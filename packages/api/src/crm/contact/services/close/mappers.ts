@@ -10,7 +10,7 @@ import {
   InputEmail,
 } from './types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class CloseContactMapper implements IContactMapper {
   ): Promise<CloseContactInput> {
     // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
     const result: CloseContactInput = {
-      name: `${source.first_name ?? ''} ${source.last_name ?? ''}`,
+      name: `${source.first_name ?? null} ${source.last_name ?? null}`,
       phones: source?.phone_numbers?.map(
         ({ phone_number, phone_type }) =>
           ({
@@ -63,22 +63,32 @@ export class CloseContactMapper implements IContactMapper {
 
   async unify(
     source: CloseContactOutput | CloseContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
+      return this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of CloseContactOutput
     return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(
+        contact,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 
   private mapSingleContactToUnified(
     contact: CloseContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -94,7 +104,7 @@ export class CloseContactMapper implements IContactMapper {
     return {
       remote_id: contact.id,
       first_name: contact.name,
-      last_name: '',
+      last_name: null,
       email_addresses: contact.emails?.map(({ email, type }) => ({
         email_address: email,
         email_address_type: type,

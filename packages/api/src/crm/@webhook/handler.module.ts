@@ -1,19 +1,20 @@
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { Module } from '@nestjs/common';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
 import { CrmWebhookHandlerService } from './handler.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [],
+  imports: [BullQueueModule],
   providers: [
-    LoggerService,
-    EncryptionService,
     EnvironmentService,
     CrmWebhookHandlerService,
+    IngestDataService,
+    WebhookService,
     /* PROVIDERS SERVICES */
   ],
-  exports: [LoggerService, CrmWebhookHandlerService],
+  exports: [CrmWebhookHandlerService],
 })
 export class CrmWebhookHandlerModule {}

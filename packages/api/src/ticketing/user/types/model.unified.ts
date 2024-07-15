@@ -41,7 +41,7 @@ export class UnifiedUserInput {
 }
 
 export class UnifiedUserOutput extends UnifiedUserInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the user' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the user' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -60,4 +60,18 @@ export class UnifiedUserOutput extends UnifiedUserInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

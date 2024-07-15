@@ -36,39 +36,39 @@ for objectType in "${objectTypes[@]}"; do
     # Create and fill files
 
     cat > "services/registry.service.ts" <<EOF
-import { Injectable } from '@nestjs/common';
-import { I${ObjectCap}Service } from '../types';
+    import { Injectable } from '@nestjs/common';
+    import { I${ObjectCap}Service } from '../types';
 
-@Injectable()
-export class ServiceRegistry {
-  private serviceMap: Map<string, I${ObjectCap}Service>;
+    @Injectable()
+    export class ServiceRegistry {
+      private serviceMap: Map<string, I${ObjectCap}Service>;
 
-  constructor() {
-    this.serviceMap = new Map<string, I${ObjectCap}Service>();
-  }
+      constructor() {
+        this.serviceMap = new Map<string, I${ObjectCap}Service>();
+      }
 
-  registerService(serviceKey: string, service: I${ObjectCap}Service) {
-    this.serviceMap.set(serviceKey, service);
-  }
+      registerService(serviceKey: string, service: I${ObjectCap}Service) {
+        this.serviceMap.set(serviceKey, service);
+      }
 
-  getService(integrationId: string): I${ObjectCap}Service {
-    const service = this.serviceMap.get(integrationId);
-    if (!service) {
-      throw new ReferenceError(\`Service not found for integration ID: \${integrationId}\`);
+      getService(integrationId: string): I${ObjectCap}Service {
+        const service = this.serviceMap.get(integrationId);
+        if (!service) {
+          throw new ReferenceError(\`Service not found for integration ID: \${integrationId}\`);
+        }
+        return service;
+      }
     }
-    return service;
-  }
-}
-EOF 
+    EOF 
 
-    cat > "services/${objectType}.service.ts" <<EOF
+cat > "services/${objectType}.service.ts" <<EOF
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/prisma/prisma.service';
 import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError, Unified${VerticalCap}Error } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -89,20 +89,12 @@ export class ${ObjectCap}Service {
     this.logger.setContext(${ObjectCap}Service.name);
   }
 
-  async batchAdd${ObjectCap}s(
-    unified${ObjectCap}Data: Unified${ObjectCap}Input[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<Unified${ObjectCap}Output[]> {
-    return;
-  }
 
   async add${ObjectCap}(
     unified${ObjectCap}Data: Unified${ObjectCap}Input,
     integrationId: string,
     linkedUserId: string,
-    remote_data?: boolean,
+        remote_data?: boolean,
   ): Promise<Unified${ObjectCap}Output> {
         return;
   }
@@ -119,7 +111,9 @@ export class ${ObjectCap}Service {
   async get${ObjectCap}s(
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<Unified${ObjectCap}Output[]> {
        return;
 
@@ -137,14 +131,13 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-
 import { ${VerticalCap}Object } from '@${VerticalLow}/@utils/@types';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Unified${ObjectCap}Output } from '../types/model.unified';
 import { I${ObjectCap}Service } from '../types';
  
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -192,11 +185,12 @@ export interface I${ObjectCap}Mapper {
 
   unify(
     source: Original${ObjectCap}Output | Original${ObjectCap}Output[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Unified${ObjectCap}Output | Unified${ObjectCap}Output[];
+  ): Promise<Unified${ObjectCap}Output | Unified${ObjectCap}Output[]>;
 }
 EOF
 
@@ -236,16 +230,13 @@ import { ServiceRegistry } from './services/registry.service';
 import { EncryptionService } from '@@core/encryption/encryption.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { BullModule } from '@nestjs/bull';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
-  ],
+  
   controllers: [${ObjectCap}Controller],
   providers: [
     ${ObjectCap}Service,
@@ -277,6 +268,7 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/logger/logger.service';
 import {
@@ -291,6 +283,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { ${ObjectCap}Service } from './services/${objectType}.service';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('${VerticalLow}/${objectType}')
 @Controller('${VerticalLow}/${objectType}')
@@ -315,19 +308,11 @@ private connectionUtils: ConnectionUtils
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original ${VerticalCap} software.',
-  })
   @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get()
-  async get${ObjectCap}s(
+@UseGuards(ApiKeyAuthGuard)  @Get()
+  async list(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+        @Query() query: FetchObjectsQueryDto,
   ) {
     try{
       const { linkedUserId, remoteSource } =
@@ -337,7 +322,9 @@ private connectionUtils: ConnectionUtils
       return this.${objectType}Service.get${ObjectCap}s(
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     }catch(error){
       throw new Error(error);
@@ -363,9 +350,8 @@ private connectionUtils: ConnectionUtils
       'Set to true to include data from the original ${VerticalCap} software.',
   })
   @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
-  get${ObjectCap}(
+@UseGuards(ApiKeyAuthGuard)  @Get(':id')
+  retrieve(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -392,9 +378,8 @@ private connectionUtils: ConnectionUtils
   })
   @ApiBody({ type: Unified${ObjectCap}Input })
   @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async add${ObjectCap}(
+@UseGuards(ApiKeyAuthGuard)  @Post()
+  async create(
     @Body() unified${ObjectCap}Data: Unified${ObjectCap}Input,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
@@ -408,25 +393,13 @@ private connectionUtils: ConnectionUtils
         unified${ObjectCap}Data,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     }catch(error){
       throw new Error(error);
     }
-  }
-  
-  @ApiOperation({
-    operationId: 'update${ObjectCap}',
-    summary: 'Update a ${ObjectCap}',
-  })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  update${ObjectCap}(
-    @Query('id') id: string,
-    @Body() update${ObjectCap}Data: Partial<Unified${ObjectCap}Input>,
-  ) {
-    return this.${objectType}Service.update${ObjectCap}(id, update${ObjectCap}Data);
   }
 }
 EOF

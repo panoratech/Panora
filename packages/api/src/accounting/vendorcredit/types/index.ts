@@ -29,9 +29,10 @@ export interface IVendorCreditMapper {
 
   unify(
     source: OriginalVendorCreditOutput | OriginalVendorCreditOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedVendorCreditOutput | UnifiedVendorCreditOutput[];
+  ): Promise<UnifiedVendorCreditOutput | UnifiedVendorCreditOutput[]>;
 }

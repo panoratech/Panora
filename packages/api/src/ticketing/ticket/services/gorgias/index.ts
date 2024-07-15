@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
@@ -10,6 +10,8 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
 import * as fs from 'fs';
+import { SyncParam } from '@@core/utils/types/interface';
+import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class GorgiasService implements ITicketService {
@@ -18,6 +20,7 @@ export class GorgiasService implements ITicketService {
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + GorgiasService.name,
@@ -42,12 +45,12 @@ export class GorgiasService implements ITicketService {
       const modifiedComments = await Promise.all(
         comments.map(async (comment) => {
           let uploads = [];
-          const uuids = comment.attachments as any[];
+          const uuids = comment.attachments as string[];
           if (uuids && uuids.length > 0) {
             const attachmentPromises = uuids.map(async (uuid) => {
               const res = await this.prisma.tcg_attachments.findUnique({
                 where: {
-                  id_tcg_attachment: uuid.extra,
+                  id_tcg_attachment: uuid,
                 },
               });
               if (!res) {
@@ -62,7 +65,7 @@ export class GorgiasService implements ITicketService {
                 url: res.file_url,
                 name: res.file_name,
                 size: stats.size,
-                content_type: 'application/pdf', //todo
+                content_type: this.utils.getMimeType(res.file_name),
               };
             });
             uploads = await Promise.all(attachmentPromises);
@@ -96,21 +99,14 @@ export class GorgiasService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-  ): Promise<ApiResponse<GorgiasTicketOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GorgiasTicketOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -119,7 +115,7 @@ export class GorgiasService implements ITicketService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}s/tickets`, {
+      const resp = await axios.get(`${connection.account_url}/tickets`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -135,13 +131,7 @@ export class GorgiasService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

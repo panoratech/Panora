@@ -12,11 +12,27 @@ export class UnifiedAttachmentInput {
 
   @ApiProperty({
     type: String,
-    description: "The uploader's uuid of the attachment",
+    description: "The uploader's UUID of the attachment",
   })
   @IsString()
   @IsOptional()
   uploader?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The UUID of the ticket the attachment is tied to',
+  })
+  @IsUUID()
+  @IsOptional()
+  ticket_id?: string; // UUID of Ticket object
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The UUID of the comment the attachment is tied to',
+  })
+  @IsUUID()
+  @IsOptional()
+  comment_id?: string; // UUID of Comment object
 
   @ApiPropertyOptional({
     type: {},
@@ -30,7 +46,7 @@ export class UnifiedAttachmentInput {
 export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the attachment',
+    description: 'The UUID of the attachment',
   })
   @IsUUID()
   @IsOptional()
@@ -51,4 +67,18 @@ export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

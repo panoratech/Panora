@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ContactService } from './services/contact.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
@@ -26,8 +26,8 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
@@ -62,12 +62,13 @@ export class ContactController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.contactService.getContacts(
+      return await this.contactService.getContacts(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -96,14 +97,30 @@ export class ContactController {
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
   })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getContact(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.getContact(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.contactService.getContact(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 
   @ApiOperation({
@@ -134,12 +151,13 @@ export class ContactController {
   ) {
     try {
       // this.logger.log('x-connection-token is ' + connection_token);
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.contactService.addContact(
         unfiedContactData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

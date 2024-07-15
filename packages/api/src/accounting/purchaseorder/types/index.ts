@@ -29,9 +29,10 @@ export interface IPurchaseOrderMapper {
 
   unify(
     source: OriginalPurchaseOrderOutput | OriginalPurchaseOrderOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedPurchaseOrderOutput | UnifiedPurchaseOrderOutput[];
+  ): Promise<UnifiedPurchaseOrderOutput | UnifiedPurchaseOrderOutput[]>;
 }

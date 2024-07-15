@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IUserService } from '@ticketing/user/types';
 import { GitlabUserOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GitlabService implements IUserService {
@@ -24,9 +25,9 @@ export class GitlabService implements IUserService {
     this.registry.registerService('gitlab', this);
   }
 
-  async syncUsers(
-    linkedUserId: string,
-  ): Promise<ApiResponse<GitlabUserOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GitlabUserOutput[]>> {
+    const { linkedUserId } = data;
+
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -36,7 +37,7 @@ export class GitlabService implements IUserService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/users`, {
+      const groups = await axios.get(`${connection.account_url}/groups`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -44,23 +45,32 @@ export class GitlabService implements IUserService {
           )}`,
         },
       });
+      let resp = [];
+      for (const group of groups.data) {
+        if (group.id) {
+          const users = await axios.get(
+            `${connection.account_url}/groups/${group.id}/members`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            },
+          );
+          resp = [...resp, users.data];
+        }
+      }
       this.logger.log(`Synced gitlab users !`);
 
-      // console.log("Users Data : ", resp.data);
-
       return {
-        data: resp.data,
+        data: resp.flat(),
         message: 'gitlab users retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -1,10 +1,10 @@
-export type JiraCollectionOutput = {
-  avatarUrls: AvatarUrls;
+export type JiraCollectionInput = {
+  avatarUrls?: Partial<AvatarUrls>;
   id: string;
-  insight: Insight;
+  insight?: Insight;
   key: string;
   name: string;
-  projectCategory: ProjectCategory;
+  projectCategory?: ProjectCategory;
   self: string;
   simplified: boolean;
   style: string;
@@ -29,4 +29,4 @@ type ProjectCategory = {
   self: string;
 };
 
-export type JiraCollectionInput = null;
+export type JiraCollectionOutput = Partial<JiraCollectionInput>;

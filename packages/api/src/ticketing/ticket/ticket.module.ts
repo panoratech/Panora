@@ -1,50 +1,36 @@
-import { GitlabService } from './services/gitlab';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
-import { TicketController } from './ticket.controller';
-import { TicketService } from './services/ticket.service';
-import { SyncService } from './sync/sync.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskService } from './services/zendesk';
-import { BullModule } from '@nestjs/bull';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from './services/registry.service';
-import { HubspotService } from './services/hubspot';
-import { FrontService } from './services/front';
-import { GithubService } from './services/github';
-import { JiraService } from './services/jira';
-import { GorgiasService } from './services/gorgias';
-import { CoreUnification } from '@@core/utils/services/core.service';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
 import { Utils } from '@ticketing/@lib/@utils';
-import { ConnectionUtils } from '@@core/connections/@utils';
-
+import { FrontService } from './services/front';
+import { FrontTicketMapper } from './services/front/mappers';
+import { GithubService } from './services/github';
+import { GithubTicketMapper } from './services/github/mappers';
+import { GitlabService } from './services/gitlab';
+import { GitlabTicketMapper } from './services/gitlab/mappers';
+import { GorgiasService } from './services/gorgias';
+import { GorgiasTicketMapper } from './services/gorgias/mappers';
+import { HubspotService } from './services/hubspot';
+import { HubspotTicketMapper } from './services/hubspot/mappers';
+import { JiraService } from './services/jira';
+import { JiraTicketMapper } from './services/jira/mappers';
+import { ServiceRegistry } from './services/registry.service';
+import { TicketService } from './services/ticket.service';
+import { ZendeskService } from './services/zendesk';
+import { ZendeskTicketMapper } from './services/zendesk/mappers';
+import { SyncService } from './sync/sync.service';
+import { TicketController } from './ticket.controller';
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [BullQueueModule],
   controllers: [TicketController],
   providers: [
     TicketService,
-    LoggerService,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
     Utils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     ZendeskService,
     HubspotService,
@@ -53,13 +39,15 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     JiraService,
     GorgiasService,
     GitlabService,
+    /* PROVIDERS MAPPERS */
+    ZendeskTicketMapper,
+    HubspotTicketMapper,
+    FrontTicketMapper,
+    GithubTicketMapper,
+    JiraTicketMapper,
+    GorgiasTicketMapper,
+    GitlabTicketMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService, IngestDataService],
 })
 export class TicketModule {}

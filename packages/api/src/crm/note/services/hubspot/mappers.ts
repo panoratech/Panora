@@ -5,7 +5,7 @@ import {
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -49,24 +49,30 @@ export class HubspotNoteMapper implements INoteMapper {
 
   async unify(
     source: HubspotNoteOutput | HubspotNoteOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleNoteToUnified(source, customFieldMappings);
+      return await this.mapSingleNoteToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((note) =>
-        this.mapSingleNoteToUnified(note, customFieldMappings),
+        this.mapSingleNoteToUnified(note, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleNoteToUnified(
     note: HubspotNoteOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -83,10 +89,11 @@ export class HubspotNoteMapper implements INoteMapper {
     if (note.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         note.properties.hubspot_owner_id,
-        'hubspot',
+        connectionId,
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }

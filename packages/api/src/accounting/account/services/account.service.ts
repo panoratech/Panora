@@ -1,10 +1,7 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { ApiResponse } from '@@core/utils/types';
-import { throwTypedError } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
 import {
   UnifiedAccountInput,
   UnifiedAccountOutput,
@@ -12,8 +9,6 @@ import {
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
-
-import { IAccountService } from '../types';
 
 @Injectable()
 export class AccountService {
@@ -27,15 +22,6 @@ export class AccountService {
     this.logger.setContext(AccountService.name);
   }
 
-  async batchAddAccounts(
-    unifiedAccountData: UnifiedAccountInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedAccountOutput[]> {
-    return;
-  }
-
   async addAccount(
     unifiedAccountData: UnifiedAccountInput,
     integrationId: string,
@@ -47,15 +33,20 @@ export class AccountService {
 
   async getAccount(
     id_accounting_account: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountOutput> {
     return;
   }
 
   async getAccounts(
+    connectionId: string,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
+    cursor?: string,
   ): Promise<UnifiedAccountOutput[]> {
     return;
   }

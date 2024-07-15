@@ -1,30 +1,31 @@
-import { Injectable } from '@nestjs/common';
-import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { connections as Connection } from '@prisma/client';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { v4 as uuidv4 } from 'uuid';
-import { ServiceRegistry } from './registry.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  APIKeyCallbackParams,
   CallbackParams,
-  OAuthCallbackParams,
+  IConnectionCategory,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { Injectable } from '@nestjs/common';
+import { connections as Connection } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from './registry.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
 
 @Injectable()
-export class CrmConnectionsService {
+export class CrmConnectionsService implements IConnectionCategory {
   constructor(
     private serviceRegistry: ServiceRegistry,
+    private connectionCategoryRegistry: CategoryConnectionRegistry,
     private webhook: WebhookService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
     this.logger.setContext(CrmConnectionsService.name);
+    this.connectionCategoryRegistry.registerService('crm', this);
   }
 
-  async handleCrmCallBack(
+  async handleCallBack(
     providerName: string,
     callbackOpts: CallbackParams,
     type_strategy: 'oauth' | 'apikey' | 'basic',
@@ -52,7 +53,7 @@ export class CrmConnectionsService {
         },
       });
       //directly send the webhook
-      await this.webhook.handlePriorityWebhook(
+      await this.webhook.deliverWebhook(
         data,
         'connection.created',
         callbackOpts.projectId,
@@ -63,7 +64,7 @@ export class CrmConnectionsService {
     }
   }
 
-  async handleCrmTokensRefresh(
+  async handleTokensRefresh(
     connectionId: string,
     providerName: string,
     refresh_token: string,
@@ -82,7 +83,7 @@ export class CrmConnectionsService {
         account_url: account_url,
         projectId: id_project,
       };
-      const data = await service.handleTokenRefresh(refreshOpts);
+      await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
       throw error;
     }

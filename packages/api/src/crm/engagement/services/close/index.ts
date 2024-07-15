@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { IEngagementService } from '@crm/engagement/types';
 import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import {
@@ -18,6 +18,7 @@ import {
   CloseEngagementMeetingOutput,
   CloseEngagementOutput,
 } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class CloseService implements IEngagementService {
@@ -32,6 +33,7 @@ export class CloseService implements IEngagementService {
     );
     this.registry.registerService('close', this);
   }
+
   async addEngagement(
     engagementData: CloseEngagementInput,
     linkedUserId: string,
@@ -58,13 +60,7 @@ export class CloseService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -98,13 +94,7 @@ export class CloseService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_call,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -138,13 +128,7 @@ export class CloseService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_meeting,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -181,44 +165,30 @@ export class CloseService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_email,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncEngagements(
-    linkedUserId: string,
-    engagement_type: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<CloseEngagementOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<CloseEngagementOutput[]>> {
     try {
-      switch (engagement_type) {
+      const { linkedUserId, engagement_type } = data;
+
+      switch (engagement_type as string) {
         case 'CALL':
-          return this.syncCalls(linkedUserId, custom_properties);
+          return this.syncCalls(linkedUserId);
         case 'MEETING':
-          return this.syncMeetings(linkedUserId, custom_properties);
+          return this.syncMeetings(linkedUserId);
         case 'EMAIL':
-          return this.syncEmails(linkedUserId, custom_properties);
+          return this.syncEmails(linkedUserId);
         default:
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
-  private async syncCalls(linkedUserId: string, custom_properties?: string[]) {
+  private async syncCalls(linkedUserId: string) {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -246,20 +216,11 @@ export class CloseService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_call,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
-  private async syncMeetings(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ) {
+  private async syncMeetings(linkedUserId: string) {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -286,17 +247,11 @@ export class CloseService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_meeting,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
-  private async syncEmails(linkedUserId: string, custom_properties?: string[]) {
+  private async syncEmails(linkedUserId: string) {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -322,13 +277,7 @@ export class CloseService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_email,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -26,9 +26,10 @@ export interface ICampaignMapper {
 
   unify(
     source: OriginalCampaignOutput | OriginalCampaignOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCampaignOutput | UnifiedCampaignOutput[];
+  ): Promise<UnifiedCampaignOutput | UnifiedCampaignOutput[]>;
 }

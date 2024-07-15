@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { IDealService } from '@crm/deal/types';
 import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { ZohoDealInput, ZohoDealOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class ZohoService implements IDealService {
   constructor(
@@ -54,20 +55,14 @@ export class ZohoService implements IDealService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.deal,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncDeals(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoDealOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoDealOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -96,13 +91,7 @@ export class ZohoService implements IDealService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.deal,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

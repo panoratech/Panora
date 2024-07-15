@@ -26,9 +26,10 @@ export interface IBenefitMapper {
 
   unify(
     source: OriginalBenefitOutput | OriginalBenefitOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedBenefitOutput | UnifiedBenefitOutput[];
+  ): Promise<UnifiedBenefitOutput | UnifiedBenefitOutput[]>;
 }

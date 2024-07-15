@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
@@ -10,6 +10,8 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { FrontCommentInput, FrontCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
 import { Utils } from '@ticketing/@lib/@utils';
+import { SyncParam } from '@@core/utils/types/interface';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class FrontService implements ICommentService {
@@ -120,20 +122,13 @@ export class FrontService implements ICommentService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.comment,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
-  async syncComments(
-    linkedUserId: string,
-    id_ticket: string,
-  ): Promise<ApiResponse<FrontCommentOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<FrontCommentOutput[]>> {
     try {
+      const { linkedUserId, id_ticket } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -144,7 +139,7 @@ export class FrontService implements ICommentService {
       //retrieve ticket remote id so we can retrieve the comments in the original software
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
-          id_tcg_ticket: id_ticket,
+          id_tcg_ticket: id_ticket as string,
         },
         select: {
           remote_id: true,
@@ -169,13 +164,7 @@ export class FrontService implements ICommentService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.comment,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

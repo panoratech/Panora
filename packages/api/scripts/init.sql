@@ -109,6 +109,7 @@ CREATE TABLE tcg_users
  created_at      timestamp NULL,
  modified_at     timestamp NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_users PRIMARY KEY ( id_tcg_user )
 );
 
@@ -132,6 +133,7 @@ CREATE TABLE tcg_teams
  created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_teams PRIMARY KEY ( id_tcg_team )
 );
 
@@ -156,6 +158,7 @@ CREATE TABLE tcg_collections
  created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
  id_linked_user    uuid NOT NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_tcg_collections PRIMARY KEY ( id_tcg_collection )
 );
 
@@ -178,6 +181,7 @@ CREATE TABLE tcg_accounts
  created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_account PRIMARY KEY ( id_tcg_account )
 );
 
@@ -240,13 +244,14 @@ COMMENT ON COLUMN managed_webhooks.endpoint IS 'UUID that will be used in the fi
 
 CREATE TABLE fs_users
 (
- id_fs_user  uuid NOT NULL,
- name        text NULL,
- email       text NULL,
- is_me       boolean NOT NULL,
- remote_id   text NULL,
- created_at  timestamp NOT NULL,
- modified_at timestamp NOT NULL,
+ id_fs_user    uuid NOT NULL,
+ name          text NULL,
+ email         text NULL,
+ is_me         boolean NOT NULL,
+ remote_id     text NULL,
+ created_at    timestamp NOT NULL,
+ modified_at   timestamp NOT NULL,
+ id_connection uuid NOT NULL,
  CONSTRAINT PK_fs_users PRIMARY KEY ( id_fs_user )
 );
 
@@ -264,21 +269,21 @@ CREATE TABLE fs_shared_links
  id_fs_shared_link  uuid NOT NULL,
  url                text NULL,
  download_url       text NULL,
- id_fs_folder       uuid NULL,
- id_fs_file         uuid NULL,
  "scope"            text NULL,
  password_protected boolean NOT NULL,
  password           text NULL,
  expires_at         timestamp with time zone NULL,
  created_at         timestamp with time zone NOT NULL,
  modified_at        timestamp with time zone NOT NULL,
+ id_connection      uuid NOT NULL,
+ id_fs_folder       uuid NULL,
+ id_fs_file         uuid NULL,
+ remote_id          text NULL,
  CONSTRAINT PK_fs_shared_links PRIMARY KEY ( id_fs_shared_link )
 );
 
 
 
-COMMENT ON COLUMN fs_shared_links.id_fs_folder IS 'if the downloadable ressource is a folder';
-COMMENT ON COLUMN fs_shared_links.id_fs_file IS 'if the downloadable ressource is a file';
 COMMENT ON COLUMN fs_shared_links."scope" IS 'can be public, or company depending on the link';
 COMMENT ON COLUMN fs_shared_links.password IS 'encrypted password';
 
@@ -294,10 +299,11 @@ CREATE TABLE fs_permissions
  remote_id        text NULL,
  "user"           uuid NULL,
  "group"          uuid NULL,
- type             text[] NULL,
+ type             text NULL,
  roles            text[] NULL,
  created_at       timestamp NOT NULL,
  modified_at      timestamp NOT NULL,
+ id_connection    uuid NOT NULL,
  CONSTRAINT PK_fs_permissions PRIMARY KEY ( id_fs_permission )
 );
 
@@ -315,11 +321,12 @@ CREATE TABLE fs_groups
 (
  id_fs_group        uuid NOT NULL,
  name               text NULL,
- users              jsonb NULL,
+ users              text[] NULL,
  remote_id          text NULL,
  remote_was_deleted boolean NOT NULL,
  created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_fs_groups PRIMARY KEY ( id_fs_group )
 );
 
@@ -342,6 +349,7 @@ CREATE TABLE fs_drives
  remote_id         text NULL,
  created_at        timestamp NOT NULL,
  modified_at       timestamp NOT NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_fs_drives PRIMARY KEY ( id_fs_drive )
 );
 
@@ -358,6 +366,8 @@ CREATE TABLE entity
 (
  id_entity          uuid NOT NULL,
  ressource_owner_id uuid NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  CONSTRAINT PK_entity PRIMARY KEY ( id_entity )
 );
 
@@ -432,6 +442,7 @@ CREATE TABLE crm_users
  id_linked_user  uuid NULL,
  remote_id       text NULL,
  remote_platform text NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_crm_users PRIMARY KEY ( id_crm_user )
 );
 
@@ -453,6 +464,7 @@ CREATE TABLE crm_deals_stages
  id_linked_user     uuid NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_crm_deal_stages PRIMARY KEY ( id_crm_deals_stage )
 );
 
@@ -468,17 +480,17 @@ CREATE TABLE crm_deals_stages
 CREATE TABLE connector_sets
 (
  id_connector_set uuid NOT NULL,
- crm_hubspot      boolean NOT NULL,
- crm_zoho         boolean NOT NULL,
- crm_attio        boolean NOT NULL,
- crm_pipedrive    boolean NOT NULL,
- tcg_zendesk      boolean NOT NULL,
- tcg_jira         boolean NOT NULL,
- tcg_gorgias      boolean NOT NULL,
- tcg_gitlab       boolean NOT NULL,
- tcg_front        boolean NOT NULL,
- crm_zendesk      boolean NOT NULL,
- crm_close        boolean NOT NULL,
+ crm_hubspot      boolean NULL,
+ crm_zoho         boolean NULL,
+ crm_attio        boolean NULL,
+ crm_pipedrive    boolean NULL,
+ tcg_zendesk      boolean NULL,
+ tcg_jira         boolean NULL,
+ tcg_gorgias      boolean NULL,
+ tcg_gitlab       boolean NULL,
+ tcg_front        boolean NULL,
+ crm_zendesk      boolean NULL,
+ crm_close        boolean NULL,
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
@@ -525,6 +537,7 @@ CREATE TABLE ats_users
  remote_modified_at timestamp NULL,
  created_at         timestamp NOT NULL,
  modified_at        timestamp NOT NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_ats_users PRIMARY KEY ( id_ats_user )
 );
 
@@ -543,8 +556,9 @@ CREATE TABLE ats_reject_reasons
  id_ats_reject_reason uuid NOT NULL,
  name                 text NULL,
  remote_id            text NULL,
- modified_at          timestamp NOT NULL,
- created_at           timestamp NOT NULL,
+ modified_at          timestamp with time zone NOT NULL,
+ created_at           timestamp with time zone NOT NULL,
+ id_connection        uuid NOT NULL,
  CONSTRAINT PK_ats_reject_reasons PRIMARY KEY ( id_ats_reject_reason )
 );
 
@@ -561,10 +575,11 @@ CREATE TABLE ats_offices
 (
  id_ats_office uuid NOT NULL,
  remote_id     text NULL,
- created_at    timestamp NOT NULL,
- modified_at   timestamp NOT NULL,
+ created_at    timestamp with time zone NOT NULL,
+ modified_at   timestamp with time zone NOT NULL,
  name          text NULL,
  location      text NULL,
+ id_connection uuid NOT NULL,
  CONSTRAINT PK_ats_offices PRIMARY KEY ( id_ats_office )
 );
 
@@ -591,10 +606,11 @@ CREATE TABLE ats_jobs
  managers          text[] NULL,
  recruiters        text[] NULL,
  remote_id         text NULL,
- remote_created_at timestamp NULL,
- remote_updated_at timestamp NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ remote_created_at timestamp with time zone NULL,
+ remote_updated_at timestamp with time zone NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_ats_jobs PRIMARY KEY ( id_ats_job )
 );
 
@@ -619,8 +635,9 @@ CREATE TABLE ats_departments
  id_ats_department uuid NOT NULL,
  name              text NULL,
  remote_id         text NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_ats_departments PRIMARY KEY ( id_ats_department )
 );
 
@@ -637,18 +654,20 @@ CREATE TABLE ats_candidates
 (
  id_ats_candidate    uuid NOT NULL,
  remote_id           text NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  first_name          text NULL,
  last_name           text NULL,
  company             text NULL,
  title               text NULL,
- remote_created_at   timestamp NULL,
- remote_modified_at  timestamp NULL,
- last_interaction_at timestamp NULL,
+ remote_created_at   timestamp with time zone NULL,
+ remote_modified_at  timestamp with time zone NULL,
+ last_interaction_at timestamp with time zone NULL,
  is_private          boolean NULL,
  email_reachable     boolean NULL,
  locations           text NULL,
+ tags                text[] NULL,
+ id_connection       uuid NOT NULL,
  CONSTRAINT PK_ats_candidates PRIMARY KEY ( id_ats_candidate )
 );
 
@@ -659,6 +678,360 @@ COMMENT ON COLUMN ats_candidates.last_name IS 'candidate''s last name.';
 COMMENT ON COLUMN ats_candidates.company IS 'The candidate''s current company';
 COMMENT ON COLUMN ats_candidates.title IS 'The candidate''s current title';
 COMMENT ON COLUMN ats_candidates.email_reachable IS 'can the candidate be emailed';
+COMMENT ON COLUMN ats_candidates.tags IS 'array of id_ats_candidate_tag';
+
+
+
+
+
+-- ************************************** ats_candidate_tags
+
+CREATE TABLE ats_candidate_tags
+(
+ id_ats_candidate_tag uuid NOT NULL,
+ name                 text NULL,
+ remote_id            text NULL,
+ created_at           timestamp with time zone NOT NULL,
+ modified_at          timestamp with time zone NOT NULL,
+ id_connection        uuid NOT NULL,
+ CONSTRAINT PK_ats_candidate_tags PRIMARY KEY ( id_ats_candidate_tag )
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_vendor_credits
+
+CREATE TABLE acc_vendor_credits
+(
+ id_acc_vendor_credit uuid NOT NULL,
+ id_connection        uuid NOT NULL,
+ remote_id            text NULL,
+ created_at           timestamp with time zone NOT NULL,
+ modified_at          timestamp with time zone NOT NULL,
+ "number"             text NULL,
+ transaction_date     timestamp with time zone NULL,
+ vendor               uuid NULL,
+ total_amount         bigint NULL,
+ currency             text NULL,
+ exchange_rate        text NULL,
+ company              uuid NULL,
+ tracking_categories  text[] NULL,
+ accounting_period    uuid NULL,
+ CONSTRAINT PK_acc_vendor_credits PRIMARY KEY ( id_acc_vendor_credit )
+);
+
+
+
+COMMENT ON COLUMN acc_vendor_credits.company IS 'The company the vendor credit belongs to.';
+
+
+
+
+
+-- ************************************** acc_vendor_credit_lines
+
+CREATE TABLE acc_vendor_credit_lines
+(
+ id_acc_vendor_credit_line uuid NOT NULL,
+ net_amount                bigint NULL,
+ tracking_categories       text[] NULL,
+ description               text NULL,
+ account                   uuid NULL,
+ id_acc_account            uuid NULL,
+ exchange_rate             text NULL,
+ id_acc_company_info       uuid NULL,
+ remote_id                 text NULL,
+ created_at                timestamp with time zone NOT NULL,
+ modified_at               timestamp with time zone NOT NULL,
+ id_acc_vendor_credit      uuid NULL,
+ CONSTRAINT PK_acc_vendor_credit_lines PRIMARY KEY ( id_acc_vendor_credit_line )
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_transactions
+
+CREATE TABLE acc_transactions
+(
+ id_acc_transaction       uuid NOT NULL,
+ transaction_type         text NULL,
+ "number"                 bigint NULL,
+ transaction_date         timestamp with time zone NULL,
+ total_amount             text NULL,
+ exchange_rate            text NULL,
+ currency                 text NULL,
+ tracking_categories      text[] NULL,
+ id_acc_account           uuid NULL,
+ id_acc_contact           uuid NULL,
+ id_acc_company_info      uuid NULL,
+ id_acc_accounting_period uuid NULL,
+ remote_id                text NOT NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ id_connection            uuid NOT NULL,
+ CONSTRAINT PK_acc_transactions PRIMARY KEY ( id_acc_transaction )
+);
+
+COMMENT ON TABLE acc_transactions IS 'Transactions
+The Transaction common model includes records of all types of transactions that do not appear in other common models. The type of transaction can be identified through the type field. More specifically, it will contain all types of transactions outside of:
+
+Credit Notes
+Expenses
+Invoices
+Journal Entries
+Payments
+Purchase Orders
+Vendor Credits';
+
+COMMENT ON COLUMN acc_transactions.total_amount IS 'The total amount being paid after taxes.';
+
+
+
+
+
+-- ************************************** acc_tracking_categories
+
+CREATE TABLE acc_tracking_categories
+(
+ id_acc_tracking_category uuid NOT NULL,
+ remote_id                text NULL,
+ name                     text NULL,
+ status                   text NULL,
+ category_type            text NULL,
+ parent_category          uuid NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ id_connection            uuid NOT NULL,
+ CONSTRAINT PK_acc_tracking_categories PRIMARY KEY ( id_acc_tracking_category )
+);
+
+
+
+COMMENT ON COLUMN acc_tracking_categories.status IS 'The tracking category''s status. Possible values include: ACTIVE, ARCHIVED. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN acc_tracking_categories.category_type IS 'The tracking category’s type. Possible values include: CLASS, DEPARTMENT. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN acc_tracking_categories.parent_category IS 'ID of the parent tracking category.';
+
+
+
+
+
+-- ************************************** acc_tax_rates
+
+CREATE TABLE acc_tax_rates
+(
+ id_acc_tax_rate    uuid NOT NULL,
+ remote_id          text NULL,
+ description        text NULL,
+ total_tax_ratge    bigint NULL,
+ effective_tax_rate bigint NULL,
+ company            uuid NULL,
+ id_connection      uuid NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ CONSTRAINT PK_acc_tax_rates PRIMARY KEY ( id_acc_tax_rate )
+);
+
+
+
+COMMENT ON COLUMN acc_tax_rates.total_tax_ratge IS 'The tax’s total tax rate - sum of the tax components (not compounded).';
+COMMENT ON COLUMN acc_tax_rates.company IS 'The subsidiary that the tax rate belongs to (in the case of multi-entity systems).';
+
+
+
+
+
+-- ************************************** acc_report_items
+
+CREATE TABLE acc_report_items
+(
+ id_acc_report_item uuid NOT NULL,
+ name               text NULL,
+ value              bigint NULL,
+ company            uuid NULL,
+ parent_item        uuid NULL,
+ remote_id          text NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ CONSTRAINT PK_acc_report_items PRIMARY KEY ( id_acc_report_item )
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_income_statements
+
+CREATE TABLE acc_income_statements
+(
+ id_acc_income_statement uuid NOT NULL,
+ name                    text NULL,
+ currency                text NULL,
+ start_period            timestamp with time zone NULL,
+ end_period              timestamp with time zone NULL,
+ gross_profit            bigint NULL,
+ net_operating_income    bigint NULL,
+ net_income              bigint NULL,
+ remote_id               text NULL,
+ created_at              timestamp with time zone NOT NULL,
+ modified_at             timestamp with time zone NOT NULL,
+ id_connection           uuid NOT NULL,
+ CONSTRAINT PK_acc_income_statements PRIMARY KEY ( id_acc_income_statement )
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_credit_notes
+
+CREATE TABLE acc_credit_notes
+(
+ id_acc_credit_note       uuid NOT NULL,
+ transaction_date         timestamp with time zone NULL,
+ status                   text NULL,
+ "number"                 text NULL,
+ id_acc_contact           uuid NULL,
+ company                  uuid NULL,
+ exchange_rate            text NULL,
+ total_amount             bigint NULL,
+ remaining_credit         bigint NULL,
+ tracking_categories      text[] NULL,
+ currency                 text NULL,
+ remote_created_at        timestamp with time zone NULL,
+ remote_updated_at        timestamp with time zone NULL,
+ payments                 text[] NULL,
+ applied_payments         text[] NULL,
+ id_acc_accounting_period uuid NULL,
+ remote_id                text NULL,
+ modified_at              time with time zone NOT NULL,
+ created_at               time with time zone NOT NULL,
+ id_connection            uuid NOT NULL,
+ CONSTRAINT PK_acc_credit_notes PRIMARY KEY ( id_acc_credit_note )
+);
+
+
+
+COMMENT ON COLUMN acc_credit_notes.status IS 'The credit note''s status. Possible values include: SUBMITTED, AUTHORIZED, PAID. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN acc_credit_notes."number" IS 'The credit note''s number.';
+COMMENT ON COLUMN acc_credit_notes.payments IS 'array of id_acc_payment';
+
+
+
+
+
+-- ************************************** acc_company_infos
+
+CREATE TABLE acc_company_infos
+(
+ id_acc_company_info   uuid NOT NULL,
+ name                  text NULL,
+ legal_name            text NULL,
+ tax_number            text NULL,
+ fiscal_year_end_month int NULL,
+ fiscal_year_end_day   int NULL,
+ currency              text NULL,
+ remote_created_at     timestamp with time zone NULL,
+ remote_id             text NULL,
+ urls                  text[] NULL,
+ created_at            timestamp with time zone NOT NULL,
+ modified_at           timestamp with time zone NOT NULL,
+ id_connection         uuid NOT NULL,
+ tracking_categories   text[] NULL,
+ CONSTRAINT PK_acc_company_infos PRIMARY KEY ( id_acc_company_info )
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_cash_flow_statements
+
+CREATE TABLE acc_cash_flow_statements
+(
+ id_acc_cash_flow_statement  uuid NOT NULL,
+ name                        text NULL,
+ currency                    text NULL,
+ company                     uuid NULL,
+ start_period                timestamp with time zone NULL,
+ end_period                  timestamp with time zone NULL,
+ cash_at_beginning_of_period bigint NULL,
+ cash_at_end_of_period       bigint NULL,
+ remote_generated_at         timestamp with time zone NULL,
+ remote_id                   text NULL,
+ modified_at                 timestamp with time zone NOT NULL,
+ created_at                  timestamp with time zone NOT NULL,
+ id_connection               uuid NOT NULL,
+ CONSTRAINT PK_acc_cash_flow_statements PRIMARY KEY ( id_acc_cash_flow_statement )
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_balance_sheets_report_items
+
+CREATE TABLE acc_balance_sheets_report_items
+(
+ id_acc_balance_sheets_report_item uuid NOT NULL,
+ remote_id                         text NULL,
+ created_at                        timestamp with time zone NOT NULL,
+ modified_at                       timestamp with time zone NOT NULL,
+ name                              text NULL,
+ value                             bigint NULL,
+ parent_item                       uuid NULL,
+ id_acc_company_info               uuid NULL,
+ CONSTRAINT PK_acc_balance_sheets_report_items PRIMARY KEY ( id_acc_balance_sheets_report_item )
+);
+
+
+
+COMMENT ON COLUMN acc_balance_sheets_report_items.parent_item IS 'uuid of another id_acc_balance_sheets_report_item';
+
+
+
+
+
+-- ************************************** acc_accounting_periods
+
+CREATE TABLE acc_accounting_periods
+(
+ id_acc_accounting_period uuid NOT NULL,
+ remote_id                text NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ name                     text NULL,
+ status                   text NULL,
+ start_date               timestamp with time zone NULL,
+ end_date                 timestamp with time zone NULL,
+ id_connection            uuid NOT NULL,
+ CONSTRAINT PK_acc_accounting_periods PRIMARY KEY ( id_acc_accounting_period )
+);
+
+
+
+COMMENT ON COLUMN acc_accounting_periods.status IS 'Possible values include: ACTIVE, INACTIVE. In cases where there is no clear mapping, the original value passed through will be returned.';
 
 
 
@@ -687,6 +1060,7 @@ CREATE TABLE tcg_tickets
  creator_type    text NULL,
  id_tcg_user     uuid NULL,
  id_linked_user  uuid NOT NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_tickets PRIMARY KEY ( id_tcg_ticket )
 );
 
@@ -724,6 +1098,7 @@ CREATE TABLE tcg_contacts
  modified_at     timestamp NULL,
  id_tcg_account  uuid NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_contact PRIMARY KEY ( id_tcg_contact ),
  CONSTRAINT FK_49 FOREIGN KEY ( id_tcg_account ) REFERENCES tcg_accounts ( id_tcg_account )
 );
@@ -763,8 +1138,8 @@ CREATE INDEX FK_connectors_sets ON projects
 
 
 
-COMMENT ON COLUMN projects.sync_mode IS 'can be realtime or periodic_pull';
-COMMENT ON COLUMN projects.pull_frequency IS 'frequency in seconds for pulls
+COMMENT ON COLUMN projects.sync_mode IS 'Can be realtime or periodic_pull';
+COMMENT ON COLUMN projects.pull_frequency IS 'Frequency in seconds for pulls
 
 ex 3600 for one hour';
 
@@ -786,6 +1161,7 @@ CREATE TABLE fs_folders
  created_at       timestamp NOT NULL,
  modified_at      timestamp NOT NULL,
  id_fs_drive      uuid NULL,
+ id_connection    uuid NOT NULL,
  id_fs_permission uuid NULL,
  CONSTRAINT PK_fs_folders PRIMARY KEY ( id_fs_folder )
 );
@@ -812,14 +1188,15 @@ CREATE INDEX FK_fs_folder_permissionID ON fs_folders
 CREATE TABLE crm_contacts
 (
  id_crm_contact  uuid NOT NULL,
- first_name      text NOT NULL,
- last_name       text NOT NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
- remote_id       text NOT NULL,
- remote_platform text NOT NULL,
+ first_name      text NULL,
+ last_name       text NULL,
+ created_at      timestamp NULL,
+ modified_at     timestamp NULL,
+ remote_id       text NULL,
+ remote_platform text NULL,
  id_crm_user     uuid NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_crm_contacts PRIMARY KEY ( id_crm_contact ),
  CONSTRAINT FK_23 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
@@ -851,6 +1228,7 @@ CREATE TABLE crm_companies
  remote_platform     text NULL,
  id_crm_user         uuid NULL,
  id_linked_user      uuid NULL,
+ id_connection       uuid NOT NULL,
  CONSTRAINT PK_crm_companies PRIMARY KEY ( id_crm_company ),
  CONSTRAINT FK_24 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user )
 );
@@ -883,6 +1261,8 @@ CREATE TABLE attribute
  id_project           uuid NOT NULL,
  "scope"              text NOT NULL,
  id_consumer          uuid NULL,
+ created_at           timestamp with time zone NOT NULL,
+ modified_at          timestamp with time zone NOT NULL,
  CONSTRAINT PK_attribute PRIMARY KEY ( id_attribute ),
  CONSTRAINT FK_32 FOREIGN KEY ( id_entity ) REFERENCES entity ( id_entity )
 );
@@ -922,9 +1302,10 @@ CREATE TABLE ats_job_interview_stages
  name                       text NULL,
  stage_order                int NULL,
  remote_id                  text NULL,
- created_at                 timestamp NOT NULL,
- modified_at                timestamp NOT NULL,
+ created_at                 timestamp with time zone NOT NULL,
+ modified_at                timestamp with time zone NOT NULL,
  id_ats_job                 uuid NULL,
+ id_connection              uuid NOT NULL,
  CONSTRAINT PK_ats_job_interview_stages PRIMARY KEY ( id_ats_job_interview_stage )
 );
 
@@ -947,14 +1328,15 @@ CREATE TABLE ats_eeocs
 (
  id_ats_eeoc       uuid NOT NULL,
  id_ats_candidate  uuid NULL,
- submitted_at      timestamp NULL,
+ submitted_at      timestamp with time zone NULL,
  race              text NULL,
  gender            text NULL,
  veteran_status    text NULL,
  disability_status text NULL,
  remote_id         text NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_ats_eeocs PRIMARY KEY ( id_ats_eeoc )
 );
 
@@ -981,38 +1363,13 @@ CREATE TABLE ats_candidate_urls
  id_ats_candidate_url uuid NOT NULL,
  value                text NULL,
  type                 text NULL,
- created_at           timestamp NOT NULL,
- modified_at          timestamp NOT NULL,
+ created_at           timestamp with time zone NOT NULL,
+ modified_at          timestamp with time zone NOT NULL,
  id_ats_candidate     uuid NOT NULL,
  CONSTRAINT PK_ats_candidate_urls PRIMARY KEY ( id_ats_candidate_url )
 );
 
 CREATE INDEX FK_candidate_url_ID ON ats_candidate_urls
-(
- id_ats_candidate
-);
-
-
-
-
-
-
-
-
--- ************************************** ats_candidate_tags
-
-CREATE TABLE ats_candidate_tags
-(
- id_ats_candidate_tag uuid NOT NULL,
- name                 text NULL,
- id_ats_candidate     uuid NULL,
- remote_id            text NULL,
- created_at           timestamp NOT NULL,
- modified_at          timestamp NOT NULL,
- CONSTRAINT PK_ats_candidate_tags PRIMARY KEY ( id_ats_candidate_tag )
-);
-
-CREATE INDEX FK_candidates_candidatestags ON ats_candidate_tags
 (
  id_ats_candidate
 );
@@ -1031,8 +1388,8 @@ CREATE TABLE ats_candidate_phone_numbers
  id_ats_candidate_phone_number uuid NOT NULL,
  value                         text NULL,
  type                          text NULL,
- created_at                    timestamp NOT NULL,
- modified_at                   timestamp NOT NULL,
+ created_at                    timestamp with time zone NOT NULL,
+ modified_at                   timestamp with time zone NOT NULL,
  id_ats_candidate              uuid NOT NULL,
  CONSTRAINT PK_ats_candidate_phone_numbers PRIMARY KEY ( id_ats_candidate_phone_number )
 );
@@ -1057,8 +1414,8 @@ CREATE TABLE ats_candidate_email_addresses
  id_ats_candidate_email_address uuid NOT NULL,
  value                          text NULL,
  type                           text NULL,
- created_at                     timestamp NOT NULL,
- modified_at                    timestamp NOT NULL,
+ created_at                     timestamp with time zone NOT NULL,
+ modified_at                    timestamp with time zone NOT NULL,
  id_ats_candidate               uuid NOT NULL,
  CONSTRAINT PK_ats_candidate_email_addresses PRIMARY KEY ( id_ats_candidate_email_address )
 );
@@ -1083,12 +1440,13 @@ CREATE TABLE ats_candidate_attachments
  remote_id                   text NULL,
  file_url                    text NULL,
  file_name                   text NULL,
- remote_created_at           timestamp NULL,
- remote_modified_at          timestamp NULL,
+ remote_created_at           timestamp with time zone NULL,
+ remote_modified_at          timestamp with time zone NULL,
  file_type                   text NULL,
- created_at                  timestamp NOT NULL,
- modified_at                 timestamp NOT NULL,
+ created_at                  timestamp with time zone NOT NULL,
+ modified_at                 timestamp with time zone NOT NULL,
  id_ats_candidate            uuid NOT NULL,
+ id_connection               uuid NOT NULL,
  CONSTRAINT PK_ats_candidate_attachments PRIMARY KEY ( id_ats_candidate_attachment )
 );
 
@@ -1111,17 +1469,18 @@ CREATE TABLE ats_applications
 (
  id_ats_application uuid NOT NULL,
  remote_id          text NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
- id_ats_candidate   uuid NULL,
- id_ats_job         uuid NULL,
- applied_at         timestamp NULL,
- rejected_at        timestamp NULL,
- offers             text[] NOT NULL,
+ applied_at         timestamp with time zone NULL,
+ rejected_at        timestamp with time zone NULL,
+ offers             text[] NULL,
  "source"           text NULL,
  credited_to        uuid NULL,
  current_stage      uuid NULL,
  reject_reason      text NULL,
+ id_ats_candidate   uuid NULL,
+ id_ats_job         uuid NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_ats_applications PRIMARY KEY ( id_ats_application )
 );
 
@@ -1156,9 +1515,10 @@ CREATE TABLE ats_activities
  visibility        text NULL,
  id_ats_candidate  uuid NULL,
  remote_id         text NULL,
- remote_created_at timestamp NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ remote_created_at timestamp with time zone NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_ats_activities PRIMARY KEY ( id_ats_activity )
 );
 
@@ -1179,6 +1539,270 @@ COMMENT ON COLUMN ats_activities.id_ats_candidate IS 'The activity’s candidate
 
 
 
+-- ************************************** acc_transactions_lines_items
+
+CREATE TABLE acc_transactions_lines_items
+(
+ id_acc_transactions_lines_item uuid NOT NULL,
+ memo                           text NULL,
+ unit_price                     text NULL,
+ quantity                       text NULL,
+ total_line_amount              text NULL,
+ id_acc_tax_rate                uuid NULL,
+ currency                       text NULL,
+ exchange_rate                  text NULL,
+ tracking_categories            text[] NULL,
+ id_acc_company_info            uuid NULL,
+ id_acc_item                    uuid NULL,
+ id_acc_account                 uuid NULL,
+ remote_id                      text NULL,
+ created_at                     time with time zone NOT NULL,
+ modified_at                    time with time zone NOT NULL,
+ id_acc_transaction             uuid NULL,
+ CONSTRAINT PK_acc_transactions_lines_items PRIMARY KEY ( id_acc_transactions_lines_item )
+);
+
+CREATE INDEX FK_acc_transactions_lineItems ON acc_transactions_lines_items
+(
+ id_acc_transaction
+);
+
+
+
+COMMENT ON COLUMN acc_transactions_lines_items.id_acc_company_info IS 'The company the line belongs to.';
+
+
+
+
+
+-- ************************************** acc_purchase_orders
+
+CREATE TABLE acc_purchase_orders
+(
+ id_acc_purchase_order    uuid NOT NULL,
+ remote_id                text NULL,
+ status                   text NULL,
+ issue_date               timestamp with time zone NULL,
+ purchase_order_number    text NULL,
+ delivery_date            timestamp with time zone NULL,
+ delivery_address         uuid NULL,
+ customer                 uuid NULL,
+ vendor                   uuid NULL,
+ memo                     text NULL,
+ company                  uuid NULL,
+ total_amount             bigint NULL,
+ currency                 text NULL,
+ exchange_rate            text NULL,
+ tracking_categories      text[] NULL,
+ remote_created_at        timestamp with time zone NULL,
+ remote_updated_at        timestamp with time zone NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ id_connection            uuid NOT NULL,
+ id_acc_accounting_period uuid NULL,
+ CONSTRAINT PK_acc_purchase_orders PRIMARY KEY ( id_acc_purchase_order )
+);
+
+CREATE INDEX FK_purchaseOrder_accountingPeriod ON acc_purchase_orders
+(
+ id_acc_accounting_period
+);
+
+
+
+COMMENT ON COLUMN acc_purchase_orders.status IS 'The purchase order''s status. Possible values include: DRAFT, SUBMITTED, AUTHORIZED, BILLED, DELETED. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN acc_purchase_orders.delivery_address IS 'contains a id_acc_address';
+COMMENT ON COLUMN acc_purchase_orders.customer IS 'The contact making the purchase order.
+Contains a id_acc_contact';
+COMMENT ON COLUMN acc_purchase_orders.vendor IS 'contains a id_acc_contact';
+COMMENT ON COLUMN acc_purchase_orders.id_acc_accounting_period IS 'The accounting period that the PurchaseOrder was generated in.';
+
+
+
+
+
+-- ************************************** acc_journal_entries
+
+CREATE TABLE acc_journal_entries
+(
+ id_acc_journal_entry     uuid NOT NULL,
+ transaction_date         timestamp with time zone NULL,
+ payments                 text[] NOT NULL,
+ applied_payments         text[] NOT NULL,
+ memo                     text NULL,
+ currency                 text NULL,
+ exchange_rate            text NULL,
+ id_acc_company_info      uuid NOT NULL,
+ journal_number           text NULL,
+ tracking_categories      text[] NULL,
+ id_acc_accounting_period uuid NULL,
+ posting_status           text NULL,
+ remote_created_at        timestamp with time zone NULL,
+ remote_modiified_at      timestamp with time zone NULL,
+ id_connection            uuid NOT NULL,
+ remote_id                text NOT NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ CONSTRAINT PK_acc_journal_entries PRIMARY KEY ( id_acc_journal_entry )
+);
+
+CREATE INDEX FK_journal_entry_accounting_period ON acc_journal_entries
+(
+ id_acc_accounting_period
+);
+
+CREATE INDEX FK_journal_entry_companyInfo ON acc_journal_entries
+(
+ id_acc_company_info
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_contacts
+
+CREATE TABLE acc_contacts
+(
+ id_acc_contact      uuid NOT NULL,
+ name                text NULL,
+ is_supplier         boolean NULL,
+ is_customer         boolean NULL,
+ email_address       text NULL,
+ tax_number          text NULL,
+ status              text NULL,
+ currency            text NULL,
+ remote_updated_at   text NULL,
+ id_acc_company_info uuid NULL,
+ id_connection       uuid NOT NULL,
+ remote_id           text NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ CONSTRAINT PK_acc_contacts PRIMARY KEY ( id_acc_contact )
+);
+
+CREATE INDEX FK_acc_contact_company ON acc_contacts
+(
+ id_acc_company_info
+);
+
+
+
+COMMENT ON COLUMN acc_contacts.status IS 'The contact''s status Possible values include: ACTIVE, ARCHIVED. In cases where there is no clear mapping, the original value passed through will be returned.';
+
+
+
+
+
+-- ************************************** acc_cash_flow_statement_report_items
+
+CREATE TABLE acc_cash_flow_statement_report_items
+(
+ id_acc_cash_flow_statement_report_item uuid NOT NULL,
+ name                                   text NULL,
+ value                                  bigint NULL,
+ type                                   text NULL,
+ parent_item                            uuid NULL,
+ remote_generated_at                    timestamp with time zone NULL,
+ remote_id                              text NULL,
+ modified_at                            timestamp with time zone NOT NULL,
+ created_at                             timestamp with time zone NOT NULL,
+ id_acc_cash_flow_statement             uuid NULL,
+ CONSTRAINT PK_acc_cash_flow_statement_report_items PRIMARY KEY ( id_acc_cash_flow_statement_report_item )
+);
+
+CREATE INDEX FK_cashflow_statement_acc_cash_flow_statement_report_item ON acc_cash_flow_statement_report_items
+(
+ id_acc_cash_flow_statement
+);
+
+
+
+COMMENT ON COLUMN acc_cash_flow_statement_report_items.type IS 'can be operating, investing, financing';
+
+
+
+
+
+-- ************************************** acc_balance_sheets
+
+CREATE TABLE acc_balance_sheets
+(
+ id_acc_balance_sheet uuid NOT NULL,
+ name                 text NULL,
+ currency             text NULL,
+ id_acc_company_info  uuid NULL,
+ "date"               timestamp with time zone NULL,
+ net_assets           bigint NULL,
+ assets               text[] NULL,
+ liabilities          text[] NULL,
+ equity               text[] NULL,
+ remote_generated_at  timestamp with time zone NULL,
+ remote_id            text NULL,
+ created_at           timestamp with time zone NOT NULL,
+ modified_at          timestamp with time zone NOT NULL,
+ id_connection        uuid NOT NULL,
+ CONSTRAINT PK_acc_balance_sheets PRIMARY KEY ( id_acc_balance_sheet )
+);
+
+CREATE INDEX FK_balanceSheetCompanyInfoID ON acc_balance_sheets
+(
+ id_acc_company_info
+);
+
+
+
+COMMENT ON COLUMN acc_balance_sheets.net_assets IS 'The balance sheet''s net assets.';
+COMMENT ON COLUMN acc_balance_sheets.assets IS 'array of id_acc_balance_sheets_report_item objects';
+COMMENT ON COLUMN acc_balance_sheets.liabilities IS 'array of id_acc_balance_sheets_report_item objects';
+COMMENT ON COLUMN acc_balance_sheets.equity IS 'array of id_acc_balance_sheets_report_item objects';
+
+
+
+
+
+-- ************************************** acc_accounts
+
+CREATE TABLE acc_accounts
+(
+ id_acc_account      uuid NOT NULL,
+ name                text NULL,
+ description         text NULL,
+ classification      text NULL,
+ type                text NULL,
+ status              text NULL,
+ current_balance     bigint NULL,
+ currency            text NULL,
+ account_number      text NULL,
+ parent_account      uuid NULL,
+ remote_id           text NULL,
+ id_acc_company_info uuid NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ id_connection       uuid NOT NULL,
+ CONSTRAINT PK_acc_accounts PRIMARY KEY ( id_acc_account )
+);
+
+CREATE INDEX FK_accounts_companyinfo_ID ON acc_accounts
+(
+ id_acc_company_info
+);
+
+
+
+COMMENT ON COLUMN acc_accounts.classification IS 'The account''s broadest grouping. Possible values include: ASSET, EQUITY, EXPENSE, LIABILITY, REVENUE. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN acc_accounts.type IS 'The account''s type is a narrower and more specific grouping within the account''s classification.';
+COMMENT ON COLUMN acc_accounts.status IS 'The account''s status. Possible values include: ACTIVE, PENDING, INACTIVE. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN acc_accounts.current_balance IS 'Use cents. 100 USD would be 10000';
+COMMENT ON COLUMN acc_accounts.currency IS 'Possible values include: XUA, AFN, AFA, ALL, ALK, DZD, ADP, AOA, AOK, AON, AOR, ARA, ARS, ARM, ARP, ARL, AMD, AWG, AUD, ATS, AZN, AZM, BSD, BHD, BDT, BBD, BYN, BYB, BYR, BEF, BEC, BEL, BZD, BMD, BTN, BOB, BOL, BOV, BOP, BAM, BAD, BAN, BWP, BRC, BRZ, BRE, BRR, BRN, BRB, BRL, GBP, BND, BGL, BGN, BGO, BGM, BUK, BIF, XPF, KHR, CAD, CVE, KYD, XAF, CLE, CLP, CLF, CNX, CNY, CNH, COP, COU, KMF, CDF, CRC, HRD, HRK, CUC, CUP, CYP, CZK, CSK, DKK, DJF, DOP, NLG, XCD, DDM, ECS, ECV, EGP, GQE, ERN, EEK, ETB, EUR, XBA, XEU, XBB, XBC, XBD, FKP, FJD, FIM, FRF, XFO, XFU, GMD, GEK, GEL, DEM, GHS, GHC, GIP, XAU, GRD, GTQ, GWP, GNF, GNS, GYD, HTG, HNL, HKD, HUF, IMP, ISK, ISJ, INR, IDR, IRR, IQD, IEP, ILS, ILP, ILR, ITL, JMD, JPY, JOD, KZT, KES, KWD, KGS, LAK, LVL, LVR, LBP, LSL, LRD, LYD, LTL, LTT, LUL, LUC, LUF, MOP, MKD, MKN, MGA, MGF, MWK, MYR, MVR, MVP, MLF, MTL, MTP, MRU, MRO, MUR, MXV, MXN, MXP, MDC, MDL, MCF, MNT, MAD, MAF, MZE, MZN, MZM, MMK, NAD, NPR, ANG, TWD, NZD, NIO, NIC, NGN, KPW, NOK, OMR, PKR, XPD, PAB, PGK, PYG, PEI, PEN, PES, PHP, XPT, PLN, PLZ, PTE, GWE, QAR, XRE, RHD, RON, ROL, RUB, RUR, RWF, SVC, WST, SAR, RSD, CSD, SCR, SLL, XAG, SGD, SKK, SIT, SBD, SOS, ZAR, ZAL, KRH, KRW, KRO, SSP, SUR, ESP, ESA, ESB, XDR, LKR, SHP, XSU, SDD, SDG, SDP, SRD, SRG, SZL, SEK, CHF, SYP, STN, STD, TVD, TJR, TJS, TZS, XTS, THB, XXX, TPE, TOP, TTD, TND, TRY, TRL, TMT, TMM, USD, USN, USS, UGX, UGS, UAH, UAK, AED, UYW, UYU, UYP, UYI, UZS, VUV, VES, VEB, VEF, VND, VNN, CHE, CHW, XOF, YDD, YER, YUN, YUD, YUM, YUR, ZWN, ZRN, ZRZ, ZMW, ZMK, ZWD, ZWR, ZWL. In cases where there is no clear mapping, the original value passed through will be returned.';
+
+
+
+
+
 -- ************************************** value
 
 CREATE TABLE value
@@ -1187,6 +1811,8 @@ CREATE TABLE value
  data         text NOT NULL,
  id_entity    uuid NOT NULL,
  id_attribute uuid NOT NULL,
+ created_at   timestamp with time zone NOT NULL,
+ modified_at  timestamp with time zone NOT NULL,
  CONSTRAINT PK_value PRIMARY KEY ( id_value ),
  CONSTRAINT FK_33 FOREIGN KEY ( id_attribute ) REFERENCES attribute ( id_attribute ),
  CONSTRAINT FK_34 FOREIGN KEY ( id_entity ) REFERENCES entity ( id_entity )
@@ -1218,10 +1844,11 @@ CREATE TABLE tcg_tags
  name            text NULL,
  remote_id       text NULL,
  remote_platform text NULL,
+ id_tcg_ticket   uuid NULL,
  created_at      timestamp NOT NULL,
  modified_at     timestamp NOT NULL,
- id_tcg_ticket   uuid NULL,
  id_linked_user  uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_tags PRIMARY KEY ( id_tcg_tag ),
  CONSTRAINT FK_48 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
 );
@@ -1256,6 +1883,7 @@ CREATE TABLE tcg_comments
  id_tcg_contact    uuid NULL,
  id_tcg_user       uuid NULL,
  id_linked_user    uuid NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_tcg_comments PRIMARY KEY ( id_tcg_comment ),
  CONSTRAINT FK_41 FOREIGN KEY ( id_tcg_contact ) REFERENCES tcg_contacts ( id_tcg_contact ),
  CONSTRAINT FK_40_1 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket ),
@@ -1317,15 +1945,15 @@ CREATE TABLE fs_files
 (
  id_fs_file       uuid NOT NULL,
  name             text NULL,
- type             text NULL,
  file_url         text NULL,
  mime_type        text NULL,
  "size"           bigint NULL,
  remote_id        text NULL,
+ id_fs_permission uuid NULL,
  id_fs_folder     uuid NULL,
  created_at       timestamp NOT NULL,
  modified_at      timestamp NOT NULL,
- id_fs_permission uuid NULL,
+ id_connection    uuid NOT NULL,
  CONSTRAINT PK_fs_files PRIMARY KEY ( id_fs_file )
 );
 
@@ -1351,13 +1979,14 @@ CREATE INDEX FK_fs_file_permissionID ON fs_files
 CREATE TABLE crm_phone_numbers
 (
  id_crm_phone_number uuid NOT NULL,
- phone_number        text NOT NULL,
- phone_type          text NOT NULL,
- owner_type          text NOT NULL,
+ phone_number        text NULL,
+ phone_type          text NULL,
+ owner_type          text NULL,
  created_at          timestamp NOT NULL,
  modified_at         timestamp NOT NULL,
  id_crm_company      uuid NULL,
  id_crm_contact      uuid NULL,
+ id_connection       uuid NOT NULL,
  CONSTRAINT PK_crm_contacts_phone_numbers PRIMARY KEY ( id_crm_phone_number ),
  CONSTRAINT FK_phonenumber_crm_contactID FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_17 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1392,13 +2021,15 @@ CREATE TABLE crm_engagements
  subject           text NULL,
  start_at          timestamp NULL,
  end_time          timestamp NULL,
- created_at        timestamp NULL,
- modified_at       timestamp NULL,
  remote_id         text NULL,
  id_linked_user    uuid NULL,
  remote_platform   text NULL,
  id_crm_company    uuid NULL,
  id_crm_user       uuid NULL,
+ id_connection     uuid NOT NULL,
+ contacts          text[] NULL,
+ created_at        timestamp NOT NULL,
+ modified_at       timestamp NOT NULL,
  CONSTRAINT PK_crm_engagement PRIMARY KEY ( id_crm_engagement ),
  CONSTRAINT FK_crm_engagement_crm_user FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1419,6 +2050,7 @@ CREATE INDEX FK_crm_engagement_crmCompanyID ON crm_engagements
 COMMENT ON COLUMN crm_engagements.type IS 'can be (but not restricted to)
 
 MEETING, CALL, EMAIL';
+COMMENT ON COLUMN crm_engagements.contacts IS 'array of id_crm_contact (uuids)';
 
 
 
@@ -1436,6 +2068,7 @@ CREATE TABLE crm_email_addresses
  modified_at        timestamp NOT NULL,
  id_crm_company     uuid NULL,
  id_crm_contact     uuid NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_crm_contact_email_addresses PRIMARY KEY ( id_crm_email ),
  CONSTRAINT FK_3 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_16 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1475,6 +2108,7 @@ CREATE TABLE crm_deals
  id_crm_deals_stage uuid NULL,
  id_linked_user     uuid NULL,
  id_crm_company     uuid NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_crm_deal PRIMARY KEY ( id_crm_deal ),
  CONSTRAINT FK_22 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_21 FOREIGN KEY ( id_crm_deals_stage ) REFERENCES crm_deals_stages ( id_crm_deals_stage ),
@@ -1516,11 +2150,12 @@ CREATE TABLE crm_addresses
  postal_code    text NULL,
  country        text NULL,
  address_type   text NULL,
+ id_crm_company uuid NULL,
+ id_crm_contact uuid NULL,
+ id_connection  uuid NOT NULL,
  created_at     timestamp NOT NULL,
  modified_at    timestamp NOT NULL,
  owner_type     text NOT NULL,
- id_crm_company uuid NULL,
- id_crm_contact uuid NULL,
  CONSTRAINT PK_crm_addresses PRIMARY KEY ( id_crm_address ),
  CONSTRAINT FK_14 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_15 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1554,14 +2189,15 @@ CREATE TABLE ats_offers
  id_ats_offer       uuid NOT NULL,
  remote_id          text NULL,
  created_by         uuid NULL,
- remote_created_at  timestamp NULL,
- closed_at          timestamp NULL,
- sent_at            timestamp NULL,
- start_date         timestamp NULL,
+ remote_created_at  timestamp with time zone NULL,
+ closed_at          timestamp with time zone NULL,
+ sent_at            timestamp with time zone NULL,
+ start_date         timestamp with time zone NULL,
  status             text NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  id_ats_application uuid NOT NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_ats_offers PRIMARY KEY ( id_ats_offer )
 );
 
@@ -1585,18 +2221,19 @@ CREATE TABLE ats_interviews
 (
  id_ats_interview           uuid NOT NULL,
  status                     text NULL,
- id_ats_application         uuid NULL,
- id_ats_job_interview_stage uuid NULL,
  organized_by               uuid NULL,
  interviewers               text[] NULL,
  location                   text NULL,
- start_at                   timestamp NULL,
- end_at                     timestamp NULL,
- remote_created_at          timestamp NULL,
- remote_updated_at          timestamp NULL,
+ start_at                   timestamp with time zone NULL,
+ end_at                     timestamp with time zone NULL,
+ remote_created_at          timestamp with time zone NULL,
+ remote_updated_at          timestamp with time zone NULL,
  remote_id                  text NULL,
- created_at                 timestamp NOT NULL,
- modified_at                timestamp NOT NULL,
+ id_ats_application         uuid NULL,
+ id_ats_job_interview_stage uuid NULL,
+ created_at                 timestamp with time zone NOT NULL,
+ modified_at                timestamp with time zone NOT NULL,
+ id_connection              uuid NOT NULL,
  CONSTRAINT PK_ats_interviews PRIMARY KEY ( id_ats_interview )
 );
 
@@ -1613,9 +2250,9 @@ CREATE INDEX FK_id_ats_job_interview_stageID ON ats_interviews
 
 
 COMMENT ON COLUMN ats_interviews.status IS 'The interview''s status. Possible values include: SCHEDULED, AWAITING_FEEDBACK, COMPLETE. In cases where there is no clear mapping, the original value passed through will be returned.';
-COMMENT ON COLUMN ats_interviews.id_ats_job_interview_stage IS 'The stage of the interview.';
 COMMENT ON COLUMN ats_interviews.organized_by IS 'The user organizing the interview. Data is a id_ats_user.';
 COMMENT ON COLUMN ats_interviews.interviewers IS 'Array of RemoteUser IDs.';
+COMMENT ON COLUMN ats_interviews.id_ats_job_interview_stage IS 'The stage of the interview.';
 
 
 
@@ -1653,6 +2290,317 @@ CREATE INDEX FK_api_keys_projects ON api_keys
 
 
 
+-- ************************************** acc_purchase_orders_line_items
+
+CREATE TABLE acc_purchase_orders_line_items
+(
+ id_acc_purchase_orders_line_item uuid NOT NULL,
+ id_acc_purchase_order            uuid NOT NULL,
+ remote_id                        text NULL,
+ modified_at                      timestamp with time zone NOT NULL,
+ created_at                       timestamp with time zone NOT NULL,
+ description                      text NULL,
+ unit_price                       bigint NULL,
+ quantity                         bigint NULL,
+ tracking_categories              text[] NULL,
+ tax_amount                       bigint NULL,
+ total_line_amount                bigint NULL,
+ currency                         text NULL,
+ exchange_rate                    text NULL,
+ id_acc_account                   uuid NULL,
+ id_acc_company                   uuid NULL,
+ CONSTRAINT PK_acc_purchase_orders_line_items PRIMARY KEY ( id_acc_purchase_orders_line_item )
+);
+
+CREATE INDEX FK_purchaseorder_purchaseorderLineItems ON acc_purchase_orders_line_items
+(
+ id_acc_purchase_order
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_phone_numbers
+
+CREATE TABLE acc_phone_numbers
+(
+ id_acc_phone_number uuid NOT NULL,
+ "number"            text NULL,
+ type                text NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ id_acc_company_info uuid NULL,
+ id_acc_contact      uuid NOT NULL,
+ id_connection       uuid NOT NULL,
+ CONSTRAINT PK_acc_phone_numbers PRIMARY KEY ( id_acc_phone_number )
+);
+
+CREATE INDEX FK_acc_phone_number_contact ON acc_phone_numbers
+(
+ id_acc_contact
+);
+
+CREATE INDEX FK_company_infos_phone_number ON acc_phone_numbers
+(
+ id_acc_company_info
+);
+
+
+
+COMMENT ON COLUMN acc_phone_numbers.id_acc_company_info IS 'holds a valueif  if the phone number belongs to a acc_company_infos objects';
+COMMENT ON COLUMN acc_phone_numbers.id_acc_contact IS 'holds a valueif  if the phone number belongs to a acc_contact object';
+
+
+
+
+
+-- ************************************** acc_journal_entries_lines
+
+CREATE TABLE acc_journal_entries_lines
+(
+ id_acc_journal_entries_line uuid NOT NULL,
+ net_amount                  bigint NULL,
+ tracking_categories         text[] NULL,
+ currency                    text NULL,
+ description                 text NULL,
+ company                     uuid NULL,
+ contact                     uuid NULL,
+ exchange_rate               text NULL,
+ remote_id                   text NULL,
+ created_at                  timestamp with time zone NOT NULL,
+ modified_at                 timestamp with time zone NOT NULL,
+ id_acc_journal_entry        uuid NOT NULL,
+ CONSTRAINT PK_acc_journal_entries_lines PRIMARY KEY ( id_acc_journal_entries_line )
+);
+
+CREATE INDEX FK_journal_entries_entries_lines ON acc_journal_entries_lines
+(
+ id_acc_journal_entry
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_items
+
+CREATE TABLE acc_items
+(
+ id_acc_item         uuid NOT NULL,
+ name                text NULL,
+ status              text NULL,
+ unit_price          bigint NULL,
+ purchase_price      bigint NULL,
+ remote_updated_at   timestamp with time zone NULL,
+ remote_id           text NULL,
+ sales_account       uuid NULL,
+ purchase_account    uuid NULL,
+ id_acc_company_info uuid NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ id_connection       uuid NOT NULL,
+ CONSTRAINT PK_acc_items PRIMARY KEY ( id_acc_item )
+);
+
+CREATE INDEX FK_acc_item_acc_account ON acc_items
+(
+ purchase_account
+);
+
+CREATE INDEX FK_acc_item_acc_company_infos ON acc_items
+(
+ id_acc_company_info
+);
+
+CREATE INDEX FK_acc_items_sales_account ON acc_items
+(
+ sales_account
+);
+
+
+
+COMMENT ON COLUMN acc_items.status IS 'The item''s status. Possible values include: ACTIVE, ARCHIVED. In cases where there is no clear mapping, the original value passed through will be returned.';
+
+
+
+
+
+-- ************************************** acc_invoices
+
+CREATE TABLE acc_invoices
+(
+ id_acc_invoice           uuid NOT NULL,
+ type                     text NULL,
+ "number"                 text NULL,
+ issue_date               timestamp with time zone NULL,
+ due_date                 timestamp with time zone NULL,
+ paid_on_date             timestamp with time zone NULL,
+ memo                     text NULL,
+ currency                 text NULL,
+ exchange_rate            text NULL,
+ total_discount           bigint NULL,
+ sub_total                bigint NULL,
+ status                   text NULL,
+ total_tax_amount         bigint NULL,
+ total_amount             bigint NULL,
+ balance                  bigint NULL,
+ remote_updated_at        timestamp with time zone NULL,
+ remote_id                text NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ id_connection            uuid NOT NULL,
+ id_acc_contact           uuid NULL,
+ id_acc_accounting_period uuid NULL,
+ tracking_categories      text[] NULL,
+ CONSTRAINT PK_acc_invoices PRIMARY KEY ( id_acc_invoice )
+);
+
+CREATE INDEX FK_acc_invoice_accounting_period_index ON acc_invoices
+(
+ id_acc_accounting_period
+);
+
+CREATE INDEX FK_invoice_contactID ON acc_invoices
+(
+ id_acc_contact
+);
+
+
+
+COMMENT ON COLUMN acc_invoices.type IS 'Whether the invoice is an accounts receivable or accounts payable. If type is ACCOUNTS_PAYABLE, the invoice is a bill. If type is ACCOUNTS_RECEIVABLE, it is an invoice. Possible values include: ACCOUNTS_RECEIVABLE, ACCOUNTS_PAYABLE. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN acc_invoices.total_discount IS 'The total discounts applied to the total cost.';
+COMMENT ON COLUMN acc_invoices.status IS 'The status of the invoice. Possible values include: PAID, DRAFT, SUBMITTED, PARTIALLY_PAID, OPEN, VOID. In cases where there is no clear mapping, the original value passed through will be returned.';
+
+
+
+
+
+-- ************************************** acc_expenses
+
+CREATE TABLE acc_expenses
+(
+ id_acc_expense      uuid NOT NULL,
+ transaction_date    timestamp with time zone NULL,
+ total_amount        bigint NULL,
+ sub_total           bigint NULL,
+ total_tax_amount    bigint NULL,
+ currency            text NULL,
+ exchange_rate       text NULL,
+ memo                text NULL,
+ id_acc_account      uuid NULL,
+ id_acc_contact      uuid NULL,
+ id_acc_company_info uuid NULL,
+ remote_id           text NULL,
+ remote_created_at   timestamp with time zone NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ id_connection       uuid NOT NULL,
+ tracking_categories text[] NULL,
+ CONSTRAINT PK_acc_expenses PRIMARY KEY ( id_acc_expense )
+);
+
+CREATE INDEX FK_acc_account_acc_expense_index ON acc_expenses
+(
+ id_acc_account
+);
+
+CREATE INDEX FK_acc_expense_acc_company_index ON acc_expenses
+(
+ id_acc_company_info
+);
+
+CREATE INDEX FK_acc_expense_acc_contact_index ON acc_expenses
+(
+ id_acc_contact
+);
+
+
+
+COMMENT ON COLUMN acc_expenses.transaction_date IS 'When the transaction occurred.';
+COMMENT ON COLUMN acc_expenses.remote_created_at IS 'When the expense was created.';
+COMMENT ON COLUMN acc_expenses.tracking_categories IS 'array of id_acc_tracking_category';
+
+
+
+
+
+-- ************************************** acc_attachments
+
+CREATE TABLE acc_attachments
+(
+ id_acc_attachment uuid NOT NULL,
+ file_name         text NULL,
+ file_url          text NULL,
+ remote_id         text NULL,
+ id_acc_account    uuid NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
+ id_connection     uuid NOT NULL,
+ CONSTRAINT PK_acc_attachments PRIMARY KEY ( id_acc_attachment )
+);
+
+CREATE INDEX FK_acc_attachments_accountID ON acc_attachments
+(
+ id_acc_account
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_addresses
+
+CREATE TABLE acc_addresses
+(
+ id_acc_address      uuid NOT NULL,
+ type                text NULL,
+ street_1            text NULL,
+ street_2            text NULL,
+ city                text NULL,
+ "state"             text NULL,
+ country_subdivision text NULL,
+ country             text NULL,
+ zip                 text NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ id_acc_contact      uuid NULL,
+ id_acc_company_info uuid NULL,
+ id_connection       uuid NOT NULL,
+ CONSTRAINT PK_acc_addresses PRIMARY KEY ( id_acc_address )
+);
+
+CREATE INDEX FK_acc_company_info_acc_adresses ON acc_addresses
+(
+ id_acc_company_info
+);
+
+CREATE INDEX FK_acc_contact_acc_addresses ON acc_addresses
+(
+ id_acc_contact
+);
+
+COMMENT ON TABLE acc_addresses IS 'The Address object is used to represent a contact''s or company''s address.';
+
+COMMENT ON COLUMN acc_addresses.type IS 'can be SHIPPING, BILLING, OFFICES, PO....';
+COMMENT ON COLUMN acc_addresses."state" IS 'can also be a region';
+COMMENT ON COLUMN acc_addresses.country_subdivision IS 'Also called a  "departement" in some countries (ex: france)';
+COMMENT ON COLUMN acc_addresses.id_acc_contact IS 'contains a value if the acc_address belongs to an acc_contact object';
+COMMENT ON COLUMN acc_addresses.id_acc_company_info IS 'contains a value if the acc_address belongs to an acc_company_info object';
+
+
+
+
+
 -- ************************************** tcg_attachments
 
 CREATE TABLE tcg_attachments
@@ -1668,6 +2616,7 @@ CREATE TABLE tcg_attachments
  id_linked_user    uuid NULL,
  id_tcg_ticket     uuid NULL,
  id_tcg_comment    uuid NULL,
+ id_connection     uuid NOT NULL,
  CONSTRAINT PK_tcg_attachments PRIMARY KEY ( id_tcg_attachment ),
  CONSTRAINT FK_51 FOREIGN KEY ( id_tcg_comment ) REFERENCES tcg_comments ( id_tcg_comment ),
  CONSTRAINT FK_50 FOREIGN KEY ( id_tcg_ticket ) REFERENCES tcg_tickets ( id_tcg_ticket )
@@ -1766,6 +2715,7 @@ CREATE TABLE crm_tasks
  id_linked_user  uuid NULL,
  remote_id       text NULL,
  remote_platform text NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_crm_task PRIMARY KEY ( id_crm_task ),
  CONSTRAINT FK_26 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
  CONSTRAINT FK_25 FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
@@ -1809,6 +2759,7 @@ CREATE TABLE crm_notes
  remote_id       text NULL,
  remote_platform text NULL,
  id_crm_user     uuid NULL,
+ id_connection   uuid NOT NULL,
  CONSTRAINT PK_crm_notes PRIMARY KEY ( id_crm_note ),
  CONSTRAINT FK_19 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
  CONSTRAINT FK_18 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company ),
@@ -1833,34 +2784,6 @@ CREATE INDEX FK_crm_note_crm_userID ON crm_notes
 CREATE INDEX FK_crm_notes_crm_dealID ON crm_notes
 (
  id_crm_deal
-);
-
-
-
-
-
-
-
-
--- ************************************** crm_engagement_contacts
-
-CREATE TABLE crm_engagement_contacts
-(
- id_crm_engagement_contact uuid NOT NULL,
- id_crm_contact            uuid NULL,
- id_crm_engagement         uuid NOT NULL,
- CONSTRAINT PK_crm_engagement_contact PRIMARY KEY ( id_crm_engagement_contact ),
- CONSTRAINT FK_30 FOREIGN KEY ( id_crm_engagement ) REFERENCES crm_engagements ( id_crm_engagement )
-);
-
-CREATE INDEX FK_crm_engagement_contacts_crmEngagementID ON crm_engagement_contacts
-(
- id_crm_engagement
-);
-
-CREATE INDEX FK_engagement_contact_crmContactID ON crm_engagement_contacts
-(
- id_crm_contact
 );
 
 
@@ -1921,10 +2844,11 @@ CREATE TABLE ats_scorecards
  id_ats_application     uuid NULL,
  id_ats_interview       uuid NULL,
  remote_id              text NULL,
- remote_created_at      timestamp NULL,
- submitted_at           timestamp NULL,
- created_at             timestamp NOT NULL,
- modified_at            timestamp NOT NULL,
+ remote_created_at      timestamp with time zone NULL,
+ submitted_at           timestamp with time zone NULL,
+ created_at             timestamp with time zone NOT NULL,
+ modified_at            timestamp with time zone NOT NULL,
+ id_connection          uuid NOT NULL,
  CONSTRAINT PK_ats_scorecards PRIMARY KEY ( id_ats_scorecard )
 );
 
@@ -1943,6 +2867,132 @@ CREATE INDEX FK_interviews_scorecards ON ats_scorecards
 COMMENT ON COLUMN ats_scorecards.overall_recommendation IS 'The inteviewer''s recommendation. Possible values include: DEFINITELY_NO, NO, YES, STRONG_YES, NO_DECISION. In cases where there is no clear mapping, the original value passed through will be returned.';
 COMMENT ON COLUMN ats_scorecards.id_ats_application IS 'The application being scored.';
 COMMENT ON COLUMN ats_scorecards.id_ats_interview IS 'The interview being scored.';
+
+
+
+
+
+-- ************************************** acc_payments
+
+CREATE TABLE acc_payments
+(
+ id_acc_payment           uuid NOT NULL,
+ id_acc_invoice           uuid NULL,
+ transaction_date         timestamp with time zone NULL,
+ id_acc_contact           uuid NULL,
+ id_acc_account           uuid NULL,
+ currency                 text NULL,
+ exchange_rate            text NULL,
+ total_amount             bigint NULL,
+ type                     text NULL,
+ remote_updated_at        timestamp with time zone NULL,
+ id_acc_company_info      uuid NULL,
+ id_acc_accounting_period uuid NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ id_connection            uuid NOT NULL,
+ tracking_categories      text[] NULL,
+ CONSTRAINT PK_acc_payments PRIMARY KEY ( id_acc_payment )
+);
+
+CREATE INDEX FK_acc_payment_acc_account_index ON acc_payments
+(
+ id_acc_account
+);
+
+CREATE INDEX FK_acc_payment_acc_company_index ON acc_payments
+(
+ id_acc_company_info
+);
+
+CREATE INDEX FK_acc_payment_acc_contact ON acc_payments
+(
+ id_acc_contact
+);
+
+CREATE INDEX FK_acc_payment_accounting_period_index ON acc_payments
+(
+ id_acc_accounting_period
+);
+
+CREATE INDEX FK_acc_payment_invoiceID ON acc_payments
+(
+ id_acc_invoice
+);
+
+
+
+COMMENT ON COLUMN acc_payments.id_acc_contact IS 'The supplier, or customer involved in the payment.';
+COMMENT ON COLUMN acc_payments.id_acc_account IS 'The supplier’s or customer’s account in which the payment is made.';
+COMMENT ON COLUMN acc_payments.type IS 'The type of the invoice. Possible values include: ACCOUNTS_PAYABLE, ACCOUNTS_RECEIVABLE. In cases where there is no clear mapping, the original value passed through will be returned.';
+COMMENT ON COLUMN acc_payments.id_acc_company_info IS 'The company the payment belongs to.';
+
+
+
+
+
+-- ************************************** acc_invoices_line_items
+
+CREATE TABLE acc_invoices_line_items
+(
+ id_acc_invoices_line_item uuid NOT NULL,
+ remote_id                 text NULL,
+ description               text NULL,
+ unit_price                bigint NULL,
+ quantity                  bigint NULL,
+ total_amount              bigint NULL,
+ currency                  text NULL,
+ exchange_rate             text NULL,
+ id_acc_invoice            uuid NOT NULL,
+ id_acc_item               uuid NOT NULL,
+ created_at                timestamp with time zone NOT NULL,
+ modified_at               timestamp with time zone NOT NULL,
+ id_connection             uuid NOT NULL,
+ acc_tracking_categories   text[] NULL,
+ CONSTRAINT PK_acc_invoices_line_items PRIMARY KEY ( id_acc_invoices_line_item )
+);
+
+CREATE INDEX FK_acc_invoice_line_items_index ON acc_invoices_line_items
+(
+ id_acc_invoice
+);
+
+CREATE INDEX FK_acc_items_lines_invoice_index ON acc_invoices_line_items
+(
+ id_acc_item
+);
+
+
+
+
+
+
+
+
+-- ************************************** acc_expense_lines
+
+CREATE TABLE acc_expense_lines
+(
+ id_acc_expense_line uuid NOT NULL,
+ id_acc_expense      uuid NOT NULL,
+ remote_id           text NULL,
+ net_amount          bigint NULL,
+ currency            text NULL,
+ description         text NULL,
+ exchange_rate       text NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ id_connection       uuid NOT NULL,
+ CONSTRAINT PK_acc_expense_lines PRIMARY KEY ( id_acc_expense_line )
+);
+
+CREATE INDEX FK_acc_expense_expense_lines_index ON acc_expense_lines
+(
+ id_acc_expense
+);
+
+
+
 
 
 
@@ -2025,6 +3075,36 @@ CREATE INDEX id_job_jobs_status_history ON jobs_status_history
 
 COMMENT ON COLUMN jobs_status_history.previous_status IS 'void when first initialization';
 COMMENT ON COLUMN jobs_status_history.new_status IS 'pending, retry_scheduled, failed, success';
+
+
+
+
+
+-- ************************************** acc_payments_line_items
+
+CREATE TABLE acc_payments_line_items
+(
+ acc_payments_line_item uuid NOT NULL,
+ id_acc_payment         uuid NOT NULL,
+ applied_amount         bigint NULL,
+ applied_date           timestamp with time zone NULL,
+ related_object_id      uuid NULL,
+ related_object_type    text NULL,
+ remote_id              text NULL,
+ created_at             timestamp with time zone NOT NULL,
+ modified_at            timestamp with time zone NOT NULL,
+ id_connection          uuid NOT NULL,
+ CONSTRAINT PK_acc_payments_line_items PRIMARY KEY ( acc_payments_line_item )
+);
+
+CREATE INDEX FK_acc_payment_line_items_index ON acc_payments_line_items
+(
+ id_acc_payment
+);
+
+
+
+COMMENT ON COLUMN acc_payments_line_items.related_object_type IS 'can either be a Invoice, CreditNote, or JournalEntry';
 
 
 

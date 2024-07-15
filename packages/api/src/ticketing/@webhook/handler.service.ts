@@ -1,7 +1,7 @@
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { ZendeskHandlerService } from './zendesk/handler';
-import { PrismaService } from '@@core/prisma/prisma.service';
 
 @Injectable()
 export class TicketingWebhookHandlerService {

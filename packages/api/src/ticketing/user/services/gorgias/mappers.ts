@@ -4,7 +4,7 @@ import {
   UnifiedUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { GorgiasUserInput, GorgiasUserOutput } from './types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -23,27 +23,30 @@ export class GorgiasUserMapper implements IUserMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: GorgiasUserOutput | GorgiasUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
     const sourcesArray = Array.isArray(source) ? source : [source];
-    return sourcesArray.map((user) =>
-      this.mapSingleUserToUnified(user, customFieldMappings),
+    return Promise.all(
+      sourcesArray.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 
   private mapSingleUserToUnified(
     user: GorgiasUserOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedUserOutput {
-    // Initialize field_mappings array from customFields, if provided
     const field_mappings = customFieldMappings
       ? customFieldMappings
           .map((mapping) => ({
@@ -55,6 +58,7 @@ export class GorgiasUserMapper implements IUserMapper {
 
     const unifiedUser: UnifiedUserOutput = {
       remote_id: String(user.id),
+      remote_data: user,
       name: `${user.firstname} ${user.lastname}`,
       email_address: user.email,
       field_mappings,

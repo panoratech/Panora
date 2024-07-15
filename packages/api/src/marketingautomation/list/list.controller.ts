@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -21,6 +22,8 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { ListService } from './services/list.service';
 import { UnifiedListInput, UnifiedListOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('marketingautomation/list')
 @Controller('marketingautomation/list')
@@ -43,26 +46,27 @@ export class ListController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
   @ApiCustomResponse(UnifiedListOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getLists(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.listService.getLists(remoteSource, linkedUserId, remote_data);
+      const { remote_data, limit, cursor } = query;
+      return this.listService.getLists(
+        connectionId,
+        remoteSource,
+        linkedUserId,
+        limit,
+        remote_data,
+        cursor,
+      );
     } catch (error) {
       throw new Error(error);
     }
@@ -87,14 +91,30 @@ export class ListController {
     description:
       'Set to true to include data from the original Marketingautomation software.',
   })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedListOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getList(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.listService.getList(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.listService.getList(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 
   @ApiOperation({
@@ -117,7 +137,7 @@ export class ListController {
   })
   @ApiBody({ type: UnifiedListInput })
   @ApiCustomResponse(UnifiedListOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addList(
     @Body() unifiedListData: UnifiedListInput,
@@ -125,12 +145,13 @@ export class ListController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.listService.addList(
         unifiedListData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EnvironmentService } from '@@core/environment/environment.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { IAccountService } from '@ticketing/account/types';
 import { ZendeskAccountOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZendeskService implements IAccountService {
@@ -26,11 +27,10 @@ export class ZendeskService implements IAccountService {
     this.registry.registerService('zendesk', this);
   }
 
-  async syncAccounts(
-    linkedUserId: string,
-    remote_account_id?: string,
-  ): Promise<ApiResponse<ZendeskAccountOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskAccountOutput[]>> {
     try {
+      const { linkedUserId, webhook_remote_identifier } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -38,6 +38,7 @@ export class ZendeskService implements IAccountService {
           vertical: 'ticketing',
         },
       });
+      const remote_account_id = webhook_remote_identifier as string;
       const request_url = remote_account_id
         ? `${connection.account_url}/organizations/${remote_account_id}.json`
         : `${connection.account_url}/organizations.json`;
@@ -61,13 +62,7 @@ export class ZendeskService implements IAccountService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.account,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

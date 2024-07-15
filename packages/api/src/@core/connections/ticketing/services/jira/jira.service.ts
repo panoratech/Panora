@@ -1,27 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  Action,
-  ActionType,
-  ConnectionsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ITicketingConnectionService } from '../../types';
-import { ServiceRegistry } from '../registry.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
-import { AuthStrategy } from '@panora/shared';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
   OAuthCallbackParams,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { Injectable } from '@nestjs/common';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  DynamicApiUrl,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { ITicketingConnectionService } from '../../types';
+import { ServiceRegistry } from '../registry.service';
 
 export type JiraCloudIdInformation = {
   id: string;
@@ -108,12 +106,15 @@ export class JiraConnectionService implements ITicketingConnectionService {
       );
       const sites_scopes: JiraCloudIdInformation[] = res_.data;
 
-      const cloud_id: string = sites_scopes[0].id; //todo
+      const cloud_id: string = sites_scopes[0].id;
       let db_res;
       const connection_token = uuidv4();
 
       const access_token = this.cryptoService.encrypt(data.access_token);
       const refresh_token = this.cryptoService.encrypt(data.refresh_token);
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['ticketing']['jira'].urls.apiUrl as DynamicApiUrl
+      )(cloud_id);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -123,7 +124,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
           data: {
             access_token: access_token,
             refresh_token: refresh_token,
-            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
+            account_url: BASE_API_URL,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -139,7 +140,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
             provider_slug: 'jira',
             vertical: 'ticketing',
             token_type: 'oauth',
-            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
+            account_url: BASE_API_URL,
             access_token: access_token,
             refresh_token: refresh_token,
             expiration_timestamp: new Date(

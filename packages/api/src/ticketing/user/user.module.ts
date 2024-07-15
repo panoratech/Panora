@@ -1,61 +1,45 @@
-import { GitlabService } from './services/gitlab';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
-import { UserController } from './user.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { UserService } from './services/user.service';
-import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ZendeskService } from './services/zendesk';
 import { FrontService } from './services/front';
-import { JiraService } from './services/jira';
+import { GitlabService } from './services/gitlab';
 import { GorgiasService } from './services/gorgias';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { JiraService } from './services/jira';
+import { ServiceRegistry } from './services/registry.service';
+import { UserService } from './services/user.service';
+import { ZendeskService } from './services/zendesk';
+import { SyncService } from './sync/sync.service';
+import { UserController } from './user.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { Utils } from '@ticketing/@lib/@utils';
-
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { FrontUserMapper } from './services/front/mappers';
+import { GitlabUserMapper } from './services/gitlab/mappers';
+import { GorgiasUserMapper } from './services/gorgias/mappers';
+import { JiraUserMapper } from './services/jira/mappers';
+import { ZendeskUserMapper } from './services/zendesk/mappers';
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [BullQueueModule],
   controllers: [UserController],
   providers: [
     UserService,
-    LoggerService,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
     Utils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
     JiraService,
     GorgiasService,
     GitlabService,
+    /* PROVIDERS MAPPERS */
+    ZendeskUserMapper,
+    FrontUserMapper,
+    JiraUserMapper,
+    GorgiasUserMapper,
+    GitlabUserMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService, IngestDataService],
 })
 export class UserModule {}

@@ -29,9 +29,10 @@ export interface IJournalEntryMapper {
 
   unify(
     source: OriginalJournalEntryOutput | OriginalJournalEntryOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedJournalEntryOutput | UnifiedJournalEntryOutput[];
+  ): Promise<UnifiedJournalEntryOutput | UnifiedJournalEntryOutput[]>;
 }

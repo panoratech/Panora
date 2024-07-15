@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { UnifiedAccountOutput } from '../types/model.unified';
-import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 
 @Injectable()
 export class AccountService {
@@ -13,6 +12,8 @@ export class AccountService {
 
   async getAccount(
     id_ticketing_account: string,
+    integrationId: string,
+    linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountOutput> {
     try {
@@ -52,6 +53,9 @@ export class AccountService {
         name: account.name,
         domains: account.domains,
         field_mappings: field_mappings,
+        remote_id: account.remote_id,
+        created_at: account.created_at,
+        modified_at: account.modified_at,
       };
 
       let res: UnifiedAccountOutput = unifiedAccount;
@@ -69,7 +73,19 @@ export class AccountService {
           remote_data: remote_data,
         };
       }
-
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.account.pull',
+          method: 'GET',
+          url: '/ticketing/account',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
       return res;
     } catch (error) {
       throw error;
@@ -77,6 +93,7 @@ export class AccountService {
   }
 
   async getAccounts(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -96,8 +113,7 @@ export class AccountService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_accounts.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_account: cursor,
           },
         });
@@ -117,8 +133,7 @@ export class AccountService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -165,6 +180,9 @@ export class AccountService {
             name: account.name,
             domains: account.domains,
             field_mappings: field_mappings,
+            remote_id: account.remote_id,
+            created_at: account.created_at,
+            modified_at: account.modified_at,
           };
         }),
       );
@@ -186,7 +204,7 @@ export class AccountService {
 
         res = remote_array_data;
       }
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

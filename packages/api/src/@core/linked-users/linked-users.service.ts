@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
 import {
   CreateBatchLinkedUserDto,
   CreateLinkedUserDto,
 } from './dto/create-linked-user.dto';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { LinkedUserError, throwTypedError } from '@@core/utils/errors';
 
 @Injectable()
 export class LinkedUsersService {

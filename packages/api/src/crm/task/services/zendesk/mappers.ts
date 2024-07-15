@@ -5,7 +5,7 @@ import {
 } from '@crm/task/types/model.unified';
 import { ITaskMapper } from '@crm/task/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
   ): Promise<ZendeskTaskInput> {
     const result: ZendeskTaskInput = {
       content: source.content,
-      completed: source.status === 'Completed',
+      completed: source.status === 'COMPLETED',
     };
 
     if (source.due_date) {
@@ -70,24 +70,30 @@ export class ZendeskTaskMapper implements ITaskMapper {
 
   async unify(
     source: ZendeskTaskOutput | ZendeskTaskOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, customFieldMappings);
+      return await this.mapSingleTaskToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((task) =>
-        this.mapSingleTaskToUnified(task, customFieldMappings),
+        this.mapSingleTaskToUnified(task, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleTaskToUnified(
     task: ZendeskTaskOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -106,10 +112,11 @@ export class ZendeskTaskMapper implements ITaskMapper {
     if (type == 'deal') {
       const deal_id = await this.utils.getDealUuidFromRemoteId(
         String(task.resource_id),
-        'zendesk',
+        connectionId,
       );
       if (deal_id) {
         opts = {
+          ...opts,
           deal_id: deal_id,
         };
       }
@@ -118,10 +125,11 @@ export class ZendeskTaskMapper implements ITaskMapper {
     if (type == 'contact') {
       const company_id = await this.utils.getCompanyUuidFromRemoteId(
         String(task.resource_id),
-        'zendesk',
+        connectionId,
       );
       if (company_id) {
         opts = {
+          ...opts,
           company_id: company_id,
         };
       }
@@ -130,10 +138,11 @@ export class ZendeskTaskMapper implements ITaskMapper {
     if (task.owner_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(task.owner_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
         opts = {
+          ...opts,
           user_id: user_id,
         };
       }
@@ -142,7 +151,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
     return {
       remote_id: String(task.id),
       content: task.content,
-      status: task.completed ? 'Completed' : 'Pending',
+      status: task.completed ? 'COMPLETED' : 'PENDING',
       finished_date: task.completed_at
         ? new Date(task.completed_at)
         : undefined,

@@ -29,9 +29,10 @@ export interface ICreditNoteMapper {
 
   unify(
     source: OriginalCreditNoteOutput | OriginalCreditNoteOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCreditNoteOutput | UnifiedCreditNoteOutput[];
+  ): Promise<UnifiedCreditNoteOutput | UnifiedCreditNoteOutput[]>;
 }

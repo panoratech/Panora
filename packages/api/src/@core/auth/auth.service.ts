@@ -1,15 +1,15 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ProjectsService } from '@@core/projects/projects.service';
+import { AuthError } from '@@core/utils/errors';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from './dto/create-user.dto';
-import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import { LoggerService } from '@@core/logger/logger.service';
-import { AuthError, throwTypedError } from '@@core/utils/errors';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
+import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
-import { ProjectsService } from '@@core/projects/projects.service';
 
 @Injectable()
 export class AuthService {

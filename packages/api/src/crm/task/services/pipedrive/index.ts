@@ -3,12 +3,14 @@ import { ITaskService } from '@crm/task/types';
 import { CrmObject } from '@crm/@lib/@types';
 import { PipedriveTaskInput, PipedriveTaskOutput } from './types';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalTaskOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class PipedriveService implements ITaskService {
@@ -54,20 +56,14 @@ export class PipedriveService implements ITaskService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.task,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncTasks(
-    linkedUserId: string,
-  ): Promise<ApiResponse<PipedriveTaskOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<PipedriveTaskOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -76,7 +72,7 @@ export class PipedriveService implements ITaskService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/activities?type=task&user_id=${19156166}`,
+        `${connection.account_url}/activities?type=task`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -93,13 +89,7 @@ export class PipedriveService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.task,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { PasswordInput } from "@/components/ui/password-input"
 import { z } from "zod"
 import config from "@/lib/config"
-import { AuthStrategy, providerToType, Provider, extractProvider, extractVertical, needsSubdomain } from "@panora/shared"
+import { AuthStrategy, providerToType, Provider, extractProvider, extractVertical, needsSubdomain, needsScope } from "@panora/shared"
 import { useEffect, useState } from "react"
 import useProjectStore from "@/state/projectStore"
 import { usePostHog } from 'posthog-js/react'
@@ -97,7 +97,8 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
     switch (item?.authStrategy.strategy) {
       case AuthStrategy.oauth2:
         const needs_subdomain = needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase());
-        if (client_id === "" || client_secret === "" || scope === "") {
+        const needs_scope = needsScope(item.name.toLowerCase(), item.vertical!.toLowerCase());
+        if (client_id === "" || client_secret === "") {
           if (client_id === "") {
             form.setError("client_id", { "message": "Please Enter Client ID" });
           }
@@ -112,14 +113,18 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
         if(needs_subdomain && subdomain == ""){
           form.setError("subdomain", { "message": "Please Enter Subdomain" });
         }
-        let ATTRIBUTES = [];
-        let VALUES = [];
+        if (needs_scope && scope === "") {
+          form.setError("scope", { "message": "Please Enter the scope" });
+        }
+        let ATTRIBUTES = ["client_id", "client_secret"];
+        let VALUES = [client_id!, client_secret!];
         if(needs_subdomain){
-          ATTRIBUTES = ["subdomain", "client_id", "client_secret", "scope"],
-          VALUES = [subdomain!, client_id!, client_secret!, scope!]
-        }else{
-          ATTRIBUTES = ["client_id", "client_secret", "scope"],
-          VALUES = [client_id!, client_secret!, scope!]
+          ATTRIBUTES.push("subdomain")
+          VALUES.push(subdomain!)
+        }
+        if(needs_scope){
+          ATTRIBUTES.push("scope")
+          VALUES.push(scope!)
         }
         if (performUpdate) {
           const dataToUpdate = mappingConnectionStrategies[0];
@@ -338,7 +343,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
     if (mappingConnectionStrategies && mappingConnectionStrategies.length > 0) {
       fetchCredentials({
         type: mappingConnectionStrategies[0].type,
-        attributes: item?.authStrategy.strategy === AuthStrategy.oauth2 ? needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["subdomain", "client_id", "client_secret", "scope"] : ["client_id", "client_secret", "scope"]
+        attributes: item?.authStrategy.strategy === AuthStrategy.oauth2 ? needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["subdomain", "client_id", "client_secret"] : needsScope(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["client_id", "client_secret","scope", ] : ["client_id", "client_secret"]
           : item?.authStrategy.strategy === AuthStrategy.api_key ? ["api_key"] : ["username", "secret"]
       }, {
         onSuccess(data) {

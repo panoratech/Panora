@@ -1,31 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import axios from 'axios';
-import { ICrmConnectionService } from '../../types';
-import {
-  Action,
-  ActionType,
-  ConnectionsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceRegistry } from '../registry.service';
-import {
-  OAuth2AuthData,
-  CONNECTORS_METADATA,
-  providerToType,
-} from '@panora/shared';
-import { AuthStrategy } from '@panora/shared';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
   OAuthCallbackParams,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { Injectable } from '@nestjs/common';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { ICrmConnectionService } from '../../types';
+import { ServiceRegistry } from '../registry.service';
 
 export interface PipedriveOAuthResponse {
   access_token: string;
@@ -65,7 +58,11 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getWebhookIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -148,7 +145,11 @@ export class PipedriveConnectionService implements ICrmConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getWebhookIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,

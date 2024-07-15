@@ -8,7 +8,7 @@ export class UnifiedNoteInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the user tied the note',
+    description: 'The UUID of the user tied the note',
   })
   @IsUUID()
   @IsOptional()
@@ -16,7 +16,7 @@ export class UnifiedNoteInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the company tied to the note',
+    description: 'The UUID of the company tied to the note',
   })
   @IsUUID()
   @IsOptional()
@@ -24,7 +24,7 @@ export class UnifiedNoteInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid fo the contact tied to the note',
+    description: 'The UUID fo the contact tied to the note',
   })
   @IsUUID()
   @IsOptional()
@@ -32,7 +32,7 @@ export class UnifiedNoteInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the deal tied to the note',
+    description: 'The UUID of the deal tied to the note',
   })
   @IsUUID()
   @IsOptional()
@@ -48,7 +48,7 @@ export class UnifiedNoteInput {
 }
 
 export class UnifiedNoteOutput extends UnifiedNoteInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the note' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the note' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -69,4 +69,18 @@ export class UnifiedNoteOutput extends UnifiedNoteInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

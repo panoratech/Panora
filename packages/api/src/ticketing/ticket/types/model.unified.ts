@@ -1,6 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { UnifiedAttachmentInput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
 import { UnifiedCommentInput } from '@ticketing/comment/types/model.unified';
+import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
+
+export type TicketType = 'BUG' | 'SUBTASK' | 'TASK' | 'TO-DO';
+export type TicketStatus = 'OPEN' | 'CLOSED';
+export type TicketPriority = 'HIGH' | 'MEDIUM' | 'LOW';
 
 export class UnifiedTicketInput {
   @ApiProperty({
@@ -19,7 +26,7 @@ export class UnifiedTicketInput {
     message: 'Type must be either OPEN or CLOSED',
   })
   @IsOptional()
-  status?: string;
+  status?: TicketStatus | string;
 
   @ApiProperty({
     type: String,
@@ -40,15 +47,15 @@ export class UnifiedTicketInput {
     description:
       'The type of the ticket. Authorized values are PROBLEM, QUESTION, or TASK',
   })
-  @IsIn(['PROBLEM', 'QUESTION', 'TASK'], {
-    message: 'Type must be either PROBLEM, QUESTION or TASK',
+  @IsIn(['BUG', 'SUBTASK', 'TASK', 'TO-DO'], {
+    message: 'Type must be either BUG, SUBTASK, TASK or TO-DO',
   })
   @IsOptional()
-  type?: string;
+  type?: TicketType | string;
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the parent ticket',
+    description: 'The UUID of the parent ticket',
   })
   @IsUUID()
   @IsOptional()
@@ -56,18 +63,18 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the collection (project) the ticket belongs to',
+    description: 'The collection UUIDs the ticket belongs to',
   })
   @IsUUID()
   @IsOptional()
-  project_id?: string;
+  collections?: (string | UnifiedCollectionOutput)[];
 
   @ApiPropertyOptional({
     type: [String],
     description: 'The tags names of the ticket',
   })
   @IsOptional()
-  tags?: string[]; // tags names
+  tags?: (string | UnifiedTagOutput)[]; // tags names
 
   @ApiPropertyOptional({
     type: Date,
@@ -85,14 +92,14 @@ export class UnifiedTicketInput {
     message: 'Type must be either HIGH, MEDIUM or LOW',
   })
   @IsOptional()
-  priority?: string;
+  priority?: TicketPriority | string;
 
   @ApiPropertyOptional({
     type: [String],
-    description: 'The users uuids the ticket is assigned to',
+    description: 'The users UUIDs the ticket is assigned to',
   })
   @IsOptional()
-  assigned_to?: string[]; //uuid of Users objects ?
+  assigned_to?: string[]; //UUID of Users objects ?
 
   @ApiPropertyOptional({
     type: UnifiedCommentInput,
@@ -103,7 +110,7 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the account which the ticket belongs to',
+    description: 'The UUID of the account which the ticket belongs to',
   })
   @IsUUID()
   @IsOptional()
@@ -111,11 +118,19 @@ export class UnifiedTicketInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the contact which the ticket belongs to',
+    description: 'The UUID of the contact which the ticket belongs to',
   })
   @IsUUID()
   @IsOptional()
   contact_id?: string;
+
+  // optional but may exist if ticket contains attachments
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'The attachements UUIDs tied to the ticket',
+  })
+  @IsOptional()
+  attachments?: (string | UnifiedAttachmentInput)[];
 
   @ApiPropertyOptional({
     type: {},
@@ -126,7 +141,7 @@ export class UnifiedTicketInput {
   field_mappings?: Record<string, any>;
 }
 export class UnifiedTicketOutput extends UnifiedTicketInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the ticket' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the ticket' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -146,4 +161,18 @@ export class UnifiedTicketOutput extends UnifiedTicketInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

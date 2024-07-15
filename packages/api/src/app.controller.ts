@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ApiOperation } from '@nestjs/swagger';
 

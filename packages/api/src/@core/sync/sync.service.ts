@@ -1,401 +1,368 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { ConnectorCategory } from '@panora/shared';
 import { ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { SyncService as CrmCompanySyncService } from '@crm/company/sync/sync.service';
-import { SyncService as CrmContactSyncService } from '@crm/contact/sync/sync.service';
-import { SyncService as CrmDealSyncService } from '@crm/deal/sync/sync.service';
-import { SyncService as CrmEngagementSyncService } from '@crm/engagement/sync/sync.service';
-import { SyncService as CrmNoteSyncService } from '@crm/note/sync/sync.service';
-import { SyncService as CrmStageSyncService } from '@crm/stage/sync/sync.service';
-import { SyncService as CrmTaskSyncService } from '@crm/task/sync/sync.service';
-import { SyncService as CrmUserSyncService } from '@crm/user/sync/sync.service';
-import { SyncService as TicketingAccountSyncService } from '@ticketing/account/sync/sync.service';
-import { SyncService as TicketingCollectionSyncService } from '@ticketing/collection/sync/sync.service';
-import { SyncService as TicketingCommentSyncService } from '@ticketing/comment/sync/sync.service';
-import { SyncService as TicketingContactSyncService } from '@ticketing/contact/sync/sync.service';
-import { SyncService as TicketingTagSyncService } from '@ticketing/tag/sync/sync.service';
-import { SyncService as TicketingTeamSyncService } from '@ticketing/team/sync/sync.service';
-import { SyncService as TicketingTicketSyncService } from '@ticketing/ticket/sync/sync.service';
-import { SyncService as TicketingUserSyncService } from '@ticketing/user/sync/sync.service';
-import { throwTypedError, CoreSyncError } from '@@core/utils/errors';
-
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreSyncRegistry } from '../@core-services/registries/core-sync.registry';
 @Injectable()
 export class CoreSyncService {
   constructor(
     private logger: LoggerService,
     private prisma: PrismaService,
-    private CrmCompanySyncService: CrmCompanySyncService,
-    private CrmContactSyncService: CrmContactSyncService,
-    private CrmDealSyncService: CrmDealSyncService,
-    private CrmEngagementSyncService: CrmEngagementSyncService,
-    private CrmNoteSyncService: CrmNoteSyncService,
-    private CrmStageSyncService: CrmStageSyncService,
-    private CrmTaskSyncService: CrmTaskSyncService,
-    private CrmUserSyncService: CrmUserSyncService,
-    private TicketingAccountSyncService: TicketingAccountSyncService,
-    private TicketingCollectionSyncService: TicketingCollectionSyncService,
-    private TicketingCommentSyncService: TicketingCommentSyncService,
-    private TicketingContactSyncService: TicketingContactSyncService,
-    private TicketingTagSyncService: TicketingTagSyncService,
-    private TicketingTeamSyncService: TicketingTeamSyncService,
-    private TicketingTicketSyncService: TicketingTicketSyncService,
-    private TicketingUserSyncService: TicketingUserSyncService,
+    private registry: CoreSyncRegistry,
   ) {
     this.logger.setContext(CoreSyncService.name);
   }
 
   //Initial sync which will execute when connection is successfully established
-  async initialSync(
-    vertical: string,
-    provider: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async initialSync(vertical: string, provider: string, linkedUserId: string) {
     try {
       switch (vertical) {
         case ConnectorCategory.Crm:
-          await this.handleCrmSync(provider, linkedUserId, id_project);
+          await this.handleCrmSync(provider, linkedUserId);
           break;
         case ConnectorCategory.Ticketing:
-          await this.handleTicketingSync(provider, linkedUserId, id_project);
+          await this.handleTicketingSync(provider, linkedUserId);
+          break;
+        case ConnectorCategory.FileStorage:
+          await this.handleFileStorageSync(provider, linkedUserId);
+          break;
+        case ConnectorCategory.Ats:
+          await this.handleAtsSync(provider, linkedUserId);
           break;
       }
     } catch (error) {
-      /*throwTypedError(
-        new CoreSyncError({
-          name: 'INITIAL_SYNC_ERROR',
-          message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-            {
-              vertical,
-              provider,
-              linkedUserId,
-              id_project,
-            },
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );*/
       throw error;
     }
   }
 
-  async handleCrmSync(
-    provider: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async handleCrmSync(provider: string, linkedUserId: string) {
     const tasks = [
       () =>
-        this.CrmUserSyncService.syncUsersForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry.getService('crm', 'user').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.CrmCompanySyncService.syncCompaniesForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry.getService('crm', 'company').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.CrmCompanySyncService.syncCompaniesForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry.getService('crm', 'contact').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.CrmContactSyncService.syncContactsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
-      () =>
-        this.CrmDealSyncService.syncDealsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry.getService('crm', 'deal').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
     ];
 
     for (const type of ENGAGEMENTS_TYPE) {
       tasks.push(() =>
-        this.CrmEngagementSyncService.syncEngagementsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-          type,
-        ),
+        this.registry.getService('crm', 'engagement').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+          engagement_type: type,
+        }),
       );
     }
 
     tasks.push(() =>
-      this.CrmNoteSyncService.syncNotesForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-      ),
+      this.registry.getService('crm', 'note').syncForLinkedUser({
+        integrationId: provider,
+        linkedUserId: linkedUserId,
+      }),
     );
     tasks.push(() =>
-      this.CrmTaskSyncService.syncTasksForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-      ),
+      this.registry.getService('crm', 'task').syncForLinkedUser({
+        integrationId: provider,
+        linkedUserId: linkedUserId,
+      }),
     );
 
     // Execute all tasks and handle results
-    const results = await Promise.allSettled(tasks.map((task) => task()));
+    for (const task of tasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(`Task failed: ${error.message}`, error);
+      }
+    }
+
+    const connection = await this.prisma.connections.findFirst({
+      where: {
+        id_linked_user: linkedUserId,
+        provider_slug: provider.toLowerCase(),
+      },
+    });
 
     const deals = await this.prisma.crm_deals.findMany({
       where: {
-        remote_platform: provider,
-        id_linked_user: linkedUserId,
+        id_connection: connection.id_connection,
       },
     });
 
-    const stageTasks = deals.map((deal) =>
-      this.CrmStageSyncService.syncStagesForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-        deal.id_crm_deal,
-      ),
+    const stageTasks = deals.map(
+      (deal) => async () =>
+        this.registry.getService('crm', 'stage').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+          deal_id: deal.id_crm_deal,
+        }),
     );
 
-    const stageResults = await Promise.allSettled(stageTasks);
-
-    results.forEach((result, index) => {
-      if (result.status === 'rejected') {
-        this.logger.error(`Task ${index} failed:`, result.reason);
-        throwTypedError(
-          new CoreSyncError({
-            name: 'CRM_INITIAL_SYNC_ERROR',
-            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-              {
-                vertical: 'crm',
-                provider,
-                linkedUserId,
-                id_project,
-              },
-            )}`,
-            cause: result.reason,
-          }),
-          this.logger,
-        );
+    // Execute all tasks and handle results
+    for (const task of stageTasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(`Stage Task failed: ${error.message}`, error);
       }
-    });
-
-    stageResults.forEach((result, index) => {
-      if (result.status === 'rejected') {
-        this.logger.error(`Stage task ${index} failed:`, result.reason);
-        throwTypedError(
-          new CoreSyncError({
-            name: 'CRM_INITIAL_SYNC_ERROR',
-            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-              {
-                vertical: 'crm',
-                provider,
-                linkedUserId,
-                id_project,
-              },
-            )}`,
-            cause: result.reason,
-          }),
-          this.logger,
-        );
-      }
-    });
+    }
   }
 
-  async handleTicketingSync(
-    provider: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async handleTicketingSync(provider: string, linkedUserId: string) {
+    //todo: define here the topological order PER provider
     const tasks = [
       () =>
-        this.TicketingTicketSyncService.syncTicketsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry.getService('ticketing', 'collection').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.TicketingUserSyncService.syncUsersForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry.getService('ticketing', 'ticket').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.TicketingAccountSyncService.syncAccountsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry.getService('ticketing', 'team').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.TicketingCollectionSyncService.syncCollectionsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry.getService('ticketing', 'user').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
       () =>
-        this.TicketingTeamSyncService.syncTeamsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-        ),
+        this.registry.getService('ticketing', 'account').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ticketing', 'contact').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
     ];
 
-    const results = await Promise.allSettled(tasks.map((task) => task()));
-
-    const accounts = await this.prisma.tcg_accounts.findMany({
+    const connection = await this.prisma.connections.findFirst({
       where: {
-        remote_platform: provider,
         id_linked_user: linkedUserId,
+        provider_slug: provider.toLowerCase(),
       },
     });
-    let contactTasks = [];
-    if (accounts) {
-      contactTasks = accounts.map((acc) =>
-        this.TicketingContactSyncService.syncContactsForLinkedUser(
-          provider,
-          linkedUserId,
-          id_project,
-          acc.id_tcg_account,
-        ),
-      );
-    } else {
-      contactTasks = [
-        () =>
-          this.TicketingContactSyncService.syncContactsForLinkedUser(
-            provider,
-            linkedUserId,
-            id_project,
-          ),
-      ];
-    }
-    const contactTasksResults = await Promise.allSettled(contactTasks);
 
+    for (const task of tasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(`Task failed: ${error.message}`, error);
+      }
+    }
     const tickets = await this.prisma.tcg_tickets.findMany({
       where: {
-        remote_platform: provider,
-        id_linked_user: linkedUserId,
+        id_connection: connection.id_connection,
       },
     });
 
-    const ticketCommentTasks = tickets.map((ticket) =>
-      this.TicketingCommentSyncService.syncCommentsForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-        ticket.id_tcg_ticket,
-      ),
+    const ticketCommentTasks = tickets.map(
+      (ticket) => async () =>
+        this.registry.getService('ticketing', 'comment').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+          id_ticket: ticket.id_tcg_ticket,
+        }),
     );
 
-    const ticketTagsTasks = tickets.map((ticket) =>
-      this.TicketingTagSyncService.syncTagsForLinkedUser(
-        provider,
-        linkedUserId,
-        id_project,
-        ticket.id_tcg_ticket,
-      ),
+    const ticketTagsTasks = tickets.map(
+      (ticket) => async () =>
+        this.registry.getService('ticketing', 'tag').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+          id_ticket: ticket.id_tcg_ticket,
+        }),
     );
 
-    const ticketCommentResults = await Promise.allSettled(ticketCommentTasks);
-    const ticketTagsResults = await Promise.allSettled(ticketTagsTasks);
-
-    contactTasksResults.forEach((result, index) => {
-      if (result.status === 'rejected') {
+    for (const task of ticketCommentTasks) {
+      try {
+        await task();
+      } catch (error) {
         this.logger.error(
-          `contactTasksResults ${index} failed:`,
-          result.reason,
+          `Ticket Comment task failed: ${error.message}`,
+          error,
         );
-        /*throwTypedError(
-          new CoreSyncError({
-            name: 'CRM_INITIAL_SYNC_ERROR',
-            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-              {
-                vertical: 'ticketing',
-                provider,
-                linkedUserId,
-                id_project,
-              },
-            )}`,
-            cause: result.reason,
-          }),
-          this.logger,
-        );*/
-        throw result.reason;
       }
-    });
-    results.forEach((result, index) => {
-      if (result.status === 'rejected') {
-        this.logger.error(`Task ${index} failed:`, result.reason);
-        /*throwTypedError(
-          new CoreSyncError({
-            name: 'CRM_INITIAL_SYNC_ERROR',
-            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-              {
-                vertical: 'ticketing',
-                provider,
-                linkedUserId,
-                id_project,
-              },
-            )}`,
-            cause: result.reason,
-          }),
-          this.logger,
-        );*/
-        throw result.reason;
+    }
+
+    for (const task of ticketTagsTasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(`Ticket Tags task failed: ${error.message}`, error);
       }
+    }
+  }
+
+  async handleFileStorageSync(provider: string, linkedUserId: string) {
+    const tasks = [
+      () =>
+        this.registry.getService('filestorage', 'group').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('filestorage', 'user').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('filestorage', 'drive').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('filestorage', 'folder').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+    ];
+    for (const task of tasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(`File Storage Task failed: ${error.message}`, error);
+      }
+    }
+
+    const connection = await this.prisma.connections.findFirst({
+      where: {
+        id_linked_user: linkedUserId,
+        provider_slug: provider.toLowerCase(),
+      },
     });
 
-    ticketCommentResults.forEach((result, index) => {
-      if (result.status === 'rejected') {
-        this.logger.error(
-          `Ticket Comment task ${index} failed:`,
-          result.reason,
-        );
-        throwTypedError(
-          new CoreSyncError({
-            name: 'CRM_INITIAL_SYNC_ERROR',
-            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-              {
-                vertical: 'ticketing',
-                provider,
-                linkedUserId,
-                id_project,
-              },
-            )}`,
-            cause: result.reason,
-          }),
-          this.logger,
-        );
-      }
+    const folders = await this.prisma.fs_folders.findMany({
+      where: {
+        id_connection: connection.id_connection,
+      },
     });
+    const filesTasks = folders.map(
+      (folder) => async () =>
+        this.registry.getService('filestorage', 'file').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+          id_folder: folder.id_fs_folder,
+        }),
+    );
 
-    ticketTagsResults.forEach((result, index) => {
-      if (result.status === 'rejected') {
-        this.logger.error(`Ticket Tags task ${index} failed:`, result.reason);
-        throwTypedError(
-          new CoreSyncError({
-            name: 'CRM_INITIAL_SYNC_ERROR',
-            message: `CoreSyncService.initialSync() call failed with args ---> ${JSON.stringify(
-              {
-                vertical: 'ticketing',
-                provider,
-                linkedUserId,
-                id_project,
-              },
-            )}`,
-            cause: result.reason,
-          }),
-          this.logger,
-        );
+    for (const task of filesTasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(`File Task failed: ${error.message}`, error);
       }
-    });
+    }
+  }
+
+  async handleAtsSync(provider: string, linkedUserId: string) {
+    const tasks = [
+      () =>
+        this.registry.getService('ats', 'office').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'department').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'rejectreason').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'user').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'jobs').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'jobinterviewstage').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'candidate').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'tag').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'eeocs').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'attachment').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'activity').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'application').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'offer').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'interview').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ats', 'scorecard').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+    ];
+    for (const task of tasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(`File Storage Task failed: ${error.message}`, error);
+      }
+    }
   }
 
   // we must have a sync_jobs table with 7 (verticals) rows, one of each is syncing details
@@ -406,54 +373,21 @@ export class CoreSyncService {
     }
   }
 
-  // todo: test behaviour
-  async resync(vertical: string, user_id: string) {
-    // premium feature
-    // trigger a resync for the vertical but only for linked_users who belong to user_id account
-    const tasks = [];
+  async resync(vertical: string, providerName: string, linkedUserId: string) {
     try {
-      switch (vertical.toLowerCase()) {
-        case 'crm':
-          tasks.push(this.CrmCompanySyncService.syncCompanies(user_id));
-          tasks.push(this.CrmContactSyncService.syncContacts(user_id));
-          tasks.push(this.CrmDealSyncService.syncDeals(user_id));
-          tasks.push(this.CrmEngagementSyncService.syncEngagements(user_id));
-          tasks.push(this.CrmNoteSyncService.syncNotes(user_id));
-          tasks.push(this.CrmStageSyncService.syncStages(user_id));
-          tasks.push(this.CrmTaskSyncService.syncTasks(user_id));
-          tasks.push(this.CrmUserSyncService.syncUsers(user_id));
-          break;
-        case 'ticketing':
-          tasks.push(this.TicketingAccountSyncService.syncAccounts(user_id));
-          tasks.push(
-            this.TicketingCollectionSyncService.syncCollections(user_id),
-          );
-          tasks.push(this.TicketingCommentSyncService.syncComments(user_id));
-          tasks.push(this.TicketingContactSyncService.syncContacts(user_id));
-          tasks.push(this.TicketingTagSyncService.syncTags(user_id));
-          tasks.push(this.TicketingTeamSyncService.syncTeams(user_id));
-          tasks.push(this.TicketingTicketSyncService.syncTickets(user_id));
-          tasks.push(this.TicketingUserSyncService.syncUsers(user_id));
-          break;
-      }
+      await this.initialSync(
+        vertical.toLowerCase(),
+        providerName.toLowerCase(),
+        linkedUserId,
+      );
       return {
         timestamp: new Date(),
         vertical: vertical,
+        provider: providerName,
         status: `SYNCING`,
       };
     } catch (error) {
       throw error;
-    } finally {
-      // Handle background tasks completion
-      Promise.allSettled(tasks).then((results) => {
-        results.forEach((result, index) => {
-          if (result.status === 'fulfilled') {
-            console.log(`Task ${index} completed successfully.`);
-          } else if (result.status === 'rejected') {
-            console.log(`Task ${index} failed:`, result.reason);
-          }
-        });
-      });
     }
   }
 }

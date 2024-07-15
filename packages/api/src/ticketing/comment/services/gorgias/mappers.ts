@@ -1,24 +1,26 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { ICommentMapper } from '@ticketing/comment/types';
 import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { GorgiasCommentInput, GorgiasCommentOutput } from './types';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-import { TicketingObject } from '@ticketing/@lib/@types';
-
-import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { Injectable } from '@nestjs/common';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import * as fs from 'fs';
 
 @Injectable()
 export class GorgiasCommentMapper implements ICommentMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private coreUnification: CoreUnification,
+    private coreUnificationService: CoreUnification,
+    private prisma: PrismaService,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -35,6 +37,34 @@ export class GorgiasCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): Promise<GorgiasCommentInput> {
+    let uploads = [];
+    if (source.attachments) {
+      const uuids = source.attachments as string[];
+      if (uuids && uuids.length > 0) {
+        const attachmentPromises = uuids.map(async (uuid) => {
+          const res = await this.prisma.tcg_attachments.findUnique({
+            where: {
+              id_tcg_attachment: uuid,
+            },
+          });
+          if (!res) {
+            throw new ReferenceError(
+              `tcg_attachment not found for uuid ${uuid}`,
+            );
+          }
+          // Assuming you want to construct the right binary attachment here
+          // For now, we'll just return the URL
+          const stats = fs.statSync(res.file_url);
+          return {
+            url: res.file_url,
+            name: res.file_name,
+            size: stats.size,
+            content_type: 'application/pdf', //todo
+          };
+        });
+        uploads = await Promise.all(attachmentPromises);
+      }
+    }
     const result: GorgiasCommentInput = {
       sender: {
         id:
@@ -50,79 +80,91 @@ export class GorgiasCommentMapper implements ICommentMapper {
       channel: 'chat',
       body_html: source.html_body,
       body_text: source.body,
-      attachments: source.attachments,
     };
+    if (uploads && uploads.length > 0) {
+      result.attachments = uploads;
+    }
     return result;
   }
 
   async unify(
     source: GorgiasCommentOutput | GorgiasCommentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCommentToUnified(source, customFieldMappings);
+      return await this.mapSingleCommentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return Promise.all(
       source.map((comment) =>
-        this.mapSingleCommentToUnified(comment, customFieldMappings),
+        this.mapSingleCommentToUnified(
+          comment,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCommentToUnified(
     comment: GorgiasCommentOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput> {
-    let opts;
+    let opts: any = {};
 
     if (comment.attachments && comment.attachments.length > 0) {
-      const unifiedObject = (await this.coreUnification.unify<
+      const attachments = (await this.coreUnificationService.unify<
         OriginalAttachmentOutput[]
       >({
         sourceObject: comment.attachments,
         targetType: TicketingObject.attachment,
-        providerName: 'gorgias',
+        providerName: 'gitlab',
         vertical: 'ticketing',
+        connectionId: connectionId,
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
-
-      opts = { ...opts, attachments: unifiedObject };
+      opts = {
+        ...opts,
+        attachments: attachments,
+      };
     }
 
     if (comment.sender.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.sender.id),
-        'gorgias',
+        connectionId,
       );
 
       if (user_id) {
-        opts = { user_id: user_id, creator_type: 'user' };
+        opts = { ...opts, user_id: user_id, creator_type: 'USER' };
       } else {
         const contact_id = await this.utils.getContactUuidFromRemoteId(
           String(comment.sender.id),
-          'gorgias',
+          connectionId,
         );
         if (contact_id) {
-          opts = { creator_type: 'CONTACT', contact_id: contact_id };
+          opts = { ...opts, creator_type: 'CONTACT', contact_id: contact_id };
         }
       }
     }
 
-    const res = {
-      body: comment.body_text || '',
-      html_body: comment.body_html || '',
-      ...opts,
-    };
-
     return {
       remote_id: String(comment.id),
-      ...res,
+      remote_data: comment,
+      body: comment.body_text || null,
+      html_body: comment.body_html || null,
+      ...opts,
     };
   }
 }

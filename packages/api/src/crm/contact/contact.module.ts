@@ -1,50 +1,45 @@
-import { Module } from '@nestjs/common';
-import { ContactService } from './services/contact.service';
-import { ContactController } from './contact.controller';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskService } from './services/zendesk';
-import { AttioService } from './services/attio';
-import { ZohoService } from './services/zoho';
-import { PipedriveService } from './services/pipedrive';
-import { HubspotService } from './services/hubspot';
-import { LoggerService } from '@@core/logger/logger.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { SyncService } from './sync/sync.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceRegistry } from './services/registry.service';
-import { CloseService } from './services/close';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { CoreUnification } from '@@core/utils/services/core.service';
-import { Utils } from '@crm/@lib/@utils';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { Utils } from '@crm/@lib/@utils';
+import { Module } from '@nestjs/common';
+import { ContactController } from './contact.controller';
+import { AttioService } from './services/attio';
+import { AttioContactMapper } from './services/attio/mappers';
+import { CloseService } from './services/close';
+import { CloseContactMapper } from './services/close/mappers';
+import { ContactService } from './services/contact.service';
+import { HubspotService } from './services/hubspot';
+import { HubspotContactMapper } from './services/hubspot/mappers';
+import { PipedriveService } from './services/pipedrive';
+import { PipedriveContactMapper } from './services/pipedrive/mappers';
+import { ServiceRegistry } from './services/registry.service';
+import { ZendeskService } from './services/zendesk';
+import { ZendeskContactMapper } from './services/zendesk/mappers';
+import { ZohoService } from './services/zoho';
+import { ZohoContactMapper } from './services/zoho/mappers';
+import { SyncService } from './sync/sync.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [BullQueueModule],
   controllers: [ContactController],
   providers: [
     ContactService,
 
-    LoggerService,
     FieldMappingService,
     SyncService,
     WebhookService,
-    EncryptionService,
+
     ServiceRegistry,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
     Utils,
-    ConnectionUtils,
+
+    IngestDataService,
+
     /* PROVIDERS SERVICES */
     AttioService,
     ZendeskService,
@@ -52,13 +47,14 @@ import { ConnectionUtils } from '@@core/connections/@utils';
     PipedriveService,
     HubspotService,
     CloseService,
+    /* PROVIDERS MAPPERS */
+    AttioContactMapper,
+    CloseContactMapper,
+    HubspotContactMapper,
+    PipedriveContactMapper,
+    ZendeskContactMapper,
+    ZohoContactMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class ContactModule {}

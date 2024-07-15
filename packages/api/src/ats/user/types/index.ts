@@ -2,17 +2,15 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedUserInput, UnifiedUserOutput } from './model.unified';
 import { OriginalUserOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IUserService {
+export interface IUserService extends IBaseObjectService {
   addUser(
     userData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalUserOutput>>;
 
-  syncUsers(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalUserOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalUserOutput[]>>;
 }
 
 export interface IUserMapper {
@@ -26,9 +24,10 @@ export interface IUserMapper {
 
   unify(
     source: OriginalUserOutput | OriginalUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[];
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]>;
 }

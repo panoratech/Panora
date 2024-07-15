@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -21,6 +22,8 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { UserService } from './services/user.service';
 import { UnifiedUserInput, UnifiedUserOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('marketingautomation/user')
 @Controller('marketingautomation/user')
@@ -43,26 +46,27 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
   @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getUsers(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
+      const { remote_data, limit, cursor } = query;
+      return this.userService.getUsers(
+        connectionId,
+        remoteSource,
+        linkedUserId,
+        limit,
+        remote_data,
+        cursor,
+      );
     } catch (error) {
       throw new Error(error);
     }
@@ -73,6 +77,12 @@ export class UserController {
     summary: 'Retrieve a User',
     description:
       'Retrieve a user from any connected Marketingautomation software',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiParam({
     name: 'id',
@@ -88,55 +98,22 @@ export class UserController {
       'Set to true to include data from the original Marketingautomation software.',
   })
   @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getUser(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.userService.getUser(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addMarketingAutomationUser',
-    summary: 'Create a User',
-    description: 'Create a user in any supported Marketingautomation software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedUserInput })
-  @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addUser(
-    @Body() unifiedUserData: UnifiedUserInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.userService.addUser(
-        unifiedUserData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.userService.getUser(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

@@ -7,7 +7,7 @@ import { IContactMapper } from '@crm/contact/types';
 import { AttioContactInput, AttioContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 
 @Injectable()
 export class AttioContactMapper implements IContactMapper {
@@ -61,25 +61,35 @@ export class AttioContactMapper implements IContactMapper {
 
   async unify(
     source: AttioContactOutput | AttioContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleContactToUnified(source, customFieldMappings);
+      return await this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotContactOutput
     return Promise.all(
       source.map((contact) =>
-        this.mapSingleContactToUnified(contact, customFieldMappings),
+        this.mapSingleContactToUnified(
+          contact,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleContactToUnified(
     contact: AttioContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -92,13 +102,12 @@ export class AttioContactMapper implements IContactMapper {
       }
     }
     const address: Address = {
-      street_1: '',
-      city: '',
-      state: '',
-      postal_code: '',
-      country: '',
+      street_1: null,
+      city: null,
+      state: null,
+      postal_code: null,
+      country: null,
     };
-    const opts: any = {};
 
     return {
       remote_id: contact.id.record_id,
@@ -107,15 +116,14 @@ export class AttioContactMapper implements IContactMapper {
       // user_id: contact.values.created_by[0]?.referenced_actor_id,
       email_addresses: contact.values.email_addresses?.map((e) => ({
         email_address: e.email_address,
-        email_address_type: e.attribute_type ? e.attribute_type : '',
+        email_address_type: e.attribute_type ? e.attribute_type : null,
       })), // Map each email
       phone_numbers: contact.values.phone_numbers?.map((p) => ({
         phone_number: p.original_phone_number,
-        phone_type: p.attribute_type ? p.attribute_type : '',
+        phone_type: p.attribute_type ? p.attribute_type : null,
       })), // Map each phone number,
       field_mappings,
       addresses: [address],
-      ...opts,
     };
   }
 }

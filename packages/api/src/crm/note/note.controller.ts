@@ -10,8 +10,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -25,6 +24,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { NoteService } from './services/note.service';
 import { UnifiedNoteInput, UnifiedNoteOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiBearerAuth('JWT')
@@ -58,12 +58,13 @@ export class NoteController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.noteService.getNotes(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -92,14 +93,30 @@ export class NoteController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedNoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getNote(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.noteService.getNote(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.noteService.getNote(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 
   @ApiOperation({
@@ -129,12 +146,13 @@ export class NoteController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.noteService.addNote(
         unifiedNoteData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

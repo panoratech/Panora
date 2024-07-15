@@ -6,7 +6,7 @@ import {
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 
 @Injectable()
 export class AttioCompanyMapper implements ICompanyMapper {
@@ -90,24 +90,34 @@ export class AttioCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: AttioCompanyOutput | AttioCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of AttioCompanyOutput
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: AttioCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -125,7 +135,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
     if (company.values.team[0]?.target_record_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         company.values.team[0].target_record_id,
-        'attio',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -141,7 +151,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
         typeof company.values.categories[0]?.option === 'string'
           ? company.values.categories[0]?.option
           : company.values.categories[0]?.option.title,
-      number_of_employees: 0, // Placeholder, as there's no direct mapping provided
+      number_of_employees: null,
       addresses: [
         {
           street_1: company.values.primary_location[0]?.line_1,
@@ -152,10 +162,10 @@ export class AttioCompanyMapper implements ICompanyMapper {
           address_type: 'primary',
           owner_type: 'company',
         },
-      ], // Assuming 'street', 'city', 'state', 'postal_code', 'country' are properties in company.properties
+      ],
       phone_numbers: [
         {
-          phone_number: '',
+          phone_number: null,
           phone_type: 'primary',
           owner_type: 'company',
         },

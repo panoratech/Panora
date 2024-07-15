@@ -1,23 +1,23 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { ICommentMapper } from '@ticketing/comment/types';
 import {
   UnifiedCommentInput,
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { FrontCommentInput, FrontCommentOutput } from './types';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-import { TicketingObject } from '@ticketing/@lib/@types';
 
-import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { Injectable } from '@nestjs/common';
-import { CoreUnification } from '@@core/utils/services/core.service';
 @Injectable()
 export class FrontCommentMapper implements ICommentMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private coreUnification: CoreUnification,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService('ticketing', 'comment', 'front', this);
   }
@@ -31,30 +31,40 @@ export class FrontCommentMapper implements ICommentMapper {
     const result: FrontCommentInput = {
       body: source.body,
       author_id: await this.utils.getUserRemoteIdFromUuid(source.user_id), // for Front it must be a User
-      attachments: source.attachments,
+      attachments: source.attachments as string[],
     };
     return result;
   }
 
   async unify(
     source: FrontCommentOutput | FrontCommentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCommentToUnified(source, customFieldMappings);
+      return await this.mapSingleCommentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return Promise.all(
       source.map((comment) =>
-        this.mapSingleCommentToUnified(comment, customFieldMappings),
+        this.mapSingleCommentToUnified(
+          comment,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCommentToUnified(
     comment: FrontCommentOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -62,42 +72,42 @@ export class FrontCommentMapper implements ICommentMapper {
   ): Promise<UnifiedCommentOutput> {
     //map the front attachment to our unified version of attachment
     //unifying the original attachment object coming from Front
-    let opts;
+    let opts: any = {};
 
     if (comment.attachments && comment.attachments.length > 0) {
-      const unifiedObject = (await this.coreUnification.unify<
+      const attachments = (await this.coreUnificationService.unify<
         OriginalAttachmentOutput[]
       >({
         sourceObject: comment.attachments,
         targetType: TicketingObject.attachment,
         providerName: 'front',
         vertical: 'ticketing',
+        connectionId: connectionId,
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
-
-      opts = { ...opts, attachments: unifiedObject };
+      opts = {
+        ...opts,
+        attachments: attachments,
+      };
     }
 
     if (comment.author.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.author.id),
-        'front',
+        connectionId,
       );
 
       if (user_id) {
         // we must always fall here for Front
-        opts = { user_id: user_id, creator_type: 'USER' };
+        opts = { ...opts, user_id: user_id, creator_type: 'USER' };
       }
     }
 
-    const res = {
-      body: comment.body,
-      ...opts,
-    };
-
     return {
       remote_id: comment.id,
-      ...res,
+      remote_data: comment,
+      body: comment.body,
+      ...opts,
     };
   }
 }

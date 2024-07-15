@@ -1,70 +1,52 @@
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { SyncError, throwTypedError } from '@@core/utils/errors';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { UnifiedTicketOutput } from '../types/model.unified';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { tcg_tickets as TicketingTicket } from '@prisma/client';
-import { ITicketService } from '../types';
-import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
-import { ServiceRegistry } from '../services/registry.service';
 import { TICKETING_PROVIDERS } from '@panora/shared';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { tcg_tickets as TicketingTicket } from '@prisma/client';
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
+import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { ITicketService } from '../types';
+import { UnifiedTicketOutput } from '../types/model.unified';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private webhook: WebhookService,
-    private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
-    private coreUnification: CoreUnification,
-    @InjectQueue('syncTasks') private syncQueue: Queue,
+    private registry: CoreSyncRegistry,
+    private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
+    this.registry.registerService('ticketing', 'ticket', this);
   }
 
   async onModuleInit() {
     try {
-      await this.scheduleSyncJob();
+      await this.bullQueueService.queueSyncJob(
+        'ticketing-sync-tickets',
+        '0 0 * * *',
+      );
     } catch (error) {
       throw error;
     }
   }
 
-  private async scheduleSyncJob() {
-    const jobName = 'ticketing-sync-tickets';
-
-    // Remove existing jobs to avoid duplicates in case of application restart
-    const jobs = await this.syncQueue.getRepeatableJobs();
-    for (const job of jobs) {
-      if (job.name === jobName) {
-        await this.syncQueue.removeRepeatableByKey(job.key);
-      }
-    }
-    // Add new job to the queue with a CRON expression
-    await this.syncQueue.add(
-      jobName,
-      {},
-      {
-        repeat: { cron: '0 0 * * *' }, // Runs once a day at midnight
-      },
-    );
-  }
   //function used by sync worker which populate our tcg_tickets table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
   // @Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
-  async syncTickets(user_id?: string) {
+  async kickstartSync(user_id?: string) {
     try {
       this.logger.log(`Syncing tickets....`);
       const users = user_id
@@ -95,11 +77,10 @@ export class SyncService implements OnModuleInit {
                 const providers = TICKETING_PROVIDERS;
                 for (const provider of providers) {
                   try {
-                    await this.syncTicketsForLinkedUser(
-                      provider,
-                      linkedUser.id_linked_user,
-                      id_project,
-                    );
+                    await this.syncForLinkedUser({
+                      integrationId: provider,
+                      linkedUserId: linkedUser.id_linked_user,
+                    });
                   } catch (error) {
                     throw error;
                   }
@@ -117,308 +98,194 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncTicketsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_project: string,
-    wh_real_time_trigger?: {
-      action: 'UPDATE' | 'DELETE';
-      data: {
-        remote_id: string;
-      };
-    },
-  ) {
+  async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} tickets for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'ticketing',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping tickets syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'ticketing.ticket',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
+      const { integrationId, linkedUserId, wh_real_time_trigger } = param;
       const service: ITicketService =
         this.serviceRegistry.getService(integrationId);
 
-      let resp: ApiResponse<OriginalTicketOutput[]>;
-      if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
-        //meaning the call has been from a real time webhook that received data from a 3rd party
-        switch (wh_real_time_trigger.action) {
-          case 'DELETE':
-            return await this.removeTicketInDb(
-              linkedUserId,
-              integrationId,
-              wh_real_time_trigger.data.remote_id,
-            );
-          default:
-            resp = await service.syncTickets(
-              linkedUserId,
-              wh_real_time_trigger.data.remote_id,
-              remoteProperties,
-            );
-            break;
-        }
-      } else {
-        resp = await service.syncTickets(
-          linkedUserId,
-          undefined,
-          remoteProperties,
-        );
-      }
-
-      const sourceObject: OriginalTicketOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalTicketOutput[]
-      >({
-        sourceObject,
-        targetType: TicketingObject.ticket,
-        providerName: integrationId,
-        vertical: 'ticketing',
-        customFieldMappings,
-      })) as UnifiedTicketOutput[];
-
-      //insert the data in the DB with the fieldMappings (value table)
-      const tickets_data = await this.saveTicketsInDb(
-        linkedUserId,
-        unifiedObject,
+      await this.ingestService.syncForLinkedUser<
+        UnifiedTicketOutput,
+        OriginalTicketOutput,
+        ITicketService
+      >(
         integrationId,
-        sourceObject,
-      );
-
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'ticketing.ticket.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-
-      await this.webhook.handleWebhook(
-        tickets_data,
-        'ticketing.ticket.pulled',
-        id_project,
-        event.id_event,
+        linkedUserId,
+        'ticketing',
+        'ticket',
+        service,
+        [],
+        wh_real_time_trigger,
       );
     } catch (error) {
       throw error;
     }
   }
 
-  async saveTicketsInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
     tickets: UnifiedTicketOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingTicket[]> {
     try {
-      let tickets_results: TicketingTicket[] = [];
+      const tickets_results: TicketingTicket[] = [];
+
+      const updateOrCreateTicket = async (
+        ticket: UnifiedTicketOutput,
+        originId: string,
+        connection_id: string,
+      ) => {
+        const existingTicket = await this.prisma.tcg_tickets.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const baseData: any = {
+          modified_at: new Date(),
+          name: ticket.name ?? null,
+          status: ticket.status ?? null,
+          description: ticket.description ?? null,
+          ticket_type: ticket.type ?? null,
+          priority: ticket.priority ?? null,
+          completed_at: ticket.completed_at ?? null,
+          assigned_to: ticket.assigned_to ?? [],
+          tags: [],
+          collections: [],
+          id_linked_user: linkedUserId,
+        };
+
+        if (existingTicket) {
+          return await this.prisma.tcg_tickets.update({
+            where: {
+              id_tcg_ticket: existingTicket.id_tcg_ticket,
+            },
+            data: baseData,
+          });
+        } else {
+          return await this.prisma.tcg_tickets.create({
+            data: {
+              ...baseData,
+              id_tcg_ticket: uuidv4(),
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
+            },
+          });
+        }
+      };
+
       for (let i = 0; i < tickets.length; i++) {
         const ticket = tickets[i];
         const originId = ticket.remote_id;
 
-        if (!originId || originId == '') {
+        if (!originId || originId === '') {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const existingTicket = await this.prisma.tcg_tickets.findFirst({
-          where: {
-            remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
-          },
-        });
+        const res = await updateOrCreateTicket(ticket, originId, connection_id);
+        const ticket_id = res.id_tcg_ticket;
+        tickets_results.push(res);
 
-        let unique_ticketing_ticket_id: string;
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          ticket.field_mappings,
+          ticket_id,
+          originSource,
+          linkedUserId,
+        );
 
-        if (existingTicket) {
-          // Update the existing ticket
-          let data: any = {
-            modified_at: new Date(),
-          };
-          if (ticket.name) {
-            data = { ...data, name: ticket.name };
+        // Process remote data
+        await this.ingestService.processRemoteData(ticket_id, remote_data[i]);
+
+        // Process collections
+        if (ticket.collections && ticket.collections[0]) {
+          let collections: string[] = [];
+          if (typeof ticket.collections[0] === 'string') {
+            collections.push(ticket.collections[0]);
+          } else {
+            const coll = await this.registry
+              .getService('ticketing', 'collection')
+              .saveToDb(
+                connection_id,
+                linkedUserId,
+                ticket.collections,
+                originSource,
+                ticket.collections.map(
+                  (col: UnifiedCollectionOutput) => col.remote_data,
+                ),
+              );
+            collections = coll.map((c) => c.id_tcg_collection as string);
           }
-          if (ticket.status) {
-            data = { ...data, status: ticket.status };
-          }
-          if (ticket.description) {
-            data = { ...data, description: ticket.description };
-          }
-          if (ticket.type) {
-            data = { ...data, ticket_type: ticket.type };
-          }
-          if (ticket.tags) {
-            data = { ...data, tags: ticket.tags };
-          }
-          if (ticket.priority) {
-            data = { ...data, priority: ticket.priority };
-          }
-          if (ticket.completed_at) {
-            data = { ...data, completed_at: ticket.completed_at };
-          }
-          if (ticket.assigned_to) {
-            data = { ...data, assigned_to: ticket.assigned_to };
-          }
-          /*
-            parent_ticket: ticket.parent_ticket || 'd',
-          */
-          const res = await this.prisma.tcg_tickets.update({
+          await this.prisma.tcg_tickets.update({
             where: {
-              id_tcg_ticket: existingTicket.id_tcg_ticket,
+              id_tcg_ticket: ticket_id,
             },
-            data: data,
-          });
-          unique_ticketing_ticket_id = res.id_tcg_ticket;
-          tickets_results = [...tickets_results, res];
-        } else {
-          // Create a new ticket
-          this.logger.log('not existing ticket ' + ticket.name);
-
-          let data: any = {
-            id_tcg_ticket: uuidv4(),
-            created_at: new Date(),
-            modified_at: new Date(),
-            id_linked_user: linkedUserId,
-            remote_id: originId,
-            remote_platform: originSource,
-          };
-          if (ticket.name) {
-            data = { ...data, name: ticket.name };
-          }
-          if (ticket.status) {
-            data = { ...data, status: ticket.status };
-          }
-          if (ticket.description) {
-            data = { ...data, description: ticket.description };
-          }
-          if (ticket.type) {
-            data = { ...data, ticket_type: ticket.type };
-          }
-          if (ticket.tags) {
-            data = { ...data, tags: ticket.tags };
-          }
-          if (ticket.priority) {
-            data = { ...data, priority: ticket.priority };
-          }
-          if (ticket.completed_at) {
-            data = { ...data, completed_at: ticket.completed_at };
-          }
-          if (ticket.assigned_to) {
-            data = { ...data, assigned_to: ticket.assigned_to };
-          }
-          if (ticket.project_id) {
-            data = { ...data, collections: [ticket.project_id] };
-          }
-          /*
-            parent_ticket: ticket.parent_ticket || 'd',
-          */
-
-          const res = await this.prisma.tcg_tickets.create({
-            data: data,
-          });
-          unique_ticketing_ticket_id = res.id_tcg_ticket;
-          tickets_results = [...tickets_results, res];
-        }
-
-        // check duplicate or existing values
-        if (ticket.field_mappings && ticket.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
             data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_ticketing_ticket_id,
+              collections: collections,
             },
           });
-
-          for (const [slug, value] of Object.entries(ticket.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
-
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_ticketing_ticket_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_ticketing_ticket_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        // Process attachments
+        if (ticket.attachments) {
+          await this.registry.getService('ticketing', 'attachment').saveToDb(
+            connection_id,
+            linkedUserId,
+            ticket.attachments,
+            originSource,
+            ticket.attachments.map(
+              (att: UnifiedAttachmentOutput) => att.remote_data,
+            ),
+            {
+              object_name: 'ticket',
+              value: ticket_id,
+            },
+          );
+        }
+
+        // Process tags
+        if (ticket.tags) {
+          let TAGS: string[] = [];
+          if (typeof ticket.tags[0] === 'string') {
+            TAGS = ticket.tags as string[];
+          } else {
+            const tags = await this.registry
+              .getService('ticketing', 'tag')
+              .saveToDb(
+                connection_id,
+                linkedUserId,
+                ticket.tags,
+                originSource,
+                ticket.tags.map((tag: UnifiedTagOutput) => tag.remote_data),
+              );
+            TAGS = tags.map((t) => t.id_tcg_tag as string);
+          }
+
+          await this.prisma.tcg_tickets.update({
+            where: {
+              id_tcg_ticket: ticket_id,
+            },
+            data: {
+              tags: TAGS,
+            },
+          });
+        }
       }
       return tickets_results;
     } catch (error) {
       throw error;
     }
   }
-  async removeTicketInDb(
-    linkedUserId: string,
-    originSource: string,
-    remote_id: string,
-  ) {
+
+  async removeInDb(connection_id: string, remote_id: string) {
     const existingTicket = await this.prisma.tcg_tickets.findFirst({
       where: {
         remote_id: remote_id,
-        remote_platform: originSource,
-        id_linked_user: linkedUserId,
+        id_connection: connection_id,
       },
     });
     await this.prisma.tcg_tickets.delete({

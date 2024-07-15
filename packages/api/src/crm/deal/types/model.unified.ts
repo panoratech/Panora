@@ -16,7 +16,7 @@ export class UnifiedDealInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the user who is on the deal',
+    description: 'The UUID of the user who is on the deal',
   })
   @IsUUID()
   @IsOptional()
@@ -24,7 +24,7 @@ export class UnifiedDealInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the stage of the deal',
+    description: 'The UUID of the stage of the deal',
   })
   @IsUUID()
   @IsOptional()
@@ -32,7 +32,7 @@ export class UnifiedDealInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the company tied to the deal',
+    description: 'The UUID of the company tied to the deal',
   })
   @IsUUID()
   @IsOptional()
@@ -48,7 +48,7 @@ export class UnifiedDealInput {
 }
 
 export class UnifiedDealOutput extends UnifiedDealInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the deal' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the deal' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -68,4 +68,18 @@ export class UnifiedDealOutput extends UnifiedDealInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

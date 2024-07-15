@@ -65,7 +65,7 @@ model api_keys {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model attribute {
-  id_attribute         String  @id(map: "pk_attribute") @db.Uuid
+  id_attribute         String   @id(map: "pk_attribute") @db.Uuid
   status               String
   ressource_owner_type String
   slug                 String
@@ -73,11 +73,13 @@ model attribute {
   data_type            String
   remote_id            String
   source               String
-  id_entity            String? @db.Uuid
-  id_project           String  @db.Uuid
+  id_entity            String?  @db.Uuid
+  id_project           String   @db.Uuid
   scope                String
-  id_consumer          String? @db.Uuid
-  entity               entity? @relation(fields: [id_entity], references: [id_entity], onDelete: NoAction, onUpdate: NoAction, map: "fk_32")
+  id_consumer          String?  @db.Uuid
+  created_at           DateTime @db.Timestamptz(6)
+  modified_at          DateTime @db.Timestamptz(6)
+  entity               entity?  @relation(fields: [id_entity], references: [id_entity], onDelete: NoAction, onUpdate: NoAction, map: "fk_32")
   value                value[]
 
   @@index([id_entity], map: "fk_attribute_entityid")
@@ -123,11 +125,12 @@ model crm_addresses {
   postal_code    String?
   country        String?
   address_type   String?
+  id_crm_company String?        @db.Uuid
+  id_crm_contact String?        @db.Uuid
+  id_connection  String         @db.Uuid
   created_at     DateTime       @db.Timestamp(6)
   modified_at    DateTime       @db.Timestamp(6)
   owner_type     String
-  id_crm_company String?        @db.Uuid
-  id_crm_contact String?        @db.Uuid
   crm_contacts   crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_14")
   crm_companies  crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_15")
 
@@ -146,6 +149,7 @@ model crm_companies {
   remote_platform     String?
   id_crm_user         String?               @db.Uuid
   id_linked_user      String?               @db.Uuid
+  id_connection       String                @db.Uuid
   crm_addresses       crm_addresses[]
   crm_users           crm_users?            @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_24")
   crm_deals           crm_deals[]
@@ -161,14 +165,15 @@ model crm_companies {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model crm_contacts {
   id_crm_contact      String                @id(map: "pk_crm_contacts") @db.Uuid
-  first_name          String
-  last_name           String
-  created_at          DateTime              @db.Timestamp(6)
-  modified_at         DateTime              @db.Timestamp(6)
-  remote_id           String
-  remote_platform     String
+  first_name          String?
+  last_name           String?
+  created_at          DateTime?             @db.Timestamp(6)
+  modified_at         DateTime?             @db.Timestamp(6)
+  remote_id           String?
+  remote_platform     String?
   id_crm_user         String?               @db.Uuid
   id_linked_user      String?               @db.Uuid
+  id_connection       String                @db.Uuid
   crm_addresses       crm_addresses[]
   crm_users           crm_users?            @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_23")
   crm_email_addresses crm_email_addresses[]
@@ -192,6 +197,7 @@ model crm_deals {
   id_crm_deals_stage String?           @db.Uuid
   id_linked_user     String?           @db.Uuid
   id_crm_company     String?           @db.Uuid
+  id_connection      String            @db.Uuid
   crm_deals_stages   crm_deals_stages? @relation(fields: [id_crm_deals_stage], references: [id_crm_deals_stage], onDelete: NoAction, onUpdate: NoAction, map: "fk_21")
   crm_users          crm_users?        @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_22")
   crm_companies      crm_companies?    @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_47_1")
@@ -211,6 +217,7 @@ model crm_deals_stages {
   id_linked_user     String?     @db.Uuid
   remote_id          String?
   remote_platform    String?
+  id_connection      String      @db.Uuid
   crm_deals          crm_deals[]
 }
 
@@ -224,6 +231,7 @@ model crm_email_addresses {
   modified_at        DateTime       @db.Timestamp(6)
   id_crm_company     String?        @db.Uuid
   id_crm_contact     String?        @db.Uuid
+  id_connection      String         @db.Uuid
   crm_companies      crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_16")
   crm_contacts       crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_3")
 
@@ -231,35 +239,26 @@ model crm_email_addresses {
   @@index([id_crm_company], map: "fk_contact_email_adress_companyid")
 }
 
-model crm_engagement_contacts {
-  id_crm_engagement_contact String          @id(map: "pk_crm_engagement_contact") @db.Uuid
-  id_crm_contact            String?         @db.Uuid
-  id_crm_engagement         String          @db.Uuid
-  crm_engagements           crm_engagements @relation(fields: [id_crm_engagement], references: [id_crm_engagement], onDelete: NoAction, onUpdate: NoAction, map: "fk_30")
-
-  @@index([id_crm_engagement], map: "fk_crm_engagement_contacts_crmengagementid")
-  @@index([id_crm_contact], map: "fk_engagement_contact_crmcontactid")
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model crm_engagements {
-  id_crm_engagement       String                    @id(map: "pk_crm_engagement") @db.Uuid
-  content                 String?
-  type                    String?
-  direction               String?
-  subject                 String?
-  start_at                DateTime?                 @db.Timestamp(6)
-  end_time                DateTime?                 @db.Timestamp(6)
-  created_at              DateTime?                 @db.Timestamp(6)
-  modified_at             DateTime?                 @db.Timestamp(6)
-  remote_id               String?
-  id_linked_user          String?                   @db.Uuid
-  remote_platform         String?
-  id_crm_company          String?                   @db.Uuid
-  id_crm_user             String?                   @db.Uuid
-  crm_engagement_contacts crm_engagement_contacts[]
-  crm_companies           crm_companies?            @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_29")
-  crm_users               crm_users?                @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_crm_engagement_crm_user")
+  id_crm_engagement String         @id(map: "pk_crm_engagement") @db.Uuid
+  content           String?
+  type              String?
+  direction         String?
+  subject           String?
+  start_at          DateTime?      @db.Timestamp(6)
+  end_time          DateTime?      @db.Timestamp(6)
+  remote_id         String?
+  id_linked_user    String?        @db.Uuid
+  remote_platform   String?
+  id_crm_company    String?        @db.Uuid
+  id_crm_user       String?        @db.Uuid
+  id_connection     String         @db.Uuid
+  contacts          String[]
+  created_at        DateTime       @db.Timestamp(6)
+  modified_at       DateTime       @db.Timestamp(6)
+  crm_companies     crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_29")
+  crm_users         crm_users?     @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_crm_engagement_crm_user")
 
   @@index([id_crm_user], map: "fk_crm_engagement_crm_user_id")
   @@index([id_crm_company], map: "fk_crm_engagement_crmcompanyid")
@@ -277,6 +276,7 @@ model crm_notes {
   remote_id       String?
   remote_platform String?
   id_crm_user     String?        @db.Uuid
+  id_connection   String         @db.Uuid
   crm_companies   crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_18")
   crm_contacts    crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_19")
   crm_deals       crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_20")
@@ -290,13 +290,14 @@ model crm_notes {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model crm_phone_numbers {
   id_crm_phone_number String         @id(map: "pk_crm_contacts_phone_numbers") @db.Uuid
-  phone_number        String
-  phone_type          String
-  owner_type          String
+  phone_number        String?
+  phone_type          String?
+  owner_type          String?
   created_at          DateTime       @db.Timestamp(6)
   modified_at         DateTime       @db.Timestamp(6)
   id_crm_company      String?        @db.Uuid
   id_crm_contact      String?        @db.Uuid
+  id_connection       String         @db.Uuid
   crm_companies       crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_17")
   crm_contacts        crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_phonenumber_crm_contactid")
 
@@ -319,6 +320,7 @@ model crm_tasks {
   id_linked_user  String?        @db.Uuid
   remote_id       String?
   remote_platform String?
+  id_connection   String         @db.Uuid
   crm_users       crm_users?     @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_25")
   crm_companies   crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_26")
   crm_deals       crm_deals?     @relation(fields: [id_crm_deal], references: [id_crm_deal], onDelete: NoAction, onUpdate: NoAction, map: "fk_27")
@@ -337,6 +339,7 @@ model crm_users {
   id_linked_user  String?           @db.Uuid
   remote_id       String?
   remote_platform String?
+  id_connection   String            @db.Uuid
   crm_companies   crm_companies[]
   crm_contacts    crm_contacts[]
   crm_deals       crm_deals[]
@@ -366,6 +369,8 @@ model cs_values {
 model entity {
   id_entity          String      @id(map: "pk_entity") @db.Uuid
   ressource_owner_id String      @db.Uuid
+  created_at         DateTime    @db.Timestamptz(6)
+  modified_at        DateTime    @db.Timestamptz(6)
   attribute          attribute[]
   value              value[]
 }
@@ -461,6 +466,7 @@ model tcg_accounts {
   created_at      DateTime       @db.Timestamp(6)
   modified_at     DateTime       @db.Timestamp(6)
   id_linked_user  String?        @db.Uuid
+  id_connection   String         @db.Uuid
   tcg_contacts    tcg_contacts[]
 }
 
@@ -477,6 +483,7 @@ model tcg_attachments {
   id_linked_user    String?       @db.Uuid
   id_tcg_ticket     String?       @db.Uuid
   id_tcg_comment    String?       @db.Uuid
+  id_connection     String        @db.Uuid
   tcg_tickets       tcg_tickets?  @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_50")
   tcg_comments      tcg_comments? @relation(fields: [id_tcg_comment], references: [id_tcg_comment], onDelete: NoAction, onUpdate: NoAction, map: "fk_51")
 
@@ -495,6 +502,7 @@ model tcg_collections {
   created_at        DateTime @db.Timestamp(6)
   modified_at       DateTime @db.Timestamp(6)
   id_linked_user    String   @db.Uuid
+  id_connection     String   @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -513,6 +521,7 @@ model tcg_comments {
   id_tcg_contact    String?           @db.Uuid
   id_tcg_user       String?           @db.Uuid
   id_linked_user    String?           @db.Uuid
+  id_connection     String            @db.Uuid
   tcg_attachments   tcg_attachments[]
   tcg_tickets       tcg_tickets?      @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_40_1")
   tcg_contacts      tcg_contacts?     @relation(fields: [id_tcg_contact], references: [id_tcg_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_41")
@@ -535,6 +544,7 @@ model tcg_contacts {
   modified_at     DateTime?      @db.Timestamp(6)
   id_tcg_account  String?        @db.Uuid
   id_linked_user  String?        @db.Uuid
+  id_connection   String         @db.Uuid
   tcg_comments    tcg_comments[]
   tcg_accounts    tcg_accounts?  @relation(fields: [id_tcg_account], references: [id_tcg_account], onDelete: NoAction, onUpdate: NoAction, map: "fk_49")
 
@@ -546,10 +556,11 @@ model tcg_tags {
   name            String?
   remote_id       String?
   remote_platform String?
+  id_tcg_ticket   String?      @db.Uuid
   created_at      DateTime     @db.Timestamp(6)
   modified_at     DateTime     @db.Timestamp(6)
-  id_tcg_ticket   String?      @db.Uuid
   id_linked_user  String?      @db.Uuid
+  id_connection   String       @db.Uuid
   tcg_tickets     tcg_tickets? @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_48")
 
   @@index([id_tcg_ticket], map: "fk_tcg_tag_tcg_ticketid")
@@ -564,6 +575,7 @@ model tcg_teams {
   created_at      DateTime @db.Timestamp(6)
   modified_at     DateTime @db.Timestamp(6)
   id_linked_user  String?  @db.Uuid
+  id_connection   String   @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -587,6 +599,7 @@ model tcg_tickets {
   creator_type    String?
   id_tcg_user     String?           @db.Uuid
   id_linked_user  String            @db.Uuid
+  id_connection   String            @db.Uuid
   tcg_attachments tcg_attachments[]
   tcg_comments    tcg_comments[]
   tcg_tags        tcg_tags[]
@@ -605,6 +618,7 @@ model tcg_users {
   created_at      DateTime?      @db.Timestamp(6)
   modified_at     DateTime?      @db.Timestamp(6)
   id_linked_user  String?        @db.Uuid
+  id_connection   String         @db.Uuid
   tcg_comments    tcg_comments[]
 }
 
@@ -614,6 +628,8 @@ model value {
   data         String
   id_entity    String    @db.Uuid
   id_attribute String    @db.Uuid
+  created_at   DateTime  @db.Timestamptz(6)
+  modified_at  DateTime  @db.Timestamptz(6)
   attribute    attribute @relation(fields: [id_attribute], references: [id_attribute], onDelete: NoAction, onUpdate: NoAction, map: "fk_33")
   entity       entity    @relation(fields: [id_entity], references: [id_entity], onDelete: NoAction, onUpdate: NoAction, map: "fk_34")
 
@@ -645,17 +661,17 @@ model webhook_delivery_attempts {
 
 model connector_sets {
   id_connector_set String     @id(map: "pk_project_connector") @db.Uuid
-  crm_hubspot      Boolean
-  crm_zoho         Boolean
-  crm_attio        Boolean
-  crm_pipedrive    Boolean
-  tcg_zendesk      Boolean
-  tcg_jira         Boolean
-  tcg_gorgias      Boolean
-  tcg_gitlab       Boolean
-  tcg_front        Boolean
-  crm_zendesk      Boolean
-  crm_close        Boolean
+  crm_hubspot      Boolean?
+  crm_zoho         Boolean?
+  crm_attio        Boolean?
+  crm_pipedrive    Boolean?
+  tcg_zendesk      Boolean?
+  tcg_jira         Boolean?
+  tcg_gorgias      Boolean?
+  tcg_gitlab       Boolean?
+  tcg_front        Boolean?
+  crm_zendesk      Boolean?
+  crm_close        Boolean?
   projects         projects[]
 }
 
@@ -680,20 +696,21 @@ model fs_drives {
   remote_id         String?
   created_at        DateTime  @db.Timestamp(6)
   modified_at       DateTime  @db.Timestamp(6)
+  id_connection     String    @db.Uuid
 }
 
 model fs_files {
   id_fs_file       String   @id(map: "pk_fs_files") @db.Uuid
   name             String?
-  type             String?
   file_url         String?
   mime_type        String?
   size             BigInt?
   remote_id        String?
+  id_fs_permission String?  @db.Uuid
   id_fs_folder     String?  @db.Uuid
   created_at       DateTime @db.Timestamp(6)
   modified_at      DateTime @db.Timestamp(6)
-  id_fs_permission String?  @db.Uuid
+  id_connection    String   @db.Uuid
 
   @@index([id_fs_folder], map: "fk_fs_file_folderid")
   @@index([id_fs_permission], map: "fk_fs_file_permissionid")
@@ -710,6 +727,7 @@ model fs_folders {
   created_at       DateTime @db.Timestamp(6)
   modified_at      DateTime @db.Timestamp(6)
   id_fs_drive      String?  @db.Uuid
+  id_connection    String   @db.Uuid
   id_fs_permission String?  @db.Uuid
 
   @@index([id_fs_drive], map: "fk_fs_folder_driveid")
@@ -722,24 +740,27 @@ model fs_permissions {
   remote_id        String?
   user             String?  @db.Uuid
   group            String?  @db.Uuid
-  type             String[]
+  type             String?
   roles            String[]
   created_at       DateTime @db.Timestamp(6)
   modified_at      DateTime @db.Timestamp(6)
+  id_connection    String   @db.Uuid
 }
 
 model fs_shared_links {
   id_fs_shared_link  String    @id(map: "pk_fs_shared_links") @db.Uuid
   url                String?
   download_url       String?
-  id_fs_folder       String?   @db.Uuid
-  id_fs_file         String?   @db.Uuid
   scope              String?
   password_protected Boolean
   password           String?
   expires_at         DateTime? @db.Timestamptz(6)
   created_at         DateTime  @db.Timestamptz(6)
   modified_at        DateTime  @db.Timestamptz(6)
+  id_connection      String    @db.Uuid
+  id_fs_folder       String?   @db.Uuid
+  id_fs_file         String?   @db.Uuid
+  remote_id          String?
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -751,9 +772,10 @@ model ats_activities {
   visibility        String?
   id_ats_candidate  String?   @db.Uuid
   remote_id         String?
-  remote_created_at DateTime? @db.Timestamp(6)
-  created_at        DateTime  @db.Timestamp(6)
-  modified_at       DateTime  @db.Timestamp(6)
+  remote_created_at DateTime? @db.Timestamptz(6)
+  created_at        DateTime  @db.Timestamptz(6)
+  modified_at       DateTime  @db.Timestamptz(6)
+  id_connection     String    @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_activity_candidate")
 }
@@ -762,17 +784,18 @@ model ats_activities {
 model ats_applications {
   id_ats_application String    @id(map: "pk_ats_applications") @db.Uuid
   remote_id          String?
-  created_at         DateTime  @db.Timestamp(6)
-  modified_at        DateTime  @db.Timestamp(6)
-  id_ats_candidate   String?   @db.Uuid
-  id_ats_job         String?   @db.Uuid
-  applied_at         DateTime? @db.Timestamp(6)
-  rejected_at        DateTime? @db.Timestamp(6)
+  applied_at         DateTime? @db.Timestamptz(6)
+  rejected_at        DateTime? @db.Timestamptz(6)
   offers             String[]
   source             String?
   credited_to        String?   @db.Uuid
   current_stage      String?   @db.Uuid
   reject_reason      String?
+  id_ats_candidate   String?   @db.Uuid
+  id_ats_job         String?   @db.Uuid
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
+  id_connection      String    @db.Uuid
 
   @@index([id_ats_job], map: "fk_ats_application_ats_job_id")
   @@index([id_ats_candidate], map: "fk_ats_application_atscandidateid")
@@ -784,12 +807,13 @@ model ats_candidate_attachments {
   remote_id                   String?
   file_url                    String?
   file_name                   String?
-  remote_created_at           DateTime? @db.Timestamp(6)
-  remote_modified_at          DateTime? @db.Timestamp(6)
+  remote_created_at           DateTime? @db.Timestamptz(6)
+  remote_modified_at          DateTime? @db.Timestamptz(6)
   file_type                   String?
-  created_at                  DateTime  @db.Timestamp(6)
-  modified_at                 DateTime  @db.Timestamp(6)
+  created_at                  DateTime  @db.Timestamptz(6)
+  modified_at                 DateTime  @db.Timestamptz(6)
   id_ats_candidate            String    @db.Uuid
+  id_connection               String    @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_ats_candidate_attachment_candidateid_index")
 }
@@ -798,8 +822,8 @@ model ats_candidate_email_addresses {
   id_ats_candidate_email_address String   @id(map: "pk_ats_candidate_email_addresses") @db.Uuid
   value                          String?
   type                           String?
-  created_at                     DateTime @db.Timestamp(6)
-  modified_at                    DateTime @db.Timestamp(6)
+  created_at                     DateTime @db.Timestamptz(6)
+  modified_at                    DateTime @db.Timestamptz(6)
   id_ats_candidate               String   @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_candidate_email_id")
@@ -810,8 +834,8 @@ model ats_candidate_phone_numbers {
   id_ats_candidate_phone_number String   @id(map: "pk_ats_candidate_phone_numbers") @db.Uuid
   value                         String?
   type                          String?
-  created_at                    DateTime @db.Timestamp(6)
-  modified_at                   DateTime @db.Timestamp(6)
+  created_at                    DateTime @db.Timestamptz(6)
+  modified_at                   DateTime @db.Timestamptz(6)
   id_ats_candidate              String   @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_candidate_phone_id")
@@ -820,20 +844,18 @@ model ats_candidate_phone_numbers {
 model ats_candidate_tags {
   id_ats_candidate_tag String   @id(map: "pk_ats_candidate_tags") @db.Uuid
   name                 String?
-  id_ats_candidate     String?  @db.Uuid
   remote_id            String?
-  created_at           DateTime @db.Timestamp(6)
-  modified_at          DateTime @db.Timestamp(6)
-
-  @@index([id_ats_candidate], map: "fk_candidates_candidatestags")
+  created_at           DateTime @db.Timestamptz(6)
+  modified_at          DateTime @db.Timestamptz(6)
+  id_connection        String   @db.Uuid
 }
 
 model ats_candidate_urls {
   id_ats_candidate_url String   @id(map: "pk_ats_candidate_urls") @db.Uuid
   value                String?
   type                 String?
-  created_at           DateTime @db.Timestamp(6)
-  modified_at          DateTime @db.Timestamp(6)
+  created_at           DateTime @db.Timestamptz(6)
+  modified_at          DateTime @db.Timestamptz(6)
   id_ats_candidate     String   @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_candidate_url_id")
@@ -843,40 +865,44 @@ model ats_candidate_urls {
 model ats_candidates {
   id_ats_candidate    String    @id(map: "pk_ats_candidates") @db.Uuid
   remote_id           String?
-  created_at          DateTime  @db.Timestamp(6)
-  modified_at         DateTime  @db.Timestamp(6)
+  created_at          DateTime  @db.Timestamptz(6)
+  modified_at         DateTime  @db.Timestamptz(6)
   first_name          String?
   last_name           String?
   company             String?
   title               String?
-  remote_created_at   DateTime? @db.Timestamp(6)
-  remote_modified_at  DateTime? @db.Timestamp(6)
-  last_interaction_at DateTime? @db.Timestamp(6)
+  remote_created_at   DateTime? @db.Timestamptz(6)
+  remote_modified_at  DateTime? @db.Timestamptz(6)
+  last_interaction_at DateTime? @db.Timestamptz(6)
   is_private          Boolean?
   email_reachable     Boolean?
   locations           String?
+  tags                String[]
+  id_connection       String    @db.Uuid
 }
 
 model ats_departments {
   id_ats_department String   @id(map: "pk_ats_departments") @db.Uuid
   name              String?
   remote_id         String?
-  created_at        DateTime @db.Timestamp(6)
-  modified_at       DateTime @db.Timestamp(6)
+  created_at        DateTime @db.Timestamptz(6)
+  modified_at       DateTime @db.Timestamptz(6)
+  id_connection     String   @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ats_eeocs {
   id_ats_eeoc       String    @id(map: "pk_ats_eeocs") @db.Uuid
   id_ats_candidate  String?   @db.Uuid
-  submitted_at      DateTime? @db.Timestamp(6)
+  submitted_at      DateTime? @db.Timestamptz(6)
   race              String?
   gender            String?
   veteran_status    String?
   disability_status String?
   remote_id         String?
-  created_at        DateTime  @db.Timestamp(6)
-  modified_at       DateTime  @db.Timestamp(6)
+  created_at        DateTime  @db.Timestamptz(6)
+  modified_at       DateTime  @db.Timestamptz(6)
+  id_connection     String    @db.Uuid
 
   @@index([id_ats_candidate], map: "fk_candidate_eeocsid")
 }
@@ -885,18 +911,19 @@ model ats_eeocs {
 model ats_interviews {
   id_ats_interview           String    @id(map: "pk_ats_interviews") @db.Uuid
   status                     String?
-  id_ats_application         String?   @db.Uuid
-  id_ats_job_interview_stage String?   @db.Uuid
   organized_by               String?   @db.Uuid
   interviewers               String[]
   location                   String?
-  start_at                   DateTime? @db.Timestamp(6)
-  end_at                     DateTime? @db.Timestamp(6)
-  remote_created_at          DateTime? @db.Timestamp(6)
-  remote_updated_at          DateTime? @db.Timestamp(6)
+  start_at                   DateTime? @db.Timestamptz(6)
+  end_at                     DateTime? @db.Timestamptz(6)
+  remote_created_at          DateTime? @db.Timestamptz(6)
+  remote_updated_at          DateTime? @db.Timestamptz(6)
   remote_id                  String?
-  created_at                 DateTime  @db.Timestamp(6)
-  modified_at                DateTime  @db.Timestamp(6)
+  id_ats_application         String?   @db.Uuid
+  id_ats_job_interview_stage String?   @db.Uuid
+  created_at                 DateTime  @db.Timestamptz(6)
+  modified_at                DateTime  @db.Timestamptz(6)
+  id_connection              String    @db.Uuid
 
   @@index([id_ats_application], map: "fk_applications_interviews")
   @@index([id_ats_job_interview_stage], map: "fk_id_ats_job_interview_stageid")
@@ -908,9 +935,10 @@ model ats_job_interview_stages {
   name                       String?
   stage_order                Int?
   remote_id                  String?
-  created_at                 DateTime @db.Timestamp(6)
-  modified_at                DateTime @db.Timestamp(6)
+  created_at                 DateTime @db.Timestamptz(6)
+  modified_at                DateTime @db.Timestamptz(6)
   id_ats_job                 String?  @db.Uuid
+  id_connection              String   @db.Uuid
 
   @@index([id_ats_job], map: "fk_ats_jobs_ats_jobinterview_id")
 }
@@ -929,10 +957,11 @@ model ats_jobs {
   managers          String[]
   recruiters        String[]
   remote_id         String?
-  remote_created_at DateTime? @db.Timestamp(6)
-  remote_updated_at DateTime? @db.Timestamp(6)
-  created_at        DateTime  @db.Timestamp(6)
-  modified_at       DateTime  @db.Timestamp(6)
+  remote_created_at DateTime? @db.Timestamptz(6)
+  remote_updated_at DateTime? @db.Timestamptz(6)
+  created_at        DateTime  @db.Timestamptz(6)
+  modified_at       DateTime  @db.Timestamptz(6)
+  id_connection     String    @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -940,14 +969,15 @@ model ats_offers {
   id_ats_offer       String    @id(map: "pk_ats_offers") @db.Uuid
   remote_id          String?
   created_by         String?   @db.Uuid
-  remote_created_at  DateTime? @db.Timestamp(6)
-  closed_at          DateTime? @db.Timestamp(6)
-  sent_at            DateTime? @db.Timestamp(6)
-  start_date         DateTime? @db.Timestamp(6)
+  remote_created_at  DateTime? @db.Timestamptz(6)
+  closed_at          DateTime? @db.Timestamptz(6)
+  sent_at            DateTime? @db.Timestamptz(6)
+  start_date         DateTime? @db.Timestamptz(6)
   status             String?
-  created_at         DateTime  @db.Timestamp(6)
-  modified_at        DateTime  @db.Timestamp(6)
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
   id_ats_application String    @db.Uuid
+  id_connection      String    @db.Uuid
 
   @@index([id_ats_application], map: "fk_ats_offers_applicationid")
 }
@@ -956,18 +986,20 @@ model ats_offers {
 model ats_offices {
   id_ats_office String   @id(map: "pk_ats_offices") @db.Uuid
   remote_id     String?
-  created_at    DateTime @db.Timestamp(6)
-  modified_at   DateTime @db.Timestamp(6)
+  created_at    DateTime @db.Timestamptz(6)
+  modified_at   DateTime @db.Timestamptz(6)
   name          String?
   location      String?
+  id_connection String   @db.Uuid
 }
 
 model ats_reject_reasons {
   id_ats_reject_reason String   @id(map: "pk_ats_reject_reasons") @db.Uuid
   name                 String?
   remote_id            String?
-  modified_at          DateTime @db.Timestamp(6)
-  created_at           DateTime @db.Timestamp(6)
+  modified_at          DateTime @db.Timestamptz(6)
+  created_at           DateTime @db.Timestamptz(6)
+  id_connection        String   @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -977,10 +1009,11 @@ model ats_scorecards {
   id_ats_application     String?   @db.Uuid
   id_ats_interview       String?   @db.Uuid
   remote_id              String?
-  remote_created_at      DateTime? @db.Timestamp(6)
-  submitted_at           DateTime? @db.Timestamp(6)
-  created_at             DateTime  @db.Timestamp(6)
-  modified_at            DateTime  @db.Timestamp(6)
+  remote_created_at      DateTime? @db.Timestamptz(6)
+  submitted_at           DateTime? @db.Timestamptz(6)
+  created_at             DateTime  @db.Timestamptz(6)
+  modified_at            DateTime  @db.Timestamptz(6)
+  id_connection          String    @db.Uuid
 
   @@index([id_ats_application], map: "fk_applications_scorecard")
   @@index([id_ats_interview], map: "fk_interviews_scorecards")
@@ -999,25 +1032,604 @@ model ats_users {
   remote_modified_at DateTime? @db.Timestamp(6)
   created_at         DateTime  @db.Timestamp(6)
   modified_at        DateTime  @db.Timestamp(6)
+  id_connection      String    @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model fs_groups {
   id_fs_group        String   @id(map: "pk_fs_groups") @db.Uuid
   name               String?
-  users              Json?
+  users              String[]
   remote_id          String?
   remote_was_deleted Boolean
   created_at         DateTime @db.Timestamp(6)
   modified_at        DateTime @db.Timestamp(6)
+  id_connection      String   @db.Uuid
 }
 
 model fs_users {
-  id_fs_user  String   @id(map: "pk_fs_users") @db.Uuid
-  name        String?
-  email       String?
-  is_me       Boolean
-  remote_id   String?
-  created_at  DateTime @db.Timestamp(6)
-  modified_at DateTime @db.Timestamp(6)
+  id_fs_user    String   @id(map: "pk_fs_users") @db.Uuid
+  name          String?
+  email         String?
+  is_me         Boolean
+  remote_id     String?
+  created_at    DateTime @db.Timestamp(6)
+  modified_at   DateTime @db.Timestamp(6)
+  id_connection String   @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_accounting_periods {
+  id_acc_accounting_period String    @id(map: "pk_acc_accounting_periods") @db.Uuid
+  remote_id                String?
+  created_at               DateTime  @db.Timestamptz(6)
+  modified_at              DateTime  @db.Timestamptz(6)
+  name                     String?
+  status                   String?
+  start_date               DateTime? @db.Timestamptz(6)
+  end_date                 DateTime? @db.Timestamptz(6)
+  id_connection            String    @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_accounts {
+  id_acc_account      String   @id(map: "pk_acc_accounts") @db.Uuid
+  name                String?
+  description         String?
+  classification      String?
+  type                String?
+  status              String?
+  current_balance     BigInt?
+  currency            String?
+  account_number      String?
+  parent_account      String?  @db.Uuid
+  remote_id           String?
+  id_acc_company_info String?  @db.Uuid
+  created_at          DateTime @db.Timestamptz(6)
+  modified_at         DateTime @db.Timestamptz(6)
+  id_connection       String   @db.Uuid
+
+  @@index([id_acc_company_info], map: "fk_accounts_companyinfo_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_addresses {
+  id_acc_address      String   @id(map: "pk_acc_addresses") @db.Uuid
+  type                String?
+  street_1            String?
+  street_2            String?
+  city                String?
+  state               String?
+  country_subdivision String?
+  country             String?
+  zip                 String?
+  created_at          DateTime @db.Timestamptz(6)
+  modified_at         DateTime @db.Timestamptz(6)
+  id_acc_contact      String?  @db.Uuid
+  id_acc_company_info String?  @db.Uuid
+  id_connection       String   @db.Uuid
+
+  @@index([id_acc_company_info], map: "fk_acc_company_info_acc_adresses")
+  @@index([id_acc_contact], map: "fk_acc_contact_acc_addresses")
+}
+
+model acc_attachments {
+  id_acc_attachment String   @id(map: "pk_acc_attachments") @db.Uuid
+  file_name         String?
+  file_url          String?
+  remote_id         String?
+  id_acc_account    String?  @db.Uuid
+  created_at        DateTime @db.Timestamptz(6)
+  modified_at       DateTime @db.Timestamptz(6)
+  id_connection     String   @db.Uuid
+
+  @@index([id_acc_account], map: "fk_acc_attachments_accountid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_balance_sheets {
+  id_acc_balance_sheet String    @id(map: "pk_acc_balance_sheets") @db.Uuid
+  name                 String?
+  currency             String?
+  id_acc_company_info  String?   @db.Uuid
+  date                 DateTime? @db.Timestamptz(6)
+  net_assets           BigInt?
+  assets               String[]
+  liabilities          String[]
+  equity               String[]
+  remote_generated_at  DateTime? @db.Timestamptz(6)
+  remote_id            String?
+  created_at           DateTime  @db.Timestamptz(6)
+  modified_at          DateTime  @db.Timestamptz(6)
+  id_connection        String    @db.Uuid
+
+  @@index([id_acc_company_info], map: "fk_balancesheetcompanyinfoid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_balance_sheets_report_items {
+  id_acc_balance_sheets_report_item String   @id(map: "pk_acc_balance_sheets_report_items") @db.Uuid
+  remote_id                         String?
+  created_at                        DateTime @db.Timestamptz(6)
+  modified_at                       DateTime @db.Timestamptz(6)
+  name                              String?
+  value                             BigInt?
+  parent_item                       String?  @db.Uuid
+  id_acc_company_info               String?  @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_cash_flow_statement_report_items {
+  id_acc_cash_flow_statement_report_item String    @id(map: "pk_acc_cash_flow_statement_report_items") @db.Uuid
+  name                                   String?
+  value                                  BigInt?
+  type                                   String?
+  parent_item                            String?   @db.Uuid
+  remote_generated_at                    DateTime? @db.Timestamptz(6)
+  remote_id                              String?
+  modified_at                            DateTime  @db.Timestamptz(6)
+  created_at                             DateTime  @db.Timestamptz(6)
+  id_acc_cash_flow_statement             String?   @db.Uuid
+
+  @@index([id_acc_cash_flow_statement], map: "fk_cashflow_statement_acc_cash_flow_statement_report_item")
+}
+
+model acc_cash_flow_statements {
+  id_acc_cash_flow_statement  String    @id(map: "pk_acc_cash_flow_statements") @db.Uuid
+  name                        String?
+  currency                    String?
+  company                     String?   @db.Uuid
+  start_period                DateTime? @db.Timestamptz(6)
+  end_period                  DateTime? @db.Timestamptz(6)
+  cash_at_beginning_of_period BigInt?
+  cash_at_end_of_period       BigInt?
+  remote_generated_at         DateTime? @db.Timestamptz(6)
+  remote_id                   String?
+  modified_at                 DateTime  @db.Timestamptz(6)
+  created_at                  DateTime  @db.Timestamptz(6)
+  id_connection               String    @db.Uuid
+}
+
+model acc_company_infos {
+  id_acc_company_info   String    @id(map: "pk_acc_company_infos") @db.Uuid
+  name                  String?
+  legal_name            String?
+  tax_number            String?
+  fiscal_year_end_month Int?
+  fiscal_year_end_day   Int?
+  currency              String?
+  remote_created_at     DateTime? @db.Timestamptz(6)
+  remote_id             String?
+  urls                  String[]
+  created_at            DateTime  @db.Timestamptz(6)
+  modified_at           DateTime  @db.Timestamptz(6)
+  id_connection         String    @db.Uuid
+  tracking_categories   String[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_contacts {
+  id_acc_contact      String   @id(map: "pk_acc_contacts") @db.Uuid
+  name                String?
+  is_supplier         Boolean?
+  is_customer         Boolean?
+  email_address       String?
+  tax_number          String?
+  status              String?
+  currency            String?
+  remote_updated_at   String?
+  id_acc_company_info String?  @db.Uuid
+  id_connection       String   @db.Uuid
+  remote_id           String?
+  created_at          DateTime @db.Timestamptz(6)
+  modified_at         DateTime @db.Timestamptz(6)
+
+  @@index([id_acc_company_info], map: "fk_acc_contact_company")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_credit_notes {
+  id_acc_credit_note       String    @id(map: "pk_acc_credit_notes") @db.Uuid
+  transaction_date         DateTime? @db.Timestamptz(6)
+  status                   String?
+  number                   String?
+  id_acc_contact           String?   @db.Uuid
+  company                  String?   @db.Uuid
+  exchange_rate            String?
+  total_amount             BigInt?
+  remaining_credit         BigInt?
+  tracking_categories      String[]
+  currency                 String?
+  remote_created_at        DateTime? @db.Timestamptz(6)
+  remote_updated_at        DateTime? @db.Timestamptz(6)
+  payments                 String[]
+  applied_payments         String[]
+  id_acc_accounting_period String?   @db.Uuid
+  remote_id                String?
+  modified_at              DateTime  @db.Timetz(6)
+  created_at               DateTime  @db.Timetz(6)
+  id_connection            String    @db.Uuid
+}
+
+model acc_expense_lines {
+  id_acc_expense_line String   @id(map: "pk_acc_expense_lines") @db.Uuid
+  id_acc_expense      String   @db.Uuid
+  remote_id           String?
+  net_amount          BigInt?
+  currency            String?
+  description         String?
+  exchange_rate       String?
+  created_at          DateTime @db.Timestamptz(6)
+  modified_at         DateTime @db.Timestamptz(6)
+  id_connection       String   @db.Uuid
+
+  @@index([id_acc_expense], map: "fk_acc_expense_expense_lines_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_expenses {
+  id_acc_expense      String    @id(map: "pk_acc_expenses") @db.Uuid
+  transaction_date    DateTime? @db.Timestamptz(6)
+  total_amount        BigInt?
+  sub_total           BigInt?
+  total_tax_amount    BigInt?
+  currency            String?
+  exchange_rate       String?
+  memo                String?
+  id_acc_account      String?   @db.Uuid
+  id_acc_contact      String?   @db.Uuid
+  id_acc_company_info String?   @db.Uuid
+  remote_id           String?
+  remote_created_at   DateTime? @db.Timestamptz(6)
+  created_at          DateTime  @db.Timestamptz(6)
+  modified_at         DateTime  @db.Timestamptz(6)
+  id_connection       String    @db.Uuid
+  tracking_categories String[]
+
+  @@index([id_acc_account], map: "fk_acc_account_acc_expense_index")
+  @@index([id_acc_company_info], map: "fk_acc_expense_acc_company_index")
+  @@index([id_acc_contact], map: "fk_acc_expense_acc_contact_index")
+}
+
+model acc_income_statements {
+  id_acc_income_statement String    @id(map: "pk_acc_income_statements") @db.Uuid
+  name                    String?
+  currency                String?
+  start_period            DateTime? @db.Timestamptz(6)
+  end_period              DateTime? @db.Timestamptz(6)
+  gross_profit            BigInt?
+  net_operating_income    BigInt?
+  net_income              BigInt?
+  remote_id               String?
+  created_at              DateTime  @db.Timestamptz(6)
+  modified_at             DateTime  @db.Timestamptz(6)
+  id_connection           String    @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_invoices {
+  id_acc_invoice           String    @id(map: "pk_acc_invoices") @db.Uuid
+  type                     String?
+  number                   String?
+  issue_date               DateTime? @db.Timestamptz(6)
+  due_date                 DateTime? @db.Timestamptz(6)
+  paid_on_date             DateTime? @db.Timestamptz(6)
+  memo                     String?
+  currency                 String?
+  exchange_rate            String?
+  total_discount           BigInt?
+  sub_total                BigInt?
+  status                   String?
+  total_tax_amount         BigInt?
+  total_amount             BigInt?
+  balance                  BigInt?
+  remote_updated_at        DateTime? @db.Timestamptz(6)
+  remote_id                String?
+  created_at               DateTime  @db.Timestamptz(6)
+  modified_at              DateTime  @db.Timestamptz(6)
+  id_connection            String    @db.Uuid
+  id_acc_contact           String?   @db.Uuid
+  id_acc_accounting_period String?   @db.Uuid
+  tracking_categories      String[]
+
+  @@index([id_acc_accounting_period], map: "fk_acc_invoice_accounting_period_index")
+  @@index([id_acc_contact], map: "fk_invoice_contactid")
+}
+
+model acc_invoices_line_items {
+  id_acc_invoices_line_item String   @id(map: "pk_acc_invoices_line_items") @db.Uuid
+  remote_id                 String?
+  description               String?
+  unit_price                BigInt?
+  quantity                  BigInt?
+  total_amount              BigInt?
+  currency                  String?
+  exchange_rate             String?
+  id_acc_invoice            String   @db.Uuid
+  id_acc_item               String   @db.Uuid
+  created_at                DateTime @db.Timestamptz(6)
+  modified_at               DateTime @db.Timestamptz(6)
+  id_connection             String   @db.Uuid
+  acc_tracking_categories   String[]
+
+  @@index([id_acc_invoice], map: "fk_acc_invoice_line_items_index")
+  @@index([id_acc_item], map: "fk_acc_items_lines_invoice_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_items {
+  id_acc_item         String    @id(map: "pk_acc_items") @db.Uuid
+  name                String?
+  status              String?
+  unit_price          BigInt?
+  purchase_price      BigInt?
+  remote_updated_at   DateTime? @db.Timestamptz(6)
+  remote_id           String?
+  sales_account       String?   @db.Uuid
+  purchase_account    String?   @db.Uuid
+  id_acc_company_info String?   @db.Uuid
+  created_at          DateTime  @db.Timestamptz(6)
+  modified_at         DateTime  @db.Timestamptz(6)
+  id_connection       String    @db.Uuid
+
+  @@index([purchase_account], map: "fk_acc_item_acc_account")
+  @@index([id_acc_company_info], map: "fk_acc_item_acc_company_infos")
+  @@index([sales_account], map: "fk_acc_items_sales_account")
+}
+
+model acc_journal_entries {
+  id_acc_journal_entry     String    @id(map: "pk_acc_journal_entries") @db.Uuid
+  transaction_date         DateTime? @db.Timestamptz(6)
+  payments                 String[]
+  applied_payments         String[]
+  memo                     String?
+  currency                 String?
+  exchange_rate            String?
+  id_acc_company_info      String    @db.Uuid
+  journal_number           String?
+  tracking_categories      String[]
+  id_acc_accounting_period String?   @db.Uuid
+  posting_status           String?
+  remote_created_at        DateTime? @db.Timestamptz(6)
+  remote_modiified_at      DateTime? @db.Timestamptz(6)
+  id_connection            String    @db.Uuid
+  remote_id                String
+  created_at               DateTime  @db.Timestamptz(6)
+  modified_at              DateTime  @db.Timestamptz(6)
+
+  @@index([id_acc_accounting_period], map: "fk_journal_entry_accounting_period")
+  @@index([id_acc_company_info], map: "fk_journal_entry_companyinfo")
+}
+
+model acc_journal_entries_lines {
+  id_acc_journal_entries_line String   @id(map: "pk_acc_journal_entries_lines") @db.Uuid
+  net_amount                  BigInt?
+  tracking_categories         String[]
+  currency                    String?
+  description                 String?
+  company                     String?  @db.Uuid
+  contact                     String?  @db.Uuid
+  exchange_rate               String?
+  remote_id                   String?
+  created_at                  DateTime @db.Timestamptz(6)
+  modified_at                 DateTime @db.Timestamptz(6)
+  id_acc_journal_entry        String   @db.Uuid
+
+  @@index([id_acc_journal_entry], map: "fk_journal_entries_entries_lines")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_payments {
+  id_acc_payment           String    @id(map: "pk_acc_payments") @db.Uuid
+  id_acc_invoice           String?   @db.Uuid
+  transaction_date         DateTime? @db.Timestamptz(6)
+  id_acc_contact           String?   @db.Uuid
+  id_acc_account           String?   @db.Uuid
+  currency                 String?
+  exchange_rate            String?
+  total_amount             BigInt?
+  type                     String?
+  remote_updated_at        DateTime? @db.Timestamptz(6)
+  id_acc_company_info      String?   @db.Uuid
+  id_acc_accounting_period String?   @db.Uuid
+  created_at               DateTime  @db.Timestamptz(6)
+  modified_at              DateTime  @db.Timestamptz(6)
+  id_connection            String    @db.Uuid
+  tracking_categories      String[]
+
+  @@index([id_acc_account], map: "fk_acc_payment_acc_account_index")
+  @@index([id_acc_company_info], map: "fk_acc_payment_acc_company_index")
+  @@index([id_acc_contact], map: "fk_acc_payment_acc_contact")
+  @@index([id_acc_accounting_period], map: "fk_acc_payment_accounting_period_index")
+  @@index([id_acc_invoice], map: "fk_acc_payment_invoiceid")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_payments_line_items {
+  acc_payments_line_item String    @id(map: "pk_acc_payments_line_items") @db.Uuid
+  id_acc_payment         String    @db.Uuid
+  applied_amount         BigInt?
+  applied_date           DateTime? @db.Timestamptz(6)
+  related_object_id      String?   @db.Uuid
+  related_object_type    String?
+  remote_id              String?
+  created_at             DateTime  @db.Timestamptz(6)
+  modified_at            DateTime  @db.Timestamptz(6)
+  id_connection          String    @db.Uuid
+
+  @@index([id_acc_payment], map: "fk_acc_payment_line_items_index")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_phone_numbers {
+  id_acc_phone_number String   @id(map: "pk_acc_phone_numbers") @db.Uuid
+  number              String?
+  type                String?
+  created_at          DateTime @db.Timestamptz(6)
+  modified_at         DateTime @db.Timestamptz(6)
+  id_acc_company_info String?  @db.Uuid
+  id_acc_contact      String   @db.Uuid
+  id_connection       String   @db.Uuid
+
+  @@index([id_acc_contact], map: "fk_acc_phone_number_contact")
+  @@index([id_acc_company_info], map: "fk_company_infos_phone_number")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_purchase_orders {
+  id_acc_purchase_order    String    @id(map: "pk_acc_purchase_orders") @db.Uuid
+  remote_id                String?
+  status                   String?
+  issue_date               DateTime? @db.Timestamptz(6)
+  purchase_order_number    String?
+  delivery_date            DateTime? @db.Timestamptz(6)
+  delivery_address         String?   @db.Uuid
+  customer                 String?   @db.Uuid
+  vendor                   String?   @db.Uuid
+  memo                     String?
+  company                  String?   @db.Uuid
+  total_amount             BigInt?
+  currency                 String?
+  exchange_rate            String?
+  tracking_categories      String[]
+  remote_created_at        DateTime? @db.Timestamptz(6)
+  remote_updated_at        DateTime? @db.Timestamptz(6)
+  created_at               DateTime  @db.Timestamptz(6)
+  modified_at              DateTime  @db.Timestamptz(6)
+  id_connection            String    @db.Uuid
+  id_acc_accounting_period String?   @db.Uuid
+
+  @@index([id_acc_accounting_period], map: "fk_purchaseorder_accountingperiod")
+}
+
+model acc_purchase_orders_line_items {
+  id_acc_purchase_orders_line_item String   @id(map: "pk_acc_purchase_orders_line_items") @db.Uuid
+  id_acc_purchase_order            String   @db.Uuid
+  remote_id                        String?
+  modified_at                      DateTime @db.Timestamptz(6)
+  created_at                       DateTime @db.Timestamptz(6)
+  description                      String?
+  unit_price                       BigInt?
+  quantity                         BigInt?
+  tracking_categories              String[]
+  tax_amount                       BigInt?
+  total_line_amount                BigInt?
+  currency                         String?
+  exchange_rate                    String?
+  id_acc_account                   String?  @db.Uuid
+  id_acc_company                   String?  @db.Uuid
+
+  @@index([id_acc_purchase_order], map: "fk_purchaseorder_purchaseorderlineitems")
+}
+
+model acc_report_items {
+  id_acc_report_item String   @id(map: "pk_acc_report_items") @db.Uuid
+  name               String?
+  value              BigInt?
+  company            String?  @db.Uuid
+  parent_item        String?  @db.Uuid
+  remote_id          String?
+  created_at         DateTime @db.Timestamptz(6)
+  modified_at        DateTime @db.Timestamptz(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_tax_rates {
+  id_acc_tax_rate    String   @id(map: "pk_acc_tax_rates") @db.Uuid
+  remote_id          String?
+  description        String?
+  total_tax_ratge    BigInt?
+  effective_tax_rate BigInt?
+  company            String?  @db.Uuid
+  id_connection      String   @db.Uuid
+  created_at         DateTime @db.Timestamptz(6)
+  modified_at        DateTime @db.Timestamptz(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_tracking_categories {
+  id_acc_tracking_category String   @id(map: "pk_acc_tracking_categories") @db.Uuid
+  remote_id                String?
+  name                     String?
+  status                   String?
+  category_type            String?
+  parent_category          String?  @db.Uuid
+  created_at               DateTime @db.Timestamptz(6)
+  modified_at              DateTime @db.Timestamptz(6)
+  id_connection            String   @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_transactions {
+  id_acc_transaction       String    @id(map: "pk_acc_transactions") @db.Uuid
+  transaction_type         String?
+  number                   BigInt?
+  transaction_date         DateTime? @db.Timestamptz(6)
+  total_amount             String?
+  exchange_rate            String?
+  currency                 String?
+  tracking_categories      String[]
+  id_acc_account           String?   @db.Uuid
+  id_acc_contact           String?   @db.Uuid
+  id_acc_company_info      String?   @db.Uuid
+  id_acc_accounting_period String?   @db.Uuid
+  remote_id                String
+  created_at               DateTime  @db.Timestamptz(6)
+  modified_at              DateTime  @db.Timestamptz(6)
+  id_connection            String    @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_transactions_lines_items {
+  id_acc_transactions_lines_item String   @id(map: "pk_acc_transactions_lines_items") @db.Uuid
+  memo                           String?
+  unit_price                     String?
+  quantity                       String?
+  total_line_amount              String?
+  id_acc_tax_rate                String?  @db.Uuid
+  currency                       String?
+  exchange_rate                  String?
+  tracking_categories            String[]
+  id_acc_company_info            String?  @db.Uuid
+  id_acc_item                    String?  @db.Uuid
+  id_acc_account                 String?  @db.Uuid
+  remote_id                      String?
+  created_at                     DateTime @db.Timetz(6)
+  modified_at                    DateTime @db.Timetz(6)
+  id_acc_transaction             String?  @db.Uuid
+
+  @@index([id_acc_transaction], map: "fk_acc_transactions_lineitems")
+}
+
+model acc_vendor_credit_lines {
+  id_acc_vendor_credit_line String   @id(map: "pk_acc_vendor_credit_lines") @db.Uuid
+  net_amount                BigInt?
+  tracking_categories       String[]
+  description               String?
+  account                   String?  @db.Uuid
+  id_acc_account            String?  @db.Uuid
+  exchange_rate             String?
+  id_acc_company_info       String?  @db.Uuid
+  remote_id                 String?
+  created_at                DateTime @db.Timestamptz(6)
+  modified_at               DateTime @db.Timestamptz(6)
+  id_acc_vendor_credit      String?  @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model acc_vendor_credits {
+  id_acc_vendor_credit String    @id(map: "pk_acc_vendor_credits") @db.Uuid
+  id_connection        String    @db.Uuid
+  remote_id            String?
+  created_at           DateTime  @db.Timestamptz(6)
+  modified_at          DateTime  @db.Timestamptz(6)
+  number               String?
+  transaction_date     DateTime? @db.Timestamptz(6)
+  vendor               String?   @db.Uuid
+  total_amount         BigInt?
+  currency             String?
+  exchange_rate        String?
+  company              String?   @db.Uuid
+  tracking_categories  String[]
+  accounting_period    String?   @db.Uuid
 }

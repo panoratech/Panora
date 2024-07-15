@@ -17,4 +17,6 @@ export type ZendeskAttachmentOutput = {
   thumbnails: ZendeskAttachmentOutput[]; // An array of attachment objects.
   url: string; // A URL to access the attachment details.
   width: string | null; // The width of the image file in pixels, or null if unknown.
+} & {
+  [key: string]: any;
 };

@@ -3,12 +3,13 @@ import { IStageService } from '@crm/stage/types';
 import { CrmObject } from '@crm/@lib/@types';
 import { ZendeskStageOutput } from './types';
 import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class ZendeskService implements IStageService {
   constructor(
@@ -23,11 +24,10 @@ export class ZendeskService implements IStageService {
     this.registry.registerService('zendesk', this);
   }
 
-  async syncStages(
-    linkedUserId: string,
-    deal_id: string,
-  ): Promise<ApiResponse<ZendeskStageOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskStageOutput[]>> {
     try {
+      const { linkedUserId, deal_id } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -36,7 +36,7 @@ export class ZendeskService implements IStageService {
         },
       });
       const res = await this.prisma.crm_deals.findUnique({
-        where: { id_crm_deal: deal_id },
+        where: { id_crm_deal: deal_id as string },
       });
       const deal = await axios.get(
         `${connection.account_url}/deals/${res.remote_id}`,
@@ -71,13 +71,7 @@ export class ZendeskService implements IStageService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.stage,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

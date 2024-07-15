@@ -1,22 +1,33 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import {
+  CallbackParams,
+  IConnectionCategory,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 import { Injectable } from '@nestjs/common';
-import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
-import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from './registry.service';
-import { CallbackParams, RefreshParams } from '@@core/connections/@utils/types';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
 
 @Injectable()
-export class MarketingAutomationConnectionsService {
+export class MarketingAutomationConnectionsService
+  implements IConnectionCategory
+{
   constructor(
     private serviceRegistry: ServiceRegistry,
+    private connectionCategoryRegistry: CategoryConnectionRegistry,
     private webhook: WebhookService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
     this.logger.setContext(MarketingAutomationConnectionsService.name);
+    this.connectionCategoryRegistry.registerService(
+      'marketingautomation',
+      this,
+    );
   }
   //STEP 1:[FRONTEND STEP]
   //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click
@@ -32,7 +43,7 @@ export class MarketingAutomationConnectionsService {
   // we catch the tmp token and swap it against oauth2 server for access/refresh tokens
   // to perform actions on his behalf
   // this call pass 1. integrationID 2. CustomerId 3. Panora Api Key
-  async handleMarketingAutomationCallBack(
+  async handleCallBack(
     providerName: string,
     callbackOpts: CallbackParams,
     type_strategy: 'oauth' | 'apikey' | 'basic',
@@ -60,7 +71,7 @@ export class MarketingAutomationConnectionsService {
         },
       });
       //directly send the webhook
-      await this.webhook.handlePriorityWebhook(
+      await this.webhook.deliverWebhook(
         data,
         'connection.created',
         callbackOpts.projectId,
@@ -71,7 +82,7 @@ export class MarketingAutomationConnectionsService {
     }
   }
 
-  async handleMarketingAutomationTokensRefresh(
+  async handleTokensRefresh(
     connectionId: string,
     providerName: string,
     refresh_token: string,
@@ -90,7 +101,7 @@ export class MarketingAutomationConnectionsService {
         account_url: account_url,
         projectId: id_project,
       };
-      const data = await service.handleTokenRefresh(refreshOpts);
+      await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
       throw error;
     }

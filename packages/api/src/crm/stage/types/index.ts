@@ -2,13 +2,10 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedStageInput, UnifiedStageOutput } from './model.unified';
 import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IStageService {
-  syncStages(
-    linkedUserId: string,
-    deal_id: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalStageOutput[]>>;
+export interface IStageService extends IBaseObjectService {
+  sync(data: SyncParam): Promise<ApiResponse<OriginalStageOutput[]>>;
 }
 
 export interface IStageMapper {
@@ -22,6 +19,7 @@ export interface IStageMapper {
 
   unify(
     source: OriginalStageOutput | OriginalStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

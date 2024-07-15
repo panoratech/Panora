@@ -4,11 +4,13 @@ import {
   Body,
   Query,
   Get,
-  Patch,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -21,9 +23,11 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { FolderService } from './services/folder.service';
 import { UnifiedFolderInput, UnifiedFolderOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiTags('filestorage/folder')
-@Controller('filestorage/folder')
+@ApiTags('filestorage/folders')
+@Controller('filestorage/folders')
 export class FolderController {
   constructor(
     private readonly folderService: FolderService,
@@ -43,29 +47,27 @@ export class FolderController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
   @ApiCustomResponse(UnifiedFolderOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getFolders(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.folderService.getFolders(
+        connectionId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -88,16 +90,32 @@ export class FolderController {
     required: false,
     type: Boolean,
     description:
-      'Set to true to include data from the original Filestorage software.',
+      'Set to true to include data from the original File Storage software.',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiCustomResponse(UnifiedFolderOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getFolder(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.folderService.getFolder(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.folderService.getFolder(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 
   @ApiOperation({
@@ -111,16 +129,9 @@ export class FolderController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
   @ApiBody({ type: UnifiedFolderInput })
   @ApiCustomResponse(UnifiedFolderOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addFolder(
     @Body() unifiedFolderData: UnifiedFolderInput,
@@ -128,12 +139,13 @@ export class FolderController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.folderService.addFolder(
         unifiedFolderData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

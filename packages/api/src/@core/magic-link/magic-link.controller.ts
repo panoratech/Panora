@@ -1,4 +1,4 @@
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { MagicLinkService } from './magic-link.service';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';

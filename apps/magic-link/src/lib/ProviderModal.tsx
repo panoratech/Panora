@@ -117,7 +117,6 @@ const ProviderModal = () => {
     returnUrl: window.location.href,
     projectId: projectId,
     linkedUserId: magicLink?.id_linked_user as string,
-    //optionalApiUrl: "https://prepared-wildcat-infinitely.ngrok-free.app", //CONNECTORS_METADATA[selectedProvider?.category!][selectedProvider?.provider!].options?.local_redirect_uri_in_https == true ? "https://prepared-wildcat-infinitely.ngrok-free.app": undefined,
     onSuccess: () => {
       console.log('OAuth successful');
       setOpenSuccessDialog(true);

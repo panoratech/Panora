@@ -26,9 +26,10 @@ export interface IBankinfoMapper {
 
   unify(
     source: OriginalBankInfoOutput | OriginalBankInfoOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedBankInfoOutput | UnifiedBankInfoOutput[];
+  ): Promise<UnifiedBankInfoOutput | UnifiedBankInfoOutput[]>;
 }

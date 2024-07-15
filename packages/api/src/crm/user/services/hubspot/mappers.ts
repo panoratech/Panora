@@ -4,7 +4,7 @@ import {
   UnifiedUserOutput,
 } from '@crm/user/types/model.unified';
 import { IUserMapper } from '@crm/user/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
 
@@ -23,24 +23,32 @@ export class HubspotUserMapper implements IUserMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: HubspotUserOutput | HubspotUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleUserToUnified(source, customFieldMappings);
+      return this.mapSingleUserToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotUserOutput
-    return source.map((user) =>
-      this.mapSingleUserToUnified(user, customFieldMappings),
+    return Promise.all(
+      source.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 
   private mapSingleUserToUnified(
     user: HubspotUserOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

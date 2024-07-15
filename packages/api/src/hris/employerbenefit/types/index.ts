@@ -29,9 +29,10 @@ export interface IEmployerBenefitMapper {
 
   unify(
     source: OriginalEmployerBenefitOutput | OriginalEmployerBenefitOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEmployerBenefitOutput | UnifiedEmployerBenefitOutput[];
+  ): Promise<UnifiedEmployerBenefitOutput | UnifiedEmployerBenefitOutput[]>;
 }

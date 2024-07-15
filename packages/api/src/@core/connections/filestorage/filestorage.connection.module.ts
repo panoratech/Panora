@@ -1,30 +1,24 @@
-import { Module } from '@nestjs/common';
-import { FilestorageConnectionsService } from './services/filestorage.connection.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { WebhookModule } from '@@core/webhook/webhook.module';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceRegistry } from './services/registry.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/webhook.module';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
-import { GoogleDriveConnectionService } from './services/google_drive/google_drive.service';
-import { DropboxConnectionService } from './services/dropbox/dropbox.service';
-import { SharepointConnectionService } from './services/sharepoint/sharepoint.service';
-import { OneDriveConnectionService } from './services/onedrive/onedrive.service';
+import { Module } from '@nestjs/common';
 import { BoxConnectionService } from './services/box/box.service';
-import { ConnectionUtils } from '../@utils';
+import { DropboxConnectionService } from './services/dropbox/dropbox.service';
+import { FilestorageConnectionsService } from './services/filestorage.connection.service';
+import { GoogleDriveConnectionService } from './services/google_drive/google_drive.service';
+import { OneDriveConnectionService } from './services/onedrive/onedrive.service';
+import { ServiceRegistry } from './services/registry.service';
+import { SharepointConnectionService } from './services/sharepoint/sharepoint.service';
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, BullQueueModule],
   providers: [
     FilestorageConnectionsService,
     ServiceRegistry,
-    LoggerService,
     WebhookService,
     EnvironmentService,
-    EncryptionService,
     ConnectionsStrategiesService,
-    ConnectionUtils,
     // PROVIDERS SERVICES
     GoogleDriveConnectionService,
     DropboxConnectionService,

@@ -76,17 +76,6 @@ export type UnifiedTicketing =
   | UnifiedCollectionInput
   | UnifiedCollectionOutput;
 
-/*export const unificationMapping = {
-  [TicketingObject.ticket]: ticketUnificationMapping,
-  [TicketingObject.comment]: commentUnificationMapping,
-  [TicketingObject.user]: userUnificationMapping,
-  [TicketingObject.account]: accountUnificationMapping,
-  [TicketingObject.contact]: contactTicketingUnificationMapping,
-  [TicketingObject.team]: teamUnificationMapping,
-  [TicketingObject.tag]: tagUnificationMapping,
-  [TicketingObject.collection]: collectionUnificationMapping,
-};*/
-
 export type ITicketingService =
   | ITicketService
   | ICommentService

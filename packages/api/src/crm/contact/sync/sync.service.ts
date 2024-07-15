@@ -1,9 +1,8 @@
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { UnifiedContactOutput } from '@crm/contact/types/model.unified';
 import { CrmObject } from '@crm/@lib/@types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -14,14 +13,15 @@ import { IContactService } from '../types';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 import { ServiceRegistry } from '../services/registry.service';
 import { CRM_PROVIDERS } from '@panora/shared';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
 import { Utils } from '@crm/@lib/@utils';
-import { throwTypedError, SyncError } from '@@core/utils/errors';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
-export class SyncService implements OnModuleInit {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -30,56 +30,29 @@ export class SyncService implements OnModuleInit {
     private serviceRegistry: ServiceRegistry,
     private utils: Utils,
     private coreUnification: CoreUnification,
-    @InjectQueue('syncTasks') private syncQueue: Queue,
+    private registry: CoreSyncRegistry,
+    private bullQueueService: BullQueueService,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
+    this.registry.registerService('crm', 'contact', this);
   }
 
   async onModuleInit() {
     try {
-      await this.scheduleSyncJob();
+      await this.bullQueueService.queueSyncJob(
+        'crm-sync-contacts',
+        '0 0 * * *',
+      );
     } catch (error) {
       throw error;
     }
   }
-
-  private async scheduleSyncJob() {
-    const jobName = 'crm-sync-contacts';
-
-    // Remove existing jobs to avoid duplicates in case of application restart
-    const jobs = await this.syncQueue.getRepeatableJobs();
-    console.log(`Found ${jobs.length} repeatable jobs.`);
-    for (const job of jobs) {
-      console.log(`Checking job: ${job.name}`);
-      if (job.name === jobName) {
-        console.log(`Removing job with key: ${job.key}`);
-        await this.syncQueue.removeRepeatableByKey(job.key);
-      }
-    }
-
-    // Add new job to the queue with a CRON expression
-    console.log(`Adding new job: ${jobName}`);
-    await this.syncQueue
-      .add(
-        jobName,
-        {},
-        {
-          repeat: { cron: '*/2 * * * *' }, // Runs once a day at midnight
-        },
-      )
-      .then(() => {
-        console.log('Crm Sync Contact Job added successfully');
-      })
-      .catch((error) => {
-        console.error('Failed to add job', error);
-      });
-  }
-
   //function used by sync worker which populate our crm_contacts table
   //its role is to fetch all contacts from providers 3rd parties and save the info inside our db
   // @Cron('*/2 * * * *') // every 2 minutes (for testing)
   @Cron('0 */8 * * *') // every 8 hours
-  async syncContacts(user_id?: string) {
+  async kickstartSync(user_id?: string) {
     try {
       this.logger.log(`Syncing contacts....`);
 
@@ -113,11 +86,10 @@ export class SyncService implements OnModuleInit {
                 );
                 for (const provider of providers) {
                   try {
-                    await this.syncContactsForLinkedUser(
-                      provider,
-                      linkedUser.id_linked_user,
-                      id_project,
-                    );
+                    await this.syncForLinkedUser({
+                      integrationId: provider,
+                      linkedUserId: linkedUser.id_linked_user,
+                    });
                   } catch (error) {
                     throw error;
                   }
@@ -135,109 +107,41 @@ export class SyncService implements OnModuleInit {
   }
 
   //todo: HANDLE DATA REMOVED FROM PROVIDER
-  async syncContactsForLinkedUser(
-    integrationId: string,
-    linkedUserId: string,
-    id_project: string,
-  ) {
+  async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
-      this.logger.log(
-        `Syncing ${integrationId} contacts for linkedUser ${linkedUserId}`,
-      );
-      // check if linkedUser has a connection if not just stop sync
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: integrationId,
-          vertical: 'crm',
-        },
-      });
-      if (!connection) {
-        this.logger.warn(
-          `Skipping contacts syncing... No ${integrationId} connection was found for linked user ${linkedUserId} `,
-        );
-      }
-      // get potential fieldMappings and extract the original properties name
-      const customFieldMappings =
-        await this.fieldMappingService.getCustomFieldMappings(
-          integrationId,
-          linkedUserId,
-          'crm.contact',
-        );
-      const remoteProperties: string[] = customFieldMappings.map(
-        (mapping) => mapping.remote_id,
-      );
-
+      const { integrationId, linkedUserId } = param;
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
-      const resp: ApiResponse<OriginalContactOutput[]> =
-        await service.syncContacts(linkedUserId, remoteProperties);
+      if (!service) return;
 
-      const sourceObject: OriginalContactOutput[] = resp.data;
-      //this.logger.log('SOURCE OBJECT DATA = ' + JSON.stringify(sourceObject));
-      //unify the data according to the target obj wanted
-      const unifiedObject = (await this.coreUnification.unify<
-        OriginalContactOutput[]
-      >({
-        sourceObject,
-        targetType: CrmObject.contact,
-        providerName: integrationId,
-        vertical: 'crm',
-        customFieldMappings,
-      })) as UnifiedContactOutput[];
-
-      //insert the data in the DB with the fieldMappings (value table)
-      const contacts_data = await this.saveContactsInDb(
-        linkedUserId,
-        unifiedObject,
-        integrationId,
-        sourceObject,
-      );
-      const event = await this.prisma.events.create({
-        data: {
-          id_event: uuidv4(),
-          status: 'success',
-          type: 'crm.contact.pulled',
-          method: 'PULL',
-          url: '/pull',
-          provider: integrationId,
-          direction: '0',
-          timestamp: new Date(),
-          id_linked_user: linkedUserId,
-        },
-      });
-      await this.webhook.handleWebhook(
-        contacts_data,
-        'crm.contact.pulled',
-        id_project,
-        event.id_event,
-      );
+      await this.ingestService.syncForLinkedUser<
+        UnifiedContactOutput,
+        OriginalContactOutput,
+        IContactService
+      >(integrationId, linkedUserId, 'crm', 'contact', service, []);
     } catch (error) {
       throw error;
     }
   }
 
-  async saveContactsInDb(
+  async saveToDb(
+    connection_id: string,
     linkedUserId: string,
-    contacts: UnifiedContactOutput[],
+    data: UnifiedContactOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmContact[]> {
     try {
-      let contacts_results: CrmContact[] = [];
-      for (let i = 0; i < contacts.length; i++) {
-        const contact = contacts[i];
-        const originId = contact.remote_id;
+      const contacts_results: CrmContact[] = [];
 
-        if (!originId || originId == '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
-
+      const updateOrCreateContact = async (
+        contact: UnifiedContactOutput,
+        originId: string,
+      ) => {
         const existingContact = await this.prisma.crm_contacts.findFirst({
           where: {
             remote_id: originId,
-            remote_platform: originSource,
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
           },
           include: {
             crm_email_addresses: true,
@@ -256,34 +160,19 @@ export class SyncService implements OnModuleInit {
           contact.addresses,
         );
 
-        let unique_crm_contact_id: string;
+        const baseData: any = {
+          first_name: contact.first_name ?? null,
+          last_name: contact.last_name ?? null,
+          id_crm_user: contact.user_id ?? null,
+          modified_at: new Date(),
+        };
 
         if (existingContact) {
-          // Update the existing contact
-          let data: any = {
-            modified_at: new Date(),
-            first_name: '',
-            last_name: '',
-          };
-
-          if (contact.first_name) {
-            data = { ...data, first_name: contact.first_name };
-          }
-          if (contact.last_name) {
-            data = { ...data, last_name: contact.last_name };
-          }
-          if (contact.user_id) {
-            data = {
-              ...data,
-              id_crm_user: contact.user_id,
-            };
-          }
-
           const res = await this.prisma.crm_contacts.update({
             where: {
               id_crm_contact: existingContact.id_crm_contact,
             },
-            data: data,
+            data: baseData,
           });
 
           if (normalizedEmails && normalizedEmails.length > 0) {
@@ -304,7 +193,8 @@ export class SyncService implements OnModuleInit {
                   return this.prisma.crm_email_addresses.create({
                     data: {
                       ...email,
-                      id_crm_contact: existingContact.id_crm_contact, // Assuming 'uuid' is the ID of the related contact
+                      id_crm_contact: existingContact.id_crm_contact,
+                      id_connection: connection_id,
                     },
                   });
                 }
@@ -330,7 +220,8 @@ export class SyncService implements OnModuleInit {
                   return this.prisma.crm_phone_numbers.create({
                     data: {
                       ...phone,
-                      id_crm_contact: existingContact.id_crm_contact, // Assuming 'uuid' is the ID of the related contact
+                      id_crm_contact: existingContact.id_crm_contact,
+                      id_connection: connection_id,
                     },
                   });
                 }
@@ -352,46 +243,25 @@ export class SyncService implements OnModuleInit {
                   return this.prisma.crm_addresses.create({
                     data: {
                       ...addy,
-                      id_crm_contact: existingContact.id_crm_contact, // Assuming 'uuid' is the ID of the related contact
+                      id_crm_contact: existingContact.id_crm_contact,
+                      id_connection: connection_id,
                     },
                   });
                 }
               }),
             );
           }
-
-          unique_crm_contact_id = res.id_crm_contact;
-          contacts_results = [...contacts_results, res];
+          return res;
         } else {
-          // Create a new contact
-          this.logger.log('not existing contact ' + contact.first_name);
           const uuid = uuidv4();
-          let data: any = {
-            id_crm_contact: uuid,
-            first_name: '',
-            last_name: '',
-            created_at: new Date(),
-            modified_at: new Date(),
-            id_linked_user: linkedUserId,
-            remote_id: originId,
-            remote_platform: originSource,
-          };
-
-          if (contact.first_name) {
-            data = { ...data, first_name: contact.first_name };
-          }
-          if (contact.last_name) {
-            data = { ...data, last_name: contact.last_name };
-          }
-          if (contact.user_id) {
-            data = {
-              ...data,
-              id_crm_user: contact.user_id,
-            };
-          }
-
           const newContact = await this.prisma.crm_contacts.create({
-            data: data,
+            data: {
+              ...baseData,
+              id_crm_contact: uuid,
+              created_at: new Date(),
+              remote_id: originId ?? null,
+              id_connection: connection_id,
+            },
           });
 
           if (normalizedEmails && normalizedEmails.length > 0) {
@@ -401,6 +271,7 @@ export class SyncService implements OnModuleInit {
                   data: {
                     ...email,
                     id_crm_contact: newContact.id_crm_contact,
+                    id_connection: connection_id,
                   },
                 }),
               ),
@@ -414,6 +285,7 @@ export class SyncService implements OnModuleInit {
                   data: {
                     ...phone,
                     id_crm_contact: newContact.id_crm_contact,
+                    id_connection: connection_id,
                   },
                 }),
               ),
@@ -427,71 +299,38 @@ export class SyncService implements OnModuleInit {
                   data: {
                     ...addy,
                     id_crm_contact: newContact.id_crm_contact,
+                    id_connection: connection_id,
                   },
                 }),
               ),
             );
           }
-
-          unique_crm_contact_id = newContact.id_crm_contact;
-          contacts_results = [...contacts_results, newContact];
+          return newContact;
         }
-        // check duplicate or existing values
-        if (contact.field_mappings && contact.field_mappings.length > 0) {
-          const entity = await this.prisma.entity.create({
-            data: {
-              id_entity: uuidv4(),
-              ressource_owner_id: unique_crm_contact_id,
-            },
-          });
+      };
 
-          for (const [slug, value] of Object.entries(contact.field_mappings)) {
-            const attribute = await this.prisma.attribute.findFirst({
-              where: {
-                slug: slug,
-                source: originSource,
-                id_consumer: linkedUserId,
-              },
-            });
+      for (let i = 0; i < data.length; i++) {
+        const contact = data[i];
+        const originId = contact.remote_id;
 
-            if (attribute) {
-              await this.prisma.value.create({
-                data: {
-                  id_value: uuidv4(),
-                  data: value || 'null',
-                  attribute: {
-                    connect: {
-                      id_attribute: attribute.id_attribute,
-                    },
-                  },
-                  entity: {
-                    connect: {
-                      id_entity: entity.id_entity,
-                    },
-                  },
-                },
-              });
-            }
-          }
+        if (!originId || originId === '') {
+          throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        //insert remote_data in db
-        await this.prisma.remote_data.upsert({
-          where: {
-            ressource_owner_id: unique_crm_contact_id,
-          },
-          create: {
-            id_remote_data: uuidv4(),
-            ressource_owner_id: unique_crm_contact_id,
-            format: 'json',
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-          update: {
-            data: JSON.stringify(remote_data[i]),
-            created_at: new Date(),
-          },
-        });
+        const res = await updateOrCreateContact(contact, originId);
+        const contact_id = res.id_crm_contact;
+        contacts_results.push(res);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          contact.field_mappings,
+          contact_id,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(contact_id, remote_data[i]);
       }
       return contacts_results;
     } catch (error) {

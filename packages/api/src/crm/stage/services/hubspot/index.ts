@@ -3,12 +3,13 @@ import { IStageService } from '@crm/stage/types';
 import { CrmObject } from '@crm/@lib/@types';
 import { HubspotStageOutput, commonStageHubspotProperties } from './types';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class HubspotService implements IStageService {
@@ -24,12 +25,10 @@ export class HubspotService implements IStageService {
     this.registry.registerService('hubspot', this);
   }
 
-  async syncStages(
-    linkedUserId: string,
-    deal_id: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotStageOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotStageOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -37,20 +36,8 @@ export class HubspotService implements IStageService {
           vertical: 'crm',
         },
       });
-
-      const res = await this.prisma.crm_deals.findUnique({
-        where: { id_crm_deal: deal_id },
-      });
-
-      const commonPropertyNames = Object.keys(commonStageHubspotProperties);
-      const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/objects/deals/${res.remote_id}`;
-
-      const queryString = allProperties
-        .map((prop) => `properties=${encodeURIComponent(prop)}`)
-        .join('&');
-
-      const url = `${baseURL}?${queryString}`;
+      // get all stages for all deals
+      const url = 'https://api.hubapi.com/crm-pipelines/v1/pipelines/deals';
 
       const resp = await axios.get(url, {
         headers: {
@@ -61,20 +48,15 @@ export class HubspotService implements IStageService {
         },
       });
       this.logger.log(`Synced hubspot stages !`);
+      const final_res = resp.data.results.stages;
 
       return {
-        data: [resp.data],
+        data: final_res,
         message: 'Hubspot stages retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.stage,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

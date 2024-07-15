@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { UnifiedUserOutput } from '../types/model.unified';
 
 @Injectable()
@@ -13,6 +12,8 @@ export class UserService {
 
   async getUser(
     id_ticketing_user: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedUserOutput> {
     try {
@@ -55,9 +56,10 @@ export class UserService {
         name: user.name,
         teams: user.teams,
         field_mappings: field_mappings,
+        remote_id: user.remote_id,
+        created_at: user.created_at,
+        modified_at: user.modified_at,
       };
-
-      let res: UnifiedUserOutput = unifiedUser;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -67,19 +69,30 @@ export class UserService {
         });
         const remote_data = JSON.parse(resp.data);
 
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedUser.remote_data = remote_data;
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.user.pull',
+          method: 'GET',
+          url: '/ticketing/user',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-      return res;
+      return unifiedUser;
     } catch (error) {
       throw error;
     }
   }
 
   async getUsers(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -98,8 +111,7 @@ export class UserService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_users.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_user: cursor,
           },
         });
@@ -119,8 +131,7 @@ export class UserService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -168,6 +179,9 @@ export class UserService {
             name: user.name,
             teams: user.teams,
             field_mappings: field_mappings,
+            remote_id: user.remote_id,
+            created_at: user.created_at,
+            modified_at: user.modified_at,
           };
         }),
       );
@@ -190,7 +204,7 @@ export class UserService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

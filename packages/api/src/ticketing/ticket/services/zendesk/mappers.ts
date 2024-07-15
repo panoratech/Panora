@@ -1,22 +1,104 @@
 import { ITicketMapper } from '@ticketing/ticket/types';
 import { CustomField, ZendeskTicketInput, ZendeskTicketOutput } from './types';
 import {
+  TicketPriority,
+  TicketStatus,
+  TicketType,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { TicketingObject } from '@ticketing/@lib/@types';
 
 @Injectable()
 export class ZendeskTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
+  ) {
     this.mappersRegistry.registerService(
       'ticketing',
       'ticket',
       'zendesk',
       this,
     );
+  }
+
+  mapToTicketPriority(
+    data: 'urgent' | 'high' | 'normal' | 'low',
+  ): TicketPriority {
+    switch (data) {
+      case 'low':
+        return 'LOW';
+      case 'normal':
+        return 'MEDIUM';
+      case 'high':
+        return 'HIGH';
+      case 'urgent':
+        return 'HIGH';
+    }
+  }
+  reverseMapToTicketPriority(data: TicketPriority): string {
+    switch (data) {
+      case 'LOW':
+        return 'low';
+      case 'MEDIUM':
+        return 'normal';
+      case 'HIGH':
+        return 'high';
+    }
+  }
+
+  reverseMapToTicketType(data: TicketType) {
+    switch (data) {
+      case 'BUG':
+        return 'problem';
+      case 'SUBTASK':
+        return 'task';
+      case 'TASK':
+        return 'task';
+      case 'TO-DO':
+        return 'task';
+    }
+  }
+  mapToIssueTypeName(
+    data: 'problem' | 'incident' | 'question' | 'task',
+  ): TicketType | string {
+    switch (data) {
+      case 'problem':
+        return 'BUG';
+      case 'incident':
+        return 'BUG';
+      case 'task':
+        return 'TASK';
+      default:
+        return data;
+    }
+  }
+
+  mapToTicketStatus(
+    data: 'new' | 'open' | 'pending' | 'hold' | 'solved' | 'closed',
+  ): TicketStatus | string {
+    switch (data) {
+      case 'new':
+        return 'OPEN';
+      case 'open':
+        return 'OPEN';
+      case 'solved':
+        return 'CLOSED';
+      case 'closed':
+        return 'CLOSED';
+      default:
+        return data;
+    }
   }
 
   async desunify(
@@ -30,9 +112,9 @@ export class ZendeskTicketMapper implements ITicketMapper {
       description: source.description,
       subject: source.name,
       comment: {
-        body: source.comment.body || '',
+        body: source.comment.body || null,
         public: !source.comment.is_private || true,
-        uploads: source.comment.attachments || [], //fetch token attachments for this uuid, would be done on the fly in dest service
+        uploads: (source.attachments as string[]) ?? [], //fetch token attachments for this uuid, would be done on the fly in dest service
       },
     };
     if (source.comment.html_body) {
@@ -47,22 +129,18 @@ export class ZendeskTicketMapper implements ITicketMapper {
       result.due_at = source.due_date?.toISOString();
     }
     if (source.priority) {
-      result.priority = (
-        source.priority == 'MEDIUM' ? 'normal' : source.priority.toLowerCase()
-      ) as 'urgent' | 'high' | 'normal' | 'low';
+      result.priority = this.reverseMapToTicketPriority(
+        source.priority as TicketPriority,
+      );
     }
     if (source.status) {
       result.status = source.status.toLowerCase() as 'open' | 'closed';
     }
     if (source.tags) {
-      result.tags = source.tags;
+      result.tags = source.tags as string[];
     }
     if (source.type) {
-      result.type = source.type.toLowerCase() as
-        | 'problem'
-        | 'incident'
-        | 'question'
-        | 'task';
+      result.type = this.reverseMapToTicketType(source.type as TicketType);
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -84,23 +162,33 @@ export class ZendeskTicketMapper implements ITicketMapper {
 
   async unify(
     source: ZendeskTicketOutput | ZendeskTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleTicketToUnified(source, customFieldMappings);
+      return this.mapSingleTicketToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return Promise.all(
       source.map((ticket) =>
-        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleTicketToUnified(
     ticket: ZendeskTicketOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -118,36 +206,53 @@ export class ZendeskTicketMapper implements ITicketMapper {
       }
     }
 
-    let opts: any;
+    const opts: any = {};
 
     //TODO: contact or user ?
     if (ticket.assignee_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
-        opts = { assigned_to: [user_id] };
+        opts.assigned_to = [user_id];
       }
     }
     if (ticket.type) {
-      opts = {
-        type:
-          ticket.type === 'incident' ? 'PROBLEM' : ticket.type.toUpperCase(),
-      };
+      opts.type = this.mapToIssueTypeName(ticket.type as any) as string;
+    }
+
+    if (ticket.status) {
+      opts.status = this.mapToTicketStatus(ticket.status as any) as string;
+    }
+
+    if (ticket.priority) {
+      opts.priority = this.mapToTicketPriority(
+        ticket.priority as any,
+      ) as string;
+    }
+
+    if (ticket.tags) {
+      const tags = (await this.coreUnificationService.unify<
+        OriginalTagOutput[]
+      >({
+        sourceObject: ticket.tags,
+        targetType: TicketingObject.tag,
+        providerName: 'zendesk',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedTagOutput[];
+      opts.tags = tags;
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: String(ticket.id),
       name: ticket.subject,
-      status:
-        ticket.status === 'new' || ticket.status === 'open' ? 'OPEN' : 'CLOSED', // todo: handle pending status ?
       description: ticket.description,
       due_date: ticket.due_at ? new Date(ticket.due_at) : undefined,
-      parent_ticket: undefined, // If available, add logic to map parent ticket
-      tags: ticket.tags,
+      parent_ticket: null,
       completed_at: new Date(ticket.updated_at),
-      priority: ticket.priority,
       field_mappings: field_mappings,
       ...opts,
     };

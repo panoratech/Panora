@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -24,6 +25,8 @@ import {
   UnifiedJobInterviewStageOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('ats/jobinterviewstage')
 @Controller('ats/jobinterviewstage')
@@ -46,28 +49,26 @@ export class JobInterviewStageController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
   @ApiCustomResponse(UnifiedJobInterviewStageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getJobInterviewStages(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.jobinterviewstageService.getJobInterviewStages(
+        connectionId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -91,55 +92,29 @@ export class JobInterviewStageController {
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
   })
-  @ApiCustomResponse(UnifiedJobInterviewStageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
-  getJobInterviewStage(
-    @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    return this.jobinterviewstageService.getJobInterviewStage(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addJobInterviewStage',
-    summary: 'Create a JobInterviewStage',
-    description: 'Create a jobinterviewstage in any supported Ats software',
-  })
   @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedJobInterviewStageInput })
   @ApiCustomResponse(UnifiedJobInterviewStageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addJobInterviewStage(
-    @Body() unifiedJobInterviewStageData: UnifiedJobInterviewStageInput,
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
+  async retrieve(
     @Headers('x-connection-token') connection_token: string,
+    @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.jobinterviewstageService.addJobInterviewStage(
-        unifiedJobInterviewStageData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.jobinterviewstageService.getJobInterviewStage(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

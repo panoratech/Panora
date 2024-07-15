@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ICollectionService } from '@ticketing/collection/types';
 import { JiraCollectionOutput, JiraCollectionInput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class JiraService implements ICollectionService {
@@ -24,10 +25,10 @@ export class JiraService implements ICollectionService {
     this.registry.registerService('jira', this);
   }
 
-  async syncCollections(
-    linkedUserId: string,
-  ): Promise<ApiResponse<JiraCollectionOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<JiraCollectionOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -47,18 +48,12 @@ export class JiraService implements ICollectionService {
       this.logger.log(`Synced jira collections !`);
 
       return {
-        data: resp.data,
+        data: resp.data.values,
         message: 'Jira collections retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'jira',
-        TicketingObject.collection,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

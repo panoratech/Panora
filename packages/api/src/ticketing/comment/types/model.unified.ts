@@ -1,6 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import {
+  UnifiedAttachmentInput,
+  UnifiedAttachmentOutput,
+} from '@ticketing/attachment/types/model.unified';
 import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
+
+export type CommentCreatorType = 'USER' | 'CONTACT';
 
 export class UnifiedCommentInput {
   @ApiProperty({ type: String, description: 'The body of the comment' })
@@ -32,44 +37,44 @@ export class UnifiedCommentInput {
     message: 'Type must be either USER or CONTACT',
   })
   @IsOptional()
-  creator_type?: string;
+  creator_type?: CommentCreatorType | string;
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the ticket the comment is tied to',
+    description: 'The UUID of the ticket the comment is tied to',
   })
   @IsUUID()
   @IsOptional()
-  ticket_id?: string; // uuid of Ticket object
-
-  @ApiPropertyOptional({
-    type: String,
-    description:
-      'The uuid of the contact which the comment belongs to (if no user_id specified)',
-  })
-  @IsUUID()
-  @IsOptional()
-  contact_id?: string; // uuid of Contact object
+  ticket_id?: string; // UUID of Ticket object
 
   @ApiPropertyOptional({
     type: String,
     description:
-      'The uuid of the user which the comment belongs to (if no contact_id specified)',
+      'The UUID of the contact which the comment belongs to (if no user_id specified)',
   })
   @IsUUID()
   @IsOptional()
-  user_id?: string; // uuid of User object
+  contact_id?: string; // UUID of Contact object
+
+  @ApiPropertyOptional({
+    type: String,
+    description:
+      'The UUID of the user which the comment belongs to (if no contact_id specified)',
+  })
+  @IsUUID()
+  @IsOptional()
+  user_id?: string; // UUID of User object
 
   @ApiPropertyOptional({
     type: [String],
-    description: 'The attachements uuids tied to the comment',
+    description: 'The attachements UUIDs tied to the comment',
   })
   @IsOptional()
-  attachments?: any[]; //uuids of Attachments objects
+  attachments?: (string | UnifiedAttachmentOutput)[]; //UUIDs of Attachments objects
 }
 
 export class UnifiedCommentOutput extends UnifiedCommentInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the comment' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the comment' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -91,9 +96,16 @@ export class UnifiedCommentOutput extends UnifiedCommentInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: [UnifiedAttachmentOutput],
-    description: 'The attachemnets tied to the comment',
+    type: {},
+    description: 'The created date of the object',
   })
   @IsOptional()
-  attachments?: UnifiedAttachmentOutput[]; // Attachments objects
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

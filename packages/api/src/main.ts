@@ -1,4 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import '@@core/@core-services/sentry/instrument';
+import * as Sentry from '@sentry/node';
+import {
+  BaseExceptionFilter,
+  HttpAdapterHost,
+  NestFactory,
+} from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';

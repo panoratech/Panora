@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
-import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
 
 @Injectable()
 export class OrganisationsService {

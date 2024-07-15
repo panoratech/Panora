@@ -23,7 +23,7 @@ export class UnifiedAccountInput {
 }
 
 export class UnifiedAccountOutput extends UnifiedAccountInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the account' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the account' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -43,4 +43,18 @@ export class UnifiedAccountOutput extends UnifiedAccountInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

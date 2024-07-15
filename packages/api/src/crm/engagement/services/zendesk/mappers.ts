@@ -6,7 +6,7 @@ import {
 } from '@crm/engagement/types/model.unified';
 import { IEngagementMapper } from '@crm/engagement/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -44,14 +44,21 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
     }[],
   ): Promise<ZendeskEngagementInput> {
     const result: ZendeskEngagementInput = {
-      summary: source.content || '',
-      incoming: source.direction === 'incoming', // Example mapping
+      summary: source.content || null,
+      incoming: source.direction === 'INBOUND',
     };
 
     if (source.start_at && source.end_time) {
-      // TODO; compute a date difference instead of raw difference
-      result.duration =
-        source.end_time.getSeconds() - source.start_at.getSeconds();
+      const startDate = new Date(source.start_at);
+      const endDate = new Date(source.end_time);
+
+      // Calculate the difference in milliseconds
+      const diffMilliseconds = endDate.getTime() - startDate.getTime();
+
+      // Convert milliseconds to seconds
+      const durationInSeconds = Math.round(diffMilliseconds / 1000);
+
+      result.duration = durationInSeconds;
     }
 
     if (source.user_id) {
@@ -78,6 +85,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
   async unify(
     source: ZendeskEngagementOutput | ZendeskEngagementOutput[],
     engagement_type: string,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -85,7 +93,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
   ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
     switch (engagement_type) {
       case 'CALL':
-        return await this.unifyCall(source, customFieldMappings);
+        return await this.unifyCall(source, connectionId, customFieldMappings);
       case 'MEETING':
         return;
       case 'EMAIL':
@@ -97,24 +105,34 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
 
   private async unifyCall(
     source: ZendeskEngagementOutput | ZendeskEngagementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ) {
     if (!Array.isArray(source)) {
-      return this.mapSingleEngagementCallToUnified(source, customFieldMappings);
+      return this.mapSingleEngagementCallToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of ZendeskEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementCallToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementCallToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleEngagementCallToUnified(
     engagement: ZendeskEngagementOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -131,25 +149,25 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
-        'zendesk',
+        connectionId,
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
     }
 
-    // Example mapping of 'direction' based on 'incoming' boolean value
-    const direction = engagement.incoming ? 'incoming' : 'outgoing';
+    const direction = engagement.incoming ? 'INBOUND' : 'OUTBOUND';
 
     return {
       remote_id: String(engagement.id),
       content: engagement.summary,
-      subject: '',
+      subject: null,
       start_at: new Date(engagement.made_at),
       end_time: new Date(engagement.updated_at),
-      type: 'CALL', // Placeholder, needs appropriate mapping
+      type: 'CALL',
       field_mappings,
       direction: direction,
       ...opts,

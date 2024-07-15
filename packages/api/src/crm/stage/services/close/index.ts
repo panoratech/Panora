@@ -3,12 +3,14 @@ import { IStageService } from '@crm/stage/types';
 import { CrmObject } from '@crm/@lib/@types';
 import { CloseStageOutput, commonStageCloseProperties } from './types';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class CloseService implements IStageService {
@@ -24,12 +26,10 @@ export class CloseService implements IStageService {
     this.registry.registerService('close', this);
   }
 
-  async syncStages(
-    linkedUserId: string,
-    deal_id: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<CloseStageOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<CloseStageOutput[]>> {
     try {
+      const { linkedUserId, deal_id } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -39,7 +39,7 @@ export class CloseService implements IStageService {
       });
 
       const res = await this.prisma.crm_deals.findUnique({
-        where: { id_crm_deal: deal_id },
+        where: { id_crm_deal: deal_id as string },
       });
       const baseURL = `${connection.account_url}/activity/status_change/opportunity/?opportunity_id=${res.remote_id}`;
 
@@ -58,13 +58,7 @@ export class CloseService implements IStageService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.stage,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

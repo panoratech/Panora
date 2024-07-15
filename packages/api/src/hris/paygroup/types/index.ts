@@ -26,9 +26,10 @@ export interface IPayGroupMapper {
 
   unify(
     source: OriginalPayGroupOutput | OriginalPayGroupOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedPayGroupOutput | UnifiedPayGroupOutput[];
+  ): Promise<UnifiedPayGroupOutput | UnifiedPayGroupOutput[]>;
 }

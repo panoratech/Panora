@@ -1,31 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import axios from 'axios';
-import { ICrmConnectionService } from '../../types';
-import { LoggerService } from '@@core/logger/logger.service';
-import {
-  Action,
-  ActionType,
-  ConnectionsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceRegistry } from '../registry.service';
-import {
-  OAuth2AuthData,
-  CONNECTORS_METADATA,
-  providerToType,
-} from '@panora/shared';
-import { AuthStrategy } from '@panora/shared';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
   OAuthCallbackParams,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { Injectable } from '@nestjs/common';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { ICrmConnectionService } from '../../types';
+import { ServiceRegistry } from '../registry.service';
 
 export interface HubspotOAuthResponse {
   refresh_token: string;
@@ -149,31 +142,37 @@ export class HubspotConnectionService implements ICrmConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`; //tocheck
-
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
-      const formData = new URLSearchParams({
+      /*const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
-        redirect_uri: REDIRECT_URI,
+        //redirect_uri: REDIRECT_URI,
         refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
-      const res = await axios.post(
-        'https://api.hubapi.com/oauth/v1/token',
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
+      });*/
+
+      const params = {
+        grant_type: 'refresh_token',
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
+        //redirect_uri: REDIRECT_URI,
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+      };
+
+      const queryString = new URLSearchParams(params).toString();
+      const url = `https://api.hubapi.com/oauth/v1/token?${queryString}`;
+      const res = await axios.post(url, null, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
         },
-      );
+      });
       const data: HubspotOAuthResponse = res.data;
-      await this.prisma.connections.update({
+      const res_ = await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
         },
@@ -185,7 +184,7 @@ export class HubspotConnectionService implements ICrmConnectionService {
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : hubspot ');
+      this.logger.log('OAuth credentials updated : hubspot');
     } catch (error) {
       throw error;
     }

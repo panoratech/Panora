@@ -6,7 +6,7 @@ import {
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 
 @Injectable()
 export class CloseCompanyMapper implements ICompanyMapper {
@@ -48,24 +48,34 @@ export class CloseCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: CloseCompanyOutput | CloseCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of CloseCompanyOutput
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: CloseCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -74,14 +84,14 @@ export class CloseCompanyMapper implements ICompanyMapper {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
-        field_mappings[mapping.slug] = company[mapping.remote_id];
+        field_mappings[mapping.slug] = company[`custom.${mapping.remote_id}`];
       }
     }
     let opts: any = {};
     if (company?.created_by || company?.custom?.close_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         (company?.created_by || company?.custom?.close_owner_id) as string,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -92,8 +102,7 @@ export class CloseCompanyMapper implements ICompanyMapper {
     return {
       remote_id: company.id,
       name: company.name,
-      industry: company?.custom?.Industry || '',
-      number_of_employees: company?.custom?.employees || 0, // Placeholder, as there's no direct mapping provided
+      number_of_employees: company?.custom?.employees || null,
       addresses: company?.addresses?.map((address) => ({
         street_1: address.address_1,
         street_2: address.address_2,
@@ -103,8 +112,8 @@ export class CloseCompanyMapper implements ICompanyMapper {
         country: address.country,
         address_type: address.label,
         owner_type: 'company',
-      })), // Assuming 'street', 'city', 'state', 'postal_code', 'country' are properties in company.properties
-      phone_numbers: [],
+      })),
+      phone_numbers: null,
       field_mappings,
       ...opts,
     };

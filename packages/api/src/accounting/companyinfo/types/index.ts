@@ -29,9 +29,10 @@ export interface ICompanyInfoMapper {
 
   unify(
     source: OriginalCompanyInfoOutput | OriginalCompanyInfoOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCompanyInfoOutput | UnifiedCompanyInfoOutput[];
+  ): Promise<UnifiedCompanyInfoOutput | UnifiedCompanyInfoOutput[]>;
 }

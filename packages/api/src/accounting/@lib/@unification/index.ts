@@ -2,8 +2,8 @@ import { AccountingObject } from '@accounting/@lib/@types';
 import { Unified, UnifyReturnType } from '@@core/utils/types';
 import { AccountingObjectInput } from '@@core/utils/types/original/original.accounting';
 import { UnifySourceType } from '@@core/utils/types/unify.output';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
 import { IUnification } from '@@core/utils/types/interface';
 import { Injectable } from '@nestjs/common';
 
@@ -48,11 +48,13 @@ export class AccountingUnificationService implements IUnification {
     sourceObject,
     targetType_,
     providerName,
+    connectionId,
     customFieldMappings,
   }: {
     sourceObject: T;
     targetType_: AccountingObject;
     providerName: string;
+    connectionId: string;
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -65,7 +67,7 @@ export class AccountingUnificationService implements IUnification {
     );
 
     if (mapping) {
-      return mapping.unify(sourceObject, customFieldMappings);
+      return mapping.unify(sourceObject, connectionId, customFieldMappings);
     }
 
     throw new Error(

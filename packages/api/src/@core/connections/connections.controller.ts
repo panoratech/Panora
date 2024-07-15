@@ -1,18 +1,19 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { ConnectionsError } from '@@core/utils/errors';
 import {
+  Body,
   Controller,
   Get,
+  Param,
+  Post,
   Query,
+  Request,
   Res,
   UseGuards,
-  Request,
-  Post,
-  Body,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { CrmConnectionsService } from './crm/services/crm.connection.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ConnectionsError } from '@@core/utils/errors';
-import { PrismaService } from '@@core/prisma/prisma.service';
 import {
   ApiBody,
   ApiOperation,
@@ -20,16 +21,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
-import { ConnectorCategory, CONNECTORS_METADATA } from '@panora/shared';
-import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
-import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
-import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-import { CoreSyncService } from '@@core/sync/sync.service';
-import { HrisConnectionsService } from './hris/services/hris.connection.service';
-import { FilestorageConnectionsService } from './filestorage/services/filestorage.connection.service';
-import { AtsConnectionsService } from './ats/services/ats.connection.service';
-import { ManagementConnectionsService } from './management/services/management.connection.service';
+import { Response } from 'express';
 
 export type StateDataType = {
   projectId: string;
@@ -48,17 +40,9 @@ export class BodyDataType {
 @Controller('connections')
 export class ConnectionsController {
   constructor(
-    private readonly crmConnectionsService: CrmConnectionsService,
-    private readonly ticketingConnectionsService: TicketingConnectionsService,
-    private readonly accountingConnectionsService: AccountingConnectionsService,
-    private readonly marketingautomationConnectionsService: MarketingAutomationConnectionsService,
-    private readonly filestorageConnectionsService: FilestorageConnectionsService,
-    private readonly hrisConnectionsService: HrisConnectionsService,
-    private readonly atsConnectionsService: AtsConnectionsService,
-    private readonly managementConnectionsService: ManagementConnectionsService,
+    private categoryConnectionRegistry: CategoryConnectionRegistry,
     private logger: LoggerService,
     private prisma: PrismaService,
-    private coreSync: CoreSyncService,
   ) {
     this.logger.setContext(ConnectionsController.name);
   }
@@ -73,7 +57,7 @@ export class ConnectionsController {
   @Get('oauth/callback')
   async handleOAuthCallback(@Res() res: Response, @Query() query: any) {
     try {
-      const { state, code } = query;
+      const { state, code, location } = query;
       if (!code) {
         throw new ConnectionsError({
           name: 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR',
@@ -92,69 +76,18 @@ export class ConnectionsController {
       const { projectId, vertical, linkedUserId, providerName, returnUrl } =
         stateData;
 
-      switch (vertical.toLowerCase()) {
-        case ConnectorCategory.Crm:
-          const { location } = query;
-          await this.crmConnectionsService.handleCrmCallBack(
-            providerName,
-            { linkedUserId, projectId, code, location },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Ats:
-          await this.atsConnectionsService.handleAtsCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Accounting:
-          await this.accountingConnectionsService.handleAccountingCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.FileStorage:
-          await this.filestorageConnectionsService.handleFilestorageCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Hris:
-          await this.hrisConnectionsService.handleHrisCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.MarketingAutomation:
-          await this.marketingautomationConnectionsService.handleMarketingAutomationCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Ticketing:
-          await this.ticketingConnectionsService.handleTicketingCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Management:
-          await this.managementConnectionsService.handleManagementCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-      }
+      const service = this.categoryConnectionRegistry.getService(
+        vertical.toLowerCase(),
+      );
+      await service.handleCallBack(
+        providerName,
+        { linkedUserId, projectId, code, location },
+        'oauth',
+      );
 
       res.redirect(returnUrl);
 
-      if (
+      /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
       ) {
@@ -164,9 +97,8 @@ export class ConnectionsController {
           vertical.toLowerCase(),
           providerName,
           linkedUserId,
-          projectId,
         );
-      }
+      }*/
     } catch (error) {
       throw error;
     }
@@ -199,115 +131,35 @@ export class ConnectionsController {
   })
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiBody({ type: BodyDataType })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({ status: 201 })
   @Post('apikey/callback')
-  async handleApiKeyCallback(
-    @Res() res: Response,
-    @Query() query: any,
-    @Body() body: BodyDataType,
-  ) {
+  async handleApiKeyCallback(@Query() query: any, @Body() body: BodyDataType) {
     try {
       const { state } = query;
       if (!state) {
-        throw ReferenceError('State not found');
+        throw new ConnectionsError({
+          name: 'API_CALLBACK_STATE_NOT_FOUND_ERROR',
+          message: `No Callback Params found for state, found ${state}`,
+        });
       }
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
-      const { projectId, vertical, linkedUserId, providerName } =
-        stateData;
+      const { projectId, vertical, linkedUserId, providerName } = stateData;
       const { apikey, ...body_data } = body;
-      switch (vertical.toLowerCase()) {
-        case ConnectorCategory.Crm:
-          await this.crmConnectionsService.handleCrmCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.Ats:
-          await this.atsConnectionsService.handleAtsCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.Accounting:
-          await this.accountingConnectionsService.handleAccountingCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.FileStorage:
-          await this.filestorageConnectionsService.handleFilestorageCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.Hris:
-          await this.hrisConnectionsService.handleHrisCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.MarketingAutomation:
-          await this.marketingautomationConnectionsService.handleMarketingAutomationCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.Ticketing:
-          await this.ticketingConnectionsService.handleTicketingCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-      }
 
-      res.send(JSON.stringify({ message: "The API Key connection successfully created" }))
-
-      // res.redirect(returnUrl);
-
-      if (
+      await this.categoryConnectionRegistry
+        .getService(vertical.toLowerCase())
+        .handleCallBack(
+          providerName,
+          {
+            projectId,
+            linkedUserId,
+            apikey,
+            body_data,
+          },
+          'apikey',
+        );
+      /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
       ) {
@@ -317,16 +169,15 @@ export class ConnectionsController {
           vertical.toLowerCase(),
           providerName,
           linkedUserId,
-          projectId,
         );
-      }
+      }*/
     } catch (error) {
       throw error;
     }
   }
 
   @ApiOperation({
-    operationId: 'getConnections',
+    operationId: 'list',
     summary: 'List Connections',
   })
   @ApiResponse({ status: 200 })
@@ -335,10 +186,22 @@ export class ConnectionsController {
   async list(@Request() req: any) {
     try {
       const { id_project } = req.user;
-      console.log('Req data is:', req.user);
       return await this.prisma.connections.findMany({
         where: {
           id_project: id_project,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get('list')
+  async list2(@Query('projectid') req: string) {
+    try {
+      return await this.prisma.connections.findMany({
+        where: {
+          id_project: req,
         },
       });
     } catch (error) {

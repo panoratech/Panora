@@ -3,12 +3,13 @@ import { INoteService } from '@crm/note/types';
 import { CrmObject } from '@crm/@lib/@types';
 import { ZendeskNoteInput, ZendeskNoteOutput } from './types';
 import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class ZendeskService implements INoteService {
   constructor(
@@ -56,20 +57,14 @@ export class ZendeskService implements INoteService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.note,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncNotes(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZendeskNoteOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskNoteOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -96,13 +91,7 @@ export class ZendeskService implements INoteService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.note,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

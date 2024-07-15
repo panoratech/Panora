@@ -4,7 +4,7 @@ import {
   UnifiedUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { FrontUserInput, FrontUserOutput } from './types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -25,26 +25,30 @@ export class FrontUserMapper implements IUserMapper {
 
   unify(
     source: FrontUserOutput | FrontUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
-    return sourcesArray.map((user) =>
-      this.mapSingleUserToUnified(user, customFieldMappings),
+    return Promise.all(
+      sourcesArray.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleUserToUnified(
+  private async mapSingleUserToUnified(
     user: FrontUserOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput {
+  ): Promise<UnifiedUserOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -53,9 +57,10 @@ export class FrontUserMapper implements IUserMapper {
     }
 
     const unifiedUser: UnifiedUserOutput = {
-      remote_id: user.id,
+      remote_id: String(user.id),
+      remote_data: user,
       name: `${user.last_name} ${user.last_name}`,
-      email_address: user.email,
+      email_address: user.email || null,
       field_mappings: field_mappings,
     };
 

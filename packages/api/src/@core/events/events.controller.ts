@@ -8,7 +8,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginationDto } from '@@core/utils/dtos/pagination.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';

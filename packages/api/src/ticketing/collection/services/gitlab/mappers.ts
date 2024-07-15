@@ -4,7 +4,7 @@ import {
   UnifiedCollectionInput,
   UnifiedCollectionOutput,
 } from '@ticketing/collection/types/model.unified';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -27,7 +27,7 @@ export class GitlabCollectionMapper implements ICollectionMapper {
   ): GitlabCollectionInput {
     const result: GitlabCollectionInput = {
       name: source.name,
-      description: source.description ? source.description : '',
+      description: source.description ? source.description : null,
       path: source.name,
     };
 
@@ -36,6 +36,7 @@ export class GitlabCollectionMapper implements ICollectionMapper {
 
   unify(
     source: GitlabCollectionOutput | GitlabCollectionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -45,12 +46,17 @@ export class GitlabCollectionMapper implements ICollectionMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((collection) =>
-      this.mapSingleCollectionToUnified(collection, customFieldMappings),
+      this.mapSingleCollectionToUnified(
+        collection,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 
   private mapSingleCollectionToUnified(
     collection: GitlabCollectionOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -58,6 +64,7 @@ export class GitlabCollectionMapper implements ICollectionMapper {
   ): UnifiedCollectionOutput {
     const unifiedCollection: UnifiedCollectionOutput = {
       remote_id: String(collection.id),
+      remote_data: collection,
       name: collection.name,
       description: collection.name,
       collection_type: 'PROJECT',

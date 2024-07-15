@@ -29,9 +29,10 @@ export interface ITimeoffBalanceMapper {
 
   unify(
     source: OriginalTimeoffBalanceOutput | OriginalTimeoffBalanceOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTimeoffBalanceOutput | UnifiedTimeoffBalanceOutput[];
+  ): Promise<UnifiedTimeoffBalanceOutput | UnifiedTimeoffBalanceOutput[]>;
 }

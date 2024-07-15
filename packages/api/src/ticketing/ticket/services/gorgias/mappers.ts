@@ -1,22 +1,41 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
 import { ITicketMapper } from '@ticketing/ticket/types';
-import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
 import {
+  TicketStatus,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { Injectable } from '@nestjs/common';
+import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
+import { GorgiasTagOutput } from '@ticketing/tag/services/gorgias/types';
 
 @Injectable()
 export class GorgiasTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private coreUnificationService: CoreUnification,
+  ) {
     this.mappersRegistry.registerService(
       'ticketing',
       'ticket',
       'gorgias',
       this,
     );
+  }
+
+  mapToTicketStatus(data: 'open' | 'closed'): TicketStatus {
+    switch (data) {
+      case 'open':
+        return 'OPEN';
+      case 'closed':
+        return 'CLOSED';
+    }
   }
 
   async desunify(
@@ -36,15 +55,11 @@ export class GorgiasTicketMapper implements ITicketMapper {
           via: source.type ?? 'email',
           from_agent: false,
           channel: source.type ?? 'email',
-          body_html: source.comment.html_body || '',
-          body_text: source.comment.body || '',
-          attachments: source.comment.attachments
-            ? source.comment.attachments.map((att) => ({
-                extra: att,
-              }))
-            : [],
+          body_html: source.comment.html_body || null,
+          body_text: source.comment.body || null,
+          attachments: (source.attachments as string[]) ?? [],
           sender:
-            source.comment.creator_type === 'user'
+            source.comment.creator_type === 'USER'
               ? {
                   id: Number(
                     await this.utils.getAsigneeRemoteIdFromUserUuid(
@@ -71,7 +86,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
     }
 
     if (source.tags) {
-      result.tags = source.tags.map((tag) => ({ name: tag }));
+      result.tags = (source.tags as string[]).map((tag) => ({ name: tag }));
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -91,6 +106,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
 
   async unify(
     source: GorgiasTicketOutput | GorgiasTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -99,13 +115,18 @@ export class GorgiasTicketMapper implements ITicketMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
     return Promise.all(
       sourcesArray.map(async (ticket) =>
-        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleTicketToUnified(
     ticket: GorgiasTicketOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -118,28 +139,46 @@ export class GorgiasTicketMapper implements ITicketMapper {
       }
     }
 
-    let opts: any;
+    let opts: any = {};
 
     if (ticket.assignee_user) {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee_user.id),
-        'gorgias',
+        connectionId,
       );
       if (user_id) {
-        opts = { assigned_to: [user_id] };
+        opts = {
+          ...opts,
+          assigned_to: [user_id],
+        };
       }
     }
+    if (ticket.tags) {
+      const tags = (await this.coreUnificationService.unify<
+        OriginalTagOutput[]
+      >({
+        sourceObject: ticket.tags as GorgiasTagOutput[],
+        targetType: TicketingObject.tag,
+        providerName: 'gorgias',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedTagOutput[];
+      opts = {
+        ...opts,
+        tags: tags,
+      };
+    }
 
-    // Assuming additional processing is needed to fully populate the UnifiedTicketOutput
     const unifiedTicket: UnifiedTicketOutput = {
       remote_id: String(ticket.id),
+      remote_data: ticket,
       name: ticket.subject,
-      status: ticket.status,
-      description: ticket.subject, // Assuming the description is similar to the subject
+      status: this.mapToTicketStatus(ticket.status as any),
+      description: ticket.subject,
       field_mappings,
       due_date: new Date(ticket.created_datetime),
-      tags: ticket.tags?.map((tag) => tag.name),
       ...opts,
     };
 

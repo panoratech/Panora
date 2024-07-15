@@ -1,17 +1,35 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
 import { ITicketMapper } from '@ticketing/ticket/types';
-import { GithubTicketInput, GithubTicketOutput } from './types';
 import {
+  TicketStatus,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { Injectable } from '@nestjs/common';
+import { GithubTicketInput, GithubTicketOutput } from './types';
 
 @Injectable()
 export class GithubTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private coreUnificationService: CoreUnification,
+  ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'github', this);
+  }
+
+  mapToTicketStatus(data: 'open' | 'closed'): TicketStatus {
+    switch (data) {
+      case 'open':
+        return 'OPEN';
+      case 'closed':
+        return 'CLOSED';
+    }
   }
 
   async desunify(
@@ -25,7 +43,7 @@ export class GithubTicketMapper implements ITicketMapper {
       title: source.name,
       body: source.description,
       assignees: [],
-      labels: source.tags || [],
+      labels: (source.tags as string[]) || [],
     };
 
     // Assuming that 'assigned_to' contains user UUIDs that need to be converted to GitHub usernames
@@ -59,6 +77,7 @@ export class GithubTicketMapper implements ITicketMapper {
 
   async unify(
     source: GithubTicketOutput | GithubTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -85,7 +104,7 @@ export class GithubTicketMapper implements ITicketMapper {
           for (const assignee of ticket.assignees) {
             const userUuid = await this.utils.getUserUuidFromRemoteId(
               String(assignee.id),
-              'github',
+              connectionId,
             );
             if (userUuid) {
               opts.assigned_to.push(userUuid);
@@ -93,12 +112,27 @@ export class GithubTicketMapper implements ITicketMapper {
           }
         }
 
+        /*TODO: first implement github tags 
+        if (ticket.labels) {
+          const tags = (await this.coreUnificationService.unify<
+            OriginalTagOutput[]
+          >({
+            sourceObject: ticket.labels,
+            targetType: TicketingObject.tag,
+            providerName: 'github',
+            vertical: 'ticketing',
+            connectionId: connectionId,
+            customFieldMappings: [],
+          })) as UnifiedTagOutput[];
+          opts.tags = tags;
+        }*/
+
         const unifiedTicket: UnifiedTicketOutput = {
           remote_id: String(ticket.id),
+          remote_data: ticket,
           name: ticket.title,
           description: ticket.body,
-          status: ticket.state,
-          tags: ticket.labels.map((label) => label.name),
+          status: this.mapToTicketStatus(ticket.state as any),
           field_mappings: field_mappings,
           ...opts,
         };

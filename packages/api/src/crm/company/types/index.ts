@@ -2,17 +2,15 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedCompanyInput, UnifiedCompanyOutput } from './model.unified';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface ICompanyService {
+export interface ICompanyService extends IBaseObjectService {
   addCompany(
     companyData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalCompanyOutput>>;
 
-  syncCompanies(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalCompanyOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalCompanyOutput[]>>;
 }
 
 export interface ICompanyMapper {
@@ -26,6 +24,7 @@ export interface ICompanyMapper {
 
   unify(
     source: OriginalCompanyOutput | OriginalCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

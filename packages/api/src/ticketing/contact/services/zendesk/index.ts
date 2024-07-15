@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EnvironmentService } from '@@core/environment/environment.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { IContactService } from '@ticketing/contact/types';
 import { ZendeskContactOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZendeskService implements IContactService {
@@ -26,11 +27,10 @@ export class ZendeskService implements IContactService {
     this.registry.registerService('zendesk', this);
   }
 
-  async syncContacts(
-    linkedUserId: string,
-    remote_account_id?: string,
-  ): Promise<ApiResponse<ZendeskContactOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
+      const { linkedUserId, webhook_remote_identifier } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -38,8 +38,13 @@ export class ZendeskService implements IContactService {
           vertical: 'ticketing',
         },
       });
-      const request_url = remote_account_id
-        ? `${connection.account_url}/users/${remote_account_id}.json`
+      let remote_contact_id;
+      if (webhook_remote_identifier) {
+        remote_contact_id = webhook_remote_identifier as string;
+      }
+
+      const request_url = remote_contact_id
+        ? `${connection.account_url}/users/${remote_contact_id}.json`
         : `${connection.account_url}/users.json`;
 
       const resp = await axios.get(request_url, {
@@ -51,7 +56,7 @@ export class ZendeskService implements IContactService {
         },
       });
 
-      const contacts: ZendeskContactOutput[] = remote_account_id
+      const contacts: ZendeskContactOutput[] = remote_contact_id
         ? [resp.data.user]
         : resp.data.users;
       const filteredContacts = contacts.filter(
@@ -65,13 +70,7 @@ export class ZendeskService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.contact,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

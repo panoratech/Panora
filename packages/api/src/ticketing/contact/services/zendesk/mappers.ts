@@ -4,7 +4,7 @@ import {
   UnifiedContactInput,
   UnifiedContactOutput,
 } from '@ticketing/contact/types/model.unified';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -30,21 +30,27 @@ export class ZendeskContactMapper implements IContactMapper {
 
   unify(
     source: ZendeskContactOutput | ZendeskContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedContactOutput | UnifiedContactOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
+      return this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return source.map((ticket) =>
-      this.mapSingleContactToUnified(ticket, customFieldMappings),
+      this.mapSingleContactToUnified(ticket, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleContactToUnified(
     contact: ZendeskContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -59,6 +65,7 @@ export class ZendeskContactMapper implements IContactMapper {
 
     const unifiedContact: UnifiedContactOutput = {
       remote_id: String(contact.id),
+      remote_data: contact,
       name: contact.name,
       email_address: contact.email,
       phone_number: contact.phone,

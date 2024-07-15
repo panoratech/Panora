@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
@@ -11,6 +11,7 @@ import { GorgiasCommentInput, GorgiasCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
 import { Utils } from '@ticketing/@lib/@utils';
 import * as fs from 'fs';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GorgiasService implements ICommentService {
@@ -41,43 +42,9 @@ export class GorgiasService implements ICommentService {
         },
       });
 
-      let uploads = [];
-      const uuids = commentData.attachments as any[];
-      if (uuids && uuids.length > 0) {
-        const attachmentPromises = uuids.map(async (uuid) => {
-          const res = await this.prisma.tcg_attachments.findUnique({
-            where: {
-              id_tcg_attachment: uuid.extra,
-            },
-          });
-          if (!res) {
-            throw new ReferenceError(
-              `tcg_attachment not found for uuid ${uuid}`,
-            );
-          }
-          // Assuming you want to construct the right binary attachment here
-          // For now, we'll just return the URL
-          const stats = fs.statSync(res.file_url);
-          return {
-            url: res.file_url,
-            name: res.file_name,
-            size: stats.size,
-            content_type: 'application/pdf', //todo
-          };
-        });
-        uploads = await Promise.all(attachmentPromises);
-      }
-
-      // Assuming you want to modify the comment object here
-      // For now, we'll just add the uploads to the comment
-      const data = {
-        ...commentData,
-        attachments: uploads,
-      };
-
       const resp = await axios.post(
         `${connection.account_url}/tickets/${remoteIdTicket}/messages`,
-        JSON.stringify(data),
+        JSON.stringify(commentData),
         {
           headers: {
             'Content-Type': 'application/json',
@@ -94,20 +61,13 @@ export class GorgiasService implements ICommentService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.comment,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
-  async syncComments(
-    linkedUserId: string,
-    id_ticket: string,
-  ): Promise<ApiResponse<GorgiasCommentOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GorgiasCommentOutput[]>> {
     try {
+      const { linkedUserId, id_ticket } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -118,7 +78,7 @@ export class GorgiasService implements ICommentService {
       //retrieve ticket remote id so we can retrieve the comments in the original software
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
-          id_tcg_ticket: id_ticket,
+          id_tcg_ticket: id_ticket as string,
         },
         select: {
           remote_id: true,
@@ -144,13 +104,7 @@ export class GorgiasService implements ICommentService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.comment,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

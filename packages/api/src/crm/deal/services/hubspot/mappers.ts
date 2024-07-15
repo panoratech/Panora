@@ -5,7 +5,7 @@ import {
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -24,9 +24,9 @@ export class HubspotDealMapper implements IDealMapper {
     const result: HubspotDealInput = {
       dealname: source.name,
       amount: source.amount.toString(),
-      pipeline: source.stage_id || '',
-      closedate: '',
-      dealstage: '',
+      pipeline: source.stage_id || null,
+      closedate: null,
+      dealstage: null,
     };
 
     if (source.user_id) {
@@ -40,7 +40,7 @@ export class HubspotDealMapper implements IDealMapper {
     /*if (source.stage_id) {
       const stage_id = await this.utils.getRemo(source.user_id);
       if (owner_id) {
-        result.dealstage = '';
+        result.dealstage = null;
       }
     }*/
 
@@ -59,24 +59,30 @@ export class HubspotDealMapper implements IDealMapper {
 
   async unify(
     source: HubspotDealOutput | HubspotDealOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, customFieldMappings);
+      return await this.mapSingleDealToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotDealOutput
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleDealToUnified(deal, customFieldMappings),
+        this.mapSingleDealToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleDealToUnified(
     deal: HubspotDealOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -93,10 +99,11 @@ export class HubspotDealMapper implements IDealMapper {
     if (deal.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         deal.properties.hubspot_owner_id,
-        'hubspot',
+        connectionId,
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -109,11 +116,23 @@ export class HubspotDealMapper implements IDealMapper {
       };
     }
 
+    if (deal.properties.dealstage) {
+      const stage_id = await this.utils.getStageUuidFromStageName(
+        deal.properties.dealstage,
+        connectionId,
+      );
+      if (stage_id) {
+        opts = {
+          ...opts,
+          stage_id: stage_id,
+        };
+      }
+    }
+
     return {
       remote_id: deal.id,
       name: deal.properties.dealname,
-      description: deal.properties.dealname, // Placeholder if there's no direct mapping
-      //TODO; stage_id: deal.properties.dealstage,
+      description: null,
       field_mappings,
       ...opts,
     };

@@ -97,6 +97,27 @@ export function needsSubdomain(provider: string, vertical: string): boolean {
     return false;
 }
 
+export function needsScope(provider: string, vertical: string): boolean {
+    // Check if the vertical exists in the config
+    if (!CONNECTORS_METADATA[vertical]) {
+        console.error(`Vertical ${vertical} not found in CONNECTORS_METADATA.`);
+        return false;
+    }
+
+    // Check if the provider exists under the specified vertical
+    if (!CONNECTORS_METADATA[vertical][provider]) {
+        console.error(`Provider ${provider} not found under vertical ${vertical}.`);
+        return false;
+    }
+
+    // Extract the provider's config
+    const providerConfig = CONNECTORS_METADATA[vertical][provider];
+    if(!providerConfig.scopes) {
+        return false;
+    }
+    return true;
+}
+
 export function needsEndUserSubdomain(provider: string, vertical: string): boolean {
     // Check if the vertical exists in the config
     if (!CONNECTORS_METADATA[vertical]) {

@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
+export type TaskStatus = 'PENDING' | 'COMPLETED';
 export class UnifiedTaskInput {
   @ApiProperty({ type: String, description: 'The subject of the task' })
   @IsString()
@@ -18,7 +19,7 @@ export class UnifiedTaskInput {
   @IsIn(['PENDING', 'COMPLETED'], {
     message: 'Type must be either PENDING or COMPLETED',
   })
-  status: string;
+  status: TaskStatus | string;
 
   @ApiPropertyOptional({ description: 'The due date of the task' })
   @IsOptional()
@@ -30,7 +31,7 @@ export class UnifiedTaskInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the user tied to the task',
+    description: 'The UUID of the user tied to the task',
   })
   @IsUUID()
   @IsOptional()
@@ -38,7 +39,7 @@ export class UnifiedTaskInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid fo the company tied to the task',
+    description: 'The UUID fo the company tied to the task',
   })
   @IsUUID()
   @IsOptional()
@@ -46,7 +47,7 @@ export class UnifiedTaskInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the deal tied to the task',
+    description: 'The UUID of the deal tied to the task',
   })
   @IsString()
   @IsOptional()
@@ -62,7 +63,7 @@ export class UnifiedTaskInput {
 }
 
 export class UnifiedTaskOutput extends UnifiedTaskInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the task' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the task' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -83,4 +84,18 @@ export class UnifiedTaskOutput extends UnifiedTaskInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

@@ -1,23 +1,21 @@
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  ConnectionStrategiesError,
-  throwTypedError,
-} from '@@core/utils/errors';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { ConnectionStrategiesError } from '@@core/utils/errors';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   AuthData,
   AuthStrategy,
+  CONNECTORS_METADATA,
   extractAuthMode,
   extractProvider,
   extractVertical,
   needsSubdomain,
-  CONNECTORS_METADATA,
+  needsScope,
   OAuth2AuthData,
+  SoftwareMode,
 } from '@panora/shared';
-import { SoftwareMode } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 
 export type OAuth = {
@@ -196,14 +194,19 @@ export class ConnectionsStrategiesService {
     let attributes: string[] = [];
     switch (authStrategy) {
       case AuthStrategy.oauth2:
-        attributes = ['client_id', 'client_secret', 'scope'];
+        attributes = ['client_id', 'client_secret'];
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
+        }
+        if (needsScope(provider.toLowerCase(), vertical.toLowerCase())) {
+          attributes.push('scope');
         }
         break;
       case AuthStrategy.api_key:
         attributes = ['api_key'];
-
+        if (needsScope(provider.toLowerCase(), vertical.toLowerCase())) {
+          attributes.push('scope');
+        }
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
         }
@@ -212,6 +215,9 @@ export class ConnectionsStrategiesService {
         attributes = ['username', 'secret'];
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
+        }
+        if (needsScope(provider.toLowerCase(), vertical.toLowerCase())) {
+          attributes.push('scope');
         }
         break;
       default:

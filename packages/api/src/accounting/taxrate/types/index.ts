@@ -26,9 +26,10 @@ export interface ITaxRateMapper {
 
   unify(
     source: OriginalTaxRateOutput | OriginalTaxRateOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTaxRateOutput | UnifiedTaxRateOutput[];
+  ): Promise<UnifiedTaxRateOutput | UnifiedTaxRateOutput[]>;
 }

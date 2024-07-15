@@ -1,11 +1,12 @@
 import { ITaskMapper } from '@crm/task/types';
 import { ZohoTaskInput, ZohoTaskOutput } from './types';
 import {
+  TaskStatus,
   UnifiedTaskInput,
   UnifiedTaskOutput,
 } from '@crm/task/types/model.unified';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -13,6 +14,35 @@ export class ZohoTaskMapper implements ITaskMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
     this.mappersRegistry.registerService('crm', 'task', 'zoho', this);
   }
+
+  mapToTaskStatus(
+    data:
+      | 'Not Started'
+      | 'Deferred'
+      | 'In Progress'
+      | 'Completed'
+      | 'Waiting on someone else',
+  ): TaskStatus | string {
+    switch (data) {
+      case 'In Progress':
+        return 'PENDING';
+      case 'Not Started':
+        return 'PENDING';
+      case 'Completed':
+        return 'COMPLETED';
+      default:
+        return data;
+    }
+  }
+  reverseMapToTaskStatus(data: TaskStatus): string {
+    switch (data) {
+      case 'COMPLETED':
+        return 'Completed';
+      case 'PENDING':
+        return 'In Progress';
+    }
+  }
+
   async desunify(
     source: UnifiedTaskInput,
     customFieldMappings?: {
@@ -26,8 +56,7 @@ export class ZohoTaskMapper implements ITaskMapper {
       Subject: source.subject,
     };
     if (source.status) {
-      result.Status =
-        source.status === 'COMPLETED' ? 'Completed' : 'In Progress';
+      result.Status = this.reverseMapToTaskStatus(source.status as TaskStatus);
     }
     if (source.due_date) {
       result.Due_Date = source.due_date.toISOString();
@@ -42,7 +71,6 @@ export class ZohoTaskMapper implements ITaskMapper {
       );
       result.What_Id.name = await this.utils.getCompanyNameFromUuid(
         source.company_id,
-        'zoho',
       );
     }
     if (source.user_id) {
@@ -67,24 +95,30 @@ export class ZohoTaskMapper implements ITaskMapper {
 
   async unify(
     source: ZohoTaskOutput | ZohoTaskOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, customFieldMappings);
+      return await this.mapSingleTaskToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleTaskToUnified(deal, customFieldMappings),
+        this.mapSingleTaskToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleTaskToUnified(
     task: ZohoTaskOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -100,21 +134,21 @@ export class ZohoTaskMapper implements ITaskMapper {
       remote_id: task.id,
       content: task.Description,
       subject: task.Subject,
-      status: task.Status === 'Completed' ? 'COMPLETED' : 'IN PROGRESS',
+      status: this.mapToTaskStatus(task.Status as any),
       finished_date: new Date(task.Closed_Time),
       due_date: new Date(task.Due_Date),
       field_mappings,
     };
-    if (task.What_Id.id) {
+    if (task.What_Id && task.What_Id.id) {
       res.company_id = await this.utils.getCompanyUuidFromRemoteId(
         task.What_Id.id,
-        'zoho',
+        connectionId,
       );
     }
-    if (task.Owner.id) {
+    if (task.Owner && task.Owner.id) {
       res.user_id = await this.utils.getUserUuidFromRemoteId(
         task.Owner.id,
-        'zoho',
+        connectionId,
       );
     }
     return res;

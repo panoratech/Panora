@@ -1,31 +1,32 @@
-import { Module } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { WebhookModule } from '@@core/webhook/webhook.module';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/webhook.module';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
-import { MarketingAutomationConnectionsService } from './services/marketingautomation.connection.service';
-import { ServiceRegistry } from './services/registry.service';
+import { Module } from '@nestjs/common';
 import { ConnectionUtils } from '../@utils';
 import { BrevoConnectionService } from './services/brevo/brevo.service';
-import { PodiumConnectionService } from './services/podium/podium.service';
-import { MailchimpConnectionService } from './services/mailchimp/mailchimp.service';
 import { GetresponseConnectionService } from './services/getresponse/getresponse.service';
 import { KeapConnectionService } from './services/keap/keap.service';
 import { KlaviyoConnectionService } from './services/klaviyo/klaviyo.service';
+import { MailchimpConnectionService } from './services/mailchimp/mailchimp.service';
+import { MarketingAutomationConnectionsService } from './services/marketingautomation.connection.service';
+import { PodiumConnectionService } from './services/podium/podium.service';
+import { ServiceRegistry } from './services/registry.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [WebhookModule],
+  imports: [WebhookModule, BullQueueModule],
   providers: [
     MarketingAutomationConnectionsService,
-    LoggerService,
+
     WebhookService,
     EnvironmentService,
-    EncryptionService,
+
     ServiceRegistry,
     ConnectionsStrategiesService,
-    ConnectionUtils,
     //PROVIDERS SERVICES
     BrevoConnectionService,
     PodiumConnectionService,

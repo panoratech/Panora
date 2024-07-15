@@ -2,13 +2,10 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.ticketing';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IContactService {
-  syncContacts(
-    linkedUserId: string,
-    remote_account_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalContactOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalContactOutput[]>>;
 }
 
 export interface IContactMapper {
@@ -22,6 +19,7 @@ export interface IContactMapper {
 
   unify(
     source: OriginalContactOutput | OriginalContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

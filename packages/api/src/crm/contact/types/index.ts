@@ -1,17 +1,15 @@
 import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
 import { ApiResponse } from '@@core/utils/types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
-export interface IContactService {
+export interface IContactService extends IBaseObjectService {
   addContact(
     contactData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalContactOutput>>;
 
-  syncContacts(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalContactOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalContactOutput[]>>;
 }
 
 export interface IContactMapper {
@@ -25,6 +23,7 @@ export interface IContactMapper {
 
   unify(
     source: OriginalContactOutput | OriginalContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

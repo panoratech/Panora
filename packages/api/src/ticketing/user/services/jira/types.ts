@@ -11,6 +11,8 @@ export type JiraUserOutput = {
   key: string;
   name: string;
   self: string;
+} & {
+  email: string;
 };
 
 type AvatarUrls = {

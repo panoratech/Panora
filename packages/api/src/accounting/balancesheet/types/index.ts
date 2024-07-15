@@ -29,9 +29,10 @@ export interface IBalanceSheetMapper {
 
   unify(
     source: OriginalBalanceSheetOutput | OriginalBalanceSheetOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedBalanceSheetOutput | UnifiedBalanceSheetOutput[];
+  ): Promise<UnifiedBalanceSheetOutput | UnifiedBalanceSheetOutput[]>;
 }

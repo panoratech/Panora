@@ -29,9 +29,10 @@ export interface IIncomeStatementMapper {
 
   unify(
     source: OriginalIncomeStatementOutput | OriginalIncomeStatementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedIncomeStatementOutput | UnifiedIncomeStatementOutput[];
+  ): Promise<UnifiedIncomeStatementOutput | UnifiedIncomeStatementOutput[]>;
 }

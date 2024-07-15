@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -23,7 +24,9 @@ import {
   UnifiedApplicationOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ApplicationService } from './services/application.service';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('ats/application')
 @Controller('ats/application')
@@ -46,28 +49,26 @@ export class ApplicationController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
   @ApiCustomResponse(UnifiedApplicationOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getApplications(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.applicationService.getApplications(
+        connectionId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -91,14 +92,30 @@ export class ApplicationController {
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
   })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedApplicationOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getApplication(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.applicationService.getApplication(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.applicationService.getApplication(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 
   @ApiOperation({
@@ -120,7 +137,7 @@ export class ApplicationController {
   })
   @ApiBody({ type: UnifiedApplicationInput })
   @ApiCustomResponse(UnifiedApplicationOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addApplication(
     @Body() unifiedApplicationData: UnifiedApplicationInput,
@@ -128,12 +145,13 @@ export class ApplicationController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.applicationService.addApplication(
         unifiedApplicationData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

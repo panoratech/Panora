@@ -7,7 +7,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,

@@ -1,6 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
+export type CollectionType = 'PROJECT' | 'LIST';
+
 export class UnifiedCollectionInput {
   @ApiProperty({
     type: String,
@@ -26,13 +28,13 @@ export class UnifiedCollectionInput {
     message: 'Type must be either PROJECT or LIST',
   })
   @IsOptional()
-  collection_type?: string;
+  collection_type?: CollectionType | string;
 }
 
 export class UnifiedCollectionOutput extends UnifiedCollectionInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the collection',
+    description: 'The UUID of the collection',
   })
   @IsUUID()
   @IsOptional()
@@ -53,4 +55,18 @@ export class UnifiedCollectionOutput extends UnifiedCollectionInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

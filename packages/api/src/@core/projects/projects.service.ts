@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { ProjectError, throwTypedError } from '@@core/utils/errors';
 import {
   ConnectorCategory,
   providersArray,
   slugFromCategory,
 } from '@panora/shared';
+import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
+import { CreateProjectDto } from './dto/create-project.dto';
 
 @Injectable()
 export class ProjectsService {

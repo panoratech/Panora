@@ -1,12 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import { UnifiedUserOutput } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
-import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class UserService {
@@ -22,6 +21,8 @@ export class UserService {
 
   async getUser(
     id_user: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedUserOutput> {
     try {
@@ -60,6 +61,9 @@ export class UserService {
         name: user.name,
         email: user.email,
         field_mappings: field_mappings,
+        remote_id: user.remote_id,
+        created_at: user.created_at,
+        modified_at: user.modified_at,
       };
 
       let res: UnifiedUserOutput = {
@@ -79,6 +83,19 @@ export class UserService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'crm.user.pull',
+          method: 'GET',
+          url: '/crm/user',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -87,6 +104,7 @@ export class UserService {
   }
 
   async getUsers(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -104,8 +122,7 @@ export class UserService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_users.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_user: cursor,
           },
         });
@@ -125,8 +142,7 @@ export class UserService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -173,6 +189,9 @@ export class UserService {
             name: user.name,
             email: user.email,
             field_mappings: field_mappings,
+            remote_id: user.remote_id,
+            created_at: user.created_at,
+            modified_at: user.modified_at,
           };
         }),
       );
@@ -194,7 +213,7 @@ export class UserService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

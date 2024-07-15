@@ -6,7 +6,7 @@ import {
 import { IContactMapper } from '@crm/contact/types';
 import { PipedriveContactInput, PipedriveContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -27,10 +27,10 @@ export class PipedriveContactMapper implements IContactMapper {
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
     const emailObject = primaryEmail
-      ? [{ value: primaryEmail, primary: true, label: '' }]
+      ? [{ value: primaryEmail, primary: true, label: null }]
       : [];
     const phoneObject = primaryPhone
-      ? [{ value: primaryPhone, primary: true, label: '' }]
+      ? [{ value: primaryPhone, primary: true, label: null }]
       : [];
     const result: PipedriveContactInput = {
       name: `${source.first_name} ${source.last_name}`,
@@ -47,7 +47,7 @@ export class PipedriveContactMapper implements IContactMapper {
           name: owner.name,
           email: owner.email,
           has_pic: 0,
-          pic_hash: '',
+          pic_hash: null,
           active_flag: false,
           value: 0,
         };
@@ -69,25 +69,35 @@ export class PipedriveContactMapper implements IContactMapper {
 
   async unify(
     source: PipedriveContactOutput | PipedriveContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleContactToUnified(source, customFieldMappings);
+      return await this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotContactOutput
     return Promise.all(
       source.map((contact) =>
-        this.mapSingleContactToUnified(contact, customFieldMappings),
+        this.mapSingleContactToUnified(
+          contact,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleContactToUnified(
     contact: PipedriveContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -100,17 +110,17 @@ export class PipedriveContactMapper implements IContactMapper {
       }
     }
     const address: Address = {
-      street_1: '',
-      city: '',
-      state: '',
-      postal_code: '',
-      country: '',
+      street_1: null,
+      city: null,
+      state: null,
+      postal_code: null,
+      country: null,
     };
     let opts: any = {};
     if (contact.owner_id.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(contact.owner_id.id),
-        'pipedrive',
+        connectionId,
       );
       if (user_id) {
         opts = {
@@ -120,16 +130,16 @@ export class PipedriveContactMapper implements IContactMapper {
     }
 
     return {
-      remote_id: contact.id,
+      remote_id: String(contact.id),
       first_name: contact.first_name,
       last_name: contact.last_name,
       email_addresses: contact.email.map((e) => ({
         email_address: e.value,
-        email_address_type: e.label ? e.label : '',
+        email_address_type: e.label ? e.label : null,
       })), // Map each email
       phone_numbers: contact.phone.map((p) => ({
         phone_number: p.value,
-        phone_type: p.label ? p.label : '',
+        phone_type: p.label ? p.label : null,
       })), // Map each phone number,
       field_mappings,
       addresses: [address],

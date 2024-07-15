@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -24,6 +25,8 @@ import {
   UnifiedTaxRateOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('accounting/taxrate')
 @Controller('accounting/taxrate')
@@ -46,29 +49,26 @@ export class TaxRateController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
   @ApiCustomResponse(UnifiedTaxRateOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTaxRates(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.taxrateService.getTaxRates(
+        connectionId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -93,56 +93,29 @@ export class TaxRateController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedTaxRateOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
-  getTaxRate(
-    @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    return this.taxrateService.getTaxRate(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addTaxRate',
-    summary: 'Create a TaxRate',
-    description: 'Create a taxrate in any supported Accounting software',
-  })
   @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedTaxRateInput })
   @ApiCustomResponse(UnifiedTaxRateOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addTaxRate(
-    @Body() unifiedTaxRateData: UnifiedTaxRateInput,
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
+  async retrieve(
     @Headers('x-connection-token') connection_token: string,
+    @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.taxrateService.addTaxRate(
-        unifiedTaxRateData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.taxrateService.getTaxRate(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

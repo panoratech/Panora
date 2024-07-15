@@ -5,17 +5,15 @@ import {
 } from './model.unified';
 import { OriginalApplicationOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IApplicationService {
+export interface IApplicationService extends IBaseObjectService {
   addApplication(
     applicationData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalApplicationOutput>>;
 
-  syncApplications(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalApplicationOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalApplicationOutput[]>>;
 }
 
 export interface IApplicationMapper {
@@ -29,9 +27,10 @@ export interface IApplicationMapper {
 
   unify(
     source: OriginalApplicationOutput | OriginalApplicationOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedApplicationOutput | UnifiedApplicationOutput[];
+  ): Promise<UnifiedApplicationOutput | UnifiedApplicationOutput[]>;
 }

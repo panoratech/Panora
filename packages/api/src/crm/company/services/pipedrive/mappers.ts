@@ -6,7 +6,7 @@ import { ICompanyMapper } from '@crm/company/types';
 import { PipedriveCompanyInput, PipedriveCompanyOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 
 @Injectable()
 export class PipedriveCompanyMapper implements ICompanyMapper {
@@ -39,10 +39,10 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
           id: Number(owner.remote_id),
           name: owner.name,
           email: owner.email,
-          has_pic: 0,
-          pic_hash: '',
+          has_pic: null,
+          pic_hash: null,
           active_flag: false,
-          value: 0,
+          value: null,
         };
       }
     }
@@ -62,24 +62,34 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: PipedriveCompanyOutput | PipedriveCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return await this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: PipedriveCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -92,21 +102,11 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       }
     }
 
-    const res = {
-      name: company.name,
-      industry: '', // Pipedrive may not directly provide this, need custom mapping
-      number_of_employees: 0, // Placeholder, as there's no direct mapping provided
-      email_addresses: [],
-      phone_numbers: [],
-      addresses: [],
-      field_mappings,
-    };
-
     let opts: any = {};
     if (company.owner_id.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(company.owner_id.id),
-        'pipedrive',
+        connectionId,
       );
       if (user_id) {
         opts = {
@@ -115,7 +115,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       }
     }
     if (company.address) {
-      res.addresses[0] = {
+      opts.addresses[0] = {
         street_1: company.address,
         city: company.address_locality,
         country: company.address_country,
@@ -123,8 +123,14 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       };
     }
     return {
-      remote_id: company.id,
-      ...res,
+      name: company.name,
+      industry: null,
+      number_of_employees: null,
+      email_addresses: null,
+      phone_numbers: null,
+      addresses: null,
+      field_mappings,
+      remote_id: String(company.id),
       ...opts,
     };
   }

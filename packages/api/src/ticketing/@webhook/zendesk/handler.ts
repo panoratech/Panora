@@ -1,23 +1,21 @@
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { mapToRemoteEvent } from './utils';
-import * as crypto from 'crypto';
-import { NonTicketPayload, Payload } from './types';
-import { SyncService as TicketSyncService } from '@ticketing/ticket/sync/sync.service';
-import { SyncService as UserSyncService } from '@ticketing/user/sync/sync.service';
-import { SyncService as ContactSyncService } from '@ticketing/contact/sync/sync.service';
-import { SyncService as AccountSyncService } from '@ticketing/account/sync/sync.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import {
   Action,
   ActionType,
   handle3rdPartyServiceError,
-  ManagedWebhooksError,
-  throwTypedError,
 } from '@@core/utils/errors';
+import { Injectable } from '@nestjs/common';
+import { SyncService as AccountSyncService } from '@ticketing/account/sync/sync.service';
+import { SyncService as ContactSyncService } from '@ticketing/contact/sync/sync.service';
+import { SyncService as TicketSyncService } from '@ticketing/ticket/sync/sync.service';
+import { SyncService as UserSyncService } from '@ticketing/user/sync/sync.service';
+import axios from 'axios';
+import * as crypto from 'crypto';
+import { NonTicketPayload, Payload } from './types';
+import { mapToRemoteEvent } from './utils';
 
 @Injectable()
 export class ZendeskHandlerService {
@@ -123,13 +121,7 @@ export class ZendeskHandlerService {
         },
       });
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        Action.webhookCreation,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -270,13 +262,7 @@ export class ZendeskHandlerService {
         },
       });
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        Action.webhookCreation,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -300,16 +286,15 @@ export class ZendeskHandlerService {
       });
       if ('ticketId' in payload) {
         // ticket payload
-        // TODO:update the tickzt inside our db
-        await this.syncTicketsService.syncTicketsForLinkedUser(
-          connection.provider_slug.toLowerCase(),
-          connection.id_linked_user,
-          connection.id_project,
-          {
+        // TODO: update the ticket inside our db
+        await this.syncTicketsService.syncForLinkedUser({
+          integrationId: connection.provider_slug.toLowerCase(),
+          linkedUserId: connection.id_linked_user,
+          wh_real_time_trigger: {
             action: 'UPDATE',
             data: { remote_id: payload.ticketId as string },
           },
-        );
+        });
       } else {
         //non-ticket payload
         const payload_ = payload as NonTicketPayload;
@@ -318,51 +303,47 @@ export class ZendeskHandlerService {
           case 'user':
             if (payload_.detail.role) {
               if (payload_.detail.role == 'end-user') {
-                await this.syncContactsService.syncContactsForLinkedUser(
-                  connection.provider_slug.toLowerCase(),
-                  connection.id_linked_user,
-                  connection.id_project,
-                  payload_.detail.id,
-                  {
+                await this.syncContactsService.syncForLinkedUser({
+                  integrationId: connection.provider_slug.toLowerCase(),
+                  linkedUserId: connection.id_linked_user,
+                  wh_real_time_trigger: {
                     action:
                       event_action.toLowerCase() == 'deleted'
                         ? 'DELETE'
                         : 'UPDATE',
                     data: { remote_id: payload_.detail.id as string },
                   },
-                );
+                });
               } else if (
                 payload_.detail.role == 'admin' ||
                 payload_.detail.role == 'agent'
               ) {
-                await this.syncUsersService.syncUsersForLinkedUser(
-                  connection.provider_slug.toLowerCase(),
-                  connection.id_linked_user,
-                  connection.id_project,
-                  {
+                await this.syncUsersService.syncForLinkedUser({
+                  integrationId: connection.provider_slug.toLowerCase(),
+                  linkedUserId: connection.id_linked_user,
+                  wh_real_time_trigger: {
                     action:
                       event_action.toLowerCase() == 'deleted'
                         ? 'DELETE'
                         : 'UPDATE',
                     data: { remote_id: payload_.detail.id as string },
                   },
-                );
+                });
               } else {
                 break;
               }
             }
             break;
           case 'organization':
-            await this.syncAccountsService.syncAccountsForLinkedUser(
-              connection.provider_slug.toLowerCase(),
-              connection.id_linked_user,
-              connection.id_project,
-              {
+            await this.syncAccountsService.syncForLinkedUser({
+              integrationId: connection.provider_slug.toLowerCase(),
+              linkedUserId: connection.id_linked_user,
+              wh_real_time_trigger: {
                 action:
                   event_action.toLowerCase() == 'deleted' ? 'DELETE' : 'UPDATE',
                 data: { remote_id: payload_.detail.id as string },
               },
-            );
+            });
           default:
             break;
         }

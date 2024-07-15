@@ -26,9 +26,10 @@ export interface IActionMapper {
 
   unify(
     source: OriginalActionOutput | OriginalActionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedActionOutput | UnifiedActionOutput[];
+  ): Promise<UnifiedActionOutput | UnifiedActionOutput[]>;
 }

@@ -1,62 +1,55 @@
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { Utils } from '@crm/@lib/@utils';
 import { Module } from '@nestjs/common';
 import { EngagementController } from './engagement.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { EngagementService } from './services/engagement.service';
-import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { HubspotService } from './services/hubspot';
-import { PipedriveService } from './services/pipedrive';
-import { ZendeskService } from './services/zendesk';
-import { ZohoService } from './services/zoho';
 import { CloseService } from './services/close';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { CoreUnification } from '@@core/utils/services/core.service';
-import { Utils } from '@crm/@lib/@utils';
-
+import { CloseEngagementMapper } from './services/close/mappers';
+import { EngagementService } from './services/engagement.service';
+import { HubspotService } from './services/hubspot';
+import { HubspotEngagementMapper } from './services/hubspot/mappers';
+import { PipedriveService } from './services/pipedrive';
+import { PipedriveEngagementMapper } from './services/pipedrive/mappers';
+import { ServiceRegistry } from './services/registry.service';
+import { ZendeskService } from './services/zendesk';
+import { ZendeskEngagementMapper } from './services/zendesk/mappers';
+import { ZohoService } from './services/zoho';
+import { ZohoEngagementMapper } from './services/zoho/mappers';
+import { SyncService } from './sync/sync.service';
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [BullQueueModule],
   controllers: [EngagementController],
   providers: [
     EngagementService,
 
-    LoggerService,
     SyncService,
     WebhookService,
-    EncryptionService,
+
     FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+
     Utils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     ZendeskService,
     ZohoService,
     PipedriveService,
     HubspotService,
     CloseService,
+    /* PROVIDERS MAPPERS */
+    ZendeskEngagementMapper,
+    ZohoEngagementMapper,
+    PipedriveEngagementMapper,
+    HubspotEngagementMapper,
+    CloseEngagementMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class EngagementModule {}

@@ -2,17 +2,15 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedFolderInput, UnifiedFolderOutput } from './model.unified';
 import { OriginalFolderOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IFolderService {
+export interface IFolderService extends IBaseObjectService {
   addFolder(
     folderData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalFolderOutput>>;
 
-  syncFolders(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalFolderOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalFolderOutput[]>>;
 }
 
 export interface IFolderMapper {
@@ -26,9 +24,10 @@ export interface IFolderMapper {
 
   unify(
     source: OriginalFolderOutput | OriginalFolderOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedFolderOutput | UnifiedFolderOutput[];
+  ): Promise<UnifiedFolderOutput | UnifiedFolderOutput[]>;
 }

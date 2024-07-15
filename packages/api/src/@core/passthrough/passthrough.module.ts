@@ -1,12 +1,11 @@
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { Module } from '@nestjs/common';
-import { PassthroughService } from './passthrough.service';
 import { PassthroughController } from './passthrough.controller';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { PassthroughService } from './passthrough.service';
 
 @Module({
-  providers: [PassthroughService, LoggerService, EncryptionService],
+  providers: [PassthroughService, EncryptionService],
   controllers: [PassthroughController],
 })
 export class PassthroughModule {}

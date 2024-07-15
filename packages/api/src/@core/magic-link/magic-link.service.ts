@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';
-import { MagicLinksError, throwTypedError } from '@@core/utils/errors';
 
 @Injectable()
 export class MagicLinkService {

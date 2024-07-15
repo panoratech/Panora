@@ -1,61 +1,34 @@
-import { balancesheetUnificationMapping } from '@accounting/balancesheet/types/mappingsTypes';
-
-import { cashflowstatementUnificationMapping } from '@accounting/cashflowstatement/types/mappingsTypes';
-
-import { companyinfoUnificationMapping } from '@accounting/companyinfo/types/mappingsTypes';
-
-import { creditnoteUnificationMapping } from '@accounting/creditnote/types/mappingsTypes';
-
 import { IExpenseService } from '@accounting/expense/types';
-import { expenseUnificationMapping } from '@accounting/expense/types/mappingsTypes';
 import {
   UnifiedExpenseInput,
   UnifiedExpenseOutput,
 } from '@accounting/expense/types/model.unified';
-import { incomestatementUnificationMapping } from '@accounting/incomestatement/types/mappingsTypes';
-
 import { IInvoiceService } from '@accounting/invoice/types';
-import { invoiceUnificationMapping } from '@accounting/invoice/types/mappingsTypes';
 import {
   UnifiedInvoiceInput,
   UnifiedInvoiceOutput,
 } from '@accounting/invoice/types/model.unified';
 import { IItemService } from '@accounting/item/types';
-import { itemUnificationMapping } from '@accounting/item/types/mappingsTypes';
 import {
   UnifiedItemInput,
   UnifiedItemOutput,
 } from '@accounting/item/types/model.unified';
-import { journalentryUnificationMapping } from '@accounting/journalentry/types/mappingsTypes';
-
 import { IPaymentService } from '@accounting/payment/types';
-import { paymentUnificationMapping } from '@accounting/payment/types/mappingsTypes';
 import {
   UnifiedPaymentInput,
   UnifiedPaymentOutput,
 } from '@accounting/payment/types/model.unified';
-import { phonenumberUnificationMapping } from '@accounting/phonenumber/types/mappingsTypes';
-
-import { purchaseorderUnificationMapping } from '@accounting/purchaseorder/types/mappingsTypes';
-
 import { ITaxRateService } from '@accounting/taxrate/types';
-import { taxrateUnificationMapping } from '@accounting/taxrate/types/mappingsTypes';
 import {
   UnifiedTaxRateInput,
   UnifiedTaxRateOutput,
 } from '@accounting/taxrate/types/model.unified';
-import { trackingcategoryUnificationMapping } from '@accounting/trackingcategory/types/mappingsTypes';
-
 import { ITransactionService } from '@accounting/transaction/types';
-import { transactionUnificationMapping } from '@accounting/transaction/types/mappingsTypes';
 import {
   UnifiedTransactionInput,
   UnifiedTransactionOutput,
 } from '@accounting/transaction/types/model.unified';
-import { vendorcreditUnificationMapping } from '@accounting/vendorcredit/types/mappingsTypes';
-
 import { IContactService } from '@accounting/contact/types';
-import { contactUnificationMapping } from '@accounting/contact/types/mappingsTypes';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,

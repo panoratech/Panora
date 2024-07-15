@@ -50,9 +50,6 @@ export enum CrmObject {
   note = 'note',
   task = 'task',
   engagement = 'engagement',
-  engagement_call = 'engagement_call',
-  engagement_meeting = 'engagement_meeting',
-  engagement_email = 'engagement_email',
   stage = 'stage',
   user = 'user',
 }
@@ -74,17 +71,6 @@ export type UnifiedCrm =
   | UnifiedTaskOutput
   | UnifiedUserInput
   | UnifiedUserOutput;
-
-/*export const unificationMapping = {
-  [CrmObject.contact]: contactUnificationMapping,
-  [CrmObject.deal]: dealUnificationMapping,
-  [CrmObject.company]: companyUnificationMapping,
-  [CrmObject.engagement]: engagementUnificationMapping,
-  [CrmObject.note]: noteUnificationMapping,
-  [CrmObject.stage]: stageUnificationMapping,
-  [CrmObject.task]: taskUnificationMapping,
-  [CrmObject.user]: userUnificationMapping,
-};*/
 
 export type ICrmService =
   | IContactService

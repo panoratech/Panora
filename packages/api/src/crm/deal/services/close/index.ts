@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { IDealService } from '@crm/deal/types';
 import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { CloseDealInput, CloseDealOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class CloseService implements IDealService {
   constructor(
@@ -53,21 +54,14 @@ export class CloseService implements IDealService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.deal,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncDeals(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<CloseDealOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<CloseDealOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       //crm.schemas.deals.read","crm.objects.deals.read
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -77,7 +71,7 @@ export class CloseService implements IDealService {
         },
       });
 
-      const baseURL = `${connection.account_url}/opportunity/`;
+      const baseURL = `${connection.account_url}/opportunity`;
       const resp = await axios.get(baseURL, {
         headers: {
           'Content-Type': 'application/json',
@@ -94,13 +88,7 @@ export class CloseService implements IDealService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.deal,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

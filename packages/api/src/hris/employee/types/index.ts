@@ -26,9 +26,10 @@ export interface IEmployeeMapper {
 
   unify(
     source: OriginalEmployeeOutput | OriginalEmployeeOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEmployeeOutput | UnifiedEmployeeOutput[];
+  ): Promise<UnifiedEmployeeOutput | UnifiedEmployeeOutput[]>;
 }

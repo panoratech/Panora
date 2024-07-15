@@ -5,19 +5,21 @@ import {
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-
-import { TicketingObject } from '@ticketing/@lib/@types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
 import { Utils } from '@ticketing/@lib/@utils';
-import { CoreUnification } from '@@core/utils/services/core.service';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { ZendeskAttachmentOutput } from '@ticketing/attachment/services/zendesk/types';
 @Injectable()
 export class ZendeskCommentMapper implements ICommentMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
-    private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
+    private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService(
       'ticketing',
@@ -52,7 +54,8 @@ export class ZendeskCommentMapper implements ICommentMapper {
     }
 
     if (source.attachments) {
-      result.uploads = source.attachments; //we let the array of uuids on purpose (it will be modified in the given service on the fly!)
+      // it is a string array of uuids of attachmts objects
+      result.uploads = source.attachments as string[];
     }
 
     if (source.html_body) {
@@ -64,73 +67,83 @@ export class ZendeskCommentMapper implements ICommentMapper {
 
   async unify(
     source: ZendeskCommentOutput | ZendeskCommentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCommentToUnified(source, customFieldMappings);
+      return this.mapSingleCommentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     return Promise.all(
       source.map((comment) =>
-        this.mapSingleCommentToUnified(comment, customFieldMappings),
+        this.mapSingleCommentToUnified(
+          comment,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCommentToUnified(
     comment: ZendeskCommentOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput> {
-    let opts;
+    let opts: any = {};
 
     if (comment.attachments && comment.attachments.length > 0) {
-      const unifiedObject = (await this.coreUnification.unify<
+      const attachments = (await this.coreUnificationService.unify<
         OriginalAttachmentOutput[]
       >({
         sourceObject: comment.attachments,
         targetType: TicketingObject.attachment,
         providerName: 'zendesk',
         vertical: 'ticketing',
+        connectionId: connectionId,
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
-
-      opts = { ...opts, attachments: unifiedObject };
+      opts = {
+        ...opts,
+        attachments: attachments,
+      };
     }
 
     if (comment.author_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(comment.author_id),
-        'zendesk',
+        connectionId,
       );
 
       if (user_id) {
-        opts = { user_id: user_id, creator_type: 'USER' };
+        opts = { ...opts, user_id: user_id, creator_type: 'USER' };
       } else {
         const contact_id = await this.utils.getContactUuidFromRemoteId(
           String(comment.author_id),
-          'zendesk',
+          connectionId,
         );
         if (contact_id) {
-          opts = { creator_type: 'CONTACT', contact_id: contact_id };
+          opts = { ...opts, creator_type: 'CONTACT', contact_id: contact_id };
         }
       }
     }
 
-    const res = {
-      body: comment.body || '',
-      html_body: comment.html_body || '',
-      is_private: !comment.public,
-      ...opts,
-    };
-
     return {
       remote_id: String(comment.id),
-      ...res,
+      remote_data: comment,
+      body: comment.body || null,
+      html_body: comment.html_body || null,
+      is_private: !comment.public,
+      ...opts,
     };
   }
 }

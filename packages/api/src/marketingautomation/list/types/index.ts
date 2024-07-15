@@ -26,9 +26,10 @@ export interface IListMapper {
 
   unify(
     source: OriginalListOutput | OriginalListOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedListOutput | UnifiedListOutput[];
+  ): Promise<UnifiedListOutput | UnifiedListOutput[]>;
 }

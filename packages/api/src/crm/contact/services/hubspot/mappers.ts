@@ -5,7 +5,7 @@ import {
 import { IContactMapper } from '@crm/contact/types';
 import { HubspotContactInput, HubspotContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -60,22 +60,32 @@ export class HubspotContactMapper implements IContactMapper {
 
   async unify(
     source: HubspotContactOutput | HubspotContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
+      return this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotContactOutput
     return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(
+        contact,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 
   private mapSingleContactToUnified(
     contact: HubspotContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -89,11 +99,11 @@ export class HubspotContactMapper implements IContactMapper {
     }
 
     /*todo: const address: Address = {
-      street_1: '',
-      city: '',
-      state: '',
-      postal_code: '',
-      country: '',
+      street_1: null,
+      city: null,
+      state: null,
+      postal_code: null,
+      country: null,
     };*/
 
     return {

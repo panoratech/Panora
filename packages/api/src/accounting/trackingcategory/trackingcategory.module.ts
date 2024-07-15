@@ -1,33 +1,32 @@
-import { Module } from '@nestjs/common';
-import { TrackingCategoryController } from './trackingcategory.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { TrackingCategoryService } from './services/trackingcategory.service';
-import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { Module } from '@nestjs/common';
+import { ServiceRegistry } from './services/registry.service';
+import { TrackingCategoryService } from './services/trackingcategory.service';
+import { SyncService } from './sync/sync.service';
+import { TrackingCategoryController } from './trackingcategory.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
-  ],
+  imports: [BullQueueModule],
   controllers: [TrackingCategoryController],
   providers: [
     TrackingCategoryService,
 
-    LoggerService,
+    CoreUnification,
+
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
+
     ServiceRegistry,
-    ConnectionUtils,
+
+    IngestDataService,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

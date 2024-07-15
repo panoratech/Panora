@@ -3,12 +3,14 @@ import { ITaskService } from '@crm/task/types';
 import { CrmObject } from '@crm/@lib/@types';
 import { CloseTaskInput, CloseTaskOutput } from './types';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalTaskOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class CloseService implements ITaskService {
@@ -23,6 +25,7 @@ export class CloseService implements ITaskService {
     );
     this.registry.registerService('close', this);
   }
+
   async addTask(
     taskData: CloseTaskInput,
     linkedUserId: string,
@@ -53,21 +56,14 @@ export class CloseService implements ITaskService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.task,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncTasks(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<CloseTaskOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<CloseTaskOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -93,13 +89,7 @@ export class CloseService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.task,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -11,8 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -26,6 +25,7 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { DealService } from './services/deal.service';
 import { UnifiedDealInput, UnifiedDealOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiBearerAuth('JWT')
@@ -59,12 +59,13 @@ export class DealController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.dealService.getDeals(
+      return await this.dealService.getDeals(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -93,14 +94,30 @@ export class DealController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedDealOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getDeal(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.dealService.getDeal(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.dealService.getDeal(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 
   @ApiOperation({
@@ -130,12 +147,13 @@ export class DealController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.dealService.addDeal(
+      return await this.dealService.addDeal(
         unifiedDealData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

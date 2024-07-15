@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { IUserService } from '@ticketing/user/types';
 import { JiraUserOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class JiraService implements IUserService {
@@ -24,11 +25,10 @@ export class JiraService implements IUserService {
     this.registry.registerService('jira', this);
   }
 
-  async syncUsers(
-    linkedUserId: string,
-    remote_user_id?: string,
-  ): Promise<ApiResponse<JiraUserOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<JiraUserOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -44,21 +44,41 @@ export class JiraService implements IUserService {
           )}`,
         },
       });
+
+      //todo: ratelimiting in jira ?
+      const userEmailPromises = resp.data.map(async (user) => {
+        const accountId = user.account_id;
+        if (accountId) {
+          const emailResp = await axios.get(
+            `${connection.account_url}/users/email?accountId=${accountId}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            },
+          );
+          return {
+            ...user,
+            email: emailResp.data.email,
+          };
+        } else {
+          return user;
+        }
+      });
+      const dataPromise = await Promise.all(userEmailPromises);
+
       this.logger.log(`Synced jira users !`);
 
       return {
-        data: resp.data,
+        data: dataPromise,
         message: 'Jira users retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'jira',
-        TicketingObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

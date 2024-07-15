@@ -7,7 +7,7 @@ import { ICompanyMapper } from '@crm/company/types';
 import { ZendeskCompanyInput, ZendeskCompanyOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 
 @Injectable()
 export class ZendeskCompanyMapper implements ICompanyMapper {
@@ -69,24 +69,34 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: ZendeskCompanyOutput | ZendeskCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: ZendeskCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -102,7 +112,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
     // Constructing the email and phone details
     const email_addresses = company.email
       ? [{ email_address: company.email, email_address_type: 'primary' }]
-      : [];
+      : null;
     const phone_numbers = [];
 
     if (company.phone) {
@@ -119,10 +129,11 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
     if (company.owner_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(company.owner_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
         opts = {
+          ...opts,
           user_id: user_id,
         };
       }
@@ -138,6 +149,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
 
     if (company.industry) {
       opts = {
+        ...opts,
         industry: company.industry,
       };
     }

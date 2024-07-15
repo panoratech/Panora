@@ -1,54 +1,42 @@
-import { GitlabService } from './services/gitlab';
-import { Module } from '@nestjs/common';
-import { CollectionController } from './collection.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { CollectionService } from './services/collection.service';
-import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { JiraService } from './services/jira';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { Module } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
+import { CollectionController } from './collection.controller';
+import { CollectionService } from './services/collection.service';
+import { GitlabService } from './services/gitlab';
+import { GitlabCollectionMapper } from './services/gitlab/mappers';
+import { JiraService } from './services/jira';
+import { JiraCollectionMapper } from './services/jira/mappers';
+import { ServiceRegistry } from './services/registry.service';
+import { SyncService } from './sync/sync.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [BullQueueModule],
   controllers: [CollectionController],
   providers: [
     CollectionService,
 
-    LoggerService,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
+
     ServiceRegistry,
-    ConnectionUtils,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+
+    Utils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     JiraService,
     GitlabService,
+    /* PROVIDERS MAPPERS */
+    JiraCollectionMapper,
+    GitlabCollectionMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class CollectionModule {}

@@ -29,9 +29,10 @@ export interface IPhoneNumberMapper {
 
   unify(
     source: OriginalPhoneNumberOutput | OriginalPhoneNumberOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedPhoneNumberOutput | UnifiedPhoneNumberOutput[];
+  ): Promise<UnifiedPhoneNumberOutput | UnifiedPhoneNumberOutput[]>;
 }

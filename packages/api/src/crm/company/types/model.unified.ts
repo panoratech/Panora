@@ -20,7 +20,7 @@ export class UnifiedCompanyInput {
   })
   @IsEnum(Industry)
   @IsOptional()
-  industry?: string;
+  industry?: Industry | string;
 
   @ApiPropertyOptional({
     type: Number,
@@ -32,7 +32,7 @@ export class UnifiedCompanyInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the user who owns the company',
+    description: 'The UUID of the user who owns the company',
   })
   @IsOptional()
   @IsUUID()
@@ -69,7 +69,7 @@ export class UnifiedCompanyInput {
 }
 
 export class UnifiedCompanyOutput extends UnifiedCompanyInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the company' })
+  @ApiPropertyOptional({ type: String, description: 'The UUID of the company' })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -89,4 +89,18 @@ export class UnifiedCompanyOutput extends UnifiedCompanyInput {
   })
   @IsOptional()
   remote_data?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The created date of the object',
+  })
+  @IsOptional()
+  created_at?: any;
+
+  @ApiPropertyOptional({
+    type: {},
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: any;
 }

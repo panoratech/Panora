@@ -1,22 +1,15 @@
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
+import { CONNECTORS_METADATA } from '@panora/shared';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
 import {
   CustomFieldCreateDto,
   DefineTargetFieldDto,
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
-import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
-import {
-  ActionType,
-  CustomFieldsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { CrmObject } from '@crm/@lib/@types';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { CONNECTORS_METADATA } from '@panora/shared';
 
 @Injectable()
 export class FieldMappingService {
@@ -97,6 +90,8 @@ export class FieldMappingService {
           source: '',
           //id_entity: id_entity,
           scope: 'user', // [user | org] wide
+          created_at: new Date(),
+          modified_at: new Date(),
         },
       });
 
@@ -142,6 +137,8 @@ export class FieldMappingService {
           source: '',
           //id_entity: id_entity,
           scope: 'user', // [user | org] wide
+          created_at: new Date(),
+          modified_at: new Date(),
         },
       });
       const updatedAttribute = await this.prisma.attribute.update({
@@ -153,6 +150,7 @@ export class FieldMappingService {
           source: dto.source_provider,
           id_consumer: dto.linked_user_id.trim(),
           status: 'mapped',
+          modified_at: new Date(),
         },
       });
 

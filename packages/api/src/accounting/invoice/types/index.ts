@@ -26,9 +26,10 @@ export interface IInvoiceMapper {
 
   unify(
     source: OriginalInvoiceOutput | OriginalInvoiceOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedInvoiceOutput | UnifiedInvoiceOutput[];
+  ): Promise<UnifiedInvoiceOutput | UnifiedInvoiceOutput[]>;
 }

@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -24,6 +25,8 @@ import {
   UnifiedCompanyInfoOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiTags('accounting/companyinfo')
 @Controller('accounting/companyinfo')
@@ -46,29 +49,26 @@ export class CompanyInfoController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
   @ApiCustomResponse(UnifiedCompanyInfoOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCompanyInfos(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.companyinfoService.getCompanyInfos(
+        connectionId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -94,56 +94,29 @@ export class CompanyInfoController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedCompanyInfoOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
-  getCompanyInfo(
-    @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    return this.companyinfoService.getCompanyInfo(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addCompanyInfo',
-    summary: 'Create a CompanyInfo',
-    description: 'Create a companyinfo in any supported Accounting software',
-  })
   @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedCompanyInfoInput })
   @ApiCustomResponse(UnifiedCompanyInfoOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addCompanyInfo(
-    @Body() unifiedCompanyInfoData: UnifiedCompanyInfoInput,
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
+  async retrieve(
     @Headers('x-connection-token') connection_token: string,
+    @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.companyinfoService.addCompanyInfo(
-        unifiedCompanyInfoData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.companyinfoService.getCompanyInfo(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

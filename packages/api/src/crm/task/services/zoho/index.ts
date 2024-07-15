@@ -3,12 +3,13 @@ import { ITaskService } from '@crm/task/types';
 import { CrmObject } from '@crm/@lib/@types';
 import { ZohoTaskInput, ZohoTaskOutput } from './types';
 import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZohoService implements ITaskService {
@@ -55,20 +56,14 @@ export class ZohoService implements ITaskService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.task,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncTasks(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoTaskOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoTaskOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -97,13 +92,7 @@ export class ZohoService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.task,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

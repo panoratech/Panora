@@ -26,9 +26,10 @@ export interface ITimeoffMapper {
 
   unify(
     source: OriginalTimeoffOutput | OriginalTimeoffOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTimeoffOutput | UnifiedTimeoffOutput[];
+  ): Promise<UnifiedTimeoffOutput | UnifiedTimeoffOutput[]>;
 }

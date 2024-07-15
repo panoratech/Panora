@@ -1,60 +1,42 @@
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
-import { TeamController } from './team.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { TeamService } from './services/team.service';
-import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { FrontService } from './services/front';
-import { ZendeskService } from './services/zendesk';
-import { JiraService } from './services/jira';
-import { GorgiasService } from './services/gorgias';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { CoreUnification } from '@@core/utils/services/core.service';
 import { Utils } from '@ticketing/@lib/@utils';
+import { FrontService } from './services/front';
+import { FrontTeamMapper } from './services/front/mappers';
+import { GorgiasService } from './services/gorgias';
+import { GorgiasTeamMapper } from './services/gorgias/mappers';
+import { JiraService } from './services/jira';
+import { JiraTeamMapper } from './services/jira/mappers';
+import { ServiceRegistry } from './services/registry.service';
+import { TeamService } from './services/team.service';
+import { ZendeskService } from './services/zendesk';
+import { ZendeskTeamMapper } from './services/zendesk/mappers';
+import { SyncService } from './sync/sync.service';
+import { TeamController } from './team.controller';
 
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [BullQueueModule],
   controllers: [TeamController],
   providers: [
     TeamService,
-
-    LoggerService,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
     Utils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
     JiraService,
     GorgiasService,
+    /* PROVIDERS MAPPERS */
+    ZendeskTeamMapper,
+    FrontTeamMapper,
+    JiraTeamMapper,
+    GorgiasTeamMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class TeamModule {}

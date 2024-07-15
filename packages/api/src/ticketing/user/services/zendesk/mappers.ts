@@ -4,7 +4,7 @@ import {
   UnifiedUserInput,
   UnifiedUserOutput,
 } from '@ticketing/user/types/model.unified';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -25,39 +25,56 @@ export class ZendeskUserMapper implements IUserMapper {
 
   unify(
     source: ZendeskUserOutput | ZendeskUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleUserToUnified(source, customFieldMappings);
+      return this.mapSingleUserToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
-    return source.map((user) =>
-      this.mapSingleUserToUnified(user, customFieldMappings),
+    return Promise.all(
+      source.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleUserToUnified(
+  private async mapSingleUserToUnified(
     user: ZendeskUserOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput {
+  ): Promise<UnifiedUserOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
         field_mappings[mapping.slug] = user.user_fields[mapping.remote_id];
       }
     }
-
     const unifiedUser: UnifiedUserOutput = {
       remote_id: String(user.id),
+      remote_data: user,
       name: user.name,
       email_address: user.email,
       field_mappings: field_mappings,
     };
+
+    if (user.default_group_id) {
+      unifiedUser.teams = [
+        await this.utils.getTeamUuidFromRemoteId(
+          String(user.default_group_id),
+          connectionId,
+        ),
+      ];
+    }
 
     return unifiedUser;
   }

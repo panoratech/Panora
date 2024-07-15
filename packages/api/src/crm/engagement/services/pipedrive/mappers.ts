@@ -5,7 +5,7 @@ import {
 } from '@crm/engagement/types/model.unified';
 import { IEngagementMapper } from '@crm/engagement/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -33,6 +33,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
   async unify(
     source: PipedriveEngagementOutput | PipedriveEngagementOutput[],
     engagement_type: string,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -40,11 +41,15 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
   ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
     switch (engagement_type) {
       case 'CALL':
-        return await this.unifyCall(source, customFieldMappings);
+        return await this.unifyCall(source, connectionId, customFieldMappings);
       case 'MEETING':
-        return await this.unifyMeeting(source, customFieldMappings);
+        return await this.unifyMeeting(
+          source,
+          connectionId,
+          customFieldMappings,
+        );
       case 'EMAIL':
-        return await this.unifyEmail(source, customFieldMappings);
+        return await this.unifyEmail(source, connectionId, customFieldMappings);
       default:
         break;
     }
@@ -52,24 +57,34 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
 
   private async unifyCall(
     source: PipedriveEngagementOutput | PipedriveEngagementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ) {
     if (!Array.isArray(source)) {
-      return this.mapSingleEngagementCallToUnified(source, customFieldMappings);
+      return this.mapSingleEngagementCallToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of PipedriveEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementCallToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementCallToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async unifyMeeting(
     source: PipedriveEngagementOutput | PipedriveEngagementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -78,6 +93,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (!Array.isArray(source)) {
       return this.mapSingleEngagementMeetingToUnified(
         source,
+        connectionId,
         customFieldMappings,
       );
     }
@@ -86,6 +102,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       source.map((engagement) =>
         this.mapSingleEngagementMeetingToUnified(
           engagement,
+          connectionId,
           customFieldMappings,
         ),
       ),
@@ -94,6 +111,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
 
   private async unifyEmail(
     source: PipedriveEngagementOutput | PipedriveEngagementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -102,19 +120,25 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (!Array.isArray(source)) {
       return this.mapSingleEngagementEmailToUnified(
         source,
+        connectionId,
         customFieldMappings,
       );
     }
     // Handling array of PipedriveEngagementOutput
     return Promise.all(
       source.map((engagement) =>
-        this.mapSingleEngagementEmailToUnified(engagement, customFieldMappings),
+        this.mapSingleEngagementEmailToUnified(
+          engagement,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleEngagementCallToUnified(
     engagement: PipedriveEngagementOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -131,10 +155,29 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
-        'pipedrive',
+        connectionId,
       );
       if (owner_id) {
         opts.user_id = owner_id;
+      }
+    }
+    if (engagement.company_id) {
+      const company_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(engagement.company_id),
+        connectionId,
+      );
+      if (company_id) {
+        opts.company_id = company_id;
+      }
+    }
+
+    if (engagement.person_id) {
+      const person_id = await this.utils.getContactUuidFromRemoteId(
+        String(engagement.person_id),
+        connectionId,
+      );
+      if (person_id) {
+        opts.contacts = [person_id];
       }
     }
 
@@ -146,15 +189,12 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       type: 'CALL',
       field_mappings,
       ...opts,
-      /*TODO: company_id: engagement.company_id
-        ? String(engagement.company_id)
-        : undefined,*/
-      //contacts: engagement.participants.map((p) => String(p.person_id)), // Assuming participants are contacts
     };
   }
 
   private async mapSingleEngagementMeetingToUnified(
     engagement: PipedriveEngagementOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -171,12 +211,32 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
-        'pipedrive',
+        connectionId,
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
+      }
+    }
+    if (engagement.company_id) {
+      const company_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(engagement.company_id),
+        connectionId,
+      );
+      if (company_id) {
+        opts.company_id = company_id;
+      }
+    }
+
+    if (engagement.person_id) {
+      const person_id = await this.utils.getContactUuidFromRemoteId(
+        String(engagement.person_id),
+        connectionId,
+      );
+      if (person_id) {
+        opts.contacts = [person_id];
       }
     }
 
@@ -188,10 +248,6 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         ? new Date(engagement.add_time + ' ' + engagement.duration)
         : undefined, // Derive end time if duration is provided
       type: 'MEETING',
-      /*TODO: company_id: engagement.company_id
-        ? String(engagement.company_id)
-        : undefined,*/
-      //contacts: engagement.participants.map((p) => String(p.person_id)), // Assuming participants are contacts
       field_mappings,
       ...opts,
     };
@@ -199,6 +255,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
 
   private async mapSingleEngagementEmailToUnified(
     engagement: PipedriveEngagementOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -215,10 +272,29 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
-        'pipedrive',
+        connectionId,
       );
       if (owner_id) {
         opts.user_id = owner_id;
+      }
+    }
+    if (engagement.company_id) {
+      const company_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(engagement.company_id),
+        connectionId,
+      );
+      if (company_id) {
+        opts.company_id = company_id;
+      }
+    }
+
+    if (engagement.person_id) {
+      const person_id = await this.utils.getContactUuidFromRemoteId(
+        String(engagement.person_id),
+        connectionId,
+      );
+      if (person_id) {
+        opts.contacts = [person_id];
       }
     }
 
@@ -229,14 +305,10 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       start_at: new Date(engagement.add_time), // Using 'add_time' as the start time
       end_time: engagement.marked_as_done_time
         ? new Date(engagement.marked_as_done_time)
-        : undefined, // Using 'marked_as_done_time' as end time if available
+        : null, // Using 'marked_as_done_time' as end time if available
       type: 'EMAIL',
       field_mappings,
       ...opts,
-      /*TODO: company_id: engagement.company_id
-        ? String(engagement.company_id)
-        : undefined,*/
-      //contacts: engagement.participants.map((p) => String(p.person_id)), // Assuming participants are contacts
     };
   }
 }

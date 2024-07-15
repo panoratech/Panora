@@ -1,54 +1,43 @@
-import { Module } from '@nestjs/common';
-import { AccountController } from './account.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { AccountService } from './services/account.service';
-import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ZendeskService } from './services/zendesk';
-import { FrontService } from './services/front';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { Module } from '@nestjs/common';
+import { Utils } from '@ticketing/@lib/@utils';
+import { AccountController } from './account.controller';
+import { AccountService } from './services/account.service';
+import { FrontService } from './services/front';
+import { FrontAccountMapper } from './services/front/mappers';
+import { ServiceRegistry } from './services/registry.service';
+import { ZendeskService } from './services/zendesk';
+import { ZendeskAccountMapper } from './services/zendesk/mappers';
+import { SyncService } from './sync/sync.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [BullQueueModule],
   controllers: [AccountController],
   providers: [
     AccountService,
 
-    LoggerService,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
+
     ServiceRegistry,
-    ConnectionUtils,
+
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
+    IngestDataService,
+    Utils,
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
+    /* PROVIDERS MAPPERS */
+    ZendeskAccountMapper,
+    FrontAccountMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class AccountModule {}

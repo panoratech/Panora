@@ -1,11 +1,12 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CoreSyncService } from './sync.service';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
-@ApiTags('syncs')
-@Controller('syncs')
+@ApiTags('sync')
+@Controller('sync')
 export class SyncController {
   constructor(
     private readonly syncService: CoreSyncService,
@@ -30,11 +31,12 @@ export class SyncController {
     summary: 'Resync common objects across a vertical',
   })
   @ApiResponse({ status: 200 })
-  @UseGuards(ApiKeyAuthGuard)
-  @Get('resyncs/:vertical')
-  resync(@Param('vertical') vertical: string) {
-    // TODO: get the right user_id of the premium user using the api key
-    const user_id = '';
-    return this.syncService.resync(vertical, user_id);
+  @UseGuards(JwtAuthGuard)
+  @Post('resync')
+  async resync(
+    @Body() data: { vertical: string; provider: string; linkedUserId: string },
+  ) {
+    const { vertical, provider, linkedUserId } = data;
+    return await this.syncService.resync(vertical, provider, linkedUserId);
   }
 }

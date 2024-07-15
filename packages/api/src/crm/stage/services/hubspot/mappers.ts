@@ -4,7 +4,7 @@ import {
   UnifiedStageOutput,
 } from '@crm/stage/types/model.unified';
 import { IStageMapper } from '@crm/stage/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
 
@@ -26,22 +26,28 @@ export class HubspotStageMapper implements IStageMapper {
 
   unify(
     source: HubspotStageOutput | HubspotStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedStageOutput | UnifiedStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, customFieldMappings);
+      return this.mapSingleStageToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotStageOutput
     return source.map((stage) =>
-      this.mapSingleStageToUnified(stage, customFieldMappings),
+      this.mapSingleStageToUnified(stage, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleStageToUnified(
     stage: HubspotStageOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -54,8 +60,8 @@ export class HubspotStageMapper implements IStageMapper {
       }
     }
     return {
-      remote_id: stage.id,
-      stage_name: stage.properties.dealstage,
+      remote_id: stage.stageId,
+      stage_name: stage.label,
       field_mappings,
     };
   }

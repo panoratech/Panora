@@ -1,33 +1,22 @@
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
 import { DriveController } from './drive.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
 import { DriveService } from './services/drive.service';
 import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-
+import { SyncService } from './sync/sync.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { Utils } from '@filestorage/@lib/@utils';
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
-  ],
+  imports: [BullQueueModule],
   controllers: [DriveController],
   providers: [
     DriveService,
-
-    LoggerService,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
+    IngestDataService,
     ServiceRegistry,
-    ConnectionUtils,
+    Utils,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

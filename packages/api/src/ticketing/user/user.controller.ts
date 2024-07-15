@@ -8,7 +8,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiOperation,
   ApiParam,
@@ -20,8 +20,8 @@ import {
 import { ApiCustomResponse } from '@@core/utils/types';
 import { UserService } from './services/user.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { UnifiedUserOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { UnifiedUserOutput } from './types/model.unified';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiBearerAuth('JWT')
@@ -54,13 +54,14 @@ export class UserController {
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     const { remote_data, limit, cursor } = query;
 
     return this.userService.getUsers(
+      connectionId,
       remoteSource,
       linkedUserId,
       limit,
@@ -87,13 +88,29 @@ export class UserController {
     description:
       'Set to true to include data from the original Ticketing software.',
   })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getUser(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.userService.getUser(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.userService.getUser(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

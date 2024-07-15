@@ -42,7 +42,7 @@ export default function ConnectionTable() {
   if (error) {
     console.log("error connections..");
   } 
- 
+  
   const linkedConnections = (filter: string) => connections?.filter((connection) => connection.status == filter);
   const ts = connections?.map((connection) => ({
     organisation: nameOrg, 

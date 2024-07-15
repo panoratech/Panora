@@ -2,17 +2,15 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedDriveInput, UnifiedDriveOutput } from './model.unified';
 import { OriginalDriveOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IDriveService {
+export interface IDriveService extends IBaseObjectService {
   addDrive(
     driveData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalDriveOutput>>;
 
-  syncDrives(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalDriveOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalDriveOutput[]>>;
 }
 
 export interface IDriveMapper {
@@ -26,9 +24,10 @@ export interface IDriveMapper {
 
   unify(
     source: OriginalDriveOutput | OriginalDriveOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedDriveOutput | UnifiedDriveOutput[];
+  ): Promise<UnifiedDriveOutput | UnifiedDriveOutput[]>;
 }

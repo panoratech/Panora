@@ -1,35 +1,34 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiCustomResponse } from '@@core/utils/types';
 import {
-  Controller,
-  Post,
   Body,
-  Query,
+  Controller,
   Get,
-  Patch,
-  Param,
   Headers,
+  Param,
+  Post,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { LoggerService } from '@@core/logger/logger.service';
 import {
+  ApiBearerAuth,
   ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiHeader,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
 import { CompanyService } from './services/company.service';
 import {
   UnifiedCompanyInput,
   UnifiedCompanyOutput,
 } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiBearerAuth('JWT')
 @ApiTags('crm/companies')
@@ -62,12 +61,13 @@ export class CompanyController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.companyService.getCompanies(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -96,14 +96,30 @@ export class CompanyController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getCompany(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.companyService.getCompany(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.companyService.getCompany(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 
   @ApiOperation({
@@ -133,12 +149,13 @@ export class CompanyController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.companyService.addCompany(
         unifiedCompanyData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,
@@ -146,19 +163,5 @@ export class CompanyController {
     } catch (error) {
       throw new Error(error);
     }
-  }
-
-  @ApiOperation({
-    operationId: 'updateCompany',
-    summary: 'Update a Company',
-  })
-  @ApiCustomResponse(UnifiedCompanyOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateCompany(
-    @Query('id') id: string,
-    @Body() updateCompanyData: Partial<UnifiedCompanyInput>,
-  ) {
-    return this.companyService.updateCompany(id, updateCompanyData);
   }
 }

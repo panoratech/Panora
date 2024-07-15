@@ -4,7 +4,7 @@ import {
   UnifiedStageOutput,
 } from '@crm/stage/types/model.unified';
 import { IStageMapper } from '@crm/stage/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
 
@@ -25,22 +25,28 @@ export class CloseStageMapper implements IStageMapper {
 
   unify(
     source: CloseStageOutput | CloseStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): UnifiedStageOutput | UnifiedStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, customFieldMappings);
+      return this.mapSingleStageToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of CloseStageOutput
     return source.map((stage) =>
-      this.mapSingleStageToUnified(stage, customFieldMappings),
+      this.mapSingleStageToUnified(stage, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleStageToUnified(
     stage: CloseStageOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

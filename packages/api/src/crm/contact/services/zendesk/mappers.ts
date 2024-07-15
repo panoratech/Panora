@@ -6,7 +6,7 @@ import {
 import { IContactMapper } from '@crm/contact/types';
 import { ZendeskContactInput, ZendeskContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -71,25 +71,35 @@ export class ZendeskContactMapper implements IContactMapper {
 
   async unify(
     source: ZendeskContactOutput | ZendeskContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleContactToUnified(source, customFieldMappings);
+      return await this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotContactOutput
     return Promise.all(
       source.map((contact) =>
-        this.mapSingleContactToUnified(contact, customFieldMappings),
+        this.mapSingleContactToUnified(
+          contact,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleContactToUnified(
     contact: ZendeskContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -121,7 +131,7 @@ export class ZendeskContactMapper implements IContactMapper {
     if (contact.owner_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(contact.owner_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
         opts = {

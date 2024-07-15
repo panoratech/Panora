@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { UnifiedTagOutput } from '../types/model.unified';
 
+// todo: return id_tcg_ticket ?
 @Injectable()
 export class TagService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
@@ -13,6 +13,8 @@ export class TagService {
 
   async getTag(
     id_ticketing_tag: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTagOutput> {
     try {
@@ -51,9 +53,10 @@ export class TagService {
         id: tag.id_tcg_tag,
         name: tag.name,
         field_mappings: field_mappings,
+        remote_id: tag.remote_id,
+        created_at: tag.created_at,
+        modified_at: tag.modified_at,
       };
-
-      let res: UnifiedTagOutput = unifiedTag;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -62,20 +65,30 @@ export class TagService {
           },
         });
         const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedTag.remote_data = remote_data;
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.tag.pull',
+          method: 'GET',
+          url: '/ticketing/tag',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-      return res;
+      return unifiedTag;
     } catch (error) {
       throw error;
     }
   }
 
   async getTags(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -95,8 +108,7 @@ export class TagService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_tags.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_tag: cursor,
           },
         });
@@ -116,8 +128,7 @@ export class TagService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -163,6 +174,9 @@ export class TagService {
             id: tag.id_tcg_tag,
             name: tag.name,
             field_mappings: field_mappings,
+            remote_id: tag.remote_id,
+            created_at: tag.created_at,
+            modified_at: tag.modified_at,
           };
         }),
       );
@@ -184,7 +198,7 @@ export class TagService {
 
         res = remote_array_data;
       }
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

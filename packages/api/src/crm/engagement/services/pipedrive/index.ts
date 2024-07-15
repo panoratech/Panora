@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { IEngagementService } from '@crm/engagement/types';
 import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { PipedriveEngagementInput, PipedriveEngagementOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class PipedriveService implements IEngagementService {
   constructor(
@@ -44,22 +45,17 @@ export class PipedriveService implements IEngagementService {
         statusCode: 201,
       };*/
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncEngagements(
-    linkedUserId: string,
-    engagement_type: string,
+  async sync(
+    data: SyncParam,
   ): Promise<ApiResponse<PipedriveEngagementOutput[]>> {
     try {
-      switch (engagement_type) {
+      const { linkedUserId, engagement_type } = data;
+
+      switch (engagement_type as string) {
         case 'CALL':
           return this.syncCalls(linkedUserId);
         case 'MEETING':
@@ -70,13 +66,7 @@ export class PipedriveService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -110,13 +100,7 @@ export class PipedriveService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement_call,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
   private async syncMeetings(linkedUserId: string) {
@@ -149,13 +133,7 @@ export class PipedriveService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement_meeting,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
   private async syncEmails(linkedUserId: string) {
@@ -188,13 +166,7 @@ export class PipedriveService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement_email,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

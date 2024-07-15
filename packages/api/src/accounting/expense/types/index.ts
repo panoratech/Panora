@@ -26,9 +26,10 @@ export interface IExpenseMapper {
 
   unify(
     source: OriginalExpenseOutput | OriginalExpenseOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedExpenseOutput | UnifiedExpenseOutput[];
+  ): Promise<UnifiedExpenseOutput | UnifiedExpenseOutput[]>;
 }

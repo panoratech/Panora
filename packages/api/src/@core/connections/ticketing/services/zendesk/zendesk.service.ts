@@ -1,17 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  Action,
-  ActionType,
-  ConnectionsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ITicketingConnectionService } from '../../types';
 import { ServiceRegistry } from '../registry.service';
 import {
@@ -23,7 +16,7 @@ import { OAuth2AuthData, providerToType } from '@panora/shared';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { OAuthCallbackParams } from '@@core/connections/@utils/types';
-import { ManagedWebhooksService } from '@@core/managed-webhooks/managed-webhooks.service';
+import { ManagedWebhooksService } from '@@core/@core-services/webhooks/third-parties-webhooks/managed-webhooks.service';
 
 export interface ZendeskOAuthResponse {
   access_token: string;
@@ -178,6 +171,48 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
         });
       }
       return db_res;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async revokeAccessTokens(linkedUserId: string) {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'zendesk',
+          vertical: 'ticketing',
+        },
+      });
+      const res_ = await axios.get(
+        `https://d3v-panora3441.zendesk.com/api/v2/oauth/tokens`,
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+      for (const obj of res_.data.tokens) {
+        try {
+          const res = await axios.delete(
+            `https://d3v-panora3441.zendesk.com/api/v2/oauth/tokens/${obj.id}.json`,
+            {
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            },
+          );
+        } catch (error) {
+          throw error;
+        }
+      }
     } catch (error) {
       throw error;
     }

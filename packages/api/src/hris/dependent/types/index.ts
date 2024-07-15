@@ -26,9 +26,10 @@ export interface IDependentMapper {
 
   unify(
     source: OriginalDependentOutput | OriginalDependentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedDependentOutput | UnifiedDependentOutput[];
+  ): Promise<UnifiedDependentOutput | UnifiedDependentOutput[]>;
 }

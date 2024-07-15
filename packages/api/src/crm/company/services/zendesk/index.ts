@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { ICompanyService } from '@crm/company/types';
 import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskCompanyInput, ZendeskCompanyOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class ZendeskService implements ICompanyService {
   constructor(
@@ -56,20 +57,13 @@ export class ZendeskService implements ICompanyService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.company,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncCompanies(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZendeskCompanyOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskCompanyOutput[]>> {
     try {
+      const { linkedUserId } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -89,7 +83,7 @@ export class ZendeskService implements ICompanyService {
         return item.data;
       });
       const filteredData = finalData.filter(
-        (item) => item.data.is_organization === true,
+        (item) => item.is_organization === true,
       );
 
       this.logger.log(`Synced zendesk companies !`);
@@ -100,13 +94,7 @@ export class ZendeskService implements ICompanyService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.company,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

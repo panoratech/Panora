@@ -1,32 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ICrmConnectionService } from '../../types';
-import { LoggerService } from '@@core/logger/logger.service';
-import {
-  Action,
-  ActionType,
-  ConnectionsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ServiceRegistry } from '../registry.service';
-import {
-  OAuth2AuthData,
-  CONNECTORS_METADATA,
-  providerToType,
-  DynamicApiUrl,
-} from '@panora/shared';
-import { AuthStrategy } from '@panora/shared';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
   OAuthCallbackParams,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { Injectable } from '@nestjs/common';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { ICrmConnectionService } from '../../types';
+import { ServiceRegistry } from '../registry.service';
 
 type ZohoUrlType = {
   [key: string]: {
@@ -56,6 +48,20 @@ export const ZOHOLocations: ZohoUrlType = {
     apiBase: 'https://www.zohoapis.jp',
   },
 };
+
+function getDomainSuffix(url: string): string | null {
+  try {
+    const domain = new URL(url).hostname;
+    const parts = domain.split('.');
+    if (parts.length > 1) {
+      return parts[parts.length - 1];
+    }
+    return null;
+  } catch (error) {
+    console.error('Invalid URL:', error);
+    return null;
+  }
+}
 
 export interface ZohoOAuthResponse {
   access_token: string;
@@ -126,11 +132,9 @@ export class ZohoConnectionService implements ICrmConnectionService {
       this.logger.log('OAuth credentials : zoho ' + JSON.stringify(data));
       let db_res;
       const connection_token = uuidv4();
-      const apiDomain = ZOHOLocations[location].apiBase;
-      const BASE_API_URL = (
-        CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl as DynamicApiUrl
-      )(apiDomain);
-
+      const BASE_API_URL = `${ZOHOLocations[location].apiBase}${
+        CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl as string
+      }`;
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
           where: {
@@ -177,8 +181,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
                 ),
               },
             },
-            account_url:
-              apiDomain + CONNECTORS_METADATA['crm']['zoho'].urls.apiUrl,
+            account_url: BASE_API_URL,
           },
         });
       }
@@ -196,6 +199,7 @@ export class ZohoConnectionService implements ICrmConnectionService {
         projectId,
         this.type,
       )) as OAuth2AuthData;
+
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         client_id: CREDENTIALS.CLIENT_ID,
@@ -205,7 +209,9 @@ export class ZohoConnectionService implements ICrmConnectionService {
       });
 
       const res = await axios.post(
-        `${account_url}/oauth/v2/token`,
+        `${
+          ZOHOLocations[getDomainSuffix(account_url)].authBase
+        }/oauth/v2/token`,
         formData.toString(),
         {
           headers: {

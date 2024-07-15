@@ -1,9 +1,8 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { UnifiedStageOutput } from '../types/model.unified';
-import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class StageService {
@@ -13,6 +12,8 @@ export class StageService {
 
   async getStage(
     id_stage: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedStageOutput> {
     try {
@@ -50,6 +51,9 @@ export class StageService {
         id: stage.id_crm_deals_stage,
         stage_name: stage.stage_name,
         field_mappings: field_mappings,
+        remote_id: stage.remote_id,
+        created_at: stage.created_at,
+        modified_at: stage.modified_at,
       };
 
       let res: UnifiedStageOutput = {
@@ -69,6 +73,19 @@ export class StageService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'crm.stage.pull',
+          method: 'GET',
+          url: '/crm/stage',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
@@ -77,6 +94,7 @@ export class StageService {
   }
 
   async getStages(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -94,8 +112,7 @@ export class StageService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_deals_stages.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_deals_stage: cursor,
           },
         });
@@ -115,8 +132,7 @@ export class StageService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -162,6 +178,9 @@ export class StageService {
             id: stage.id_crm_deals_stage,
             stage_name: stage.stage_name,
             field_mappings: field_mappings,
+            remote_id: stage.remote_id,
+            created_at: stage.created_at,
+            modified_at: stage.modified_at,
           };
         }),
       );
@@ -183,7 +202,7 @@ export class StageService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { UnifiedTeamOutput } from '../types/model.unified';
@@ -13,6 +13,8 @@ export class TeamService {
 
   async getTeam(
     id_ticketing_team: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedTeamOutput> {
     try {
@@ -52,9 +54,10 @@ export class TeamService {
         name: team.name,
         description: team.description,
         field_mappings: field_mappings,
+        remote_id: team.remote_id,
+        created_at: team.created_at,
+        modified_at: team.modified_at,
       };
-
-      let res: UnifiedTeamOutput = unifiedTeam;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -63,20 +66,29 @@ export class TeamService {
           },
         });
         const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedTeam.remote_data = remote_data;
       }
-
-      return res;
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.team.pull',
+          method: 'GET',
+          url: '/ticketing/team',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
+      return unifiedTeam;
     } catch (error) {
       throw error;
     }
   }
 
   async getTeams(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -96,8 +108,7 @@ export class TeamService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_teams.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_team: cursor,
           },
         });
@@ -117,8 +128,7 @@ export class TeamService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -165,6 +175,9 @@ export class TeamService {
             name: team.name,
             description: team.description,
             field_mappings: field_mappings,
+            remote_id: team.remote_id,
+            created_at: team.created_at,
+            modified_at: team.modified_at,
           };
         }),
       );
@@ -186,7 +199,7 @@ export class TeamService {
 
         res = remote_array_data;
       }
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',

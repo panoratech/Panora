@@ -5,17 +5,15 @@ import {
 } from './model.unified';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IAttachmentService {
+export interface IAttachmentService extends IBaseObjectService {
   addAttachment(
     attachmentData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalAttachmentOutput>>;
 
-  syncAttachments(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalAttachmentOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalAttachmentOutput[]>>;
 }
 
 export interface IAttachmentMapper {
@@ -29,9 +27,10 @@ export interface IAttachmentMapper {
 
   unify(
     source: OriginalAttachmentOutput | OriginalAttachmentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAttachmentOutput | UnifiedAttachmentOutput[];
+  ): Promise<UnifiedAttachmentOutput | UnifiedAttachmentOutput[]>;
 }

@@ -1,5 +1,5 @@
 import { CONNECTORS_METADATA } from './connectors/metadata';
-import { needsEndUserSubdomain, needsSubdomain, OAuth2AuthData, providerToType } from './envConfig';
+import { needsEndUserSubdomain, needsScope, needsSubdomain, OAuth2AuthData, providerToType } from './envConfig';
 import { AuthStrategy, DynamicAuthorization, ProviderConfig, StringAuthorization } from './types';
 import { randomString } from './utils';
 
@@ -15,7 +15,8 @@ interface AuthParams {
 
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
-export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, redirectUrlIngressWhenLocalDev }: AuthParams) => {
+export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
+  const redirectUrlIngressWhenLocalDev = CONNECTORS_METADATA[vertical][providerName].options?.local_redirect_uri_in_https === true && 'https://prepared-wildcat-infinitely.ngrok-free.app';
   const encodedRedirectUrl = encodeURIComponent(`${redirectUrlIngressWhenLocalDev ? redirectUrlIngressWhenLocalDev : apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
@@ -79,7 +80,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
   const DATA = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
-  const data = await DATA.json() as OAuth2AuthData;
+  const data = await DATA.json() as OAuth2AuthData; 
 
   // console.log("Fetched Data ", JSON.stringify(data))
 
@@ -123,8 +124,11 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if(providerName === 'helpscout') {
     params = `client_id=${encodeURIComponent(clientId)}&state=${state}`;
   }
+  if(providerName === 'pipedrive') {
+    params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
+  }
 
-  if (scopes) {
+  if (needsScope(providerName, vertical) && scopes) {
     if(providerName === 'slack') {
       params += `&scope=&user_scope=${encodeURIComponent(scopes)}`;
     } else {

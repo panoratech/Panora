@@ -26,9 +26,10 @@ export interface ILocationMapper {
 
   unify(
     source: OriginalLocationOutput | OriginalLocationOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedLocationOutput | UnifiedLocationOutput[];
+  ): Promise<UnifiedLocationOutput | UnifiedLocationOutput[]>;
 }

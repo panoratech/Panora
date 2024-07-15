@@ -1,13 +1,12 @@
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { PassThroughRequestDto } from './dto/passthrough.dto';
 import { PassThroughResponse } from './types';
 import axios, { AxiosResponse } from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { v4 as uuidv4 } from 'uuid';
-import { LoggerService } from '@@core/logger/logger.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
 import { CONNECTORS_METADATA } from '@panora/shared';
-import { PassthroughRequestError, throwTypedError } from '@@core/utils/errors';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class PassthroughService {
@@ -26,6 +25,7 @@ export class PassthroughService {
     vertical: string,
   ): Promise<PassThroughResponse> {
     try {
+      //TODO;
       const { method, path, data, headers } = requestParams;
 
       const job_resp_create = await this.prisma.events.create({
@@ -58,13 +58,13 @@ export class PassthroughService {
         method,
         url: URL,
         data,
-        headers: {
+        headers /*: {
           ...headers,
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
             connection.access_token,
           )}`,
-        },
+        },*/,
       });
 
       const status_resp =

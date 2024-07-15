@@ -3,12 +3,13 @@ import { IDealService } from '@crm/deal/types';
 import { CrmObject } from '@crm/@lib/@types';
 import { PipedriveDealInput, PipedriveDealOutput } from './types';
 import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class PipedriveService implements IDealService {
@@ -54,20 +55,13 @@ export class PipedriveService implements IDealService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.deal,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncDeals(
-    linkedUserId: string,
-  ): Promise<ApiResponse<PipedriveDealOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<PipedriveDealOutput[]>> {
     try {
+      const { linkedUserId } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -90,13 +84,7 @@ export class PipedriveService implements IDealService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.deal,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

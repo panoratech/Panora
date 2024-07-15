@@ -4,7 +4,7 @@ import {
   UnifiedTagInput,
   UnifiedTagOutput,
 } from '@ticketing/tag/types/model.unified';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -25,6 +25,7 @@ export class FrontTagMapper implements ITagMapper {
 
   unify(
     source: FrontTagOutput | FrontTagOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,12 +35,13 @@ export class FrontTagMapper implements ITagMapper {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((tag) =>
-      this.mapSingleTagToUnified(tag, customFieldMappings),
+      this.mapSingleTagToUnified(tag, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTagToUnified(
     tag: FrontTagOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -47,6 +49,7 @@ export class FrontTagMapper implements ITagMapper {
   ): UnifiedTagOutput {
     const unifiedTag: UnifiedTagOutput = {
       remote_id: tag.id,
+      remote_data: tag,
       name: tag.name,
     };
 

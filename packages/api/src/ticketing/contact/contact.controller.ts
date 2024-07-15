@@ -1,28 +1,28 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiCustomResponse } from '@@core/utils/types';
 import {
   Controller,
-  Query,
   Get,
-  Param,
   Headers,
+  Param,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
 import {
+  ApiBearerAuth,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
-  ApiHeader,
   ApiTags,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ContactService } from './services/contact.service';
-import { ConnectionUtils } from '@@core/connections/@utils';
 import { UnifiedContactOutput } from './types/model.unified';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
 @ApiBearerAuth('JWT')
 @ApiTags('ticketing/contacts')
@@ -55,12 +55,13 @@ export class ContactController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.contactService.getContacts(
+        connectionId,
         remoteSource,
         linkedUserId,
         limit,
@@ -90,13 +91,29 @@ export class ContactController {
     description:
       'Set to true to include data from the original Ticketing software.',
   })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
   @ApiCustomResponse(UnifiedContactOutput)
   @Get(':id')
   @UseGuards(ApiKeyAuthGuard)
-  getContact(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.getContact(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.contactService.getContact(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

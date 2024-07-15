@@ -1,62 +1,48 @@
-import { GitlabService } from './services/gitlab';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
-import { SyncService } from './sync/sync.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ZendeskService } from './services/zendesk';
-import { BullModule } from '@nestjs/bull';
+import { Utils } from '@ticketing/@lib/@utils';
 import { CommentController } from './comment.controller';
 import { CommentService } from './services/comment.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from './services/registry.service';
 import { FrontService } from './services/front';
-import { JiraService } from './services/jira';
+import { FrontCommentMapper } from './services/front/mappers';
+import { GitlabService } from './services/gitlab';
+import { GitlabCommentMapper } from './services/gitlab/mappers';
 import { GorgiasService } from './services/gorgias';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { UnificationRegistry } from '@@core/utils/registry/unification.registry';
-import { CoreUnification } from '@@core/utils/services/core.service';
-import { Utils } from '@ticketing/@lib/@utils';
-import { ConnectionUtils } from '@@core/connections/@utils';
-
+import { GorgiasCommentMapper } from './services/gorgias/mappers';
+import { JiraService } from './services/jira';
+import { JiraCommentMapper } from './services/jira/mappers';
+import { ServiceRegistry } from './services/registry.service';
+import { ZendeskService } from './services/zendesk';
+import { ZendeskCommentMapper } from './services/zendesk/mappers';
+import { SyncService } from './sync/sync.service';
 @Module({
-  imports: [
-    BullModule.registerQueue(
-      {
-        name: 'webhookDelivery',
-      },
-      { name: 'syncTasks' },
-    ),
-  ],
+  imports: [BullQueueModule],
   controllers: [CommentController],
   providers: [
     CommentService,
 
-    LoggerService,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
     Utils,
+    IngestDataService,
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
     JiraService,
     GorgiasService,
     GitlabService,
+    /* PROVIDERS MAPPERS */
+    ZendeskCommentMapper,
+    FrontCommentMapper,
+    JiraCommentMapper,
+    GorgiasCommentMapper,
+    GitlabCommentMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class CommentModule {}

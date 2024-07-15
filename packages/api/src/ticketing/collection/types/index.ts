@@ -8,12 +8,10 @@ import {
   OriginalCollectionInput,
 } from '@@core/utils/types/original/original.ticketing';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface ICollectionService {
-  syncCollections(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalCollectionOutput[]>>;
+export interface ICollectionService extends IBaseObjectService {
+  sync(data: SyncParam): Promise<ApiResponse<OriginalCollectionOutput[]>>;
 }
 
 export interface ICollectionMapper {
@@ -27,6 +25,7 @@ export interface ICollectionMapper {
 
   unify(
     source: OriginalCollectionOutput | OriginalCollectionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

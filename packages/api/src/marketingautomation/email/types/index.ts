@@ -26,9 +26,10 @@ export interface IEmailMapper {
 
   unify(
     source: OriginalEmailOutput | OriginalEmailOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEmailOutput | UnifiedEmailOutput[];
+  ): Promise<UnifiedEmailOutput | UnifiedEmailOutput[]>;
 }

@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedCollectionOutput } from '../types/model.unified';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import {
+  CollectionType,
+  UnifiedCollectionOutput,
+} from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 
@@ -21,6 +24,8 @@ export class CollectionService {
   }
   async getCollection(
     id_ticketing_collection: string,
+    linkedUserId: string,
+    integrationId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCollectionOutput> {
     try {
@@ -36,10 +41,9 @@ export class CollectionService {
         name: collection.name,
         description: collection.description,
         collection_type: collection.collection_type,
-      };
-
-      let res: UnifiedCollectionOutput = {
-        ...unifiedCollection,
+        remote_id: collection.remote_id,
+        created_at: collection.created_at,
+        modified_at: collection.modified_at,
       };
 
       if (remote_data) {
@@ -50,19 +54,30 @@ export class CollectionService {
         });
         const remote_data = JSON.parse(resp.data);
 
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedCollection.remote_data = remote_data;
       }
+      await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.collection.pull',
+          method: 'GET',
+          url: '/ticketing/collection',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-      return res;
+      return unifiedCollection;
     } catch (error) {
       throw error;
     }
   }
 
   async getCollections(
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -80,8 +95,7 @@ export class CollectionService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_collections.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_collection: cursor,
           },
         });
@@ -101,8 +115,7 @@ export class CollectionService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -124,6 +137,9 @@ export class CollectionService {
             name: collection.name,
             description: collection.description,
             collection_type: collection.collection_type,
+            remote_id: collection.remote_id,
+            created_at: collection.created_at,
+            modified_at: collection.modified_at,
           };
         }),
       );
@@ -145,13 +161,13 @@ export class CollectionService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.collection.pulled',
           method: 'GET',
-          url: '/ticketing/collection',
+          url: '/ticketing/collections',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

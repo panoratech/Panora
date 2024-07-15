@@ -5,7 +5,7 @@ import {
 } from '@crm/task/types/model.unified';
 import { ITaskMapper } from '@crm/task/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -22,15 +22,15 @@ export class PipedriveTaskMapper implements ITaskMapper {
     }[],
   ): Promise<PipedriveTaskInput> {
     const result: PipedriveTaskInput = {
-      subject: source.subject || '',
-      public_description: source.content || '',
-      done: source.status === 'Completed',
+      subject: source.subject || null,
+      public_description: source.content || null,
+      done: source.status === 'COMPLETED',
       due_date: source.due_date
         ? source.due_date.toISOString().split('T')[0]
-        : '',
+        : null,
       due_time: source.due_date
         ? source.due_date.toISOString().split('T')[1]
-        : '',
+        : null,
     };
 
     if (source.user_id) {
@@ -70,24 +70,30 @@ export class PipedriveTaskMapper implements ITaskMapper {
 
   async unify(
     source: PipedriveTaskOutput | PipedriveTaskOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, customFieldMappings);
+      return await this.mapSingleTaskToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((task) =>
-        this.mapSingleTaskToUnified(task, customFieldMappings),
+        this.mapSingleTaskToUnified(task, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleTaskToUnified(
     task: PipedriveTaskOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -105,10 +111,11 @@ export class PipedriveTaskMapper implements ITaskMapper {
     if (task.user_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(task.user_id),
-        'pipedrive',
+        connectionId,
       );
       if (user_id) {
         opts = {
+          ...opts,
           user_id: user_id,
         };
       }
@@ -117,10 +124,11 @@ export class PipedriveTaskMapper implements ITaskMapper {
     if (task.company_id) {
       const company_id = await this.utils.getCompanyUuidFromRemoteId(
         String(task.company_id),
-        'pipedrive',
+        connectionId,
       );
       if (company_id) {
         opts = {
+          ...opts,
           company_id: company_id,
         };
       }
@@ -128,25 +136,27 @@ export class PipedriveTaskMapper implements ITaskMapper {
     if (task.deal_id) {
       const deal_id = await this.utils.getDealUuidFromRemoteId(
         String(task.deal_id),
-        'pipedrive',
+        connectionId,
       );
       if (deal_id) {
         opts = {
+          ...opts,
           deal_id: deal_id,
         };
       }
     }
 
     return {
-      remote_id: task.id,
+      remote_id: String(task.id),
       subject: task.subject,
       content: task.public_description,
-      status: task.done ? 'Completed' : 'Pending',
-      due_date: task.due_date ? new Date(task.due_date) : undefined,
+      status: task.done ? 'COMPLETED' : 'PENDING',
+      due_date: task.due_date ? new Date(task.due_date) : null,
       finished_date: task.marked_as_done_time
         ? new Date(task.marked_as_done_time)
-        : undefined,
+        : null,
       field_mappings,
+      description: '', //todo null
       ...opts,
     };
   }

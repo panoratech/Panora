@@ -6,8 +6,11 @@ import {
   Get,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -20,9 +23,11 @@ import { ApiCustomResponse } from '@@core/utils/types';
 import { FileService } from './services/file.service';
 import { UnifiedFileInput, UnifiedFileOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiTags('filestorage/file')
-@Controller('filestorage/file')
+@ApiTags('filestorage/files')
+@Controller('filestorage/files')
 export class FileController {
   constructor(
     private readonly fileService: FileService,
@@ -42,26 +47,29 @@ export class FileController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
   @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getFiles(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.fileService.getFiles(remoteSource, linkedUserId, remote_data);
+      const { remote_data, limit, cursor } = query;
+
+      return this.fileService.getFiles(
+        connectionId,
+        remoteSource,
+        linkedUserId,
+        limit,
+        remote_data,
+        cursor,
+      );
     } catch (error) {
       throw new Error(error);
     }
@@ -83,16 +91,32 @@ export class FileController {
     required: false,
     type: Boolean,
     description:
-      'Set to true to include data from the original Filestorage software.',
+      'Set to true to include data from the original File Storage software.',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getFile(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.fileService.getFile(id, remote_data);
+    const { linkedUserId, remoteSource } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.fileService.getFile(
+      id,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 
   @ApiOperation({
@@ -106,16 +130,9 @@ export class FileController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
   @ApiBody({ type: UnifiedFileInput })
   @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addFile(
     @Body() unifiedFileData: UnifiedFileInput,
@@ -123,12 +140,13 @@ export class FileController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.fileService.addFile(
         unifiedFileData,
+        connectionId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -2,7 +2,7 @@ import { Body, Controller, Post, Query } from '@nestjs/common';
 import { PassThroughRequestDto } from './dto/passthrough.dto';
 import { PassThroughResponse } from './types';
 import { PassthroughService } from './passthrough.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
@@ -11,6 +11,8 @@ import { GitlabCommentInput, GitlabCommentOutput } from './types';
 import { ServiceRegistry } from '../registry.service';
 import { Utils } from '@ticketing/@lib/@utils';
 import * as fs from 'fs';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 
 @Injectable()
 export class GitlabService implements ICommentService {
@@ -62,7 +64,7 @@ export class GitlabService implements ICommentService {
             url: res.file_url,
             name: res.file_name,
             size: stats.size,
-            content_type: 'application/pdf', //todo
+            content_type: this.utils.getMimeType(res.file_name),
           };
         });
         uploads = await Promise.all(attachmentPromises);
@@ -78,22 +80,13 @@ export class GitlabService implements ICommentService {
       const ticket = await this.prisma.tcg_tickets.findFirst({
         where: {
           remote_id: remoteIdTicket,
-          remote_platform: 'gitlab',
+          id_connection: connection.id_connection,
         },
         select: {
           collections: true,
           id_tcg_ticket: true,
         },
       });
-
-      // const ticket = await this.prisma.tcg_tickets.findUnique({
-      //     where: {
-      //         id_tcg_ticket: remoteIdTicket,
-      //     },
-      //     select: {
-      //         collections: true
-      //     },
-      // });
 
       const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(
         ticket.collections[0],
@@ -126,20 +119,13 @@ export class GitlabService implements ICommentService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.comment,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
-  async syncComments(
-    linkedUserId: string,
-    id_ticket: string,
-  ): Promise<ApiResponse<GitlabCommentOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GitlabCommentOutput[]>> {
     try {
+      const { linkedUserId, id_ticket } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -150,7 +136,7 @@ export class GitlabService implements ICommentService {
       //retrieve ticket remote id so we can retrieve the comments in the original software
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
-          id_tcg_ticket: id_ticket,
+          id_tcg_ticket: id_ticket as string,
         },
         select: {
           remote_id: true,
@@ -166,43 +152,36 @@ export class GitlabService implements ICommentService {
       // Retrieve the uuid of issue from remote_data
       const remote_data = await this.prisma.remote_data.findFirst({
         where: {
-          ressource_owner_id: id_ticket,
+          ressource_owner_id: id_ticket as string,
         },
       });
       const { iid } = JSON.parse(remote_data.data);
 
-      console.log(
-        'Requested URL : ',
-        `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
-      );
-
-      const resp = await axios.get(
-        `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
+      let res = [];
+      if (remote_project_id) {
+        const resp = await axios.get(
+          `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
           },
-        },
-      );
+        );
+        res = resp.data;
+      }
+
       this.logger.log(`Synced gitlab comments !`);
-      console.log(resp.data);
 
       return {
-        data: resp.data,
+        data: res,
         message: 'Gitlab comments retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.comment,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }
