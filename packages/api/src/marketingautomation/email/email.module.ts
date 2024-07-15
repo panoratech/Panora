@@ -13,9 +13,6 @@ import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
-
-
-
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Module({
@@ -23,17 +20,14 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
   controllers: [EmailController],
   providers: [
     EmailService,
-    
+
     SyncService,
     WebhookService,
 
-    
-    
     FieldMappingService,
     ServiceRegistry,
     CoreUnification,
 
-    
     IngestDataService,
     /* PROVIDERS SERVICES */
   ],

@@ -70,11 +70,19 @@ export class CloseContactMapper implements IContactMapper {
     }[],
   ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of CloseContactOutput
     return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, connectionId, customFieldMappings),
+      this.mapSingleContactToUnified(
+        contact,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 

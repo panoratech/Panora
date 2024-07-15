@@ -22,13 +22,12 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
   controllers: [AccountController],
   providers: [
     AccountService,
-    
+
     SyncService,
     WebhookService,
-    
+
     ServiceRegistry,
-    
-    
+
     CoreUnification,
     IngestDataService,
     Utils,
@@ -39,11 +38,6 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     ZendeskAccountMapper,
     FrontAccountMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class AccountModule {}

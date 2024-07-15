@@ -28,14 +28,13 @@ import { SyncService } from './sync/sync.service';
   controllers: [EngagementController],
   providers: [
     EngagementService,
-    
+
     SyncService,
     WebhookService,
-    
-    
+
     FieldMappingService,
     ServiceRegistry,
-    
+
     Utils,
     IngestDataService,
     /* PROVIDERS SERVICES */
@@ -51,11 +50,6 @@ import { SyncService } from './sync/sync.service';
     HubspotEngagementMapper,
     CloseEngagementMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class EngagementModule {}

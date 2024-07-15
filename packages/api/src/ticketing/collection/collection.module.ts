@@ -22,13 +22,12 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
   controllers: [CollectionController],
   providers: [
     CollectionService,
-    
+
     SyncService,
     WebhookService,
-    
-    
+
     ServiceRegistry,
-    
+
     Utils,
     IngestDataService,
     /* PROVIDERS SERVICES */
@@ -38,11 +37,6 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     JiraCollectionMapper,
     GitlabCollectionMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class CollectionModule {}

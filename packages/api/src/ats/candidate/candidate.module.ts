@@ -13,7 +13,6 @@ import { AshbyService } from './services/ashby';
 
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
-
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { Utils } from '@ats/@lib/@utils';
 import { ServiceRegistry as ApplicationServiceRegistry } from '@ats/application/services/registry.service';
@@ -24,16 +23,16 @@ import { AshbyCandidateMapper } from './services/ashby/mappers';
   controllers: [CandidateController],
   providers: [
     CandidateService,
-    
+
     CoreUnification,
-    
+
     SyncService,
     WebhookService,
-    
+
     ServiceRegistry,
-    
+
     IngestDataService,
-    
+
     ApplicationServiceRegistry,
     AttachmentServiceRegistry,
     Utils,

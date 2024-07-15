@@ -11,9 +11,7 @@ import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { AshbyService } from './services/ashby';
 
-
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-
 
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { AshbyRejectReasonMapper } from './services/ashby/mappers';
@@ -24,17 +22,17 @@ import { Utils } from '@ats/@lib/@utils';
   controllers: [RejectReasonController],
   providers: [
     RejectReasonService,
-    
+
     SyncService,
     CoreUnification,
 
     WebhookService,
-    
+
     ServiceRegistry,
-    
+
     Utils,
     IngestDataService,
-    
+
     AshbyRejectReasonMapper,
     /* PROVIDERS SERVICES */
     AshbyService,

@@ -8,13 +8,6 @@ import { ConnectionsStrategiesService } from './connections-strategies.service';
 
 @Module({
   controllers: [ConnectionsStrategiesController],
-  providers: [
-    
-    
-
-    ConnectionsStrategiesService,
-    ConfigService,
-    ValidateUserService,
-  ],
+  providers: [ConnectionsStrategiesService, ConfigService, ValidateUserService],
 })
 export class ConnectionsStrategiesModule {}

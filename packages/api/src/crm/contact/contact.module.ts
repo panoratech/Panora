@@ -30,16 +30,16 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
   controllers: [ContactController],
   providers: [
     ContactService,
-    
+
     FieldMappingService,
     SyncService,
     WebhookService,
-    
+
     ServiceRegistry,
     Utils,
-    
+
     IngestDataService,
-    
+
     /* PROVIDERS SERVICES */
     AttioService,
     ZendeskService,
@@ -55,11 +55,6 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     ZendeskContactMapper,
     ZohoContactMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class ContactModule {}

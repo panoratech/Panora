@@ -10,9 +10,7 @@ import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
-
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-
 
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { Utils } from '@ats/@lib/@utils';
@@ -22,16 +20,15 @@ import { Utils } from '@ats/@lib/@utils';
   controllers: [EeocsController],
   providers: [
     EeocsService,
-    
+
     SyncService,
     WebhookService,
     CoreUnification,
 
-    
     ServiceRegistry,
-    
+
     IngestDataService,
-    
+
     Utils,
     /* PROVIDERS SERVICES */
   ],

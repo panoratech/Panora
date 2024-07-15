@@ -30,15 +30,15 @@ import { SyncService } from './sync/sync.service';
   controllers: [CompanyController],
   providers: [
     CompanyService,
-    
+
     SyncService,
     WebhookService,
-    
+
     ServiceRegistry,
-    
+
     Utils,
     IngestDataService,
-    
+
     /* PROVIDERS SERVICES */
     ZendeskService,
     ZohoService,
@@ -54,11 +54,6 @@ import { SyncService } from './sync/sync.service';
     ZendeskCompanyMapper,
     ZohoCompanyMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class CompanyModule {}

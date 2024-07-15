@@ -11,9 +11,7 @@ import { TagController } from './tag.controller';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { AshbyService } from './services/ashby';
 
-
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-
 
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { AshbyTagMapper } from './services/ashby/mappers';
@@ -24,17 +22,16 @@ import { Utils } from '@ats/@lib/@utils';
   controllers: [TagController],
   providers: [
     TagService,
-    
+
     SyncService,
     WebhookService,
-    
+
     Utils,
     ServiceRegistry,
     CoreUnification,
 
-    
     IngestDataService,
-    
+
     AshbyTagMapper,
     /* PROVIDERS SERVICES */
     AshbyService,

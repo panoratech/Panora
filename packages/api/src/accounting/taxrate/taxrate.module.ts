@@ -11,9 +11,6 @@ import { TaxRateController } from './taxrate.controller';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
-
-
-
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Module({
@@ -21,16 +18,14 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
   controllers: [TaxRateController],
   providers: [
     TaxRateService,
-    
+
     CoreUnification,
-    
-    
-    
+
     SyncService,
     WebhookService,
-    
+
     ServiceRegistry,
-    
+
     IngestDataService,
     /* PROVIDERS SERVICES */
   ],

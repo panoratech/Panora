@@ -21,9 +21,7 @@ import { CrmUnificationService } from './@lib/@unification';
     UserModule,
     CrmWebhookHandlerModule,
   ],
-  providers: [
-    CrmUnificationService
-  ],
+  providers: [CrmUnificationService],
   exports: [
     ContactModule,
     DealModule,
@@ -36,4 +34,4 @@ import { CrmUnificationService } from './@lib/@unification';
     CrmWebhookHandlerModule,
   ],
 })
-export class CrmModule { }
+export class CrmModule {}

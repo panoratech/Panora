@@ -11,9 +11,7 @@ import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { AshbyService } from './services/ashby';
 
-
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-
 
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { AshbyInterviewMapper } from './services/ashby/mappers';
@@ -26,14 +24,14 @@ import { Utils } from '@ats/@lib/@utils';
     CoreUnification,
 
     InterviewService,
-    
+
     SyncService,
     WebhookService,
-    
+
     ServiceRegistry,
-    
+
     IngestDataService,
-    
+
     AshbyInterviewMapper,
     Utils,
     /* PROVIDERS SERVICES */

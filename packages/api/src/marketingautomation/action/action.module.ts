@@ -12,25 +12,20 @@ import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
-
-
-
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 @Module({
   imports: [BullQueueModule],
   controllers: [ActionController],
   providers: [
     ActionService,
-    
+
     SyncService,
     WebhookService,
-    
+
     ServiceRegistry,
-    
-    
+
     IngestDataService,
-    
-    
+
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

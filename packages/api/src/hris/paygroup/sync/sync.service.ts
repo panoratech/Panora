@@ -22,7 +22,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ) {
     this.logger.setContext(SyncService.name);
   }
-saveToDb(
+  saveToDb(
     connection_id: string,
     linkedUserId: string,
     data: any[],

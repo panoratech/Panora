@@ -21,13 +21,13 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
   controllers: [AttachmentController],
   providers: [
     AttachmentService,
-    
+
     WebhookService,
-    
+
     ServiceRegistry,
-    
+
     Utils,
-    
+
     IngestDataService,
     /* PROVIDERS SERVICES */
 

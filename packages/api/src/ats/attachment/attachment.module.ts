@@ -10,9 +10,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
-
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-
 
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { AshbyAttachmentMapper } from './services/ashby/mappers';
@@ -23,16 +21,15 @@ import { Utils } from '@ats/@lib/@utils';
   controllers: [AttachmentController],
   providers: [
     AttachmentService,
-    
+
     SyncService,
     WebhookService,
     CoreUnification,
 
-    
     ServiceRegistry,
-    
+
     IngestDataService,
-    
+
     AshbyAttachmentMapper,
     Utils,
     /* PROVIDERS SERVICES */

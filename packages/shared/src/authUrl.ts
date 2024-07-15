@@ -16,7 +16,7 @@ interface AuthParams {
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
 export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
-  const redirectUrlIngressWhenLocalDev = CONNECTORS_METADATA[vertical][providerName].options?.local_redirect_uri_in_https == true && "https://prepared-wildcat-infinitely.ngrok-free.app";
+  const redirectUrlIngressWhenLocalDev = CONNECTORS_METADATA[vertical][providerName].options?.local_redirect_uri_in_https === true && 'https://prepared-wildcat-infinitely.ngrok-free.app';
   const encodedRedirectUrl = encodeURIComponent(`${redirectUrlIngressWhenLocalDev ? redirectUrlIngressWhenLocalDev : apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
@@ -124,7 +124,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if(providerName === 'helpscout') {
     params = `client_id=${encodeURIComponent(clientId)}&state=${state}`;
   }
-  if(providerName === 'pipedrive'){
+  if(providerName === 'pipedrive') {
     params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
   }
 

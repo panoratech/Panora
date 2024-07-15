@@ -11,9 +11,7 @@ import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { AshbyService } from './services/ashby';
 
-
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-
 
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { AshbyOfferMapper } from './services/ashby/mappers';
@@ -24,17 +22,17 @@ import { Utils } from '@ats/@lib/@utils';
   controllers: [OfferController],
   providers: [
     OfferService,
-    
+
     CoreUnification,
 
     SyncService,
     WebhookService,
-    
+
     ServiceRegistry,
-    
+
     IngestDataService,
     Utils,
-    
+
     AshbyOfferMapper,
     /* PROVIDERS SERVICES */
     AshbyService,
