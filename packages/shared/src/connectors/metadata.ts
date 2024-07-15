@@ -335,6 +335,17 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.api_key
         }
       },
+      'redtail': {
+        urls: {
+          docsUrl: 'https://corporate.redtailtechnology.com/api',
+          apiUrl: 'https://smf.crm3.redtailtechnology.com/api/public/v1', //still unsure need to double check with their team
+        },
+        logoPath: 'https://pbs.twimg.com/profile_images/1247266546688249856/7TZh-Laf_400x400.png',
+        description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
+        authStrategy: {
+          strategy: AuthStrategy.api_key
+        }
+      },
     },
     'ticketing': {
       'front': {

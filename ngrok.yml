@@ -1,5 +1,5 @@
 version: 2
-authtoken: TOKEN
+authtoken: 2jIGQKtQHXkns14xtm6Jsv2rH1t_3tdpxdnTSmsCNkATBsLBD
 log_level: debug
 log: stdout
 
@@ -7,5 +7,5 @@ tunnels:
   api-tunnel:
     proto: http
     addr: 3000
-    domain: DOMAIN
+    domain: prepared-wildcat-infinitely.ngrok-free.app
 

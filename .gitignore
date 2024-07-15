@@ -1,3 +1,4 @@
+ngrok.yml
 **/node_modules/
 **/dist/
 node_modules
@@ -12,4 +13,3 @@ redis_data
 .pnpm-store/
 .npmrc
 .vscode
-ngrok.yml
