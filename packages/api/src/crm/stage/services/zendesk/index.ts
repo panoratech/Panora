@@ -71,13 +71,7 @@ export class ZendeskService implements IStageService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.stage,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

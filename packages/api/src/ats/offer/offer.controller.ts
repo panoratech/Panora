@@ -37,7 +37,7 @@ export class OfferController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getOffers',
     summary: 'List a batch of Offers',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class OfferController {
   @ApiCustomResponse(UnifiedOfferOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getOffers(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class OfferController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getOffer',
     summary: 'Retrieve a Offer',
     description: 'Retrieve a offer from any connected Ats software',
   })

@@ -61,13 +61,7 @@ export class HubspotService implements INoteService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.note,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -109,13 +103,7 @@ export class HubspotService implements INoteService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.note,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -9,7 +9,6 @@ export class GroupService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
     this.logger.setContext(GroupService.name);
   }
-
   async getGroup(
     id_fs_group: string,
     linkedUserId: string,

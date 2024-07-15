@@ -24,7 +24,7 @@ export class ZohoService implements IEngagementService {
     );
     this.registry.registerService('zoho', this);
   }
-
+  //ONLY CALLS FOR ZOHO
   async addEngagement(
     engagementData: ZohoEngagementInput,
     linkedUserId: string,
@@ -56,20 +56,12 @@ export class ZohoService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.engagement,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async sync(data: SyncParam): Promise<ApiResponse<ZohoEngagementOutput[]>> {
+  private async syncCalls(linkedUserId: string) {
     try {
-      const { linkedUserId } = data;
-
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -78,9 +70,9 @@ export class ZohoService implements IEngagementService {
         },
       });
       const fields =
-        'Owner,Description,Campaign_Name,End_Date,Start_Date,Type,Created_By';
+        'Owner,Description,Campaign_Name,End_Date,Start_Date,Type,Created_By,Subject,Call_Type,Who_Id, Call_Start_Time, Call_Duration';
       const resp = await axios.get(
-        `${connection.account_url}/Campaigns?fields=${fields}`,
+        `${connection.account_url}/Calls?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -90,21 +82,64 @@ export class ZohoService implements IEngagementService {
           },
         },
       );
-      //this.logger.log('CONTACTS ZOHO ' + JSON.stringify(resp.data.data));
-      this.logger.log(`Synced zoho engagements !`);
+      this.logger.log(`Synced zoho calls engagements !`);
       return {
         data: resp.data.data,
         message: 'Zoho engagements retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.engagement,
-        ActionType.GET,
+      throw error;
+    }
+  }
+
+  private async syncMeetings(linkedUserId: string) {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'zoho',
+          vertical: 'crm',
+        },
+      });
+      const fields =
+        'Owner,Description,End_DateTime,Start_DateTime,Subject,What_Id,Who_Id,Participants,Event_Title';
+      const resp = await axios.get(
+        `${connection.account_url}/Events?fields=${fields}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
       );
+      this.logger.log(`Synced zoho meetings engagements !`);
+      return {
+        data: resp.data.data,
+        message: 'Zoho engagements retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoEngagementOutput[]>> {
+    try {
+      const { linkedUserId, engagement_type } = data;
+
+      switch (engagement_type as string) {
+        case 'CALL':
+          return this.syncCalls(linkedUserId);
+        case 'MEETING':
+          return this.syncMeetings(linkedUserId);
+        default:
+          break;
+      }
+    } catch (error) {
+      throw error;
     }
   }
 }

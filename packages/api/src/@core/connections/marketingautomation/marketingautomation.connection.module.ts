@@ -21,14 +21,12 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
   imports: [WebhookModule, BullQueueModule],
   providers: [
     MarketingAutomationConnectionsService,
-    LoggerService,
+
     WebhookService,
     EnvironmentService,
-    CategoryConnectionRegistry,
-    EncryptionService,
+
     ServiceRegistry,
     ConnectionsStrategiesService,
-    ConnectionUtils,
     //PROVIDERS SERVICES
     BrevoConnectionService,
     PodiumConnectionService,

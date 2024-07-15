@@ -141,7 +141,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           description: collection.description ?? null,
           collection_type: collection.collection_type ?? null,
           modified_at: new Date(),
-          id_tcg_ticket: id_ticket ?? null,
+          //todo id_tcg_ticket: id_ticket ?? null,
         };
 
         if (existingCollection) {
@@ -161,6 +161,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               created_at: new Date(),
               remote_id: originId ?? null,
               id_connection: connection_id,
+              id_linked_user: linkedUserId,
             },
           });
         }
@@ -169,10 +170,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < data.length; i++) {
         const collection = data[i];
         const originId = collection.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateCollection(
           collection,

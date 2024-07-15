@@ -24,9 +24,6 @@ export class ZendeskService implements IContactService {
     );
     this.registry.registerService('zendesk', this);
   }
-  sync(data: SyncParam): Promise<ApiResponse<OriginalContactOutput[]>> {
-    throw new Error('Method not implemented.');
-  }
 
   async addContact(
     contactData: ZendeskContactInput,
@@ -61,19 +58,11 @@ export class ZendeskService implements IContactService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.contact,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncContacts(
-    data: SyncParam,
-  ): Promise<ApiResponse<ZendeskContactOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
       const { linkedUserId } = data;
 
@@ -108,13 +97,7 @@ export class ZendeskService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.contact,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

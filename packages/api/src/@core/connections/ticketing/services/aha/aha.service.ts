@@ -59,7 +59,6 @@ export class AhaConnectionService implements ITicketingConnectionService {
         },
       });
 
-      //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
           ? this.env.getWebhookIngress()

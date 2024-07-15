@@ -5,6 +5,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -21,8 +23,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiTags('filestorage/drive')
-@Controller('filestorage/drive')
+@ApiTags('filestorage/drives')
+@Controller('filestorage/drives')
 export class DriveController {
   constructor(
     private readonly driveService: DriveService,
@@ -33,7 +35,7 @@ export class DriveController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getDrives',
     summary: 'List a batch of Drives',
   })
   @ApiHeader({
@@ -44,8 +46,9 @@ export class DriveController {
   })
   @ApiCustomResponse(UnifiedDriveOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
-  async list(
+  async getDrives(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -70,7 +73,7 @@ export class DriveController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getDrive',
     summary: 'Retrieve a Drive',
     description: 'Retrieve a drive from any connected Filestorage software',
   })

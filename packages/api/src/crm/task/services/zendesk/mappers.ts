@@ -116,6 +116,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
       );
       if (deal_id) {
         opts = {
+          ...opts,
           deal_id: deal_id,
         };
       }
@@ -128,6 +129,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
       );
       if (company_id) {
         opts = {
+          ...opts,
           company_id: company_id,
         };
       }
@@ -140,6 +142,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
       );
       if (user_id) {
         opts = {
+          ...opts,
           user_id: user_id,
         };
       }

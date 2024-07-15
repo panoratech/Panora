@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import useOAuth from '@/hooks/useOAuth';
-import { providersArray, categoryFromSlug, Provider,CONNECTORS_METADATA } from '@panora/shared/src';
+import { providersArray, categoryFromSlug, Provider,CONNECTORS_METADATA,AuthStrategy } from '@panora/shared/src';
 import { categoriesVerticals } from '@panora/shared/src/categories';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,19 +10,45 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import useProjectConnectors from '@/hooks/queries/useProjectConnectors';
-import {ArrowLeftRight} from 'lucide-react'
+import {ArrowLeftRight} from 'lucide-react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Input } from "@/components/ui/input";
 import Modal from '@/components/Modal';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import useCreateApiKeyConnection from '@/hooks/queries/useCreateApiKeyConnection';
+
+
+// const formSchema = z.object({
+//   apiKey: z.string().min(2, {
+//     message: "Api Key must be at least 2 characters.",
+//   })
+// });
+
+interface IApiKeyFormData {
+  apikey: string,
+  [key : string]: string
+}
 
 const ProviderModal = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedProvider, setSelectedProvider] = useState<{
     provider: string;
     category: string;
-  }>();
-  const [optionalApiUrlForLocal, setOptionalApiUrlForLocal] = useState<string>();
-  const [startFlow, setStartFlow] = useState(false);
-  const [preStartFlow, setPreStartFlow] = useState(false);
-  const [projectId, setProjectId] = useState("");
+  }>({provider:'',category:''});
+  const [startFlow, setStartFlow] = useState<boolean>(false);
+  const [preStartFlow, setPreStartFlow] = useState<boolean>(false);
+  const [openApiKeyDialog,setOpenApiKeyDialog] = useState<boolean>(false);
+  const [projectId, setProjectId] = useState<string>("");
   const [data, setData] = useState<Provider[]>([]);
   const [errorResponse,setErrorResponse] = useState<{
     errorPresent: boolean; errorMessage : string
@@ -32,14 +58,24 @@ const ProviderModal = () => {
     status: boolean; provider: string
   }>({status: false, provider: ''});
 
-  const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState('');
+  const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState<string>('');
   const [openSuccessDialog,setOpenSuccessDialog] = useState<boolean>(false);
   const [currentProviderLogoURL,setCurrentProviderLogoURL] = useState<string>('')
   const [currentProvider,setCurrentProvider] = useState<string>('')
 
-
+  const {mutate : createApiKeyConnection} = useCreateApiKeyConnection();
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
   const {data: connectorsForProject} = useProjectConnectors(projectId);
+
+  // const form = useForm<z.infer<typeof formSchema>>({
+  //   resolver: zodResolver(formSchema),
+
+  //   defaultValues: {
+  //     apiKey: "",
+  //   },
+  // })
+
+  const {register,formState: {errors},handleSubmit,reset} = useForm<IApiKeyFormData>();
 
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
@@ -80,7 +116,6 @@ const ProviderModal = () => {
     vertical: selectedProvider?.category!,
     returnUrl: window.location.href,
     projectId: projectId,
-    optionalApiUrl: optionalApiUrlForLocal,
     linkedUserId: magicLink?.id_linked_user as string,
     onSuccess: () => {
       console.log('OAuth successful');
@@ -109,7 +144,6 @@ const ProviderModal = () => {
       
       open(onWindowClose)
       .catch((error : Error) => {
-        console.log("Error in use0Auth : ",error.message);
         setLoading({
           status: false,
           provider: ''
@@ -131,20 +165,23 @@ const ProviderModal = () => {
   
   const handleWalletClick = (walletName: string, category: string) => {
     setSelectedProvider({provider: walletName.toLowerCase(), category: category.toLowerCase()});
-    const options = CONNECTORS_METADATA[selectedProvider?.category!][selectedProvider?.provider!].options;
-    if(options && options.local_redirect_uri_in_https) {
-      setOptionalApiUrlForLocal('https://prepared-wildcat-infinitely.ngrok-free.app')
-    }
     const logoPath = CONNECTORS_METADATA[category.toLowerCase()][walletName.toLowerCase()].logoPath;
     setCurrentProviderLogoURL(logoPath);
     setCurrentProvider(walletName.toLowerCase())
     setPreStartFlow(true);
-    setOptionalApiUrlForLocal('')
   };
 
   const handleStartFlow = () => {
-    setLoading({status: true, provider: selectedProvider?.provider!});
-    setStartFlow(true);
+    if(selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.strategy===AuthStrategy.api_key)
+      {
+        setOpenApiKeyDialog(true)
+      }
+    else
+    {
+      setLoading({status: true, provider: selectedProvider?.provider!});
+      setStartFlow(true);
+    }
+    
   }
 
   const handleCategoryClick = (category: string) => {  
@@ -177,6 +214,54 @@ const ProviderModal = () => {
           }];
       }
       return [];
+    });
+  }
+
+  const onCloseApiKeyDialog = (dialogState : boolean) => {
+    setOpenApiKeyDialog(dialogState);
+    reset();
+  }
+
+  const onApiKeySubmit = (values: IApiKeyFormData) => {
+    // const extraFields = getValues()
+    onCloseApiKeyDialog(false);
+    setLoading({status: true, provider: selectedProvider?.provider!});
+    setPreStartFlow(false);
+
+    // Creating API Key Connection
+    createApiKeyConnection({
+      query : {
+        linkedUserId: magicLink?.id_linked_user as string,
+        projectId: projectId,
+        providerName: selectedProvider?.provider!,
+        vertical: selectedProvider?.category!
+      },
+      data: values  
+    },
+    {
+      onSuccess: () => {
+        setSelectedProvider({
+          provider: '',
+          category: ''
+        });   
+        
+        setLoading({
+            status: false,
+            provider: ''
+        });
+        setOpenSuccessDialog(true);
+      },
+      onError: (error) => {
+        setErrorResponse({errorPresent:true,errorMessage: error.message});
+        setLoading({
+          status: false,
+          provider: ''
+        });
+        setSelectedProvider({
+          provider: '',
+          category: ''
+        });  
+      }
     });
   }
 
@@ -238,6 +323,66 @@ const ProviderModal = () => {
           {/* </div> */}
       </CardFooter>
     </Card>
+
+    {/* Dialog for apikey input */}
+    <Dialog open={openApiKeyDialog} onOpenChange={onCloseApiKeyDialog}>
+      <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Enter a API key</DialogTitle>
+      </DialogHeader>
+      {/* <Form {...form}> */}
+        <form onSubmit={handleSubmit(onApiKeySubmit)}>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+              <Label className={errors.apikey ? 'text-destructive' : ''}>Enter your API key for {selectedProvider?.provider}</Label>
+              <Input 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                      placeholder="Your api key"
+                      {...register('apikey',{
+                        required: 'Api Key must be at least 2 characters',
+                        minLength: {
+                          value:2,
+                          message: 'Api Key must be at least 2 characters'
+                        }
+                      
+                      })}
+              />
+              <div>{errors.apikey && (<p className='text-sm font-medium text-destructive'>{errors.apikey.message}</p>)}</div>
+              
+
+            {/* </div> */}
+            {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
+            (
+              <>
+              <Label className={errors[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {selectedProvider?.provider}</Label>
+              <Input
+                    type='text'
+                    placeholder={`Your ${fieldName}`}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                    {...register(fieldName,{
+                      required: `${fieldName} must be at least 2 characters`,
+                      minLength:{
+                        value:2,
+                        message: `${fieldName} must be at least 2 characters`,
+                      }
+                    })}
+              />
+              {errors[fieldName] && (<p className='text-sm font-medium text-destructive'>{errors[fieldName]?.message}</p>)}
+              </>
+            ))}
+          </div>
+        </div>
+      <DialogFooter>
+        <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCloseApiKeyDialog(false)}>Cancel</Button>
+        <Button type='submit' size="sm" className="h-7 gap-1">
+          Continue
+        </Button>
+      </DialogFooter>
+        </form>
+      {/* </Form> */}
+      </DialogContent>
+    </Dialog>
+
 
     {/* OAuth Successful Modal */}
     <Modal open={openSuccessDialog} setOpen={CloseSuccessDialog} >

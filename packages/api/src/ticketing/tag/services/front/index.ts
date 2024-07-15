@@ -66,13 +66,7 @@ export class FrontService implements ITagService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.tag,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

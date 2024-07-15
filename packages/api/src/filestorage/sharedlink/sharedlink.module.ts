@@ -8,30 +8,32 @@ import { ServiceRegistry } from './services/registry.service';
 import { SharedLinkService } from './services/sharedlink.service';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+
+
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+
+
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { BoxSharedLinkMapper } from './services/box/mappers';
+import { Utils } from '@filestorage/@lib/@utils';
+
 @Module({
   imports: [BullQueueModule],
   providers: [
     SharedLinkService,
-    LoggerService,
+    
     SyncService,
     WebhookService,
-    EncryptionService,
+    
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
     FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
-    IngestDataService,
-    CoreSyncRegistry,
     
+    IngestDataService,
+    
+    Utils,
     /* PROVIDERS SERVICES */
+    BoxSharedLinkMapper,
   ],
   exports: [SyncService],
 })

@@ -45,13 +45,7 @@ export class PipedriveService implements IEngagementService {
         statusCode: 201,
       };*/
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -72,13 +66,7 @@ export class PipedriveService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -112,13 +100,7 @@ export class PipedriveService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement_call,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
   private async syncMeetings(linkedUserId: string) {
@@ -151,13 +133,7 @@ export class PipedriveService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement_meeting,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
   private async syncEmails(linkedUserId: string) {
@@ -190,13 +166,7 @@ export class PipedriveService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.engagement_email,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -40,7 +40,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getAutomations',
     summary: 'List a batch of Automations',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class AutomationController {
   @ApiCustomResponse(UnifiedAutomationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getAutomations(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getAutomation',
     summary: 'Retrieve a Automation',
     description:
       'Retrieve a automation from any connected Marketingautomation software',
@@ -121,7 +121,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addAutomation',
     summary: 'Create a Automation',
     description:
       'Create a automation in any supported Marketingautomation software',
@@ -143,7 +143,7 @@ export class AutomationController {
   @ApiCustomResponse(UnifiedAutomationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addAutomation(
     @Body() unifiedAutomationData: UnifiedAutomationInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

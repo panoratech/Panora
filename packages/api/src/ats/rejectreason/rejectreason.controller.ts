@@ -40,7 +40,7 @@ export class RejectReasonController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getRejectReasons',
     summary: 'List a batch of RejectReasons',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class RejectReasonController {
   @ApiCustomResponse(UnifiedRejectReasonOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getRejectReasons(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class RejectReasonController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getRejectReason',
     summary: 'Retrieve a RejectReason',
     description: 'Retrieve a rejectreason from any connected Ats software',
   })

@@ -122,9 +122,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
         IUserService
       >(integrationId, linkedUserId, 'filestorage', 'user', service, [
         {
-          paramName: 'id_folder',
+          paramName: 'id_group',
           param: group_id,
-
           shouldPassToIngest: false,
           shouldPassToService: true,
         },
@@ -158,7 +157,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const baseData: any = {
           name: user.name ?? null,
           email: user.email ?? null,
-          is_me: user.is_me ?? null,
+          is_me: user.is_me ?? false,
           modified_at: new Date(),
         };
 

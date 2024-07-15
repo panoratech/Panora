@@ -74,21 +74,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 const providers = TICKETING_PROVIDERS;
                 for (const provider of providers) {
                   try {
-                    const accounts = await this.prisma.tcg_accounts.findMany();
-                    if (accounts) {
-                      for (const acc of accounts) {
-                        await this.syncForLinkedUser({
-                          integrationId: provider,
-                          linkedUserId: linkedUser.id_linked_user,
-                          account_id: acc.id_tcg_account,
-                        });
-                      }
-                    } else {
-                      await this.syncForLinkedUser({
-                        integrationId: provider,
-                        linkedUserId: linkedUser.id_linked_user,
-                      });
-                    }
+                    await this.syncForLinkedUser({
+                      integrationId: provider,
+                      linkedUserId: linkedUser.id_linked_user,
+                    });
                   } catch (error) {
                     throw error;
                   }
@@ -123,14 +112,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         'ticketing',
         'contact',
         service,
-        [
-          {
-            param: account_id,
-            paramName: 'account_id',
-            shouldPassToService: true,
-            shouldPassToIngest: true,
-          },
-        ],
+        [],
         wh_real_time_trigger,
       );
     } catch (error) {

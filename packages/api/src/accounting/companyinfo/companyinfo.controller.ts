@@ -40,7 +40,7 @@ export class CompanyInfoController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getCompanyInfos',
     summary: 'List a batch of CompanyInfos',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class CompanyInfoController {
   @ApiCustomResponse(UnifiedCompanyInfoOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getCompanyInfos(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class CompanyInfoController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getCompanyInfo',
     summary: 'Retrieve a CompanyInfo',
     description:
       'Retrieve a companyinfo from any connected Accounting software',

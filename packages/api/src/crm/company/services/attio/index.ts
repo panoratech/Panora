@@ -26,10 +26,6 @@ export class AttioService implements ICompanyService {
     );
     this.registry.registerService('attio', this);
   }
-  sync(data: SyncParam): Promise<ApiResponse<OriginalCompanyOutput[]>> {
-    throw new Error('Method not implemented.');
-  }
-
   async addCompany(
     companyData: AttioCompanyInput,
     linkedUserId: string,
@@ -63,19 +59,11 @@ export class AttioService implements ICompanyService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Attio',
-        CrmObject.company,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncCompanies(
-    data: SyncParam,
-  ): Promise<ApiResponse<AttioCompanyOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<AttioCompanyOutput[]>> {
     try {
       const { linkedUserId } = data;
 
@@ -104,13 +92,7 @@ export class AttioService implements ICompanyService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Attio',
-        CrmObject.company,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 }

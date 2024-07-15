@@ -1,7 +1,7 @@
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
@@ -11,6 +11,7 @@ import {
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { GitlabTicketInput, GitlabTicketOutput } from './types';
+import { GitlabTagOutput } from '@ticketing/tag/services/gitlab/types';
 
 @Injectable()
 export class GitlabTicketMapper implements ITicketMapper {
@@ -107,15 +108,15 @@ export class GitlabTicketMapper implements ITicketMapper {
       }
     }
 
-    let opts: any;
+    let opts: any = {};
     if (ticket.type) {
       opts = { ...opts, type: ticket.type === 'opened' ? 'OPEN' : 'CLOSED' };
     }
 
-    if (ticket.assignee) {
+    if (ticket.assignee && ticket.assignee[0]) {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
-        String(ticket.assignee),
+        String(ticket.assignee[0].id),
         connectionId,
       );
       if (user_id) {
@@ -127,7 +128,12 @@ export class GitlabTicketMapper implements ITicketMapper {
       const tags = (await this.coreUnificationService.unify<
         OriginalTagOutput[]
       >({
-        sourceObject: ticket.labels,
+        sourceObject: ticket.labels.map(
+          (label) =>
+            ({
+              name: label,
+            } as GitlabTagOutput),
+        ),
         targetType: TicketingObject.tag,
         providerName: 'gitlab',
         vertical: 'ticketing',
@@ -135,6 +141,7 @@ export class GitlabTicketMapper implements ITicketMapper {
         customFieldMappings: [],
       })) as UnifiedTagOutput[];
       opts = {
+        ...opts,
         tags: tags,
       };
     }

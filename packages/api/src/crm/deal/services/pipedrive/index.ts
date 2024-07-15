@@ -55,13 +55,7 @@ export class PipedriveService implements IDealService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.deal,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -90,13 +84,7 @@ export class PipedriveService implements IDealService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.deal,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

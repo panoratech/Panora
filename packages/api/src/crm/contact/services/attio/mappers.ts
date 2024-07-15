@@ -108,7 +108,6 @@ export class AttioContactMapper implements IContactMapper {
       postal_code: null,
       country: null,
     };
-    const opts: any = {};
 
     return {
       remote_id: contact.id.record_id,
@@ -125,7 +124,6 @@ export class AttioContactMapper implements IContactMapper {
       })), // Map each phone number,
       field_mappings,
       addresses: [address],
-      ...opts,
     };
   }
 }

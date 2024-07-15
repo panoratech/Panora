@@ -26,13 +26,13 @@ export class WebhookController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getWebhooksMetadata',
     summary: 'Retrieve webhooks metadata ',
   })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @Get()
-  list(@Request() req: any) {
+  getWebhooks(@Request() req: any) {
     const { id_project } = req.user;
     return this.webhookService.getWebhookEndpoints(id_project);
   }

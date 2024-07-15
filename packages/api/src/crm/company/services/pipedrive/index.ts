@@ -55,15 +55,8 @@ export class PipedriveService implements ICompanyService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.company,
-        ActionType.POST,
-      );
+      throw error;
     }
-    return;
   }
 
   async sync(data: SyncParam): Promise<ApiResponse<PipedriveCompanyOutput[]>> {
@@ -91,13 +84,7 @@ export class PipedriveService implements ICompanyService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.company,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

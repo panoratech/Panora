@@ -56,13 +56,7 @@ export class PipedriveService implements ITaskService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.task,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -78,7 +72,7 @@ export class PipedriveService implements ITaskService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/activities?type=task&user_id=${19156166}`,
+        `${connection.account_url}/activities?type=task`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -95,13 +89,7 @@ export class PipedriveService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.task,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -65,13 +65,7 @@ export class JiraService implements ITagService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'jira',
-        TicketingObject.tag,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

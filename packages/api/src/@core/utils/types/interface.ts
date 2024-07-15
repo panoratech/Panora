@@ -29,6 +29,7 @@ export interface IUnification {
     providerName,
     connectionId,
     customFieldMappings,
+    extraParams,
   }: {
     sourceObject: T;
     targetType_: TargetObject;
@@ -38,6 +39,7 @@ export interface IUnification {
       slug: string;
       remote_id: string;
     }[];
+    extraParams?: { [key: string]: any };
   }): Promise<UnifyReturnType>;
 }
 

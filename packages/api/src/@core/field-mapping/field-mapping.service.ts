@@ -181,7 +181,7 @@ export class FieldMappingService {
         },
       });
       const provider = CONNECTORS_METADATA[vertical][providerId.toLowerCase()];
-      if (!provider.urls.customPropertiesUrl)
+      if (!provider.urls.apiUrl || !provider.urls.customPropertiesUrl)
         throw new Error('proivder urls are invalid');
 
       const resp = await axios.get(provider.urls.customPropertiesUrl, {

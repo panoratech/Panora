@@ -61,13 +61,7 @@ export class AshbyService implements IOfferService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.offer,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

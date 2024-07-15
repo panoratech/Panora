@@ -58,13 +58,7 @@ export class ZendeskService implements IDealService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.deal,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -98,13 +92,7 @@ export class ZendeskService implements IDealService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.deal,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

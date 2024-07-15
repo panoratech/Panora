@@ -1,17 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { IRejectReasonService } from '@ats/rejectreason/types';
-import { AtsObject } from '@ats/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
-import { AshbyRejectReasonInput, AshbyRejectReasonOutput } from './types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { OriginalRejectReasonOutput } from '@@core/utils/types/original/original.ats';
 import { SyncParam } from '@@core/utils/types/interface';
+import { AtsObject } from '@ats/@lib/@types';
+import { IRejectReasonService } from '@ats/rejectreason/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { AshbyRejectReasonOutput } from './types';
 
 @Injectable()
 export class AshbyService implements IRejectReasonService {
@@ -58,13 +56,7 @@ export class AshbyService implements IRejectReasonService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.rejectreason,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

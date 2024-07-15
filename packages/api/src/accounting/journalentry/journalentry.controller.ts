@@ -40,7 +40,7 @@ export class JournalEntryController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getJournalEntrys',
     summary: 'List a batch of JournalEntrys',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class JournalEntryController {
   @ApiCustomResponse(UnifiedJournalEntryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getJournalEntrys(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class JournalEntryController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getJournalEntry',
     summary: 'Retrieve a JournalEntry',
     description:
       'Retrieve a journalentry from any connected Accounting software',
@@ -121,7 +121,7 @@ export class JournalEntryController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addJournalEntry',
     summary: 'Create a JournalEntry',
     description: 'Create a journalentry in any supported Accounting software',
   })
@@ -142,7 +142,7 @@ export class JournalEntryController {
   @ApiCustomResponse(UnifiedJournalEntryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addJournalEntry(
     @Body() unifiedJournalEntryData: UnifiedJournalEntryInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

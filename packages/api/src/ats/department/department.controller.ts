@@ -40,7 +40,7 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getDepartments',
     summary: 'List a batch of Departments',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class DepartmentController {
   @ApiCustomResponse(UnifiedDepartmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getDepartments(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getDepartment',
     summary: 'Retrieve a Department',
     description: 'Retrieve a department from any connected Ats software',
   })

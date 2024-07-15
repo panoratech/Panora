@@ -60,13 +60,7 @@ export class CloseService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -100,13 +94,7 @@ export class CloseService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_call,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -140,13 +128,7 @@ export class CloseService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_meeting,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -183,13 +165,7 @@ export class CloseService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_email,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -208,13 +184,7 @@ export class CloseService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -246,13 +216,7 @@ export class CloseService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_call,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -283,13 +247,7 @@ export class CloseService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_meeting,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -319,13 +277,7 @@ export class CloseService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.engagement_email,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

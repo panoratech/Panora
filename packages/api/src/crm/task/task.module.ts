@@ -1,44 +1,33 @@
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { Utils } from '@crm/@lib/@utils';
 import { Module } from '@nestjs/common';
 import { CloseService } from './services/close';
+import { CloseTaskMapper } from './services/close/mappers';
 import { HubspotService } from './services/hubspot';
+import { HubspotTaskMapper } from './services/hubspot/mappers';
 import { PipedriveService } from './services/pipedrive';
+import { PipedriveTaskMapper } from './services/pipedrive/mappers';
 import { ServiceRegistry } from './services/registry.service';
 import { TaskService } from './services/task.service';
 import { ZendeskService } from './services/zendesk';
+import { AttioService } from './services/attio';
+import { ZendeskTaskMapper } from './services/zendesk/mappers';
+import { AttioTaskMapper } from './services/attio/mappers';
 import { ZohoService } from './services/zoho';
+import { ZohoTaskMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 import { TaskController } from './task.controller';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-
 @Module({
   imports: [BullQueueModule],
   controllers: [TaskController],
   providers: [
     TaskService,
-    LoggerService,
     SyncService,
-    CoreSyncRegistry,
-    
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
     Utils,
     IngestDataService,
     /* PROVIDERS SERVICES */
@@ -46,14 +35,16 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
     ZohoService,
     PipedriveService,
     HubspotService,
+    AttioService,
     CloseService,
+    /* PROVIDERS MAPPERS */
+    ZendeskTaskMapper,
+    ZohoTaskMapper,
+    PipedriveTaskMapper,
+    HubspotTaskMapper,
+    CloseTaskMapper,
+    AttioTaskMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class TaskModule {}

@@ -37,7 +37,7 @@ export class ActionController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getActions',
     summary: 'List a batch of Actions',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class ActionController {
   @ApiCustomResponse(UnifiedActionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getActions(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class ActionController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getAction',
     summary: 'Retrieve a Action',
     description:
       'Retrieve a action from any connected Marketingautomation software',
@@ -118,7 +118,7 @@ export class ActionController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addAction',
     summary: 'Create a Action',
     description:
       'Create a action in any supported Marketingautomation software',
@@ -140,7 +140,7 @@ export class ActionController {
   @ApiCustomResponse(UnifiedActionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addAction(
     @Body() unifiedActionData: UnifiedActionInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

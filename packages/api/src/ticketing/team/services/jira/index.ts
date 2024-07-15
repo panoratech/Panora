@@ -48,18 +48,12 @@ export class JiraService implements ITeamService {
       this.logger.log(`Synced jira teams !`);
 
       return {
-        data: resp.data._results,
+        data: resp.data.groups,
         message: 'Jira teams retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'jira',
-        TicketingObject.team,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

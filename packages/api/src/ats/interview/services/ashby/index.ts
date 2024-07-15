@@ -58,13 +58,7 @@ export class AshbyService implements IInterviewService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.interview,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

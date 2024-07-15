@@ -40,7 +40,7 @@ export class LocationController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getLocations',
     summary: 'List a batch of Locations',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class LocationController {
   @ApiCustomResponse(UnifiedLocationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getLocations(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class LocationController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getLocation',
     summary: 'Retrieve a Location',
     description: 'Retrieve a location from any connected Hris software',
   })

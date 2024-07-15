@@ -102,6 +102,13 @@ export class ZohoCompanyMapper implements ICompanyMapper {
         field_mappings[mapping.slug] = company[mapping.remote_id];
       }
     }
+    const opts: any = {};
+    if (company.Owner && company.Owner.id) {
+      opts.user_id = await this.utils.getUserUuidFromRemoteId(
+        company.Owner.id,
+        connectionId,
+      );
+    }
 
     return {
       remote_id: company.id,
@@ -124,11 +131,8 @@ export class ZohoCompanyMapper implements ICompanyMapper {
           owner_type: 'company',
         },
       ],
+      ...opts,
       industry: company.Industry,
-      user_id: await this.utils.getUserUuidFromRemoteId(
-        company.Owner.id,
-        connectionId,
-      ),
       number_of_employees: company.Employees,
       field_mappings,
     };

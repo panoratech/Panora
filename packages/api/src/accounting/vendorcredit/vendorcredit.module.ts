@@ -10,10 +10,10 @@ import { SyncService } from './sync/sync.service';
 import { VendorCreditController } from './vendorcredit.controller';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+
+
+
+
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Module({
@@ -21,18 +21,17 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
   controllers: [VendorCreditController],
   providers: [
     VendorCreditService,
-    LoggerService,
+    
     SyncService,
     WebhookService,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
-    EncryptionService,
-    CoreSyncRegistry,
+    
+    
+    
     
     FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
+    
     IngestDataService,
     /* PROVIDERS SERVICES */
   ],

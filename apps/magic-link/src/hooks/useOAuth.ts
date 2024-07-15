@@ -13,7 +13,7 @@ type UseOAuthProps = {
   onSuccess: () => void;
 };
 
-const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, optionalApiUrl, onSuccess }: UseOAuthProps) => {
+const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
   const intervalRef = useRef<number | ReturnType<typeof setInterval> | null>(null);
   const authWindowRef = useRef<Window | null>(null);
@@ -43,9 +43,8 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
 
   const openModal = async (onWindowClose: () => void) => {
     const apiUrl = config.API_URL!;
-    const redirectUrlIngressWhenLocalDev = optionalApiUrl;
     const authUrl = await constructAuthUrl({
-      projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, redirectUrlIngressWhenLocalDev
+      projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical
     });
     console.log('auth url is '+ authUrl)
 
@@ -56,7 +55,7 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
     const width = 600, height = 600;
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
-    const authWindow = window.open(authUrl as string, 'OAuth', `width=${width},height=${height},top=${top},left=${left}`);
+    const authWindow = window.open(authUrl as string, '_blank', `width=${width},height=${height},top=${top},left=${left}`); 
     authWindowRef.current = authWindow;
 
     clearExistingInterval(false);

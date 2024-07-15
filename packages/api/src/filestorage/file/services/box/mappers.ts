@@ -1,21 +1,16 @@
-import { BoxFileInput, BoxFileOutput } from './types';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.file-storage';
+import { FileStorageObject } from '@filestorage/@lib/@types';
+import { Utils } from '@filestorage/@lib/@utils';
+import { IFileMapper } from '@filestorage/file/types';
 import {
   UnifiedFileInput,
   UnifiedFileOutput,
 } from '@filestorage/file/types/model.unified';
-import { IFileMapper } from '@filestorage/file/types';
-import { Utils } from '@filestorage/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { Injectable } from '@nestjs/common';
-import {
-  OriginalPermissionOutput,
-  OriginalSharedLinkOutput,
-} from '@@core/utils/types/original/original.file-storage';
-import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { FileStorageObject } from '@filestorage/@lib/@types';
 import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
+import { Injectable } from '@nestjs/common';
+import { BoxFileInput, BoxFileOutput } from './types';
 
 @Injectable()
 export class BoxFileMapper implements IFileMapper {
@@ -97,13 +92,8 @@ export class BoxFileMapper implements IFileMapper {
       name: file.name || null,
       type: file.extension || null,
       file_url: file.shared_link?.url || null,
-      mime_type: file.metadata?.['content-type'] || null,
+      mime_type: this.utils.getMimeType(file.name) || null,
       size: file.size?.toString() || null,
-      folder_id:
-        (await this.utils.getFolderIdFromRemote(
-          file.parent?.id,
-          connectionId,
-        )) || null,
       permission: null,
       field_mappings,
       ...opts,

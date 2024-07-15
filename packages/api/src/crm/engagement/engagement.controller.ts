@@ -44,7 +44,7 @@ export class EngagementController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getEngagements',
     summary: 'List a batch of Engagements',
   })
   @ApiHeader({
@@ -57,7 +57,7 @@ export class EngagementController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getEngagements(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -82,7 +82,7 @@ export class EngagementController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getEngagement',
     summary: 'Retrieve a Engagement',
     description: 'Retrieve a engagement from any connected Crm software',
   })
@@ -125,7 +125,7 @@ export class EngagementController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addEngagement',
     summary: 'Create a Engagement',
     description: 'Create a engagement in any supported Crm software',
   })
@@ -145,7 +145,7 @@ export class EngagementController {
   @ApiCustomResponse(UnifiedEngagementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addEngagement(
     @Body() unifiedEngagementData: UnifiedEngagementInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

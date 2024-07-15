@@ -40,7 +40,7 @@ export class TransactionController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTransactions',
     summary: 'List a batch of Transactions',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class TransactionController {
   @ApiCustomResponse(UnifiedTransactionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getTransactions(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class TransactionController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTransaction',
     summary: 'Retrieve a Transaction',
     description:
       'Retrieve a transaction from any connected Accounting software',

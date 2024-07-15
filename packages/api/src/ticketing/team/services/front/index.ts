@@ -53,13 +53,7 @@ export class FrontService implements ITeamService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.team,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

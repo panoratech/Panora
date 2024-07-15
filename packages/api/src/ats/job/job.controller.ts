@@ -37,7 +37,7 @@ export class JobController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getJobs',
     summary: 'List a batch of Jobs',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class JobController {
   @ApiCustomResponse(UnifiedJobOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getJobs(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class JobController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getJob',
     summary: 'Retrieve a Job',
     description: 'Retrieve a job from any connected Ats software',
   })

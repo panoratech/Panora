@@ -223,6 +223,7 @@ export class DealService {
         amount: Number(deal.amount),
         stage_id: deal.id_crm_deals_stage, // uuid of Stage object
         user_id: deal.id_crm_user, // uuid of User object
+        company_id: deal.id_crm_company,
         field_mappings: field_mappings,
         remote_id: deal.remote_id,
         created_at: deal.created_at,
@@ -356,6 +357,7 @@ export class DealService {
             amount: Number(deal.amount),
             stage_id: deal.id_crm_deals_stage, // uuid of Stage object
             user_id: deal.id_crm_user, // uuid of User object
+            company_id: deal.id_crm_company,
             field_mappings: field_mappings,
             remote_id: deal.remote_id,
             created_at: deal.created_at,

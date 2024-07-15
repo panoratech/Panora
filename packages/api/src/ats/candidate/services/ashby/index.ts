@@ -55,13 +55,7 @@ export class AshbyService implements ICandidateService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'ashby',
-        AtsObject.application,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -96,13 +90,7 @@ export class AshbyService implements ICandidateService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.candidate,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

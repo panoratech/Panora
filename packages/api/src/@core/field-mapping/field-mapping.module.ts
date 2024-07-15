@@ -5,7 +5,7 @@ import { FieldMappingController } from './field-mapping.controller';
 import { FieldMappingService } from './field-mapping.service';
 
 @Module({
-  providers: [FieldMappingService, LoggerService, EncryptionService],
+  providers: [FieldMappingService],
   controllers: [FieldMappingController],
 })
 export class FieldMappingModule {}

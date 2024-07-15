@@ -37,7 +37,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTicketingContacts',
     summary: 'List all Contacts',
   })
   @ApiHeader({
@@ -50,7 +50,7 @@ export class ContactController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getContacts(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -74,7 +74,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTicketingContact',
     summary: 'Retrieve a Contact',
     description: 'Retrieve a contact from any connected Ticketing software',
   })

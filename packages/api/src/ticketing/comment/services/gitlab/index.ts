@@ -119,13 +119,7 @@ export class GitlabService implements ICommentService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.comment,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
   async sync(data: SyncParam): Promise<ApiResponse<GitlabCommentOutput[]>> {
@@ -163,38 +157,31 @@ export class GitlabService implements ICommentService {
       });
       const { iid } = JSON.parse(remote_data.data);
 
-      console.log(
-        'Requested URL : ',
-        `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
-      );
-
-      const resp = await axios.get(
-        `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
+      let res = [];
+      if (remote_project_id) {
+        const resp = await axios.get(
+          `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
           },
-        },
-      );
+        );
+        res = resp.data;
+      }
+
       this.logger.log(`Synced gitlab comments !`);
-      console.log(resp.data);
 
       return {
-        data: resp.data,
+        data: res,
         message: 'Gitlab comments retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.comment,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

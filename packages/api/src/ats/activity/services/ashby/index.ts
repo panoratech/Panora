@@ -66,13 +66,7 @@ export class AshbyService implements IActivityService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.activity,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

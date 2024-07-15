@@ -1,6 +1,8 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ApiResponse } from '@@core/utils/types';
@@ -10,15 +12,10 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { ITicketService } from '../types';
 import {
-  TicketPriority,
-  TicketStatus,
-  TicketType,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class TicketService {
@@ -148,6 +145,13 @@ export class TicketService {
       return result_ticket;
     } catch (error) {
       throw error;
+      /*throwTypedError(
+        new UnifiedTicketingError({
+          name: 'CREATE_TICKET_ERROR',
+          message: 'TicketService.addTicket() call failed',
+          cause: error,
+        }),
+      );*/
     }
   }
 

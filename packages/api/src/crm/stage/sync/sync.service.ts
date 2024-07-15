@@ -1,23 +1,21 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { CrmObject } from '@crm/@lib/@types';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedStageOutput } from '../types/model.unified';
-import { IStageService } from '../types';
-import { crm_deals_stages as CrmStage } from '@prisma/client';
-import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
-import { CRM_PROVIDERS } from '@panora/shared';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { CRM_PROVIDERS } from '@panora/shared';
+import { crm_deals_stages as CrmStage } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IStageService } from '../types';
+import { UnifiedStageOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -161,66 +159,104 @@ export class SyncService implements OnModuleInit, IBaseSync {
         stage: UnifiedStageOutput,
         originId: string,
       ) => {
-        const existingStage = await this.prisma.crm_deals.findFirst({
-          where: {
-            id_crm_deal: deal_id,
-          },
-          select: {
-            id_crm_deals_stage: true,
-          },
-        });
-
         const baseData: any = {
           stage_name: stage.stage_name ?? null,
           modified_at: new Date(),
         };
 
-        if (existingStage?.id_crm_deals_stage) {
-          return await this.prisma.crm_deals_stages.update({
+        if (deal_id) {
+          const existingStage = await this.prisma.crm_deals.findFirst({
             where: {
-              id_crm_deals_stage: existingStage.id_crm_deals_stage,
+              id_crm_deal: deal_id,
             },
-            data: baseData,
-          });
-        } else {
-          const isExistingStage = await this.prisma.crm_deals_stages.findFirst({
-            where: {
-              remote_id: originId,
-              id_connection: connection_id,
+            select: {
+              id_crm_deals_stage: true,
             },
           });
-
-          if (isExistingStage) {
-            await this.prisma.crm_deals.update({
+          if (existingStage?.id_crm_deals_stage) {
+            return await this.prisma.crm_deals_stages.update({
               where: {
-                id_crm_deal: deal_id,
+                id_crm_deals_stage: existingStage.id_crm_deals_stage,
               },
-              data: {
-                id_crm_deals_stage: isExistingStage.id_crm_deals_stage,
+              data: baseData,
+            });
+          } else {
+            const isExistingStage =
+              await this.prisma.crm_deals_stages.findFirst({
+                where: {
+                  remote_id: originId,
+                  id_connection: connection_id,
+                },
+              });
+
+            if (isExistingStage) {
+              await this.prisma.crm_deals.update({
+                where: {
+                  id_crm_deal: deal_id,
+                },
+                data: {
+                  id_crm_deals_stage: isExistingStage.id_crm_deals_stage,
+                },
+              });
+              return isExistingStage;
+            } else {
+              const newStage = await this.prisma.crm_deals_stages.create({
+                data: {
+                  ...baseData,
+                  id_crm_deals_stage: uuidv4(),
+                  created_at: new Date(),
+                  remote_id: originId ?? '',
+                  id_connection: connection_id,
+                },
+              });
+
+              await this.prisma.crm_deals.update({
+                where: {
+                  id_crm_deal: deal_id,
+                },
+                data: {
+                  id_crm_deals_stage: newStage.id_crm_deals_stage,
+                },
+              });
+
+              return newStage;
+            }
+          }
+        } else {
+          let existingStage;
+          if (!originId) {
+            existingStage = await this.prisma.crm_deals_stages.findFirst({
+              where: {
+                stage_name: stage.stage_name,
+                id_connection: connection_id,
               },
             });
-            return isExistingStage;
           } else {
-            const newStage = await this.prisma.crm_deals_stages.create({
+            existingStage = await this.prisma.crm_deals_stages.findFirst({
+              where: {
+                remote_id: originId,
+                id_connection: connection_id,
+              },
+            });
+          }
+
+          if (existingStage) {
+            return await this.prisma.crm_deals_stages.update({
+              where: {
+                id_crm_deals_stage: existingStage.id_crm_deals_stage,
+              },
+              data: baseData,
+            });
+          } else {
+            return await this.prisma.crm_deals_stages.create({
               data: {
                 ...baseData,
                 id_crm_deals_stage: uuidv4(),
                 created_at: new Date(),
-                remote_id: originId ?? '',
+                remote_id: originId ?? null,
                 id_connection: connection_id,
               },
             });
-
-            await this.prisma.crm_deals.update({
-              where: {
-                id_crm_deal: deal_id,
-              },
-              data: {
-                id_crm_deals_stage: newStage.id_crm_deals_stage,
-              },
-            });
-
-            return newStage;
           }
         }
       };
@@ -228,10 +264,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
       for (let i = 0; i < data.length; i++) {
         const stage = data[i];
         const originId = stage.remote_id;
-
-        if (!originId || originId === '') {
-          throw new ReferenceError(`Origin id not there, found ${originId}`);
-        }
 
         const res = await updateOrCreateStage(stage, originId);
         const stage_id = res.id_crm_deals_stage;

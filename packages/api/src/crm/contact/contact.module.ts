@@ -1,7 +1,6 @@
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -9,39 +8,38 @@ import { Utils } from '@crm/@lib/@utils';
 import { Module } from '@nestjs/common';
 import { ContactController } from './contact.controller';
 import { AttioService } from './services/attio';
+import { AttioContactMapper } from './services/attio/mappers';
 import { CloseService } from './services/close';
+import { CloseContactMapper } from './services/close/mappers';
 import { ContactService } from './services/contact.service';
 import { HubspotService } from './services/hubspot';
+import { HubspotContactMapper } from './services/hubspot/mappers';
 import { PipedriveService } from './services/pipedrive';
+import { PipedriveContactMapper } from './services/pipedrive/mappers';
 import { ServiceRegistry } from './services/registry.service';
 import { ZendeskService } from './services/zendesk';
+import { ZendeskContactMapper } from './services/zendesk/mappers';
 import { ZohoService } from './services/zoho';
+import { ZohoContactMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
   imports: [BullQueueModule],
   controllers: [ContactController],
   providers: [
     ContactService,
-    LoggerService,
-    FieldMappingService,
-    CoreSyncRegistry,
     
+    FieldMappingService,
     SyncService,
     WebhookService,
-    EncryptionService,
+    
     ServiceRegistry,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
     Utils,
-    ConnectionUtils,
+    
     IngestDataService,
+    
     /* PROVIDERS SERVICES */
     AttioService,
     ZendeskService,
@@ -49,13 +47,19 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
     PipedriveService,
     HubspotService,
     CloseService,
+    /* PROVIDERS MAPPERS */
+    AttioContactMapper,
+    CloseContactMapper,
+    HubspotContactMapper,
+    PipedriveContactMapper,
+    ZendeskContactMapper,
+    ZohoContactMapper,
   ],
   exports: [
     SyncService,
     ServiceRegistry,
     WebhookService,
-    FieldMappingService,
-    LoggerService,
+    
   ],
 })
 export class ContactModule {}

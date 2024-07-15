@@ -56,13 +56,7 @@ export class HubspotService implements IStageService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.stage,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

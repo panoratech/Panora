@@ -1,10 +1,27 @@
 /* INPUT */
 
+import {
+  BoxFileInput,
+  BoxFileOutput,
+} from '@filestorage/file/services/box/types';
+import {
+  BoxFolderInput,
+  BoxFolderOutput,
+} from '@filestorage/folder/services/box/types';
+import {
+  BoxGroupInput,
+  BoxGroupOutput,
+} from '@filestorage/group/services/box/types';
+import {
+  BoxUserInput,
+  BoxUserOutput,
+} from '@filestorage/user/services/box/types';
+
 /* file */
-export type OriginalFileInput = any;
+export type OriginalFileInput = BoxFileInput;
 
 /* folder */
-export type OriginalFolderInput = any;
+export type OriginalFolderInput = BoxFolderInput;
 
 /* permission */
 export type OriginalPermissionInput = any;
@@ -16,10 +33,10 @@ export type OriginalSharedLinkInput = any;
 export type OriginalDriveInput = any;
 
 /* group */
-export type OriginalGroupInput = any;
+export type OriginalGroupInput = BoxGroupInput;
 
 /* user */
-export type OriginalUserInput = any;
+export type OriginalUserInput = BoxUserInput;
 
 export type FileStorageObjectInput =
   | OriginalFileInput
@@ -33,10 +50,10 @@ export type FileStorageObjectInput =
 /* OUTPUT */
 
 /* file */
-export type OriginalFileOutput = any;
+export type OriginalFileOutput = BoxFileOutput;
 
 /* folder */
-export type OriginalFolderOutput = any;
+export type OriginalFolderOutput = BoxFolderOutput;
 
 /* permission */
 export type OriginalPermissionOutput = any;
@@ -48,10 +65,10 @@ export type OriginalSharedLinkOutput = any;
 export type OriginalDriveOutput = any;
 
 /* group */
-export type OriginalGroupOutput = any;
+export type OriginalGroupOutput = BoxGroupOutput;
 
 /* user */
-export type OriginalUserOutput = any;
+export type OriginalUserOutput = BoxUserOutput;
 
 export type FileStorageObjectOutput =
   | OriginalFileOutput

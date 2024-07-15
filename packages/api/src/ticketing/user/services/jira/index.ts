@@ -44,24 +44,29 @@ export class JiraService implements IUserService {
           )}`,
         },
       });
+
       //todo: ratelimiting in jira ?
       const userEmailPromises = resp.data.map(async (user) => {
         const accountId = user.account_id;
-        const emailResp = await axios.get(
-          `${connection.account_url}/users/email?accountId=${accountId}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${this.cryptoService.decrypt(
-                connection.access_token,
-              )}`,
+        if (accountId) {
+          const emailResp = await axios.get(
+            `${connection.account_url}/users/email?accountId=${accountId}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
             },
-          },
-        );
-        return {
-          ...user,
-          email: emailResp.data.email,
-        };
+          );
+          return {
+            ...user,
+            email: emailResp.data.email,
+          };
+        } else {
+          return user;
+        }
       });
       const dataPromise = await Promise.all(userEmailPromises);
 
@@ -73,13 +78,7 @@ export class JiraService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'jira',
-        TicketingObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -37,7 +37,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getGroups',
     summary: 'List a batch of Groups',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class GroupController {
   @ApiCustomResponse(UnifiedGroupOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getGroups(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getGroup',
     summary: 'Retrieve a Group',
     description: 'Retrieve a group from any connected Hris software',
   })

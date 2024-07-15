@@ -54,13 +54,7 @@ export class CloseService implements INoteService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.note,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -93,13 +87,7 @@ export class CloseService implements INoteService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.note,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

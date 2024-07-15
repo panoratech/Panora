@@ -43,7 +43,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTicketingAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class AttachmentController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getAttachments(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -81,7 +81,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTicketingAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Ticketing software',
   })
@@ -125,7 +125,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'download',
+    operationId: 'downloadAttachment',
     summary: 'Download a Attachment',
     description: 'Download a attachment from any connected Ticketing software',
   })
@@ -151,7 +151,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id/download')
-  download(
+  downloadAttachment(
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -159,9 +159,9 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'create',
-    summary: 'Create an Attachment',
-    description: 'Create an attachment in any supported Ticketing software',
+    operationId: 'addTicketingAttachment',
+    summary: 'Create a Attachment',
+    description: 'Create a attachment in any supported Ticketing software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -180,7 +180,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addAttachment(
     @Body() unfiedAttachmentData: UnifiedAttachmentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

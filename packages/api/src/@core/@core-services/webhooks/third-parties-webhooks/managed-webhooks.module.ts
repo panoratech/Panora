@@ -1,4 +1,3 @@
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { ValidateUserService } from '@@core/utils/services/validate-user.service';
 import { CrmWebhookHandlerModule } from '@crm/@webhook/handler.module';
@@ -16,6 +15,6 @@ import { ManagedWebhooksService } from './managed-webhooks.service';
   ],
   controllers: [ManagedWebhooksController, MWHandlerController],
   exports: [ManagedWebhooksService],
-  providers: [ManagedWebhooksService, LoggerService, ValidateUserService],
+  providers: [ManagedWebhooksService, ValidateUserService],
 })
 export class ManagedWebhooksModule {}

@@ -7,6 +7,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -24,8 +26,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiTags('filestorage/file')
-@Controller('filestorage/file')
+@ApiTags('filestorage/files')
+@Controller('filestorage/files')
 export class FileController {
   constructor(
     private readonly fileService: FileService,
@@ -36,7 +38,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getFiles',
     summary: 'List a batch of Files',
   })
   @ApiHeader({
@@ -47,8 +49,9 @@ export class FileController {
   })
   @ApiCustomResponse(UnifiedFileOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
-  async list(
+  async getFiles(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +76,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getFile',
     summary: 'Retrieve a File',
     description: 'Retrieve a file from any connected Filestorage software',
   })
@@ -117,7 +120,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addFile',
     summary: 'Create a File',
     description: 'Create a file in any supported Filestorage software',
   })
@@ -131,7 +134,7 @@ export class FileController {
   @ApiCustomResponse(UnifiedFileOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addFile(
     @Body() unifiedFileData: UnifiedFileInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

@@ -5,7 +5,7 @@ import { PassthroughController } from './passthrough.controller';
 import { PassthroughService } from './passthrough.service';
 
 @Module({
-  providers: [PassthroughService, LoggerService, EncryptionService],
+  providers: [PassthroughService,  EncryptionService],
   controllers: [PassthroughController],
 })
 export class PassthroughModule {}

@@ -58,13 +58,7 @@ export class AshbyService implements IApplicationService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'ashby',
-        AtsObject.application,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -99,13 +93,7 @@ export class AshbyService implements IApplicationService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.application,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

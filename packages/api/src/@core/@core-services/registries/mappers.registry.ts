@@ -16,11 +16,11 @@ export class MappersRegistry {
     service: any,
   ) {
     const compositeKey = this.createCompositeKey(
-      category_vertical,
-      common_object,
-      provider_name,
+      category_vertical.toLowerCase().trim(),
+      common_object.toLowerCase().trim(),
+      provider_name.toLowerCase().trim(),
     );
-    this.serviceMap.set(compositeKey, service);
+    this.serviceMap.set(compositeKey.toLowerCase().trim(), service);
   }
 
   // Retrieve a service using the composite key
@@ -30,11 +30,11 @@ export class MappersRegistry {
     provider_name: string,
   ): any {
     const compositeKey = this.createCompositeKey(
-      category_vertical,
-      common_object,
-      provider_name,
+      category_vertical.toLowerCase().trim(),
+      common_object.toLowerCase().trim(),
+      provider_name.toLowerCase().trim(),
     );
-    const service = this.serviceMap.get(compositeKey);
+    const service = this.serviceMap.get(compositeKey.toLowerCase().trim());
     if (!service) {
       throw new Error(
         `Service not found for given keys: ${category_vertical}, ${common_object}, ${provider_name}`,

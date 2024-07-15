@@ -12,6 +12,8 @@ import {
   extractProvider,
   extractVertical,
   needsSubdomain,
+  needsScope,
+  OAuth2AuthData,
   SoftwareMode,
 } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
@@ -192,14 +194,19 @@ export class ConnectionsStrategiesService {
     let attributes: string[] = [];
     switch (authStrategy) {
       case AuthStrategy.oauth2:
-        attributes = ['client_id', 'client_secret', 'scope'];
+        attributes = ['client_id', 'client_secret'];
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
+        }
+        if (needsScope(provider.toLowerCase(), vertical.toLowerCase())) {
+          attributes.push('scope');
         }
         break;
       case AuthStrategy.api_key:
         attributes = ['api_key'];
-
+        if (needsScope(provider.toLowerCase(), vertical.toLowerCase())) {
+          attributes.push('scope');
+        }
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
         }
@@ -208,6 +215,9 @@ export class ConnectionsStrategiesService {
         attributes = ['username', 'secret'];
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
+        }
+        if (needsScope(provider.toLowerCase(), vertical.toLowerCase())) {
+          attributes.push('scope');
         }
         break;
       default:
@@ -305,10 +315,31 @@ export class ConnectionsStrategiesService {
     }
   }
 
-  async getCredentials(projectId: string, type: string) {
+  isOAuth2AuthData(data: AuthData): data is OAuth2AuthData {
+    return (
+      (data as OAuth2AuthData).CLIENT_ID !== undefined &&
+      (data as OAuth2AuthData).CLIENT_SECRET !== undefined
+    );
+  }
+
+  async getSafeCredentials(projectId: string, type: string) {
+    try {
+      const res = await this.getCredentials(projectId, type);
+
+      if (this.isOAuth2AuthData(res)) {
+        const { CLIENT_SECRET, ...safeData } = res;
+        return safeData;
+      }
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCredentials(projectId: string, type: string): Promise<AuthData> {
     try {
       const isCustomCred = await this.isCustomCredentials(projectId, type);
-      console.log('inside get credentials...');
       const provider = extractProvider(type);
       const vertical = extractVertical(type);
       //TODO: extract sofwtaremode
@@ -338,7 +369,6 @@ export class ConnectionsStrategiesService {
           authStrategy,
           SoftwareMode.cloud,
         );
-        console.log('CONNECTION STRATEGY result is' + JSON.stringify(res));
         return res;
       }
     } catch (error) {

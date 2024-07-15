@@ -130,7 +130,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       phone_numbers: null,
       addresses: null,
       field_mappings,
-      remote_id: company.id,
+      remote_id: String(company.id),
       ...opts,
     };
   }

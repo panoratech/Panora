@@ -40,7 +40,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTemplates',
     summary: 'List a batch of Templates',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class TemplateController {
   @ApiCustomResponse(UnifiedTemplateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getTemplates(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTemplate',
     summary: 'Retrieve a Template',
     description:
       'Retrieve a template from any connected Marketingautomation software',
@@ -121,7 +121,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addTemplate',
     summary: 'Create a Template',
     description:
       'Create a template in any supported Marketingautomation software',
@@ -143,7 +143,7 @@ export class TemplateController {
   @ApiCustomResponse(UnifiedTemplateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addTemplate(
     @Body() unifiedTemplateData: UnifiedTemplateInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

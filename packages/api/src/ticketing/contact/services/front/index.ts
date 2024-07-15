@@ -28,11 +28,6 @@ export class FrontService implements IContactService {
     try {
       const { linkedUserId, account_id, webhook_remote_identifier } = data;
 
-      if (!account_id)
-        throw new ReferenceError(
-          'account id not found for front but mandatory',
-        );
-
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -40,7 +35,7 @@ export class FrontService implements IContactService {
           vertical: 'ticketing',
         },
       });
-      let remote_account_id;
+      /*let remote_account_id;
       if (account_id) {
         // account_id can either be the remote or the panora id
         // if the call is made from real time webhook trigger then it is a remote id
@@ -51,21 +46,16 @@ export class FrontService implements IContactService {
         });
         if (res) {
           remote_account_id = res.remote_id;
-        } else {
-          remote_account_id = webhook_remote_identifier as string;
         }
-      }
+      }*/
 
-      const resp = await axios.get(
-        `${connection.account_url}/accounts/${remote_account_id}/contacts`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+      const resp = await axios.get(`${connection.account_url}/contacts`, {
+        headers: {
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
       this.logger.log(`Synced front contacts !`);
 
       return {
@@ -75,13 +65,6 @@ export class FrontService implements IContactService {
       };
     } catch (error) {
       throw error;
-      /*handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.contact,
-        ActionType.GET,
-      );*/
     }
   }
 }

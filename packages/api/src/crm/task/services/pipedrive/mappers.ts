@@ -115,6 +115,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
       );
       if (user_id) {
         opts = {
+          ...opts,
           user_id: user_id,
         };
       }
@@ -127,6 +128,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
       );
       if (company_id) {
         opts = {
+          ...opts,
           company_id: company_id,
         };
       }
@@ -138,13 +140,14 @@ export class PipedriveTaskMapper implements ITaskMapper {
       );
       if (deal_id) {
         opts = {
+          ...opts,
           deal_id: deal_id,
         };
       }
     }
 
     return {
-      remote_id: task.id,
+      remote_id: String(task.id),
       subject: task.subject,
       content: task.public_description,
       status: task.done ? 'COMPLETED' : 'PENDING',
@@ -153,6 +156,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
         ? new Date(task.marked_as_done_time)
         : null,
       field_mappings,
+      description: '', //todo null
       ...opts,
     };
   }

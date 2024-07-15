@@ -40,7 +40,7 @@ export class InvoiceController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getInvoices',
     summary: 'List a batch of Invoices',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class InvoiceController {
   @ApiCustomResponse(UnifiedInvoiceOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getInvoices(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class InvoiceController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getInvoice',
     summary: 'Retrieve a Invoice',
     description: 'Retrieve a invoice from any connected Accounting software',
   })
@@ -120,7 +120,7 @@ export class InvoiceController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addInvoice',
     summary: 'Create a Invoice',
     description: 'Create a invoice in any supported Accounting software',
   })
@@ -141,7 +141,7 @@ export class InvoiceController {
   @ApiCustomResponse(UnifiedInvoiceOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addInvoice(
     @Body() unifiedInvoiceData: UnifiedInvoiceInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

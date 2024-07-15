@@ -24,5 +24,5 @@ export interface IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[];
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]>;
 }

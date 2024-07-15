@@ -10,7 +10,7 @@ import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
 import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
 import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import {
@@ -171,15 +171,16 @@ export class JiraTicketMapper implements ITicketMapper {
       [mapping.slug]: ticket.custom_fields?.[mapping.remote_id],
     }));*/
 
-    let opts: any;
-
-    const assigneeId = ticket.fields.assignee.id;
-    const user_id = await this.utils.getUserUuidFromRemoteId(
-      assigneeId,
-      connectionId,
-    );
-    if (user_id) {
-      opts = { assigned_to: [user_id] };
+    let opts: any = {};
+    if (ticket.fields.assignee) {
+      const assigneeId = ticket.fields.assignee.id;
+      const user_id = await this.utils.getUserUuidFromRemoteId(
+        assigneeId,
+        connectionId,
+      );
+      if (user_id) {
+        opts = { ...opts, assigned_to: [user_id] };
+      }
     }
 
     if (ticket.fields.labels) {
@@ -194,6 +195,7 @@ export class JiraTicketMapper implements ITicketMapper {
         customFieldMappings: [],
       })) as UnifiedTagOutput[];
       opts = {
+        ...opts,
         tags: tags,
       };
     }
@@ -210,6 +212,7 @@ export class JiraTicketMapper implements ITicketMapper {
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
       opts = {
+        ...opts,
         attachments: attachments,
       };
     }
@@ -226,6 +229,7 @@ export class JiraTicketMapper implements ITicketMapper {
         customFieldMappings: [],
       })) as UnifiedCollectionOutput[];
       opts = {
+        ...opts,
         collections: collections,
       };
     }
@@ -241,7 +245,7 @@ export class JiraTicketMapper implements ITicketMapper {
     };
     if (ticket.fields.priority) {
       unifiedTicket.priority = this.mapToTicketPriority(
-        ticket.fields.priority as any,
+        (ticket.fields.priority as any).name as any,
       );
     }
 

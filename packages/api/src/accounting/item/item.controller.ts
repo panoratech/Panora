@@ -37,7 +37,7 @@ export class ItemController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getItems',
     summary: 'List a batch of Items',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class ItemController {
   @ApiCustomResponse(UnifiedItemOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getItems(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class ItemController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getItem',
     summary: 'Retrieve a Item',
     description: 'Retrieve a item from any connected Accounting software',
   })

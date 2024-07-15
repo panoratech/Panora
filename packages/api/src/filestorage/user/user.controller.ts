@@ -5,6 +5,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -21,8 +23,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiTags('filestorage/permission')
-@Controller('filestorage/permission')
+@ApiTags('filestorage/users')
+@Controller('filestorage/users')
 export class UserController {
   constructor(
     private readonly permissionService: UserService,
@@ -45,6 +47,7 @@ export class UserController {
   @ApiCustomResponse(UnifiedUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async list(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,

@@ -128,7 +128,7 @@ export class ConnectionsStrategiesController {
     @Query('projectId') projectId: string,
     @Query('type') type: string,
   ) {
-    return await this.connectionsStrategiesService.getCredentials(
+    return await this.connectionsStrategiesService.getSafeCredentials(
       projectId,
       type,
     );

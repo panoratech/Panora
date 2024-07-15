@@ -37,7 +37,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTicketingTags',
     summary: 'List a batch of Tags',
   })
   @ApiHeader({
@@ -50,7 +50,7 @@ export class TagController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getTags(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -74,7 +74,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTicketingTag',
     summary: 'Retrieve a Tag',
     description: 'Retrieve a tag from any connected Ticketing software',
   })

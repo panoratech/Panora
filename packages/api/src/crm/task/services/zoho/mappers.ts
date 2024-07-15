@@ -139,13 +139,13 @@ export class ZohoTaskMapper implements ITaskMapper {
       due_date: new Date(task.Due_Date),
       field_mappings,
     };
-    if (task.What_Id.id) {
+    if (task.What_Id && task.What_Id.id) {
       res.company_id = await this.utils.getCompanyUuidFromRemoteId(
         task.What_Id.id,
         connectionId,
       );
     }
-    if (task.Owner.id) {
+    if (task.Owner && task.Owner.id) {
       res.user_id = await this.utils.getUserUuidFromRemoteId(
         task.Owner.id,
         connectionId,

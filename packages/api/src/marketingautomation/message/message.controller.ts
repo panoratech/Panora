@@ -40,7 +40,7 @@ export class MessageController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getMessages',
     summary: 'List a batch of Messages',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class MessageController {
   @ApiCustomResponse(UnifiedMessageOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getMessages(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class MessageController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getMessage',
     summary: 'Retrieve a Message',
     description:
       'Retrieve a message from any connected Marketingautomation software',

@@ -1,5 +1,3 @@
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { PrismaModule } from '@@core/@core-services/prisma/prisma.module';
 import { CoreModule } from '@@core/core.module';
 import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
@@ -17,10 +15,11 @@ import { CrmModule } from './crm/crm.module';
 import { FileStorageModule } from './filestorage/filestorage.module';
 import { HrisModule } from './hris/hris.module';
 import { MarketingAutomationModule } from './marketingautomation/marketingautomation.module';
+import { CoreSharedModule } from '@@core/@core-services/module';
 
 @Module({
   imports: [
-    PrismaModule,
+    CoreSharedModule,
     CoreModule,
     HrisModule,
     MarketingAutomationModule,
@@ -89,7 +88,6 @@ import { MarketingAutomationModule } from './marketingautomation/marketingautoma
   controllers: [AppController],
   providers: [
     AppService,
-    LoggerService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

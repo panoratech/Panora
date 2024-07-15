@@ -37,7 +37,7 @@ export class GitlabService implements IUserService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/users`, {
+      const groups = await axios.get(`${connection.account_url}/groups`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -45,23 +45,32 @@ export class GitlabService implements IUserService {
           )}`,
         },
       });
+      let resp = [];
+      for (const group of groups.data) {
+        if (group.id) {
+          const users = await axios.get(
+            `${connection.account_url}/groups/${group.id}/members`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            },
+          );
+          resp = [...resp, users.data];
+        }
+      }
       this.logger.log(`Synced gitlab users !`);
 
-      // console.log("Users Data : ", resp.data);
-
       return {
-        data: resp.data,
+        data: resp.flat(),
         message: 'gitlab users retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

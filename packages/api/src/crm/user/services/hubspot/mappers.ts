@@ -23,20 +23,26 @@ export class HubspotUserMapper implements IUserMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: HubspotUserOutput | HubspotUserOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleUserToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleUserToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotUserOutput
-    return source.map((user) =>
-      this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+    return Promise.all(
+      source.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 

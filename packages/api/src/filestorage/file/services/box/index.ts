@@ -27,8 +27,9 @@ export class BoxService implements IFileService {
 
   async sync(data: SyncParam): Promise<ApiResponse<BoxFileOutput[]>> {
     try {
-      const { linkedUserId, folder_id } = data;
-      if (!folder_id) return;
+      const { linkedUserId, id_folder } = data;
+      if (!id_folder) return;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -36,11 +37,13 @@ export class BoxService implements IFileService {
           vertical: 'filestorage',
         },
       });
+
       const folder = await this.prisma.fs_folders.findUnique({
         where: {
-          id_fs_folder: folder_id as string,
+          id_fs_folder: id_folder as string,
         },
       });
+
       const resp = await axios.get(
         `${connection.account_url}/folders/${folder.remote_id}/items`,
         {
@@ -63,13 +66,7 @@ export class BoxService implements IFileService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Box',
-        FileStorageObject.file,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

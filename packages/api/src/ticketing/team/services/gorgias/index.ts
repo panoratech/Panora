@@ -53,13 +53,7 @@ export class GorgiasService implements ITeamService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.team,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

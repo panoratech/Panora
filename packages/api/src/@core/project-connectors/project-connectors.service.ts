@@ -75,7 +75,8 @@ export class ProjectConnectorsService {
       });
       return res;
     } catch (error) {
-      throw error;
+            throw error;
+
     }
   }*/
 

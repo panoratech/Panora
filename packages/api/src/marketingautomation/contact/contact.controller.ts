@@ -40,7 +40,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getMarketingAutomationContacts',
     summary: 'List a batch of Contacts',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class ContactController {
   @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getContacts(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getMarketingAutomationContact',
     summary: 'Retrieve a Contact',
     description:
       'Retrieve a contact from any connected Marketingautomation software',
@@ -121,7 +121,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addMarketingAutomationContact',
     summary: 'Create a Contact',
     description:
       'Create a contact in any supported Marketingautomation software',
@@ -143,7 +143,7 @@ export class ContactController {
   @ApiCustomResponse(UnifiedContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addContact(
     @Body() unifiedContactData: UnifiedContactInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

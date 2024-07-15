@@ -119,6 +119,7 @@ export class HubspotTaskMapper implements ITaskMapper {
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }

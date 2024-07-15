@@ -130,7 +130,7 @@ export class FrontTicketMapper implements ITicketMapper {
       }
     }
 
-    let opts: any;
+    let opts: any = {};
 
     if (ticket.assignee) {
       //fetch the right assignee uuid from remote id
@@ -139,7 +139,10 @@ export class FrontTicketMapper implements ITicketMapper {
         connectionId,
       );
       if (user_id) {
-        opts = { assigned_to: [user_id] };
+        opts = {
+          ...opts,
+          assigned_to: [user_id],
+        };
       }
     }
     if (ticket.tags) {
@@ -154,6 +157,7 @@ export class FrontTicketMapper implements ITicketMapper {
         customFieldMappings: [],
       })) as UnifiedTagOutput[];
       opts = {
+        ...opts,
         tags: tags,
       };
     }

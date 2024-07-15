@@ -31,18 +31,22 @@ export class OAuthTokenRefreshService implements OnModuleInit {
     });
 
     for (const connection of connectionsToRefresh) {
-      if (connection.refresh_token) {
-        const account_url =
-          connection.provider_slug == 'zoho' ? connection.account_url : '';
-        await this.categoryConnectionRegistry
-          .getService(connection.vertical.toLowerCase())
-          .handleTokensRefresh(
-            connection.id_connection,
-            connection.provider_slug,
-            connection.refresh_token,
-            connection.id_project,
-            account_url,
-          );
+      try {
+        if (connection.refresh_token) {
+          const account_url =
+            connection.provider_slug == 'zoho' ? connection.account_url : '';
+          await this.categoryConnectionRegistry
+            .getService(connection.vertical.toLowerCase())
+            .handleTokensRefresh(
+              connection.id_connection,
+              connection.provider_slug,
+              connection.refresh_token,
+              connection.id_project,
+              account_url,
+            );
+        }
+      } catch (error) {
+        this.logger.error('failed to refresh token ', error);
       }
     }
   }

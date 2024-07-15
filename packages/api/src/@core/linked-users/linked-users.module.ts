@@ -5,7 +5,7 @@ import { LinkedUsersController } from './linked-users.controller';
 import { LinkedUsersService } from './linked-users.service';
 
 @Module({
-  providers: [LinkedUsersService, LoggerService, ValidateUserService],
+  providers: [LinkedUsersService,  ValidateUserService],
   controllers: [LinkedUsersController],
 })
 export class LinkedUsersModule {}

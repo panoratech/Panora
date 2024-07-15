@@ -40,7 +40,7 @@ export class TaxRateController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTaxRates',
     summary: 'List a batch of TaxRates',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class TaxRateController {
   @ApiCustomResponse(UnifiedTaxRateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getTaxRates(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class TaxRateController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTaxRate',
     summary: 'Retrieve a TaxRate',
     description: 'Retrieve a taxrate from any connected Accounting software',
   })

@@ -40,7 +40,7 @@ export class ActivityController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getActivitys',
     summary: 'List a batch of Activitys',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class ActivityController {
   @ApiCustomResponse(UnifiedActivityOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getActivitys(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class ActivityController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getActivity',
     summary: 'Retrieve a Activity',
     description: 'Retrieve a activity from any connected Ats software',
   })
@@ -119,7 +119,7 @@ export class ActivityController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addActivity',
     summary: 'Create a Activity',
     description: 'Create a activity in any supported Ats software',
   })
@@ -139,7 +139,7 @@ export class ActivityController {
   @ApiCustomResponse(UnifiedActivityOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addActivity(
     @Body() unifiedActivityData: UnifiedActivityInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

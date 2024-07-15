@@ -53,13 +53,7 @@ export class FrontService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

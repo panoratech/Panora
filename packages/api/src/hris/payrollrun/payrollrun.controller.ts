@@ -40,7 +40,7 @@ export class PayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getPayrollRuns',
     summary: 'List a batch of PayrollRuns',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class PayrollRunController {
   @ApiCustomResponse(UnifiedPayrollRunOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getPayrollRuns(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {

@@ -1,43 +1,29 @@
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { Module } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 import { FrontService } from './services/front';
+import { FrontTeamMapper } from './services/front/mappers';
 import { GorgiasService } from './services/gorgias';
+import { GorgiasTeamMapper } from './services/gorgias/mappers';
 import { JiraService } from './services/jira';
+import { JiraTeamMapper } from './services/jira/mappers';
 import { ServiceRegistry } from './services/registry.service';
 import { TeamService } from './services/team.service';
 import { ZendeskService } from './services/zendesk';
+import { ZendeskTeamMapper } from './services/zendesk/mappers';
 import { SyncService } from './sync/sync.service';
 import { TeamController } from './team.controller';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
   imports: [BullQueueModule],
   controllers: [TeamController],
   providers: [
     TeamService,
-    LoggerService,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
-    CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
-    CoreSyncRegistry,
-    
     Utils,
     IngestDataService,
     /* PROVIDERS SERVICES */
@@ -45,13 +31,12 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
     FrontService,
     JiraService,
     GorgiasService,
+    /* PROVIDERS MAPPERS */
+    ZendeskTeamMapper,
+    FrontTeamMapper,
+    JiraTeamMapper,
+    GorgiasTeamMapper,
   ],
-  exports: [
-    SyncService,
-    ServiceRegistry,
-    WebhookService,
-    FieldMappingService,
-    LoggerService,
-  ],
+  exports: [SyncService, ServiceRegistry, WebhookService],
 })
 export class TeamModule {}

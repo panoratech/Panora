@@ -62,13 +62,7 @@ export class ZendeskService implements IAccountService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.account,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

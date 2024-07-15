@@ -108,13 +108,7 @@ export class ZendeskService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -152,13 +146,7 @@ export class ZendeskService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -14,6 +14,7 @@ import { ScoreCardModule } from './scorecard/scorecard.module';
 import { TagModule } from './tag/tag.module';
 import { UserModule } from './user/user.module';
 import { EeocsModule } from './eeocs/eeocs.module';
+import { AtsUnificationService } from './@lib/@unification';
 
 @Module({
   exports: [
@@ -33,6 +34,7 @@ import { EeocsModule } from './eeocs/eeocs.module';
     UserModule,
     EeocsModule,
   ],
+  providers: [AtsUnificationService],
   imports: [
     ActivityModule,
     ApplicationModule,

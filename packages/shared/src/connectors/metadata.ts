@@ -6,7 +6,7 @@ import { AuthStrategy, ProvidersConfig } from '../types';
 export const CONNECTORS_METADATA: ProvidersConfig = {
     'crm': {
       'hubspot': {
-        scopes: 'crm.objects.companies.read crm.objects.companies.write crm.objects.contacts.read crm.objects.contacts.write crm.objects.deals.read crm.objects.deals.write',
+        scopes: 'crm.objects.companies.read crm.objects.companies.write crm.objects.contacts.read crm.objects.contacts.write crm.objects.deals.read crm.objects.deals.write crm.objects.custom.read crm.objects.custom.write crm.objects.leads.read crm.objects.leads.write crm.objects.owners.read crm.objects.users.read crm.objects.users.write sales-email-read',
         urls: {
           docsUrl: 'https://developers.hubspot.com/docs/api/crm/understanding-the-crm',
           authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
@@ -20,7 +20,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'attio': {
-        scopes: 'record_permission:read',
         urls: {
           docsUrl: 'https://developers.attio.com/reference',
           authBaseUrl: 'https://app.attio.com/authorize',
@@ -34,11 +33,11 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'zoho': {
-        scopes: 'ZohoCRM.modules.ALL',
+        scopes: 'ZohoCRM.modules.ALL,ZohoCRM.users.READ',
         urls: {
           docsUrl: 'https://www.zoho.com/crm/developer/docs/api/v5/',
-          authBaseUrl: ' https://accounts.zoho.com/oauth/v2/auth',
-          apiUrl: (domain) => `${domain}/crm/v3`, // it is contained in the connection service
+          authBaseUrl: 'https://accounts.zoho.com/oauth/v2/auth',
+          apiUrl: '/crm/v5', // the base part is contained in the connection service
           customPropertiesUrl: '/settings/fields?module=Contact',
         },
         logoPath: 'https://assets-global.website-files.com/64f68d43d25e5962af5f82dd/64f68d43d25e5962af5f9812_64ad8bbe47c78358489b29fc_645e3ccf636a8d659f320e25_Group%25252012.png',
@@ -48,7 +47,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'pipedrive': {
-        urls: {
+        urls: { 
           docsUrl: 'https://developers.pipedrive.com/docs/api/v1',
           authBaseUrl: 'https://oauth.pipedrive.com/oauth/authorize',
           apiUrl: 'https://api.pipedrive.com/v1',
@@ -58,6 +57,9 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         authStrategy: {
           strategy: AuthStrategy.oauth2
+        },
+        options: {
+          local_redirect_uri_in_https: true
         }
       },
       'freshsales': {
@@ -75,7 +77,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'zendesk': {
-        scopes: 'read write',
+        scopes: 'read write profile',
         urls: {
           docsUrl: 'https://developer.zendesk.com/api-reference/sales-crm/introduction/',
           authBaseUrl: 'https://api.getbase.com/oauth2/authorize',
@@ -130,7 +132,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'capsule': {
-        scopes: '',
         urls: {
           docsUrl: 'https://developer.capsulecrm.com/',
           authBaseUrl: 'https://api.capsulecrm.com/oauth/authorise',
@@ -387,7 +388,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           apiUrl: (domain) => `https://${domain}.gorgias.com/api`,
           authBaseUrl: (domain) => `https://${domain}.com/connections/gorgias/oauth/install`,
         },
-        active: false,
         options: {
           company_subdomain: true,
         },
@@ -400,8 +400,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'jira': {
         scopes: 'read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider offline_access',
         urls: {
-          docsUrl: '',
-          apiUrl: '/rest/api/3',
+          docsUrl: 'https://developer.atlassian.com/cloud/jira/platform/rest/v3',
+          apiUrl: (cloudId) => `https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3`, 
           authBaseUrl: 'https://auth.atlassian.com/authorize',
         },
         logoPath: 'https://logowik.com/content/uploads/images/jira3124.jpg',
@@ -2710,7 +2710,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'box': {
-        scopes: '',
         urls: {
           docsUrl: 'https://developer.box.com/reference/',
           apiUrl: 'https://api.box.com/2.0',
@@ -2718,7 +2717,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/95b201e8-845a-4064-a9b2-a8eb49d19ca3.png?w=128&h=128&fit=max&dpr=3&auto=format&q=50',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2733,7 +2732,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }

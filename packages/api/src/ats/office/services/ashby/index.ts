@@ -61,13 +61,7 @@ export class AshbyService implements IOfficeService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.office,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

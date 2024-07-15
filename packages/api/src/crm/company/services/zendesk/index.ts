@@ -57,13 +57,7 @@ export class ZendeskService implements ICompanyService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.company,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -89,7 +83,7 @@ export class ZendeskService implements ICompanyService {
         return item.data;
       });
       const filteredData = finalData.filter(
-        (item) => item.data.is_organization === true,
+        (item) => item.is_organization === true,
       );
 
       this.logger.log(`Synced zendesk companies !`);
@@ -100,13 +94,7 @@ export class ZendeskService implements ICompanyService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.company,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

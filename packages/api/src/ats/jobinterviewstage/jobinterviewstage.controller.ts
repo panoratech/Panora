@@ -40,7 +40,7 @@ export class JobInterviewStageController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getJobInterviewStages',
     summary: 'List a batch of JobInterviewStages',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class JobInterviewStageController {
   @ApiCustomResponse(UnifiedJobInterviewStageOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getJobInterviewStages(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class JobInterviewStageController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getJobInterviewStage',
     summary: 'Retrieve a JobInterviewStage',
     description: 'Retrieve a jobinterviewstage from any connected Ats software',
   })

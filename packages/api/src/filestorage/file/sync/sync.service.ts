@@ -122,7 +122,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncForLinkedUser(data: SyncLinkedUserType) {
     try {
-      const { integrationId, linkedUserId, folder_id } = data;
+      const { integrationId, linkedUserId, id_folder } = data;
       const service: IFileService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
@@ -134,8 +134,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
       >(integrationId, linkedUserId, 'filestorage', 'file', service, [
         {
           paramName: 'id_folder',
-          param: folder_id,
-          shouldPassToIngest: false,
+          param: id_folder,
+          shouldPassToIngest: true,
           shouldPassToService: true,
         },
       ]);
@@ -150,6 +150,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     files: UnifiedFileOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
+    id_folder?: string,
   ): Promise<FileStorageFile[]> {
     try {
       const files_results: FileStorageFile[] = [];
@@ -157,6 +158,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const updateOrCreateFile = async (
         file: UnifiedFileOutput,
         originId: string,
+        id_folder?: string,
       ) => {
         const existingFile = await this.prisma.fs_files.findFirst({
           where: {
@@ -170,7 +172,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           file_url: file.file_url ?? null,
           mime_type: file.mime_type ?? null,
           size: file.size ?? null,
-          folder_id: file.folder_id ?? null,
+          id_fs_folder: id_folder ?? null,
           modified_at: new Date(),
         };
 
@@ -202,7 +204,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           throw new ReferenceError(`Origin id not there, found ${originId}`);
         }
 
-        const res = await updateOrCreateFile(file, originId);
+        const res = await updateOrCreateFile(file, originId, id_folder);
         const file_id = res.id_fs_file;
         files_results.push(res);
 

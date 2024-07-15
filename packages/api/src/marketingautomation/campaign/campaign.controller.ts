@@ -40,7 +40,7 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getCampaigns',
     summary: 'List a batch of Campaigns',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class CampaignController {
   @ApiCustomResponse(UnifiedCampaignOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getCampaigns(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getCampaign',
     summary: 'Retrieve a Campaign',
     description:
       'Retrieve a campaign from any connected Marketingautomation software',
@@ -121,7 +121,7 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addCampaign',
     summary: 'Create a Campaign',
     description:
       'Create a campaign in any supported Marketingautomation software',
@@ -143,7 +143,7 @@ export class CampaignController {
   @ApiCustomResponse(UnifiedCampaignOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addCampaign(
     @Body() unifiedCampaignData: UnifiedCampaignInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

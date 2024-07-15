@@ -61,13 +61,7 @@ export class AshbyService implements IJobService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.job,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

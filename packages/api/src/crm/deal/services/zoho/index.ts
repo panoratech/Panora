@@ -55,13 +55,7 @@ export class ZohoService implements IDealService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.deal,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -97,13 +91,7 @@ export class ZohoService implements IDealService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.deal,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -106,7 +106,7 @@ export class ZohoNoteMapper implements INoteMapper {
       field_mappings,
     };
 
-    const module = note.Parent_Id.module;
+    const module = note.Parent_Id && note.Parent_Id.module;
     if (module.api_name === 'Deals' && module.id) {
       res.deal_id = await this.utils.getDealUuidFromRemoteId(
         module.id,

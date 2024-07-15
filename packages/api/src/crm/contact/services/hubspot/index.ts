@@ -62,13 +62,7 @@ export class HubspotService implements IContactService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.contact,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -110,13 +104,7 @@ export class HubspotService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.contact,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -63,7 +63,7 @@ export class JiraCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput> {
-    let opts;
+    let opts: any = {};
 
     if (comment.author.accountId) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
@@ -73,14 +73,16 @@ export class JiraCommentMapper implements ICommentMapper {
 
       if (user_id) {
         // we must always fall here for Jira
-        opts = { user_id: user_id, creator_type: 'USER' };
+        opts = { ...opts, user_id: user_id, creator_type: 'USER' };
       }
+    }
+    if (comment.body.content[0].content[0].text) {
+      opts.body = comment.body.content[0].content[0].text;
     }
 
     return {
       remote_id: comment.id,
       remote_data: comment,
-      body: comment.body,
       ...opts,
     };
   }

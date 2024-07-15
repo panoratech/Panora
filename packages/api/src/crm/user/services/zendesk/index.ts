@@ -54,13 +54,7 @@ export class ZendeskService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

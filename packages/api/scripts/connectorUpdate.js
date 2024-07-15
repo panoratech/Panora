@@ -328,7 +328,7 @@ function updateInitSQLFile(initSQLFile, newServiceDirs, vertical) {
   let newLines = newServiceDirs
     .map((serviceName) => {
       const columnName = `${vertical.toLowerCase()}_${serviceName.toLowerCase()}`;
-      return ` ${columnName} boolean,\n`;
+      return ` ${columnName} boolean NOT NULL,\n`;
     })
     .join('');
 

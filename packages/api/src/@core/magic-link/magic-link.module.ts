@@ -6,6 +6,6 @@ import { MagicLinkService } from './magic-link.service';
 
 @Module({
   controllers: [MagicLinkController],
-  providers: [MagicLinkService, LoggerService, JwtService],
+  providers: [MagicLinkService,  JwtService],
 })
 export class MagicLinkModule {}

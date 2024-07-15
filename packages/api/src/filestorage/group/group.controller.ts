@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -25,8 +27,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiTags('filestorage/permission')
-@Controller('filestorage/permission')
+@ApiTags('filestorage/groups')
+@Controller('filestorage/groups')
 export class GroupController {
   constructor(
     private readonly permissionService: GroupService,
@@ -48,6 +50,7 @@ export class GroupController {
   })
   @ApiCustomResponse(UnifiedGroupOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,

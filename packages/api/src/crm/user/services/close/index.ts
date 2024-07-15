@@ -55,13 +55,7 @@ export class CloseService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

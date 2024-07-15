@@ -40,7 +40,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getAccountingAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getAttachments(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getAccountingAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Accounting software',
   })
@@ -120,7 +120,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addAccountingAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Accounting software',
   })
@@ -141,7 +141,7 @@ export class AttachmentController {
   @ApiCustomResponse(UnifiedAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addAttachment(
     @Body() unifiedAttachmentData: UnifiedAttachmentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

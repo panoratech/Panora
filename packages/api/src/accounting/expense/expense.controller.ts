@@ -40,7 +40,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getExpenses',
     summary: 'List a batch of Expenses',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class ExpenseController {
   @ApiCustomResponse(UnifiedExpenseOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getExpenses(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getExpense',
     summary: 'Retrieve a Expense',
     description: 'Retrieve a expense from any connected Accounting software',
   })
@@ -120,7 +120,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addExpense',
     summary: 'Create a Expense',
     description: 'Create a expense in any supported Accounting software',
   })
@@ -141,7 +141,7 @@ export class ExpenseController {
   @ApiCustomResponse(UnifiedExpenseOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addExpense(
     @Body() unifiedExpenseData: UnifiedExpenseInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

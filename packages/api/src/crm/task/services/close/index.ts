@@ -56,13 +56,7 @@ export class CloseService implements ITaskService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.task,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -95,13 +89,7 @@ export class CloseService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.task,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -111,6 +111,7 @@ export class PipedriveNoteMapper implements INoteMapper {
       );
       if (contact_id) {
         opts = {
+          ...opts,
           contact_id: contact_id,
         };
       }
@@ -123,6 +124,7 @@ export class PipedriveNoteMapper implements INoteMapper {
       );
       if (deal_id) {
         opts = {
+          ...opts,
           deal_id: deal_id,
         };
       }
@@ -135,6 +137,7 @@ export class PipedriveNoteMapper implements INoteMapper {
       );
       if (org_id) {
         opts = {
+          ...opts,
           company_id: org_id,
         };
       }

@@ -37,7 +37,7 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getLists',
     summary: 'List a batch of Lists',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class ListController {
   @ApiCustomResponse(UnifiedListOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getLists(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getList',
     summary: 'Retrieve a List',
     description:
       'Retrieve a list from any connected Marketingautomation software',
@@ -118,7 +118,7 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addList',
     summary: 'Create a List',
     description: 'Create a list in any supported Marketingautomation software',
   })
@@ -139,7 +139,7 @@ export class ListController {
   @ApiCustomResponse(UnifiedListOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addList(
     @Body() unifiedListData: UnifiedListInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

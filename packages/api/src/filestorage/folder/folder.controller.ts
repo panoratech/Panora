@@ -7,6 +7,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -24,8 +26,8 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiTags('filestorage/folder')
-@Controller('filestorage/folder')
+@ApiTags('filestorage/folders')
+@Controller('filestorage/folders')
 export class FolderController {
   constructor(
     private readonly folderService: FolderService,
@@ -36,7 +38,7 @@ export class FolderController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getFolders',
     summary: 'List a batch of Folders',
   })
   @ApiHeader({
@@ -47,8 +49,9 @@ export class FolderController {
   })
   @ApiCustomResponse(UnifiedFolderOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
-  async list(
+  async getFolders(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -72,7 +75,7 @@ export class FolderController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getFolder',
     summary: 'Retrieve a Folder',
     description: 'Retrieve a folder from any connected Filestorage software',
   })
@@ -116,7 +119,7 @@ export class FolderController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addFolder',
     summary: 'Create a Folder',
     description: 'Create a folder in any supported Filestorage software',
   })
@@ -130,7 +133,7 @@ export class FolderController {
   @ApiCustomResponse(UnifiedFolderOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addFolder(
     @Body() unifiedFolderData: UnifiedFolderInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

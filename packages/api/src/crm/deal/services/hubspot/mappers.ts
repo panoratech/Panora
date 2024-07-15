@@ -103,6 +103,7 @@ export class HubspotDealMapper implements IDealMapper {
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -122,6 +123,7 @@ export class HubspotDealMapper implements IDealMapper {
       );
       if (stage_id) {
         opts = {
+          ...opts,
           stage_id: stage_id,
         };
       }

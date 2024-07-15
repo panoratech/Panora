@@ -66,7 +66,7 @@ export class BoxUserMapper implements IUserMapper {
       remote_id: user.id,
       name: user.name || null,
       email: user.login || null,
-      is_me: null,
+      is_me: false,
       field_mappings,
       //remote_created_at: user.created_at || null,
       //remote_modified_at: user.modified_at || null,

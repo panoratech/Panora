@@ -55,13 +55,7 @@ export class ZohoService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

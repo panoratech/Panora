@@ -121,13 +121,7 @@ export class ZendeskHandlerService {
         },
       });
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        Action.webhookCreation,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -268,13 +262,7 @@ export class ZendeskHandlerService {
         },
       });
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        Action.webhookCreation,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -318,7 +306,6 @@ export class ZendeskHandlerService {
                 await this.syncContactsService.syncForLinkedUser({
                   integrationId: connection.provider_slug.toLowerCase(),
                   linkedUserId: connection.id_linked_user,
-                  account_id: payload_.detail.id,
                   wh_real_time_trigger: {
                     action:
                       event_action.toLowerCase() == 'deleted'

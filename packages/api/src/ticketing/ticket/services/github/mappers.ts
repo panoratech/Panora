@@ -1,7 +1,7 @@
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
@@ -97,7 +97,7 @@ export class GithubTicketMapper implements ITicketMapper {
           }
         }
 
-        let opts: any = {};
+        const opts: any = {};
 
         if (ticket.assignees && ticket.assignees.length > 0) {
           opts.assigned_to = [];
@@ -112,6 +112,7 @@ export class GithubTicketMapper implements ITicketMapper {
           }
         }
 
+        /*TODO: first implement github tags 
         if (ticket.labels) {
           const tags = (await this.coreUnificationService.unify<
             OriginalTagOutput[]
@@ -123,10 +124,8 @@ export class GithubTicketMapper implements ITicketMapper {
             connectionId: connectionId,
             customFieldMappings: [],
           })) as UnifiedTagOutput[];
-          opts = {
-            tags: tags,
-          };
-        }
+          opts.tags = tags;
+        }*/
 
         const unifiedTicket: UnifiedTicketOutput = {
           remote_id: String(ticket.id),

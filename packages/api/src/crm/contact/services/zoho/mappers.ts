@@ -139,6 +139,14 @@ export class ZohoContactMapper implements IContactMapper {
       country: contact.Mailing_Country,
     };
 
+    const opts: any = {};
+    if (contact.Owner && contact.Owner.id) {
+      opts.user_id = await this.utils.getUserUuidFromRemoteId(
+        contact.Owner.id,
+        connectionId,
+      );
+    }
+
     return {
       remote_id: String(contact.id),
       first_name: contact.First_Name ? contact.First_Name : null,
@@ -146,10 +154,7 @@ export class ZohoContactMapper implements IContactMapper {
       email_addresses,
       phone_numbers,
       field_mappings,
-      user_id: await this.utils.getUserUuidFromRemoteId(
-        contact.Owner.id,
-        connectionId,
-      ),
+      ...opts,
       addresses: [address],
     };
   }

@@ -15,7 +15,6 @@ interface IUpdateConnectionStrategyDto {
 const useUpdateConnectionStrategy = () => {    
     const update = async (connectionStrategyData: IUpdateConnectionStrategyDto) => {
         if(connectionStrategyData.updateToggle) {
-            console.log(connectionStrategyData.id_cs)
             const response = await fetch(`${config.API_URL}/connections-strategies/toggle`, {
                 method: 'POST',
                 body: JSON.stringify({id_cs:connectionStrategyData.id_cs}),

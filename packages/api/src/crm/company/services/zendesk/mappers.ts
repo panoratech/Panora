@@ -133,6 +133,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
       );
       if (user_id) {
         opts = {
+          ...opts,
           user_id: user_id,
         };
       }
@@ -148,6 +149,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
 
     if (company.industry) {
       opts = {
+        ...opts,
         industry: company.industry,
       };
     }

@@ -30,12 +30,14 @@ export class JiraUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
-    return sourcesArray.map((user) =>
-      this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+    return Promise.all(
+      sourcesArray.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 

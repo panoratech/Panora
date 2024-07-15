@@ -25,21 +25,21 @@ export class CloseEngagementMapper implements IEngagementMapper {
   }
 
   mapToTaskDirection(
-    data: 'outbound' | 'inbound',
+    data: 'outgoing' | 'incoming',
   ): EngagementDirection | string {
     switch (data) {
-      case 'inbound':
+      case 'incoming':
         return 'INBOUND';
-      case 'outbound':
+      case 'outgoing':
         return 'OUTBOUND';
     }
   }
   reverseMapToTaskDirection(data: EngagementDirection): string {
     switch (data) {
       case 'INBOUND':
-        return 'inbound';
+        return 'incoming';
       case 'OUTBOUND':
-        return 'outbound';
+        return 'outgoing';
     }
   }
 
@@ -318,6 +318,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -384,6 +385,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -395,6 +397,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -459,6 +462,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -494,7 +498,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     return {
       remote_id: engagement.id,
       content: engagement.body_html,
-      subject: null,
+      subject: engagement.subject,
       start_at: new Date(engagement.date_created),
       end_time: new Date(engagement.date_updated), // Assuming end time can be mapped from last modified date
       type: 'EMAIL',

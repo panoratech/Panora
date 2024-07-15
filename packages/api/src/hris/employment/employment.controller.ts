@@ -40,7 +40,7 @@ export class EmploymentController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getEmployments',
     summary: 'List a batch of Employments',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class EmploymentController {
   @ApiCustomResponse(UnifiedEmploymentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getEmployments(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class EmploymentController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getEmployment',
     summary: 'Retrieve a Employment',
     description: 'Retrieve a employment from any connected Hris software',
   })

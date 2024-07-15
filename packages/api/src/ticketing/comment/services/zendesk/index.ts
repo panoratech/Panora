@@ -117,13 +117,7 @@ export class ZendeskService implements ICommentService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.comment,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
   async sync(data: SyncParam): Promise<ApiResponse<OriginalCommentOutput[]>> {
@@ -166,13 +160,7 @@ export class ZendeskService implements ICommentService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.comment,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -1,5 +1,5 @@
 import {useState,useEffect} from 'react'
-import {providersArray, ConnectorCategory, categoryFromSlug, Provider,CONNECTORS_METADATA} from '@panora/shared';
+import {providersArray, ConnectorCategory, categoryFromSlug, Provider,CONNECTORS_METADATA, AuthStrategy} from '@panora/shared';
 import useOAuth from '@/hooks/useOAuth';
 import useProjectConnectors from '@/hooks/queries/useProjectConnectors';
 import { Card } from './ui/card';
@@ -8,12 +8,41 @@ import { ArrowRightIcon } from '@radix-ui/react-icons';
 import {ArrowLeftRight} from 'lucide-react'
 import Modal from './Modal';
 import config from '@/helpers/config';
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import useCreateApiKeyConnection from '@/hooks/queries/useCreateApiKeyConnection';
+import { LoadingSpinner } from './ui/loading-spinner';
+import { Label } from './ui/label';
+
+
 export interface DynamicCardProp {
   projectId: string;
   linkedUserId: string;
   category?: ConnectorCategory;
   optionalApiUrl?: string,
 }
+interface IApiKeyFormData {
+  apikey: string,
+  [key : string]: string
+}
+
+
+// const formSchema = z.object({
+//   apiKey: z.string().min(2, {
+//     message: "Api Key must be at least 2 characters.",
+//   })
+// })
 
 const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : DynamicCardProp) => {
 
@@ -22,20 +51,35 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
   const [selectedProvider, setSelectedProvider] = useState<{
     provider: string;
     category: string;
-  }>();  
+  }>({
+    provider: '',
+    category: ''
+  });  
   
-  const [loading, setLoading] = useState<{
-    status: boolean; provider: string
-  }>({status: false, provider: ''});
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const [error,setError] = useState(false);
-  const [startFlow, setStartFlow] = useState(false);
+  const [errorResponse,setErrorResponse] = useState<{
+    errorPresent: boolean; errorMessage : string
+  }>({errorPresent:false,errorMessage:''});
+  const [startFlow, setStartFlow] = useState<boolean>(false);
   const [openSuccessDialog,setOpenSuccessDialog] = useState<boolean>(false);
+  const [openApiKeyDialog,setOpenApiKeyDialog] = useState<boolean>(false);
   const [currentProviderLogoURL,setCurrentProviderLogoURL] = useState<string>('')
   const [currentProvider,setCurrentProvider] = useState<string>('')
   const returnUrlWithWindow = (typeof window !== 'undefined') 
     ? window.location.href
     : '';
+
+  const {mutate : createApiKeyConnection} = useCreateApiKeyConnection();
+
+
+  // const form = useForm<z.infer<typeof formSchema>>({
+  //   resolver: zodResolver(formSchema),
+  //   defaultValues: {
+  //     apiKey: "",
+  //   },
+  // })
+  const {register,formState: {errors},handleSubmit,reset} = useForm<IApiKeyFormData>();
 
   
   const [data, setData] = useState<Provider[]>([]);
@@ -56,25 +100,26 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
   const {data: connectorsForProject} = useProjectConnectors(projectId,optionalApiUrl ? optionalApiUrl : config.API_URL!);
 
   const onWindowClose = () => {
-    setSelectedProvider({
-      provider: '',
-      category: ''
-    });
-    setLoading({
-        status: false,
-        provider: ''
-    })
+    // setSelectedProvider({
+    //   provider: '',
+    //   category: ''
+    // });
+    setLoading(false)
     setStartFlow(false);
   }
 
   useEffect(() => {
     if (startFlow && isReady) {
-      open(onWindowClose);
-    } else if (startFlow && !isReady) {
-      setLoading({
-        status: false,
-        provider: ''
+      setErrorResponse({errorPresent:false,errorMessage:''});
+
+      open(onWindowClose)
+      .catch((error : Error) => {
+        setLoading(false);
+        setStartFlow(false);
+        setErrorResponse({errorPresent:true,errorMessage:error.message})
       });
+    } else if (startFlow && !isReady) {
+      setLoading(false);
     }
   }, [startFlow, isReady]);
 
@@ -102,8 +147,17 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
     const logoPath = CONNECTORS_METADATA[category.toLowerCase()][walletName.toLowerCase()].logoPath;
     setCurrentProviderLogoURL(logoPath)
     setCurrentProvider(walletName.toLowerCase())
-    setLoading({status: true, provider: selectedProvider?.provider!});
-    setStartFlow(true);
+    if(CONNECTORS_METADATA[category.toLowerCase()][walletName.toLowerCase()].authStrategy.strategy===AuthStrategy.api_key)
+      {
+        setOpenApiKeyDialog(true);
+      }
+    else
+    {
+      setLoading(true);
+      setStartFlow(true);
+    }
+    
+    
   }
 
   function transformConnectorsStatus(connectors : {[key: string]: boolean}): { connector_name: string;category: string; status: string }[] {
@@ -121,6 +175,48 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
     });
   }
 
+  const onCloseApiKeyDialog = (dialogState : boolean) => {
+    setOpenApiKeyDialog(dialogState);
+    reset();
+  }
+
+  const onApiKeySubmit = (values: IApiKeyFormData) => {
+    setErrorResponse({errorPresent:false,errorMessage:''});
+    onCloseApiKeyDialog(false);
+    setLoading(true);
+
+    // Creating API Key Connection
+    createApiKeyConnection({
+      query : {
+        linkedUserId: linkedUserId,
+        projectId: projectId,
+        providerName: selectedProvider?.provider!,
+        vertical: selectedProvider?.category!
+      },
+      data: values,  
+      api_url: optionalApiUrl ?? config.API_URL!
+    },
+    {
+      onSuccess: () => {
+        // setSelectedProvider({
+        //   provider: '',
+        //   category: ''
+        // });   
+        
+        setLoading(false);
+        setOpenSuccessDialog(true);
+      },
+      onError: (error) => {
+        setErrorResponse({errorPresent:true,errorMessage: error.message});
+        setLoading(false);
+        // setSelectedProvider({
+        //   provider: '',
+        //   category: ''
+        // });  
+      }
+    })
+  }
+
   
   return (
       <div className="flex flex-col gap-2 pt-0">
@@ -128,7 +224,8 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
           return (
             <Card
             key={`${item.name}-${item.vertical}`} 
-            className= "flex flex-col border w-1/2 items-start gap-2 rounded-lg p-3 text-left text-sm transition-all hover:border-stone-100"
+            className={`flex flex-col border w-1/2 items-start gap-2 rounded-lg p-3 text-left text-sm transition-all  
+              ${ (item.name.toLowerCase()===selectedProvider?.provider && item.vertical?.toLowerCase()===selectedProvider?.category)  && errorResponse.errorPresent ? 'border-red-600' : 'hover:border-stone-400'}`}
             >
               <div className="flex w-full items-start justify-between">
                 <div className="flex flex-col gap-1">
@@ -140,10 +237,21 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
                     {item.description!.substring(0, 300)}
                   </div>
                   <div className="line-clamp-2 mt-2 text-xs text-muted-foreground">
-                    <Button className='h-7 gap-1' size="sm" variant="expandIcon" Icon={ArrowRightIcon} iconPlacement="right" onClick={() => handleStartFlow(item.name, item.vertical!)} >
+                  { (item.name.toLowerCase()===selectedProvider?.provider && item.vertical?.toLowerCase()===selectedProvider?.category) && loading ? (
+                      <Button size="sm" className='h-7 gap-1' variant="default" disabled>
+                      <LoadingSpinner/>
+                      Connecting
+                    </Button>
+                    )
+                    :
+                    (   
+                      <Button className='h-7 gap-1' size="sm" variant="expandIcon" Icon={ArrowRightIcon} iconPlacement="right" onClick={() => handleStartFlow(item.name, item.vertical!)} >
                       Connect
                     </Button>
+                    )}
                   </div>
+
+                  {item.name.toLowerCase()===selectedProvider?.provider && item.vertical?.toLowerCase()===selectedProvider?.category && errorResponse.errorPresent ? <p className='mt-2 text-xs text-red-700'>{errorResponse.errorMessage}</p> : (<></>)}
             
                 </div>
                 <div>
@@ -152,6 +260,65 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
             </Card>
           )})
         }
+
+        {/* Dialog for apikey input */}
+        <Dialog open={openApiKeyDialog} onOpenChange={onCloseApiKeyDialog}>
+          <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter a API key</DialogTitle>
+          </DialogHeader>
+          {/* <Form {...form}> */}
+            <form onSubmit={handleSubmit(onApiKeySubmit)}>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label className={errors.apikey ? 'text-destructive' : ''}>Enter your API key for {selectedProvider?.provider}</Label>
+                <Input 
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                        placeholder="Your api key"
+                        {...register('apikey',{
+                          required: 'Api Key must be at least 2 characters',
+                          minLength: {
+                            value:2,
+                            message: 'Api Key must be at least 2 characters'
+                          }
+                        
+                        })}
+                  />
+                  <div>{errors.apikey && (<p className='text-sm font-medium text-destructive'>{errors.apikey.message}</p>)}</div>
+                  
+
+                {/* </div> */}
+                {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
+                (
+                  <>
+                  <Label className={errors[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {selectedProvider?.provider}</Label>
+                  <Input
+                        type='text'
+                        placeholder={`Your ${fieldName}`}
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                        {...register(fieldName,{
+                          required: `${fieldName} must be at least 2 characters`,
+                          minLength:{
+                            value:2,
+                            message: `${fieldName} must be at least 2 characters`,
+                          }
+                        })}
+                  />
+                  {errors[fieldName] && (<p className='text-sm font-medium text-destructive'>{errors[fieldName]?.message}</p>)}
+                  </>
+                ))}
+              </div>
+            </div>
+          <DialogFooter>
+            <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCloseApiKeyDialog(false)}>Cancel</Button>
+            <Button type='submit' size="sm" className="h-7 gap-1">
+              Continue
+            </Button>
+          </DialogFooter>
+            </form>
+          {/* </Form> */}
+          </DialogContent>
+        </Dialog>
 
 
         {/* OAuth Successful Modal */}

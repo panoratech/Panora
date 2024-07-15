@@ -28,14 +28,10 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 @Module({
   imports: [WebhookModule, ManagedWebhooksModule, BullQueueModule],
   providers: [
-    TicketingConnectionsService,
-    LoggerService,
     EnvironmentService,
-    EncryptionService,
+
     ServiceRegistry,
     ConnectionsStrategiesService,
-    CategoryConnectionRegistry,
-    ConnectionUtils,
     //PROVIDERS SERVICES
     ZendeskConnectionService,
     FrontConnectionService,
@@ -51,7 +47,29 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
     AsanaConnectionService,
     WrikeConnectionService,
     IroncladConnectionService,
+    TicketingConnectionsService,
   ],
-  exports: [TicketingConnectionsService],
+  exports: [
+    EnvironmentService,
+
+    ServiceRegistry,
+    ConnectionsStrategiesService,
+    //PROVIDERS SERVICES
+    ZendeskConnectionService,
+    FrontConnectionService,
+    GithubConnectionService,
+    JiraConnectionService,
+    LinearConnectionService,
+    GitlabConnectionService,
+    ClickupConnectionService,
+    GorgiasConnectionService,
+    AhaConnectionService,
+    DixaConnectionService,
+    HelpscoutConnectionService,
+    AsanaConnectionService,
+    WrikeConnectionService,
+    IroncladConnectionService,
+    TicketingConnectionsService,
+  ],
 })
 export class TicketingConnectionModule {}

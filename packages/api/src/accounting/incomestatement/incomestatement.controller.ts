@@ -40,7 +40,7 @@ export class IncomeStatementController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getIncomeStatements',
     summary: 'List a batch of IncomeStatements',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class IncomeStatementController {
   @ApiCustomResponse(UnifiedIncomeStatementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getIncomeStatements(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class IncomeStatementController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getIncomeStatement',
     summary: 'Retrieve a IncomeStatement',
     description:
       'Retrieve a incomestatement from any connected Accounting software',

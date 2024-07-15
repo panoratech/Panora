@@ -139,8 +139,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
           size: folder.size ?? null,
           folder_url: folder.folder_url ?? null,
           description: folder.description ?? null,
-          drive_id: folder.drive_id ?? null,
-          parent_folder_id: folder.parent_folder_id ?? null,
+          id_fs_drive: folder.drive_id ?? null,
+          parent_folder: folder.parent_folder_id ?? null,
           modified_at: new Date(),
         };
 

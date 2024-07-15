@@ -41,13 +41,13 @@ export class HubspotService implements IUserService {
       const allProperties = [...commonPropertyNames, ...custom_properties];
       const baseURL = `${connection.account_url}/owners`;
 
-      const queryString = allProperties
+      /*const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
-        .join('&');
+        .join('&');*/
 
-      const url = `${baseURL}?${queryString}`;
+      //const url = `${baseURL}?${queryString}`;
 
-      const resp = await axios.get(url, {
+      const resp = await axios.get(baseURL, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -64,13 +64,7 @@ export class HubspotService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

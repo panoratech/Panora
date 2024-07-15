@@ -40,7 +40,7 @@ export class NoteController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getNotes',
     summary: 'List a batch of Notes',
   })
   @ApiHeader({
@@ -53,7 +53,7 @@ export class NoteController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getNotes(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -77,7 +77,7 @@ export class NoteController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getNote',
     summary: 'Retrieve a Note',
     description: 'Retrieve a note from any connected Crm software',
   })
@@ -120,7 +120,7 @@ export class NoteController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addNote',
     summary: 'Create a Note',
     description: 'Create a note in any supported Crm software',
   })
@@ -140,7 +140,7 @@ export class NoteController {
   @ApiCustomResponse(UnifiedNoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addNote(
     @Body() unifiedNoteData: UnifiedNoteInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

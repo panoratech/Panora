@@ -36,18 +36,8 @@ export class GitlabService implements ICollectionService {
           vertical: 'ticketing',
         },
       });
-
-      const currentUser = await axios.get(`${connection.account_url}/user`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
-        },
-      });
-
       const resp = await axios.get(
-        `${connection.account_url}/users/${currentUser.data.id}/projects`,
+        `${connection.account_url}/projects?membership=true`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -57,7 +47,6 @@ export class GitlabService implements ICollectionService {
           },
         },
       );
-
       this.logger.log(`Synced gitlab collections !`);
 
       return {
@@ -66,13 +55,7 @@ export class GitlabService implements ICollectionService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.collection,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

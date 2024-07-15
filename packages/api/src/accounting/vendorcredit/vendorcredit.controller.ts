@@ -40,7 +40,7 @@ export class VendorCreditController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getVendorCredits',
     summary: 'List a batch of VendorCredits',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class VendorCreditController {
   @ApiCustomResponse(UnifiedVendorCreditOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getVendorCredits(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class VendorCreditController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getVendorCredit',
     summary: 'Retrieve a VendorCredit',
     description:
       'Retrieve a vendorcredit from any connected Accounting software',

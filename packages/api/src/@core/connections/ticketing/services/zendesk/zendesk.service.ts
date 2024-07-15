@@ -175,4 +175,46 @@ export class ZendeskConnectionService implements ITicketingConnectionService {
       throw error;
     }
   }
+
+  async revokeAccessTokens(linkedUserId: string) {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'zendesk',
+          vertical: 'ticketing',
+        },
+      });
+      const res_ = await axios.get(
+        `https://d3v-panora3441.zendesk.com/api/v2/oauth/tokens`,
+        {
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+      for (const obj of res_.data.tokens) {
+        try {
+          const res = await axios.delete(
+            `https://d3v-panora3441.zendesk.com/api/v2/oauth/tokens/${obj.id}.json`,
+            {
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            },
+          );
+        } catch (error) {
+          throw error;
+        }
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }

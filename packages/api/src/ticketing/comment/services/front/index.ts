@@ -122,13 +122,7 @@ export class FrontService implements ICommentService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.comment,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
   async sync(data: SyncParam): Promise<ApiResponse<FrontCommentOutput[]>> {
@@ -170,13 +164,7 @@ export class FrontService implements ICommentService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.comment,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

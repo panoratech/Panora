@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/node';
+/*import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 // Ensure to call this before importing any other modules!
@@ -17,3 +17,4 @@ Sentry.init({
   // This is relative to tracesSampleRate
   profilesSampleRate: 1.0,
 });
+*/

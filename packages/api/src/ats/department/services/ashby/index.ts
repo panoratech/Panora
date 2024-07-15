@@ -64,13 +64,7 @@ export class AshbyService implements IDepartmentService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.department,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

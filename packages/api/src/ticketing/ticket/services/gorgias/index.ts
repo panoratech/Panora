@@ -99,13 +99,7 @@ export class GorgiasService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -137,13 +131,7 @@ export class GorgiasService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

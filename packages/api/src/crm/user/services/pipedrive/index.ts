@@ -51,13 +51,7 @@ export class PipedriveService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Pipedrive',
-        CrmObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

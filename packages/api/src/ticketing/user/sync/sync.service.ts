@@ -145,7 +145,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const baseData: any = {
           name: user.name ?? null,
           email_address: user.email_address ?? null,
-          teams: user.teams ?? null,
+          teams: user.teams ?? [],
           modified_at: new Date(),
         };
 

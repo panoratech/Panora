@@ -1,4 +1,3 @@
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ProjectsService } from '@@core/projects/projects.service';
 import { ValidateUserService } from '@@core/utils/services/validate-user.service';
 import { Module } from '@nestjs/common';
@@ -19,7 +18,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     ApiKeyStrategy,
     ConfigService,
     ProjectsService,
-    LoggerService,
     ValidateUserService,
   ],
   imports: [

@@ -55,13 +55,7 @@ export class CloseService implements IContactService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.contact,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -95,13 +89,7 @@ export class CloseService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.contact,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

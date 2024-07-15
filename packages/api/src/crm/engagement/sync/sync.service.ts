@@ -116,24 +116,16 @@ export class SyncService implements OnModuleInit, IBaseSync {
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
 
-      // todo
-      const targetType =
-        engagement_type === 'CALL'
-          ? 'engagement_call'
-          : engagement_type === 'MEETING'
-          ? 'engagement_meeting'
-          : 'engagement_email';
-
       await this.ingestService.syncForLinkedUser<
         UnifiedEngagementOutput,
         OriginalEngagementOutput,
         IEngagementService
-      >(integrationId, linkedUserId, 'crm', targetType, service, [
+      >(integrationId, linkedUserId, 'crm', 'engagement', service, [
         {
           param: engagement_type,
           paramName: 'engagement_type',
           shouldPassToService: true,
-          shouldPassToIngest: false,
+          shouldPassToIngest: true,
         },
       ]);
     } catch (error) {
@@ -179,11 +171,18 @@ export class SyncService implements OnModuleInit, IBaseSync {
           start_at: engagement.start_at ?? null,
           end_time: engagement.end_time ?? null,
           type: engagement.type ?? null,
-          id_crm_company: engagement.company_id ?? null,
-          id_crm_contact: engagement.contacts ?? null,
           modified_at: new Date(),
         };
 
+        if (engagement.contacts) {
+          baseData.contacts = engagement.contacts;
+        }
+        if (engagement.company_id) {
+          baseData.id_crm_company = engagement.company_id;
+        }
+        if (engagement.user_id) {
+          baseData.id_crm_user = engagement.user_id;
+        }
         if (existingEngagement) {
           return await this.prisma.crm_engagements.update({
             where: {

@@ -17,7 +17,6 @@ import { TeamModule } from '@ticketing/team/team.module';
 import { TicketModule } from '@ticketing/ticket/ticket.module';
 import { UserModule as TUserModule } from '@ticketing/user/user.module';
 import { LoggerService } from '../@core-services/logger/logger.service';
-import { CoreSyncRegistry } from '../@core-services/registries/core-sync.registry';
 import { SyncController } from './sync.controller';
 import { CoreSyncService } from './sync.service';
 
@@ -41,7 +40,27 @@ import { CoreSyncService } from './sync.service';
     TicketModule,
     TUserModule,
   ],
-  providers: [CoreSyncService, CoreSyncRegistry, LoggerService],
+  exports: [
+    BullQueueModule,
+    CompanyModule,
+    ContactModule,
+    DealModule,
+    EngagementModule,
+    NoteModule,
+    StageModule,
+    TaskModule,
+    UserModule,
+    AccountModule,
+    CollectionModule,
+    CommentModule,
+    TContactModule,
+    TagModule,
+    TeamModule,
+    TicketModule,
+    TUserModule,
+    CoreSyncService,
+  ],
+  providers: [CoreSyncService, LoggerService],
   controllers: [SyncController],
 })
 export class SyncModule {}

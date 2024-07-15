@@ -40,7 +40,7 @@ export class BalanceSheetController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getBalanceSheets',
     summary: 'List a batch of BalanceSheets',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class BalanceSheetController {
   @ApiCustomResponse(UnifiedBalanceSheetOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getBalanceSheets(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class BalanceSheetController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getBalanceSheet',
     summary: 'Retrieve a BalanceSheet',
     description:
       'Retrieve a balancesheet from any connected Accounting software',

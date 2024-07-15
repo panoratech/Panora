@@ -40,7 +40,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getCompanys',
     summary: 'List a batch of Companys',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class CompanyController {
   @ApiCustomResponse(UnifiedCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getCompanys(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {

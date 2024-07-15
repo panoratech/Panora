@@ -30,6 +30,20 @@ import { ZendeskDealOutput } from '@crm/deal/services/zendesk/types';
 import { ZohoDealOutput } from '@crm/deal/services/zoho/types';
 import { CloseDealOutput } from '@crm/deal/services/close/types';
 import {
+  AttioDealOutput,
+  AttioDealInput,
+} from '@crm/deal/services/attio/types';
+import { AttioUserOutput } from '@crm/user/services/attio/types';
+import {
+  AttioTaskOutput,
+  AttioTaskInput,
+} from '@crm/task/services/attio/types';
+import {
+  AttioNoteOutput,
+  AttioNoteInput,
+} from '@crm/note/services/attio/types';
+
+import {
   HubspotEngagementInput,
   HubspotEngagementOutput,
 } from '@crm/engagement/services/hubspot/types';
@@ -142,7 +156,8 @@ export type OriginalDealInput =
   | ZohoDealOutput
   | ZendeskDealOutput
   | PipedriveDealOutput
-  | CloseDealOutput;
+  | CloseDealOutput
+  | AttioDealInput;
 
 /* company */
 export type OriginalCompanyInput =
@@ -167,7 +182,8 @@ export type OriginalNoteInput =
   | ZohoNoteInput
   | ZendeskNoteInput
   | PipedriveNoteInput
-  | CloseNoteInput;
+  | CloseNoteInput
+  | AttioNoteInput;
 
 /* task */
 export type OriginalTaskInput =
@@ -175,7 +191,8 @@ export type OriginalTaskInput =
   | ZohoTaskInput
   | ZendeskTaskInput
   | PipedriveTaskInput
-  | CloseTaskInput;
+  | CloseTaskInput
+  | AttioTaskInput;
 
 /* stage */
 export type OriginalStageInput =
@@ -221,7 +238,8 @@ export type OriginalDealOutput =
   | ZohoDealOutput
   | ZendeskDealOutput
   | PipedriveDealOutput
-  | CloseDealOutput;
+  | CloseDealOutput
+  | AttioDealOutput;
 
 /* company */
 export type OriginalCompanyOutput =
@@ -246,7 +264,8 @@ export type OriginalNoteOutput =
   | ZohoNoteOutput
   | ZendeskNoteOutput
   | PipedriveNoteOutput
-  | CloseNoteOutput;
+  | CloseNoteOutput
+  | AttioNoteOutput;
 
 /* task */
 export type OriginalTaskOutput =
@@ -254,7 +273,8 @@ export type OriginalTaskOutput =
   | ZohoTaskOutput
   | ZendeskTaskOutput
   | PipedriveTaskOutput
-  | CloseTaskOutput;
+  | CloseTaskOutput
+  | AttioTaskOutput;
 
 /* stage */
 export type OriginalStageOutput =
@@ -272,7 +292,8 @@ export type OriginalUserOutput =
   | ZohoUserOutput
   | ZendeskUserOutput
   | PipedriveUserOutput
-  | CloseUserInput;
+  | CloseUserInput
+  | AttioUserOutput;
 
 export type CrmObjectOutput =
   | OriginalContactOutput

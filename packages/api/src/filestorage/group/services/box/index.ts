@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IGroupService } from '@filestorage/group/types';
-import { FileStorageObject } from '@filestorage/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
-import { BoxGroupInput, BoxGroupOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
+import { FileStorageObject } from '@filestorage/@lib/@types';
+import { IGroupService } from '@filestorage/group/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { BoxGroupOutput } from './types';
 
 @Injectable()
 export class BoxService implements IGroupService {
@@ -51,13 +50,7 @@ export class BoxService implements IGroupService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Box',
-        FileStorageObject.group,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

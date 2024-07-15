@@ -1,49 +1,93 @@
 /* INPUT */
 
+import {
+  AshbyActivityInput,
+  AshbyActivityOutput,
+} from '@ats/activity/services/ashby/types';
+import {
+  AshbyApplicationInput,
+  AshbyApplicationOutput,
+} from '@ats/application/services/ashby/types';
+import {
+  AshbyAttachmentInput,
+  AshbyAttachmentOutput,
+} from '@ats/attachment/services/ashby/types';
+import {
+  AshbyCandidateInput,
+  AshbyCandidateOutput,
+} from '@ats/candidate/services/ashby/types';
+import {
+  AshbyDepartmentInput,
+  AshbyDepartmentOutput,
+} from '@ats/department/services/ashby/types';
+import {
+  AshbyInterviewInput,
+  AshbyInterviewOutput,
+} from '@ats/interview/services/ashby/types';
+import { AshbyJobInput, AshbyJobOutput } from '@ats/job/services/ashby/types';
+import {
+  AshbyJobInterviewStageInput,
+  AshbyJobInterviewStageOutput,
+} from '@ats/jobinterviewstage/services/ashby/types';
+import {
+  AshbyOfferInput,
+  AshbyOfferOutput,
+} from '@ats/offer/services/ashby/types';
+import {
+  AshbyOfficeInput,
+  AshbyOfficeOutput,
+} from '@ats/office/services/ashby/types';
+import {
+  AshbyRejectReasonInput,
+  AshbyRejectReasonOutput,
+} from '@ats/rejectreason/services/ashby/types';
+import { AshbyTagInput, AshbyTagOutput } from '@ats/tag/services/ashby/types';
+import {
+  AshbyUserInput,
+  AshbyUserOutput,
+} from '@ats/user/services/ashby/types';
+
 /* activity */
-export type OriginalActivityInput = any;
+export type OriginalActivityInput = AshbyActivityInput;
 
 /* application */
-export type OriginalApplicationInput = any;
+export type OriginalApplicationInput = AshbyApplicationInput;
 
 /* attachment */
-export type OriginalAttachmentInput = any;
+export type OriginalAttachmentInput = AshbyAttachmentInput;
 
 /* candidate */
-export type OriginalCandidateInput = any;
+export type OriginalCandidateInput = AshbyCandidateInput;
 
 /* department */
-export type OriginalDepartmentInput = any;
+export type OriginalDepartmentInput = AshbyDepartmentInput;
 
 /* interview */
-export type OriginalInterviewInput = any;
+export type OriginalInterviewInput = AshbyInterviewInput;
 
 /* jobinterviewstage */
-export type OriginalJobInterviewStageInput = any;
+export type OriginalJobInterviewStageInput = AshbyJobInterviewStageInput;
 
 /* job */
-export type OriginalJobInput = any;
+export type OriginalJobInput = AshbyJobInput;
 
 /* offer */
-export type OriginalOfferInput = any;
+export type OriginalOfferInput = AshbyOfferInput;
 
 /* office */
-export type OriginalOfficeInput = any;
+export type OriginalOfficeInput = AshbyOfficeInput;
 
 /* rejectreason */
-export type OriginalRejectReasonInput = any;
+export type OriginalRejectReasonInput = AshbyRejectReasonInput;
 
 /* scorecard */
 export type OriginalScoreCardInput = any;
 
-/* screeningquestion */
-export type OriginalScreeningQuestionInput = any;
-
 /* tag */
-export type OriginalTagInput = any;
+export type OriginalTagInput = AshbyTagInput;
 
 /* user */
-export type OriginalUserInput = any;
+export type OriginalUserInput = AshbyUserInput;
 
 /* eeocs */
 export type OriginalEeocsInput = any;
@@ -61,7 +105,6 @@ export type AtsObjectInput =
   | OriginalOfficeInput
   | OriginalRejectReasonInput
   | OriginalScoreCardInput
-  | OriginalScreeningQuestionInput
   | OriginalTagInput
   | OriginalUserInput
   | OriginalEeocsInput;
@@ -69,49 +112,46 @@ export type AtsObjectInput =
 /* OUTPUT */
 
 /* activity */
-export type OriginalActivityOutput = any;
+export type OriginalActivityOutput = AshbyActivityOutput;
 
 /* application */
-export type OriginalApplicationOutput = any;
+export type OriginalApplicationOutput = AshbyApplicationOutput;
 
 /* attachment */
-export type OriginalAttachmentOutput = any;
+export type OriginalAttachmentOutput = AshbyAttachmentOutput;
 
 /* candidate */
-export type OriginalCandidateOutput = any;
+export type OriginalCandidateOutput = AshbyCandidateOutput;
 
 /* department */
-export type OriginalDepartmentOutput = any;
+export type OriginalDepartmentOutput = AshbyDepartmentOutput;
 
 /* interview */
-export type OriginalInterviewOutput = any;
+export type OriginalInterviewOutput = AshbyInterviewOutput;
 
 /* jobinterviewstage */
-export type OriginalJobInterviewStageOutput = any;
+export type OriginalJobInterviewStageOutput = AshbyJobInterviewStageOutput;
 
 /* job */
-export type OriginalJobOutput = any;
+export type OriginalJobOutput = AshbyJobOutput;
 
 /* offer */
-export type OriginalOfferOutput = any;
+export type OriginalOfferOutput = AshbyOfferOutput;
 
 /* office */
-export type OriginalOfficeOutput = any;
+export type OriginalOfficeOutput = AshbyOfficeOutput;
 
 /* rejectreason */
-export type OriginalRejectReasonOutput = any;
+export type OriginalRejectReasonOutput = AshbyRejectReasonOutput;
 
 /* scorecard */
 export type OriginalScoreCardOutput = any;
 
-/* screeningquestion */
-export type OriginalScreeningQuestionOutput = any;
-
 /* tag */
-export type OriginalTagOutput = any;
+export type OriginalTagOutput = AshbyTagOutput;
 
 /* user */
-export type OriginalUserOutput = any;
+export type OriginalUserOutput = AshbyUserOutput;
 
 /* eeocs */
 export type OriginalEeocsOutput = any;
@@ -129,7 +169,6 @@ export type AtsObjectOutput =
   | OriginalOfficeOutput
   | OriginalRejectReasonOutput
   | OriginalScoreCardOutput
-  | OriginalScreeningQuestionOutput
   | OriginalTagOutput
   | OriginalUserOutput
   | OriginalEeocsOutput;

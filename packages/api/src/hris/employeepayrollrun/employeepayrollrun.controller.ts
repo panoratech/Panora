@@ -40,7 +40,7 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getEmployeePayrollRuns',
     summary: 'List a batch of EmployeePayrollRuns',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class EmployeePayrollRunController {
   @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getEmployeePayrollRuns(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getEmployeePayrollRun',
     summary: 'Retrieve a EmployeePayrollRun',
     description:
       'Retrieve a employeepayrollrun from any connected Hris software',

@@ -299,7 +299,7 @@ private connectionUtils: ConnectionUtils
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'get${ObjectCap}s',
     summary: 'List a batch of ${ObjectCap}s',
   })
    @ApiHeader({
@@ -332,7 +332,7 @@ private connectionUtils: ConnectionUtils
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'get${ObjectCap}',
     summary: 'Retrieve a ${ObjectCap}',
     description: 'Retrieve a ${objectType} from any connected ${VerticalCap} software',
   })
@@ -359,7 +359,7 @@ private connectionUtils: ConnectionUtils
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'add${ObjectCap}',
     summary: 'Create a ${ObjectCap}',
     description: 'Create a ${objectType} in any supported ${VerticalCap} software',
   })
@@ -400,19 +400,6 @@ private connectionUtils: ConnectionUtils
     }catch(error){
       throw new Error(error);
     }
-  }
-
-  @ApiOperation({
-    operationId: 'update',
-    summary: 'Update a ${ObjectCap}',
-  })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
-@UseGuards(ApiKeyAuthGuard)  @Patch()
-  update$(
-    @Query('id') id: string,
-    @Body() update${ObjectCap}Data: Partial<Unified${ObjectCap}Input>,
-  ) {
-    return this.${objectType}Service.update${ObjectCap}(id, update${ObjectCap}Data);
   }
 }
 EOF

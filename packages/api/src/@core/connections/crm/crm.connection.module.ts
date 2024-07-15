@@ -1,10 +1,9 @@
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/webhook.module';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { Module } from '@nestjs/common';
-import { ConnectionUtils } from '../@utils';
 import { AffinityConnectionService } from './services/affinity/affinity.service';
 import { AttioConnectionService } from './services/attio/attio.service';
 import { CapsuleConnectionService } from './services/capsule/capsule.service';
@@ -19,22 +18,15 @@ import { TeamleaderConnectionService } from './services/teamleader/teamleader.se
 import { TeamworkConnectionService } from './services/teamwork/teamwork.service';
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
 import { ZohoConnectionService } from './services/zoho/zoho.service';
-import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/webhook.module';
-import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
-import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
   imports: [WebhookModule, BullQueueModule],
   providers: [
     CrmConnectionsService,
     ServiceRegistry,
-    LoggerService,
     WebhookService,
     EnvironmentService,
-    EncryptionService,
     ConnectionsStrategiesService,
-    ConnectionUtils,
-    CategoryConnectionRegistry,
     // PROVIDERS SERVICES
     HubspotConnectionService,
     AttioConnectionService,

@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IEngagementService } from '@crm/engagement/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { ZendeskEngagementInput, ZendeskEngagementOutput } from './types';
-import axios from 'axios';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
 import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IEngagementService } from '@crm/engagement/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { ZendeskEngagementInput, ZendeskEngagementOutput } from './types';
 @Injectable()
 export class ZendeskService implements IEngagementService {
   constructor(
@@ -42,13 +41,7 @@ export class ZendeskService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.engagement,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
   private async addCall(
@@ -84,13 +77,7 @@ export class ZendeskService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.engagement_call,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -109,13 +96,7 @@ export class ZendeskService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.engagement,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -148,13 +129,7 @@ export class ZendeskService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.engagement_call,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

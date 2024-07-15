@@ -40,7 +40,7 @@ export class EmployerBenefitController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getEmployerBenefits',
     summary: 'List a batch of EmployerBenefits',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class EmployerBenefitController {
   @ApiCustomResponse(UnifiedEmployerBenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getEmployerBenefits(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class EmployerBenefitController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getEmployerBenefit',
     summary: 'Retrieve a EmployerBenefit',
     description: 'Retrieve a employerbenefit from any connected Hris software',
   })

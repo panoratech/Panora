@@ -48,18 +48,12 @@ export class JiraService implements ICollectionService {
       this.logger.log(`Synced jira collections !`);
 
       return {
-        data: resp.data,
+        data: resp.data.values,
         message: 'Jira collections retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'jira',
-        TicketingObject.collection,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

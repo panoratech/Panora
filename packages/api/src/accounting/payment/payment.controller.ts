@@ -40,7 +40,7 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getPayments',
     summary: 'List a batch of Payments',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class PaymentController {
   @ApiCustomResponse(UnifiedPaymentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getPayments(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getPayment',
     summary: 'Retrieve a Payment',
     description: 'Retrieve a payment from any connected Accounting software',
   })
@@ -120,7 +120,7 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addPayment',
     summary: 'Create a Payment',
     description: 'Create a payment in any supported Accounting software',
   })
@@ -141,7 +141,7 @@ export class PaymentController {
   @ApiCustomResponse(UnifiedPaymentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addPayment(
     @Body() unifiedPaymentData: UnifiedPaymentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

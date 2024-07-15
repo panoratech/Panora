@@ -40,7 +40,7 @@ export class CreditNoteController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getCreditNotes',
     summary: 'List a batch of CreditNotes',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class CreditNoteController {
   @ApiCustomResponse(UnifiedCreditNoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getCreditNotes(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class CreditNoteController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getCreditNote',
     summary: 'Retrieve a CreditNote',
     description: 'Retrieve a creditnote from any connected Accounting software',
   })

@@ -61,13 +61,7 @@ export class AshbyService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

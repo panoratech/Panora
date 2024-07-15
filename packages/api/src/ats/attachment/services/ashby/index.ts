@@ -81,13 +81,7 @@ export class AshbyService implements IAttachmentService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'ashby',
-        AtsObject.attachment,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 

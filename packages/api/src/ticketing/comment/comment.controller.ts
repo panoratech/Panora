@@ -43,7 +43,7 @@ export class CommentController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getComments',
     summary: 'List a batch of Comments',
   })
   @ApiHeader({
@@ -56,7 +56,7 @@ export class CommentController {
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  async list(
+  async getComments(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -80,7 +80,7 @@ export class CommentController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getComment',
     summary: 'Retrieve a Comment',
     description: 'Retrieve a comment from any connected Ticketing software',
   })
@@ -124,7 +124,7 @@ export class CommentController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addComment',
     summary: 'Create a Comment',
     description: 'Create a comment in any supported Ticketing software',
   })
@@ -145,7 +145,7 @@ export class CommentController {
   @ApiCustomResponse(UnifiedCommentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addComment(
     @Body() unfiedCommentData: UnifiedCommentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

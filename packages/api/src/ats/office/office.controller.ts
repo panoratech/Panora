@@ -37,7 +37,7 @@ export class OfficeController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getOffices',
     summary: 'List a batch of Offices',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class OfficeController {
   @ApiCustomResponse(UnifiedOfficeOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getOffices(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class OfficeController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getOffice',
     summary: 'Retrieve a Office',
     description: 'Retrieve a office from any connected Ats software',
   })

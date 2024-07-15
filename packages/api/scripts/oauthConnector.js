@@ -83,8 +83,7 @@ private cService: ConnectionsStrategiesService,
     this.type = providerToType('${provider.toLowerCase()}', '${vertical.toLowerCase()}', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: OAuthCallbackParams) {
-
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -167,7 +166,8 @@ private cService: ConnectionsStrategiesService,
       }
       return db_res;
     } catch (error) {
-      throw error;
+            throw error;
+
     }
   }
     
@@ -209,7 +209,8 @@ private cService: ConnectionsStrategiesService,
       });
       this.logger.log('OAuth credentials updated : ${provider} ');
     } catch (error) {
-      throw error;    
+            throw error;
+  
     }
   }
 } 

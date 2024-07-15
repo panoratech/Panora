@@ -40,7 +40,7 @@ export class PayGroupController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getPayGroups',
     summary: 'List a batch of PayGroups',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class PayGroupController {
   @ApiCustomResponse(UnifiedPayGroupOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getPayGroups(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class PayGroupController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getPayGroup',
     summary: 'Retrieve a PayGroup',
     description: 'Retrieve a paygroup from any connected Hris software',
   })

@@ -153,6 +153,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }

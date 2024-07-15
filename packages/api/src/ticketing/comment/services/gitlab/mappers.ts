@@ -79,7 +79,7 @@ export class GitlabCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput> {
-    let opts;
+    let opts: any = {};
 
     if (comment.attachment && comment.attachment.length > 0) {
       const attachments = (await this.coreUnificationService.unify<
@@ -93,6 +93,7 @@ export class GitlabCommentMapper implements ICommentMapper {
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
       opts = {
+        ...opts,
         attachments: attachments,
       };
     }

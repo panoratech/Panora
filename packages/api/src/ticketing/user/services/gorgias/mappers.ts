@@ -23,17 +23,19 @@ export class GorgiasUserMapper implements IUserMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: GorgiasUserOutput | GorgiasUserOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
     const sourcesArray = Array.isArray(source) ? source : [source];
-    return sourcesArray.map((user) =>
-      this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+    return Promise.all(
+      sourcesArray.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 

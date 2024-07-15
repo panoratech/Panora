@@ -73,13 +73,7 @@ export class BoxService implements ISharedLinkService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Box',
-        FileStorageObject.sharedlink,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

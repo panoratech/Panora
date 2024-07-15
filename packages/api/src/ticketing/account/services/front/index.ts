@@ -53,13 +53,7 @@ export class FrontService implements IAccountService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.account,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

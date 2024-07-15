@@ -111,15 +111,18 @@ export class HubspotTicketMapper implements ITicketMapper {
         field_mappings[mapping.slug] = ticket.properties[mapping.remote_id];
       }
     }
+    const opts: any = {};
     const owner_id = ticket.properties.hubspot_owner_id;
-    const user_id = await this.utils.getUserUuidFromRemoteId(
-      owner_id,
-      connectionId,
-    );
-    let opts = {};
-    if (user_id) {
-      opts = { assigned_to: [user_id] };
+    if (owner_id) {
+      const user_id = await this.utils.getUserUuidFromRemoteId(
+        owner_id,
+        connectionId,
+      );
+      if (user_id) {
+        opts.assigned_to = [user_id];
+      }
     }
+
     return {
       remote_id: ticket.id,
       remote_data: ticket,

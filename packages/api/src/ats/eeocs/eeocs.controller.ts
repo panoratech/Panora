@@ -37,7 +37,7 @@ export class EeocsController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getEeocss',
     summary: 'List a batch of Eeocss',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class EeocsController {
   @ApiCustomResponse(UnifiedEeocsOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getEeocss(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class EeocsController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getEeocs',
     summary: 'Retrieve a Eeocs',
     description: 'Retrieve a eeocs from any connected Ats software',
   })

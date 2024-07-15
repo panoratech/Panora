@@ -152,7 +152,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
           ticket_type: ticket.type ?? null,
           priority: ticket.priority ?? null,
           completed_at: ticket.completed_at ?? null,
-          assigned_to: ticket.assigned_to ?? null,
+          assigned_to: ticket.assigned_to ?? [],
+          tags: [],
+          collections: [],
+          id_linked_user: linkedUserId,
         };
 
         if (existingTicket) {
@@ -199,7 +202,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         await this.ingestService.processRemoteData(ticket_id, remote_data[i]);
 
         // Process collections
-        if (ticket.collections[0]) {
+        if (ticket.collections && ticket.collections[0]) {
           let collections: string[] = [];
           if (typeof ticket.collections[0] === 'string') {
             collections.push(ticket.collections[0]);
@@ -246,21 +249,28 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
         // Process tags
         if (ticket.tags) {
-          const tags = await this.registry
-            .getService('ticketing', 'tag')
-            .saveToDb(
-              connection_id,
-              linkedUserId,
-              ticket.tags,
-              originSource,
-              ticket.tags.map((tag: UnifiedTagOutput) => tag.remote_data),
-            );
+          let TAGS: string[] = [];
+          if (typeof ticket.tags[0] === 'string') {
+            TAGS = ticket.tags as string[];
+          } else {
+            const tags = await this.registry
+              .getService('ticketing', 'tag')
+              .saveToDb(
+                connection_id,
+                linkedUserId,
+                ticket.tags,
+                originSource,
+                ticket.tags.map((tag: UnifiedTagOutput) => tag.remote_data),
+              );
+            TAGS = tags.map((t) => t.id_tcg_tag as string);
+          }
+
           await this.prisma.tcg_tickets.update({
             where: {
               id_tcg_ticket: ticket_id,
             },
             data: {
-              tags: tags.map((tag) => tag.id_tcg_tag as string),
+              tags: TAGS,
             },
           });
         }

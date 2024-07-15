@@ -36,17 +36,17 @@ We made a docker file that builds Panora from sources, specifically to help you 
 
     - `HUBSPOT_CRM_CLOUD_CLIENT_ID = client_id_value_pasted_from_hubspot_developer_app`
     - `HUBSPOT_CRM_CLOUD_CLIENT_SECRET = client_secret_value_pasted_from_hubspot_developer_app`
-
   </Step>
-  <Step title="Removed previously installed dependencies">
+  <Step title="Remove previously installed dependencies">
     ```bash 
     rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
     ```
+    <Info>For Mac users only: ```echo -e "node-linker=hoisted\n package-import-method=clone-or-copy" > .npmrc```</Info>
   </Step>
-  <Step title="Mac Users only:">
-    ```bash 
-    echo -e "node-linker=hoisted\n package-import-method=clone-or-copy" > .npmrc 
-    ```
+  <Step title="(Optional) Enable Grok">
+    If you have to create an oAuth app for a provider and needs an **https** redirect uri you must enable Grok service and use your secure domain from them (it proxies requests to `localhost:3000`):
+    - Add your auth token and domain from your Ngrok dashboard to the `ngrok.yml` file.
+    - Uncomment the Grok service inside the `docker-compose.dev.yml` file.
   </Step>
   <Step title="Start the Dockerfile">
     ```bash 
@@ -197,7 +197,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
               slug: string;
               remote_id: string;
             }[]
-          ): UnifiedContactOutput | UnifiedContactOutput[];
+          ): Promise<UnifiedContactOutput | UnifiedContactOutput[]>;
         }
         ```
 
@@ -217,7 +217,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
               slug: string;
               remote_id: string;
             }[],
-          ): UnifiedContactOutput | UnifiedContactOutput[] {}
+          ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {}
         }
         ```
 
@@ -230,7 +230,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
   <Step title="Enable your new service">
     After these 3 files are successfully created and filled, you are ready to fix all dependencies/linting issues that you may have. <br/>
     To make sure the service is enabled, dependencies and imports must be added. <br/>
-    We built a script that does it in seconds. You can run the given Docker commands from the root directory of Panora.
+    We built a script that does it in seconds. You can execute the given command from the root directory of Panora.
 
     ```bash
       docker build -t validate_connectors -f ./packages/api/Dockerfile.validate-connectors .
@@ -243,6 +243,44 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
 
   </Step>
 </Steps>
+
+# Step 3: Test your new connector
+
+Now you must test Panora unified endpoints with the new connector built.
+    <Steps>
+      <Step title="Create a connection using the magic link">
+          **If the connector uses oAuth:**  <br/>
+          You need a set of credentials that you'll set in `.env` if you use oAuth (check above how it works). 
+          Check [this guide](/core-concepts/magic-links) to create a connection through it.
+          To activate your new connector on the magic link, visit this [**file**](https://github.com/panoratech/Panora/blob/main/packages/shared/src/connectors/metadata.ts#L6) :
+          and change your connector status to `active: true`. 
+            
+          **If the connector uses API KEY auth:**<br/>
+          You currently have to do a POST request to create a connection.<br/>
+          Create your query encoded URI by computing this:<br/>
+        ```ts 
+          const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
+        ```
+          The values for `linkedUserId` and `projectId` are to be found within the webapp at `localhost`
+        ```shell Insert an api key connection
+        curl --request POST \
+             --url http://localhost:3000/connections/apikey/callback?state=state \
+             --header 'Content-Type: application/json' \
+             --data '{
+                "apikey": "YOUR_CONNECTOR_API_KEY",
+                // if your connector needs more parameters for auth (e.g username or whatever)
+                //"username": "YOUR_USERNAME_VALUE"
+             }'
+        ```   
+      </Step>
+      <Step title="Test with unified endpoints">
+        Now after successfully creating a new connection, you can copy a `connection token` inside the webapp under `http://localhost/connections`.
+        Create a Panora Api Key and make unified request with your `connection token`. 
+        Check [this guide](/core-concepts/auth) to do it !
+      </Step> 
+    </Steps>
+
+
 
 ### Congrats, you now have built a new integration with Panora ! 🦸‍♀️
 

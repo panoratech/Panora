@@ -146,7 +146,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             where: { id_tcg_account: existingAccount.id_tcg_account },
             data: {
               name: existingAccount.name ?? null,
-              domains: existingAccount.domains ?? null,
+              domains: existingAccount.domains ?? [],
               modified_at: new Date(),
             },
           });

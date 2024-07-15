@@ -40,7 +40,7 @@ export class PhoneNumberController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getPhoneNumbers',
     summary: 'List a batch of PhoneNumbers',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class PhoneNumberController {
   @ApiCustomResponse(UnifiedPhoneNumberOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getPhoneNumbers(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class PhoneNumberController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getPhoneNumber',
     summary: 'Retrieve a PhoneNumber',
     description:
       'Retrieve a phonenumber from any connected Accounting software',

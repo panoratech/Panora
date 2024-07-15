@@ -99,7 +99,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedCommentOutput> {
-    let opts;
+    let opts: any = {};
 
     if (comment.attachments && comment.attachments.length > 0) {
       const attachments = (await this.coreUnificationService.unify<
@@ -113,6 +113,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
       opts = {
+        ...opts,
         attachments: attachments,
       };
     }
@@ -124,14 +125,14 @@ export class ZendeskCommentMapper implements ICommentMapper {
       );
 
       if (user_id) {
-        opts = { user_id: user_id, creator_type: 'USER' };
+        opts = { ...opts, user_id: user_id, creator_type: 'USER' };
       } else {
         const contact_id = await this.utils.getContactUuidFromRemoteId(
           String(comment.author_id),
           connectionId,
         );
         if (contact_id) {
-          opts = { creator_type: 'CONTACT', contact_id: contact_id };
+          opts = { ...opts, creator_type: 'CONTACT', contact_id: contact_id };
         }
       }
     }

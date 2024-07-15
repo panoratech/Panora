@@ -9,8 +9,8 @@ import { ConnectionsStrategiesService } from './connections-strategies.service';
 @Module({
   controllers: [ConnectionsStrategiesController],
   providers: [
-    LoggerService,
-    EncryptionService,
+    
+    
 
     ConnectionsStrategiesService,
     ConfigService,

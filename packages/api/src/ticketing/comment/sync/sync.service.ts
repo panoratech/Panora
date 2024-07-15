@@ -173,6 +173,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           html_body: comment.html_body ?? null,
           is_private: comment.is_private ?? null,
           creator_type: comment.creator_type ?? null,
+          id_tcg_attachment: [],
           ...opts,
         };
 

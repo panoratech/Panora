@@ -37,7 +37,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getAtsTags',
     summary: 'List a batch of Tags',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class TagController {
   @ApiCustomResponse(UnifiedTagOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getTags(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getAtsTag',
     summary: 'Retrieve a Tag',
     description: 'Retrieve a tag from any connected Ats software',
   })

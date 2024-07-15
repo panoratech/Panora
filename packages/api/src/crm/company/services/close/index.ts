@@ -58,13 +58,7 @@ export class CloseService implements ICompanyService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.company,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -105,13 +99,7 @@ export class CloseService implements ICompanyService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.company,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -93,6 +93,7 @@ export class HubspotNoteMapper implements INoteMapper {
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }

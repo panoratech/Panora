@@ -11,7 +11,7 @@ import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
 import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
@@ -206,7 +206,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       }
     }
 
-    let opts: any;
+    const opts: any = {};
 
     //TODO: contact or user ?
     if (ticket.assignee_id) {
@@ -215,25 +215,21 @@ export class ZendeskTicketMapper implements ITicketMapper {
         connectionId,
       );
       if (user_id) {
-        opts = { assigned_to: [user_id] };
+        opts.assigned_to = [user_id];
       }
     }
     if (ticket.type) {
-      opts = {
-        type: this.mapToIssueTypeName(ticket.type as any),
-      };
+      opts.type = this.mapToIssueTypeName(ticket.type as any) as string;
     }
 
     if (ticket.status) {
-      opts = {
-        status: this.mapToTicketStatus(ticket.status as any),
-      };
+      opts.status = this.mapToTicketStatus(ticket.status as any) as string;
     }
 
     if (ticket.priority) {
-      opts = {
-        priority: this.mapToTicketPriority(ticket.priority as any),
-      };
+      opts.priority = this.mapToTicketPriority(
+        ticket.priority as any,
+      ) as string;
     }
 
     if (ticket.tags) {
@@ -247,9 +243,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
         connectionId: connectionId,
         customFieldMappings: [],
       })) as UnifiedTagOutput[];
-      opts = {
-        tags: tags,
-      };
+      opts.tags = tags;
     }
 
     const unifiedTicket: UnifiedTicketOutput = {

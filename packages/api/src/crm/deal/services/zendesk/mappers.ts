@@ -107,6 +107,7 @@ export class ZendeskDealMapper implements IDealMapper {
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -118,6 +119,7 @@ export class ZendeskDealMapper implements IDealMapper {
       );
       if (stage_id) {
         opts = {
+          ...opts,
           stage_id: stage_id,
         };
       }
@@ -130,6 +132,7 @@ export class ZendeskDealMapper implements IDealMapper {
       );
       if (contact_id) {
         opts = {
+          ...opts,
           company_id: contact_id,
         };
       }
@@ -141,7 +144,7 @@ export class ZendeskDealMapper implements IDealMapper {
       amount:
         typeof deal.value === 'string' ? parseFloat(deal.value) : deal.value,
       field_mappings,
-      description: null,
+      description: '', //todo null
       ...opts,
     };
   }

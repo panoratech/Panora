@@ -40,7 +40,7 @@ export class BenefitController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getBenefits',
     summary: 'List a batch of Benefits',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class BenefitController {
   @ApiCustomResponse(UnifiedBenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getBenefits(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class BenefitController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getBenefit',
     summary: 'Retrieve a Benefit',
     description: 'Retrieve a benefit from any connected Hris software',
   })

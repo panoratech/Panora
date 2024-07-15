@@ -59,13 +59,7 @@ export class HubspotService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'hubspot',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
   async sync(data: SyncParam): Promise<ApiResponse<HubspotTicketOutput[]>> {
@@ -105,13 +99,7 @@ export class HubspotService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'hubspot',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

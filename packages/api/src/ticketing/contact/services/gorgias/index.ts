@@ -53,13 +53,7 @@ export class GorgiasService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.contact,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -53,13 +53,7 @@ export class BoxService implements IUserService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Box',
-        FileStorageObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

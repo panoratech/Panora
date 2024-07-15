@@ -65,13 +65,7 @@ export class GorgiasService implements ITagService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.tag,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

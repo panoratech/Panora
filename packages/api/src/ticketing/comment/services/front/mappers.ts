@@ -72,7 +72,7 @@ export class FrontCommentMapper implements ICommentMapper {
   ): Promise<UnifiedCommentOutput> {
     //map the front attachment to our unified version of attachment
     //unifying the original attachment object coming from Front
-    let opts;
+    let opts: any = {};
 
     if (comment.attachments && comment.attachments.length > 0) {
       const attachments = (await this.coreUnificationService.unify<
@@ -86,6 +86,7 @@ export class FrontCommentMapper implements ICommentMapper {
         customFieldMappings: [],
       })) as UnifiedAttachmentOutput[];
       opts = {
+        ...opts,
         attachments: attachments,
       };
     }
@@ -98,7 +99,7 @@ export class FrontCommentMapper implements ICommentMapper {
 
       if (user_id) {
         // we must always fall here for Front
-        opts = { user_id: user_id, creator_type: 'USER' };
+        opts = { ...opts, user_id: user_id, creator_type: 'USER' };
       }
     }
 

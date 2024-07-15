@@ -110,13 +110,7 @@ export class JiraService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'jira',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
   async sync(data: SyncParam): Promise<ApiResponse<JiraTicketOutput[]>> {
@@ -146,13 +140,7 @@ export class JiraService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'jira',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

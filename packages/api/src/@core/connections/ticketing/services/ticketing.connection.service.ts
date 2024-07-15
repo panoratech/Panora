@@ -24,6 +24,7 @@ export class TicketingConnectionsService implements IConnectionCategory {
     this.logger.setContext(TicketingConnectionsService.name);
     this.connectionCategoryRegistry.registerService('ticketing', this);
   }
+
   //STEP 1:[FRONTEND STEP]
   //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click
   // on it to grant access => they grant US the access and then when confirmed

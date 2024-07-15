@@ -64,13 +64,7 @@ export class AshbyService implements ITagService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Ashby',
-        AtsObject.tag,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -23,14 +23,14 @@ export class GitlabUserMapper implements IUserMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: GitlabUserOutput | GitlabUserOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
     const sourcesArray = Array.isArray(source) ? source : [source];
     return sourcesArray.map((user) =>
       this.mapSingleUserToUnified(user, connectionId, customFieldMappings),

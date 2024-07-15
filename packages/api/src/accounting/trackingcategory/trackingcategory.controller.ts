@@ -40,7 +40,7 @@ export class TrackingCategoryController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTrackingCategorys',
     summary: 'List a batch of TrackingCategorys',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class TrackingCategoryController {
   @ApiCustomResponse(UnifiedTrackingCategoryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getTrackingCategorys(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class TrackingCategoryController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTrackingCategory',
     summary: 'Retrieve a TrackingCategory',
     description:
       'Retrieve a trackingcategory from any connected Accounting software',

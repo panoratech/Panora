@@ -7,6 +7,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Request,
@@ -75,13 +76,14 @@ export class ConnectionsController {
       const { projectId, vertical, linkedUserId, providerName, returnUrl } =
         stateData;
 
-      await this.categoryConnectionRegistry
-        .getService(vertical.toLowerCase())
-        .handleCallBack(
-          providerName,
-          { linkedUserId, projectId, code, location },
-          'oauth',
-        );
+      const service = this.categoryConnectionRegistry.getService(
+        vertical.toLowerCase(),
+      );
+      await service.handleCallBack(
+        providerName,
+        { linkedUserId, projectId, code, location },
+        'oauth',
+      );
 
       res.redirect(returnUrl);
 
@@ -187,6 +189,19 @@ export class ConnectionsController {
       return await this.prisma.connections.findMany({
         where: {
           id_project: id_project,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get('list')
+  async list2(@Query('projectid') req: string) {
+    try {
+      return await this.prisma.connections.findMany({
+        where: {
+          id_project: req,
         },
       });
     } catch (error) {

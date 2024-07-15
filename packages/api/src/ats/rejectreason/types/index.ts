@@ -1,11 +1,11 @@
+import { ApiResponse } from '@@core/utils/types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
+import { OriginalRejectReasonOutput } from '@@core/utils/types/original/original.ats';
 import {
   UnifiedRejectReasonInput,
   UnifiedRejectReasonOutput,
 } from './model.unified';
-import { OriginalRejectReasonOutput } from '@@core/utils/types/original/original.ats';
-import { ApiResponse } from '@@core/utils/types';
-import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IRejectReasonService extends IBaseObjectService {
   sync(data: SyncParam): Promise<ApiResponse<OriginalRejectReasonOutput[]>>;

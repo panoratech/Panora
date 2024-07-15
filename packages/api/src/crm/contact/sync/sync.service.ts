@@ -194,6 +194,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     data: {
                       ...email,
                       id_crm_contact: existingContact.id_crm_contact,
+                      id_connection: connection_id,
                     },
                   });
                 }
@@ -220,6 +221,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     data: {
                       ...phone,
                       id_crm_contact: existingContact.id_crm_contact,
+                      id_connection: connection_id,
                     },
                   });
                 }
@@ -269,6 +271,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                   data: {
                     ...email,
                     id_crm_contact: newContact.id_crm_contact,
+                    id_connection: connection_id,
                   },
                 }),
               ),
@@ -282,6 +285,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                   data: {
                     ...phone,
                     id_crm_contact: newContact.id_crm_contact,
+                    id_connection: connection_id,
                   },
                 }),
               ),

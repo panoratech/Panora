@@ -39,7 +39,7 @@ export class BankinfoController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getBankinfos',
     summary: 'List a batch of Bankinfos',
   })
   @ApiHeader({
@@ -51,7 +51,7 @@ export class BankinfoController {
   @ApiCustomResponse(UnifiedBankInfoOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getBankinfos(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -75,7 +75,7 @@ export class BankinfoController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getBankinfo',
     summary: 'Retrieve a Bankinfo',
     description: 'Retrieve a bankinfo from any connected Hris software',
   })

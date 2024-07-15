@@ -67,13 +67,7 @@ export class ZendeskService implements ITagService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.tag,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

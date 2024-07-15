@@ -23,13 +23,11 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
   providers: [
     HrisConnectionsService,
     ServiceRegistry,
-    LoggerService,
+
     WebhookService,
     EnvironmentService,
-    EncryptionService,
+
     ConnectionsStrategiesService,
-    ConnectionUtils,
-    CategoryConnectionRegistry,
     // PROVIDERS SERVICES
     RipplingConnectionService,
     DeelConnectionService,

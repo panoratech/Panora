@@ -37,7 +37,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getMarketingAutomationEvents',
     summary: 'List a batch of Events',
   })
   @ApiHeader({
@@ -49,7 +49,7 @@ export class EventController {
   @ApiCustomResponse(UnifiedEventOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getEvents(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -73,7 +73,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getEvent',
     summary: 'Retrieve a Event',
     description:
       'Retrieve a event from any connected Marketingautomation software',

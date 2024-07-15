@@ -40,7 +40,7 @@ export class AddressController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getAddresss',
     summary: 'List a batch of Addresss',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class AddressController {
   @ApiCustomResponse(UnifiedAddressOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getAddresss(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class AddressController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getAddress',
     summary: 'Retrieve a Address',
     description: 'Retrieve a address from any connected Accounting software',
   })

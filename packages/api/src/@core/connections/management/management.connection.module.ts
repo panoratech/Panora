@@ -16,14 +16,12 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
   imports: [WebhookModule, BullQueueModule],
   providers: [
     ManagementConnectionsService,
-    LoggerService,
+
     WebhookService,
     EnvironmentService,
-    EncryptionService,
+
     ServiceRegistry,
     ConnectionsStrategiesService,
-    ConnectionUtils,
-    CategoryConnectionRegistry,
     //PROVIDERS SERVICES
     NotionConnectionService,
     SlackConnectionService,

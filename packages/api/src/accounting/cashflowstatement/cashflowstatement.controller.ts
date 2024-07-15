@@ -40,7 +40,7 @@ export class CashflowStatementController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getCashflowStatements',
     summary: 'List a batch of CashflowStatements',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class CashflowStatementController {
   @ApiCustomResponse(UnifiedCashflowStatementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getCashflowStatements(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class CashflowStatementController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getCashflowStatement',
     summary: 'Retrieve a CashflowStatement',
     description:
       'Retrieve a cashflowstatement from any connected Accounting software',

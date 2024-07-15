@@ -18,6 +18,7 @@ import {
   HubspotEngagementMeetingOutput,
   HubspotEngagementOutput,
   commonCallHubspotProperties,
+  commonEmailHubspotProperties,
   commonMeetingHubspotProperties,
 } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
@@ -61,13 +62,7 @@ export class HubspotService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -104,13 +99,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_call,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -147,13 +136,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_meeting,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -190,13 +173,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_email,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -215,13 +192,7 @@ export class HubspotService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -261,13 +232,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_call,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -310,13 +275,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_meeting,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -330,7 +289,7 @@ export class HubspotService implements IEngagementService {
         },
       });
 
-      const commonPropertyNames = Object.keys(commonCallHubspotProperties);
+      const commonPropertyNames = Object.keys(commonEmailHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
       const baseURL = 'https://api.hubapi.com/crm/v3/objects/emails';
 
@@ -356,13 +315,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_email,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

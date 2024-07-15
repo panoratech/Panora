@@ -55,13 +55,7 @@ export class ZendeskService implements ITeamService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.team,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

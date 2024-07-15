@@ -70,17 +70,18 @@ export class EngagementService {
           unifiedEngagementData.type.toUpperCase(),
         );
 
-      const targetType = this.getEngagementType(unifiedEngagementData.type);
-
       const unifiedObject = (await this.coreUnification.unify<
         OriginalEngagementOutput[]
       >({
         sourceObject: [resp.data],
-        targetType: targetType,
+        targetType: CrmObject.engagement,
         providerName: integrationId,
         vertical: 'crm',
         connectionId: connection_id,
         customFieldMappings: [],
+        extraParams: {
+          engagement_type: unifiedEngagementData.type.toUpperCase(),
+        },
       })) as UnifiedEngagementOutput[];
 
       const source_engagement = resp.data;
@@ -186,15 +187,6 @@ export class EngagementService {
     }
   }
 
-  getEngagementType(type: string) {
-    const upperType = type.toUpperCase();
-    return upperType === 'CALL'
-      ? CrmObject.engagement_call
-      : upperType === 'MEETING'
-      ? CrmObject.engagement_meeting
-      : CrmObject.engagement_email;
-  }
-
   async saveOrUpdateEngagement(
     engagement: UnifiedEngagementOutput,
     connection_id: string,
@@ -279,6 +271,7 @@ export class EngagementService {
         end_time: engagement.end_time,
         type: engagement.type,
         company_id: engagement.id_crm_company,
+        user_id: engagement.id_crm_user,
         field_mappings: field_mappings,
         remote_id: engagement.remote_id,
         created_at: engagement.created_at,
@@ -414,6 +407,7 @@ export class EngagementService {
             end_time: engagement.end_time,
             type: engagement.type,
             company_id: engagement.id_crm_company,
+            user_id: engagement.id_crm_user,
             field_mappings: field_mappings,
             remote_id: engagement.remote_id,
             created_at: engagement.created_at,

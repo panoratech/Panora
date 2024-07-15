@@ -1,7 +1,7 @@
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
@@ -12,6 +12,7 @@ import {
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
+import { GorgiasTagOutput } from '@ticketing/tag/services/gorgias/types';
 
 @Injectable()
 export class GorgiasTicketMapper implements ITicketMapper {
@@ -138,7 +139,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
       }
     }
 
-    let opts: any;
+    let opts: any = {};
 
     if (ticket.assignee_user) {
       //fetch the right assignee uuid from remote id
@@ -147,14 +148,17 @@ export class GorgiasTicketMapper implements ITicketMapper {
         connectionId,
       );
       if (user_id) {
-        opts = { assigned_to: [user_id] };
+        opts = {
+          ...opts,
+          assigned_to: [user_id],
+        };
       }
     }
     if (ticket.tags) {
       const tags = (await this.coreUnificationService.unify<
         OriginalTagOutput[]
       >({
-        sourceObject: ticket.tags,
+        sourceObject: ticket.tags as GorgiasTagOutput[],
         targetType: TicketingObject.tag,
         providerName: 'gorgias',
         vertical: 'ticketing',
@@ -162,6 +166,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
         customFieldMappings: [],
       })) as UnifiedTagOutput[];
       opts = {
+        ...opts,
         tags: tags,
       };
     }

@@ -147,6 +147,7 @@ export class IngestDataService {
       vertical: vertical,
       connectionId: connectionId,
       customFieldMappings,
+      extraParams,
     })) as T[];
 
     if (unifiedObject == null) {
@@ -167,6 +168,7 @@ export class IngestDataService {
         sourceObject,
         ...Object.values(extraParams || {}),
       );
+
     const event = await this.prisma.events.create({
       data: {
         id_event: uuidv4(),

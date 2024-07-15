@@ -10,14 +10,11 @@ export class CategoryConnectionRegistry<T = IConnectionCategory> {
   }
 
   registerService(serviceKey: string, service: T) {
-    this.serviceMap.set(serviceKey, service);
+    this.serviceMap.set(serviceKey.toLowerCase().trim(), service);
   }
 
   getService(category: string): T {
-    const service = this.serviceMap.get(category);
-    if (!service) {
-      throw new Error();
-    }
+    const service = this.serviceMap.get(category.toLowerCase().trim());
     return service;
   }
 }

@@ -40,7 +40,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTimeoffs',
     summary: 'List a batch of Timeoffs',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class TimeoffController {
   @ApiCustomResponse(UnifiedTimeoffOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getTimeoffs(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTimeoff',
     summary: 'Retrieve a Timeoff',
     description: 'Retrieve a timeoff from any connected Hris software',
   })
@@ -119,7 +119,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'addTimeoff',
     summary: 'Create a Timeoff',
     description: 'Create a timeoff in any supported Hris software',
   })
@@ -139,7 +139,7 @@ export class TimeoffController {
   @ApiCustomResponse(UnifiedTimeoffOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async create(
+  async addTimeoff(
     @Body() unifiedTimeoffData: UnifiedTimeoffInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,

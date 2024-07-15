@@ -40,7 +40,7 @@ export class ScoreCardController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getScoreCards',
     summary: 'List a batch of ScoreCards',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class ScoreCardController {
   @ApiCustomResponse(UnifiedScoreCardOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getScoreCards(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class ScoreCardController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getScoreCard',
     summary: 'Retrieve a ScoreCard',
     description: 'Retrieve a scorecard from any connected Ats software',
   })

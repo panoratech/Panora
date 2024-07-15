@@ -38,6 +38,11 @@ import {
   UnifiedJobInput,
   UnifiedJobOutput,
 } from '@ats/job/types/model.unified';
+import { IJobInterviewStageService } from '@ats/jobinterviewstage/types';
+import {
+  UnifiedJobInterviewStageInput,
+  UnifiedJobInterviewStageOutput,
+} from '@ats/jobinterviewstage/types/model.unified';
 import { IOfferService } from '@ats/offer/types';
 import {
   UnifiedOfferInput,
@@ -48,21 +53,6 @@ import {
   UnifiedOfficeInput,
   UnifiedOfficeOutput,
 } from '@ats/office/types/model.unified';
-import { ITagService } from '@ats/tag/types';
-import {
-  UnifiedTagInput,
-  UnifiedTagOutput,
-} from '@ats/tag/types/model.unified';
-import { IUserService } from '@ats/user/types';
-import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
-} from '@ats/user/types/model.unified';
-import { IJobInterviewStageService } from '@ats/jobinterviewstage/types';
-import {
-  UnifiedJobInterviewStageInput,
-  UnifiedJobInterviewStageOutput,
-} from '@ats/jobinterviewstage/types/model.unified';
 import { IRejectReasonService } from '@ats/rejectreason/types';
 import {
   UnifiedRejectReasonInput,
@@ -73,8 +63,18 @@ import {
   UnifiedScoreCardInput,
   UnifiedScoreCardOutput,
 } from '@ats/scorecard/types/model.unified';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { ITagService } from '@ats/tag/types';
+import {
+  UnifiedTagInput,
+  UnifiedTagOutput,
+} from '@ats/tag/types/model.unified';
+import { IUserService } from '@ats/user/types';
+import {
+  UnifiedUserInput,
+  UnifiedUserOutput,
+} from '@ats/user/types/model.unified';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsIn, IsString } from 'class-validator';
 
 export enum AtsObject {
   activity = 'activity',
@@ -89,7 +89,6 @@ export enum AtsObject {
   office = 'office',
   rejectreason = 'rejectreason',
   scorecard = 'scorecard',
-  screeningquestion = 'screeningquestion',
   tag = 'tag',
   user = 'user',
   eeocs = 'eeocs',

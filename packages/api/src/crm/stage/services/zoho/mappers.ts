@@ -32,7 +32,11 @@ export class ZohoStageMapper implements IStageMapper {
     }[],
   ): UnifiedStageOutput | UnifiedStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, connectionId, customFieldMappings);
+      return this.mapSingleStageToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotStageOutput
@@ -49,6 +53,9 @@ export class ZohoStageMapper implements IStageMapper {
       remote_id: string;
     }[],
   ): UnifiedStageOutput {
-    return;
+    return {
+      remote_id: null,
+      stage_name: stage.Stage_Name,
+    };
   }
 }

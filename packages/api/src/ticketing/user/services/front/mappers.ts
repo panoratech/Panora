@@ -30,23 +30,25 @@ export class FrontUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
-    return sourcesArray.map((user) =>
-      this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+    return Promise.all(
+      sourcesArray.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 
-  private mapSingleUserToUnified(
+  private async mapSingleUserToUnified(
     user: FrontUserOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput {
+  ): Promise<UnifiedUserOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

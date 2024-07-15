@@ -9,31 +9,30 @@ import { EeocsService } from './services/eeocs.service';
 import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+
+
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+
+
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { Utils } from '@ats/@lib/@utils';
 
 @Module({
   imports: [BullQueueModule],
   controllers: [EeocsController],
   providers: [
     EeocsService,
-    LoggerService,
+    
     SyncService,
     WebhookService,
     CoreUnification,
-    UnificationRegistry,
-    MappersRegistry,
-    EncryptionService,
-    FieldMappingService,
-    ServiceRegistry,
-    ConnectionUtils,
-    IngestDataService,
-    CoreSyncRegistry,
+
     
+    ServiceRegistry,
+    
+    IngestDataService,
+    
+    Utils,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

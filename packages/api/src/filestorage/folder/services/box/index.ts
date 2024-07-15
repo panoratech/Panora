@@ -10,6 +10,9 @@ import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { BoxFolderInput, BoxFolderOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { BoxFileOutput } from '@filestorage/file/services/box/types';
+import { UnifiedFileOutput } from '@filestorage/file/types/model.unified';
 
 @Injectable()
 export class BoxService implements IFolderService {
@@ -18,6 +21,7 @@ export class BoxService implements IFolderService {
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(
       FileStorageObject.folder.toUpperCase() + ':' + BoxService.name,
@@ -56,13 +60,7 @@ export class BoxService implements IFolderService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Box',
-        FileStorageObject.folder,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -90,6 +88,15 @@ export class BoxService implements IFolderService {
         },
       );
       const folders = resp.data.entries.filter((elem) => elem.type == 'folder');
+      const files = resp.data.entries.filter((elem) => elem.type == 'file');
+      await this.ingestService.ingestData<UnifiedFileOutput, BoxFileOutput>(
+        files,
+        'box',
+        connection.id_connection,
+        'filestorage',
+        FileStorageObject.file,
+      );
+
       let results: BoxFolderOutput[] = folders;
       for (const folder of folders) {
         // Recursively get subfolders
@@ -118,13 +125,7 @@ export class BoxService implements IFolderService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Box',
-        FileStorageObject.folder,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -40,7 +40,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getTimeoffBalances',
     summary: 'List a batch of TimeoffBalances',
   })
   @ApiHeader({
@@ -52,7 +52,7 @@ export class TimeoffBalanceController {
   @ApiCustomResponse(UnifiedTimeoffBalanceOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async list(
+  async getTimeoffBalances(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -76,7 +76,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getTimeoffBalance',
     summary: 'Retrieve a TimeoffBalance',
     description: 'Retrieve a timeoffbalance from any connected Hris software',
   })

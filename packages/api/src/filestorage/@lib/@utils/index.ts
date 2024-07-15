@@ -1,9 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { getFileExtension, MIME_TYPES } from '@@core/utils/types';
 
 @Injectable()
 export class Utils {
   constructor(private readonly prisma: PrismaService) {}
+  getMimeType(file_name: string): string {
+    try {
+      const extension = getFileExtension(file_name);
+      if (!extension) throw new Error('extension doesnt exist for your file');
+      return MIME_TYPES[extension.toLowerCase()];
+    } catch (error) {
+      throw error;
+    }
+  }
   async getRemoteFolderParentId(id_folder: string) {
     try {
       const res = await this.prisma.fs_folders.findFirst({

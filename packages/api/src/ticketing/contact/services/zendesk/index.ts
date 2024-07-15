@@ -29,7 +29,7 @@ export class ZendeskService implements IContactService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
-      const { linkedUserId, account_id, webhook_remote_identifier } = data;
+      const { linkedUserId, webhook_remote_identifier } = data;
 
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -38,22 +38,13 @@ export class ZendeskService implements IContactService {
           vertical: 'ticketing',
         },
       });
-      let remote_account_id;
-      if (account_id) {
-        const res = await this.prisma.tcg_accounts.findFirst({
-          where: {
-            id_tcg_account: account_id,
-          },
-        });
-        if (res) {
-          remote_account_id = res.remote_id;
-        } else {
-          remote_account_id = webhook_remote_identifier as string;
-        }
+      let remote_contact_id;
+      if (webhook_remote_identifier) {
+        remote_contact_id = webhook_remote_identifier as string;
       }
 
-      const request_url = remote_account_id
-        ? `${connection.account_url}/users/${remote_account_id}.json`
+      const request_url = remote_contact_id
+        ? `${connection.account_url}/users/${remote_contact_id}.json`
         : `${connection.account_url}/users.json`;
 
       const resp = await axios.get(request_url, {
@@ -65,7 +56,7 @@ export class ZendeskService implements IContactService {
         },
       });
 
-      const contacts: ZendeskContactOutput[] = remote_account_id
+      const contacts: ZendeskContactOutput[] = remote_contact_id
         ? [resp.data.user]
         : resp.data.users;
       const filteredContacts = contacts.filter(
@@ -79,13 +70,7 @@ export class ZendeskService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.contact,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

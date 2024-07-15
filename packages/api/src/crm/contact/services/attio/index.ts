@@ -58,13 +58,7 @@ export class AttioService implements IContactService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Attio',
-        CrmObject.contact,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -79,8 +73,6 @@ export class AttioService implements IContactService {
           vertical: 'crm',
         },
       });
-      // console.log('Before Axios');
-      // console.log(this.cryptoService.decrypt(connection.access_token));
 
       const resp = await axios.post(
         `${connection.account_url}/objects/people/records/query`,
@@ -96,21 +88,13 @@ export class AttioService implements IContactService {
         },
       );
 
-      console.log('After Axios');
-
       return {
         data: resp.data.data,
         message: 'Attio contacts retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Attio',
-        CrmObject.contact,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 }
