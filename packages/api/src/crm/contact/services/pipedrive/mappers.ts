@@ -22,7 +22,6 @@ export class PipedriveContactMapper implements IContactMapper {
       remote_id: string;
     }[],
   ): Promise<PipedriveContactInput> {
-    // Assuming 'email_addresses' and 'phone_numbers' arrays contain at least one entry
     const primaryEmail = source.email_addresses?.[0]?.email_address;
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
@@ -30,13 +29,21 @@ export class PipedriveContactMapper implements IContactMapper {
       ? [{ value: primaryEmail, primary: true, label: null }]
       : [];
     const phoneObject = primaryPhone
-      ? [{ value: primaryPhone, primary: true, label: null }]
+      ? [
+          {
+            value: primaryPhone,
+            primary: true,
+            label:
+              source.phone_numbers?.[0]?.phone_type == 'MOBILE'
+                ? 'Mobile'
+                : null,
+          },
+        ]
       : [];
     const result: PipedriveContactInput = {
       name: `${source.first_name} ${source.last_name}`,
       email: emailObject,
       phone: phoneObject,
-      cc_email: source.user_id, //TODO: i put in here for tmp reasons uuid
     };
 
     if (source.user_id) {
@@ -109,13 +116,6 @@ export class PipedriveContactMapper implements IContactMapper {
         field_mappings[mapping.slug] = contact[mapping.remote_id];
       }
     }
-    const address: Address = {
-      street_1: null,
-      city: null,
-      state: null,
-      postal_code: null,
-      country: null,
-    };
     let opts: any = {};
     if (contact.owner_id.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
@@ -135,14 +135,13 @@ export class PipedriveContactMapper implements IContactMapper {
       last_name: contact.last_name,
       email_addresses: contact.email.map((e) => ({
         email_address: e.value,
-        email_address_type: e.label ? e.label : null,
+        email_address_type: e.label ? e.label.toUpperCase() : null,
       })), // Map each email
       phone_numbers: contact.phone.map((p) => ({
         phone_number: p.value,
-        phone_type: p.label ? p.label : null,
+        phone_type: p.label ? p.label.toUpperCase() : null,
       })), // Map each phone number,
       field_mappings,
-      addresses: [address],
       ...opts,
     };
   }

@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { ITaskService } from '@crm/task/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { ZohoTaskInput, ZohoTaskOutput } from './types';
-import axios from 'axios';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
 import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { ITaskService } from '@crm/task/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { ZohoTaskInput, ZohoTaskOutput } from './types';
 
 @Injectable()
 export class ZohoService implements ITaskService {
@@ -49,7 +48,6 @@ export class ZohoService implements ITaskService {
           },
         },
       );
-      //this.logger.log('zoho resp is ' + JSON.stringify(resp));
       return {
         data: resp.data.data,
         message: 'Zoho task created',

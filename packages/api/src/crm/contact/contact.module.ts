@@ -1,8 +1,6 @@
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { ConnectionUtils } from '@@core/connections/@utils';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { Utils } from '@crm/@lib/@utils';
 import { Module } from '@nestjs/common';
@@ -22,24 +20,18 @@ import { ZendeskContactMapper } from './services/zendesk/mappers';
 import { ZohoService } from './services/zoho';
 import { ZohoContactMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Module({
   imports: [BullQueueModule],
   controllers: [ContactController],
   providers: [
     ContactService,
-
     FieldMappingService,
     SyncService,
     WebhookService,
-
     ServiceRegistry,
     Utils,
-
     IngestDataService,
-
     /* PROVIDERS SERVICES */
     AttioService,
     ZendeskService,

@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IEngagementService } from '@crm/engagement/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { ZohoEngagementInput, ZohoEngagementOutput } from './types';
-import axios from 'axios';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
 import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IEngagementService } from '@crm/engagement/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { ZohoEngagementOutput } from './types';
 
 @Injectable()
 export class ZohoService implements IEngagementService {
@@ -23,41 +22,6 @@ export class ZohoService implements IEngagementService {
       CrmObject.engagement.toUpperCase() + ':' + ZohoService.name,
     );
     this.registry.registerService('zoho', this);
-  }
-  //ONLY CALLS FOR ZOHO
-  async addEngagement(
-    engagementData: ZohoEngagementInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoEngagementOutput>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
-          vertical: 'crm',
-        },
-      });
-      const resp = await axios.post(
-        `${connection.account_url}/Campaigns`,
-        { data: [engagementData] },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      //this.logger.log('zoho resp is ' + JSON.stringify(resp));
-      return {
-        data: resp.data.data,
-        message: 'Zoho engagement created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      throw error;
-    }
   }
 
   private async syncCalls(linkedUserId: string) {

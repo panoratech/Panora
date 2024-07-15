@@ -19,15 +19,57 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     );
   }
 
-  //TODO:
-  desunify(
+  async desunify(
     source: UnifiedEngagementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): PipedriveEngagementInput {
-    return;
+  ): Promise<PipedriveEngagementInput> {
+    const result: PipedriveEngagementInput = {
+      subject: source.subject || null,
+      public_description: source.content || null,
+    };
+
+    if (source.type) {
+      result.type = `${source.type.substring(0, 1)}${source.type
+        .substring(1)
+        .toUpperCase()}`;
+    }
+
+    if (source.start_at && source.end_time) {
+      const startDate = new Date(source.start_at);
+      const endDate = new Date(source.end_time);
+
+      const diffMilliseconds = endDate.getTime() - startDate.getTime();
+      const durationInSeconds = Math.round(diffMilliseconds / 1000);
+
+      const dueDate = startDate.toISOString().split('T')[0];
+      const dueTime = startDate.toTimeString().split(' ')[0].substring(0, 5);
+      const duration = `${String(Math.floor(durationInSeconds / 60)).padStart(
+        2,
+        '0',
+      )}:${String(durationInSeconds % 60).padStart(2, '0')}`;
+
+      result.due_date = dueDate;
+      result.due_time = dueTime;
+      result.duration = duration;
+    }
+
+    if (source.user_id) {
+      const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
+      if (owner_id) {
+        result.user_id = Number(owner_id);
+      }
+    }
+    if (source.company_id) {
+      const id = await this.utils.getRemoteIdFromCompanyUuid(source.company_id);
+      if (id) {
+        result.org_id = Number(id);
+      }
+    }
+
+    return result;
   }
 
   async unify(
@@ -177,7 +219,35 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         connectionId,
       );
       if (person_id) {
-        opts.contacts = [person_id];
+        opts.contacts.push(person_id);
+      }
+    }
+
+    if (engagement.attendee && engagement.attendee.length > 0) {
+      for (const p of engagement.attendee) {
+        if (p.person_id) {
+          const id = await this.utils.getContactUuidFromRemoteId(
+            String(p.person_id),
+            connectionId,
+          );
+          if (id) {
+            opts.contacts.push(id);
+          }
+        }
+      }
+    }
+
+    if (engagement.participants && engagement.participants.length > 0) {
+      for (const p of engagement.participants) {
+        if (p.person_id) {
+          const id = await this.utils.getContactUuidFromRemoteId(
+            String(p.person_id),
+            connectionId,
+          );
+          if (id) {
+            opts.contacts.push(id);
+          }
+        }
       }
     }
 
@@ -236,7 +306,35 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         connectionId,
       );
       if (person_id) {
-        opts.contacts = [person_id];
+        opts.contacts.push(person_id);
+      }
+    }
+
+    if (engagement.attendee && engagement.attendee.length > 0) {
+      for (const p of engagement.attendee) {
+        if (p.person_id) {
+          const id = await this.utils.getContactUuidFromRemoteId(
+            String(p.person_id),
+            connectionId,
+          );
+          if (id) {
+            opts.contacts.push(id);
+          }
+        }
+      }
+    }
+
+    if (engagement.participants && engagement.participants.length > 0) {
+      for (const p of engagement.participants) {
+        if (p.person_id) {
+          const id = await this.utils.getContactUuidFromRemoteId(
+            String(p.person_id),
+            connectionId,
+          );
+          if (id) {
+            opts.contacts.push(id);
+          }
+        }
       }
     }
 
@@ -294,7 +392,35 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         connectionId,
       );
       if (person_id) {
-        opts.contacts = [person_id];
+        opts.contacts.push(person_id);
+      }
+    }
+
+    if (engagement.attendee && engagement.attendee.length > 0) {
+      for (const p of engagement.attendee) {
+        if (p.person_id) {
+          const id = await this.utils.getContactUuidFromRemoteId(
+            String(p.person_id),
+            connectionId,
+          );
+          if (id) {
+            opts.contacts.push(id);
+          }
+        }
+      }
+    }
+
+    if (engagement.participants && engagement.participants.length > 0) {
+      for (const p of engagement.participants) {
+        if (p.person_id) {
+          const id = await this.utils.getContactUuidFromRemoteId(
+            String(p.person_id),
+            connectionId,
+          );
+          if (id) {
+            opts.contacts.push(id);
+          }
+        }
       }
     }
 

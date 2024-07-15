@@ -62,16 +62,18 @@ export class Utils {
   }
 
   normalizeAddresses(addresses: Address[]) {
-    const normalizedAddresses = addresses.map((addy) => ({
-      ...addy,
-      created_at: new Date(),
-      modified_at: new Date(),
-      id_crm_address: uuidv4(),
-      owner_type: addy.owner_type ? addy.owner_type : '',
-      address_type: addy.address_type === '' ? 'primary' : addy.address_type,
-    }));
-
-    return normalizedAddresses;
+    if (addresses) {
+      const normalizedAddresses = addresses.map((addy) => ({
+        ...addy,
+        created_at: new Date(),
+        modified_at: new Date(),
+        id_crm_address: uuidv4(),
+        owner_type: addy.owner_type ? addy.owner_type : '',
+        address_type: addy.address_type === '' ? 'primary' : addy.address_type,
+      }));
+      return normalizedAddresses;
+    }
+    return [];
   }
 
   async getRemoteIdFromUserUuid(uuid: string) {

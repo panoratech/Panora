@@ -8,7 +8,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IEngagementService extends IBaseObjectService {
-  addEngagement(
+  addEngagement?(
     engagementData: DesunifyReturnType,
     linkedUserId: string,
     engagement_type: string,

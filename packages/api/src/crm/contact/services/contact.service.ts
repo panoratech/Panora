@@ -166,7 +166,6 @@ export class ContactService {
     const normalizedAddresses = this.utils.normalizeAddresses(
       contact.addresses,
     );
-
     const data: any = {
       first_name: contact.first_name,
       last_name: contact.last_name,
@@ -234,6 +233,7 @@ export class ContactService {
               data: {
                 ...email,
                 id_crm_contact: contactId,
+                id_connection: connectionId,
               },
             });
           }
@@ -257,6 +257,7 @@ export class ContactService {
               data: {
                 ...phone,
                 id_crm_contact: contactId,
+                id_connection: connectionId,
               },
             });
           }
@@ -303,6 +304,7 @@ export class ContactService {
             data: {
               ...email,
               id_crm_contact: contactId,
+              id_connection: connectionId,
             },
           }),
         ),
@@ -316,6 +318,7 @@ export class ContactService {
             data: {
               ...phone,
               id_crm_contact: contactId,
+              id_connection: connectionId,
             },
           }),
         ),
@@ -559,8 +562,11 @@ export class ContactService {
                 ressource_owner_id: contact.id,
               },
             });
-            const remote_data = JSON.parse(resp.data);
-            return { ...contact, remote_data };
+            if (resp && resp.data) {
+              const remote_data = JSON.parse(resp.data);
+              return { ...contact, remote_data };
+            }
+            return contact;
           }),
         );
 

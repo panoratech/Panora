@@ -21,7 +21,6 @@ export class HubspotContactMapper implements IContactMapper {
       remote_id: string;
     }[],
   ): Promise<HubspotContactInput> {
-    // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
     const primaryEmail = source.email_addresses?.[0]?.email_address;
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
@@ -35,6 +34,22 @@ export class HubspotContactMapper implements IContactMapper {
     }
     if (primaryPhone) {
       result.phone = primaryPhone;
+    }
+
+    if (source.addresses && source.addresses.length > 0) {
+      result.address = source.addresses[0].street_1;
+      if (source.addresses[0].city) {
+        result.city = source.addresses[0].city;
+      }
+      if (source.addresses[0].state) {
+        result.state = source.addresses[0].state;
+      }
+      if (source.addresses[0].country) {
+        result.country = source.addresses[0].country;
+      }
+      if (source.addresses[0].postal_code) {
+        result.zip = source.addresses[0].postal_code;
+      }
     }
 
     if (source.user_id) {
@@ -98,13 +113,27 @@ export class HubspotContactMapper implements IContactMapper {
       }
     }
 
-    /*todo: const address: Address = {
-      street_1: null,
-      city: null,
-      state: null,
-      postal_code: null,
-      country: null,
-    };*/
+    const opts: any = {
+      addresses: [],
+    };
+
+    const address: any = {};
+    if (contact.properties.address) {
+      address.street_1 = contact.properties.address;
+    }
+    if (contact.properties.city) {
+      address.city = contact.properties.city;
+    }
+    if (contact.properties.state) {
+      address.state = contact.properties.state;
+    }
+    if (contact.properties.zip) {
+      address.postal_code = contact.properties.zip;
+    }
+    if (contact.properties.country) {
+      address.country = contact.properties.country;
+    }
+    opts.addresses[0] = address;
 
     return {
       remote_id: contact.id,
@@ -124,8 +153,8 @@ export class HubspotContactMapper implements IContactMapper {
           owner_type: 'contact',
         },
       ],
+      ...opts,
       field_mappings,
-      addresses: [],
     };
   }
 }

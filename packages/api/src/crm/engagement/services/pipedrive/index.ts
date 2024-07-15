@@ -24,11 +24,10 @@ export class PipedriveService implements IEngagementService {
     this.registry.registerService('pipedrive', this);
   }
 
-  /*TODO: */
   async addEngagement(
     engagementData: PipedriveEngagementInput,
     linkedUserId: string,
-    engagement_type: string,
+    engagement_type?: string,
   ): Promise<ApiResponse<PipedriveEngagementOutput>> {
     try {
       const connection = await this.prisma.connections.findFirst({
@@ -38,12 +37,23 @@ export class PipedriveService implements IEngagementService {
           vertical: 'crm',
         },
       });
-      return;
-      /*return {
+      const resp = await axios.post(
+        `${connection.account_url}/activities`,
+        JSON.stringify(engagementData),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+      return {
         data: resp.data.data,
         message: 'Pipedrive engagement created',
         statusCode: 201,
-      };*/
+      };
     } catch (error) {
       throw error;
     }

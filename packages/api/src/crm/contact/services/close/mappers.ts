@@ -26,8 +26,7 @@ export class CloseContactMapper implements IContactMapper {
       remote_id: string;
     }[],
   ): Promise<CloseContactInput> {
-    // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
-    const result: CloseContactInput = {
+    /*const result: CloseContactInput = {
       name: `${source.first_name ?? null} ${source.last_name ?? null}`,
       phones: source?.phone_numbers?.map(
         ({ phone_number, phone_type }) =>
@@ -57,8 +56,8 @@ export class CloseContactMapper implements IContactMapper {
         }
       }
     }
-
-    return result;
+    */
+    return;
   }
 
   async unify(

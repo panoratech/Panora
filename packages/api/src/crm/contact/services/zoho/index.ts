@@ -49,9 +49,20 @@ export class ZohoService implements IContactService {
           },
         },
       );
-      //this.logger.log('zoho resp is ' + JSON.stringify(resp));
+
+      const final_res = await axios.get(
+        `${connection.account_url}/Contacts/${resp.data.data[0].details.id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
       return {
-        data: resp.data.data,
+        data: final_res.data.data[0],
         message: 'Zoho contact created',
         statusCode: 201,
       };
