@@ -1,16 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IDealService } from '@crm/deal/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { ZendeskDealInput, ZendeskDealOutput } from './types';
-import axios from 'axios';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
 import { SyncParam } from '@@core/utils/types/interface';
-import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
+import { CrmObject } from '@crm/@lib/@types';
+import { IDealService } from '@crm/deal/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { ZendeskDealInput, ZendeskDealOutput } from './types';
 @Injectable()
 export class ZendeskService implements IDealService {
   constructor(
@@ -37,6 +35,7 @@ export class ZendeskService implements IDealService {
           vertical: 'crm',
         },
       });
+
       const resp = await axios.post(
         `${connection.account_url}/deals`,
         {

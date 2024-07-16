@@ -226,6 +226,7 @@ export class CompanyService {
               data: {
                 ...email,
                 id_crm_company: companyId,
+                id_connection: connectionId,
               },
             });
           }
@@ -249,6 +250,7 @@ export class CompanyService {
               data: {
                 ...phone,
                 id_crm_company: companyId,
+                id_connection: connectionId,
               },
             });
           }
@@ -295,6 +297,7 @@ export class CompanyService {
             data: {
               ...email,
               id_crm_company: companyId,
+              id_connection: connectionId,
             },
           }),
         ),
@@ -308,6 +311,7 @@ export class CompanyService {
             data: {
               ...phone,
               id_crm_company: companyId,
+              id_connection: connectionId,
             },
           }),
         ),
@@ -406,10 +410,12 @@ export class CompanyService {
         });
         const remote_data = JSON.parse(resp.data);
 
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        if (resp && resp.data) {
+          res = {
+            ...res,
+            remote_data: remote_data,
+          };
+        }
       }
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
@@ -552,8 +558,11 @@ export class CompanyService {
                 ressource_owner_id: company.id,
               },
             });
-            const remote_data = JSON.parse(resp.data);
-            return { ...company, remote_data };
+            if (resp && resp.data) {
+              const remote_data = JSON.parse(resp.data);
+              return { ...company, remote_data };
+            }
+            return company;
           }),
         );
         res = remote_array_data;

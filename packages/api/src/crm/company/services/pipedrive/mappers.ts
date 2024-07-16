@@ -26,10 +26,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
     };
 
     if (source.addresses && source.addresses[0]) {
-      result.address = source.addresses[0].street_1;
-      result.address_locality = source.addresses[0].city;
-      result.address_country = source.addresses[0].country;
-      result.address_postal_code = source.addresses[0].postal_code;
+      result.address = `${source.addresses[0].street_1}, ${source.addresses[0].postal_code} ${source.addresses[0].city}, ${source.addresses[0].country}`;
     }
 
     if (source.user_id) {
@@ -115,20 +112,32 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       }
     }
     if (company.address) {
-      opts.addresses[0] = {
-        street_1: company.address,
-        city: company.address_locality,
-        country: company.address_country,
-        postal_code: company.address_postal_code,
-      };
+      const addressRegex = /^(.*?), (\d{5}) (.*?), (.*)$/;
+      const match = company.address.match(addressRegex);
+
+      const [, street, postalCode, city, country] = match;
+      opts.addresses = [
+        {
+          street_1: street,
+          city: city,
+          country: country,
+          postal_code: postalCode,
+        },
+      ];
+    }
+    if (company.cc_email) {
+      opts.email_adresses = [
+        {
+          owner_type: 'COMPANY',
+          email_address: company.cc_email,
+          email_address_type: 'WORK',
+        },
+      ];
     }
     return {
       name: company.name,
       industry: null,
-      number_of_employees: null,
-      email_addresses: null,
-      phone_numbers: null,
-      addresses: null,
+      number_of_employees: company.people_count ?? null,
       field_mappings,
       remote_id: String(company.id),
       ...opts,

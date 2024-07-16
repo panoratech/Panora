@@ -2,9 +2,13 @@ export interface HubspotCompanyInput {
   city: string;
   name: string;
   phone: string;
-  state: string;
   domain: string;
   industry: string;
+  state: string;
+  country: string;
+  address: string;
+  numberofemployees: string;
+  zip: string;
   hubspot_owner_id?: string;
   [key: string]: any;
 }
@@ -21,6 +25,10 @@ export interface HubspotCompanyOutput {
     name: string;
     phone: string;
     state: string;
+    country: string;
+    zip: string;
+    address: string;
+    numberofemployees: string;
     [key: string]: string;
   };
   createdAt: string;
@@ -36,5 +44,9 @@ export const commonCompanyHubspotProperties = {
   name: '',
   phone: '',
   state: '',
+  country: '',
+  zip: '',
+  address: '',
   hubspot_owner_id: '',
+  numberofemployees: '',
 };

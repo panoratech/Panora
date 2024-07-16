@@ -47,7 +47,7 @@ export class ZohoService implements IUserService {
           },
         },
       );
-      //this.logger.log('CONTACTS ZOHO ' + JSON.stringify(resp.data.data));
+      this.logger.log('USERS ZOHO ' + JSON.stringify(resp.data));
       this.logger.log(`Synced zoho users !`);
       return {
         data: resp.data.data,

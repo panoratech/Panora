@@ -91,6 +91,21 @@ export class Utils {
     }
   }
 
+  async getEmailFromUserUuid(uuid: string) {
+    try {
+      const res = await this.prisma.crm_users.findFirst({
+        where: {
+          id_crm_user: uuid,
+        },
+      });
+      // if (!res) throw new Error(`crm_user not found for uuid ${uuid}`);
+      if (!res) return;
+      return res.email;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getUser(uuid: string) {
     try {
       const res = await this.prisma.crm_users.findFirst({

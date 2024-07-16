@@ -11,6 +11,7 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { CrmObject } from '@crm/@lib/@types';
 import { UnifiedStageOutput } from '@crm/stage/types/model.unified';
 import { ZohoStageOutput } from '@crm/stage/services/zoho/types';
+import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class ZohoDealMapper implements IDealMapper {
@@ -34,12 +35,10 @@ export class ZohoDealMapper implements IDealMapper {
       Amount: source.amount,
     };
     if (source.company_id) {
-      result.Account_Name.id = await this.utils.getRemoteIdFromCompanyUuid(
-        source.company_id,
-      );
-      result.Account_Name.name = await this.utils.getCompanyNameFromUuid(
-        source.company_id,
-      );
+      result.Account_Name = {
+        id: await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
+        name: await this.utils.getCompanyNameFromUuid(source.company_id),
+      };
     }
     if (source.stage_id) {
       result.Stage = await this.utils.getStageNameFromStageUuid(
@@ -47,9 +46,9 @@ export class ZohoDealMapper implements IDealMapper {
       );
     }
     if (source.user_id) {
-      result.Owner.id = await this.utils.getRemoteIdFromUserUuid(
-        source.user_id,
-      );
+      result.Owner = {
+        id: await this.utils.getRemoteIdFromUserUuid(source.user_id),
+      } as any;
     }
 
     if (customFieldMappings && source.field_mappings) {

@@ -21,45 +21,40 @@ export class AttioDealMapper implements IDealMapper {
       remote_id: string;
     }[],
   ): Promise<AttioDealInput> {
-    const result: AttioDealInput = {
+    const result: any = {
       values: {
-        name: [
-          {
-            value: source.name,
-          },
-        ],
+        name: source.name,
       },
     };
+    if (source.stage_id) {
+      const stage_name = await this.utils.getStageNameFromStageUuid(
+        source.stage_id,
+      );
+      if (stage_name) {
+        result.values.stage = stage_name;
+      }
+    } else {
+      result.values.stage = 'In Progress'; // todo
+    }
     if (source.company_id) {
       const company_id = await this.utils.getRemoteIdFromCompanyUuid(
         source.company_id,
       );
       if (company_id) {
-        result.values.associated_company! = [
-          {
-            target_object: 'companies',
-            target_record_id: company_id,
-          },
-        ];
+        result.values.associated_company! = {
+          target_object: 'companies',
+          target_record_id: company_id,
+        };
       }
     }
     if (source.user_id) {
-      const user_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
-      if (user_id) {
-        result.values.owner! = [
-          {
-            referenced_actor_id: user_id,
-            referenced_actor_type: 'workspace-member',
-          },
-        ];
+      const email = await this.utils.getEmailFromUserUuid(source.user_id);
+      if (email) {
+        result.values.owner! = email;
       }
     }
     if (source.amount) {
-      result.values.value = [
-        {
-          currency_value: source.amount,
-        },
-      ];
+      result.values.value = source.amount;
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -167,7 +162,7 @@ export class AttioDealMapper implements IDealMapper {
     return {
       remote_id: deal.id.record_id,
       name: deal.values.name.length > 0 ? deal.values.name[0].value : null,
-      description: null,
+      description: '',
       field_mappings,
       ...opts,
     };

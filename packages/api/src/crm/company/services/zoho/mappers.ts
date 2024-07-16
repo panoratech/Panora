@@ -37,7 +37,7 @@ export class ZohoCompanyMapper implements ICompanyMapper {
     }
     if (source.phone_numbers) {
       result.Phone = source.phone_numbers?.find(
-        (phone) => phone.phone_type === 'primary',
+        (phone) => phone.phone_type === 'WORK',
       )?.phone_number;
     }
 
@@ -116,8 +116,8 @@ export class ZohoCompanyMapper implements ICompanyMapper {
       phone_numbers: [
         {
           phone_number: company.Phone,
-          phone_type: 'primary',
-          owner_type: 'company',
+          phone_type: 'WORK',
+          owner_type: 'COMPANY',
         },
       ],
       addresses: [
@@ -127,8 +127,8 @@ export class ZohoCompanyMapper implements ICompanyMapper {
           state: company.Billing_State,
           postal_code: company.Billing_Code,
           country: company.Billing_Country,
-          address_type: 'primary',
-          owner_type: 'company',
+          address_type: 'PERSONAL',
+          owner_type: 'COMPANY',
         },
       ],
       ...opts,

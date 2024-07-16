@@ -29,9 +29,18 @@ export class PipedriveDealMapper implements IDealMapper {
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {
-        result.creator_user_id.id = Number(owner_id);
+        result.user_id = Number(owner_id);
       }
     }
+    if (source.company_id) {
+      const company_id = await this.utils.getRemoteIdFromCompanyUuid(
+        source.company_id,
+      );
+      if (company_id) {
+        result.org_id = Number(company_id);
+      }
+    }
+
     if (source.stage_id) {
       const stage_id = await this.utils.getStageIdFromStageUuid(
         source.stage_id,
@@ -95,7 +104,7 @@ export class PipedriveDealMapper implements IDealMapper {
     }
 
     let opts: any = {};
-    if (deal.creator_user_id.id) {
+    if (deal.creator_user_id && deal.creator_user_id.id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(deal.creator_user_id.id),
         connectionId,

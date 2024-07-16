@@ -326,6 +326,7 @@ export class Email {
   })
   @IsString()
   @IsOptional()
+  @IsIn(['COMPANY', 'CONTACT'])
   owner_type?: string;
 }
 

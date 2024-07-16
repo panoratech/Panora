@@ -111,17 +111,17 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
 
     // Constructing the email and phone details
     const email_addresses = company.email
-      ? [{ email_address: company.email, email_address_type: 'primary' }]
+      ? [{ email_address: company.email, email_address_type: 'WORK' }]
       : null;
     const phone_numbers = [];
 
     if (company.phone) {
-      phone_numbers.push({ phone_number: company.phone, phone_type: 'work' });
+      phone_numbers.push({ phone_number: company.phone, phone_type: 'WORK' });
     }
     if (company.mobile) {
       phone_numbers.push({
         phone_number: company.mobile,
-        phone_type: 'mobile',
+        phone_type: 'MOBILE',
       });
     }
 

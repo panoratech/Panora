@@ -20,14 +20,14 @@ export class HubspotCompanyMapper implements ICompanyMapper {
       remote_id: string;
     }[],
   ): Promise<HubspotCompanyInput> {
-    const result: HubspotCompanyInput = {
-      city: null,
+    const result: any = {
       name: source.name,
-      phone: null,
-      state: null,
-      domain: null,
       industry: source.industry || null,
     };
+
+    if (source.number_of_employees) {
+      result.numberofemployees = source.number_of_employees;
+    }
 
     // Assuming 'phone_numbers' array contains at least one phone number
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
@@ -39,6 +39,9 @@ export class HubspotCompanyMapper implements ICompanyMapper {
       if (address) {
         result.city = address.city;
         result.state = address.state;
+        result.zip = address.postal_code;
+        result.address = address.street_1;
+        result.country = address.country;
       }
     }
 
@@ -121,23 +124,23 @@ export class HubspotCompanyMapper implements ICompanyMapper {
       remote_id: company.id,
       name: company.properties.name,
       industry: company.properties.industry,
-      number_of_employees: null,
+      number_of_employees: company.properties.numberofemployees,
       addresses: [
         {
-          street_1: null,
+          street_1: company.properties.address,
           city: company.properties.city,
           state: company.properties.state,
-          postal_code: null,
-          country: null,
-          address_type: 'primary',
-          owner_type: 'company',
+          postal_code: company.properties.zip,
+          country: company.properties.country,
+          address_type: 'WORK',
+          owner_type: 'COMPANY',
         },
-      ], // Assuming 'street', 'city', 'state', 'postal_code', 'country' are properties in company.properties
+      ],
       phone_numbers: [
         {
           phone_number: company.properties.phone,
-          phone_type: 'primary',
-          owner_type: 'company',
+          phone_type: 'WORK',
+          owner_type: 'COMPANY',
         },
       ],
       field_mappings,

@@ -150,7 +150,7 @@ export class CloseDealMapper implements IDealMapper {
     return {
       remote_id: deal.id,
       name: deal.note,
-      description: deal.note,
+      description: deal.note || '',
       amount: parseFloat(`${deal.value || 0}`),
       field_mappings,
       ...opts,

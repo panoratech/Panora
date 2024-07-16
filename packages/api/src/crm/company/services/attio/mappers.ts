@@ -7,6 +7,7 @@ import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { getCountryCode, getCountryName } from '@@core/utils/types';
 
 @Injectable()
 export class AttioCompanyMapper implements ICompanyMapper {
@@ -29,31 +30,29 @@ export class AttioCompanyMapper implements ICompanyMapper {
         ],
       },
     };
-    if (source.industry) {
+    /*todo if (source.industry) {
       result.values.categories = [
         {
           option: source.industry,
         },
       ];
-    }
+    }*/
 
     if (source.addresses) {
       const address = source.addresses[0];
       if (address) {
-        // result.city = address.city;
-        // result.state = address.state;
         result.values.primary_location = [
           {
             locality: address.city,
             line_1: address.street_1,
-            line_2: address.street_2,
+            line_2: address.street_2 ?? null,
             line_3: null,
             line_4: null,
-            region: address.state + ',' + address.country,
+            region: address.state,
             postcode: address.postal_code,
             latitude: null,
             longitude: null,
-            country_code: null,
+            country_code: getCountryCode(address.country),
           },
         ];
       }
@@ -158,16 +157,11 @@ export class AttioCompanyMapper implements ICompanyMapper {
           city: company.values.primary_location[0]?.locality,
           state: company.values.primary_location[0]?.region,
           postal_code: company.values.primary_location[0]?.postcode,
-          country: company.values.primary_location[0]?.country_code,
-          address_type: 'primary',
-          owner_type: 'company',
-        },
-      ],
-      phone_numbers: [
-        {
-          phone_number: null,
-          phone_type: 'primary',
-          owner_type: 'company',
+          country: getCountryName(
+            company.values.primary_location[0]?.country_code,
+          ),
+          address_type: 'WORK',
+          owner_type: 'COMPANY',
         },
       ],
       field_mappings,

@@ -35,7 +35,7 @@ export class ZendeskDealMapper implements IDealMapper {
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {
-        result.creator_id = Number(owner_id);
+        result.owner_id = Number(owner_id);
       }
     }
     if (source.stage_id) {
@@ -100,9 +100,9 @@ export class ZendeskDealMapper implements IDealMapper {
     }
 
     let opts: any = {};
-    if (deal.creator_id) {
+    if (deal.owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
-        String(deal.creator_id),
+        String(deal.owner_id),
         connectionId,
       );
       if (owner_id) {

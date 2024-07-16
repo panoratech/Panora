@@ -414,10 +414,12 @@ export class ContactService {
         });
         const remote_data = JSON.parse(resp.data);
 
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        if (resp && resp.data) {
+          res = {
+            ...res,
+            remote_data: remote_data,
+          };
+        }
       }
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({

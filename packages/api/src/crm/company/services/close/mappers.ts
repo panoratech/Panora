@@ -7,6 +7,7 @@ import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { getCountryCode, getCountryName } from '@@core/utils/types';
 
 @Injectable()
 export class CloseCompanyMapper implements ICompanyMapper {
@@ -28,6 +29,7 @@ export class CloseCompanyMapper implements ICompanyMapper {
         address_2: address.street_2,
         city: address.city,
         state: address.state,
+        country: getCountryCode(address.country),
         zipcode: address.postal_code,
         label: address.address_type,
       })) as CloseCompanyInput['addresses'],
@@ -109,11 +111,10 @@ export class CloseCompanyMapper implements ICompanyMapper {
         city: address.city,
         state: address.state,
         postal_code: address.zipcode,
-        country: address.country,
+        country: getCountryName(address.country) || address.country,
         address_type: address.label,
-        owner_type: 'company',
+        owner_type: 'COMPANY',
       })),
-      phone_numbers: null,
       field_mappings,
       ...opts,
     };
