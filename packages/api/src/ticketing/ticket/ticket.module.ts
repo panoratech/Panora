@@ -5,8 +5,6 @@ import { Module } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 import { FrontService } from './services/front';
 import { FrontTicketMapper } from './services/front/mappers';
-import { GithubService } from './services/github';
-import { GithubTicketMapper } from './services/github/mappers';
 import { GitlabService } from './services/gitlab';
 import { GitlabTicketMapper } from './services/gitlab/mappers';
 import { GorgiasService } from './services/gorgias';
@@ -32,14 +30,12 @@ import { TicketController } from './ticket.controller';
     /* PROVIDERS SERVICES */
     ZendeskService,
     FrontService,
-    GithubService,
     JiraService,
     GorgiasService,
     GitlabService,
     /* PROVIDERS MAPPERS */
     ZendeskTicketMapper,
     FrontTicketMapper,
-    GithubTicketMapper,
     JiraTicketMapper,
     GorgiasTicketMapper,
     GitlabTicketMapper,

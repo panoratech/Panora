@@ -25,10 +25,6 @@ import {
   FrontTicketOutput,
 } from '@ticketing/ticket/services/front/types';
 import {
-  GithubTicketInput,
-  GithubTicketOutput,
-} from '@ticketing/ticket/services/github/types';
-import {
   FrontUserInput,
   FrontUserOutput,
 } from '@ticketing/user/services/front/types';
@@ -133,7 +129,6 @@ import {
 export type OriginalTicketInput =
   | ZendeskTicketInput
   | FrontTicketInput
-  | GithubTicketInput
   | GorgiasTicketInput
   | JiraTicketInput
   | GitlabTicketInput;
@@ -200,7 +195,6 @@ export type TicketingObjectInput =
 export type OriginalTicketOutput =
   | ZendeskTicketOutput
   | FrontTicketOutput
-  | GithubTicketOutput
   | GorgiasTicketOutput
   | JiraTicketOutput
   | GitlabTicketOutput;
