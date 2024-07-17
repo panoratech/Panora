@@ -1,5 +1,12 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ZendeskTagOutput } from '@ticketing/tag/services/zendesk/types';
 import { ITicketMapper } from '@ticketing/ticket/types';
-import { CustomField, ZendeskTicketInput, ZendeskTicketOutput } from './types';
 import {
   TicketPriority,
   TicketStatus,
@@ -7,14 +14,7 @@ import {
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { Injectable } from '@nestjs/common';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
+import { CustomField, ZendeskTicketInput, ZendeskTicketOutput } from './types';
 
 @Injectable()
 export class ZendeskTicketMapper implements ITicketMapper {
@@ -126,7 +126,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       ); // get the mail of the uuid
     }
     if (source.due_date) {
-      result.due_at = source.due_date?.toISOString();
+      result.due_at = source.due_date as any; //todo
     }
     if (source.priority) {
       result.priority = this.reverseMapToTicketPriority(
@@ -233,17 +233,23 @@ export class ZendeskTicketMapper implements ITicketMapper {
     }
 
     if (ticket.tags) {
-      const tags = (await this.coreUnificationService.unify<
-        OriginalTagOutput[]
-      >({
-        sourceObject: ticket.tags,
-        targetType: TicketingObject.tag,
-        providerName: 'zendesk',
-        vertical: 'ticketing',
-        connectionId: connectionId,
-        customFieldMappings: [],
-      })) as UnifiedTagOutput[];
-      opts.tags = tags;
+      const tags = await this.ingestService.ingestData<
+        UnifiedTagOutput,
+        ZendeskTagOutput
+      >(
+        ticket.tags.map(
+          (label) =>
+            ({
+              name: label,
+            } as ZendeskTagOutput),
+        ),
+        'zendesk',
+        connectionId,
+        'ticketing',
+        TicketingObject.tag,
+        [],
+      );
+      opts.tags = tags.map((tag) => tag.id_tcg_tag);
     }
 
     const unifiedTicket: UnifiedTicketOutput = {

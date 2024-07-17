@@ -48,8 +48,8 @@ export class ZendeskTagMapper implements ITagMapper {
   ): UnifiedTagOutput {
     const unifiedTag: UnifiedTagOutput = {
       remote_id: null,
-      remote_data: tag as any,
-      name: tag,
+      remote_data: tag,
+      name: tag.name,
     };
 
     return unifiedTag;

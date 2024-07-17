@@ -1,25 +1,19 @@
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { JiraTagOutput } from '@ticketing/tag/services/jira/types';
 import { ITicketMapper } from '@ticketing/ticket/types';
-import { JiraTicketInput, JiraTicketOutput } from './types';
 import {
   TicketPriority,
   TicketType,
   UnifiedTicketInput,
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
-import { Injectable } from '@nestjs/common';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-import {
-  OriginalAttachmentOutput,
-  OriginalCollectionOutput,
-} from '@@core/utils/types/original/original.ticketing';
-import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
+import { JiraTicketInput, JiraTicketOutput } from './types';
 
 @Injectable()
 export class JiraTicketMapper implements ITicketMapper {
@@ -79,7 +73,7 @@ export class JiraTicketMapper implements ITicketMapper {
       remote_id: string;
     }[],
   ): Promise<JiraTicketInput> {
-    if (!source.collections[0]) {
+    if (!source.collections || !source.collections[0]) {
       throw new ReferenceError(
         'a project key/id is mandatory for Jira ticket creation',
       );
@@ -91,8 +85,11 @@ export class JiraTicketMapper implements ITicketMapper {
       fields: {
         project: {
           key: project_name || undefined,
+          id: await this.utils.getCollectionRemoteIdFromUuid(
+            source.collections[0] as string,
+          ),
         },
-        description: source.description,
+        summary: source.description,
         issuetype: {
           name: this.mapToIssueTypeName(source.type as TicketType) || null,
         },
@@ -113,9 +110,11 @@ export class JiraTicketMapper implements ITicketMapper {
     }
 
     if (source.priority) {
-      result.fields.priority = this.reverseMapToTicketPriority(
-        source.priority as TicketPriority,
-      );
+      result.fields.priority = {
+        name: this.reverseMapToTicketPriority(
+          source.priority as TicketPriority,
+        ),
+      };
     }
 
     if (source.attachments) {
@@ -182,25 +181,29 @@ export class JiraTicketMapper implements ITicketMapper {
         opts = { ...opts, assigned_to: [user_id] };
       }
     }
-
     if (ticket.fields.labels) {
-      const tags = (await this.coreUnificationService.unify<
-        OriginalTagOutput[]
-      >({
-        sourceObject: ticket.fields.labels,
-        targetType: TicketingObject.tag,
-        providerName: 'jira',
-        vertical: 'ticketing',
-        connectionId: connectionId,
-        customFieldMappings: [],
-      })) as UnifiedTagOutput[];
-      opts = {
-        ...opts,
-        tags: tags,
-      };
+      const tags = await this.ingestService.ingestData<
+        UnifiedTagOutput,
+        JiraTagOutput
+      >(
+        ticket.fields.labels.map(
+          (label) =>
+            ({
+              name: label,
+            } as JiraTagOutput),
+        ),
+        'jira',
+        connectionId,
+        'ticketing',
+        TicketingObject.tag,
+        [],
+      );
+      opts.tags = tags.map((tag) => tag.id_tcg_tag);
     }
 
-    if (ticket.fields.attachment && ticket.fields.attachment.length > 0) {
+    //todo : for issue type: a translation is needed as it might be Tache or Task for instance inside ticket.fields.issuetype
+
+    /*TODO if (ticket.fields.attachment && ticket.fields.attachment.length > 0) {
       const attachments = (await this.coreUnificationService.unify<
         OriginalAttachmentOutput[]
       >({
@@ -215,23 +218,16 @@ export class JiraTicketMapper implements ITicketMapper {
         ...opts,
         attachments: attachments,
       };
-    }
+    }*/
 
     if (ticket.fields.project) {
-      const collections = (await this.coreUnificationService.unify<
-        OriginalCollectionOutput[]
-      >({
-        sourceObject: [ticket.fields.project],
-        targetType: TicketingObject.collection,
-        providerName: 'jira',
-        vertical: 'ticketing',
-        connectionId: connectionId,
-        customFieldMappings: [],
-      })) as UnifiedCollectionOutput[];
-      opts = {
-        ...opts,
-        collections: collections,
-      };
+      const collection_id = await this.utils.getCollectionUuidFromRemoteId(
+        ticket.fields.project.id,
+        connectionId,
+      );
+      if (collection_id) {
+        opts.collections = [collection_id];
+      }
     }
 
     const unifiedTicket: UnifiedTicketOutput = {
@@ -243,9 +239,9 @@ export class JiraTicketMapper implements ITicketMapper {
       field_mappings: [], //TODO
       ...opts,
     };
-    if (ticket.fields.priority) {
+    if (ticket.fields.priority && ticket.fields.priority.name) {
       unifiedTicket.priority = this.mapToTicketPriority(
-        (ticket.fields.priority as any).name as any,
+        ticket.fields.priority.name as any,
       );
     }
 

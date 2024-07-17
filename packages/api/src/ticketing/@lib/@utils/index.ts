@@ -27,6 +27,22 @@ export class Utils {
     }
   }
 
+  async getRemoteIdFromTagName(name: string, connection_id: string) {
+    try {
+      const res = await this.prisma.tcg_tags.findFirst({
+        where: {
+          name: name,
+          id_connection: connection_id,
+        },
+      });
+      if (!res) return undefined;
+
+      return res.remote_id;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getCommentUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.tcg_comments.findFirst({

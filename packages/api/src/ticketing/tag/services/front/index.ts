@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
-import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { ServiceRegistry } from '../registry.service';
-import { ITagService } from '@ticketing/tag/types';
-import { FrontTagOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { ITagService } from '@ticketing/tag/types';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { FrontTagOutput } from './types';
 
 @Injectable()
 export class FrontService implements ITagService {
@@ -37,7 +36,7 @@ export class FrontService implements ITagService {
         },
       });
 
-      const ticket = await this.prisma.tcg_tickets.findUnique({
+      /*const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
           id_tcg_ticket: id_ticket as string,
         },
@@ -58,10 +57,17 @@ export class FrontService implements ITagService {
 
       const conversation = resp.data._results.find(
         (c) => c.id === ticket.remote_id,
-      );
-
+      );*/
+      const resp = await axios.get(`${connection.account_url}/tags`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
       return {
-        data: conversation.tags,
+        data: resp.data._results,
         message: 'Front tags retrieved',
         statusCode: 200,
       };

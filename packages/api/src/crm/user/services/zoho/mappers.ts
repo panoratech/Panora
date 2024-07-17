@@ -56,6 +56,11 @@ export class ZohoUserMapper implements IUserMapper {
       remote_id: string;
     }[],
   ): UnifiedUserOutput {
-    return;
+    return {
+      remote_id: user.id,
+      name: user.full_name,
+      email: user.email,
+      remote_data: user,
+    };
   }
 }

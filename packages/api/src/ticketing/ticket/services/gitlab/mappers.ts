@@ -12,6 +12,7 @@ import {
 } from '@ticketing/ticket/types/model.unified';
 import { GitlabTicketInput, GitlabTicketOutput } from './types';
 import { GitlabTagOutput } from '@ticketing/tag/services/gitlab/types';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class GitlabTicketMapper implements ITicketMapper {
@@ -19,6 +20,7 @@ export class GitlabTicketMapper implements ITicketMapper {
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
     private coreUnificationService: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'gitlab', this);
   }
@@ -39,7 +41,9 @@ export class GitlabTicketMapper implements ITicketMapper {
       description: source.description ? source.description : null,
       project_id: Number(remote_project_id),
     };
-
+    if (source.due_date) {
+      result.due_date = source.due_date;
+    }
     if (source.status) {
       result.type = source.status === 'OPEN' ? 'opened' : 'closed';
     }
@@ -125,24 +129,25 @@ export class GitlabTicketMapper implements ITicketMapper {
     }
 
     if (ticket.labels) {
-      const tags = (await this.coreUnificationService.unify<
-        OriginalTagOutput[]
-      >({
-        sourceObject: ticket.labels.map(
+      const tags = await this.ingestService.ingestData<
+        UnifiedTagOutput,
+        GitlabTagOutput
+      >(
+        ticket.labels.map(
           (label) =>
             ({
               name: label,
             } as GitlabTagOutput),
         ),
-        targetType: TicketingObject.tag,
-        providerName: 'gitlab',
-        vertical: 'ticketing',
-        connectionId: connectionId,
-        customFieldMappings: [],
-      })) as UnifiedTagOutput[];
+        'gitlab',
+        connectionId,
+        'ticketing',
+        TicketingObject.tag,
+        [],
+      );
       opts = {
         ...opts,
-        tags: tags,
+        tags: tags.map((tag) => tag.id_tcg_tag),
       };
     }
 
@@ -161,7 +166,7 @@ export class GitlabTicketMapper implements ITicketMapper {
       remote_data: ticket,
       name: ticket.title,
       description: ticket.description || null,
-      due_date: new Date(ticket.created_at),
+      due_date: new Date(ticket.due_date),
       field_mappings,
       ...opts,
     };

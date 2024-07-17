@@ -11,8 +11,6 @@ import { GitlabService } from './services/gitlab';
 import { GitlabTicketMapper } from './services/gitlab/mappers';
 import { GorgiasService } from './services/gorgias';
 import { GorgiasTicketMapper } from './services/gorgias/mappers';
-import { HubspotService } from './services/hubspot';
-import { HubspotTicketMapper } from './services/hubspot/mappers';
 import { JiraService } from './services/jira';
 import { JiraTicketMapper } from './services/jira/mappers';
 import { ServiceRegistry } from './services/registry.service';
@@ -33,7 +31,6 @@ import { TicketController } from './ticket.controller';
     IngestDataService,
     /* PROVIDERS SERVICES */
     ZendeskService,
-    HubspotService,
     FrontService,
     GithubService,
     JiraService,
@@ -41,7 +38,6 @@ import { TicketController } from './ticket.controller';
     GitlabService,
     /* PROVIDERS MAPPERS */
     ZendeskTicketMapper,
-    HubspotTicketMapper,
     FrontTicketMapper,
     GithubTicketMapper,
     JiraTicketMapper,

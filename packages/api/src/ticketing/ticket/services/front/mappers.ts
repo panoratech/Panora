@@ -44,6 +44,7 @@ export class FrontTicketMapper implements ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
+    connection_id?: string,
   ): Promise<FrontTicketInput> {
     const body_: any = {};
 
@@ -76,7 +77,14 @@ export class FrontTicketMapper implements ITicketMapper {
     }
 
     if (source.tags) {
-      result.tags = source.tags as string[];
+      result.tags = [];
+      for (const tag of source.tags) {
+        const id = await this.utils.getRemoteIdFromTagName(
+          tag as string,
+          connection_id,
+        );
+        result.tags.push(id);
+      }
     }
 
     if (customFieldMappings && source.field_mappings) {

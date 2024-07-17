@@ -66,6 +66,7 @@ export class TicketService {
           targetType: TicketingObject.ticket,
           providerName: integrationId,
           vertical: 'ticketing',
+          connectionId: connection_id,
           customFieldMappings: unifiedTicketData.field_mappings
             ? customFieldMappings
             : [],
@@ -145,13 +146,6 @@ export class TicketService {
       return result_ticket;
     } catch (error) {
       throw error;
-      /*throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_TICKET_ERROR',
-          message: 'TicketService.addTicket() call failed',
-          cause: error,
-        }),
-      );*/
     }
   }
 
@@ -255,9 +249,12 @@ export class TicketService {
       description: ticket.description,
       ticket_type: ticket.type,
       tags: ticket.tags,
+      due_date: ticket.due_date,
+      collections: ticket.collections,
       priority: ticket.priority,
       completed_at: ticket.completed_at,
       assigned_to: ticket.assigned_to,
+      id_linked_user: connection_id, //todo remove
     };
 
     if (existingTicket) {

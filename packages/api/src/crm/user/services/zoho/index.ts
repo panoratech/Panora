@@ -47,10 +47,9 @@ export class ZohoService implements IUserService {
           },
         },
       );
-      this.logger.log('USERS ZOHO ' + JSON.stringify(resp.data));
       this.logger.log(`Synced zoho users !`);
       return {
-        data: resp.data.data,
+        data: resp.data.users,
         message: 'Zoho users retrieved',
         statusCode: 200,
       };

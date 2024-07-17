@@ -122,7 +122,12 @@ interface Issue {
       description: string;
       [key: string]: any;
     }>;
-    priority: string;
+    priority: Partial<{
+      id: string;
+      name: string;
+      iconUrl: string;
+      self: string;
+    }>;
     duedate: string;
   }>;
   id: string;

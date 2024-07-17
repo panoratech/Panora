@@ -136,6 +136,7 @@ export class CoreUnification {
     providerName,
     vertical,
     customFieldMappings,
+    connectionId,
   }: {
     sourceObject: T;
     targetType: TargetObject;
@@ -145,6 +146,7 @@ export class CoreUnification {
       slug: string;
       remote_id: string;
     }[];
+    connectionId?: string;
   }): Promise<DesunifyReturnType> {
     try {
       let targetType_: TargetObject;
@@ -212,6 +214,7 @@ export class CoreUnification {
             targetType_,
             providerName,
             customFieldMappings,
+            connectionId,
           });
       }
     } catch (error) {

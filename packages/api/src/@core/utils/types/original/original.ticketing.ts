@@ -29,10 +29,6 @@ import {
   GithubTicketOutput,
 } from '@ticketing/ticket/services/github/types';
 import {
-  HubspotTicketInput,
-  HubspotTicketOutput,
-} from '@ticketing/ticket/services/hubspot/types';
-import {
   FrontUserInput,
   FrontUserOutput,
 } from '@ticketing/user/services/front/types';
@@ -138,7 +134,6 @@ export type OriginalTicketInput =
   | ZendeskTicketInput
   | FrontTicketInput
   | GithubTicketInput
-  | HubspotTicketInput
   | GorgiasTicketInput
   | JiraTicketInput
   | GitlabTicketInput;
@@ -206,7 +201,6 @@ export type OriginalTicketOutput =
   | ZendeskTicketOutput
   | FrontTicketOutput
   | GithubTicketOutput
-  | HubspotTicketOutput
   | GorgiasTicketOutput
   | JiraTicketOutput
   | GitlabTicketOutput;

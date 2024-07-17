@@ -40,6 +40,93 @@ export class JiraService implements ITicketService {
         },
       });
 
+      //first check if issueType is the right one
+
+      const a = await axios.get(
+        `${connection.account_url}/issuetype/project?projectId=${ticketData.fields.project.id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+
+      const item = a.data.find(
+        (element) =>
+          element.untranslatedName === ticketData.fields.issuetype.name,
+      );
+
+      if (item && item.id) {
+        ticketData.fields.issuetype = {
+          id: item.id,
+        };
+      } else {
+        //insert the issuetype
+        const resp = await axios.post(
+          `${connection.account_url}/issuetype`,
+          JSON.stringify({
+            description: ticketData.fields.issuetype.name,
+            name: ticketData.fields.issuetype.name,
+            type: 'standard',
+          }),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          },
+        );
+        ticketData.fields.issuetype = {
+          id: resp.data.id,
+        };
+      }
+      ticketData.fields.project = {
+        key: ticketData.fields.project.key,
+      };
+
+      //now handle priority
+      /*const c = await axios.get(`${connection.account_url}/priority`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
+      const priority_ = c.data.find(
+        (element) => element.name === ticketData.fields.priority.name,
+      );
+      const { priority, ...baseFields } = ticketData.fields;
+      if (priority_) {
+        ticketData.fields.priority = {
+          id: priority.id,
+        };
+      } else {
+        //create priority
+        /*const resp = await axios.post(
+          `${connection.account_url}/priority`,
+          JSON.stringify({
+            name: ticketData.fields.priority.name,
+            statusColor: '#000000',
+          }),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          },
+        );
+        ticketData.fields = {
+          ...baseFields,
+        };
+      }*/
       const resp = await axios.post(
         `${connection.account_url}/issue`,
         JSON.stringify(ticketData),
@@ -104,8 +191,16 @@ export class JiraService implements ITicketService {
         );
       }
 
+      const final_res = await axios.get(resp.data.self, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
       return {
-        data: resp.data,
+        data: final_res.data,
         message: 'Jira ticket created',
         statusCode: 201,
       };

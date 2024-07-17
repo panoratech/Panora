@@ -20,6 +20,7 @@ export class TicketingUnificationService implements IUnification {
     targetType_,
     providerName,
     customFieldMappings,
+    connectionId,
   }: {
     sourceObject: T;
     targetType_: TicketingObject;
@@ -28,6 +29,7 @@ export class TicketingUnificationService implements IUnification {
       slug: string;
       remote_id: string;
     }[];
+    connectionId?: string;
   }): Promise<TicketingObjectInput> {
     const mapping = this.mappersRegistry.getService(
       'ticketing',
@@ -36,7 +38,7 @@ export class TicketingUnificationService implements IUnification {
     );
 
     if (mapping) {
-      return mapping.desunify(sourceObject, customFieldMappings);
+      return mapping.desunify(sourceObject, customFieldMappings, connectionId);
     }
 
     throw new Error(

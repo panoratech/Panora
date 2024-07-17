@@ -1,17 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ITicketService } from '@ticketing/ticket/types';
 import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskTicketInput, ZendeskTicketOutput } from './types';
-import { SyncParam } from '@@core/utils/types/interface';
-import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class ZendeskService implements ITicketService {

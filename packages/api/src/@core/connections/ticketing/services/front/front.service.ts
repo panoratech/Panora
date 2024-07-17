@@ -1,21 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { ITicketingConnectionService } from '../../types';
-import { ServiceRegistry } from '../registry.service';
-import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import {
   OAuthCallbackParams,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { Injectable } from '@nestjs/common';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { ITicketingConnectionService } from '../../types';
+import { ServiceRegistry } from '../registry.service';
 
 export type FrontOAuthResponse = {
   access_token: string;
@@ -99,9 +102,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url: CONNECTORS_METADATA['ticketing']['front'].urls
               .apiUrl as string,
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
-            ),
+            expiration_timestamp: new Date(Number(data.expires_at) * 1000),
             status: 'valid',
             created_at: new Date(),
           },
@@ -118,9 +119,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_at) * 1000,
-            ),
+            expiration_timestamp: new Date(Number(data.expires_at) * 1000),
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -174,9 +173,7 @@ export class FrontConnectionService implements ITicketingConnectionService {
         data: {
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_at) * 1000,
-          ),
+          expiration_timestamp: new Date(Number(data.expires_at) * 1000),
         },
       });
       this.logger.log('OAuth credentials updated : front ');

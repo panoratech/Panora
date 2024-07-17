@@ -344,7 +344,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         authStrategy: {
           strategy: AuthStrategy.api_key
-        }
+        },
+        active: false
       },
     },
     'ticketing': {

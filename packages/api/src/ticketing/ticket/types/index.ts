@@ -19,6 +19,7 @@ export interface ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
+    connection_id?: string,
   ): DesunifyReturnType;
 
   unify(
