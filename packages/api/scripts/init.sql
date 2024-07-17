@@ -265,7 +265,7 @@ CREATE TABLE ecom_products
  modifed_at      timestamp with time zone NOT NULL,
  created_at      timestamp with time zone NOT NULL,
  id_connection   uuid NOT NULL,
- CONSTRAINT PK_99_copy_1 PRIMARY KEY ( id_ecom_product )
+ CONSTRAINT PK_ecom_products PRIMARY KEY ( id_ecom_product )
 );
 
 -- ************************************** ecom_customers
@@ -280,7 +280,7 @@ CREATE TABLE ecom_customers
  modifed_at       timestamp with time zone NOT NULL,
  created_at       timestamp with time zone NOT NULL,
  id_connection    uuid NOT NULL,
- CONSTRAINT PK_99 PRIMARY KEY ( id_ecom_customer )
+ CONSTRAINT PK_ecom_customers PRIMARY KEY ( id_ecom_customer )
 );
 
 -- ************************************** cs_values
@@ -857,7 +857,7 @@ CREATE TABLE ecom_product_variants
  modifed_at              timestamp with time zone NOT NULL,
  created_at              timestamp with time zone NOT NULL,
  id_ecom_product         uuid NOT NULL,
- CONSTRAINT PK_99_copy_2 PRIMARY KEY ( id_ecom_product_variant ),
+ CONSTRAINT PK_ecom_product_variants PRIMARY KEY ( id_ecom_product_variant ),
  CONSTRAINT FK_ecom_products_variants FOREIGN KEY ( id_ecom_product ) REFERENCES ecom_products ( id_ecom_product )
 );
 CREATE INDEX FK_ecom_products_variants ON ecom_product_variants
@@ -884,7 +884,7 @@ CREATE TABLE ecom_orders
  modifed_at         timestamp with time zone NOT NULL,
  created_at         timestamp with time zone NOT NULL,
  id_ecom_customer   uuid NULL,
- CONSTRAINT PK_99_copy_3 PRIMARY KEY ( id_ecom_order ),
+ CONSTRAINT PK_ecom_orders PRIMARY KEY ( id_ecom_order ),
  CONSTRAINT FK_ecom_customer_orders FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer )
 );
 CREATE INDEX FK_ecom_customer_orders ON ecom_orders
@@ -908,7 +908,7 @@ CREATE TABLE ecom_customer_addresses
  modified_at              timestamp with time zone NOT NULL,
  created_at               timestamp with time zone NOT NULL,
  id_ecom_customer         uuid NOT NULL,
- CONSTRAINT PK_104 PRIMARY KEY ( id_ecom_customer_address ),
+ CONSTRAINT PK_ecom_customer_addresses PRIMARY KEY ( id_ecom_customer_address ),
  CONSTRAINT FK_ecom_customer_customeraddress FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer )
 );
 CREATE INDEX FK_ecom_customer_customeraddress ON ecom_customer_addresses
@@ -1508,7 +1508,7 @@ CREATE TABLE ecom_fulfilments
  modifed_at         timestamp with time zone NOT NULL,
  created_at         timestamp with time zone NOT NULL,
  id_ecom_order      uuid NULL,
- CONSTRAINT PK_99_copy_2_copy_1 PRIMARY KEY ( id_ecom_fulfilment ),
+ CONSTRAINT PK_ecom_fulfilments PRIMARY KEY ( id_ecom_fulfilment ),
  CONSTRAINT FK_ecom_order_fulfilment FOREIGN KEY ( id_ecom_order ) REFERENCES ecom_orders ( id_ecom_order )
 );
 CREATE INDEX FK_ecom_order_fulfilment ON ecom_fulfilments
