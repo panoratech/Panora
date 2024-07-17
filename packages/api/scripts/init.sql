@@ -854,13 +854,13 @@ CREATE TABLE ecom_product_variants
  options                 jsonb NULL,
  weight                  bigint NULL,
  inventory_quantity      bigint NULL,
+ id_ecom_product         uuid NULL,
  modifed_at              timestamp with time zone NOT NULL,
  created_at              timestamp with time zone NOT NULL,
- id_ecom_product         uuid NOT NULL,
  CONSTRAINT PK_ecom_product_variants PRIMARY KEY ( id_ecom_product_variant ),
  CONSTRAINT FK_ecom_products_variants FOREIGN KEY ( id_ecom_product ) REFERENCES ecom_products ( id_ecom_product )
 );
-CREATE INDEX FK_ecom_products_variants ON ecom_product_variants
+CREATE INDEX FK_index_ecom_products_variants ON ecom_product_variants
 (
  id_ecom_product
 );
@@ -879,15 +879,15 @@ CREATE TABLE ecom_orders
  total_shipping     bigint NULL,
  total_tax          bigint NULL,
  fulfillment_status text NULL,
- id_connection      uuid NOT NULL,
  remote_id          text NULL,
+ id_ecom_customer   uuid NULL,
+ id_connection      uuid NOT NULL,
  modifed_at         timestamp with time zone NOT NULL,
  created_at         timestamp with time zone NOT NULL,
- id_ecom_customer   uuid NULL,
  CONSTRAINT PK_ecom_orders PRIMARY KEY ( id_ecom_order ),
  CONSTRAINT FK_ecom_customer_orders FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer )
 );
-CREATE INDEX FK_ecom_customer_orders ON ecom_orders
+CREATE INDEX FK_index_ecom_customer_orders ON ecom_orders
 (
  id_ecom_customer
 );
@@ -905,13 +905,13 @@ CREATE TABLE ecom_customer_addresses
  "state"                  text NULL,
  postal_code              text NULL,
  country                  text NULL,
+ id_ecom_customer         uuid NOT NULL,
  modified_at              timestamp with time zone NOT NULL,
  created_at               timestamp with time zone NOT NULL,
- id_ecom_customer         uuid NOT NULL,
  CONSTRAINT PK_ecom_customer_addresses PRIMARY KEY ( id_ecom_customer_address ),
  CONSTRAINT FK_ecom_customer_customeraddress FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer )
 );
-CREATE INDEX FK_ecom_customer_customeraddress ON ecom_customer_addresses
+CREATE INDEX FK_index_ecom_customer_customeraddress ON ecom_customer_addresses
 (
  id_ecom_customer
 );
@@ -1503,15 +1503,15 @@ CREATE TABLE ecom_fulfilments
  tracking_urls      text[] NULL,
  tracking_numbers   text[] NULL,
  items              jsonb NULL,
- id_connection      uuid NOT NULL,
  remote_id          text NULL,
+ id_ecom_order      uuid NULL,
+ id_connection      uuid NOT NULL,
  modifed_at         timestamp with time zone NOT NULL,
  created_at         timestamp with time zone NOT NULL,
- id_ecom_order      uuid NULL,
  CONSTRAINT PK_ecom_fulfilments PRIMARY KEY ( id_ecom_fulfilment ),
  CONSTRAINT FK_ecom_order_fulfilment FOREIGN KEY ( id_ecom_order ) REFERENCES ecom_orders ( id_ecom_order )
 );
-CREATE INDEX FK_ecom_order_fulfilment ON ecom_fulfilments
+CREATE INDEX FK_index_ecom_order_fulfilment ON ecom_fulfilments
 (
  id_ecom_order
 );
