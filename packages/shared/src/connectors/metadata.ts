@@ -6,7 +6,7 @@ import { AuthStrategy, ProvidersConfig } from '../types';
 export const CONNECTORS_METADATA: ProvidersConfig = {
     'crm': {
       'hubspot': {
-        scopes: 'crm.objects.companies.read crm.objects.companies.write crm.objects.contacts.read crm.objects.contacts.write crm.objects.deals.read crm.objects.deals.write crm.objects.custom.read crm.objects.custom.write crm.objects.leads.read crm.objects.leads.write crm.objects.owners.read crm.objects.users.read crm.objects.users.write sales-email-read',
+        scopes: 'crm.objects.companies.read crm.objects.companies.write crm.objects.contacts.read crm.objects.contacts.write crm.objects.deals.read crm.objects.deals.write crm.objects.custom.read crm.objects.custom.write crm.objects.leads.read crm.objects.leads.write crm.objects.owners.read crm.objects.users.read crm.objects.users.write oauth sales-email-read',
         urls: {
           docsUrl: 'https://developers.hubspot.com/docs/api/crm/understanding-the-crm',
           authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
