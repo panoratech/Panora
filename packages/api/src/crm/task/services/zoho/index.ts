@@ -24,40 +24,6 @@ export class ZohoService implements ITaskService {
     this.registry.registerService('zoho', this);
   }
 
-  async addTask(
-    taskData: ZohoTaskInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoTaskOutput>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
-          vertical: 'crm',
-        },
-      });
-      const resp = await axios.post(
-        `${connection.account_url}/Tasks`,
-        { data: [taskData] },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      return {
-        data: resp.data.data,
-        message: 'Zoho task created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async sync(data: SyncParam): Promise<ApiResponse<ZohoTaskOutput[]>> {
     try {
       const { linkedUserId } = data;

@@ -42,9 +42,8 @@ export class ZohoNoteMapper implements INoteMapper {
       Parent_Id: {
         module: {
           api_name: module.api_name,
-          id: module.id,
         },
-        id: null, // todo
+        id: module.id,
       },
     };
 
@@ -102,28 +101,36 @@ export class ZohoNoteMapper implements INoteMapper {
 
     const res: UnifiedNoteOutput = {
       remote_id: note.id,
+      remote_data: note,
       content: note.Note_Content,
       field_mappings,
     };
 
-    const module = note.Parent_Id && note.Parent_Id.module;
-    if (module.api_name === 'Deals' && module.id) {
-      res.deal_id = await this.utils.getDealUuidFromRemoteId(
+    const module = note.Parent_Id;
+    if (module && module.id) {
+      const a = await this.utils.getDealUuidFromRemoteId(
         module.id,
         connectionId,
       );
-    }
-    if (module.api_name === 'Accounts' && module.id) {
-      res.company_id = await this.utils.getCompanyUuidFromRemoteId(
-        module.id,
-        connectionId,
-      );
-    }
-    if (module.api_name === 'Contacts' && module.id) {
-      res.contact_id = await this.utils.getContactUuidFromRemoteId(
-        module.id,
-        connectionId,
-      );
+      if (a) {
+        res.deal_id = a;
+      } else {
+        const b = await this.utils.getCompanyUuidFromRemoteId(
+          module.id,
+          connectionId,
+        );
+        if (b) {
+          res.company_id = b;
+        } else {
+          const c = await this.utils.getContactUuidFromRemoteId(
+            module.id,
+            connectionId,
+          );
+          if (c) {
+            res.contact_id = c;
+          }
+        }
+      }
     }
 
     return res;

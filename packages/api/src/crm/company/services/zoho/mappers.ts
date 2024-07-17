@@ -42,9 +42,9 @@ export class ZohoCompanyMapper implements ICompanyMapper {
     }
 
     if (source.user_id) {
-      result.Owner.id = await this.utils.getRemoteIdFromUserUuid(
-        source.user_id,
-      );
+      result.Owner = {
+        id: await this.utils.getRemoteIdFromUserUuid(source.user_id),
+      };
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -112,6 +112,7 @@ export class ZohoCompanyMapper implements ICompanyMapper {
 
     return {
       remote_id: company.id,
+      remote_data: company,
       name: company.Account_Name,
       phone_numbers: [
         {

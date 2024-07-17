@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { IEngagementService } from '@crm/engagement/types';
-import { CrmObject } from '@crm/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IEngagementService } from '@crm/engagement/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import {
   CloseEngagementCallInput,
@@ -18,7 +18,6 @@ import {
   CloseEngagementMeetingOutput,
   CloseEngagementOutput,
 } from './types';
-import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class CloseService implements IEngagementService {

@@ -62,6 +62,14 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         result.user_id = Number(owner_id);
       }
     }
+    if (source.contacts && source.contacts.length > 0) {
+      const id = await this.utils.getRemoteIdFromContactUuid(
+        source.contacts[0],
+      );
+      if (id) {
+        result.person_id = Number(id);
+      }
+    }
     if (source.company_id) {
       const id = await this.utils.getRemoteIdFromCompanyUuid(source.company_id);
       if (id) {
@@ -193,7 +201,9 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       }
     }
 
-    const opts: any = {};
+    const opts: any = {
+      contacts: [],
+    };
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
@@ -203,9 +213,9 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         opts.user_id = owner_id;
       }
     }
-    if (engagement.company_id) {
+    if (engagement.org_id) {
       const company_id = await this.utils.getCompanyUuidFromRemoteId(
-        String(engagement.company_id),
+        String(engagement.org_id),
         connectionId,
       );
       if (company_id) {
@@ -219,7 +229,7 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         connectionId,
       );
       if (person_id) {
-        opts.contacts.push(person_id);
+        opts.contacts = [person_id];
       }
     }
 
@@ -252,10 +262,12 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
     }
 
     return {
+      remote_id: String(engagement.id),
+      remote_data: engagement,
       content: engagement.public_description,
       subject: engagement.subject,
-      start_at: new Date(engagement.due_date + ' ' + engagement.due_time), // Combine due_date and due_time
-      end_time: new Date(engagement.marked_as_done_time),
+      start_at: null,
+      end_time: new Date(engagement.due_date),
       type: 'CALL',
       field_mappings,
       ...opts,
@@ -277,7 +289,9 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
       }
     }
 
-    let opts: any = {};
+    let opts: any = {
+      contacts: [],
+    };
     if (engagement.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(engagement.user_id),
@@ -290,95 +304,9 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
         };
       }
     }
-    if (engagement.company_id) {
+    if (engagement.org_id) {
       const company_id = await this.utils.getCompanyUuidFromRemoteId(
-        String(engagement.company_id),
-        connectionId,
-      );
-      if (company_id) {
-        opts.company_id = company_id;
-      }
-    }
-
-    if (engagement.person_id) {
-      const person_id = await this.utils.getContactUuidFromRemoteId(
-        String(engagement.person_id),
-        connectionId,
-      );
-      if (person_id) {
-        opts.contacts.push(person_id);
-      }
-    }
-
-    if (engagement.attendee && engagement.attendee.length > 0) {
-      for (const p of engagement.attendee) {
-        if (p.person_id) {
-          const id = await this.utils.getContactUuidFromRemoteId(
-            String(p.person_id),
-            connectionId,
-          );
-          if (id) {
-            opts.contacts.push(id);
-          }
-        }
-      }
-    }
-
-    if (engagement.participants && engagement.participants.length > 0) {
-      for (const p of engagement.participants) {
-        if (p.person_id) {
-          const id = await this.utils.getContactUuidFromRemoteId(
-            String(p.person_id),
-            connectionId,
-          );
-          if (id) {
-            opts.contacts.push(id);
-          }
-        }
-      }
-    }
-
-    return {
-      content: engagement.note,
-      subject: engagement.subject,
-      start_at: new Date(engagement.due_date + ' ' + engagement.due_time), // Combine due_date and due_time
-      end_time: engagement.duration
-        ? new Date(engagement.add_time + ' ' + engagement.duration)
-        : undefined, // Derive end time if duration is provided
-      type: 'MEETING',
-      field_mappings,
-      ...opts,
-    };
-  }
-
-  private async mapSingleEngagementEmailToUnified(
-    engagement: PipedriveEngagementOutput,
-    connectionId: string,
-    customFieldMappings?: {
-      slug: string;
-      remote_id: string;
-    }[],
-  ): Promise<UnifiedEngagementOutput> {
-    const field_mappings: { [key: string]: any } = {};
-    if (customFieldMappings) {
-      for (const mapping of customFieldMappings) {
-        field_mappings[mapping.slug] = engagement[mapping.remote_id];
-      }
-    }
-
-    const opts: any = {};
-    if (engagement.user_id) {
-      const owner_id = await this.utils.getUserUuidFromRemoteId(
-        String(engagement.user_id),
-        connectionId,
-      );
-      if (owner_id) {
-        opts.user_id = owner_id;
-      }
-    }
-    if (engagement.company_id) {
-      const company_id = await this.utils.getCompanyUuidFromRemoteId(
-        String(engagement.company_id),
+        String(engagement.org_id),
         connectionId,
       );
       if (company_id) {
@@ -426,12 +354,97 @@ export class PipedriveEngagementMapper implements IEngagementMapper {
 
     return {
       remote_id: String(engagement.id),
+      remote_data: engagement,
+      content: engagement.note,
+      subject: engagement.subject,
+      end_time: new Date(engagement.due_date),
+      type: 'MEETING',
+      field_mappings,
+      ...opts,
+    };
+  }
+
+  private async mapSingleEngagementEmailToUnified(
+    engagement: PipedriveEngagementOutput,
+    connectionId: string,
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+  ): Promise<UnifiedEngagementOutput> {
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = engagement[mapping.remote_id];
+      }
+    }
+
+    const opts: any = {
+      contacts: [],
+    };
+    if (engagement.user_id) {
+      const owner_id = await this.utils.getUserUuidFromRemoteId(
+        String(engagement.user_id),
+        connectionId,
+      );
+      if (owner_id) {
+        opts.user_id = owner_id;
+      }
+    }
+    if (engagement.org_id) {
+      const company_id = await this.utils.getCompanyUuidFromRemoteId(
+        String(engagement.org_id),
+        connectionId,
+      );
+      if (company_id) {
+        opts.company_id = company_id;
+      }
+    }
+
+    if (engagement.person_id) {
+      const person_id = await this.utils.getContactUuidFromRemoteId(
+        String(engagement.person_id),
+        connectionId,
+      );
+      if (person_id) {
+        opts.contacts.push(person_id);
+      }
+    }
+
+    if (engagement.attendee && engagement.attendee.length > 0) {
+      for (const p of engagement.attendee) {
+        if (p.person_id) {
+          const id = await this.utils.getContactUuidFromRemoteId(
+            String(p.person_id),
+            connectionId,
+          );
+          if (id) {
+            opts.contacts.push(id);
+          }
+        }
+      }
+    }
+
+    if (engagement.participants && engagement.participants.length > 0) {
+      for (const p of engagement.participants) {
+        if (p.person_id) {
+          const id = await this.utils.getContactUuidFromRemoteId(
+            String(p.person_id),
+            connectionId,
+          );
+          if (id) {
+            opts.contacts.push(id);
+          }
+        }
+      }
+    }
+
+    return {
+      remote_id: String(engagement.id),
+      remote_data: engagement,
       content: engagement.note, // Assuming email content is stored in 'note'
       subject: engagement.subject,
-      start_at: new Date(engagement.add_time), // Using 'add_time' as the start time
-      end_time: engagement.marked_as_done_time
-        ? new Date(engagement.marked_as_done_time)
-        : null, // Using 'marked_as_done_time' as end time if available
+      end_time: new Date(engagement.due_date),
       type: 'EMAIL',
       field_mappings,
       ...opts,

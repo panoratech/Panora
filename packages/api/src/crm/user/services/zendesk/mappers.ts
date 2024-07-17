@@ -80,6 +80,7 @@ export class ZendeskUserMapper implements IUserMapper {
 
     return {
       remote_id: String(user.id),
+      remote_data: user,
       name: user.name,
       email: user.email,
       field_mappings,

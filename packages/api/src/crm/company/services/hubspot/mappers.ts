@@ -122,6 +122,7 @@ export class HubspotCompanyMapper implements ICompanyMapper {
 
     return {
       remote_id: company.id,
+      remote_data: company,
       name: company.properties.name,
       industry: company.properties.industry,
       number_of_employees: company.properties.numberofemployees,

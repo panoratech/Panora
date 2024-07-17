@@ -21,7 +21,7 @@ export class CloseNoteMapper implements INoteMapper {
     }[],
   ): Promise<CloseNoteInput> {
     const result: CloseNoteInput = {
-      note_html: source.content,
+      note: source.content,
     };
 
     if (source.company_id) {
@@ -124,6 +124,7 @@ export class CloseNoteMapper implements INoteMapper {
     }
     return {
       remote_id: note.id,
+      remote_data: note,
       content: note.note_html,
       field_mappings,
       ...opts,

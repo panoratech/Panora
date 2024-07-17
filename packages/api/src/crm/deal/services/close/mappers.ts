@@ -149,6 +149,7 @@ export class CloseDealMapper implements IDealMapper {
     }
     return {
       remote_id: deal.id,
+      remote_data: deal,
       name: deal.note,
       description: deal.note || '',
       amount: parseFloat(`${deal.value || 0}`),

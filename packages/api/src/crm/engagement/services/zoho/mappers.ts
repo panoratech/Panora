@@ -164,6 +164,7 @@ export class ZohoEngagementMapper implements IEngagementMapper {
 
     return {
       remote_id: engagement.id,
+      remote_data: engagement,
       content: engagement.Description,
       subject: engagement.Subject,
       type: 'CALL',
@@ -236,6 +237,7 @@ export class ZohoEngagementMapper implements IEngagementMapper {
     }
     return {
       remote_id: engagement.id,
+      remote_data: engagement,
       content: engagement.Description,
       subject: engagement.Event_Title,
       start_at: engagement.Start_DateTime,

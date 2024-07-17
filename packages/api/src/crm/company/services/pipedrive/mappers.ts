@@ -136,6 +136,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
     }
     return {
       name: company.name,
+      remote_data: company,
       industry: null,
       number_of_employees: company.people_count ?? null,
       field_mappings,

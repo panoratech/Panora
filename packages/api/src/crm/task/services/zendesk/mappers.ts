@@ -27,7 +27,7 @@ export class ZendeskTaskMapper implements ITaskMapper {
     };
 
     if (source.due_date) {
-      result.due_date = source.due_date.toISOString();
+      result.due_date = source.due_date as any;
     }
     if (source.deal_id) {
       const deal_id = await this.utils.getRemoteIdFromDealUuid(source.deal_id);
@@ -150,12 +150,11 @@ export class ZendeskTaskMapper implements ITaskMapper {
 
     return {
       remote_id: String(task.id),
+      remote_data: task,
       content: task.content,
       status: task.completed ? 'COMPLETED' : 'PENDING',
-      finished_date: task.completed_at
-        ? new Date(task.completed_at)
-        : undefined,
-      due_date: task.due_date ? new Date(task.due_date) : undefined,
+      finished_date: task.completed_at ? new Date(task.completed_at) : null,
+      due_date: task.due_date ? new Date(task.due_date) : null,
       field_mappings,
       ...opts,
     };

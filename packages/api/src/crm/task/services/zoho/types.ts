@@ -1,5 +1,5 @@
 interface ZohoTask {
-  Owner: PersonDetail;
+  Owner: Partial<PersonDetail>;
   Description: string;
   $currency_symbol: string;
   Closed_Time: string | null;

@@ -40,12 +40,20 @@ export class HubspotService implements ITaskService {
           vertical: 'crm',
         },
       });
-      const dataBody = {
-        properties: taskData,
-      };
       const resp = await axios.post(
         `${connection.account_url}/objects/tasks`,
-        JSON.stringify(dataBody),
+        JSON.stringify(taskData),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+      const final_resp = await axios.get(
+        `${connection.account_url}/objects/tasks/${resp.data.id}?properties=hs_task_body&associations=deal,company`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -56,7 +64,7 @@ export class HubspotService implements ITaskService {
         },
       );
       return {
-        data: resp.data,
+        data: final_resp.data,
         message: 'Hubspot task created',
         statusCode: 201,
       };
@@ -85,7 +93,7 @@ export class HubspotService implements ITaskService {
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
         .join('&');
 
-      const url = `${baseURL}?${queryString}`;
+      const url = `${baseURL}?${queryString}&associations=deal,company`;
 
       const resp = await axios.get(url, {
         headers: {

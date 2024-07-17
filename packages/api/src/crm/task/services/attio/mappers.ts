@@ -165,6 +165,7 @@ export class AttioTaskMapper implements ITaskMapper {
 
     return {
       remote_id: task.id.task_id,
+      remote_data: task,
       content: task.content_plaintext,
       status: task.is_completed ? 'COMPLETED' : 'PENDING',
       due_date: new Date(task.deadline_at),

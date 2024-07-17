@@ -1,7 +1,8 @@
 interface NoteInput {
-  note_html: string;
+  note: string;
+  note_html?: string;
   lead_id: string;
-  attachments: Attachment[];
+  attachments?: Attachment[];
 }
 
 interface Attachment {

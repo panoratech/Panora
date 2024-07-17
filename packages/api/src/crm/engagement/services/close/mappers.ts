@@ -77,13 +77,11 @@ export class CloseEngagementMapper implements IEngagementMapper {
           new Date(source.start_at).getTime()
         : 0;
     const result: CloseEngagementCallInput = {
-      note_html: source.content || null,
+      note: source.content || null,
       duration: Math.floor(diffInMilliseconds / (1000 * 60)),
     };
     if (source.direction) {
-      result.direction = this.reverseMapToTaskDirection(
-        source.direction as EngagementDirection,
-      );
+      result.direction = source.direction.toLowerCase();
     }
 
     // Map HubSpot owner ID from user ID
@@ -99,8 +97,8 @@ export class CloseEngagementMapper implements IEngagementMapper {
         source.company_id,
       );
     }
-    if (source?.contacts && source?.contacts?.length) {
-      const contactId = await this.utils.getRemoteIdFromUserUuid(
+    if (source?.contacts && source?.contacts?.length > 0) {
+      const contactId = await this.utils.getRemoteIdFromContactUuid(
         source.contacts[0],
       );
       if (contactId) {
@@ -348,10 +346,11 @@ export class CloseEngagementMapper implements IEngagementMapper {
       }
     }
     if (engagement.direction) {
-      opts.direction = this.mapToTaskDirection(engagement.direction as any);
+      opts.direction = engagement.direction.toUpperCase();
     }
     return {
       remote_id: engagement.id,
+      remote_data: engagement,
       content: engagement.note_html || engagement.note,
       subject: engagement.note,
       start_at: new Date(engagement.date_created),
@@ -428,6 +427,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
     }
     return {
       remote_id: engagement.id,
+      remote_data: engagement,
       content: engagement.note,
       subject: engagement.title,
       start_at: new Date(engagement.starts_at),
@@ -497,6 +497,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
 
     return {
       remote_id: engagement.id,
+      remote_data: engagement,
       content: engagement.body_html,
       subject: engagement.subject,
       start_at: new Date(engagement.date_created),

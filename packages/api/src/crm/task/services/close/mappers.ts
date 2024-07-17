@@ -135,6 +135,7 @@ export class CloseTaskMapper implements ITaskMapper {
 
     return {
       remote_id: task.id,
+      remote_data: task,
       subject: null,
       content: task.text,
       status: task?.is_complete ? 'COMPLETED' : 'PENDING',

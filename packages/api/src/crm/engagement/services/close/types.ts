@@ -5,7 +5,8 @@ interface Call {
   user_id: string;
   direction: string;
   status: string;
-  note_html: string;
+  note_html?: string;
+  note: string;
   duration: number;
   phone: string;
 }

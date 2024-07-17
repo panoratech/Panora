@@ -30,6 +30,8 @@ export class ZohoService implements INoteService {
     linkedUserId: string,
   ): Promise<ApiResponse<ZohoNoteOutput>> {
     try {
+      if (!noteData.Parent_Id.module.api_name)
+        throw new Error('You must attach a parent module to your note in Zoho');
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -37,8 +39,20 @@ export class ZohoService implements INoteService {
           vertical: 'crm',
         },
       });
+      let url: string;
+      switch (noteData.Parent_Id.module.api_name) {
+        case 'Accounts':
+          url = `${connection.account_url}/Accounts/${noteData.Parent_Id.id}/Notes`;
+          break;
+        case 'Contacts':
+          url = `${connection.account_url}/Contacts/${noteData.Parent_Id.id}/Notes`;
+          break;
+        case 'Deals':
+          url = `${connection.account_url}/Deals/${noteData.Parent_Id.id}/Notes`;
+          break;
+      }
       const resp = await axios.post(
-        `${connection.account_url}/Notes`,
+        url,
         { data: [noteData] },
         {
           headers: {
@@ -49,9 +63,20 @@ export class ZohoService implements INoteService {
           },
         },
       );
-      //this.logger.log('zoho resp is ' + JSON.stringify(resp));
+
+      const final_res = await axios.get(
+        `${connection.account_url}/Notes/${resp.data.data[0].details.id}?fields=Parent_Id,Owner,Created_Time,Note_Content`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
       return {
-        data: resp.data.data,
+        data: final_res.data.data[0],
         message: 'Zoho note created',
         statusCode: 201,
       };
@@ -83,7 +108,6 @@ export class ZohoService implements INoteService {
           },
         },
       );
-      //this.logger.log('CONTACTS ZOHO ' + JSON.stringify(resp.data.data));
       this.logger.log(`Synced zoho notes !`);
       return {
         data: resp.data.data,

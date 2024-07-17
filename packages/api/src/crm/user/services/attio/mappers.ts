@@ -62,6 +62,7 @@ export class AttioUserMapper implements IUserMapper {
     }
     return {
       remote_id: user.id.workspace_member_id,
+      remote_data: user,
       name: `${user.first_name} ${user.last_name}`,
       email: user.email_address,
       field_mappings,

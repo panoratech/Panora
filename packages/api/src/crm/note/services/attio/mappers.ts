@@ -136,7 +136,7 @@ export class AttioNoteMapper implements INoteMapper {
           break;
         case 'companies':
           const company_id = await this.utils.getCompanyUuidFromRemoteId(
-            note.parent_object,
+            note.parent_record_id,
             connectionId,
           );
           if (company_id) {
@@ -162,6 +162,7 @@ export class AttioNoteMapper implements INoteMapper {
     }
     return {
       remote_id: note.id.note_id,
+      remote_data: note,
       content: note.content_plaintext,
       field_mappings,
       ...opts,

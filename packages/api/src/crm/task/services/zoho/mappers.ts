@@ -50,47 +50,7 @@ export class ZohoTaskMapper implements ITaskMapper {
       remote_id: string;
     }[],
   ): Promise<ZohoTaskInput> {
-    // todo what_id and owner
-    const result: ZohoTaskInput = {
-      Description: source.content,
-      Subject: source.subject,
-    };
-    if (source.status) {
-      result.Status = this.reverseMapToTaskStatus(source.status as TaskStatus);
-    }
-    if (source.due_date) {
-      result.Due_Date = source.due_date.toISOString();
-    }
-    if (source.finished_date) {
-      result.Closed_Time = source.finished_date.toISOString();
-    }
-
-    if (source.company_id) {
-      result.What_Id.id = await this.utils.getRemoteIdFromCompanyUuid(
-        source.company_id,
-      );
-      result.What_Id.name = await this.utils.getCompanyNameFromUuid(
-        source.company_id,
-      );
-    }
-    if (source.user_id) {
-      result.Owner.id = await this.utils.getRemoteIdFromUserUuid(
-        source.user_id,
-      );
-    }
-
-    if (customFieldMappings && source.field_mappings) {
-      for (const [k, v] of Object.entries(source.field_mappings)) {
-        const mapping = customFieldMappings.find(
-          (mapping) => mapping.slug === k,
-        );
-        if (mapping) {
-          result[mapping.remote_id] = v;
-        }
-      }
-    }
-
-    return result;
+    return;
   }
 
   async unify(
@@ -132,6 +92,7 @@ export class ZohoTaskMapper implements ITaskMapper {
     }
     const res: UnifiedTaskOutput = {
       remote_id: task.id,
+      remote_data: task,
       content: task.Description,
       subject: task.Subject,
       status: this.mapToTaskStatus(task.Status as any),

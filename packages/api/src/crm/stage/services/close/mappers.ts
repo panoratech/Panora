@@ -60,6 +60,7 @@ export class CloseStageMapper implements IStageMapper {
     }
     return {
       remote_id: stage.id,
+      remote_data: stage,
       stage_name: stage.new_status_label,
       field_mappings,
     };

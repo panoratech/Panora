@@ -61,6 +61,7 @@ export class HubspotStageMapper implements IStageMapper {
     }
     return {
       remote_id: stage.stageId,
+      remote_data: stage,
       stage_name: stage.label,
       field_mappings,
     };

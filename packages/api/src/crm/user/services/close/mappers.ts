@@ -62,6 +62,7 @@ export class CloseUserMapper implements IUserMapper {
     }
     return {
       remote_id: user.id,
+      remote_data: user,
       name: `${user.first_name} ${user.last_name}`,
       email: user.email,
       field_mappings,

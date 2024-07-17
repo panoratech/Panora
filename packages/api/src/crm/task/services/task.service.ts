@@ -171,7 +171,6 @@ export class TaskService {
     const existingTask = await this.prisma.crm_tasks.findFirst({
       where: { remote_id: task.remote_id, id_connection: connection_id },
     });
-
     const data: any = {
       modified_at: new Date(),
       subject: task.subject,

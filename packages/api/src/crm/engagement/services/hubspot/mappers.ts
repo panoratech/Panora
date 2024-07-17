@@ -53,9 +53,8 @@ export class HubspotEngagementMapper implements IEngagementMapper {
   ): Promise<HubspotEngagementCallInput> {
     const result: HubspotEngagementCallInput = {
       hs_call_body: source.content || null,
-      hs_timestamp: source.start_at?.toISOString() || null,
+      hs_timestamp: new Date() as any,
       hs_call_title: source.subject || null,
-      // Assuming direction is used to determine call status
       hs_call_status: null,
       hs_call_duration: null, // Needs appropriate mapping
       hs_call_direction: source.direction || null, // Needs appropriate mapping
@@ -95,13 +94,13 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     }[],
   ): Promise<HubspotEngagementMeetingInput> {
     const result: HubspotEngagementMeetingInput = {
-      hs_timestamp: source.start_at?.toISOString() || null,
+      hs_timestamp: new Date() as any,
       hs_meeting_body: source.content || null,
       hs_meeting_title: source.subject || null,
       hs_meeting_outcome: null, // Placeholder, needs appropriate mapping
-      hs_meeting_end_time: source.end_time?.toISOString() || null,
+      hs_meeting_end_time: (source.end_time as any) ?? null,
       hs_meeting_location: null, // Placeholder, needs appropriate mapping
-      hs_meeting_start_time: source.start_at?.toISOString() || null,
+      hs_meeting_start_time: (source.start_at as any) ?? null,
       hs_meeting_external_url: null, // Placeholder, needs appropriate mapping
       hs_internal_meeting_notes: null, // Placeholder, needs appropriate mapping
       hubspot_owner_id: null,
@@ -137,7 +136,7 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     }[],
   ): Promise<HubspotEngagementEmailInput> {
     const result: HubspotEngagementEmailInput = {
-      hs_timestamp: source.start_at?.toISOString() || null,
+      hs_timestamp: new Date() as any,
       hs_email_text: source.content || null,
       hs_email_subject: source.subject || null,
       hs_email_status: null, // Placeholder, needs appropriate mapping
@@ -326,10 +325,10 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     }
 
     return {
+      remote_data: engagement,
+      remote_id: engagement.id,
       content: engagement.properties.hs_call_body,
       subject: engagement.properties.hs_call_title,
-      start_at: new Date(engagement.properties.createdate),
-      end_time: new Date(engagement.properties.hs_lastmodifieddate), // Assuming end time is mapped from last modified date
       type: 'CALL',
       direction: engagement.properties.hs_call_direction,
       field_mappings,
@@ -367,6 +366,8 @@ export class HubspotEngagementMapper implements IEngagementMapper {
     }
 
     return {
+      remote_data: engagement,
+      remote_id: engagement.id,
       content: engagement.properties.hs_meeting_body,
       subject: engagement.properties.hs_meeting_title,
       start_at: new Date(engagement.properties.hs_meeting_start_time),
@@ -408,10 +409,9 @@ export class HubspotEngagementMapper implements IEngagementMapper {
 
     return {
       remote_id: engagement.id,
+      remote_data: engagement,
       content: engagement.properties.hs_email_text,
       subject: engagement.properties.hs_email_subject,
-      start_at: new Date(engagement.properties.createdate),
-      end_time: new Date(engagement.properties.hs_lastmodifieddate), // Assuming end time can be mapped from last modified date
       type: 'EMAIL',
       direction:
         engagement.properties.hs_email_direction === 'INCOMING_EMAIL'

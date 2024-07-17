@@ -161,6 +161,7 @@ export class AttioDealMapper implements IDealMapper {
 
     return {
       remote_id: deal.id.record_id,
+      remote_data: deal,
       name: deal.values.name.length > 0 ? deal.values.name[0].value : null,
       description: '',
       field_mappings,

@@ -46,6 +46,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
     const result: ZendeskEngagementInput = {
       summary: source.content || null,
       incoming: source.direction === 'INBOUND',
+      phone_number: '33666666', // todo
     };
 
     if (source.start_at && source.end_time) {
@@ -163,6 +164,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
 
     return {
       remote_id: String(engagement.id),
+      remote_data: engagement,
       content: engagement.summary,
       subject: null,
       start_at: new Date(engagement.made_at),

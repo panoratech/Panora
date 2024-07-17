@@ -5,7 +5,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface ITaskService extends IBaseObjectService {
-  addTask(
+  addTask?(
     taskData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalTaskOutput>>;

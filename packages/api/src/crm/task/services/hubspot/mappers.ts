@@ -40,12 +40,12 @@ export class HubspotTaskMapper implements ITaskMapper {
     }[],
   ): Promise<HubspotTaskInput> {
     const result: any = {
-      hs_task_subject: source.subject || null,
-      hs_task_body: source.content || null,
-      hs_task_priority: null,
-      hs_timestamp: source.due_date
-        ? source.due_date.toISOString()
-        : new Date().toISOString(),
+      properties: {
+        hs_task_subject: source.subject || null,
+        hs_task_body: source.content || null,
+        hs_task_priority: null,
+        hs_timestamp: new Date() as any,
+      },
     };
     if (source.status) {
       result.hs_task_status = this.reverseMapToTaskStatus(
@@ -58,6 +58,38 @@ export class HubspotTaskMapper implements ITaskMapper {
       if (owner_id) {
         result.hubspot_owner_id = owner_id;
       }
+    }
+
+    if (source.deal_id) {
+      result.associations = result.associations ? [...result.associations] : [];
+      const id = await this.utils.getRemoteIdFromDealUuid(source.deal_id);
+      result.associations.push({
+        to: {
+          id: id,
+        },
+        types: [
+          {
+            associationCategory: 'HUBSPOT_DEFINED',
+            associationTypeId: 216,
+          },
+        ],
+      });
+    }
+
+    if (source.company_id) {
+      result.associations = result.associations ? [...result.associations] : [];
+      const id = await this.utils.getRemoteIdFromCompanyUuid(source.company_id);
+      result.associations.push({
+        to: {
+          id: id,
+        },
+        types: [
+          {
+            associationCategory: 'HUBSPOT_DEFINED',
+            associationTypeId: 192,
+          },
+        ],
+      });
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -127,11 +159,27 @@ export class HubspotTaskMapper implements ITaskMapper {
     if (task.properties.hs_task_status) {
       opts.status = this.mapToTaskStatus(task.properties.hs_task_status as any);
     }
+    if (task.associations) {
+      if (task.associations.deals) {
+        const remote_id = task.associations.deals.results[0].id;
+        opts.deal_id = await this.utils.getDealUuidFromRemoteId(
+          remote_id,
+          connectionId,
+        );
+      }
+      if (task.associations.companies) {
+        const remote_id = task.associations.companies.results[0].id;
+        opts.company_id = await this.utils.getCompanyUuidFromRemoteId(
+          remote_id,
+          connectionId,
+        );
+      }
+    }
     return {
       remote_id: task.id,
+      remote_data: task,
       subject: task.properties.hs_task_subject,
       content: task.properties.hs_task_body,
-      due_date: new Date(task.properties.hs_timestamp),
       field_mappings,
       ...opts,
     };

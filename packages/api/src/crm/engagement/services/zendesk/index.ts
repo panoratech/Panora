@@ -57,7 +57,7 @@ export class ZendeskService implements IEngagementService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/engagements`,
+        `${connection.account_url}/calls`,
         {
           data: engagementData,
         },

@@ -102,6 +102,7 @@ export class CloseContactMapper implements IContactMapper {
 
     return {
       remote_id: contact.id,
+      remote_data: contact,
       first_name: contact.name,
       last_name: null,
       email_addresses: contact.emails?.map(({ email, type }) => ({

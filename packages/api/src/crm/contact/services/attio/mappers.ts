@@ -154,6 +154,7 @@ export class AttioContactMapper implements IContactMapper {
 
     return {
       remote_id: contact.id.record_id,
+      remote_data: contact,
       first_name: contact.values.name[0]?.first_name,
       last_name: contact.values.name[0]?.last_name,
       email_addresses: contact.values.email_addresses?.map((e) => ({

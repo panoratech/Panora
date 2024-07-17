@@ -131,6 +131,7 @@ export class HubspotDealMapper implements IDealMapper {
 
     return {
       remote_id: deal.id,
+      remote_data: deal,
       name: deal.properties.dealname,
       description: '',
       field_mappings,

@@ -137,6 +137,7 @@ export class HubspotContactMapper implements IContactMapper {
 
     return {
       remote_id: contact.id,
+      remote_data: contact,
       first_name: contact.properties.firstname,
       last_name: contact.properties.lastname,
       email_addresses: [

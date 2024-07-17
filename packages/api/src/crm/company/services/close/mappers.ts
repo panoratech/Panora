@@ -103,6 +103,7 @@ export class CloseCompanyMapper implements ICompanyMapper {
     }
     return {
       remote_id: company.id,
+      remote_data: company,
       name: company.name,
       number_of_employees: company?.custom?.employees || null,
       addresses: company?.addresses?.map((address) => ({

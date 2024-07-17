@@ -150,6 +150,7 @@ export class ZendeskContactMapper implements IContactMapper {
 
     return {
       remote_id: String(contact.id),
+      remote_data: contact,
       first_name: contact.first_name,
       last_name: contact.last_name,
       email_addresses,

@@ -21,7 +21,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
       remote_id: string;
     }[],
   ): Promise<PipedriveTaskInput> {
-    const result: PipedriveTaskInput = {
+    /*const result: PipedriveTaskInput = {
       subject: source.subject || null,
       public_description: source.content || null,
       done: source.status === 'COMPLETED',
@@ -63,9 +63,9 @@ export class PipedriveTaskMapper implements ITaskMapper {
           result[mapping.remote_id] = v;
         }
       }
-    }
+    }*/
 
-    return result;
+    return;
   }
 
   async unify(
@@ -121,9 +121,9 @@ export class PipedriveTaskMapper implements ITaskMapper {
       }
     }
 
-    if (task.company_id) {
+    if (task.org_id) {
       const company_id = await this.utils.getCompanyUuidFromRemoteId(
-        String(task.company_id),
+        String(task.org_id),
         connectionId,
       );
       if (company_id) {
@@ -148,6 +148,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
 
     return {
       remote_id: String(task.id),
+      remote_data: task,
       subject: task.subject,
       content: task.public_description,
       status: task.done ? 'COMPLETED' : 'PENDING',

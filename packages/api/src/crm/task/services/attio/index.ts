@@ -48,6 +48,27 @@ export class AttioService implements ITaskService {
           },
         },
       );
+      const linked_records = await Promise.all(
+        resp.data.data.linked_records.map(async (record) => {
+          const res = await axios.get(
+            `https://api.attio.com/v2/objects/${record.target_object_id}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            },
+          );
+          return {
+            target_object_id: res.data.data.api_slug,
+            target_record_id: record.target_record_id,
+          };
+        }),
+      );
+
+      resp.data.data.linked_records = linked_records;
       return {
         data: resp?.data.data,
         message: 'Attio task created',

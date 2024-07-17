@@ -1,5 +1,7 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ApiResponse } from '@@core/utils/types';
@@ -9,14 +11,10 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { IEngagementService } from '../types';
 import {
-  EngagementDirection,
-  EngagementType,
   UnifiedEngagementInput,
   UnifiedEngagementOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class EngagementService {

@@ -55,6 +55,7 @@ export class ZohoStageMapper implements IStageMapper {
   ): UnifiedStageOutput {
     return {
       remote_id: null,
+      remote_data: stage,
       stage_name: stage.Stage_Name,
     };
   }
