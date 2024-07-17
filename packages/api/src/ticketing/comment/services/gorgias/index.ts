@@ -1,17 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
-import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { ICommentService } from '@ticketing/comment/types';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { GorgiasCommentInput, GorgiasCommentOutput } from './types';
-import { ServiceRegistry } from '../registry.service';
-import { Utils } from '@ticketing/@lib/@utils';
-import * as fs from 'fs';
 import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ICommentService } from '@ticketing/comment/types';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { GorgiasCommentInput, GorgiasCommentOutput } from './types';
 
 @Injectable()
 export class GorgiasService implements ICommentService {

@@ -1,18 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
-import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { ICommentService } from '@ticketing/comment/types';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { GitlabCommentInput, GitlabCommentOutput } from './types';
-import { ServiceRegistry } from '../registry.service';
-import { Utils } from '@ticketing/@lib/@utils';
-import * as fs from 'fs';
 import { SyncParam } from '@@core/utils/types/interface';
-import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ICommentService } from '@ticketing/comment/types';
+import axios from 'axios';
+import * as fs from 'fs';
+import { ServiceRegistry } from '../registry.service';
+import { GitlabCommentInput, GitlabCommentOutput } from './types';
 
 @Injectable()
 export class GitlabService implements ICommentService {
@@ -72,10 +70,12 @@ export class GitlabService implements ICommentService {
 
       // Assuming you want to modify the comment object here
       // For now, we'll just add the uploads to the comment
-      const data = {
+      const data: any = {
         ...commentData,
-        attachments: uploads,
       };
+      if (uploads.length > 0) {
+        data.attachments = uploads;
+      }
 
       const ticket = await this.prisma.tcg_tickets.findFirst({
         where: {

@@ -127,6 +127,13 @@ export class JiraService implements ITicketService {
           ...baseFields,
         };
       }*/
+      const { comment, ...baseFields } = ticketData.fields;
+
+      ticketData = {
+        fields: {
+          ...baseFields,
+        },
+      };
       const resp = await axios.post(
         `${connection.account_url}/issue`,
         JSON.stringify(ticketData),
@@ -140,7 +147,21 @@ export class JiraService implements ITicketService {
         },
       );
 
-      // todo: Add comment if someone wants to add one when creation of the ticket
+      if (comment && comment[0]) {
+        // Add comment if someone wants to add one when creation of the ticket
+        const resp_comment = await axios.post(
+          `${connection.account_url}/issue/${resp.data.id}/comment`,
+          JSON.stringify(comment[0]),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          },
+        );
+      }
 
       // Process attachments
       let uploads = [];

@@ -99,7 +99,7 @@ export class UnifiedTicketInput {
     description: 'The users UUIDs the ticket is assigned to',
   })
   @IsOptional()
-  assigned_to?: string[]; //UUID of Users objects ?
+  assigned_to?: string[]; //UUID of Users objects
 
   @ApiPropertyOptional({
     type: UnifiedCommentInput,

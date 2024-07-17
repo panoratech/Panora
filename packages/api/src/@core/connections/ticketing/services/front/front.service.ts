@@ -15,6 +15,7 @@ import {
   OAuth2AuthData,
   providerToType,
 } from '@panora/shared';
+import qs from 'qs';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { ITicketingConnectionService } from '../../types';
@@ -145,26 +146,30 @@ export class FrontConnectionService implements ITicketingConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
-      const res = await axios.post(
-        `https://app.frontapp.com/oauth/token`,
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
-          },
+
+      const DATA = new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+      }).toString();
+
+      const config = {
+        method: 'post',
+        url: 'https://app.frontapp.com/oauth/token',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Basic ${Buffer.from(
+            `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+          ).toString('base64')}`,
         },
-      );
+        data: DATA,
+      };
+
+      const res = await axios(config);
+
       const data: FrontOAuthResponse = res.data;
       await this.prisma.connections.update({
         where: {

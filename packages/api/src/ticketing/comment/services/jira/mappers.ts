@@ -7,6 +7,7 @@ import {
   UnifiedCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { JiraCommentInput, JiraCommentOutput } from './types';
+import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 @Injectable()
 export class JiraCommentMapper implements ICommentMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
@@ -21,7 +22,21 @@ export class JiraCommentMapper implements ICommentMapper {
     }[],
   ): Promise<JiraCommentInput> {
     const result: JiraCommentInput = {
-      body: source.body,
+      body: {
+        content: [
+          {
+            content: [
+              {
+                text: source.body,
+                type: 'text',
+              },
+            ],
+            type: 'paragraph',
+          },
+        ],
+        type: 'doc',
+        version: 1,
+      },
     };
     if (source.attachments) {
       result.attachments = source.attachments as string[];

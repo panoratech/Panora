@@ -33,6 +33,7 @@ interface GitlabTicket {
   severity: string;
   _links: Links;
   task_completion_status: TaskCompletionStatus;
+  [key: string]: any;
 }
 
 interface Epic {

@@ -1,8 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
-} from '@ticketing/attachment/types/model.unified';
+import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export type CommentCreatorType = 'USER' | 'CONTACT';

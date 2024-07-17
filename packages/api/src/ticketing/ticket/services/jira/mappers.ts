@@ -14,6 +14,12 @@ import {
   UnifiedTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { JiraTicketInput, JiraTicketOutput } from './types';
+import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedCommentOutput } from '@ticketing/comment/types/model.unified';
+import {
+  JiraCommentInput,
+  JiraCommentOutput,
+} from '@ticketing/comment/services/jira/types';
 
 @Injectable()
 export class JiraTicketMapper implements ITicketMapper {
@@ -72,6 +78,7 @@ export class JiraTicketMapper implements ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
+    connectionId?: string,
   ): Promise<JiraTicketInput> {
     if (!source.collections || !source.collections[0]) {
       throw new ReferenceError(
@@ -109,16 +116,29 @@ export class JiraTicketMapper implements ITicketMapper {
       result.fields.labels = source.tags as string[];
     }
 
-    if (source.priority) {
+    /*if (source.priority) {
       result.fields.priority = {
         name: this.reverseMapToTicketPriority(
           source.priority as TicketPriority,
         ),
       };
-    }
+    }*/
 
     if (source.attachments) {
       result.attachments = source.attachments as string[]; // dummy assigning we'll insert them in the service func
+    }
+
+    if (source.comment) {
+      const comment =
+        (await this.coreUnificationService.desunify<UnifiedCommentOutput>({
+          sourceObject: source.comment,
+          targetType: TicketingObject.comment,
+          providerName: 'jira',
+          vertical: 'ticketing',
+          connectionId: connectionId,
+          customFieldMappings: [],
+        })) as JiraCommentInput;
+      result.fields.comment = [comment];
     }
 
     // Map custom fields if applicable

@@ -13,6 +13,8 @@ import {
 import { GitlabTicketInput, GitlabTicketOutput } from './types';
 import { GitlabTagOutput } from '@ticketing/tag/services/gitlab/types';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { UnifiedCommentOutput } from '@ticketing/comment/types/model.unified';
+import { GitlabCommentInput } from '@ticketing/comment/services/gitlab/types';
 
 @Injectable()
 export class GitlabTicketMapper implements ITicketMapper {
@@ -31,6 +33,7 @@ export class GitlabTicketMapper implements ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
+    connectionId?: string,
   ): Promise<GitlabTicketInput> {
     const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(
       source.collections[0] as string,
@@ -59,6 +62,19 @@ export class GitlabTicketMapper implements ITicketMapper {
     const tags = source.tags as string[];
     if (tags) {
       result.labels = tags;
+    }
+
+    if (source.comment) {
+      const comment =
+        (await this.coreUnificationService.desunify<UnifiedCommentOutput>({
+          sourceObject: source.comment,
+          targetType: TicketingObject.comment,
+          providerName: 'gitlab',
+          vertical: 'ticketing',
+          connectionId: connectionId,
+          customFieldMappings: [],
+        })) as GitlabCommentInput;
+      result.comment = comment;
     }
 
     // TODO - Custom fields mapping

@@ -531,6 +531,9 @@ importers:
       pino-pretty:
         specifier: ^10.2.3
         version: 10.3.1
+      qs:
+        specifier: ^6.12.3
+        version: 6.12.3
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.14
@@ -8943,7 +8946,7 @@ packages:
       dezalgo: 1.0.4
       hexoid: 1.0.0
       once: 1.4.0
-      qs: 6.12.0
+      qs: 6.12.3
     dev: true
 
   /forwarded@0.2.0:
@@ -12214,12 +12217,11 @@ packages:
     dependencies:
       side-channel: 1.0.6
 
-  /qs@6.12.0:
-    resolution: {integrity: sha512-trVZiI6RMOkO476zLGaBIzszOdFPnCCXHPG9kn0yuS1uz6xdVxPfZdB3vUig9pxPFDM9BRAgz/YUIVQ1/vuiUg==}
+  /qs@6.12.3:
+    resolution: {integrity: sha512-AWJm14H1vVaO/iNZ4/hO+HyaTehuy9nRqVdkTqlJt0HWvBiBIEXFmb4C0DGeYo3Xes9rrEW+TxHsaigCbN5ICQ==}
     engines: {node: '>=0.6'}
     dependencies:
       side-channel: 1.0.6
-    dev: true
 
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -14002,7 +14004,7 @@ packages:
       formidable: 2.1.2
       methods: 1.1.2
       mime: 2.6.0
-      qs: 6.12.0
+      qs: 6.12.3
       semver: 7.6.0
     transitivePeerDependencies:
       - supports-color
