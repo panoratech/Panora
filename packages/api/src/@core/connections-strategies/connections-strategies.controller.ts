@@ -121,7 +121,6 @@ export class ConnectionsStrategiesController {
     summary: 'Fetch credentials info needed for connections',
   })
   @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard)
   @Get('getCredentials')
   async getCredentials(
     @Query('projectId') projectId: string,

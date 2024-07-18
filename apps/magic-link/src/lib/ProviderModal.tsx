@@ -96,7 +96,7 @@ const ProviderModal = () => {
     const PROVIDERS = selectedCategory == "All" ? providersArray() : providersArray(selectedCategory);
     const getConnectorsToDisplay = () => {
       // First, check if the company selected custom connectors in the UI or not
-      const unwanted_connectors = transformConnectorsStatus(connectorsForProject).filter(connector => connector.status === "false");
+      const unwanted_connectors = transformConnectorsStatus(connectorsForProject).filter(connector => connector.status === "false"); 
       // Filter out the providers present in the unwanted connectors array
       const filteredProviders = PROVIDERS.filter(provider => {
           return !unwanted_connectors.some( (unwanted) => 
