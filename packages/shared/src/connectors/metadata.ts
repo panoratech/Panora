@@ -2769,5 +2769,46 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.oauth2
         }
       },
+    },
+    'ecommerce': {
+      'shopify': {
+        urls: {
+          docsUrl: 'https://shopify.dev/docs/apps/build',
+          apiUrl: (store_name: string) => `https://${store_name}.myshopify.com`,
+          authBaseUrl: (shop: string) => `https://${shop}.myshopify.com/admin/oauth/authorize`
+        },
+        logoPath: 'https://1000logos.net/wp-content/uploads/2020/08/Shopify-Logo.jpg',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        }
+      },
+      'magento': {
+        urls: {
+          docsUrl: 'https://developer.adobe.com/commerce/webapi/get-started/',
+          apiUrl: '',
+          authBaseUrl: ''
+        },
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKRidZq3jXGYOIZ2X2EruCx0pFMkbsHineLg&s',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        }
+      },
+      'woocommerce': {
+        urls: {
+          docsUrl: 'https://woocommerce.github.io/woocommerce-rest-api-docs/#introduction',
+          apiUrl: (store_name: string) => `https://${store_name}.com`,
+          authBaseUrl: (store_name: string) => `https://${store_name}.com/wc-auth/v1/authorize`
+        },
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHiusc7S5-BoiU1YKCztJMv_Qj7wlim4TwbA&s',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        }
+      },
     }
 };

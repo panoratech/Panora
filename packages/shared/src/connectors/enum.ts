@@ -7,6 +7,10 @@ export enum CrmConnectors {
     CLOSE = 'close'
 }
 
+export enum EcommerceConnectors {
+    SHOPIFY = 'shopify',
+}
+
 export enum TicketingConnectors {
     ZENDESK = 'zendesk',
     FRONT = 'front',
