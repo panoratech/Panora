@@ -491,6 +491,7 @@ CREATE TABLE connector_sets
  tcg_front        boolean NULL,
  crm_zendesk      boolean NULL,
  crm_close        boolean NULL,
+ fs_box           boolean NULL,
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 

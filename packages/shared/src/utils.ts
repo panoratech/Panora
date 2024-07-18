@@ -163,7 +163,7 @@ export function slugFromCategory(category: ConnectorCategory) {
     case ConnectorCategory.MarketingAutomation:
       return 'mktg';
     case ConnectorCategory.FileStorage:
-      return 'fstg';
+      return 'fs';
     case ConnectorCategory.Accounting:
       return 'actng';
     default: 
@@ -183,7 +183,7 @@ export function categoryFromSlug(slug: string): ConnectorCategory | null {
       return ConnectorCategory.Ticketing;
     case 'mktg':
       return ConnectorCategory.MarketingAutomation;
-    case 'fstg':
+    case 'fs':
       return ConnectorCategory.FileStorage;
     case 'actng':
       return ConnectorCategory.Accounting;
