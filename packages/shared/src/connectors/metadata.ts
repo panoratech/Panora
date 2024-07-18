@@ -17,6 +17,9 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         authStrategy: {
           strategy: AuthStrategy.oauth2
+        },
+        options: {
+          local_redirect_uri_in_https: true
         }
       },
       'attio': {
@@ -392,7 +395,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           ]
         },
       },
-      // TODO
       'gorgias': {
         scopes: 'write:all openid email profile offline',
         urls: {
@@ -407,7 +409,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         authStrategy: {
           strategy: AuthStrategy.oauth2
-        }
+        },
+        active: false
       },
       'jira': {
         scopes: 'read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider offline_access',
