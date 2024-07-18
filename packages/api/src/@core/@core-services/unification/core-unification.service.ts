@@ -45,6 +45,17 @@ export class CoreUnification {
       if (sourceObject == null) return [];
       let targetType_: TargetObject;
       switch (vertical.toLowerCase()) {
+        case ConnectorCategory.Ecommerce:
+          targetType_ = targetType as EcommerceObject;
+          const ecommerceRegistry = this.registry.getService('ecommerce');
+          return ecommerceRegistry.unify({
+            sourceObject,
+            targetType_,
+            providerName,
+            connectionId,
+            customFieldMappings,
+            extraParams,
+          });
         case ConnectorCategory.Crm:
           targetType_ = targetType as CrmObject;
           const crmRegistry = this.registry.getService('crm');
@@ -151,6 +162,15 @@ export class CoreUnification {
     try {
       let targetType_: TargetObject;
       switch (vertical.toLowerCase()) {
+        case ConnectorCategory.Ecommerce:
+          targetType_ = targetType as EcommerceObject;
+          const ecommerceRegistry = this.registry.getService('crm');
+          return ecommerceRegistry.desunify({
+            sourceObject,
+            targetType_,
+            providerName,
+            customFieldMappings,
+          });
         case ConnectorCategory.Crm:
           targetType_ = targetType as CrmObject;
           const crmRegistry = this.registry.getService('crm');

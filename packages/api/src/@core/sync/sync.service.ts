@@ -30,6 +30,9 @@ export class CoreSyncService {
         case ConnectorCategory.Ats:
           await this.handleAtsSync(provider, linkedUserId);
           break;
+        case ConnectorCategory.Ecommerce:
+          await this.handleEcommerceSync(provider, linkedUserId);
+          break;
       }
     } catch (error) {
       throw error;
@@ -274,6 +277,45 @@ export class CoreSyncService {
         await task();
       } catch (error) {
         this.logger.error(`File Task failed: ${error.message}`, error);
+      }
+    }
+  }
+
+  async handleEcommerceSync(provider: string, linkedUserId: string) {
+    const tasks = [
+      () =>
+        this.registry.getService('ecommerce', 'order').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry
+          .getService('ecommerce', 'fulfillmentorders')
+          .syncForLinkedUser({
+            integrationId: provider,
+            linkedUserId: linkedUserId,
+          }),
+      () =>
+        this.registry.getService('ecommerce', 'fulfillment').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ecommerce', 'product').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ecommerce', 'customer').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+    ];
+    for (const task of tasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(`Ecommerce Task failed: ${error.message}`, error);
       }
     }
   }

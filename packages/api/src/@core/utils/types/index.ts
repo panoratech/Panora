@@ -19,6 +19,7 @@ import {
   MarketingAutomationObject,
   UnifiedMarketingAutomation,
 } from '@marketingautomation/@lib/@types';
+import { UnifiedEcommerce } from '@ecommerce/@lib/@types';
 
 export type Unified =
   | UnifiedCrm
@@ -27,7 +28,8 @@ export type Unified =
   | UnifiedMarketingAutomation
   | UnifiedAts
   | UnifiedHris
-  | UnifiedAccounting;
+  | UnifiedAccounting
+  | UnifiedEcommerce;
 
 export type UnifyReturnType = Unified | Unified[];
 
@@ -38,7 +40,8 @@ export type TargetObject =
   | AccountingObject
   | FileStorageObject
   | MarketingAutomationObject
-  | TicketingObject;
+  | TicketingObject
+  | EcommerceObject;
 
 export type StandardObject = TargetObject;
 

@@ -1,21 +1,18 @@
-import { AtsObject } from '@ats/@lib/@types';
-import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { Unified, UnifyReturnType } from '@@core/utils/types';
-import { UnifySourceType } from '@@core/utils/types/unify.output';
-import { AtsObjectInput } from '@@core/utils/types/original/original.ats';
-import { IUnification } from '@@core/utils/types/interface';
-import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { UnificationRegistry } from '@@core/@core-services/registries/unification.registry';
+import { Unified, UnifyReturnType } from '@@core/utils/types';
+import { IUnification } from '@@core/utils/types/interface';
+import { EcommerceObjectInput } from '@@core/utils/types/original/original.ecommerce';
+import { UnifySourceType } from '@@core/utils/types/unify.output';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class AtsUnificationService implements IUnification {
+export class EcommerceUnificationService implements IUnification {
   constructor(
-    private registry: UnificationRegistry<AtsUnificationService>,
+    private registry: UnificationRegistry<EcommerceUnificationService>,
     private mappersRegistry: MappersRegistry,
   ) {
-    this.registry.registerService('ats', this);
+    this.registry.registerService('ecommerce', this);
   }
   async desunify<T extends Unified>({
     sourceObject,
@@ -24,15 +21,15 @@ export class AtsUnificationService implements IUnification {
     customFieldMappings,
   }: {
     sourceObject: T;
-    targetType_: AtsObject;
+    targetType_: EcommerceObject;
     providerName: string;
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[];
-  }): Promise<AtsObjectInput> {
+  }): Promise<EcommerceObjectInput> {
     const mapping = this.mappersRegistry.getService(
-      'ats',
+      'ecommerce',
       targetType_,
       providerName,
     );
@@ -53,7 +50,7 @@ export class AtsUnificationService implements IUnification {
     customFieldMappings,
   }: {
     sourceObject: T;
-    targetType_: AtsObject;
+    targetType_: EcommerceObject;
     providerName: string;
     connectionId: string;
     customFieldMappings?: {
@@ -62,7 +59,7 @@ export class AtsUnificationService implements IUnification {
     }[];
   }): Promise<UnifyReturnType> {
     const mapping = this.mappersRegistry.getService(
-      'ats',
+      'ecommerce',
       targetType_,
       providerName,
     );
