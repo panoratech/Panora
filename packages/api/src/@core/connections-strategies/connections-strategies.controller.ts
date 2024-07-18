@@ -116,13 +116,12 @@ export class ConnectionsStrategiesController {
     );
   }
 
-  //todo: ADMIN
   @ApiOperation({
     operationId: 'getCredentials',
     summary: 'Fetch credentials info needed for connections',
   })
   @ApiResponse({ status: 200 })
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('getCredentials')
   async getCredentials(
     @Query('projectId') projectId: string,

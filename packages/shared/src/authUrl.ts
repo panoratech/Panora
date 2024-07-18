@@ -71,7 +71,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     config,
     encodedRedirectUrl,
     state,
-    apiUrl
+    apiUrl 
   } = input;
 
   const type = providerToType(providerName, vertical, authStrategy);
