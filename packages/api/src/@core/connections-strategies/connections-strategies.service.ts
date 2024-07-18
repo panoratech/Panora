@@ -90,8 +90,8 @@ export class ConnectionsStrategiesService {
       for (let i = 0; i < attributes.length; i++) {
         const attribute_slug = attributes[i];
         const value = values[i];
-        const encrypted_value = this.crypto.encrypt(value);
         //create all attributes (for oauth =>  client_id, client_secret)
+        console.log(`Attribute : ${attribute_slug}, value: ${value}`);
         const attribute_ = await this.prisma.cs_attributes.create({
           data: {
             id_cs_attribute: uuidv4(),
@@ -103,7 +103,7 @@ export class ConnectionsStrategiesService {
         const value_ = await this.prisma.cs_values.create({
           data: {
             id_cs_value: uuidv4(),
-            value: encrypted_value,
+            value: this.crypto.encrypt(value),
             id_cs_attribute: attribute_.id_cs_attribute,
           },
         });
