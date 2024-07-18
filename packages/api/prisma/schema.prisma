@@ -672,6 +672,7 @@ model connector_sets {
   tcg_front        Boolean?
   crm_zendesk      Boolean?
   crm_close        Boolean?
+  fs_box           Boolean?
   projects         projects[]
 }
 
