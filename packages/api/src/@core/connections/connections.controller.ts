@@ -57,7 +57,7 @@ export class ConnectionsController {
   @Get('oauth/callback')
   async handleOAuthCallback(@Res() res: Response, @Query() query: any) {
     try {
-      const { state, code, location } = query;
+      const { state, code, ...otherParams } = query;
       if (!code) {
         throw new ConnectionsError({
           name: 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR',
@@ -81,11 +81,16 @@ export class ConnectionsController {
       );
       await service.handleCallBack(
         providerName,
-        { linkedUserId, projectId, code, location },
+        { linkedUserId, projectId, code, otherParams },
         'oauth',
       );
 
-      res.redirect(returnUrl);
+      if (providerName == 'shopify') {
+        // we must redirect using shop and host to get a valid session on shopify server
+        service.redirectUponConnection(res, otherParams);
+      } else {
+        res.redirect(`/`);
+      }
 
       /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]

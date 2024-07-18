@@ -10,13 +10,12 @@ import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalProductOutput } from '@@core/utils/types/original/original.ecommerce';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ATS_PROVIDERS } from '@panora/shared';
-import { ecommerce_products as EcommerceProduct } from '@prisma/client';
+import { ATS_PROVIDERS, ECOMMERCE_PROVIDERS } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IProductService } from '../types';
 import { UnifiedProductOutput } from '../types/model.unified';
-
+import { ecom_products as EcommerceProduct } from '@prisma/client';
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
@@ -74,7 +73,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             });
             linkedUsers.map(async (linkedUser) => {
               try {
-                const providers = ATS_PROVIDERS;
+                const providers = ECOMMERCE_PROVIDERS;
                 for (const provider of providers) {
                   try {
                     await this.syncForLinkedUser({
@@ -153,7 +152,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         if (existingProduct) {
           return await this.prisma.ecom_products.update({
             where: {
-              id_ecommerce_product: existingProduct.id_ecommerce_product,
+              id_ecom_product: existingProduct.id_ecom_product,
             },
             data: baseData,
           });
@@ -161,7 +160,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           return await this.prisma.ecom_products.create({
             data: {
               ...baseData,
-              id_ecommerce_product: uuidv4(),
+              id_ecom_product: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
               id_connection: connection_id,
@@ -175,7 +174,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const originId = product.remote_id;
 
         const res = await updateOrCreateProduct(product, originId);
-        const product_id = res.id_ecommerce_product;
+        const product_id = res.id_ecom_product;
         products_results.push(res);
 
         // Process field mappings

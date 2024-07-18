@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { IDepartmentService } from '../types';
+import { IFulfillmentService } from '../types';
 
 @Injectable()
 export class ServiceRegistry {
-  private serviceMap: Map<string, IDepartmentService>;
+  private serviceMap: Map<string, IFulfillmentService>;
 
   constructor() {
-    this.serviceMap = new Map<string, IDepartmentService>();
+    this.serviceMap = new Map<string, IFulfillmentService>();
   }
 
-  registerService(serviceKey: string, service: IDepartmentService) {
+  registerService(serviceKey: string, service: IFulfillmentService) {
     this.serviceMap.set(serviceKey, service);
   }
 
-  getService(integrationId: string): IDepartmentService {
+  getService(integrationId: string): IFulfillmentService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
       throw new ReferenceError(

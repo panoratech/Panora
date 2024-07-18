@@ -5,6 +5,7 @@ import { IUnification } from '@@core/utils/types/interface';
 import { EcommerceObjectInput } from '@@core/utils/types/original/original.ecommerce';
 import { UnifySourceType } from '@@core/utils/types/unify.output';
 import { Injectable } from '@nestjs/common';
+import { EcommerceObject } from '@panora/shared';
 
 @Injectable()
 export class EcommerceUnificationService implements IUnification {

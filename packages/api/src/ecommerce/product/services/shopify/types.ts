@@ -1,5 +1,5 @@
 export interface ShopifyProductInput {
-  id: string;
+  [key: string]: any;
 }
 
 export type ShopifyProductOutput = Partial<ShopifyProductInput>;

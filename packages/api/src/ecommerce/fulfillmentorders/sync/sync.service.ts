@@ -1,23 +1,21 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { ApiResponse } from '@@core/utils/types';
-import { IDepartmentService } from '../types';
-import { OriginalDepartmentOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedDepartmentOutput } from '../types/model.unified';
-import { ats_departments as AtsDepartment } from '@prisma/client';
-import { ATS_PROVIDERS } from '@panora/shared';
-import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { OriginalFulfillmentOrdersOutput } from '@@core/utils/types/original/original.ecommerce';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { ATS_PROVIDERS, ECOMMERCE_PROVIDERS } from '@panora/shared';
+import { ecommerce_fulfillmentorders as EcommerceFulfillmentOrders } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IFulfillmentOrdersService } from '../types';
+import { UnifiedFulfillmentOrdersOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -33,13 +31,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
-    this.registry.registerService('ats', 'department', this);
+    this.registry.registerService('ecommerce', 'fulfillmentorders', this);
   }
 
   async onModuleInit() {
     try {
       await this.bullQueueService.queueSyncJob(
-        'ats-sync-departments',
+        'ecommerce-sync-fulfillmentorderss',
         '0 0 * * *',
       );
     } catch (error) {
@@ -50,7 +48,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   @Cron('0 */8 * * *') // every 8 hours
   async kickstartSync(user_id?: string) {
     try {
-      this.logger.log('Syncing departments...');
+      this.logger.log('Syncing fulfillmentorderss...');
       const users = user_id
         ? [
             await this.prisma.users.findUnique({
@@ -76,7 +74,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             });
             linkedUsers.map(async (linkedUser) => {
               try {
-                const providers = ATS_PROVIDERS;
+                const providers = ECOMMERCE_PROVIDERS;
                 for (const provider of providers) {
                   try {
                     await this.syncForLinkedUser({
@@ -102,15 +100,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
       const { integrationId, linkedUserId } = param;
-      const service: IDepartmentService =
+      const service: IFulfillmentOrdersService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedDepartmentOutput,
-        OriginalDepartmentOutput,
-        IDepartmentService
-      >(integrationId, linkedUserId, 'ats', 'department', service, []);
+        UnifiedFulfillmentOrdersOutput,
+        OriginalFulfillmentOrdersOutput,
+        IFulfillmentOrdersService
+      >(
+        integrationId,
+        linkedUserId,
+        'ecommerce',
+        'fulfillmentorders',
+        service,
+        [],
+      );
     } catch (error) {
       throw error;
     }
@@ -119,51 +124,54 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    departments: UnifiedDepartmentOutput[],
+    fulfillmentorderss: UnifiedFulfillmentOrdersOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
-  ): Promise<AtsDepartment[]> {
+  ): Promise<EcommerceFulfillmentOrders[]> {
     try {
-      const departments_results: AtsDepartment[] = [];
+      const fulfillmentorderss_results: EcommerceFulfillmentOrders[] = [];
 
-      const updateOrCreateDepartment = async (
-        department: UnifiedDepartmentOutput,
+      const updateOrCreateFulfillmentOrders = async (
+        fulfillmentorders: UnifiedFulfillmentOrdersOutput,
         originId: string,
       ) => {
-        let existingDepartment;
+        let existingFulfillmentOrders;
         if (!originId) {
-          existingDepartment = await this.prisma.ats_departments.findFirst({
-            where: {
-              name: department.name,
-              id_connection: connection_id,
-            },
-          });
+          existingFulfillmentOrders =
+            await this.prisma.ecommerce_fulfillmentorderss.findFirst({
+              where: {
+                name: fulfillmentorders.name,
+                id_connection: connection_id,
+              },
+            });
         } else {
-          existingDepartment = await this.prisma.ats_departments.findFirst({
-            where: {
-              remote_id: originId,
-              id_connection: connection_id,
-            },
-          });
+          existingFulfillmentOrders =
+            await this.prisma.ecommerce_fulfillmentorderss.findFirst({
+              where: {
+                remote_id: originId,
+                id_connection: connection_id,
+              },
+            });
         }
 
         const baseData: any = {
-          name: department.name ?? null,
+          name: fulfillmentorders.name ?? null,
           modified_at: new Date(),
         };
 
-        if (existingDepartment) {
-          return await this.prisma.ats_departments.update({
+        if (existingFulfillmentOrders) {
+          return await this.prisma.ecommerce_fulfillmentorderss.update({
             where: {
-              id_ats_department: existingDepartment.id_ats_department,
+              id_ecommerce_fulfillmentorders:
+                existingFulfillmentOrders.id_ecommerce_fulfillmentorders,
             },
             data: baseData,
           });
         } else {
-          return await this.prisma.ats_departments.create({
+          return await this.prisma.ecommerce_fulfillmentorderss.create({
             data: {
               ...baseData,
-              id_ats_department: uuidv4(),
+              id_ecommerce_fulfillmentorders: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
               id_connection: connection_id,
@@ -172,30 +180,33 @@ export class SyncService implements OnModuleInit, IBaseSync {
         }
       };
 
-      for (let i = 0; i < departments.length; i++) {
-        const department = departments[i];
-        const originId = department.remote_id;
+      for (let i = 0; i < fulfillmentorderss.length; i++) {
+        const fulfillmentorders = fulfillmentorderss[i];
+        const originId = fulfillmentorders.remote_id;
 
-        const res = await updateOrCreateDepartment(department, originId);
-        const department_id = res.id_ats_department;
-        departments_results.push(res);
+        const res = await updateOrCreateFulfillmentOrders(
+          fulfillmentorders,
+          originId,
+        );
+        const fulfillmentorders_id = res.id_ecommerce_fulfillmentorders;
+        fulfillmentorderss_results.push(res);
 
         // Process field mappings
         await this.ingestService.processFieldMappings(
-          department.field_mappings,
-          department_id,
+          fulfillmentorders.field_mappings,
+          fulfillmentorders_id,
           originSource,
           linkedUserId,
         );
 
         // Process remote data
         await this.ingestService.processRemoteData(
-          department_id,
+          fulfillmentorders_id,
           remote_data[i],
         );
       }
 
-      return departments_results;
+      return fulfillmentorderss_results;
     } catch (error) {
       throw error;
     }

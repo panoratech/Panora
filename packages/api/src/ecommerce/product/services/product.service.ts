@@ -3,6 +3,7 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { UnifiedProductOutput } from '../types/model.unified';
+import { ecom_products as EcommerceProduct } from '@prisma/client';
 
 @Injectable()
 export class ProductService {
@@ -19,7 +20,7 @@ export class ProductService {
     try {
       const product = await this.prisma.ecom_products.findUnique({
         where: {
-          id_ecommerce_product: id_ecommerce_product,
+          id_ecom_product: id_ecommerce_product,
         },
       });
 
@@ -31,7 +32,7 @@ export class ProductService {
       const values = await this.prisma.value.findMany({
         where: {
           entity: {
-            ressource_owner_id: product.id_ecommerce_product,
+            ressource_owner_id: product.id_ecom_product,
           },
         },
         include: {
@@ -53,7 +54,7 @@ export class ProductService {
 
       // Transform to UnifiedProductOutput format
       const unifiedProduct: UnifiedProductOutput = {
-        id: product.id_ecommerce_product,
+        id: product.id_ecom_product,
         name: product.name,
         field_mappings: field_mappings,
         remote_id: product.remote_id,
@@ -65,7 +66,7 @@ export class ProductService {
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
-            ressource_owner_id: product.id_ecommerce_product,
+            ressource_owner_id: product.id_ecom_product,
           },
         });
         const remote_data = JSON.parse(resp.data);
@@ -115,7 +116,7 @@ export class ProductService {
         const isCursorPresent = await this.prisma.ecom_products.findFirst({
           where: {
             id_connection: connection_id,
-            id_ecommerce_product: cursor,
+            id_ecom_product: cursor,
           },
         });
         if (!isCursorPresent) {
@@ -127,7 +128,7 @@ export class ProductService {
         take: limit + 1,
         cursor: cursor
           ? {
-              id_ecommerce_product: cursor,
+              id_ecom_product: cursor,
             }
           : undefined,
         orderBy: {
@@ -140,7 +141,7 @@ export class ProductService {
 
       if (products.length === limit + 1) {
         next_cursor = Buffer.from(
-          products[products.length - 1].id_ecommerce_product,
+          products[products.length - 1].id_ecom_product,
         ).toString('base64');
         products.pop();
       }
@@ -155,7 +156,7 @@ export class ProductService {
           const values = await this.prisma.value.findMany({
             where: {
               entity: {
-                ressource_owner_id: product.id_ecommerce_product,
+                ressource_owner_id: product.id_ecom_product,
               },
             },
             include: {
@@ -180,7 +181,7 @@ export class ProductService {
 
           // Transform to UnifiedProductOutput format
           return {
-            id: product.id_ecommerce_product,
+            id: product.id_ecom_product,
             name: product.name,
             field_mappings: field_mappings,
             remote_id: product.remote_id,

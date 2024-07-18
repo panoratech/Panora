@@ -7,13 +7,13 @@ import { Queues } from '@@core/@core-services/queues/types';
 export class SyncProcessor {
   constructor(private syncService: SyncService) {}
 
-  @Process('ats-sync-departments')
-  async handleSyncDepartments(job: Job) {
+  @Process('ecommerce-sync-fulfillments')
+  async handleSyncFulfillments(job: Job) {
     try {
-      console.log(`Processing queue -> ats-sync-departments ${job.id}`);
+      console.log(`Processing queue -> ecommerce-sync-fulfillments ${job.id}`);
       await this.syncService.kickstartSync();
     } catch (error) {
-      console.error('Error syncing ats departments', error);
+      console.error('Error syncing ecommerce fulfillments', error);
     }
   }
 }

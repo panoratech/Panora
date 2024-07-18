@@ -1,17 +1,15 @@
-type CommonCallbackParams = {
+export type OAuthCallbackParams = {
   projectId: string;
   linkedUserId: string;
+  code: string;
+  [key: string]: any;
 };
 
-export type APIKeyCallbackParams = CommonCallbackParams & {
+export type APIKeyCallbackParams = {
+  projectId: string;
+  linkedUserId: string;
   apikey: string;
   body_data?: { [key: string]: any };
-};
-
-// Define the specific callback parameters for OAUTH
-export type OAuthCallbackParams = CommonCallbackParams & {
-  code: string;
-  location?: string; // for zoho
 };
 
 // Define the discriminated union type for callback parameters
@@ -38,4 +36,6 @@ export interface IConnectionCategory {
     id_project: string,
     account_url?: string,
   ): Promise<void>;
+
+  redirectUponConnection?(...params: any[]): void;
 }

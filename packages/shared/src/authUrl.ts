@@ -124,7 +124,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if(providerName === 'helpscout') {
     params = `client_id=${encodeURIComponent(clientId)}&state=${state}`;
   }
-  if(providerName === 'pipedrive') {
+  if(providerName === 'pipedrive' || providerName === 'shopify') {
     params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
   }
 

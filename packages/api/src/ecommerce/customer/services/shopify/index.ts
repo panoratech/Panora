@@ -10,6 +10,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { ShopifyCustomerOutput } from './types';
+import { EcommerceObject } from '@panora/shared';
 
 @Injectable()
 export class ShopifyService implements ICustomerService {
@@ -23,12 +24,6 @@ export class ShopifyService implements ICustomerService {
       EcommerceObject.customer.toUpperCase() + ':' + ShopifyService.name,
     );
     this.registry.registerService('shopify', this);
-  }
-  addCustomer(
-    customerData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalCustomerOutput>> {
-    throw new Error('Method not implemented.');
   }
 
   async sync(data: SyncParam): Promise<ApiResponse<ShopifyCustomerOutput[]>> {

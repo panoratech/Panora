@@ -1,25 +1,10 @@
 /* INPUT */
 
-import {
-  ShopifyProductInput,
-  ShopifyProductOutput,
-} from '@ecommerce/product/services/shopify/types';
-import {
-  ShopifyOrderInput,
-  ShopifyOrderOutput,
-} from '@ecommerce/order/services/shopify/types';
-import {
-  ShopifyFulfillmentOrdersInput,
-  ShopifyFulfillmentOrdersOutput,
-} from '@ecommerce/fulfillmentorders/services/shopify/types';
-import {
-  ShopifyCustomerInput,
-  ShopifyCustomerOutput,
-} from '@ecommerce/customer/services/shopify/types';
-import {
-  ShopifyFulfillmentInput,
-  ShopifyFulfillmentOrderOutput,
-} from '@ecommerce/fulfillment/services/shopify/types';
+import { ShopifyCustomerInput } from '@ecommerce/customer/services/shopify/types';
+import { ShopifyFulfillmentInput } from '@ecommerce/fulfillment/services/shopify/types';
+import { ShopifyFulfillmentOrdersInput } from '@ecommerce/fulfillmentorders/services/shopify/types';
+import { ShopifyOrderInput } from '@ecommerce/order/services/shopify/types';
+import { ShopifyProductInput } from '@ecommerce/product/services/shopify/types';
 
 /* product */
 export type OriginalProductInput = ShopifyProductInput;

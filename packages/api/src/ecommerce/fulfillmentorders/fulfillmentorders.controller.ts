@@ -1,47 +1,40 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiCustomResponse } from '@@core/utils/types';
 import {
   Controller,
-  Post,
-  Body,
-  Query,
   Get,
-  Patch,
-  Param,
   Headers,
+  Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
-  ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiHeader,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { DepartmentService } from './services/department.service';
-import {
-  UnifiedDepartmentInput,
-  UnifiedDepartmentOutput,
-} from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { FulfillmentOrdersService } from './services/fulfillmentorders.service';
+import { UnifiedFulfillmentOrdersOutput } from './types/model.unified';
 
-@ApiTags('ats/department')
-@Controller('ats/department')
-export class DepartmentController {
+@ApiTags('ats/fulfillmentorders')
+@Controller('ats/fulfillmentorders')
+export class FulfillmentOrdersController {
   constructor(
-    private readonly departmentService: DepartmentService,
+    private readonly fulfillmentordersService: FulfillmentOrdersService,
     private logger: LoggerService,
     private connectionUtils: ConnectionUtils,
   ) {
-    this.logger.setContext(DepartmentController.name);
+    this.logger.setContext(FulfillmentOrdersController.name);
   }
 
   @ApiOperation({
-    operationId: 'getDepartments',
-    summary: 'List a batch of Departments',
+    operationId: 'getFulfillmentOrderss',
+    summary: 'List a batch of FulfillmentOrderss',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,10 +42,10 @@ export class DepartmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDepartmentOutput)
+  @ApiCustomResponse(UnifiedFulfillmentOrdersOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getDepartments(
+  async getFulfillmentOrderss(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -62,7 +55,7 @@ export class DepartmentController {
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.departmentService.getDepartments(
+      return this.fulfillmentordersService.getFulfillmentOrderss(
         connectionId,
         remoteSource,
         linkedUserId,
@@ -76,21 +69,23 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'getDepartment',
-    summary: 'Retrieve a Department',
-    description: 'Retrieve a department from any connected Ats software',
+    operationId: 'getFulfillmentOrders',
+    summary: 'Retrieve a FulfillmentOrders',
+    description:
+      'Retrieve a fulfillmentorders from any connected Ecommerce software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
-    description: 'id of the department you want to retrieve.',
+    description: 'id of the fulfillmentorders you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
+    description:
+      'Set to true to include data from the original Ecommerce software.',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -98,7 +93,7 @@ export class DepartmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDepartmentOutput)
+  @ApiCustomResponse(UnifiedFulfillmentOrdersOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -110,7 +105,7 @@ export class DepartmentController {
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
-    return this.departmentService.getDepartment(
+    return this.fulfillmentordersService.getFulfillmentOrders(
       id,
       linkedUserId,
       remoteSource,

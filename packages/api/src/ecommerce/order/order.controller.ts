@@ -1,47 +1,40 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiCustomResponse } from '@@core/utils/types';
 import {
   Controller,
-  Post,
-  Body,
-  Query,
   Get,
-  Patch,
-  Param,
   Headers,
+  Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
-  ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiHeader,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { DepartmentService } from './services/department.service';
-import {
-  UnifiedDepartmentInput,
-  UnifiedDepartmentOutput,
-} from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { OrderService } from './services/order.service';
+import { UnifiedOrderOutput } from './types/model.unified';
 
-@ApiTags('ats/department')
-@Controller('ats/department')
-export class DepartmentController {
+@ApiTags('ecommerce/order')
+@Controller('ecommerce/order')
+export class OrderController {
   constructor(
-    private readonly departmentService: DepartmentService,
+    private readonly orderService: OrderService,
     private logger: LoggerService,
     private connectionUtils: ConnectionUtils,
   ) {
-    this.logger.setContext(DepartmentController.name);
+    this.logger.setContext(OrderController.name);
   }
 
   @ApiOperation({
-    operationId: 'getDepartments',
-    summary: 'List a batch of Departments',
+    operationId: 'getOrders',
+    summary: 'List a batch of Orders',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,10 +42,10 @@ export class DepartmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDepartmentOutput)
+  @ApiCustomResponse(UnifiedOrderOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  async getDepartments(
+  async getOrders(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: FetchObjectsQueryDto,
   ) {
@@ -62,7 +55,7 @@ export class DepartmentController {
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.departmentService.getDepartments(
+      return this.orderService.getOrders(
         connectionId,
         remoteSource,
         linkedUserId,
@@ -76,15 +69,15 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'getDepartment',
-    summary: 'Retrieve a Department',
-    description: 'Retrieve a department from any connected Ats software',
+    operationId: 'getOrder',
+    summary: 'Retrieve a Order',
+    description: 'Retrieve a order from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
-    description: 'id of the department you want to retrieve.',
+    description: 'id of the order you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -98,7 +91,7 @@ export class DepartmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDepartmentOutput)
+  @ApiCustomResponse(UnifiedOrderOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -110,7 +103,7 @@ export class DepartmentController {
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
-    return this.departmentService.getDepartment(
+    return this.orderService.getOrder(
       id,
       linkedUserId,
       remoteSource,

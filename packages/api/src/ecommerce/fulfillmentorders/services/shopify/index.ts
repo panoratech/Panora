@@ -4,16 +4,16 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { SyncParam } from '@@core/utils/types/interface';
-import { OriginalProductOutput } from '@@core/utils/types/original/original.ecommerce';
-import { IProductService } from '@ecommerce/product/types';
+import { OriginalFulfillmentOrdersOutput } from '@@core/utils/types/original/original.ecommerce';
+import { IFulfillmentOrdersService } from '@ecommerce/fulfillmentorders/types';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
-import { ShopifyProductOutput } from './types';
+import { ShopifyFulfillmentOrdersOutput } from './types';
 import { EcommerceObject } from '@panora/shared';
 
 @Injectable()
-export class ShopifyService implements IProductService {
+export class ShopifyService implements IFulfillmentOrdersService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -21,18 +21,16 @@ export class ShopifyService implements IProductService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      EcommerceObject.product.toUpperCase() + ':' + ShopifyService.name,
+      EcommerceObject.fulfillmentorders.toUpperCase() +
+        ':' +
+        ShopifyService.name,
     );
     this.registry.registerService('shopify', this);
   }
-  addProduct(
-    productData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalProductOutput>> {
-    throw new Error('Method not implemented.');
-  }
 
-  async sync(data: SyncParam): Promise<ApiResponse<ShopifyProductOutput[]>> {
+  async sync(
+    data: SyncParam,
+  ): Promise<ApiResponse<ShopifyFulfillmentOrdersOutput[]>> {
     try {
       const { linkedUserId } = data;
 
@@ -54,12 +52,13 @@ export class ShopifyService implements IProductService {
           },
         },
       );
-      const products: ShopifyProductOutput[] = resp.data.results;
-      this.logger.log(`Synced shopify products !`);
+      const fulfillmentorderss: ShopifyFulfillmentOrdersOutput[] =
+        resp.data.results;
+      this.logger.log(`Synced shopify fulfillmentorderss !`);
 
       return {
-        data: products,
-        message: 'Shopify products retrieved',
+        data: fulfillmentorderss,
+        message: 'Shopify fulfillmentorderss retrieved',
         statusCode: 200,
       };
     } catch (error) {

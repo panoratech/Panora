@@ -14294,6 +14294,671 @@
         ]
       }
     },
+    "/ecommerce/product": {
+      "get": {
+        "operationId": "getProducts",
+        "summary": "List a batch of Products",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original software.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedProductOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ecommerce/product"
+        ]
+      }
+    },
+    "/ecommerce/product/{id}": {
+      "get": {
+        "operationId": "getProduct",
+        "summary": "Retrieve a Product",
+        "description": "Retrieve a product from any connected Ats software",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the product you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ats software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedProductOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ecommerce/product"
+        ]
+      }
+    },
+    "/ecommerce/order": {
+      "get": {
+        "operationId": "getOrders",
+        "summary": "List a batch of Orders",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original software.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedOrderOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ecommerce/order"
+        ]
+      }
+    },
+    "/ecommerce/order/{id}": {
+      "get": {
+        "operationId": "getOrder",
+        "summary": "Retrieve a Order",
+        "description": "Retrieve a order from any connected Ats software",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the order you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ats software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedOrderOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ecommerce/order"
+        ]
+      }
+    },
+    "/ecommerce/customer": {
+      "get": {
+        "operationId": "getCustomers",
+        "summary": "List a batch of Customers",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original software.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCustomerOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ecommerce/customer"
+        ]
+      }
+    },
+    "/ecommerce/customer/{id}": {
+      "get": {
+        "operationId": "getCustomer",
+        "summary": "Retrieve a Customer",
+        "description": "Retrieve a customer from any connected Ats software",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the customer you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ats software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedCustomerOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ecommerce/customer"
+        ]
+      }
+    },
+    "/ecommerce/fulfillment": {
+      "get": {
+        "operationId": "getFulfillments",
+        "summary": "List a batch of Fulfillments",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original software.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedFulfillmentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ecommerce/fulfillment"
+        ]
+      }
+    },
+    "/ecommerce/fulfillment/{id}": {
+      "get": {
+        "operationId": "getFulfillment",
+        "summary": "Retrieve a Fulfillment",
+        "description": "Retrieve a fulfillment from any connected Ats software",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the fulfillment you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ats software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedFulfillmentOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ecommerce/fulfillment"
+        ]
+      }
+    },
+    "/ats/fulfillmentorders": {
+      "get": {
+        "operationId": "getFulfillmentOrderss",
+        "summary": "List a batch of FulfillmentOrderss",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original software.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records.",
+            "schema": {
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Set to get the number of records after this cursor.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedFulfillmentOrdersOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ats/fulfillmentorders"
+        ]
+      }
+    },
+    "/ats/fulfillmentorders/{id}": {
+      "get": {
+        "operationId": "getFulfillmentOrders",
+        "summary": "Retrieve a FulfillmentOrders",
+        "description": "Retrieve a fulfillmentorders from any connected Ecommerce software",
+        "parameters": [
+          {
+            "name": "x-connection-token",
+            "required": true,
+            "in": "header",
+            "description": "The connection token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "id of the fulfillmentorders you want to retrieve.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "remote_data",
+            "required": false,
+            "in": "query",
+            "description": "Set to true to include data from the original Ecommerce software.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/UnifiedFulfillmentOrdersOutput"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ats/fulfillmentorders"
+        ]
+      }
+    },
     "/ticketing/attachments": {
       "get": {
         "operationId": "getTicketingAttachments",
@@ -17942,6 +18607,197 @@
           "shared_link",
           "permission",
           "field_mappings"
+        ]
+      },
+      "UnifiedProductOutput": {
+        "type": "object",
+        "properties": {
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The UUID of the department"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The remote ID of the department in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          },
+          "created_at": {
+            "type": "object",
+            "properties": {}
+          },
+          "modified_at": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data",
+          "created_at",
+          "modified_at"
+        ]
+      },
+      "UnifiedOrderOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the order"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The UUID of the order"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The remote ID of the order in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          },
+          "created_at": {
+            "type": "object",
+            "properties": {}
+          },
+          "modified_at": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data",
+          "created_at",
+          "modified_at"
+        ]
+      },
+      "UnifiedCustomerOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the customer"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The UUID of the customer"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The remote ID of the customer in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          },
+          "created_at": {
+            "type": "object",
+            "properties": {}
+          },
+          "modified_at": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data",
+          "created_at",
+          "modified_at"
+        ]
+      },
+      "UnifiedFulfillmentOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the fulfillment"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The UUID of the fulfillment"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The remote ID of the fulfillment in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          },
+          "created_at": {
+            "type": "object",
+            "properties": {}
+          },
+          "modified_at": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data",
+          "created_at",
+          "modified_at"
+        ]
+      },
+      "UnifiedFulfillmentOrdersOutput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the fulfillmentorders"
+          },
+          "field_mappings": {
+            "type": "object",
+            "properties": {}
+          },
+          "id": {
+            "type": "string",
+            "description": "The UUID of the fulfillmentorders"
+          },
+          "remote_id": {
+            "type": "string",
+            "description": "The remote ID of the fulfillmentorders in the context of the 3rd Party"
+          },
+          "remote_data": {
+            "type": "object",
+            "properties": {}
+          },
+          "created_at": {
+            "type": "object",
+            "properties": {}
+          },
+          "modified_at": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "required": [
+          "field_mappings",
+          "remote_data",
+          "created_at",
+          "modified_at"
         ]
       }
     }

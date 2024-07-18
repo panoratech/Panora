@@ -10,12 +10,12 @@ import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalCustomerOutput } from '@@core/utils/types/original/original.ecommerce';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ATS_PROVIDERS } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ICustomerService } from '../types';
 import { UnifiedCustomerOutput } from '../types/model.unified';
-
+import { ECOMMERCE_PROVIDERS } from '@panora/shared';
+import { ecom_customers as EcommerceCustomer } from '@prisma/client';
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
@@ -129,14 +129,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
       ) => {
         let existingCustomer;
         if (!originId) {
-          existingCustomer = await this.prisma.ecommerce_customers.findFirst({
+          existingCustomer = await this.prisma.ecom_customers.findFirst({
             where: {
               name: customer.name,
               id_connection: connection_id,
             },
           });
         } else {
-          existingCustomer = await this.prisma.ecommerce_customers.findFirst({
+          existingCustomer = await this.prisma.ecom_customers.findFirst({
             where: {
               remote_id: originId,
               id_connection: connection_id,
@@ -150,17 +150,17 @@ export class SyncService implements OnModuleInit, IBaseSync {
         };
 
         if (existingCustomer) {
-          return await this.prisma.ecommerce_customers.update({
+          return await this.prisma.ecom_customers.update({
             where: {
-              id_ecommerce_customer: existingCustomer.id_ecommerce_customer,
+              id_ecom_customer: existingCustomer.id_ecom_customer,
             },
             data: baseData,
           });
         } else {
-          return await this.prisma.ecommerce_customers.create({
+          return await this.prisma.ecom_customers.create({
             data: {
               ...baseData,
-              id_ecommerce_customer: uuidv4(),
+              id_ecom_customer: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
               id_connection: connection_id,
@@ -174,7 +174,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const originId = customer.remote_id;
 
         const res = await updateOrCreateCustomer(customer, originId);
-        const customer_id = res.id_ecommerce_customer;
+        const customer_id = res.id_ecom_customer;
         customers_results.push(res);
 
         // Process field mappings

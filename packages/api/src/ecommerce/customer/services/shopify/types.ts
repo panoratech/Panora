@@ -1,8 +1,5 @@
 export interface ShopifyCustomerInput {
-  id: string;
-  name: string;
-  isArchived: boolean;
-  parentId: string;
+  [key: string]: any;
 }
 
 export type ShopifyCustomerOutput = Partial<ShopifyCustomerInput>;

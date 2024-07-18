@@ -20,6 +20,7 @@ import {
   UnifiedMarketingAutomation,
 } from '@marketingautomation/@lib/@types';
 import { UnifiedEcommerce } from '@ecommerce/@lib/@types';
+import { EcommerceObject } from '@panora/shared';
 
 export type Unified =
   | UnifiedCrm

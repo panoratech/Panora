@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
 
-export class UnifiedDepartmentInput {
+export class UnifiedFulfillmentOrdersInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The name of the department',
+    description: 'The name of the fulfillmentorders',
   })
   @IsString()
   @IsOptional()
@@ -19,10 +19,10 @@ export class UnifiedDepartmentInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedDepartmentOutput extends UnifiedDepartmentInput {
+export class UnifiedFulfillmentOrdersOutput extends UnifiedFulfillmentOrdersInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The UUID of the department',
+    description: 'The UUID of the fulfillmentorders',
   })
   @IsUUID()
   @IsOptional()
@@ -31,7 +31,7 @@ export class UnifiedDepartmentOutput extends UnifiedDepartmentInput {
   @ApiPropertyOptional({
     type: String,
     description:
-      'The remote ID of the department in the context of the 3rd Party',
+      'The remote ID of the fulfillmentorders in the context of the 3rd Party',
   })
   @IsString()
   @IsOptional()
@@ -40,7 +40,7 @@ export class UnifiedDepartmentOutput extends UnifiedDepartmentInput {
   @ApiPropertyOptional({
     type: {},
     description:
-      'The remote data of the department in the context of the 3rd Party',
+      'The remote data of the fulfillmentorders in the context of the 3rd Party',
   })
   @IsOptional()
   remote_data?: Record<string, any>;

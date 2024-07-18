@@ -1,17 +1,55 @@
+import { Address } from '@ecommerce/@lib/@types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
+import {
+  IsUUID,
+  IsOptional,
+  IsString,
+  IsDateString,
+  IsEmail,
+} from 'class-validator';
 
 export class UnifiedCustomerInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The name of the customer',
+    description: 'The email of the customer',
+  })
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The first name of the customer',
   })
   @IsString()
   @IsOptional()
-  name?: string;
+  first_name?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: String,
+    description: 'The last name of the customer',
+  })
+  @IsString()
+  @IsOptional()
+  last_name?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The phone number of the customer',
+  })
+  @IsString()
+  @IsOptional()
+  phone_number?: string;
+
+  @ApiPropertyOptional({
+    type: [Object],
+    description: 'The addresses of the customer',
+  })
+  @IsOptional()
+  addresses?: Address[];
+
+  @ApiPropertyOptional({
+    type: String,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -46,16 +84,18 @@ export class UnifiedCustomerOutput extends UnifiedCustomerInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: String,
     description: 'The created date of the object',
   })
+  @IsDateString()
   @IsOptional()
-  created_at?: any;
+  created_at?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: String,
     description: 'The modified date of the object',
   })
+  @IsDateString()
   @IsOptional()
-  modified_at?: any;
+  modified_at?: string;
 }

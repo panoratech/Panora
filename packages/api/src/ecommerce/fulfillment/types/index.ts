@@ -1,24 +1,19 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedDepartmentInput,
-  UnifiedDepartmentOutput,
+  UnifiedFulfillmentInput,
+  UnifiedFulfillmentOutput,
 } from './model.unified';
-import { OriginalDepartmentOutput } from '@@core/utils/types/original/original.ats';
+import { OriginalFulfillmentOutput } from '@@core/utils/types/original/original.ecommerce';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IDepartmentService extends IBaseObjectService {
-  addDepartment(
-    departmentData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalDepartmentOutput>>;
-
-  sync(data: SyncParam): Promise<ApiResponse<OriginalDepartmentOutput[]>>;
+export interface IFulfillmentService extends IBaseObjectService {
+  sync(data: SyncParam): Promise<ApiResponse<OriginalFulfillmentOutput[]>>;
 }
 
-export interface IDepartmentMapper {
+export interface IFulfillmentMapper {
   desunify(
-    source: UnifiedDepartmentInput,
+    source: UnifiedFulfillmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,11 +21,11 @@ export interface IDepartmentMapper {
   ): DesunifyReturnType;
 
   unify(
-    source: OriginalDepartmentOutput | OriginalDepartmentOutput[],
+    source: OriginalFulfillmentOutput | OriginalFulfillmentOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDepartmentOutput | UnifiedDepartmentOutput[]>;
+  ): Promise<UnifiedFulfillmentOutput | UnifiedFulfillmentOutput[]>;
 }

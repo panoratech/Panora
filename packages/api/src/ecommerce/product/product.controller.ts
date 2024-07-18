@@ -1,32 +1,25 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiCustomResponse } from '@@core/utils/types';
 import {
   Controller,
-  Post,
-  Body,
-  Query,
   Get,
-  Patch,
-  Param,
   Headers,
+  Param,
+  Query,
   UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
-  ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiHeader,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
 import { ProductService } from './services/product.service';
-import {
-  UnifiedProductInput,
-  UnifiedProductOutput,
-} from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { UnifiedProductOutput } from './types/model.unified';
 
 @ApiTags('ecommerce/product')
 @Controller('ecommerce/product')

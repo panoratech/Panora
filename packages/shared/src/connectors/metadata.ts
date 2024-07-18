@@ -2772,6 +2772,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
     },
     'ecommerce': {
       'shopify': {
+        scopes: 'write_products,read_shipping',
         urls: {
           docsUrl: 'https://shopify.dev/docs/apps/build',
           apiUrl: (store_name: string) => `https://${store_name}.myshopify.com`,
@@ -2782,6 +2783,9 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
+        },
+        options: {
+          company_subdomain: true,
         }
       },
       'magento': {
@@ -2795,7 +2799,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
-        }
+        },
       },
       'woocommerce': {
         urls: {
@@ -2808,6 +2812,9 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
+        },
+        options: {
+          company_subdomain: true,
         }
       },
     }

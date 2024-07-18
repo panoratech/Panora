@@ -2,36 +2,36 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedDepartmentOutput } from '../types/model.unified';
+import { UnifiedOrderOutput } from '../types/model.unified';
 
 @Injectable()
-export class DepartmentService {
+export class OrderService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
-    this.logger.setContext(DepartmentService.name);
+    this.logger.setContext(OrderService.name);
   }
 
-  async getDepartment(
-    id_ats_department: string,
+  async getOrder(
+    id_ecom_order: string,
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedDepartmentOutput> {
+  ): Promise<UnifiedOrderOutput> {
     try {
-      const department = await this.prisma.ats_departments.findUnique({
+      const order = await this.prisma.ecom_orders.findUnique({
         where: {
-          id_ats_department: id_ats_department,
+          id_ecom_order: id_ecom_order,
         },
       });
 
-      if (!department) {
-        throw new Error(`Department with ID ${id_ats_department} not found.`);
+      if (!order) {
+        throw new Error(`Order with ID ${id_ecom_order} not found.`);
       }
 
-      // Fetch field mappings for the department
+      // Fetch field mappings for the order
       const values = await this.prisma.value.findMany({
         where: {
           entity: {
-            ressource_owner_id: department.id_ats_department,
+            ressource_owner_id: order.id_ecom_order,
           },
         },
         include: {
@@ -51,21 +51,21 @@ export class DepartmentService {
         [key]: value,
       }));
 
-      // Transform to UnifiedDepartmentOutput format
-      const unifiedDepartment: UnifiedDepartmentOutput = {
-        id: department.id_ats_department,
-        name: department.name,
+      // Transform to UnifiedOrderOutput format
+      const unifiedOrder: UnifiedOrderOutput = {
+        id: order.id_ecom_order,
+        name: order.name,
         field_mappings: field_mappings,
-        remote_id: department.remote_id,
-        created_at: department.created_at,
-        modified_at: department.modified_at,
+        remote_id: order.remote_id,
+        created_at: order.created_at,
+        modified_at: order.modified_at,
       };
 
-      let res: UnifiedDepartmentOutput = unifiedDepartment;
+      let res: UnifiedOrderOutput = unifiedOrder;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
-            ressource_owner_id: department.id_ats_department,
+            ressource_owner_id: order.id_ecom_order,
           },
         });
         const remote_data = JSON.parse(resp.data);
@@ -79,9 +79,9 @@ export class DepartmentService {
         data: {
           id_event: uuidv4(),
           status: 'success',
-          type: 'ats.department.pull',
+          type: 'ecommerce.order.pull',
           method: 'GET',
-          url: '/ats/department',
+          url: '/ecommerce/order',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),
@@ -95,7 +95,7 @@ export class DepartmentService {
     }
   }
 
-  async getDepartments(
+  async getOrders(
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
@@ -103,7 +103,7 @@ export class DepartmentService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedDepartmentOutput[];
+    data: UnifiedOrderOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -112,10 +112,10 @@ export class DepartmentService {
       let next_cursor = null;
 
       if (cursor) {
-        const isCursorPresent = await this.prisma.ats_departments.findFirst({
+        const isCursorPresent = await this.prisma.ecom_orders.findFirst({
           where: {
             id_connection: connection_id,
-            id_ats_department: cursor,
+            id_ecom_order: cursor,
           },
         });
         if (!isCursorPresent) {
@@ -123,11 +123,11 @@ export class DepartmentService {
         }
       }
 
-      const departments = await this.prisma.ats_departments.findMany({
+      const orders = await this.prisma.ecom_orders.findMany({
         take: limit + 1,
         cursor: cursor
           ? {
-              id_ats_department: cursor,
+              id_ecom_order: cursor,
             }
           : undefined,
         orderBy: {
@@ -138,24 +138,24 @@ export class DepartmentService {
         },
       });
 
-      if (departments.length === limit + 1) {
+      if (orders.length === limit + 1) {
         next_cursor = Buffer.from(
-          departments[departments.length - 1].id_ats_department,
+          orders[orders.length - 1].id_ecom_order,
         ).toString('base64');
-        departments.pop();
+        orders.pop();
       }
 
       if (cursor) {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedDepartments: UnifiedDepartmentOutput[] = await Promise.all(
-        departments.map(async (department) => {
-          // Fetch field mappings for the department
+      const unifiedOrders: UnifiedOrderOutput[] = await Promise.all(
+        orders.map(async (order) => {
+          // Fetch field mappings for the order
           const values = await this.prisma.value.findMany({
             where: {
               entity: {
-                ressource_owner_id: department.id_ats_department,
+                ressource_owner_id: order.id_ecom_order,
               },
             },
             include: {
@@ -178,30 +178,30 @@ export class DepartmentService {
             }),
           );
 
-          // Transform to UnifiedDepartmentOutput format
+          // Transform to UnifiedOrderOutput format
           return {
-            id: department.id_ats_department,
-            name: department.name,
+            id: order.id_ecom_order,
+            name: order.name,
             field_mappings: field_mappings,
-            remote_id: department.remote_id,
-            created_at: department.created_at,
-            modified_at: department.modified_at,
+            remote_id: order.remote_id,
+            created_at: order.created_at,
+            modified_at: order.modified_at,
           };
         }),
       );
 
-      let res: UnifiedDepartmentOutput[] = unifiedDepartments;
+      let res: UnifiedOrderOutput[] = unifiedOrders;
 
       if (remote_data) {
-        const remote_array_data: UnifiedDepartmentOutput[] = await Promise.all(
-          res.map(async (department) => {
+        const remote_array_data: UnifiedOrderOutput[] = await Promise.all(
+          res.map(async (order) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
-                ressource_owner_id: department.id,
+                ressource_owner_id: order.id,
               },
             });
             const remote_data = JSON.parse(resp.data);
-            return { ...department, remote_data };
+            return { ...order, remote_data };
           }),
         );
 
@@ -212,9 +212,9 @@ export class DepartmentService {
         data: {
           id_event: uuidv4(),
           status: 'success',
-          type: 'ats.department.pull',
+          type: 'ecommerce.order.pull',
           method: 'GET',
-          url: '/ats/departments',
+          url: '/ecommerce/orders',
           provider: integrationId,
           direction: '0',
           timestamp: new Date(),

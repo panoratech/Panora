@@ -1,61 +1,88 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
+import {
+  IsUUID,
+  IsOptional,
+  IsString,
+  IsDateString,
+  IsArray,
+  IsObject,
+} from 'class-validator';
 
-export class UnifiedDepartmentInput {
+export class UnifiedFulfilmentInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The name of the department',
+    description: 'The carrier of the fulfilment',
   })
   @IsString()
   @IsOptional()
-  name?: string;
+  carrier?: string;
 
   @ApiPropertyOptional({
-    type: {},
-    description:
-      'The custom field mappings of the object between the remote 3rd party & Panora',
+    type: [String],
+    description: 'The tracking URLs of the fulfilment',
   })
+  @IsArray()
   @IsOptional()
-  field_mappings?: Record<string, any>;
-}
+  @IsString({ each: true })
+  tracking_urls?: string[];
 
-export class UnifiedDepartmentOutput extends UnifiedDepartmentInput {
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'The tracking numbers of the fulfilment',
+  })
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  tracking_numbers?: string[];
+
+  @ApiPropertyOptional({
+    type: Object,
+    description: 'The items in the fulfilment',
+  })
+  @IsObject()
+  @IsOptional()
+  items?: Record<string, any>;
+
   @ApiPropertyOptional({
     type: String,
-    description: 'The UUID of the department',
+    description: 'The UUID of the order associated with the fulfilment',
   })
   @IsUUID()
   @IsOptional()
-  id?: string;
+  order_id?: string;
+}
+
+export class UnifiedFulfilmentOutput extends UnifiedFulfilmentInput {
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The UUID of the fulfilment',
+  })
+  @IsUUID()
+  @IsOptional()
+  id: string;
 
   @ApiPropertyOptional({
     type: String,
     description:
-      'The remote ID of the department in the context of the 3rd Party',
+      'The remote ID of the fulfilment in the context of the 3rd Party',
   })
   @IsString()
   @IsOptional()
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
-    description:
-      'The remote data of the department in the context of the 3rd Party',
-  })
-  @IsOptional()
-  remote_data?: Record<string, any>;
-
-  @ApiPropertyOptional({
-    type: {},
+    type: String,
     description: 'The created date of the object',
   })
+  @IsDateString()
   @IsOptional()
-  created_at?: any;
+  created_at?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: String,
     description: 'The modified date of the object',
   })
+  @IsDateString()
   @IsOptional()
-  modified_at?: any;
+  modified_at?: string;
 }
