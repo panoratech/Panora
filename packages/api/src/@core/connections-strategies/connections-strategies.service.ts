@@ -46,6 +46,7 @@ export class ConnectionsStrategiesService {
           status: true,
         },
       });
+      this.logger.log(JSON.stringify(res));
       if (!res) return false;
       return res.status;
     } catch (error) {
