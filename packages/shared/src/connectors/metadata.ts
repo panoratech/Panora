@@ -350,6 +350,20 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         active: false
       },
+      'wealthbox': {
+        scopes: 'login+data',
+        urls: {
+          docsUrl: 'https://dev.wealthbox.com',
+          apiUrl: 'https://smf.crm3.redtailtechnology.com/api/public/v1',
+          authBaseUrl: 'https://app.crmworkspace.com/oauth/authorize'
+        },
+        logoPath: 'https://pbs.twimg.com/profile_images/1674874004027461632/zoKBfoA0_400x400.png',
+        description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+        active: false
+      }
     },
     'ticketing': {
       'front': {
