@@ -210,7 +210,7 @@ const ProviderModal = () => {
           return [{
               connector_name: connector_name,
               category: category,
-              status: value == null ? "false" : String(value)
+              status: value == null ? "true" : String(value)
           }];
       }
       return [];
