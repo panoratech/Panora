@@ -202,7 +202,7 @@ const ProviderModal = () => {
       }
   }
 
-  function transformConnectorsStatus(connectors : {[key: string]: boolean}): { connector_name: string;category: string; status: string }[] {
+  function transformConnectorsStatus(connectors : {[key: string]: boolean | null}): { connector_name: string;category: string; status: string }[] {
     return Object.entries(connectors).flatMap(([key, value]) => {
       const [category_slug, connector_name] = key.split('_').map((part: string) => part.trim());
       const category = categoryFromSlug(category_slug);
@@ -210,7 +210,7 @@ const ProviderModal = () => {
           return [{
               connector_name: connector_name,
               category: category,
-              status: String(value)
+              status: value == null ? "false" : String(value)
           }];
       }
       return [];

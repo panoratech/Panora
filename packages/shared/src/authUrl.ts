@@ -17,10 +17,11 @@ interface AuthParams {
 // make sure to check if client has own credentials to connect or panora managed ones
 export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
   const redirectUrlIngressWhenLocalDev = CONNECTORS_METADATA[vertical][providerName].options?.local_redirect_uri_in_https === true && 'https://prepared-wildcat-infinitely.ngrok-free.app';
-  const encodedRedirectUrl = encodeURIComponent(`${redirectUrlIngressWhenLocalDev ? redirectUrlIngressWhenLocalDev : apiUrl}/connections/oauth/callback`);
+  const localEnv = apiUrl.startsWith("http://localhost:3000") || apiUrl.includes("localhost");
+  const encodedRedirectUrl = encodeURIComponent(`${localEnv && redirectUrlIngressWhenLocalDev ? redirectUrlIngressWhenLocalDev : apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
-  // console.log('encodedRedirect URL : ', encodedRedirectUrl);
+  // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
   // const vertical = findConnectorCategory(providerName);
   if (vertical == null) {
     throw new ReferenceError('vertical is null');

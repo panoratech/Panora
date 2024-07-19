@@ -187,7 +187,7 @@ model crm_contacts {
 model crm_deals {
   id_crm_deal        String            @id(map: "pk_crm_deal") @db.Uuid
   name               String
-  description        String
+  description        String?
   amount             BigInt
   created_at         DateTime          @db.Timestamp(6)
   modified_at        DateTime          @db.Timestamp(6)
@@ -499,6 +499,7 @@ model tcg_collections {
   remote_platform   String?
   collection_type   String?
   parent_collection String?  @db.Uuid
+  id_tcg_ticket     String?  @db.Uuid
   created_at        DateTime @db.Timestamp(6)
   modified_at       DateTime @db.Timestamp(6)
   id_linked_user    String   @db.Uuid
@@ -513,14 +514,14 @@ model tcg_comments {
   is_private        Boolean?
   remote_id         String?
   remote_platform   String?
-  created_at        DateTime?         @db.Timestamp(6)
-  modified_at       DateTime?         @db.Timestamp(6)
   creator_type      String?
   id_tcg_attachment String[]
   id_tcg_ticket     String?           @db.Uuid
   id_tcg_contact    String?           @db.Uuid
   id_tcg_user       String?           @db.Uuid
   id_linked_user    String?           @db.Uuid
+  created_at        DateTime?         @db.Timestamp(6)
+  modified_at       DateTime?         @db.Timestamp(6)
   id_connection     String            @db.Uuid
   tcg_attachments   tcg_attachments[]
   tcg_tickets       tcg_tickets?      @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_40_1")
@@ -591,14 +592,14 @@ model tcg_tickets {
   collections     String[]
   completed_at    DateTime?         @db.Timestamp(6)
   priority        String?
-  created_at      DateTime          @db.Timestamp(6)
-  modified_at     DateTime          @db.Timestamp(6)
   assigned_to     String[]
   remote_id       String?
   remote_platform String?
   creator_type    String?
   id_tcg_user     String?           @db.Uuid
-  id_linked_user  String            @db.Uuid
+  id_linked_user  String?           @db.Uuid
+  created_at      DateTime          @db.Timestamp(6)
+  modified_at     DateTime          @db.Timestamp(6)
   id_connection   String            @db.Uuid
   tcg_attachments tcg_attachments[]
   tcg_comments    tcg_comments[]
@@ -615,10 +616,10 @@ model tcg_users {
   remote_id       String?
   remote_platform String?
   teams           String[]
-  created_at      DateTime?      @db.Timestamp(6)
-  modified_at     DateTime?      @db.Timestamp(6)
   id_linked_user  String?        @db.Uuid
   id_connection   String         @db.Uuid
+  created_at      DateTime?      @db.Timestamp(6)
+  modified_at     DateTime?      @db.Timestamp(6)
   tcg_comments    tcg_comments[]
 }
 
@@ -1633,4 +1634,112 @@ model acc_vendor_credits {
   company              String?   @db.Uuid
   tracking_categories  String[]
   accounting_period    String?   @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ecom_customer_addresses {
+  id_ecom_customer_address String         @id(map: "pk_ecom_customer_addresses") @db.Uuid
+  address_type             String?
+  line_1                   String?
+  line_2                   String?
+  street_1                 String?
+  street_2                 String?
+  city                     String?
+  state                    String?
+  postal_code              String?
+  country                  String?
+  id_ecom_customer         String         @db.Uuid
+  modified_at              DateTime       @db.Timestamptz(6)
+  created_at               DateTime       @db.Timestamptz(6)
+  ecom_customers           ecom_customers @relation(fields: [id_ecom_customer], references: [id_ecom_customer], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_customer_customeraddress")
+
+  @@index([id_ecom_customer], map: "fk_index_ecom_customer_customeraddress")
+}
+
+model ecom_customers {
+  id_ecom_customer        String                    @id(map: "pk_ecom_customers") @db.Uuid
+  remote_id               String?
+  email                   String?
+  first_name              String?
+  last_name               String?
+  phone_number            String?
+  modifed_at              DateTime                  @db.Timestamptz(6)
+  created_at              DateTime                  @db.Timestamptz(6)
+  id_connection           String                    @db.Uuid
+  ecom_customer_addresses ecom_customer_addresses[]
+  ecom_orders             ecom_orders[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ecom_fulfilments {
+  id_ecom_fulfilment String       @id(map: "pk_ecom_fulfilments") @db.Uuid
+  carrier            String?
+  tracking_urls      String[]
+  tracking_numbers   String[]
+  items              Json?
+  remote_id          String?
+  id_ecom_order      String?      @db.Uuid
+  id_connection      String       @db.Uuid
+  modifed_at         DateTime     @db.Timestamptz(6)
+  created_at         DateTime     @db.Timestamptz(6)
+  ecom_orders        ecom_orders? @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_fulfilment")
+
+  @@index([id_ecom_order], map: "fk_index_ecom_order_fulfilment")
+}
+
+model ecom_orders {
+  id_ecom_order      String             @id(map: "pk_ecom_orders") @db.Uuid
+  order_status       String?
+  order_number       String?
+  payment_status     String?
+  currency           String?
+  total_price        BigInt?
+  total_discount     BigInt?
+  total_shipping     BigInt?
+  total_tax          BigInt?
+  fulfillment_status String?
+  remote_id          String?
+  id_ecom_customer   String?            @db.Uuid
+  id_connection      String             @db.Uuid
+  modifed_at         DateTime           @db.Timestamptz(6)
+  created_at         DateTime           @db.Timestamptz(6)
+  ecom_fulfilments   ecom_fulfilments[]
+  ecom_customers     ecom_customers?    @relation(fields: [id_ecom_customer], references: [id_ecom_customer], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_customer_orders")
+
+  @@index([id_ecom_customer], map: "fk_index_ecom_customer_orders")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ecom_product_variants {
+  id_ecom_product_variant String         @id(map: "pk_ecom_product_variants") @db.Uuid
+  id_connection           String         @db.Uuid
+  remote_id               String?
+  title                   String?
+  price                   BigInt?
+  sku                     String?
+  options                 Json?
+  weight                  BigInt?
+  inventory_quantity      BigInt?
+  id_ecom_product         String?        @db.Uuid
+  modifed_at              DateTime       @db.Timestamptz(6)
+  created_at              DateTime       @db.Timestamptz(6)
+  ecom_products           ecom_products? @relation(fields: [id_ecom_product], references: [id_ecom_product], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_products_variants")
+
+  @@index([id_ecom_product], map: "fk_index_ecom_products_variants")
+}
+
+model ecom_products {
+  id_ecom_product       String                  @id(map: "pk_ecom_products") @db.Uuid
+  remote_id             String?
+  product_url           String?
+  product_type          String?
+  product_status        String?
+  images_urls           String[]
+  description           String?
+  vendor                String?
+  tags                  String[]
+  modifed_at            DateTime                @db.Timestamptz(6)
+  created_at            DateTime                @db.Timestamptz(6)
+  id_connection         String                  @db.Uuid
+  ecom_product_variants ecom_product_variants[]
 }
