@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedFulfillmentOutput } from '../types/model.unified';
+import { UnifiedFulfilmentOutput } from '../types/model.unified';
 
 @Injectable()
 export class FulfillmentService {
@@ -15,7 +15,7 @@ export class FulfillmentService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedFulfillmentOutput> {
+  ): Promise<UnifiedFulfilmentOutput> {
     try {
       const fulfillment = await this.prisma.ecom_fulfilments.findUnique({
         where: {
@@ -51,17 +51,21 @@ export class FulfillmentService {
         [key]: value,
       }));
 
-      // Transform to UnifiedFulfillmentOutput format
-      const unifiedFulfillment: UnifiedFulfillmentOutput = {
+      // Transform to UnifiedFulfilmentOutput format
+      const unifiedFulfillment: UnifiedFulfilmentOutput = {
         id: fulfillment.id_ecom_fulfilment,
-        name: fulfillment.name,
+        carrier: fulfillment.carrier,
+        tracking_urls: fulfillment.tracking_urls,
+        tracking_numbers: fulfillment.tracking_numbers,
+        items: fulfillment.items as Record<any, string>,
         field_mappings: field_mappings,
         remote_id: fulfillment.remote_id,
-        created_at: fulfillment.created_at,
-        modified_at: fulfillment.modified_at,
+        order_id: fulfillment.id_ecom_order,
+        created_at: fulfillment.created_at.toISOString(),
+        modified_at: fulfillment.modifed_at.toISOString(),
       };
 
-      let res: UnifiedFulfillmentOutput = unifiedFulfillment;
+      let res: UnifiedFulfilmentOutput = unifiedFulfillment;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -103,7 +107,7 @@ export class FulfillmentService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedFulfillmentOutput[];
+    data: UnifiedFulfilmentOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -149,7 +153,7 @@ export class FulfillmentService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedFulfillments: UnifiedFulfillmentOutput[] = await Promise.all(
+      const unifiedFulfillments: UnifiedFulfilmentOutput[] = await Promise.all(
         fulfillments.map(async (fulfillment) => {
           // Fetch field mappings for the fulfillment
           const values = await this.prisma.value.findMany({
@@ -178,22 +182,26 @@ export class FulfillmentService {
             }),
           );
 
-          // Transform to UnifiedFulfillmentOutput format
+          // Transform to UnifiedFulfilmentOutput format
           return {
             id: fulfillment.id_ecom_fulfilment,
-            name: fulfillment.name,
+            carrier: fulfillment.carrier,
+            tracking_urls: fulfillment.tracking_urls,
+            tracking_numbers: fulfillment.tracking_numbers,
+            items: fulfillment.items as Record<any, string>,
+            order_id: fulfillment.id_ecom_order,
             field_mappings: field_mappings,
             remote_id: fulfillment.remote_id,
-            created_at: fulfillment.created_at,
-            modified_at: fulfillment.modified_at,
+            created_at: fulfillment.created_at.toISOString(),
+            modified_at: fulfillment.modifed_at.toISOString(),
           };
         }),
       );
 
-      let res: UnifiedFulfillmentOutput[] = unifiedFulfillments;
+      let res: UnifiedFulfilmentOutput[] = unifiedFulfillments;
 
       if (remote_data) {
-        const remote_array_data: UnifiedFulfillmentOutput[] = await Promise.all(
+        const remote_array_data: UnifiedFulfilmentOutput[] = await Promise.all(
           res.map(async (fulfillment) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

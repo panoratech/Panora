@@ -16,6 +16,8 @@ import { ICustomerService } from '../types';
 import { UnifiedCustomerOutput } from '../types/model.unified';
 import { ECOMMERCE_PROVIDERS } from '@panora/shared';
 import { ecom_customers as EcommerceCustomer } from '@prisma/client';
+import { Utils } from '@ecommerce/@lib/@utils';
+
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
     private ingestService: IngestDataService,
+    private utils: Utils,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ecommerce', 'customer', this);
@@ -131,8 +134,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
         if (!originId) {
           existingCustomer = await this.prisma.ecom_customers.findFirst({
             where: {
-              name: customer.name,
+              email: customer.email,
+              first_name: customer.first_name,
+              last_name: customer.last_name,
               id_connection: connection_id,
+            },
+            include: {
+              ecom_customer_addresses: true,
             },
           });
         } else {
@@ -141,23 +149,61 @@ export class SyncService implements OnModuleInit, IBaseSync {
               remote_id: originId,
               id_connection: connection_id,
             },
+            include: {
+              ecom_customer_addresses: true,
+            },
           });
         }
 
+        const normalizedAddresses = this.utils.normalizeAddresses(
+          customer.addresses,
+        );
+
         const baseData: any = {
-          name: customer.name ?? null,
+          email: customer.email ?? null,
+          first_name: customer.first_name ?? null,
+          last_name: customer.last_name ?? null,
+          phone_number: customer.phone_number ?? null,
           modified_at: new Date(),
         };
 
         if (existingCustomer) {
-          return await this.prisma.ecom_customers.update({
+          const res = await this.prisma.ecom_customers.update({
             where: {
               id_ecom_customer: existingCustomer.id_ecom_customer,
             },
             data: baseData,
           });
+          if (normalizedAddresses && normalizedAddresses.length > 0) {
+            await Promise.all(
+              normalizedAddresses.map((data, index) => {
+                if (
+                  existingCustomer &&
+                  existingCustomer.ecom_customer_addresses[index]
+                ) {
+                  return this.prisma.ecom_customer_addresses.update({
+                    where: {
+                      id_ecom_customer_address:
+                        existingCustomer.ecom_customer_addresses[index]
+                          .id_ecom_customer_address,
+                    },
+                    data: data,
+                  });
+                } else {
+                  return this.prisma.ecom_customer_addresses.create({
+                    data: {
+                      ...data,
+                      id_ecom_customer: existingCustomer.id_ecom_customer,
+                      //todo: id_connection: connection_id,
+                    },
+                  });
+                }
+              }),
+            );
+          }
+          return res;
         } else {
-          return await this.prisma.ecom_customers.create({
+          const newCus = await this.prisma.ecom_customers.create({
             data: {
               ...baseData,
               id_ecom_customer: uuidv4(),
@@ -166,6 +212,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_connection: connection_id,
             },
           });
+
+          if (normalizedAddresses && normalizedAddresses.length > 0) {
+            await Promise.all(
+              normalizedAddresses.map((data) =>
+                this.prisma.ecom_customer_addresses.create({
+                  data: {
+                    ...data,
+                    id_ecom_customer: newCus.id_ecom_customer,
+                    //todo: id_connection: connection_id,
+                  },
+                }),
+              ),
+            );
+          }
+
+          return newCus;
         }
       };
 

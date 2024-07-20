@@ -32,7 +32,7 @@ export class FulfillmentOrdersController {
     this.logger.setContext(FulfillmentOrdersController.name);
   }
 
-  @ApiOperation({
+  /*@ApiOperation({
     operationId: 'getFulfillmentOrderss',
     summary: 'List a batch of FulfillmentOrderss',
   })
@@ -111,5 +111,5 @@ export class FulfillmentOrdersController {
       remoteSource,
       remote_data,
     );
-  }
+  }*/
 }

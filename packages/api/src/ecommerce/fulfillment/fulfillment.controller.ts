@@ -19,7 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FulfillmentService } from './services/fulfillment.service';
-import { UnifiedFulfillmentOutput } from './types/model.unified';
+import { UnifiedFulfilmentOutput } from './types/model.unified';
 
 @ApiTags('ecommerce/fulfillment')
 @Controller('ecommerce/fulfillment')
@@ -42,7 +42,7 @@ export class FulfillmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedFulfillmentOutput)
+  @ApiCustomResponse(UnifiedFulfilmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getFulfillments(
@@ -91,7 +91,7 @@ export class FulfillmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedFulfillmentOutput)
+  @ApiCustomResponse(UnifiedFulfilmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

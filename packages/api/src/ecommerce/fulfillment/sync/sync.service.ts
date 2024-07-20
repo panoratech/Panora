@@ -15,7 +15,7 @@ import { ecom_fulfilments as EcommerceFulfillment } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFulfillmentService } from '../types';
-import { UnifiedFulfillmentOutput } from '../types/model.unified';
+import { UnifiedFulfilmentOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -77,10 +77,25 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 const providers = ECOMMERCE_PROVIDERS;
                 for (const provider of providers) {
                   try {
-                    await this.syncForLinkedUser({
-                      integrationId: provider,
-                      linkedUserId: linkedUser.id_linked_user,
+                    const connection = await this.prisma.connections.findFirst({
+                      where: {
+                        id_linked_user: linkedUser.id_linked_user,
+                        provider_slug: provider.toLowerCase(),
+                      },
                     });
+                    //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
+                    const orders = await this.prisma.ecom_orders.findMany({
+                      where: {
+                        id_connection: connection.id_connection,
+                      },
+                    });
+                    for (const order of orders) {
+                      await this.syncForLinkedUser({
+                        integrationId: provider,
+                        linkedUserId: linkedUser.id_linked_user,
+                        id_order: order.id_ecom_order,
+                      });
+                    }
                   } catch (error) {
                     throw error;
                   }
@@ -99,16 +114,23 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
-      const { integrationId, linkedUserId } = param;
+      const { integrationId, linkedUserId, id_order } = param;
       const service: IFulfillmentService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedFulfillmentOutput,
+        UnifiedFulfilmentOutput,
         OriginalFulfillmentOutput,
         IFulfillmentService
-      >(integrationId, linkedUserId, 'ecommerce', 'fulfillment', service, []);
+      >(integrationId, linkedUserId, 'ecommerce', 'fulfillment', service, [
+        {
+          param: id_order,
+          paramName: 'id_order',
+          shouldPassToService: true,
+          shouldPassToIngest: true,
+        },
+      ]);
     } catch (error) {
       throw error;
     }
@@ -117,23 +139,26 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    fulfillments: UnifiedFulfillmentOutput[],
+    fulfillments: UnifiedFulfilmentOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
+    order_id?: string,
   ): Promise<EcommerceFulfillment[]> {
     try {
       const fulfillments_results: EcommerceFulfillment[] = [];
 
       const updateOrCreateFulfillment = async (
-        fulfillment: UnifiedFulfillmentOutput,
+        fulfillment: UnifiedFulfilmentOutput,
         originId: string,
       ) => {
         let existingFulfillment;
         if (!originId) {
           existingFulfillment = await this.prisma.ecom_fulfilments.findFirst({
             where: {
-              name: fulfillment.name,
               id_connection: connection_id,
+              tracking_numbers: {
+                hasSome: fulfillment.tracking_numbers,
+              },
             },
           });
         } else {
@@ -146,7 +171,11 @@ export class SyncService implements OnModuleInit, IBaseSync {
         }
 
         const baseData: any = {
-          name: fulfillment.name ?? null,
+          carrier: fulfillment.carrier ?? null,
+          tracking_urls: fulfillment.tracking_urls ?? [],
+          tracking_numbers: fulfillment.tracking_numbers ?? [],
+          items: fulfillment.items ?? null,
+          id_ecom_order: order_id ?? null,
           modified_at: new Date(),
         };
 
@@ -161,7 +190,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           return await this.prisma.ecom_fulfilments.create({
             data: {
               ...baseData,
-              id_ecom_fulfillment: uuidv4(),
+              id_ecom_fulfilment: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
               id_connection: connection_id,

@@ -2772,20 +2772,20 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
     },
     'ecommerce': {
       'shopify': {
-        scopes: 'write_products,read_shipping',
+        scopes: 'read_all_orders,read_assigned_fulfillment_orders,read_customers,read_fulfillments,read_orders,write_orders,read_products,write_products',
         urls: {
           docsUrl: 'https://shopify.dev/docs/apps/build',
           apiUrl: (store_name: string) => `https://${store_name}.myshopify.com`,
           authBaseUrl: (shop: string) => `https://${shop}.myshopify.com/admin/oauth/authorize`
         },
-        logoPath: 'https://1000logos.net/wp-content/uploads/2020/08/Shopify-Logo.jpg',
+        logoPath: 'https://cdn.eastsideco.com/media/v3/services/ecommerce-services/shopify-logo.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
         options: {
-          company_subdomain: true,
+          end_user_domain: true,
         }
       },
       'magento': {

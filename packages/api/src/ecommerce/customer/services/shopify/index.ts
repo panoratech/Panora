@@ -2,15 +2,13 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { SyncParam } from '@@core/utils/types/interface';
-import { OriginalCustomerOutput } from '@@core/utils/types/original/original.ecommerce';
 import { ICustomerService } from '@ecommerce/customer/types';
 import { Injectable } from '@nestjs/common';
+import { EcommerceObject } from '@panora/shared';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { ShopifyCustomerOutput } from './types';
-import { EcommerceObject } from '@panora/shared';
 
 @Injectable()
 export class ShopifyService implements ICustomerService {
@@ -33,23 +31,23 @@ export class ShopifyService implements ICustomerService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'ashby',
+          provider_slug: 'shopify',
           vertical: 'ecommerce',
         },
       });
-      const resp = await axios.post(
-        `${connection.account_url}/departement.list`,
+      const resp = await axios.get(
+        `${connection.account_url}/admin/api/2024-07/customers.json`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${Buffer.from(
-              `${this.cryptoService.decrypt(connection.access_token)}:`,
-            ).toString('base64')}`,
+            'X-Shopify-Access-Token': this.cryptoService.decrypt(
+              connection.access_token,
+            ),
           },
         },
       );
-      const customers: ShopifyCustomerOutput[] = resp.data.results;
-      this.logger.log(`Synced ashby customers !`);
+      const customers: ShopifyCustomerOutput[] = resp.data.customers;
+      this.logger.log(`Synced shopify customers !`);
 
       return {
         data: customers,

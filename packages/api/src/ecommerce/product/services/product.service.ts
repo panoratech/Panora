@@ -2,13 +2,206 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedProductOutput } from '../types/model.unified';
+import {
+  UnifiedProductInput,
+  UnifiedProductOutput,
+} from '../types/model.unified';
 import { ecom_products as EcommerceProduct } from '@prisma/client';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { ServiceRegistry } from './registry.service';
+import { EcommerceObject } from '@panora/shared';
+import { IProductService } from '../types';
+import { ApiResponse } from '@@core/utils/types';
+import { OriginalProductOutput } from '@@core/utils/types/original/original.ecommerce';
+import { Utils } from '@ecommerce/@lib/@utils';
 
 @Injectable()
 export class ProductService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
+    private webhook: WebhookService,
+    private utils: Utils,
+  ) {
     this.logger.setContext(ProductService.name);
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async addProduct(
+    unifiedProductData: UnifiedProductInput,
+    connection_id: string,
+    integrationId: string,
+    linkedUserId: string,
+    remote_data?: boolean,
+  ): Promise<UnifiedProductOutput> {
+    try {
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedProductInput>({
+          sourceObject: unifiedProductData,
+          targetType: EcommerceObject.product,
+          providerName: integrationId,
+          vertical: 'ecommerce',
+          customFieldMappings: [],
+        });
+
+      const service: IProductService =
+        this.serviceRegistry.getService(integrationId);
+      const resp: ApiResponse<OriginalProductOutput> = await service.addProduct(
+        desunifiedObject,
+        linkedUserId,
+      );
+
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalProductOutput[]
+      >({
+        sourceObject: [resp.data],
+        targetType: EcommerceObject.product,
+        providerName: integrationId,
+        vertical: 'ecommerce',
+        connectionId: connection_id,
+        customFieldMappings: [],
+      })) as UnifiedProductOutput[];
+
+      const source_product = resp.data;
+      const target_product = unifiedObject[0];
+
+      const unique_ecommerce_product_id = await this.saveOrUpdateProduct(
+        target_product,
+        connection_id,
+      );
+
+      await this.ingestService.processRemoteData(
+        unique_ecommerce_product_id,
+        source_product,
+      );
+
+      const result_product = await this.getProduct(
+        unique_ecommerce_product_id,
+        linkedUserId,
+        integrationId,
+        remote_data,
+      );
+
+      const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
+      const event = await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: status_resp,
+          type: 'ecommerce.product.push',
+          method: 'POST',
+          url: '/ecommerce/products',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      await this.webhook.dispatchWebhook(
+        result_product,
+        'ecommerce.product.created',
+        linkedUser.id_project,
+        event.id_event,
+      );
+
+      return result_product;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveOrUpdateProduct(
+    product: UnifiedProductOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingProduct = await this.prisma.ecom_products.findFirst({
+      where: { remote_id: product.remote_id, id_connection: connection_id },
+      include: {
+        ecom_product_variants: true,
+      },
+    });
+
+    const normalizedVariants = this.utils.normalizeVariants(product.variants);
+
+    const data: any = {
+      product_url: product.product_url,
+      product_type: product.product_type,
+      product_status: product.product_status,
+      images_urls: product.images_urls,
+      description: product.description,
+      vendor: product.vendor,
+      tags: product.tags,
+      modified_at: new Date(),
+    };
+
+    if (existingProduct) {
+      const res = await this.prisma.ecom_products.update({
+        where: { id_ecom_product: existingProduct.id_ecom_product },
+        data: data,
+      });
+
+      if (normalizedVariants && normalizedVariants.length > 0) {
+        await Promise.all(
+          normalizedVariants.map((email, index) => {
+            if (existingProduct.ecom_product_variants[index]) {
+              return this.prisma.ecom_product_variants.update({
+                where: {
+                  id_ecom_product_variant:
+                    existingProduct.ecom_product_variants[index]
+                      .id_ecom_product_variant,
+                },
+                data: email,
+              });
+            } else {
+              return this.prisma.ecom_product_variants.create({
+                data: {
+                  ...email,
+                  id_ecom_product: existingProduct.id_ecom_product,
+                  id_connection: connection_id,
+                },
+              });
+            }
+          }),
+        );
+      }
+
+      return res.id_ecom_product;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = product.remote_id;
+      data.id_connection = connection_id;
+      data.id_ecom_product = uuidv4();
+
+      const newProduct = await this.prisma.ecom_products.create({ data: data });
+      if (normalizedVariants && normalizedVariants.length > 0) {
+        await Promise.all(
+          normalizedVariants.map((data) =>
+            this.prisma.ecom_product_variants.create({
+              data: {
+                ...data,
+                id_ecom_product: newProduct.id_ecom_product,
+                id_connection: connection_id,
+              },
+            }),
+          ),
+        );
+      }
+      return newProduct.id_ecom_product;
+    }
   }
 
   async getProduct(
@@ -21,6 +214,9 @@ export class ProductService {
       const product = await this.prisma.ecom_products.findUnique({
         where: {
           id_ecom_product: id_ecommerce_product,
+        },
+        include: {
+          ecom_product_variants: true,
         },
       });
 
@@ -55,11 +251,25 @@ export class ProductService {
       // Transform to UnifiedProductOutput format
       const unifiedProduct: UnifiedProductOutput = {
         id: product.id_ecom_product,
-        name: product.name,
+        product_url: product.product_url,
+        product_type: product.product_type,
+        product_status: product.product_status,
+        images_urls: product.images_urls,
+        description: product.description,
+        vendor: product.vendor,
+        variants: product.ecom_product_variants.map((variant) => ({
+          title: variant.title,
+          price: Number(variant.price),
+          sku: variant.sku,
+          options: variant.options,
+          weight: Number(variant.weight),
+          inventory_quantity: Number(variant.inventory_quantity),
+        })),
+        tags: product.tags,
         field_mappings: field_mappings,
         remote_id: product.remote_id,
-        created_at: product.created_at,
-        modified_at: product.modified_at,
+        created_at: product.created_at.toISOString(),
+        modified_at: product.modifed_at.toISOString(),
       };
 
       let res: UnifiedProductOutput = unifiedProduct;
@@ -137,6 +347,9 @@ export class ProductService {
         where: {
           id_connection: connection_id,
         },
+        include: {
+          ecom_product_variants: true,
+        },
       });
 
       if (products.length === limit + 1) {
@@ -182,11 +395,25 @@ export class ProductService {
           // Transform to UnifiedProductOutput format
           return {
             id: product.id_ecom_product,
-            name: product.name,
+            product_url: product.product_url,
+            product_type: product.product_type,
+            product_status: product.product_status,
+            images_urls: product.images_urls,
+            description: product.description,
+            vendor: product.vendor,
+            variants: product.ecom_product_variants.map((variant) => ({
+              title: variant.title,
+              price: Number(variant.price),
+              sku: variant.sku,
+              options: variant.options,
+              weight: Number(variant.weight),
+              inventory_quantity: Number(variant.inventory_quantity),
+            })),
+            tags: product.tags,
             field_mappings: field_mappings,
             remote_id: product.remote_id,
-            created_at: product.created_at,
-            modified_at: product.modified_at,
+            created_at: product.created_at.toISOString(),
+            modified_at: product.modifed_at.toISOString(),
           };
         }),
       );

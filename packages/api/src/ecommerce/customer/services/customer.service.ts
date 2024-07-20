@@ -21,6 +21,9 @@ export class CustomerService {
         where: {
           id_ecom_customer: id_ecommerce_customer,
         },
+        include: {
+          ecom_customer_addresses: true,
+        },
       });
 
       if (!customer) {
@@ -54,11 +57,15 @@ export class CustomerService {
       // Transform to UnifiedCustomerOutput format
       const unifiedCustomer: UnifiedCustomerOutput = {
         id: customer.id_ecom_customer,
-        name: customer.name,
+        email: customer.email,
+        first_name: customer.first_name,
+        last_name: customer.last_name,
+        phone_number: customer.phone_number,
         field_mappings: field_mappings,
         remote_id: customer.remote_id,
-        created_at: customer.created_at,
-        modified_at: customer.modified_at,
+        created_at: customer.created_at.toISOString(),
+        modified_at: customer.modifed_at.toISOString(),
+        addresses: customer.ecom_customer_addresses,
       };
 
       let res: UnifiedCustomerOutput = unifiedCustomer;
@@ -136,6 +143,9 @@ export class CustomerService {
         where: {
           id_connection: connection_id,
         },
+        include: {
+          ecom_customer_addresses: true,
+        },
       });
 
       if (customers.length === limit + 1) {
@@ -181,11 +191,15 @@ export class CustomerService {
           // Transform to UnifiedCustomerOutput format
           return {
             id: customer.id_ecom_customer,
-            name: customer.name,
+            email: customer.email,
+            first_name: customer.first_name,
+            last_name: customer.last_name,
+            phone_number: customer.phone_number,
             field_mappings: field_mappings,
             remote_id: customer.remote_id,
-            created_at: customer.created_at,
-            modified_at: customer.modified_at,
+            created_at: customer.created_at.toISOString(),
+            modified_at: customer.modifed_at.toISOString(),
+            addresses: customer.ecom_customer_addresses,
           };
         }),
       );

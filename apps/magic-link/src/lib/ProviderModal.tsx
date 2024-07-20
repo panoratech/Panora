@@ -48,6 +48,7 @@ const ProviderModal = () => {
   const [startFlow, setStartFlow] = useState<boolean>(false);
   const [preStartFlow, setPreStartFlow] = useState<boolean>(false);
   const [openApiKeyDialog,setOpenApiKeyDialog] = useState<boolean>(false);
+  const [openDomainDialog, setOpenDomainDialog] = useState<boolean>(false);
   const [projectId, setProjectId] = useState<string>("");
   const [data, setData] = useState<Provider[]>([]);
   const [errorResponse,setErrorResponse] = useState<{
@@ -62,7 +63,7 @@ const ProviderModal = () => {
   const [openSuccessDialog,setOpenSuccessDialog] = useState<boolean>(false);
   const [currentProviderLogoURL,setCurrentProviderLogoURL] = useState<string>('')
   const [currentProvider,setCurrentProvider] = useState<string>('')
-
+  const [endUserDomain, setEndUserDomain] = useState<string>('');
   const {mutate : createApiKeyConnection} = useCreateApiKeyConnection();
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
   const {data: connectorsForProject} = useProjectConnectors(projectId);
@@ -121,6 +122,9 @@ const ProviderModal = () => {
       console.log('OAuth successful');
       setOpenSuccessDialog(true);
     },
+    additionalParams: {
+      end_user_domain: endUserDomain
+    }
   });
 
   const onWindowClose = () => {
@@ -172,16 +176,15 @@ const ProviderModal = () => {
   };
 
   const handleStartFlow = () => {
-    if(selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.strategy===AuthStrategy.api_key)
-      {
-        setOpenApiKeyDialog(true)
-      }
-    else
-    {
-      setLoading({status: true, provider: selectedProvider?.provider!});
+    const providerMetadata = CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider];
+    if (providerMetadata.authStrategy.strategy === AuthStrategy.api_key) {
+      setOpenApiKeyDialog(true);
+    } else if (providerMetadata?.options?.end_user_domain) {
+      setOpenDomainDialog(true);
+    } else {
+      setLoading({ status: true, provider: selectedProvider?.provider! });
       setStartFlow(true);
     }
-    
   }
 
   const handleCategoryClick = (category: string) => {  
@@ -263,6 +266,17 @@ const ProviderModal = () => {
         });  
       }
     });
+  }
+
+  const onCloseDomainDialog = (dialogState: boolean) => {
+    setOpenDomainDialog(dialogState);
+    reset();
+  }
+
+  const onDomainSubmit = () => {
+    setOpenDomainDialog(false);
+    setLoading({ status: true, provider: selectedProvider?.provider! });
+    setStartFlow(true);
   }
 
 
@@ -382,6 +396,35 @@ const ProviderModal = () => {
       {/* </Form> */}
       </DialogContent>
     </Dialog>
+
+    {/* Dialog for end-user domain input */}
+    <Dialog open={openDomainDialog} onOpenChange={onCloseDomainDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Your Domain</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={(e) => { e.preventDefault(); onDomainSubmit(); }}>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label className={errors.end_user_domain ? 'text-destructive' : ''}>Enter your domain for {`${selectedProvider?.provider.substring(0,1)}${selectedProvider?.provider.substring(1)}`}</Label>
+                <Input
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Your domain"
+                  onChange={(e) => setEndUserDomain(e.target.value)}
+                />
+                <div>{errors.end_user_domain && (<p className='text-sm font-medium text-destructive'>{errors.end_user_domain.message}</p>)}</div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCloseDomainDialog(false)}>Cancel</Button>
+              <Button type='submit' size="sm" className="h-7 gap-1">
+                Continue
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
 
 
     {/* OAuth Successful Modal */}

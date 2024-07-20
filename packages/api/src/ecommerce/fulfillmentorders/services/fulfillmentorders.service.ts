@@ -10,7 +10,7 @@ export class FulfillmentOrdersService {
     this.logger.setContext(FulfillmentOrdersService.name);
   }
 
-  async getFulfillmentOrders(
+  /*async getFulfillmentOrders(
     id_ecommerce_fulfillmentorders: string,
     linkedUserId: string,
     integrationId: string,
@@ -241,5 +241,5 @@ export class FulfillmentOrdersService {
     } catch (error) {
       throw error;
     }
-  }
+  }*/
 }

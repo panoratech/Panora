@@ -11,7 +11,6 @@ import { OriginalFulfillmentOrdersOutput } from '@@core/utils/types/original/ori
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ATS_PROVIDERS, ECOMMERCE_PROVIDERS } from '@panora/shared';
-import { ecommerce_fulfillmentorders as EcommerceFulfillmentOrders } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFulfillmentOrdersService } from '../types';
@@ -33,8 +32,30 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ecommerce', 'fulfillmentorders', this);
   }
+  saveToDb(
+    connection_id: string,
+    linkedUserId: string,
+    data: any[],
+    originSource: string,
+    remote_data: Record<string, any>[],
+    ...rest: any
+  ): Promise<any[]> {
+    throw new Error('Method not implemented.');
+  }
+  kickstartSync?(...params: any[]): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  syncForLinkedUser?(param: SyncLinkedUserType): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  removeInDb?(connection_id: string, remote_id: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  onModuleInit() {
+    return;
+  }
 
-  async onModuleInit() {
+  /*async onModuleInit() {
     try {
       await this.bullQueueService.queueSyncJob(
         'ecommerce-sync-fulfillmentorderss',
@@ -43,10 +64,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
     } catch (error) {
       throw error;
     }
-  }
+  }*/
 
-  @Cron('0 */8 * * *') // every 8 hours
-  async kickstartSync(user_id?: string) {
+  //@Cron('0 */8 * * *') // every 8 hours
+  /*async kickstartSync(user_id?: string) {
     try {
       this.logger.log('Syncing fulfillmentorderss...');
       const users = user_id
@@ -210,5 +231,5 @@ export class SyncService implements OnModuleInit, IBaseSync {
     } catch (error) {
       throw error;
     }
-  }
+  }*/
 }

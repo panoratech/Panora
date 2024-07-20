@@ -11,9 +11,12 @@ type UseOAuthProps = {
   linkedUserId: string;           // Linked User ID
   optionalApiUrl?: string;        // URL of the User's Server
   onSuccess: () => void;
+  additionalParams?: {
+    end_user_domain: string;
+  }
 };
 
-const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, onSuccess }: UseOAuthProps) => {
+const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, additionalParams, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
   const intervalRef = useRef<number | ReturnType<typeof setInterval> | null>(null);
   const authWindowRef = useRef<Window | null>(null);
@@ -44,7 +47,7 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
   const openModal = async (onWindowClose: () => void) => {
     const apiUrl = config.API_URL!;
     const authUrl = await constructAuthUrl({
-      projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical
+      projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, additionalParams
     });
     console.log('auth url is '+ authUrl)
 

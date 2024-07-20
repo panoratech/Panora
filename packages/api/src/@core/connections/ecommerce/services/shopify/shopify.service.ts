@@ -60,9 +60,7 @@ export class ShopifyConnectionService implements IEcommerceConnectionService {
       if (!shopRegex.test(shop)) {
         throw new Error('Invalid shop received through shopify request');
       }
-
       //todo: check hmac
-
       const formData = new URLSearchParams({
         code: code,
         client_id: CREDENTIALS.CLIENT_ID,

@@ -26,7 +26,22 @@ export class ShopifyProductMapper implements IProductMapper {
       remote_id: string;
     }[],
   ): Promise<ShopifyProductInput> {
-    return;
+    const res: any = {
+      // todo title: source.,
+      body_html: source.description,
+      vendor: source.vendor,
+      product_type: source.product_type.toLowerCase(),
+      status: source.product_status,
+    };
+    if (source.variants) {
+      res.variants = source.variants.map((item) => ({
+        option1: item.title,
+        price: item.price,
+        sku: item.sku,
+      }));
+    }
+
+    return res;
   }
 
   async unify(
@@ -65,8 +80,25 @@ export class ShopifyProductMapper implements IProductMapper {
     }[],
   ): Promise<UnifiedProductOutput> {
     return {
-      remote_id: product.id,
+      remote_id: product.id?.toString(),
       remote_data: product,
+      product_url: product.handle
+        ? `https://example.com/products/${product.handle}`
+        : undefined,
+      product_type: product.product_type,
+      product_status: product.status,
+      images_urls: product.images?.map((image) => image.src),
+      description: product.body_html,
+      vendor: product.vendor,
+      variants: product.variants?.map((variant) => ({
+        title: variant.title,
+        price: variant.price,
+        sku: variant.sku,
+        options: variant.option1,
+        weight: variant.weight,
+        inventory_quantity: variant.inventory_quantity,
+      })),
+      tags: product.tags?.split(',').map((tag) => tag.trim()),
     };
   }
 }

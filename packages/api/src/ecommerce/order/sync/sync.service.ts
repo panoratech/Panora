@@ -132,7 +132,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         if (!originId) {
           existingOrder = await this.prisma.ecom_orders.findFirst({
             where: {
-              name: order.name,
+              order_number: order.order_number,
               id_connection: connection_id,
             },
           });
@@ -146,7 +146,16 @@ export class SyncService implements OnModuleInit, IBaseSync {
         }
 
         const baseData: any = {
-          name: order.name ?? null,
+          order_status: order.order_status ?? null,
+          order_number: order.order_number ?? null,
+          payment_status: order.payment_status ?? null,
+          currency: order.currency ?? null,
+          total_price: order.total_price ?? null,
+          total_discount: order.total_discount ?? null,
+          total_shipping: order.total_shipping ?? null,
+          total_tax: order.total_tax ?? null,
+          fulfillment_status: order.fulfillment_status ?? null,
+          id_ecom_customer: order.customer_id ?? null,
           modified_at: new Date(),
         };
 

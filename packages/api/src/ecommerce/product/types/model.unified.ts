@@ -2,6 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
   IsDateString,
+  IsIn,
   IsOptional,
   IsString,
   IsUUID,
@@ -26,9 +27,9 @@ export class UnifiedProductInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The status of the product',
+    description: 'The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.',
   })
-  @IsString()
+  @IsIn(['ARCHIVED', 'ACTIVE', 'DRAFT'])
   @IsOptional()
   product_status?: string;
 
@@ -79,6 +80,14 @@ export class UnifiedProductInput {
   @IsOptional()
   @IsString({ each: true })
   tags?: string[];
+
+  @ApiPropertyOptional({
+    type: Object,
+    description:
+      'The custom field mappings of the object between the remote 3rd party & Panora',
+  })
+  @IsOptional()
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedProductOutput extends UnifiedProductInput {
@@ -88,7 +97,7 @@ export class UnifiedProductOutput extends UnifiedProductInput {
   })
   @IsUUID()
   @IsOptional()
-  id: string;
+  id?: string;
 
   @ApiPropertyOptional({
     type: String,
@@ -97,6 +106,14 @@ export class UnifiedProductOutput extends UnifiedProductInput {
   @IsString()
   @IsOptional()
   remote_id: string;
+
+  @ApiPropertyOptional({
+    type: Object,
+    description:
+      'The remote data of the customer in the context of the 3rd Party',
+  })
+  @IsOptional()
+  remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
     type: String,

@@ -9,7 +9,7 @@ import { IProductService } from '@ecommerce/product/types';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
-import { ShopifyProductOutput } from './types';
+import { ShopifyProductInput, ShopifyProductOutput } from './types';
 import { EcommerceObject } from '@panora/shared';
 
 @Injectable()
@@ -25,11 +25,42 @@ export class ShopifyService implements IProductService {
     );
     this.registry.registerService('shopify', this);
   }
-  addProduct(
-    productData: DesunifyReturnType,
+
+  async addProduct(
+    productData: ShopifyProductInput,
     linkedUserId: string,
-  ): Promise<ApiResponse<OriginalProductOutput>> {
-    throw new Error('Method not implemented.');
+  ): Promise<ApiResponse<ShopifyProductOutput>> {
+    try {
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'shopify',
+          vertical: 'ecommerce',
+        },
+      });
+      const resp = await axios.post(
+        `${connection.account_url}/admin/api/2024-07/products.json`,
+        {
+          product: productData,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': this.cryptoService.decrypt(
+              connection.access_token,
+            ),
+          },
+        },
+      );
+
+      return {
+        data: resp.data.product,
+        message: 'Shopify product created',
+        statusCode: 201,
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
   async sync(data: SyncParam): Promise<ApiResponse<ShopifyProductOutput[]>> {
@@ -43,18 +74,18 @@ export class ShopifyService implements IProductService {
           vertical: 'ecommerce',
         },
       });
-      const resp = await axios.post(
-        `${connection.account_url}/departement.list`,
+      const resp = await axios.get(
+        `${connection.account_url}/admin/api/2024-07/products.json`,
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${Buffer.from(
-              `${this.cryptoService.decrypt(connection.access_token)}:`,
-            ).toString('base64')}`,
+            'X-Shopify-Access-Token': this.cryptoService.decrypt(
+              connection.access_token,
+            ),
           },
         },
       );
-      const products: ShopifyProductOutput[] = resp.data.results;
+      const products: ShopifyProductOutput[] = resp.data.products;
       this.logger.log(`Synced shopify products !`);
 
       return {

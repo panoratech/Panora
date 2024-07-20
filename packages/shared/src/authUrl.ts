@@ -11,11 +11,14 @@ interface AuthParams {
   apiUrl: string;
   vertical: string;
   redirectUrlIngressWhenLocalDev?: string;
+  additionalParams?: {
+    end_user_domain: string; // needed for instance with shopify or sharepoint to construct the auth domain
+  }
 }
 
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
-export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
+export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, additionalParams }: AuthParams) => {
   const redirectUrlIngressWhenLocalDev = CONNECTORS_METADATA[vertical][providerName].options?.local_redirect_uri_in_https === true && 'https://prepared-wildcat-infinitely.ngrok-free.app';
   const encodedRedirectUrl = encodeURIComponent(`${redirectUrlIngressWhenLocalDev ? redirectUrlIngressWhenLocalDev : apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
@@ -42,7 +45,8 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
         config,
         encodedRedirectUrl,
         state,
-        apiUrl
+        apiUrl,
+        additionalParams
       });
     case AuthStrategy.api_key:
       return handleApiKeyUrl();
@@ -60,6 +64,9 @@ interface HandleOAuth2Url {
   encodedRedirectUrl: string;
   state: string;
   apiUrl: string;
+  additionalParams?: {
+    end_user_domain: string; // needed for instance with shopify or sharepoint to construct the auth domain
+  }
 }
 
 const handleOAuth2Url = async (input: HandleOAuth2Url) => {
@@ -71,7 +78,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     config,
     encodedRedirectUrl,
     state,
-    apiUrl
+    apiUrl ,
+    additionalParams
   } = input;
 
   const type = providerToType(providerName, vertical, authStrategy);
@@ -106,8 +114,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     if(typeof baseUrl === 'string') {
       BASE_URL = baseUrl;
     } else {
-      BASE_URL = (baseUrl as DynamicAuthorization)('END_USER_SUBDOMAIN'); // TODO: get the END-USER domain from the hook (data coming from webapp client)
-      // TODO: add the end user subdomain as query param on the redirect uri ?
+      BASE_URL = (baseUrl as DynamicAuthorization)(additionalParams.end_user_domain);
     }
   } else {
     BASE_URL = baseUrl as StringAuthorization;

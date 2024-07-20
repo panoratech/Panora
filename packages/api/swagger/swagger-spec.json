@@ -14749,7 +14749,7 @@
                     {
                       "properties": {
                         "data": {
-                          "$ref": "#/components/schemas/UnifiedFulfillmentOutput"
+                          "$ref": "#/components/schemas/UnifiedFulfilmentOutput"
                         }
                       }
                     }
@@ -14811,7 +14811,7 @@
                     {
                       "properties": {
                         "data": {
-                          "$ref": "#/components/schemas/UnifiedFulfillmentOutput"
+                          "$ref": "#/components/schemas/UnifiedFulfilmentOutput"
                         }
                       }
                     }
@@ -14823,139 +14823,6 @@
         },
         "tags": [
           "ecommerce/fulfillment"
-        ]
-      }
-    },
-    "/ats/fulfillmentorders": {
-      "get": {
-        "operationId": "getFulfillmentOrderss",
-        "summary": "List a batch of FulfillmentOrderss",
-        "parameters": [
-          {
-            "name": "x-connection-token",
-            "required": true,
-            "in": "header",
-            "description": "The connection token",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original software.",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records.",
-            "schema": {
-              "default": 50,
-              "type": "number"
-            }
-          },
-          {
-            "name": "cursor",
-            "required": false,
-            "in": "query",
-            "description": "Set to get the number of records after this cursor.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedFulfillmentOrdersOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ats/fulfillmentorders"
-        ]
-      }
-    },
-    "/ats/fulfillmentorders/{id}": {
-      "get": {
-        "operationId": "getFulfillmentOrders",
-        "summary": "Retrieve a FulfillmentOrders",
-        "description": "Retrieve a fulfillmentorders from any connected Ecommerce software",
-        "parameters": [
-          {
-            "name": "x-connection-token",
-            "required": true,
-            "in": "header",
-            "description": "The connection token",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "id of the fulfillmentorders you want to retrieve.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "remote_data",
-            "required": false,
-            "in": "query",
-            "description": "Set to true to include data from the original Ecommerce software.",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponse"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/UnifiedFulfillmentOrdersOutput"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "ats/fulfillmentorders"
         ]
       }
     },
@@ -18612,48 +18479,123 @@
       "UnifiedProductOutput": {
         "type": "object",
         "properties": {
+          "product_url": {
+            "type": "string",
+            "description": "The URL of the product"
+          },
+          "product_type": {
+            "type": "string",
+            "description": "The type of the product"
+          },
+          "product_status": {
+            "type": "string",
+            "description": "The status of the product. Either ACTIVE, DRAFT OR ARCHIVED."
+          },
+          "images_urls": {
+            "description": "The URLs of the product images",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the product"
+          },
+          "vendor": {
+            "type": "string",
+            "description": "The vendor of the product"
+          },
+          "variants": {
+            "description": "The variants of the product",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "tags": {
+            "description": "The tags associated with the product",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "field_mappings": {
             "type": "object",
-            "properties": {}
+            "description": "The custom field mappings of the object between the remote 3rd party & Panora"
           },
           "id": {
             "type": "string",
-            "description": "The UUID of the department"
+            "description": "The UUID of the product"
           },
           "remote_id": {
             "type": "string",
-            "description": "The remote ID of the department in the context of the 3rd Party"
+            "description": "The remote ID of the product in the context of the 3rd Party"
           },
           "remote_data": {
             "type": "object",
-            "properties": {}
+            "description": "The remote data of the customer in the context of the 3rd Party"
           },
           "created_at": {
-            "type": "object",
-            "properties": {}
+            "type": "string",
+            "description": "The created date of the object"
           },
           "modified_at": {
-            "type": "object",
-            "properties": {}
+            "type": "string",
+            "description": "The modified date of the object"
           }
-        },
-        "required": [
-          "field_mappings",
-          "remote_data",
-          "created_at",
-          "modified_at"
-        ]
+        }
       },
       "UnifiedOrderOutput": {
         "type": "object",
         "properties": {
-          "name": {
+          "order_status": {
             "type": "string",
-            "description": "The name of the order"
+            "description": "The status of the order"
+          },
+          "order_number": {
+            "type": "string",
+            "description": "The number of the order"
+          },
+          "payment_status": {
+            "type": "string",
+            "description": "The payment status of the order"
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency of the order"
+          },
+          "total_price": {
+            "type": "number",
+            "description": "The total price of the order"
+          },
+          "total_discount": {
+            "type": "number",
+            "description": "The total discount on the order"
+          },
+          "total_shipping": {
+            "type": "number",
+            "description": "The total shipping cost of the order"
+          },
+          "total_tax": {
+            "type": "number",
+            "description": "The total tax on the order"
+          },
+          "fulfillment_status": {
+            "type": "string",
+            "description": "The fulfillment status of the order"
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "The UUID of the customer associated with the order"
+          },
+          "items": {
+            "type": "object",
+            "description": "The items in the order"
           },
           "field_mappings": {
             "type": "object",
-            "properties": {}
+            "description": "The custom field mappings of the object between the remote 3rd party & Panora"
           },
           "id": {
             "type": "string",
@@ -18665,34 +18607,47 @@
           },
           "remote_data": {
             "type": "object",
-            "properties": {}
+            "description": "The remote data of the customer in the context of the 3rd Party"
           },
           "created_at": {
-            "type": "object",
-            "properties": {}
+            "type": "string",
+            "description": "The created date of the object"
           },
           "modified_at": {
-            "type": "object",
-            "properties": {}
+            "type": "string",
+            "description": "The modified date of the object"
           }
-        },
-        "required": [
-          "field_mappings",
-          "remote_data",
-          "created_at",
-          "modified_at"
-        ]
+        }
       },
       "UnifiedCustomerOutput": {
         "type": "object",
         "properties": {
-          "name": {
+          "email": {
             "type": "string",
-            "description": "The name of the customer"
+            "description": "The email of the customer"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "The first name of the customer"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "The last name of the customer"
+          },
+          "phone_number": {
+            "type": "string",
+            "description": "The phone number of the customer"
+          },
+          "addresses": {
+            "description": "The addresses of the customer",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           },
           "field_mappings": {
             "type": "object",
-            "properties": {}
+            "description": "The custom field mappings of the object between the remote 3rd party & Panora"
           },
           "id": {
             "type": "string",
@@ -18704,101 +18659,72 @@
           },
           "remote_data": {
             "type": "object",
-            "properties": {}
+            "description": "The remote data of the customer in the context of the 3rd Party"
           },
           "created_at": {
-            "type": "object",
-            "properties": {}
+            "type": "string",
+            "description": "The created date of the object"
           },
           "modified_at": {
-            "type": "object",
-            "properties": {}
+            "type": "string",
+            "description": "The modified date of the object"
           }
-        },
-        "required": [
-          "field_mappings",
-          "remote_data",
-          "created_at",
-          "modified_at"
-        ]
+        }
       },
-      "UnifiedFulfillmentOutput": {
+      "UnifiedFulfilmentOutput": {
         "type": "object",
         "properties": {
-          "name": {
+          "carrier": {
             "type": "string",
-            "description": "The name of the fulfillment"
+            "description": "The carrier of the fulfilment"
+          },
+          "tracking_urls": {
+            "description": "The tracking URLs of the fulfilment",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tracking_numbers": {
+            "description": "The tracking numbers of the fulfilment",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "items": {
+            "type": "object",
+            "description": "The items in the fulfilment"
+          },
+          "order_id": {
+            "type": "string",
+            "description": "The UUID of the order associated with the fulfilment"
           },
           "field_mappings": {
             "type": "object",
-            "properties": {}
+            "description": "The custom field mappings of the object between the remote 3rd party & Panora"
           },
           "id": {
             "type": "string",
-            "description": "The UUID of the fulfillment"
+            "description": "The UUID of the fulfilment"
           },
           "remote_id": {
             "type": "string",
-            "description": "The remote ID of the fulfillment in the context of the 3rd Party"
+            "description": "The remote ID of the fulfilment in the context of the 3rd Party"
           },
           "remote_data": {
             "type": "object",
-            "properties": {}
+            "description": "The remote data of the customer in the context of the 3rd Party"
           },
           "created_at": {
-            "type": "object",
-            "properties": {}
+            "type": "string",
+            "description": "The created date of the object"
           },
           "modified_at": {
-            "type": "object",
-            "properties": {}
+            "type": "string",
+            "description": "The modified date of the object"
           }
-        },
-        "required": [
-          "field_mappings",
-          "remote_data",
-          "created_at",
-          "modified_at"
-        ]
-      },
-      "UnifiedFulfillmentOrdersOutput": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the fulfillmentorders"
-          },
-          "field_mappings": {
-            "type": "object",
-            "properties": {}
-          },
-          "id": {
-            "type": "string",
-            "description": "The UUID of the fulfillmentorders"
-          },
-          "remote_id": {
-            "type": "string",
-            "description": "The remote ID of the fulfillmentorders in the context of the 3rd Party"
-          },
-          "remote_data": {
-            "type": "object",
-            "properties": {}
-          },
-          "created_at": {
-            "type": "object",
-            "properties": {}
-          },
-          "modified_at": {
-            "type": "object",
-            "properties": {}
-          }
-        },
-        "required": [
-          "field_mappings",
-          "remote_data",
-          "created_at",
-          "modified_at"
-        ]
+        }
       }
     }
   }

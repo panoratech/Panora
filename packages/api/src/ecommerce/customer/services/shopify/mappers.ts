@@ -70,9 +70,27 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
     }[],
   ): Promise<UnifiedCustomerOutput> {
     return {
-      remote_id: customer.id,
+      remote_id: customer.id?.toString(),
       remote_data: customer,
-      name: customer.name || null,
+      email: customer.email || null,
+      first_name: customer.first_name || null,
+      last_name: customer.last_name || null,
+      phone_number: customer.phone || null,
+      addresses:
+        customer.addresses?.map((address) => ({
+          street_1: address.address1,
+          street_2: address.address2 || undefined,
+          city: address.city,
+          state: address.province,
+          postal_code: address.zip,
+          country: address.country,
+          address_type: address.default ? 'PERSONAL' : 'WORK',
+        })) || [],
+      field_mappings:
+        customFieldMappings?.reduce((acc, mapping) => {
+          acc[mapping.slug] = customer[mapping.remote_id];
+          return acc;
+        }, {} as Record<string, any>) || {},
     };
   }
 }

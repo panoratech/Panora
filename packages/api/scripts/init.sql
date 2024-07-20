@@ -262,7 +262,7 @@ CREATE TABLE ecom_products
  description     text NULL,
  vendor          text NULL,
  tags            text[] NULL,
- modifed_at      timestamp with time zone NOT NULL,
+ modified_at      timestamp with time zone NOT NULL,
  created_at      timestamp with time zone NOT NULL,
  id_connection   uuid NOT NULL,
  CONSTRAINT PK_ecom_products PRIMARY KEY ( id_ecom_product )
@@ -277,7 +277,7 @@ CREATE TABLE ecom_customers
  first_name       text NULL,
  last_name        text NULL,
  phone_number     text NULL,
- modifed_at       timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  created_at       timestamp with time zone NOT NULL,
  id_connection    uuid NOT NULL,
  CONSTRAINT PK_ecom_customers PRIMARY KEY ( id_ecom_customer )
@@ -856,7 +856,7 @@ CREATE TABLE ecom_product_variants
  weight                  bigint NULL,
  inventory_quantity      bigint NULL,
  id_ecom_product         uuid NULL,
- modifed_at              timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
  created_at              timestamp with time zone NOT NULL,
  CONSTRAINT PK_ecom_product_variants PRIMARY KEY ( id_ecom_product_variant ),
  CONSTRAINT FK_ecom_products_variants FOREIGN KEY ( id_ecom_product ) REFERENCES ecom_products ( id_ecom_product )
@@ -883,7 +883,7 @@ CREATE TABLE ecom_orders
  remote_id          text NULL,
  id_ecom_customer   uuid NULL,
  id_connection      uuid NOT NULL,
- modifed_at         timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  created_at         timestamp with time zone NOT NULL,
  CONSTRAINT PK_ecom_orders PRIMARY KEY ( id_ecom_order ),
  CONSTRAINT FK_ecom_customer_orders FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer )
@@ -1507,7 +1507,7 @@ CREATE TABLE ecom_fulfilments
  remote_id          text NULL,
  id_ecom_order      uuid NULL,
  id_connection      uuid NOT NULL,
- modifed_at         timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  created_at         timestamp with time zone NOT NULL,
  CONSTRAINT PK_ecom_fulfilments PRIMARY KEY ( id_ecom_fulfilment ),
  CONSTRAINT FK_ecom_order_fulfilment FOREIGN KEY ( id_ecom_order ) REFERENCES ecom_orders ( id_ecom_order )

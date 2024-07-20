@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@@core/utils/types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -5,6 +6,7 @@ import {
   IsString,
   IsDateString,
   IsInt,
+  IsObject,
 } from 'class-validator';
 
 export class UnifiedOrderInput {
@@ -34,11 +36,11 @@ export class UnifiedOrderInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The currency of the order',
+    description:
+      'The currency of the order. Authorized value must be of type CurrencyCode (ISO 4217)',
   })
-  @IsString()
   @IsOptional()
-  currency?: string;
+  currency?: CurrencyCode;
 
   @ApiPropertyOptional({
     type: Number,
@@ -87,6 +89,22 @@ export class UnifiedOrderInput {
   @IsUUID()
   @IsOptional()
   customer_id?: string;
+
+  @ApiPropertyOptional({
+    type: Object,
+    description: 'The items in the order',
+  })
+  @IsObject()
+  @IsOptional()
+  items?: Record<string, any>;
+
+  @ApiPropertyOptional({
+    type: Object,
+    description:
+      'The custom field mappings of the object between the remote 3rd party & Panora',
+  })
+  @IsOptional()
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedOrderOutput extends UnifiedOrderInput {
@@ -96,7 +114,7 @@ export class UnifiedOrderOutput extends UnifiedOrderInput {
   })
   @IsUUID()
   @IsOptional()
-  id: string;
+  id?: string;
 
   @ApiPropertyOptional({
     type: String,
@@ -105,6 +123,14 @@ export class UnifiedOrderOutput extends UnifiedOrderInput {
   @IsString()
   @IsOptional()
   remote_id: string;
+
+  @ApiPropertyOptional({
+    type: Object,
+    description:
+      'The remote data of the customer in the context of the 3rd Party',
+  })
+  @IsOptional()
+  remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
     type: String,

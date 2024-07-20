@@ -2,12 +2,174 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedOrderOutput } from '../types/model.unified';
+import { UnifiedOrderInput, UnifiedOrderOutput } from '../types/model.unified';
+import { EcommerceObject } from '@panora/shared';
+import { OriginalOrderOutput } from '@@core/utils/types/original/original.ecommerce';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { ServiceRegistry } from './registry.service';
+import { IOrderService } from '../types';
+import { ApiResponse } from '@@core/utils/types';
 
 @Injectable()
 export class OrderService {
-  constructor(private prisma: PrismaService, private logger: LoggerService) {
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
+    private webhook: WebhookService,
+  ) {
     this.logger.setContext(OrderService.name);
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async validateCustomerId(id?: string) {
+    if (id) {
+      const res = await this.prisma.ecom_customers.findUnique({
+        where: { id_ecom_customer: id },
+      });
+      if (!res)
+        throw new ReferenceError(
+          'You inserted a cusotmer_id which does not exist',
+        );
+    }
+  }
+
+  async addOrder(
+    unifiedOrderData: UnifiedOrderInput,
+    connection_id: string,
+    integrationId: string,
+    linkedUserId: string,
+    remote_data?: boolean,
+  ): Promise<UnifiedOrderOutput> {
+    try {
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+      await this.validateCustomerId(unifiedOrderData.customer_id);
+
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedOrderInput>({
+          sourceObject: unifiedOrderData,
+          targetType: EcommerceObject.order,
+          providerName: integrationId,
+          vertical: 'ecommerce',
+          customFieldMappings: [],
+        });
+
+      const service: IOrderService =
+        this.serviceRegistry.getService(integrationId);
+      const resp: ApiResponse<OriginalOrderOutput> = await service.addOrder(
+        desunifiedObject,
+        linkedUserId,
+      );
+
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalOrderOutput[]
+      >({
+        sourceObject: [resp.data],
+        targetType: EcommerceObject.order,
+        providerName: integrationId,
+        vertical: 'ecommerce',
+        connectionId: connection_id,
+        customFieldMappings: [],
+      })) as UnifiedOrderOutput[];
+
+      const source_order = resp.data;
+      const target_order = unifiedObject[0];
+
+      const unique_ecommerce_order_id = await this.saveOrUpdateOrder(
+        target_order,
+        connection_id,
+      );
+
+      await this.ingestService.processRemoteData(
+        unique_ecommerce_order_id,
+        source_order,
+      );
+
+      const result_order = await this.getOrder(
+        unique_ecommerce_order_id,
+        undefined,
+        undefined,
+        remote_data,
+      );
+
+      const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
+      const event = await this.prisma.events.create({
+        data: {
+          id_event: uuidv4(),
+          status: status_resp,
+          type: 'ecommerce.order.push',
+          method: 'POST',
+          url: '/ecommerce/companies',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      await this.webhook.dispatchWebhook(
+        result_order,
+        'ecommerce.order.created',
+        linkedUser.id_project,
+        event.id_event,
+      );
+
+      return result_order;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveOrUpdateOrder(
+    order: UnifiedOrderOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingOrder = await this.prisma.ecom_orders.findFirst({
+      where: { remote_id: order.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      order_status: order.order_status,
+      order_number: order.order_number,
+      payment_status: order.payment_status,
+      currency: order.currency,
+      total_price: order.total_price,
+      total_discount: order.total_discount,
+      total_shipping: order.total_shipping,
+      total_tax: order.total_tax,
+      fulfillment_status: order.fulfillment_status,
+      id_ecom_customer: order.customer_id,
+      modified_at: new Date(),
+    };
+
+    if (existingOrder) {
+      const res = await this.prisma.ecom_orders.update({
+        where: { id_ecom_order: existingOrder.id_ecom_order },
+        data: data,
+      });
+
+      return res.id_ecom_order;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = order.remote_id;
+      data.id_connection = connection_id;
+      data.id_ecom_order = uuidv4();
+
+      const newOrder = await this.prisma.ecom_orders.create({ data: data });
+
+      return newOrder.id_ecom_order;
+    }
   }
 
   async getOrder(
@@ -54,11 +216,20 @@ export class OrderService {
       // Transform to UnifiedOrderOutput format
       const unifiedOrder: UnifiedOrderOutput = {
         id: order.id_ecom_order,
-        name: order.name,
+        order_status: order.order_status,
+        order_number: order.order_number,
+        payment_status: order.payment_status,
+        currency: order.currency,
+        total_price: Number(order.total_price),
+        total_discount: Number(order.total_discount),
+        total_shipping: Number(order.total_shipping),
+        total_tax: Number(order.total_tax),
+        fulfillment_status: order.fulfillment_status,
+        customer_id: order.id_ecom_customer,
         field_mappings: field_mappings,
         remote_id: order.remote_id,
-        created_at: order.created_at,
-        modified_at: order.modified_at,
+        created_at: order.created_at.toISOString(),
+        modified_at: order.modifed_at.toISOString(),
       };
 
       let res: UnifiedOrderOutput = unifiedOrder;
@@ -181,11 +352,20 @@ export class OrderService {
           // Transform to UnifiedOrderOutput format
           return {
             id: order.id_ecom_order,
-            name: order.name,
+            order_status: order.order_status,
+            order_number: order.order_number,
+            payment_status: order.payment_status,
+            currency: order.currency,
+            total_price: Number(order.total_price),
+            total_discount: Number(order.total_discount),
+            total_shipping: Number(order.total_shipping),
+            total_tax: Number(order.total_tax),
+            fulfillment_status: order.fulfillment_status,
+            customer_id: order.id_ecom_customer,
             field_mappings: field_mappings,
             remote_id: order.remote_id,
-            created_at: order.created_at,
-            modified_at: order.modified_at,
+            created_at: order.created_at.toISOString(),
+            modified_at: order.modifed_at.toISOString(),
           };
         }),
       );

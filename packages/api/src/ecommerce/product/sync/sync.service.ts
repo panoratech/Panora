@@ -10,12 +10,14 @@ import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalProductOutput } from '@@core/utils/types/original/original.ecommerce';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ATS_PROVIDERS, ECOMMERCE_PROVIDERS } from '@panora/shared';
+import { ECOMMERCE_PROVIDERS } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IProductService } from '../types';
 import { UnifiedProductOutput } from '../types/model.unified';
 import { ecom_products as EcommerceProduct } from '@prisma/client';
+import { Utils } from '@ecommerce/@lib/@utils';
+
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
@@ -28,6 +30,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
     private ingestService: IngestDataService,
+    private utils: Utils,
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ecommerce', 'product', this);
@@ -131,8 +134,11 @@ export class SyncService implements OnModuleInit, IBaseSync {
         if (!originId) {
           existingProduct = await this.prisma.ecom_products.findFirst({
             where: {
-              name: product.name,
+              product_url: product.product_url,
               id_connection: connection_id,
+            },
+            include: {
+              ecom_product_variants: true,
             },
           });
         } else {
@@ -141,23 +147,64 @@ export class SyncService implements OnModuleInit, IBaseSync {
               remote_id: originId,
               id_connection: connection_id,
             },
+            include: {
+              ecom_product_variants: true,
+            },
           });
         }
 
+        const normalizedVariants = this.utils.normalizeVariants(
+          product.variants,
+        );
+
         const baseData: any = {
-          name: product.name ?? null,
+          product_url: product.product_url ?? null,
+          product_type: product.product_type ?? null,
+          product_status: product.product_status ?? null,
+          images_urls: product.images_urls ?? [],
+          description: product.description ?? null,
+          vendor: product.vendor ?? null,
+          tags: product.tags ?? [],
           modified_at: new Date(),
         };
 
         if (existingProduct) {
-          return await this.prisma.ecom_products.update({
+          const res = await this.prisma.ecom_products.update({
             where: {
               id_ecom_product: existingProduct.id_ecom_product,
             },
             data: baseData,
           });
+          if (normalizedVariants && normalizedVariants.length > 0) {
+            await Promise.all(
+              normalizedVariants.map((data, index) => {
+                if (
+                  existingProduct &&
+                  existingProduct.ecom_product_variants[index]
+                ) {
+                  return this.prisma.ecom_product_variants.update({
+                    where: {
+                      id_ecom_product_variant:
+                        existingProduct.ecom_product_variants[index]
+                          .id_ecom_product_variant,
+                    },
+                    data: data,
+                  });
+                } else {
+                  return this.prisma.ecom_product_variants.create({
+                    data: {
+                      ...data,
+                      id_ecom_product: existingProduct.id_ecom_product,
+                      id_connection: connection_id,
+                    },
+                  });
+                }
+              }),
+            );
+          }
+          return res;
         } else {
-          return await this.prisma.ecom_products.create({
+          const newProd = await this.prisma.ecom_products.create({
             data: {
               ...baseData,
               id_ecom_product: uuidv4(),
@@ -166,6 +213,22 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_connection: connection_id,
             },
           });
+
+          if (normalizedVariants && normalizedVariants.length > 0) {
+            await Promise.all(
+              normalizedVariants.map((data) =>
+                this.prisma.ecom_product_variants.create({
+                  data: {
+                    ...data,
+                    id_ecom_product: newProd.id_ecom_product,
+                    id_connection: connection_id,
+                  },
+                }),
+              ),
+            );
+          }
+
+          return newProd;
         }
       };
 

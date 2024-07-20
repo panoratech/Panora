@@ -1219,7 +1219,7 @@ model ecom_customers {
   id_connection           String                    @db.Uuid
   ecom_customer_addresses ecom_customer_addresses[]
   ecom_orders             ecom_orders[]
-} 
+}
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ecom_fulfilments {

@@ -284,19 +284,7 @@ export class CoreSyncService {
   async handleEcommerceSync(provider: string, linkedUserId: string) {
     const tasks = [
       () =>
-        this.registry.getService('ecommerce', 'order').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry
-          .getService('ecommerce', 'fulfillmentorders')
-          .syncForLinkedUser({
-            integrationId: provider,
-            linkedUserId: linkedUserId,
-          }),
-      () =>
-        this.registry.getService('ecommerce', 'fulfillment').syncForLinkedUser({
+        this.registry.getService('ecommerce', 'customer').syncForLinkedUser({
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),
@@ -306,7 +294,12 @@ export class CoreSyncService {
           linkedUserId: linkedUserId,
         }),
       () =>
-        this.registry.getService('ecommerce', 'customer').syncForLinkedUser({
+        this.registry.getService('ecommerce', 'order').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      () =>
+        this.registry.getService('ecommerce', 'fulfillment').syncForLinkedUser({
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),
@@ -316,6 +309,36 @@ export class CoreSyncService {
         await task();
       } catch (error) {
         this.logger.error(`Ecommerce Task failed: ${error.message}`, error);
+      }
+    }
+
+    const connection = await this.prisma.connections.findFirst({
+      where: {
+        id_linked_user: linkedUserId,
+        provider_slug: provider.toLowerCase(),
+      },
+    });
+
+    const orders = await this.prisma.ecom_orders.findMany({
+      where: {
+        id_connection: connection.id_connection,
+      },
+    });
+
+    const fulfTasks = orders.map(
+      (order) => async () =>
+        this.registry.getService('ecommerce', 'fulfillment').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+          id_order: order.id_ecom_order,
+        }),
+    );
+
+    for (const task of fulfTasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(`Fulfillment Task failed: ${error.message}`, error);
       }
     }
   }

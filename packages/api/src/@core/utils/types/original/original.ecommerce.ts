@@ -1,10 +1,25 @@
 /* INPUT */
 
-import { ShopifyCustomerInput } from '@ecommerce/customer/services/shopify/types';
-import { ShopifyFulfillmentInput } from '@ecommerce/fulfillment/services/shopify/types';
-import { ShopifyFulfillmentOrdersInput } from '@ecommerce/fulfillmentorders/services/shopify/types';
-import { ShopifyOrderInput } from '@ecommerce/order/services/shopify/types';
-import { ShopifyProductInput } from '@ecommerce/product/services/shopify/types';
+import {
+  ShopifyCustomerInput,
+  ShopifyCustomerOutput,
+} from '@ecommerce/customer/services/shopify/types';
+import {
+  ShopifyFulfillmentInput,
+  ShopifyFulfillmentOutput,
+} from '@ecommerce/fulfillment/services/shopify/types';
+import {
+  ShopifyFulfillmentOrdersInput,
+  ShopifyFulfillmentOrdersOutput,
+} from '@ecommerce/fulfillmentorders/services/shopify/types';
+import {
+  ShopifyOrderInput,
+  ShopifyOrderOutput,
+} from '@ecommerce/order/services/shopify/types';
+import {
+  ShopifyProductInput,
+  ShopifyProductOutput,
+} from '@ecommerce/product/services/shopify/types';
 
 /* product */
 export type OriginalProductInput = ShopifyProductInput;
@@ -31,19 +46,19 @@ export type EcommerceObjectInput =
 /* OUTPUT */
 
 /* product */
-export type OriginalProductOutput = ShopifyProductInput;
+export type OriginalProductOutput = ShopifyProductOutput;
 
 /* order */
-export type OriginalOrderOutput = ShopifyOrderInput;
+export type OriginalOrderOutput = ShopifyOrderOutput;
 
 /* fulfillmentorders */
-export type OriginalFulfillmentOrdersOutput = ShopifyFulfillmentOrdersInput;
+export type OriginalFulfillmentOrdersOutput = ShopifyFulfillmentOrdersOutput;
 
 /* customer */
-export type OriginalCustomerOutput = ShopifyCustomerInput;
+export type OriginalCustomerOutput = ShopifyCustomerOutput;
 
 /* fulfillment */
-export type OriginalFulfillmentOutput = ShopifyFulfillmentInput;
+export type OriginalFulfillmentOutput = ShopifyFulfillmentOutput;
 
 export type EcommerceObjectOutput =
   | OriginalProductOutput

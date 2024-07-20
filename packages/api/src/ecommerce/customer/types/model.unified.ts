@@ -49,7 +49,7 @@ export class UnifiedCustomerInput {
   addresses?: Address[];
 
   @ApiPropertyOptional({
-    type: String,
+    type: Object,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -76,7 +76,7 @@ export class UnifiedCustomerOutput extends UnifiedCustomerInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
     description:
       'The remote data of the customer in the context of the 3rd Party',
   })

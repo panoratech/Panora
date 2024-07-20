@@ -50,6 +50,14 @@ export class UnifiedFulfilmentInput {
   @IsUUID()
   @IsOptional()
   order_id?: string;
+
+  @ApiPropertyOptional({
+    type: Object,
+    description:
+      'The custom field mappings of the object between the remote 3rd party & Panora',
+  })
+  @IsOptional()
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedFulfilmentOutput extends UnifiedFulfilmentInput {
@@ -59,7 +67,7 @@ export class UnifiedFulfilmentOutput extends UnifiedFulfilmentInput {
   })
   @IsUUID()
   @IsOptional()
-  id: string;
+  id?: string;
 
   @ApiPropertyOptional({
     type: String,
@@ -69,6 +77,14 @@ export class UnifiedFulfilmentOutput extends UnifiedFulfilmentInput {
   @IsString()
   @IsOptional()
   remote_id?: string;
+
+  @ApiPropertyOptional({
+    type: Object,
+    description:
+      'The remote data of the customer in the context of the 3rd Party',
+  })
+  @IsOptional()
+  remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
     type: String,
