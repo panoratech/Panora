@@ -44,6 +44,12 @@ export class WebhookProcessor {
           webhooks_payloads: true,
         },
       });
+    
+      const event = await this.prisma.events.findUnique({
+        where: {
+          id_event: deliveryAttempt.id_event
+        }
+      })
 
     // Check if the endpoint is active
     if (deliveryAttempt.webhook_endpoints.active) {
@@ -54,6 +60,7 @@ export class WebhookProcessor {
           {
             id_event: deliveryAttempt.id_event,
             data: deliveryAttempt.webhooks_payloads.data,
+            type: event.type
           },
           {
             headers: {
