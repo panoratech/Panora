@@ -18,9 +18,10 @@ export class ApiKeyStrategy extends PassportStrategy(
           if (!isValid) {
             return done(new UnauthorizedException('Invalid API Key'), null);
           }
+          const projectId = await this.authService.getProjectIdForApiKey(apikey);
           //console.log('validating api request...  : ' + req.user);
           // If the API key is valid, attach the user to the request object
-          req.user = { ...req.user, apiKeyValidated: true };
+          req.user = { ...req.user, projectId: projectId, apiKeyValidated: true };
 
           // If valid, we now have the user info from the API key validation process
           return done(null, req.user);

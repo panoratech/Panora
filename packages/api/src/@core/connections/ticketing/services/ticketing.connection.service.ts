@@ -67,7 +67,7 @@ export class TicketingConnectionsService implements IConnectionCategory {
         },
       });
       //directly send the webhook
-      await this.webhook.deliverWebhook(
+      await this.webhook.dispatchWebhook(
         data,
         'connection.created',
         callbackOpts.projectId,

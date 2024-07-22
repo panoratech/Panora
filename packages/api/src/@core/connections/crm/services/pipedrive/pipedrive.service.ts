@@ -60,7 +60,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
+          ? this.env.getTunnelIngress()
           : this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
@@ -147,7 +147,7 @@ export class PipedriveConnectionService implements ICrmConnectionService {
       const { connectionId, refreshToken, projectId } = opts;
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
+          ? this.env.getTunnelIngress()
           : this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(

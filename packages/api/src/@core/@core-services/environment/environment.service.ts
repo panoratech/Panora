@@ -23,6 +23,9 @@ export class EnvironmentService {
   getWebhookIngress(): string {
     return this.configService.get<string>('WEBHOOK_INGRESS');
   }
+  getTunnelIngress(): string {
+    return this.configService.get<string>('REDIRECT_TUNNEL_INGRESS');
+  }
   getSentryDsn(): string {
     return this.configService.get<string>('SENTRY_DSN');
   }

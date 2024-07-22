@@ -17,7 +17,7 @@ interface AuthParams {
 // make sure to check if client has own credentials to connect or panora managed ones
 export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical }: AuthParams) => {
   const redirectUrlIngressWhenLocalDev = CONNECTORS_METADATA[vertical][providerName].options?.local_redirect_uri_in_https === true && 'https://prepared-wildcat-infinitely.ngrok-free.app';
-  const localEnv = apiUrl.startsWith("http://localhost:3000") || apiUrl.includes("localhost");
+  const localEnv = apiUrl.startsWith('http://localhost:3000') || apiUrl.includes('localhost');
   const encodedRedirectUrl = encodeURIComponent(`${localEnv && redirectUrlIngressWhenLocalDev ? redirectUrlIngressWhenLocalDev : apiUrl}/connections/oauth/callback`);
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));

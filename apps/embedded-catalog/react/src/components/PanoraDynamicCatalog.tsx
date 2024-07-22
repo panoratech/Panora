@@ -91,7 +91,7 @@ const DynamicCatalog = ({projectId,linkedUserId, category, optionalApiUrl} : Dyn
     projectId: projectId,
     linkedUserId: linkedUserId,
     optionalApiUrl: optionalApiUrl,
-    onSuccess: () => {
+    onSuccess: () => { 
       console.log('OAuth successful');
       setOpenSuccessDialog(true);
     },

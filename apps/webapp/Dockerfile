@@ -1,7 +1,8 @@
 # run directly from the repo root directory
-# docker build -f ./apps/magic-link/Dockerfile .
+# docker build -f ./apps/webapp/Dockerfile .
 FROM node:20-alpine AS base
 # =======================================================================
+# Turbo: Prepare a standalone workspace for docker
 FROM base AS builder
 RUN apk add --no-cache libc6-compat
 RUN apk update
@@ -14,11 +15,13 @@ RUN corepack enable
 WORKDIR /app
 RUN pnpm add -g turbo@1.13.4
 COPY . .
-RUN turbo prune magic-link --docker
-RUN ls -la ./out/full/apps/magic-link
+RUN turbo prune webapp --docker
+
+#check content
+RUN ls -la ./out/full/apps/webapp
 
 # =======================================================================
-# Add lockfile and package.json's of isolated subworkspace
+# Install Deps and build project using PNPM
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
 RUN apk update
@@ -26,30 +29,37 @@ RUN apk update
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-ARG VITE_BACKEND_DOMAIN
 
-ENV VITE_BACKEND_DOMAIN="$VITE_BACKEND_DOMAIN"
+ARG NEXT_PUBLIC_DISTRIBUTION 
+ARG NEXT_PUBLIC_BACKEND_DOMAIN
+ARG NEXT_PUBLIC_MAGIC_LINK_DOMAIN
+ARG NEXT_PUBLIC_WEBAPP_DOMAIN
+
+
+ENV NEXT_PUBLIC_DISTRIBUTION="$NEXT_PUBLIC_DISTRIBUTION"
+ENV NEXT_PUBLIC_BACKEND_DOMAIN="${NEXT_PUBLIC_BACKEND_DOMAIN}"
+ENV NEXT_PUBLIC_MAGIC_LINK_DOMAIN="${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}"
+ENV NEXT_PUBLIC_WEBAPP_DOMAIN="${NEXT_PUBLIC_WEBAPP_DOMAIN}"
 
 RUN corepack enable
 
 WORKDIR /app
 
+RUN ls -la 
+
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
+
+# 🔴🔴🔴 possible bug due to missing dependencies here, when using "standalone mode"
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN pnpm install
+
+# install dependencies
+RUN pnpm install --shamefully-hoist
 
 # Build the project
 COPY --from=builder ./app/out/full/ .
-RUN pnpm turbo run build --filter=magic-link...
+RUN pnpm run build
 
-# ========================================================================
-FROM nginx:1.24-alpine3.17 as runner
+CMD cd /app/apps/webapp/ && pnpm run start
 
-COPY --from=installer ./app/apps/magic-link/dist/ /usr/share/nginx/html
-COPY apps/magic-link/nginx.conf /etc/nginx/conf.d/default.conf
-
-
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]

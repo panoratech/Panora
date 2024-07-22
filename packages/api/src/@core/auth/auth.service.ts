@@ -270,6 +270,26 @@ export class AuthService {
       });
     } catch (error) {
       throw error;
+    } 
+  }
+
+  async getProjectIdForApiKey(apiKey: string) {
+    try{
+    // Decode the JWT to verify if it's valid and get the payload
+      const decoded = this.jwtService.verify(apiKey, {
+        secret: process.env.JWT_SECRET,
+      });
+
+      //const hashed_api_key = this.hashApiKey(apiKey);
+      const saved_api_key = await this.prisma.api_keys.findUnique({
+        where: {
+          api_key_hash: apiKey,
+        },
+      });
+
+      return saved_api_key.id_project;
+    }catch(error){
+      throw error;
     }
   }
 

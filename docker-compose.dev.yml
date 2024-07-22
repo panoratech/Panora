@@ -34,6 +34,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       WEBHOOK_INGRESS: ${WEBHOOK_INGRESS}
+      REDIRECT_TUNNEL_INGRESS: ${REDIRECT_TUNNEL_INGRESS}
       JWT_SECRET: ${JWT_SECRET}
       SENTRY_ENABLED: ${SENTRY_ENABLED}
       SENTRY_DSN: ${SENTRY_DSN}
@@ -196,11 +197,10 @@ services:
     
   webapp-nextjs:
     build:
-      dockerfile: ./apps/client-ts/Dockerfile.dev
+      dockerfile: ./apps/webapp/Dockerfile.dev
       context: ./
       args:
         VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
-        VITE_FRONTEND_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
     environment:
       NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
       NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}

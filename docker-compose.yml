@@ -29,6 +29,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       WEBHOOK_INGRESS: ${WEBHOOK_INGRESS}
+      REDIRECT_TUNNEL_INGRESS: ${REDIRECT_TUNNEL_INGRESS}
       JWT_SECRET: ${JWT_SECRET}
       SENTRY_ENABLED: ${SENTRY_ENABLED}
       SENTRY_DSN: ${SENTRY_DSN}
@@ -162,12 +163,12 @@ services:
         condition: service_healthy
     networks:
       - backend
-    # healthcheck:
-    #   test: ["CMD-SHELL", "curl", "-f", "http://localhost:3000/health"]
-    #   start_period: 60s
-    #   interval: 10s
-    #   timeout: 1s
-    #   retries: 50
+    healthcheck:
+      test: ["CMD-SHELL", "curl", "-f", "http://localhost:3000/health"]
+      start_period: 60s
+      interval: 10s
+      timeout: 1s
+      retries: 50
 
   redis:
     image: valkey/valkey:7.2-alpine
@@ -215,6 +216,20 @@ services:
     networks:
       - backend
       - frontend
+      
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: always
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    ports:
+    - 4040:4040
+    network_mode: "host"
 
 networks:
   frontend:
