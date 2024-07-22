@@ -414,6 +414,7 @@
     {
       "group": "Recipes",
       "pages": [
+        "recipes/frontend-sdk", 
         "recipes/embed-catalog", 
         "recipes/import-existing-users", 
         "recipes/catch-connection-token",
@@ -433,7 +434,7 @@
       "group": "Devtools",
       "pages": [
         {
-          "group": "SDKs",
+          "group": "Backend SDKs",
           "pages": ["backend-sdk/typescript", "backend-sdk/python"]
         }
       ]
