@@ -1,5 +1,11 @@
 # @panora/frontend-sdk
 
+## 1.1.1
+
+### Patch Changes
+
+- ded2580: Readme patch
+
 ## 1.1.0
 
 ### Minor Changes
