@@ -1,5 +1,13 @@
 # webapp
 
+## 0.1.8
+
+### Patch Changes
+
+- Updated dependencies [773c515]
+  - @panora/shared@1.4.0
+  - api@0.0.9
+
 ## 0.1.7
 
 ### Patch Changes
