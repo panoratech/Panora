@@ -20,7 +20,6 @@ import { ZohoNoteMapper } from './services/zoho/mappers';
 import { AttioNoteMapper } from './services/attio/mappers';
 import { SyncService } from './sync/sync.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [NoteController],
   providers: [
     NoteService,

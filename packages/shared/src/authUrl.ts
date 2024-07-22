@@ -2,6 +2,7 @@ import { CONNECTORS_METADATA } from './connectors/metadata';
 import { needsEndUserSubdomain, needsScope, needsSubdomain, OAuth2AuthData, providerToType } from './envConfig';
 import { AuthStrategy, DynamicAuthorization, ProviderConfig, StringAuthorization } from './types';
 import { randomString } from './utils';
+import * as crypto from 'crypto';
 
 interface AuthParams {
   projectId: string;
@@ -14,6 +15,28 @@ interface AuthParams {
   additionalParams?: {
     end_user_domain: string; // needed for instance with shopify or sharepoint to construct the auth domain
   }
+}
+
+function generateCodes() {
+    const base64URLEncode = (str: Buffer): string => {
+        return str.toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=/g, '');
+    }
+
+    const verifier = base64URLEncode(crypto.randomBytes(32));
+
+    const sha256 = (buffer: Buffer): Buffer => {
+        return crypto.createHash('sha256').update(buffer).digest();
+    }
+
+    const challenge = base64URLEncode(sha256(Buffer.from(verifier)));
+
+    return {
+        codeVerifier: verifier,
+        codeChallenge: challenge
+    }
 }
 
 // make sure to check wether its api_key or oauth2 to build the right auth
@@ -176,7 +199,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       params += `&owner=user`
       break;
     case 'klaviyo':
-      params += `&code_challenge_method=S256&code_challenge=` // TODO
+      const {codeChallenge, codeVerifier}= generateCodes()
+      params += `&code_challenge_method=S256&code_challenge=${codeChallenge}` //todo: store codeVerifier in a store
       break;
     default:
       break;

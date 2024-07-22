@@ -19,7 +19,6 @@ import { ServiceRegistry as ApplicationServiceRegistry } from '@ats/application/
 import { ServiceRegistry as AttachmentServiceRegistry } from '@ats/attachment/services/registry.service';
 import { AshbyCandidateMapper } from './services/ashby/mappers';
 @Module({
-  imports: [BullQueueModule],
   controllers: [CandidateController],
   providers: [
     CandidateService,

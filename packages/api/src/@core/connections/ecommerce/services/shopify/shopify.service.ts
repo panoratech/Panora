@@ -3,7 +3,13 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { OAuthCallbackParams } from '@@core/connections/@utils/types';
+import {
+  AbstractBaseConnectionService,
+  OAuthCallbackParams,
+  PassthroughInput,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
+import { PassthroughResponse } from '@@core/passthrough/types';
 import { Injectable } from '@nestjs/common';
 import {
   AuthStrategy,
@@ -12,10 +18,10 @@ import {
   OAuth2AuthData,
   providerToType,
 } from '@panora/shared';
-import { v4 as uuidv4 } from 'uuid';
-import { IEcommerceConnectionService } from '../../types';
-import { ServiceRegistry } from '../registry.service';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../registry.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 
 export type ShopifyOAuthResponse = {
   access_token: string;
@@ -23,20 +29,64 @@ export type ShopifyOAuthResponse = {
 };
 
 @Injectable()
-export class ShopifyConnectionService implements IEcommerceConnectionService {
+export class ShopifyConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
-    private prisma: PrismaService,
+    protected prisma: PrismaService,
     private logger: LoggerService,
-    private cryptoService: EncryptionService,
+    protected cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private connectionUtils: ConnectionUtils,
     private cService: ConnectionsStrategiesService,
+    private retryService: RetryHandler,
   ) {
+    super(prisma, cryptoService);
     this.logger.setContext(ShopifyConnectionService.name);
     this.registry.registerService('shopify', this);
     this.type = providerToType('shopify', 'ecommerce', AuthStrategy.oauth2);
+  }
+
+  async passthrough(
+    input: PassthroughInput,
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
+    try {
+      const { headers } = input;
+      const config = await this.constructPassthrough(input, connectionId);
+
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: connectionId,
+        },
+      });
+
+      config.headers['X-Shopify-Access-Token'] = this.cryptoService.decrypt(
+        connection.access_token,
+      );
+
+      config.headers = {
+        ...config.headers,
+        ...headers,
+      };
+
+      return await this.retryService.makeRequest(
+        {
+          method: config.method,
+          url: config.url,
+          data: config.data,
+          headers: config.headers,
+        },
+        'ecommerce.ashby.passthrough',
+        config.linkedUserId,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  handleTokenRefresh?(opts: RefreshParams): Promise<any> {
+    return Promise.resolve();
   }
 
   async handleCallback(opts: OAuthCallbackParams) {

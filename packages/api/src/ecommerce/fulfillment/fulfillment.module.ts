@@ -12,7 +12,6 @@ import { ShopifyFulfillmentMapper } from './services/shopify/mappers';
 import { SyncService } from './sync/sync.service';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [FulfillmentController],
   providers: [
     FulfillmentService,

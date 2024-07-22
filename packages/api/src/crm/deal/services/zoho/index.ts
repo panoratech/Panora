@@ -37,7 +37,7 @@ export class ZohoService implements IDealService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/Deals`,
+        `${connection.account_url}/v5/Deals`,
         { data: [dealData] },
         {
           headers: {
@@ -49,7 +49,7 @@ export class ZohoService implements IDealService {
         },
       );
       const final_res = await axios.get(
-        `${connection.account_url}/Deals/${resp.data.data[0].details.id}`,
+        `${connection.account_url}/v5/Deals/${resp.data.data[0].details.id}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export class ZohoService implements IDealService {
       const fields =
         'Owner,Description,Deal_Name,Account_Name,Stage,Amount,Contact_Name';
       const resp = await axios.get(
-        `${connection.account_url}/Deals?fields=${fields}`,
+        `${connection.account_url}/v5/Deals?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

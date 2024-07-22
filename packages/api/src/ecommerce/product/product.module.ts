@@ -12,7 +12,6 @@ import { ShopifyService } from './services/shopify';
 import { ShopifyProductMapper } from './services/shopify/mappers';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [ProductController],
   providers: [
     ProductService,

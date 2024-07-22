@@ -270,10 +270,10 @@
         ]
       }
     },
-    "/connections/apikey/callback": {
+    "/connections/basicorapikey/callback": {
       "post": {
-        "operationId": "handleApiKeyCallback",
-        "summary": "Capture api key callback",
+        "operationId": "handleBasicOrApiKeyCallback",
+        "summary": "Capture basic or api key callback",
         "parameters": [
           {
             "name": "state",
@@ -3987,25 +3987,9 @@
         "summary": "Make a passthrough request",
         "parameters": [
           {
-            "name": "integrationId",
+            "name": "x-connection-token",
             "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "linkedUserId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "vertical",
-            "required": true,
-            "in": "query",
+            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -4027,7 +4011,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PassThroughResponse"
+                  "type": "object"
                 }
               }
             }
@@ -4037,10 +4021,43 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PassThroughResponse"
+                  "type": "object"
                 }
               }
             }
+          }
+        },
+        "tags": [
+          "passthrough"
+        ]
+      }
+    },
+    "/passthrough/{retryId}": {
+      "get": {
+        "operationId": "getRetriedRequestResponse",
+        "summary": "Retrieve response of a failed passthrough request due to rate limits",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "retryId",
+            "required": true,
+            "in": "path",
+            "description": "id of the retryJob returned when you initiated a passthrough request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -16653,10 +16670,7 @@
           "method": {
             "enum": [
               "GET",
-              "POST",
-              "PATCH",
-              "DELETE",
-              "PUT"
+              "POST"
             ],
             "type": "string"
           },
@@ -16666,6 +16680,12 @@
           "data": {
             "type": "object"
           },
+          "request_format": {
+            "type": "object"
+          },
+          "overrideBaseUrl": {
+            "type": "string"
+          },
           "headers": {
             "type": "object"
           }
@@ -16673,25 +16693,6 @@
         "required": [
           "method",
           "path"
-        ]
-      },
-      "PassThroughResponse": {
-        "type": "object",
-        "properties": {
-          "url": {
-            "type": "string"
-          },
-          "status": {
-            "type": "number"
-          },
-          "data": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "url",
-          "status",
-          "data"
         ]
       },
       "CreateConnectionStrategyDto": {
@@ -18563,7 +18564,7 @@
           },
           "currency": {
             "type": "string",
-            "description": "The currency of the order"
+            "description": "The currency of the order. Authorized value must be of type CurrencyCode (ISO 4217)"
           },
           "total_price": {
             "type": "number",

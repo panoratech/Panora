@@ -3,18 +3,32 @@ import { ApiProperty } from '@nestjs/swagger';
 enum Action {
   GET = 'GET',
   POST = 'POST',
-  PATCH = 'PATCH',
-  DELETE = 'DELETE',
-  PUT = 'PUT',
 }
+
+export type MultipartData = {
+  name: string;
+  data: string;
+  encoding: string; //BASE64
+  file_name: string; //make sure to include extension
+};
+
+export type JsonData = Record<string, any>;
 
 export class PassThroughRequestDto {
   @ApiProperty({ name: 'method', enum: Action })
   method: Action;
+
   @ApiProperty()
   path: string;
+
   @ApiProperty()
-  data?: Record<string, any> | Record<string, any>[];
+  data?: JsonData | MultipartData[];
+
   @ApiProperty()
-  headers?: Record<string, string>;
+  request_format?: 'JSON' | 'MULTIPART';
+
+  @ApiProperty()
+  overrideBaseUrl?: string;
+
+  headers?: Record<string, any>;
 }

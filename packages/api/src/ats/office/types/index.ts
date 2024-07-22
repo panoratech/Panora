@@ -5,7 +5,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IOfficeService extends IBaseObjectService {
-  addOffice(
+  addOffice?(
     officeData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalOfficeOutput>>;

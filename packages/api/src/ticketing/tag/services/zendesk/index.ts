@@ -49,7 +49,7 @@ export class ZendeskService implements ITagService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/tickets/${ticket.remote_id}/tags`,
+        `${connection.account_url}/v2/tickets/${ticket.remote_id}/tags`,
         {
           headers: {
             'Content-Type': 'application/json',

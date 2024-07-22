@@ -164,10 +164,10 @@ paths:
           description: ''
       tags: &ref_1
         - connections
-  /connections/apikey/callback:
+  /connections/basicorapikey/callback:
     post:
-      operationId: handleApiKeyCallback
-      summary: Capture api key callback
+      operationId: handleBasicOrApiKeyCallback
+      summary: Capture basic or api key callback
       parameters:
         - name: state
           required: true
@@ -2314,19 +2314,9 @@ paths:
       operationId: passthroughRequest
       summary: Make a passthrough request
       parameters:
-        - name: integrationId
+        - name: x-connection-token
           required: true
-          in: query
-          schema:
-            type: string
-        - name: linkedUserId
-          required: true
-          in: query
-          schema:
-            type: string
-        - name: vertical
-          required: true
-          in: query
+          in: header
           schema:
             type: string
       requestBody:
@@ -2341,15 +2331,37 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PassThroughResponse'
+                type: object
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PassThroughResponse'
-      tags:
+                type: object
+      tags: &ref_43
         - passthrough
+  /passthrough/{retryId}:
+    get:
+      operationId: getRetriedRequestResponse
+      summary: Retrieve response of a failed passthrough request due to rate limits
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: retryId
+          required: true
+          in: path
+          description: >-
+            id of the retryJob returned when you initiated a passthrough
+            request.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags: *ref_43
   /connections-strategies/create:
     post:
       operationId: createConnectionStrategy
@@ -2364,7 +2376,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: &ref_43
+      tags: &ref_44
         - connections-strategies
   /connections-strategies/toggle:
     post:
@@ -2380,7 +2392,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_43
+      tags: *ref_44
   /connections-strategies/delete:
     post:
       operationId: deleteConnectionStrategy
@@ -2395,7 +2407,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_43
+      tags: *ref_44
   /connections-strategies/update:
     post:
       operationId: updateConnectionStrategy
@@ -2410,7 +2422,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_43
+      tags: *ref_44
   /connections-strategies/credentials:
     post:
       operationId: getConnectionStrategyCredentials
@@ -2425,7 +2437,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_43
+      tags: *ref_44
   /connections-strategies/getCredentials:
     get:
       operationId: getCredentials
@@ -2444,7 +2456,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_43
+      tags: *ref_44
   /connections-strategies/getConnectionStrategiesForProject:
     get:
       operationId: getConnectionStrategiesForProject
@@ -2453,7 +2465,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_43
+      tags: *ref_44
   /project-connectors:
     post:
       operationId: updateConnectorsToProject
@@ -2468,7 +2480,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: &ref_44
+      tags: &ref_45
         - project-connectors
     get:
       operationId: getConnectorsFromProject
@@ -2487,7 +2499,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_44
+      tags: *ref_45
   /hris/bankinfo:
     get:
       operationId: getBankinfos
@@ -2529,7 +2541,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedBankInfoOutput'
-      tags: &ref_45
+      tags: &ref_46
         - hris/bankinfo
   /hris/bankinfo/{id}:
     get:
@@ -2566,7 +2578,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedBankInfoOutput'
-      tags: *ref_45
+      tags: *ref_46
   /hris/benefit:
     get:
       operationId: getBenefits
@@ -2608,7 +2620,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedBenefitOutput'
-      tags: &ref_46
+      tags: &ref_47
         - hris/benefit
   /hris/benefit/{id}:
     get:
@@ -2645,7 +2657,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedBenefitOutput'
-      tags: *ref_46
+      tags: *ref_47
   /hris/company:
     get:
       operationId: getCompanys
@@ -2730,7 +2742,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedDependentOutput'
-      tags: &ref_47
+      tags: &ref_48
         - hris/dependent
   /hris/dependent/{id}:
     get:
@@ -2767,7 +2779,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedDependentOutput'
-      tags: *ref_47
+      tags: *ref_48
   /hris/employeepayrollrun:
     get:
       operationId: getEmployeePayrollRuns
@@ -2809,7 +2821,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmployeePayrollRunOutput'
-      tags: &ref_48
+      tags: &ref_49
         - hris/employeepayrollrun
   /hris/employeepayrollrun/{id}:
     get:
@@ -2846,7 +2858,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmployeePayrollRunOutput'
-      tags: *ref_48
+      tags: *ref_49
   /hris/employee:
     get:
       operationId: getEmployees
@@ -2888,7 +2900,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmployeeOutput'
-      tags: &ref_49
+      tags: &ref_50
         - hris/employee
     post:
       operationId: addEmployee
@@ -2930,7 +2942,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedEmployeeOutput'
-      tags: *ref_49
+      tags: *ref_50
   /hris/employee/{id}:
     get:
       operationId: getEmployee
@@ -2966,7 +2978,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmployeeOutput'
-      tags: *ref_49
+      tags: *ref_50
   /hris/employerbenefit:
     get:
       operationId: getEmployerBenefits
@@ -3008,7 +3020,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmployerBenefitOutput'
-      tags: &ref_50
+      tags: &ref_51
         - hris/employerbenefit
   /hris/employerbenefit/{id}:
     get:
@@ -3045,7 +3057,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmployerBenefitOutput'
-      tags: *ref_50
+      tags: *ref_51
   /hris/employment:
     get:
       operationId: getEmployments
@@ -3087,7 +3099,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmploymentOutput'
-      tags: &ref_51
+      tags: &ref_52
         - hris/employment
   /hris/employment/{id}:
     get:
@@ -3124,7 +3136,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmploymentOutput'
-      tags: *ref_51
+      tags: *ref_52
   /hris/group:
     get:
       operationId: getGroups
@@ -3166,7 +3178,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedGroupOutput'
-      tags: &ref_52
+      tags: &ref_53
         - hris/group
   /hris/group/{id}:
     get:
@@ -3203,7 +3215,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedGroupOutput'
-      tags: *ref_52
+      tags: *ref_53
   /hris/location:
     get:
       operationId: getLocations
@@ -3245,7 +3257,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedLocationOutput'
-      tags: &ref_53
+      tags: &ref_54
         - hris/location
   /hris/location/{id}:
     get:
@@ -3282,7 +3294,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedLocationOutput'
-      tags: *ref_53
+      tags: *ref_54
   /hris/paygroup:
     get:
       operationId: getPayGroups
@@ -3324,7 +3336,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPayGroupOutput'
-      tags: &ref_54
+      tags: &ref_55
         - hris/paygroup
   /hris/paygroup/{id}:
     get:
@@ -3361,7 +3373,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPayGroupOutput'
-      tags: *ref_54
+      tags: *ref_55
   /hris/payrollrun:
     get:
       operationId: getPayrollRuns
@@ -3446,7 +3458,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTimeoffOutput'
-      tags: &ref_55
+      tags: &ref_56
         - hris/timeoff
     post:
       operationId: addTimeoff
@@ -3488,7 +3500,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTimeoffOutput'
-      tags: *ref_55
+      tags: *ref_56
   /hris/timeoff/{id}:
     get:
       operationId: getTimeoff
@@ -3524,7 +3536,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTimeoffOutput'
-      tags: *ref_55
+      tags: *ref_56
   /hris/timeoffbalance:
     get:
       operationId: getTimeoffBalances
@@ -3566,7 +3578,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTimeoffBalanceOutput'
-      tags: &ref_56
+      tags: &ref_57
         - hris/timeoffbalance
   /hris/timeoffbalance/{id}:
     get:
@@ -3603,7 +3615,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTimeoffBalanceOutput'
-      tags: *ref_56
+      tags: *ref_57
   /marketingautomation/action:
     get:
       operationId: getActions
@@ -3645,7 +3657,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedActionOutput'
-      tags: &ref_57
+      tags: &ref_58
         - marketingautomation/action
     post:
       operationId: addAction
@@ -3689,7 +3701,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedActionOutput'
-      tags: *ref_57
+      tags: *ref_58
   /marketingautomation/action/{id}:
     get:
       operationId: getAction
@@ -3727,7 +3739,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedActionOutput'
-      tags: *ref_57
+      tags: *ref_58
   /marketingautomation/automation:
     get:
       operationId: getAutomations
@@ -3769,7 +3781,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAutomationOutput'
-      tags: &ref_58
+      tags: &ref_59
         - marketingautomation/automation
     post:
       operationId: addAutomation
@@ -3813,7 +3825,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAutomationOutput'
-      tags: *ref_58
+      tags: *ref_59
   /marketingautomation/automation/{id}:
     get:
       operationId: getAutomation
@@ -3851,7 +3863,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAutomationOutput'
-      tags: *ref_58
+      tags: *ref_59
   /marketingautomation/campaign:
     get:
       operationId: getCampaigns
@@ -3893,7 +3905,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: &ref_59
+      tags: &ref_60
         - marketingautomation/campaign
     post:
       operationId: addCampaign
@@ -3937,7 +3949,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: *ref_59
+      tags: *ref_60
   /marketingautomation/campaign/{id}:
     get:
       operationId: getCampaign
@@ -3975,7 +3987,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: *ref_59
+      tags: *ref_60
   /marketingautomation/contact:
     get:
       operationId: getMarketingAutomationContacts
@@ -4017,7 +4029,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: &ref_60
+      tags: &ref_61
         - marketingautomation/contact
     post:
       operationId: addMarketingAutomationContact
@@ -4061,7 +4073,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_60
+      tags: *ref_61
   /marketingautomation/contact/{id}:
     get:
       operationId: getMarketingAutomationContact
@@ -4099,7 +4111,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_60
+      tags: *ref_61
   /marketingautomation/email:
     get:
       operationId: getEmails
@@ -4141,7 +4153,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmailOutput'
-      tags: &ref_61
+      tags: &ref_62
         - marketingautomation/email
   /marketingautomation/email/{id}:
     get:
@@ -4180,7 +4192,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEmailOutput'
-      tags: *ref_61
+      tags: *ref_62
   /marketingautomation/event:
     get:
       operationId: getMarketingAutomationEvents
@@ -4222,7 +4234,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEventOutput'
-      tags: &ref_62
+      tags: &ref_63
         - marketingautomation/event
   /marketingautomation/event/{id}:
     get:
@@ -4261,7 +4273,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEventOutput'
-      tags: *ref_62
+      tags: *ref_63
   /marketingautomation/list:
     get:
       operationId: getLists
@@ -4303,7 +4315,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedListOutput'
-      tags: &ref_63
+      tags: &ref_64
         - marketingautomation/list
     post:
       operationId: addList
@@ -4347,7 +4359,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedListOutput'
-      tags: *ref_63
+      tags: *ref_64
   /marketingautomation/list/{id}:
     get:
       operationId: getList
@@ -4385,7 +4397,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedListOutput'
-      tags: *ref_63
+      tags: *ref_64
   /marketingautomation/message:
     get:
       operationId: getMessages
@@ -4427,7 +4439,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedMessageOutput'
-      tags: &ref_64
+      tags: &ref_65
         - marketingautomation/message
   /marketingautomation/message/{id}:
     get:
@@ -4466,7 +4478,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedMessageOutput'
-      tags: *ref_64
+      tags: *ref_65
   /marketingautomation/template:
     get:
       operationId: getTemplates
@@ -4508,7 +4520,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTemplateOutput'
-      tags: &ref_65
+      tags: &ref_66
         - marketingautomation/template
     post:
       operationId: addTemplate
@@ -4552,7 +4564,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTemplateOutput'
-      tags: *ref_65
+      tags: *ref_66
   /marketingautomation/template/{id}:
     get:
       operationId: getTemplate
@@ -4590,7 +4602,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTemplateOutput'
-      tags: *ref_65
+      tags: *ref_66
   /marketingautomation/user:
     get:
       operationId: getMarketingAutomationUsers
@@ -4632,7 +4644,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: &ref_66
+      tags: &ref_67
         - marketingautomation/user
   /marketingautomation/user/{id}:
     get:
@@ -4671,7 +4683,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_66
+      tags: *ref_67
   /ats/activity:
     get:
       operationId: getActivitys
@@ -4713,7 +4725,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedActivityOutput'
-      tags: &ref_67
+      tags: &ref_68
         - ats/activity
     post:
       operationId: addActivity
@@ -4755,7 +4767,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedActivityOutput'
-      tags: *ref_67
+      tags: *ref_68
   /ats/activity/{id}:
     get:
       operationId: getActivity
@@ -4791,7 +4803,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedActivityOutput'
-      tags: *ref_67
+      tags: *ref_68
   /ats/application:
     get:
       operationId: getApplications
@@ -4833,7 +4845,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedApplicationOutput'
-      tags: &ref_68
+      tags: &ref_69
         - ats/application
     post:
       operationId: addApplication
@@ -4875,7 +4887,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedApplicationOutput'
-      tags: *ref_68
+      tags: *ref_69
   /ats/application/{id}:
     get:
       operationId: getApplication
@@ -4911,7 +4923,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedApplicationOutput'
-      tags: *ref_68
+      tags: *ref_69
   /ats/attachment:
     get:
       operationId: getAtsAttachments
@@ -4953,7 +4965,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: &ref_69
+      tags: &ref_70
         - ats/attachment
     post:
       operationId: addAtsAttachment
@@ -4995,7 +5007,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_69
+      tags: *ref_70
   /ats/attachment/{id}:
     get:
       operationId: getAtsAttachment
@@ -5031,7 +5043,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_69
+      tags: *ref_70
   /ats/candidate:
     get:
       operationId: getCandidates
@@ -5073,7 +5085,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCandidateOutput'
-      tags: &ref_70
+      tags: &ref_71
         - ats/candidate
     post:
       operationId: addCandidate
@@ -5115,7 +5127,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCandidateOutput'
-      tags: *ref_70
+      tags: *ref_71
   /ats/candidate/{id}:
     get:
       operationId: getCandidate
@@ -5151,7 +5163,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCandidateOutput'
-      tags: *ref_70
+      tags: *ref_71
   /ats/department:
     get:
       operationId: getDepartments
@@ -5193,7 +5205,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedDepartmentOutput'
-      tags: &ref_71
+      tags: &ref_72
         - ats/department
   /ats/department/{id}:
     get:
@@ -5230,7 +5242,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedDepartmentOutput'
-      tags: *ref_71
+      tags: *ref_72
   /ats/interview:
     get:
       operationId: getInterviews
@@ -5272,7 +5284,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedInterviewOutput'
-      tags: &ref_72
+      tags: &ref_73
         - ats/interview
     post:
       operationId: addInterview
@@ -5314,7 +5326,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedInterviewOutput'
-      tags: *ref_72
+      tags: *ref_73
   /ats/interview/{id}:
     get:
       operationId: getInterview
@@ -5350,7 +5362,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedInterviewOutput'
-      tags: *ref_72
+      tags: *ref_73
   /ats/jobinterviewstage:
     get:
       operationId: getJobInterviewStages
@@ -5392,7 +5404,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedJobInterviewStageOutput'
-      tags: &ref_73
+      tags: &ref_74
         - ats/jobinterviewstage
   /ats/jobinterviewstage/{id}:
     get:
@@ -5429,7 +5441,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedJobInterviewStageOutput'
-      tags: *ref_73
+      tags: *ref_74
   /ats/job:
     get:
       operationId: getJobs
@@ -5471,7 +5483,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedJobOutput'
-      tags: &ref_74
+      tags: &ref_75
         - ats/job
   /ats/job/{id}:
     get:
@@ -5508,7 +5520,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedJobOutput'
-      tags: *ref_74
+      tags: *ref_75
   /ats/offer:
     get:
       operationId: getOffers
@@ -5550,7 +5562,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedOfferOutput'
-      tags: &ref_75
+      tags: &ref_76
         - ats/offer
   /ats/offer/{id}:
     get:
@@ -5587,7 +5599,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedOfferOutput'
-      tags: *ref_75
+      tags: *ref_76
   /ats/office:
     get:
       operationId: getOffices
@@ -5629,7 +5641,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedOfficeOutput'
-      tags: &ref_76
+      tags: &ref_77
         - ats/office
   /ats/office/{id}:
     get:
@@ -5666,7 +5678,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedOfficeOutput'
-      tags: *ref_76
+      tags: *ref_77
   /ats/rejectreason:
     get:
       operationId: getRejectReasons
@@ -5708,7 +5720,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedRejectReasonOutput'
-      tags: &ref_77
+      tags: &ref_78
         - ats/rejectreason
   /ats/rejectreason/{id}:
     get:
@@ -5745,7 +5757,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedRejectReasonOutput'
-      tags: *ref_77
+      tags: *ref_78
   /ats/scorecard:
     get:
       operationId: getScoreCards
@@ -5787,7 +5799,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedScoreCardOutput'
-      tags: &ref_78
+      tags: &ref_79
         - ats/scorecard
   /ats/scorecard/{id}:
     get:
@@ -5824,7 +5836,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedScoreCardOutput'
-      tags: *ref_78
+      tags: *ref_79
   /ats/tag:
     get:
       operationId: getAtsTags
@@ -5866,7 +5878,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTagOutput'
-      tags: &ref_79
+      tags: &ref_80
         - ats/tag
   /ats/tag/{id}:
     get:
@@ -5903,7 +5915,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTagOutput'
-      tags: *ref_79
+      tags: *ref_80
   /ats/user:
     get:
       operationId: getAtsUsers
@@ -5945,7 +5957,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: &ref_80
+      tags: &ref_81
         - ats/user
   /ats/user/{id}:
     get:
@@ -5982,7 +5994,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_80
+      tags: *ref_81
   /ats/eeocs:
     get:
       operationId: getEeocss
@@ -6024,7 +6036,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEeocsOutput'
-      tags: &ref_81
+      tags: &ref_82
         - ats/eeocs
   /ats/eeocs/{id}:
     get:
@@ -6061,7 +6073,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedEeocsOutput'
-      tags: *ref_81
+      tags: *ref_82
   /accounting/account:
     get:
       operationId: getAccountingAccounts
@@ -6103,7 +6115,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAccountOutput'
-      tags: &ref_82
+      tags: &ref_83
         - accounting/account
     post:
       operationId: addAccount
@@ -6145,7 +6157,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountOutput'
-      tags: *ref_82
+      tags: *ref_83
   /accounting/account/{id}:
     get:
       operationId: getAccountingAccount
@@ -6181,7 +6193,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAccountOutput'
-      tags: *ref_82
+      tags: *ref_83
   /accounting/address:
     get:
       operationId: getAddresss
@@ -6223,7 +6235,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAddressOutput'
-      tags: &ref_83
+      tags: &ref_84
         - accounting/address
   /accounting/address/{id}:
     get:
@@ -6260,7 +6272,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAddressOutput'
-      tags: *ref_83
+      tags: *ref_84
   /accounting/attachment:
     get:
       operationId: getAccountingAttachments
@@ -6302,7 +6314,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: &ref_84
+      tags: &ref_85
         - accounting/attachment
     post:
       operationId: addAccountingAttachment
@@ -6344,7 +6356,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_84
+      tags: *ref_85
   /accounting/attachment/{id}:
     get:
       operationId: getAccountingAttachment
@@ -6380,7 +6392,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_84
+      tags: *ref_85
   /accounting/balancesheet:
     get:
       operationId: getBalanceSheets
@@ -6422,7 +6434,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedBalanceSheetOutput'
-      tags: &ref_85
+      tags: &ref_86
         - accounting/balancesheet
   /accounting/balancesheet/{id}:
     get:
@@ -6459,7 +6471,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedBalanceSheetOutput'
-      tags: *ref_85
+      tags: *ref_86
   /accounting/cashflowstatement:
     get:
       operationId: getCashflowStatements
@@ -6501,7 +6513,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCashflowStatementOutput'
-      tags: &ref_86
+      tags: &ref_87
         - accounting/cashflowstatement
   /accounting/cashflowstatement/{id}:
     get:
@@ -6538,7 +6550,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCashflowStatementOutput'
-      tags: *ref_86
+      tags: *ref_87
   /accounting/companyinfo:
     get:
       operationId: getCompanyInfos
@@ -6580,7 +6592,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCompanyInfoOutput'
-      tags: &ref_87
+      tags: &ref_88
         - accounting/companyinfo
   /accounting/companyinfo/{id}:
     get:
@@ -6617,7 +6629,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCompanyInfoOutput'
-      tags: *ref_87
+      tags: *ref_88
   /accounting/contact:
     get:
       operationId: getAccountingContacts
@@ -6659,7 +6671,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: &ref_88
+      tags: &ref_89
         - accounting/contact
     post:
       operationId: addAccountingContact
@@ -6701,7 +6713,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_88
+      tags: *ref_89
   /accounting/contact/{id}:
     get:
       operationId: getAccountingContact
@@ -6737,7 +6749,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_88
+      tags: *ref_89
   /accounting/creditnote:
     get:
       operationId: getCreditNotes
@@ -6779,7 +6791,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCreditNoteOutput'
-      tags: &ref_89
+      tags: &ref_90
         - accounting/creditnote
   /accounting/creditnote/{id}:
     get:
@@ -6816,7 +6828,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCreditNoteOutput'
-      tags: *ref_89
+      tags: *ref_90
   /accounting/expense:
     get:
       operationId: getExpenses
@@ -6858,7 +6870,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedExpenseOutput'
-      tags: &ref_90
+      tags: &ref_91
         - accounting/expense
     post:
       operationId: addExpense
@@ -6900,7 +6912,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedExpenseOutput'
-      tags: *ref_90
+      tags: *ref_91
   /accounting/expense/{id}:
     get:
       operationId: getExpense
@@ -6936,7 +6948,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedExpenseOutput'
-      tags: *ref_90
+      tags: *ref_91
   /accounting/incomestatement:
     get:
       operationId: getIncomeStatements
@@ -6978,7 +6990,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedIncomeStatementOutput'
-      tags: &ref_91
+      tags: &ref_92
         - accounting/incomestatement
   /accounting/incomestatement/{id}:
     get:
@@ -7015,7 +7027,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedIncomeStatementOutput'
-      tags: *ref_91
+      tags: *ref_92
   /accounting/invoice:
     get:
       operationId: getInvoices
@@ -7057,7 +7069,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedInvoiceOutput'
-      tags: &ref_92
+      tags: &ref_93
         - accounting/invoice
     post:
       operationId: addInvoice
@@ -7099,7 +7111,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedInvoiceOutput'
-      tags: *ref_92
+      tags: *ref_93
   /accounting/invoice/{id}:
     get:
       operationId: getInvoice
@@ -7135,7 +7147,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedInvoiceOutput'
-      tags: *ref_92
+      tags: *ref_93
   /accounting/item:
     get:
       operationId: getItems
@@ -7177,7 +7189,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedItemOutput'
-      tags: &ref_93
+      tags: &ref_94
         - accounting/item
   /accounting/item/{id}:
     get:
@@ -7214,7 +7226,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedItemOutput'
-      tags: *ref_93
+      tags: *ref_94
   /accounting/journalentry:
     get:
       operationId: getJournalEntrys
@@ -7256,7 +7268,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedJournalEntryOutput'
-      tags: &ref_94
+      tags: &ref_95
         - accounting/journalentry
     post:
       operationId: addJournalEntry
@@ -7298,7 +7310,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedJournalEntryOutput'
-      tags: *ref_94
+      tags: *ref_95
   /accounting/journalentry/{id}:
     get:
       operationId: getJournalEntry
@@ -7334,7 +7346,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedJournalEntryOutput'
-      tags: *ref_94
+      tags: *ref_95
   /accounting/payment:
     get:
       operationId: getPayments
@@ -7376,7 +7388,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPaymentOutput'
-      tags: &ref_95
+      tags: &ref_96
         - accounting/payment
     post:
       operationId: addPayment
@@ -7418,7 +7430,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedPaymentOutput'
-      tags: *ref_95
+      tags: *ref_96
   /accounting/payment/{id}:
     get:
       operationId: getPayment
@@ -7454,7 +7466,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPaymentOutput'
-      tags: *ref_95
+      tags: *ref_96
   /accounting/phonenumber:
     get:
       operationId: getPhoneNumbers
@@ -7496,7 +7508,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPhoneNumberOutput'
-      tags: &ref_96
+      tags: &ref_97
         - accounting/phonenumber
   /accounting/phonenumber/{id}:
     get:
@@ -7533,7 +7545,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPhoneNumberOutput'
-      tags: *ref_96
+      tags: *ref_97
   /accounting/purchaseorder:
     get:
       operationId: getPurchaseOrders
@@ -7575,7 +7587,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
-      tags: &ref_97
+      tags: &ref_98
         - accounting/purchaseorder
     post:
       operationId: addPurchaseOrder
@@ -7617,7 +7629,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
-      tags: *ref_97
+      tags: *ref_98
   /accounting/purchaseorder/{id}:
     get:
       operationId: getPurchaseOrder
@@ -7653,7 +7665,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
-      tags: *ref_97
+      tags: *ref_98
   /accounting/taxrate:
     get:
       operationId: getTaxRates
@@ -7695,7 +7707,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTaxRateOutput'
-      tags: &ref_98
+      tags: &ref_99
         - accounting/taxrate
   /accounting/taxrate/{id}:
     get:
@@ -7732,7 +7744,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTaxRateOutput'
-      tags: *ref_98
+      tags: *ref_99
   /accounting/trackingcategory:
     get:
       operationId: getTrackingCategorys
@@ -7774,7 +7786,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTrackingCategoryOutput'
-      tags: &ref_99
+      tags: &ref_100
         - accounting/trackingcategory
   /accounting/trackingcategory/{id}:
     get:
@@ -7811,7 +7823,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTrackingCategoryOutput'
-      tags: *ref_99
+      tags: *ref_100
   /accounting/transaction:
     get:
       operationId: getTransactions
@@ -7853,7 +7865,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTransactionOutput'
-      tags: &ref_100
+      tags: &ref_101
         - accounting/transaction
   /accounting/transaction/{id}:
     get:
@@ -7890,7 +7902,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedTransactionOutput'
-      tags: *ref_100
+      tags: *ref_101
   /accounting/vendorcredit:
     get:
       operationId: getVendorCredits
@@ -7932,7 +7944,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedVendorCreditOutput'
-      tags: &ref_101
+      tags: &ref_102
         - accounting/vendorcredit
   /accounting/vendorcredit/{id}:
     get:
@@ -7969,7 +7981,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedVendorCreditOutput'
-      tags: *ref_101
+      tags: *ref_102
   /filestorage/drives:
     get:
       operationId: getDrives
@@ -8011,7 +8023,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedDriveOutput'
-      tags: &ref_102
+      tags: &ref_103
         - filestorage/drives
   /filestorage/drives/{id}:
     get:
@@ -8048,7 +8060,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedDriveOutput'
-      tags: *ref_102
+      tags: *ref_103
   /filestorage/files:
     get:
       operationId: getFiles
@@ -8090,7 +8102,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedFileOutput'
-      tags: &ref_103
+      tags: &ref_104
         - filestorage/files
     post:
       operationId: addFile
@@ -8131,7 +8143,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFileOutput'
-      tags: *ref_103
+      tags: *ref_104
   /filestorage/files/{id}:
     get:
       operationId: getFile
@@ -8167,7 +8179,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedFileOutput'
-      tags: *ref_103
+      tags: *ref_104
   /filestorage/folders:
     get:
       operationId: getFolders
@@ -8209,7 +8221,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedFolderOutput'
-      tags: &ref_104
+      tags: &ref_105
         - filestorage/folders
     post:
       operationId: addFolder
@@ -8250,7 +8262,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFolderOutput'
-      tags: *ref_104
+      tags: *ref_105
   /filestorage/folders/{id}:
     get:
       operationId: getFolder
@@ -8286,7 +8298,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedFolderOutput'
-      tags: *ref_104
+      tags: *ref_105
   /filestorage/groups:
     get:
       operationId: list
@@ -8328,7 +8340,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedGroupOutput'
-      tags: &ref_105
+      tags: &ref_106
         - filestorage/groups
   /filestorage/groups/{id}:
     get:
@@ -8365,7 +8377,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedGroupOutput'
-      tags: *ref_105
+      tags: *ref_106
   /filestorage/users:
     get:
       operationId: list
@@ -8407,7 +8419,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: &ref_106
+      tags: &ref_107
         - filestorage/users
   /filestorage/users/{id}:
     get:
@@ -8444,7 +8456,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_106
+      tags: *ref_107
   /ecommerce/product:
     get:
       operationId: getProducts
@@ -8486,7 +8498,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedProductOutput'
-      tags: &ref_107
+      tags: &ref_108
         - ecommerce/product
   /ecommerce/product/{id}:
     get:
@@ -8523,7 +8535,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedProductOutput'
-      tags: *ref_107
+      tags: *ref_108
   /ecommerce/order:
     get:
       operationId: getOrders
@@ -8565,7 +8577,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedOrderOutput'
-      tags: &ref_108
+      tags: &ref_109
         - ecommerce/order
   /ecommerce/order/{id}:
     get:
@@ -8602,7 +8614,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedOrderOutput'
-      tags: *ref_108
+      tags: *ref_109
   /ecommerce/customer:
     get:
       operationId: getCustomers
@@ -8644,7 +8656,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCustomerOutput'
-      tags: &ref_109
+      tags: &ref_110
         - ecommerce/customer
   /ecommerce/customer/{id}:
     get:
@@ -8681,7 +8693,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedCustomerOutput'
-      tags: *ref_109
+      tags: *ref_110
   /ecommerce/fulfillment:
     get:
       operationId: getFulfillments
@@ -8723,7 +8735,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedFulfilmentOutput'
-      tags: &ref_110
+      tags: &ref_111
         - ecommerce/fulfillment
   /ecommerce/fulfillment/{id}:
     get:
@@ -8760,7 +8772,7 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedFulfilmentOutput'
-      tags: *ref_110
+      tags: *ref_111
   /ticketing/attachments:
     get:
       operationId: getTicketingAttachments
@@ -8802,9 +8814,9 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: &ref_111
+      tags: &ref_112
         - ticketing/attachments
-      security: &ref_112
+      security: &ref_113
         - JWT: []
     post:
       operationId: addTicketingAttachment
@@ -8846,8 +8858,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_111
-      security: *ref_112
+      tags: *ref_112
+      security: *ref_113
   /ticketing/attachments/{id}:
     get:
       operationId: getTicketingAttachment
@@ -8883,8 +8895,8 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_111
-      security: *ref_112
+      tags: *ref_112
+      security: *ref_113
   /ticketing/attachments/{id}/download:
     get:
       operationId: downloadAttachment
@@ -8920,8 +8932,8 @@ paths:
                   - properties:
                       data:
                         $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_111
-      security: *ref_112
+      tags: *ref_112
+      security: *ref_113
 info:
   title: Unified Panora API
   description: The Panora API description
@@ -10080,32 +10092,20 @@ components:
           enum:
             - GET
             - POST
-            - PATCH
-            - DELETE
-            - PUT
           type: string
         path:
           type: string
         data:
           type: object
+        request_format:
+          type: object
+        overrideBaseUrl:
+          type: string
         headers:
           type: object
       required:
         - method
         - path
-    PassThroughResponse:
-      type: object
-      properties:
-        url:
-          type: string
-        status:
-          type: number
-        data:
-          type: object
-      required:
-        - url
-        - status
-        - data
     CreateConnectionStrategyDto:
       type: object
       properties:
@@ -11510,7 +11510,9 @@ components:
           description: The payment status of the order
         currency:
           type: string
-          description: The currency of the order
+          description: >-
+            The currency of the order. Authorized value must be of type
+            CurrencyCode (ISO 4217)
         total_price:
           type: number
           description: The total price of the order

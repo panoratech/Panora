@@ -17,7 +17,6 @@ import { SyncService } from './sync/sync.service';
 import { TeamController } from './team.controller';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [TeamController],
   providers: [
     TeamService,

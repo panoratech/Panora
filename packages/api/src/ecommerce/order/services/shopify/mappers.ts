@@ -9,6 +9,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { Utils } from '@ecommerce/@lib/@utils';
 import { ShopifyOrderOutput } from './types';
 import { OriginalOrderOutput } from '@@core/utils/types/original/original.ecommerce';
+import { CurrencyCode } from '@@core/utils/types';
 
 @Injectable()
 export class ShopifyOrderMapper implements IOrderMapper {
@@ -98,7 +99,7 @@ export class ShopifyOrderMapper implements IOrderMapper {
       order_status: order.fulfillment_status || order.financial_status || '',
       order_number: order.order_number?.toString() || '',
       payment_status: order.financial_status || '',
-      currency: order.currency || '',
+      currency: (order.currency as CurrencyCode) || null,
       total_price: parseFloat(order.total_price || '0'),
       total_discount: parseFloat(order.total_discounts || '0'),
       total_shipping: order.shipping_lines?.reduce(

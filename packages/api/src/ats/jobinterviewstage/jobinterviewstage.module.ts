@@ -18,7 +18,6 @@ import { AshbyJobInterviewStageMapper } from './services/ashby/mappers';
 import { Utils } from '@ats/@lib/@utils';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [JobInterviewStageController],
   providers: [
     CoreUnification,

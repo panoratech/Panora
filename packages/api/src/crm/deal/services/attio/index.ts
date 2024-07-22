@@ -39,7 +39,7 @@ export class AttioService implements IDealService {
       });
 
       const resp = await axios.post(
-        `${connection.account_url}/objects/deals/records`,
+        `${connection.account_url}/v2/objects/deals/records`,
         JSON.stringify({
           data: dealData,
         }),
@@ -74,7 +74,7 @@ export class AttioService implements IDealService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/objects/deals/records/query`,
+        `${connection.account_url}/v2/objects/deals/records/query`,
         {},
         {
           headers: {

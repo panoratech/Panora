@@ -1,11 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { AxiosResponse } from 'axios';
 
-export class PassThroughResponse {
-  @ApiProperty()
-  url: string;
-  @ApiProperty()
-  status: number;
-  @ApiProperty()
-  data: any;
-  // Define the properties here
-}
+export type PassthroughResponse =
+  | AxiosResponse
+  | { statusCode: number; retryId: string };

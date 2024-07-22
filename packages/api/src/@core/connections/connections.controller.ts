@@ -7,7 +7,6 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Query,
   Request,
@@ -21,6 +20,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { Response } from 'express';
 
 export type StateDataType = {
@@ -131,14 +131,14 @@ export class ConnectionsController {
   }*/
 
   @ApiOperation({
-    operationId: 'handleApiKeyCallback',
-    summary: 'Capture api key callback',
+    operationId: 'handleBasicOrApiKeyCallback',
+    summary: 'Capture basic or api key callback',
   })
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiBody({ type: BodyDataType })
   @UseGuards(JwtAuthGuard)
   @ApiResponse({ status: 201 })
-  @Post('apikey/callback')
+  @Post('basicorapikey/callback')
   async handleApiKeyCallback(@Query() query: any, @Body() body: BodyDataType) {
     try {
       const { state } = query;
@@ -152,18 +152,29 @@ export class ConnectionsController {
       const { projectId, vertical, linkedUserId, providerName } = stateData;
       const { apikey, ...body_data } = body;
 
+      const strategy =
+        CONNECTORS_METADATA[providerName.toLowerCase()][vertical.toLowerCase()]
+          .authStrategy.strategy;
+
+      const body_ =
+        strategy == AuthStrategy.api_key
+          ? {
+              projectId,
+              linkedUserId,
+              apikey,
+              body_data,
+            }
+          : {
+              projectId,
+              linkedUserId,
+              body_data,
+            };
+      const strategy_type =
+        strategy == AuthStrategy.api_key ? 'apikey' : 'basic';
+
       await this.categoryConnectionRegistry
         .getService(vertical.toLowerCase())
-        .handleCallBack(
-          providerName,
-          {
-            projectId,
-            linkedUserId,
-            apikey,
-            body_data,
-          },
-          'apikey',
-        );
+        .handleCallBack(providerName, body_, strategy_type);
       /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false

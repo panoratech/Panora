@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IDepartmentService extends IBaseObjectService {
-  addDepartment(
-    departmentData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalDepartmentOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalDepartmentOutput[]>>;
 }
 

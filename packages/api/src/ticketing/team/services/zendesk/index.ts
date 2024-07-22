@@ -39,7 +39,7 @@ export class ZendeskService implements ITeamService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/groups.json`, {
+      const resp = await axios.get(`${connection.account_url}/v2/groups.json`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

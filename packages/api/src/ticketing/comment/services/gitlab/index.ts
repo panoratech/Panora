@@ -101,7 +101,7 @@ export class GitlabService implements ICommentService {
       const { iid } = JSON.parse(remote_data.data);
 
       const resp = await axios.post(
-        `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
+        `${connection.account_url}/v4/projects/${remote_project_id}/issues/${iid}/notes`,
         JSON.stringify(data),
         {
           headers: {
@@ -160,7 +160,7 @@ export class GitlabService implements ICommentService {
       let res = [];
       if (remote_project_id) {
         const resp = await axios.get(
-          `${connection.account_url}/projects/${remote_project_id}/issues/${iid}/notes`,
+          `${connection.account_url}/v4/projects/${remote_project_id}/issues/${iid}/notes`,
           {
             headers: {
               'Content-Type': 'application/json',

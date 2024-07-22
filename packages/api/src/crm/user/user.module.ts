@@ -21,7 +21,6 @@ import { ZohoUserMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 import { UserController } from './user.controller';
 @Module({
-  imports: [BullQueueModule],
   controllers: [UserController],
   providers: [
     UserService,

@@ -42,7 +42,7 @@ export class BoxService implements IFolderService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/folders`,
+        `${connection.account_url}/2.0/folders`,
         JSON.stringify(folderData),
         {
           headers: {
@@ -77,7 +77,7 @@ export class BoxService implements IFolderService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/folders/${remote_folder_id}/items`,
+        `${connection.account_url}/2.0/folders/${remote_folder_id}/items`,
         {
           headers: {
             'Content-Type': 'application/json',

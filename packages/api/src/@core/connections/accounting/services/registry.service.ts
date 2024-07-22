@@ -1,19 +1,19 @@
+import { IConnectionService } from '@@core/connections/@utils/types';
 import { Injectable } from '@nestjs/common';
-import { IAccountingConnectionService } from '../types';
 
 @Injectable()
 export class ServiceRegistry {
-  private serviceMap: Map<string, IAccountingConnectionService>;
+  private serviceMap: Map<string, IConnectionService>;
 
   constructor() {
-    this.serviceMap = new Map<string, IAccountingConnectionService>();
+    this.serviceMap = new Map<string, IConnectionService>();
   }
 
-  registerService(serviceKey: string, service: IAccountingConnectionService) {
+  registerService(serviceKey: string, service: IConnectionService) {
     this.serviceMap.set(serviceKey, service);
   }
 
-  getService(integrationId: string): IAccountingConnectionService {
+  getService(integrationId: string): IConnectionService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
       throw new ReferenceError(

@@ -8,7 +8,6 @@ import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [MessageController],
   providers: [
     MessageService,

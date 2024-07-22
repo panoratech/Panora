@@ -17,7 +17,6 @@ import { ZendeskAttachmentMapper } from './services/zendesk/mappers';
 
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [AttachmentController],
   providers: [
     AttachmentService,

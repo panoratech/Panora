@@ -40,7 +40,7 @@ export class HubspotService implements INoteService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/objects/notes`,
+        `${connection.account_url}/v3/objects/notes`,
         JSON.stringify(noteData),
         {
           headers: {

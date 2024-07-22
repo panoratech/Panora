@@ -10,7 +10,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { ServiceRegistry } from './registry.service';
 import { IOrderService } from '../types';
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, CurrencyCode } from '@@core/utils/types';
 
 @Injectable()
 export class OrderService {
@@ -219,7 +219,7 @@ export class OrderService {
         order_status: order.order_status,
         order_number: order.order_number,
         payment_status: order.payment_status,
-        currency: order.currency,
+        currency: order.currency as CurrencyCode,
         total_price: Number(order.total_price),
         total_discount: Number(order.total_discount),
         total_shipping: Number(order.total_shipping),
@@ -355,7 +355,7 @@ export class OrderService {
             order_status: order.order_status,
             order_number: order.order_number,
             payment_status: order.payment_status,
-            currency: order.currency,
+            currency: order.currency as CurrencyCode,
             total_price: Number(order.total_price),
             total_discount: Number(order.total_discount),
             total_shipping: Number(order.total_shipping),

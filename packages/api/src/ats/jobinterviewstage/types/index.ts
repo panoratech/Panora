@@ -8,7 +8,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IJobInterviewStageService extends IBaseObjectService {
-  addJobInterviewStage(
+  addJobInterviewStage?(
     jobinterviewstageData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalJobInterviewStageOutput>>;

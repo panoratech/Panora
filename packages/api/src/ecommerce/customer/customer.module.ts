@@ -12,7 +12,6 @@ import { Utils } from '@ecommerce/@lib/@utils';
 import { ShopifyCustomerMapper } from './services/shopify/mappers';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [CustomerController],
   providers: [
     CustomerService,

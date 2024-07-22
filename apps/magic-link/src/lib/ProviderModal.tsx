@@ -35,7 +35,11 @@ import useCreateApiKeyConnection from '@/hooks/queries/useCreateApiKeyConnection
 // });
 
 interface IApiKeyFormData {
-  apikey: string,
+  apikey: string;
+  [key : string]: string
+}
+
+interface IBasicAuthFormData {
   [key : string]: string
 }
 
@@ -48,6 +52,7 @@ const ProviderModal = () => {
   const [startFlow, setStartFlow] = useState<boolean>(false);
   const [preStartFlow, setPreStartFlow] = useState<boolean>(false);
   const [openApiKeyDialog,setOpenApiKeyDialog] = useState<boolean>(false);
+  const [openBasicAuthDialog,setOpenBasicAuthDialog] = useState<boolean>(false);
   const [openDomainDialog, setOpenDomainDialog] = useState<boolean>(false);
   const [projectId, setProjectId] = useState<string>("");
   const [data, setData] = useState<Provider[]>([]);
@@ -68,15 +73,9 @@ const ProviderModal = () => {
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
   const {data: connectorsForProject} = useProjectConnectors(projectId);
 
-  // const form = useForm<z.infer<typeof formSchema>>({
-  //   resolver: zodResolver(formSchema),
 
-  //   defaultValues: {
-  //     apiKey: "",
-  //   },
-  // })
-
-  const {register,formState: {errors},handleSubmit,reset} = useForm<IApiKeyFormData>();
+  const {register, formState: {errors}, handleSubmit,reset} = useForm<IApiKeyFormData>();
+  const {register: register2, formState: {errors: errors2}, handleSubmit: handleSubmit2, reset: reset2} = useForm<IBasicAuthFormData>();
 
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
@@ -179,9 +178,12 @@ const ProviderModal = () => {
     const providerMetadata = CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider];
     if (providerMetadata.authStrategy.strategy === AuthStrategy.api_key) {
       setOpenApiKeyDialog(true);
+    } else if(providerMetadata.authStrategy.strategy === AuthStrategy.basic) {
+      setOpenBasicAuthDialog(true);
     } else if (providerMetadata?.options?.end_user_domain) {
       setOpenDomainDialog(true);
     } else {
+      // OAUTH2 WITHOUT EXTRA PARAMS
       setLoading({ status: true, provider: selectedProvider?.provider! });
       setStartFlow(true);
     }
@@ -224,6 +226,12 @@ const ProviderModal = () => {
     setOpenApiKeyDialog(dialogState);
     reset();
   }
+
+  const onCloseBasicAuthDialog = (dialogState : boolean) => {
+    setOpenBasicAuthDialog(dialogState);
+    reset2();
+  }
+
 
   const onApiKeySubmit = (values: IApiKeyFormData) => {
     // const extraFields = getValues()
@@ -268,9 +276,50 @@ const ProviderModal = () => {
     });
   }
 
+  const onBasicAuthSubmit = (values: IBasicAuthFormData) => {
+    onCloseBasicAuthDialog(false);
+    setLoading({status: true, provider: selectedProvider?.provider!});
+    setPreStartFlow(false);
+
+    // Creating Basic Auth Connection
+    createApiKeyConnection({
+      query : {
+        linkedUserId: magicLink?.id_linked_user as string,
+        projectId: projectId,
+        providerName: selectedProvider?.provider!,
+        vertical: selectedProvider?.category!
+      },
+      data: values  
+    },
+    {
+      onSuccess: () => {
+        setSelectedProvider({
+          provider: '',
+          category: ''
+        });   
+        
+        setLoading({
+            status: false,
+            provider: ''
+        });
+        setOpenSuccessDialog(true);
+      },
+      onError: (error) => {
+        setErrorResponse({errorPresent:true,errorMessage: error.message});
+        setLoading({
+          status: false,
+          provider: ''
+        });
+        setSelectedProvider({
+          provider: '',
+          category: ''
+        });  
+      }
+    });
+  }
+
   const onCloseDomainDialog = (dialogState: boolean) => {
     setOpenDomainDialog(dialogState);
-    reset();
   }
 
   const onDomainSubmit = () => {
@@ -397,6 +446,48 @@ const ProviderModal = () => {
       </DialogContent>
     </Dialog>
 
+    {/* Dialog for basic auth input */}
+    <Dialog open={openBasicAuthDialog} onOpenChange={onCloseBasicAuthDialog}>
+      <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Enter your credentials</DialogTitle>
+      </DialogHeader>
+      {/* <Form {...form}> */}
+        <form onSubmit={handleSubmit2(onBasicAuthSubmit)}>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
+            (
+              <>
+              <Label className={errors2[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {selectedProvider?.provider}</Label>
+              <Input
+                    type='text'
+                    placeholder={`Your ${fieldName}`}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                    {...register2(fieldName,{
+                      required: `${fieldName} must be at least 2 characters`,
+                      minLength:{
+                        value:2,
+                        message: `${fieldName} must be at least 2 characters`,
+                      }
+                    })}
+              />
+              {errors2[fieldName] && (<p className='text-sm font-medium text-destructive'>{errors2[fieldName]?.message}</p>)}
+              </>
+            ))}
+          </div>
+        </div>
+      <DialogFooter>
+        <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCloseBasicAuthDialog(false)}>Cancel</Button>
+        <Button type='submit' size="sm" className="h-7 gap-1">
+          Continue
+        </Button>
+      </DialogFooter>
+        </form>
+      {/* </Form> */}
+      </DialogContent>
+    </Dialog>
+
     {/* Dialog for end-user domain input */}
     <Dialog open={openDomainDialog} onOpenChange={onCloseDomainDialog}>
         <DialogContent>
@@ -423,7 +514,7 @@ const ProviderModal = () => {
             </DialogFooter>
           </form>
         </DialogContent>
-      </Dialog>
+    </Dialog>
 
 
 
