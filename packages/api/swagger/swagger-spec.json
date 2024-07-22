@@ -3663,6 +3663,21 @@
         ]
       }
     },
+    "/projects/current": {
+      "get": {
+        "operationId": "getProjects",
+        "summary": "Retrieve projects",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "projects"
+        ]
+      }
+    },
     "/projects": {
       "get": {
         "operationId": "getProjects",

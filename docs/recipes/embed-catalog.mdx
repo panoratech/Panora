@@ -10,7 +10,7 @@ icon: "square-terminal"
 
 <CodeGroup>
     ```shell React
-    npm i @panora/embedded-card-react
+    pnpm i @panora/embedded-card-react
     ```
 </CodeGroup>
 
@@ -19,6 +19,15 @@ icon: "square-terminal"
   `category` prop to filter them by category. Learn more about values accepted
   [here](/glossary/metadata/category).
 </Note>
+
+<Frame type="glass">
+    <video
+    controls
+    className="block"
+    src="/images/embed-video.mp4"
+    alt="Hero Light"
+    />
+</Frame>
 
 #### Import a single connector card
 
@@ -34,12 +43,12 @@ Don't forget to import the styles as well `import "@panora/embedded-card-react/d
 
     const MyPage = () => {
         return (
-            <PanoraProviderCard
-                name={"hubspot"} // name of the provider
-                category={ConnectorCategory.Crm} // category where provider belongs to
-                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} // the project id tied to your organization
-                returnUrl={"https://acme.inc"} // the url you want to redirect users to after the connection flow is successful
-                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  // the linked id of the user if already created in Panora system or user's info in your system
+            <PanoraProviderCard 
+                name={"hubspot"} // name of the provider  
+                category={ConnectorCategory.Crm} 
+                projectId={"f9e9601e-d6da-471a-9777-94257e9b4f00"} 
+                linkedUserId={"4c6ca51b-7b23-4e3a-9309-24d2d331a04d"} 
+                optionalApiUrl={"http://localhost:3000"} // Optional (only if you are in selfhost mode and want to use localhost:3000), by default: api.panora.dev
             />
         )
     } 
@@ -55,10 +64,10 @@ Don't forget to import the styles as well `import "@panora/embedded-card-react/d
     const MyPage = () => {
         return (
             <PanoraDynamicCatalogCard
-                category={ConnectorCategory.Crm} // optional but if provided it returns only connectors of the category
-                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} // the project id tied to your organization
-                returnUrl={"https://acme.inc"} // the url you want to redirect users to after the connection flow is successful
-                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  // the linked id of the user if already created in Panora system or user's info in your system
+                category={ConnectorCategory.Crm} 
+                projectId={"f9e9601e-d6da-471a-9777-94257e9b4f00"} 
+                linkedUserId={"4c6ca51b-7b23-4e3a-9309-24d2d331a04d"} 
+                optionalApiUrl="http://localhost:3000"
             />
         )
     }
@@ -67,9 +76,12 @@ Don't forget to import the styles as well `import "@panora/embedded-card-react/d
 
 Congrats ! You should be able to see the displayed connectors !
 
+
 # Step 2 (optional): Select your own connectors
  
-**insert**video
+ <Frame type="glass">
+    <img src="/images/custom-connectors-widget.png" />
+</Frame>
 
 You have the ability to choose which connectors will be rendered (also applied to magic-link).
 

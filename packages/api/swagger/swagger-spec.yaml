@@ -2113,7 +2113,7 @@ paths:
         '201':
           description: ''
       tags: *ref_38
-  /projects:
+  /projects/current:
     get:
       operationId: getProjects
       summary: Retrieve projects
@@ -2123,6 +2123,15 @@ paths:
           description: ''
       tags: &ref_39
         - projects
+  /projects:
+    get:
+      operationId: getProjects
+      summary: Retrieve projects
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags: *ref_39
     post:
       operationId: createProject
       summary: Create a project
