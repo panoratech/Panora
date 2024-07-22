@@ -1,0 +1,16 @@
+{
+  "name": "@panora/frontend-sdk",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev"
+  },
+  "dependencies": {
+    "@panora/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^4.5.4"
+  }
+}

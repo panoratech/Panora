@@ -11,6 +11,7 @@ import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoggerService } from '../@core-services/logger/logger.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectsService } from './projects.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -20,6 +21,15 @@ export class ProjectsController {
     private logger: LoggerService,
   ) {
     this.logger.setContext(ProjectsController.name);
+  }
+
+  @ApiOperation({ operationId: 'getProjects', summary: 'Retrieve projects' })
+  @ApiResponse({ status: 200 })
+  @UseGuards(ApiKeyAuthGuard)
+  @Get('current')
+  getCurrentProject(@Request() req: Request) {
+    const projectId = req.user.projectId;
+    return projectId;
   }
 
   @ApiOperation({ operationId: 'getProjects', summary: 'Retrieve projects' })

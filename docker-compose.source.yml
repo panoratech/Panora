@@ -35,6 +35,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       WEBHOOK_INGRESS: ${WEBHOOK_INGRESS}
+      REDIRECT_TUNNEL_INGRESS: ${REDIRECT_TUNNEL_INGRESS}
       JWT_SECRET: ${JWT_SECRET}
       SENTRY_ENABLED: ${SENTRY_ENABLED}
       SENTRY_DSN: ${SENTRY_DSN}
@@ -196,7 +197,7 @@ services:
       
   webapp-next:
     build:
-      dockerfile: ./apps/client-ts/Dockerfile
+      dockerfile: ./apps/webapp/Dockerfile
       context: ./
       args:
         NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
@@ -228,6 +229,24 @@ services:
     networks:
       - backend
       - frontend
+  
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: always
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    ports:
+    - 4040:4040
+    depends_on:
+      api:
+        condition: service_healthy
+    network_mode: "host"
+    
 networks:
   frontend:
   backend:

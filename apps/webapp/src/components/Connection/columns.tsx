@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Connection } from "./schema"
-import { DataTableColumnHeader } from "./../shared/data-table-column-header"
+import { DataTableColumnHeader } from "../shared/data-table-column-header"
 import React from "react"
 import { ClipboardIcon } from '@radix-ui/react-icons'
 import { toast } from "sonner"

@@ -59,7 +59,7 @@
   },
   "tabs": [
     {
-      "name": "CRM",
+      "name": "Crm",
       "url": "crm"
     },
     {
@@ -171,7 +171,7 @@
       "group": "Unified Objects",
       "pages": [
         {
-          "group": "CRM", 
+          "group": "Crm", 
           "pages": [
             {
               "group": "Contact",

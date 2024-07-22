@@ -1,5 +1,5 @@
 version: 2
-authtoken: AUTH_TOKEN
+authtoken: AUTH_TOKEN # Grab your auth token here (https://dashboard.ngrok.com/get-started/your-authtoken)
 log_level: debug
 log: stdout
 
@@ -7,5 +7,5 @@ tunnels:
   api-tunnel:
     proto: http
     addr: 3000
-    domain: DOMAIN
+    domain: DOMAIN # Grab your domain here (https://dashboard.ngrok.com/cloud-edge/domains)
 

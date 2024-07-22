@@ -4,7 +4,7 @@ description: "List of Event Types."
 ---
 
 Find down here all the types of events we currently send. We may add more at any time, so in developing and maintaining your code, you should not assume that only these types exist.
-You’ll notice that these events follow a pattern: resource.event. Our goal is to design a consistent system that makes things easier to anticipate and code against.
+You'll notice that these events follow a pattern: resource.event. Our goal is to design a consistent system that makes things easier to anticipate and code against.
 
 <ResponseField name="Event Types List">
   <Expandable title="properties" defaultOpen="true">
@@ -152,5 +152,75 @@ You’ll notice that these events follow a pattern: resource.event. Our goal is 
         Occurs whenever a team has been deleted in a Ticketing software. The **data** field is a [`Ticketing Team`](/ticketing/teams/overview)
     </ResponseField>
 
+    <ResponseField name="filestorage.drive.pulled">
+      Occurs whenever a drive has been pulled from a file storage. The **data** field is a [`File Storage Drive`](/filestorage/drives/overview)
+    </ResponseField>
+    <ResponseField name="filestorage.file.pulled">
+      Occurs whenever a file has been pulled from a file storage. The **data** field is a [`File Storage File`](/filestorage/files/overview)
+    </ResponseField>
+    <ResponseField name="filestorage.folder.pulled">
+      Occurs whenever a folder has been pulled from a file storage. The **data** field is a [`File Storage Folder`](/filestorage/folders/overview)
+    </ResponseField>
+    <ResponseField name="filestorage.group.pulled">
+      Occurs whenever a group has been pulled from a file storage. The **data** field is a [`File Storage Group`](/filestorage/groups/overview)
+    </ResponseField>
+    <ResponseField name="filestorage.user.pulled">
+      Occurs whenever a user has been pulled from a file storage. The **data** field is a [`File Storage User`](/filestorage/users/overview)
+    </ResponseField>
+
+    <ResponseField name="ats.activity.pulled">
+      Occurs whenever an activity has been pulled from an ATS. The **data** field is a [`ATS Activity`](/ats/activities/overview)
+    </ResponseField>
+    <ResponseField name="ats.application.pulled">
+      Occurs whenever an application has been pulled from an ATS. The **data** field is a [`ATS Application`](/ats/applications/overview)
+    </ResponseField>
+    <ResponseField name="ats.application.created">
+      Occurs whenever an application has been created in an ATS. The **data** field is a [`ATS Application`](/ats/applications/overview)
+    </ResponseField>
+    <ResponseField name="ats.attachment.pulled">
+      Occurs whenever an attachment has been pulled from an ATS. The **data** field is a [`ATS Attachment`](/ats/attachments/overview)
+    </ResponseField>
+    <ResponseField name="ats.attachment.created">
+      Occurs whenever an attachment has been created in an ATS. The **data** field is a [`ATS Attachment`](/ats/attachments/overview)
+    </ResponseField>
+    <ResponseField name="ats.candidate.pulled">
+      Occurs whenever a candidate has been pulled from an ATS. The **data** field is a [`ATS Candidate`](/ats/candidates/overview)
+    </ResponseField>
+    <ResponseField name="ats.candidate.created">
+      Occurs whenever a candidate has been created in an ATS. The **data** field is a [`ATS Candidate`](/ats/candidates/overview)
+    </ResponseField>
+    <ResponseField name="ats.departement.pulled">
+      Occurs whenever a department has been pulled from an ATS. The **data** field is a [`ATS Department`](/ats/departments/overview)
+    </ResponseField>
+    <ResponseField name="ats.eeocs.pulled">
+      Occurs whenever EEOC data has been pulled from an ATS. The **data** field is a [`ATS EEOC`](/ats/eeocs/overview)
+    </ResponseField>
+    <ResponseField name="ats.interview.pulled">
+      Occurs whenever an interview has been pulled from an ATS. The **data** field is a [`ATS Interview`](/ats/interviews/overview)
+    </ResponseField>
+    <ResponseField name="ats.job.pulled">
+      Occurs whenever a job has been pulled from an ATS. The **data** field is a [`ATS Job`](/ats/jobs/overview)
+    </ResponseField>
+    <ResponseField name="ats.jobinterviewstage.pulled">
+      Occurs whenever a job interview stage has been pulled from an ATS. The **data** field is a [`ATS Job Interview Stage`](/ats/jobinterviewstages/overview)
+    </ResponseField>
+    <ResponseField name="ats.offer.pulled">
+      Occurs whenever an offer has been pulled from an ATS. The **data** field is a [`ATS Offer`](/ats/offers/overview)
+    </ResponseField>
+    <ResponseField name="ats.offer.created">
+      Occurs whenever an offer has been created in an ATS. The **data** field is a [`ATS Offer`](/ats/offers/overview)
+    </ResponseField>
+    <ResponseField name="ats.office.pulled">
+      Occurs whenever an office has been pulled from an ATS. The **data** field is a [`ATS Office`](/ats/offices/overview)
+    </ResponseField>
+    <ResponseField name="ats.rejectreason.pulled">
+      Occurs whenever a reject reason has been pulled from an ATS. The **data** field is a [`ATS Reject Reason`](/ats/rejectreasons/overview)
+    </ResponseField>
+    <ResponseField name="ats.scorecard.pulled">
+      Occurs whenever a scorecard has been pulled from an ATS. The **data** field is a [`ATS Scorecard`](/ats/scorecards/overview)
+    </ResponseField>
+    <ResponseField name="ats.tag.pulled">
+      Occurs whenever a tag has been pulled from an ATS. The **data** field is a [`ATS Tag`](/ats/tags/overview)
+    </ResponseField>
   </Expandable>
 </ResponseField>

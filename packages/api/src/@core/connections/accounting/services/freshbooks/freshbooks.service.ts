@@ -65,7 +65,7 @@ export class FreshbooksConnectionService
 
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
+          ? this.env.getTunnelIngress()
           : this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
