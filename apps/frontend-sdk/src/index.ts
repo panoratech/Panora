@@ -1,5 +1,5 @@
-import { ConnectorCategory, constructAuthUrl } from '@panora/shared';
 import axios from 'axios';
+import { ConnectorCategory, constructAuthUrl } from '@panora/shared';
 
 interface PanoraConfig {
   apiKey: string;

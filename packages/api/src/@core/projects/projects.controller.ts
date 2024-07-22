@@ -27,7 +27,7 @@ export class ProjectsController {
   @ApiResponse({ status: 200 })
   @UseGuards(ApiKeyAuthGuard)
   @Get('current')
-  getCurrentProject(@Request() req: Request) {
+  getCurrentProject(@Request() req: any) {
     const projectId = req.user.projectId;
     return projectId;
   }
