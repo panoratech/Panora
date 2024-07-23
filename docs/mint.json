@@ -78,7 +78,12 @@
       "group": "Documentation",
       "pages": [
         "welcome",
-        "quick-start"
+        "quick-start",
+        {
+          "group": "Integrations Catalog",
+          "icon": "album-collection",
+          "pages": ["integrations/crm/index", "integrations/ticketing/index", "integrations/ats/index", "integrations/filestorage/index", "integrations/ecommerce/index"]
+        }
       ]
     },
     {
