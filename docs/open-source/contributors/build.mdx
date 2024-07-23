@@ -1,60 +1,9 @@
 ---
-title: "Build a connector"
+title: "3. Build"
 description: "We welcome all contributions to Panora; from small UI enhancements to brand new integrations. We love seeing community members level up and give people power-ups!"
 icon: "star"
 ---
 
-## Introduction
-
-### Setup your environnement
-
-We made a docker file that builds Panora from sources, specifically to help you locally test your contributions. Here's how to use it.
-
-<Info>Execute these from your Panora's repo root folder</Info>
-
-<Steps>
-  <Step title="Copy env variables">
-    ```bash 
-    cp .env.example .env 
-    ```
-  </Step>
-  <Step title="Rules for env variables"> 
-    <Info>
-      You must manually create a custom OAuth2 App inside the 3rd party and copy the
-      critical values (likely _client id and client secret_)
-    </Info>
-    You have the option to manage a custom 3rd party OAuth App.
-
-    **Each custom 3rd party environment variable must be of the form `PROVIDER_category_SOFTWAREMODE_ATTRIBUTE` where**
-
-    - `PROVIDER` is any 3rd party name
-    - `category` is for example [CRM, TICKETING, MARKETINGAUTOMATION, ...]
-    - `SOFTWAREMODE` is [ CLOUD, ONPREMISE ]
-    - `ATTRIBUTE` is for example [ CLIENT_ID, CLIENT_SECRET, SUBDOMAIN, ... ]
-
-    _Example_ :
-
-    - `HUBSPOT_CRM_CLOUD_CLIENT_ID = client_id_value_pasted_from_hubspot_developer_app`
-    - `HUBSPOT_CRM_CLOUD_CLIENT_SECRET = client_secret_value_pasted_from_hubspot_developer_app`
-  </Step>
-  <Step title="Remove previously installed dependencies">
-    ```bash 
-    rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
-    ```
-    <Info>For Mac users only: ```echo -e "node-linker=hoisted\n package-import-method=clone-or-copy" > .npmrc```</Info>
-  </Step>
-  <Step title="(Optional) Enable Grok">
-    If you have to create an oAuth app for a provider and needs an **https** redirect uri you must enable Grok service and use your secure domain from them (it proxies requests to `localhost:3000`):
-    - Add your auth token and domain from your Ngrok dashboard to the `ngrok.yml` file.
-    - Uncomment the Grok service inside the `docker-compose.dev.yml` file.
-  </Step>
-  <Step title="Start the Dockerfile">
-    ```bash 
-    docker compose -f docker-compose.dev.yml up
-    ``` 
-  </Step>
-</Steps>
-  That's all ! You can find the backend and other services running at their usual location. Editing code locally will **immediately** reflect.
 
 ## Adding new Integrations ✨
 
@@ -81,11 +30,6 @@ You can find all categories inside [`packages/shared/src/categories.ts`](https:/
   to the `crm` category.
 </Info>
 
-# Step 1: Ensure 3rd party metadata is set
-
-Look into the `packages/shared/src/connectors/metadata.ts` file and check if the provider you want to build has its metadata set inside the `CONNECTORS_METADATA` object.
-
-It should be available (if not [contact us](https://app.cal.com/rflih/30)) with `active` field set to `false` meaning the integration has not been built.
 
 Actually an integration is built in 2 parts :
 
@@ -243,47 +187,3 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
 
   </Step>
 </Steps>
-
-# Step 3: Test your new connector
-
-Now you must test Panora unified endpoints with the new connector built.
-    <Steps>
-      <Step title="Create a connection using the magic link">
-          **If the connector uses oAuth:**  <br/>
-          You need a set of credentials that you'll set in `.env` if you use oAuth (check above how it works). 
-          Check [this guide](/core-concepts/magic-links) to create a connection through it.
-          To activate your new connector on the magic link, visit this [**file**](https://github.com/panoratech/Panora/blob/main/packages/shared/src/connectors/metadata.ts#L6) :
-          and change your connector status to `active: true`. 
-            
-          **If the connector uses API KEY auth:**<br/>
-          You currently have to do a POST request to create a connection.<br/>
-          Create your query encoded URI by computing this:<br/>
-        ```ts 
-          const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
-        ```
-          The values for `linkedUserId` and `projectId` are to be found within the webapp at `localhost`
-        ```shell Insert an api key connection
-        curl --request POST \
-             --url http://localhost:3000/connections/apikey/callback?state=state \
-             --header 'Content-Type: application/json' \
-             --data '{
-                "apikey": "YOUR_CONNECTOR_API_KEY",
-                // if your connector needs more parameters for auth (e.g username or whatever)
-                //"username": "YOUR_USERNAME_VALUE"
-             }'
-        ```   
-      </Step>
-      <Step title="Test with unified endpoints">
-        Now after successfully creating a new connection, you can copy a `connection token` inside the webapp under `http://localhost/connections`.
-        Create a Panora Api Key and make unified request with your `connection token`. 
-        Check [this guide](/core-concepts/auth) to do it !
-      </Step> 
-    </Steps>
-
-
-
-### Congrats, you now have built a new integration with Panora ! 🦸‍♀️
-
-<Info>
-  Nb: The development kit to add integrations out of the blue is coming soon 🎸
-</Info>

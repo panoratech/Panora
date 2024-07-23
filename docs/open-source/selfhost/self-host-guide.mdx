@@ -1,22 +1,9 @@
 ---
-title: "Self-hosting Guide"
+title: "Quickstart"
 description: "Try Panora in no time with full control."
-icon: "house-laptop"
 ---
 
 <Info>**Prerequisite:** You should have Git and Docker installed</Info>
-
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/watch?v=8UjtKuMeyk0"
-  title="YouTube video player"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen
-></iframe>
-
-
 
 <Steps>
   <Step title="Open a terminal and type this to download Panora:">
@@ -26,6 +13,7 @@ git clone https://github.com/panoratech/Panora.git
   </Step>
 
 <Step title="Prepare the installation:">
+<Note> Check [here](/open-source/selfhost/envVariables) to fill the right env variables ! </Note>
   ```bash 
   cd Panora && cp .env.example .env 
   ```

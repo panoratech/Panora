@@ -41,6 +41,8 @@ Your customers expect all of their tools to work well together. Panora avoids yo
 
 Panora supports integration with the following objects across multiple platforms:
 
+[Here is an extensive list of all integrations !](https://docs.panora.dev/integrations-catalog)
+
 ### CRM
 
 |                                               | Contacts | Deals | Notes | Engagements | Tasks | Users | Companies |
@@ -90,7 +92,13 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
   docker compose up
  ```
 
-Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product
+Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product !
+
+See also [our selfhost guide here !](https://docs.panora.dev/open-source/selfhost/self-host-guide)
+
+# 👾 Join the community
+
+- [Join the Discord](https://discord.com/invite/PH5k7gGubt)
 
 # 🤔 Questions? Ask the core team
 

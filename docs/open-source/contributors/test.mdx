@@ -1,0 +1,49 @@
+---
+title: "4. Test"
+description: "We welcome all contributions to Panora; from small UI enhancements to brand new integrations. We love seeing community members level up and give people power-ups!"
+icon: "star"
+---
+
+# Test your new connector
+
+Now you must test Panora unified endpoints with the new connector built.
+    <Steps>
+      <Step title="Create a connection using the magic link">
+          **If the connector uses oAuth:**  <br/>
+          You need a set of credentials that you'll set in `.env` if you use oAuth (check above how it works). 
+          Check [this guide](/core-concepts/magic-links) to create a connection through it.
+          To activate your new connector on the magic link, visit this [**file**](https://github.com/panoratech/Panora/blob/main/packages/shared/src/connectors/metadata.ts#L6) :
+          and change your connector status to `active: true`. 
+            
+          **If the connector uses API KEY auth:**<br/>
+          You currently have to do a POST request to create a connection.<br/>
+          Create your query encoded URI by computing this:<br/>
+        ```ts 
+          const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
+        ```
+          The values for `linkedUserId` and `projectId` are to be found within the webapp at `localhost`
+        ```shell Insert an api key connection
+        curl --request POST \
+             --url http://localhost:3000/connections/apikey/callback?state=state \
+             --header 'Content-Type: application/json' \
+             --data '{
+                "apikey": "YOUR_CONNECTOR_API_KEY",
+                // if your connector needs more parameters for auth (e.g username or whatever)
+                //"username": "YOUR_USERNAME_VALUE"
+             }'
+        ```   
+      </Step>
+      <Step title="Test with unified endpoints">
+        Now after successfully creating a new connection, you can copy a `connection token` inside the webapp under `http://localhost/connections`.
+        Create a Panora Api Key and make unified request with your `connection token`. 
+        Check [this guide](/core-concepts/auth) to do it !
+      </Step> 
+    </Steps>
+
+
+
+### Congrats, you now have built a new integration with Panora ! 🦸‍♀️
+
+<Info>
+  Nb: The development kit to add integrations out of the blue is coming soon 🎸
+</Info>

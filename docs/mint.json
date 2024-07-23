@@ -59,7 +59,7 @@
   },
   "tabs": [
     {
-      "name": "Crm",
+      "name": "CRM",
       "url": "crm"
     },
     {
@@ -69,6 +69,10 @@
     {
       "name": "API Reference",
       "url": "api-reference"
+    },
+    {
+      "name": "Integrations",
+      "url": "integrations"
     }
   ],
   "anchors": [
@@ -79,11 +83,7 @@
       "pages": [
         "welcome",
         "quick-start",
-        {
-          "group": "Integrations Catalog",
-          "icon": "album-collection",
-          "pages": ["integrations/crm/index", "integrations/ticketing/index", "integrations/ats/index", "integrations/filestorage/index", "integrations/ecommerce/index"]
-        }
+        "integrations-catalog"
       ]
     },
     {
@@ -166,6 +166,55 @@
     {
       "group": "",
       "pages": [
+        {
+          "group": "CRM",
+          "pages": [
+            "integrations/crm/index", 
+            "integrations/crm/hubspot/index",
+            "integrations/crm/zoho/index",
+            "integrations/crm/close/index",
+            "integrations/crm/attio/index",
+            "integrations/crm/zendesk/index",
+            "integrations/crm/pipedrive/index"
+          ]
+        },            
+        {
+          "group": "Ticketing",
+          "pages": [
+            "integrations/ticketing/index",  
+            "integrations/ticketing/zendesk/index",
+            "integrations/ticketing/jira/index",
+            "integrations/ticketing/gitlab/index",
+            "integrations/ticketing/front/index"
+          ]
+        }, 
+        {
+          "group": "ATS",
+          "pages": [
+            "integrations/ats/index", 
+            "integrations/ats/ashby/index"
+          ]
+        }, 
+        {
+          "group": "File Storage",
+          "pages": [
+            "integrations/filestorage/index", 
+            "integrations/filestorage/box/index"
+          ]
+        },
+        {
+          "group": "Ecommerce",
+          "pages": [
+            "integrations/ecommerce/index", 
+            "integrations/ecommerce/shopify/index"
+          ]
+        }
+
+      ]
+    },
+    {
+      "group": "",
+      "pages": [
         "api-reference/introduction",
         "api-reference/authentication",
         "api-reference/errors",
@@ -176,7 +225,7 @@
       "group": "Unified Objects",
       "pages": [
         {
-          "group": "Crm", 
+          "group": "CRM", 
           "pages": [
             {
               "group": "Contact",
@@ -458,8 +507,25 @@
     {
       "group": "Open-Source",
       "pages": [
-        "open-source/self-host-guide",
-        "open-source/contributors"
+        {
+          "group": "Selfhost",
+          "icon": "house-laptop",
+          "pages": [
+            "open-source/selfhost/self-host-guide",
+            "open-source/selfhost/envVariables",
+            "open-source/selfhost/ngrok"
+          ]
+        }, 
+        {
+          "group": "Build a connector",
+          "icon": "star",
+          "pages": [
+            "open-source/contributors/setup",
+            "open-source/contributors/metadata",
+            "open-source/contributors/build",
+            "open-source/contributors/test"
+          ]
+        }
       ]
     },
     {
