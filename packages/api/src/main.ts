@@ -28,15 +28,30 @@ async function bootstrap() {
     )
     .build();
   const document = SwaggerModule.createDocument(app, config);
+  // Add x-speakeasy-name-override
+  document['x-speakeasy-name-override'] = [
+    {
+      operationId: '^get.*',
+      methodNameOverride: 'retrieve',
+    },
+    {
+      operationId: '^list.*',
+      methodNameOverride: 'list',
+    },
+    {
+      operationId: '^new.*',
+      methodNameOverride: 'create',
+    },
+  ];
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   SwaggerModule.setup('docs', app, document);
   fs.writeFileSync('./swagger/swagger-spec.yaml', yaml.dump(document));
-  fs.writeFileSync(
+  /*fs.writeFileSync(
     './swagger/swagger-spec.json',
     JSON.stringify(document, null, 2),
-  );
+  );*/
   app.use(cors());
   app.useLogger(app.get(Logger));
   app.useGlobalInterceptors(new LoggerErrorInterceptor());

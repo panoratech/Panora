@@ -10233,6 +10233,9 @@ components:
         - file_url
         - uploader
         - field_mappings
+    Url:
+      type: object
+      properties: {}
     UnifiedCandidateOutput:
       type: object
       properties:
@@ -10290,17 +10293,17 @@ components:
             BLOG, LINKEDIN, GITHUB, or OTHER
           type: array
           items:
-            type: array
+            $ref: '#/components/schemas/Url'
         phone_numbers:
           description: The phone numbers of the candidate
           type: array
           items:
-            type: array
+            $ref: '#/components/schemas/Phone'
         email_addresses:
           description: The email addresses of the candidate
           type: array
           items:
-            type: array
+            $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
           properties: {}
@@ -10381,17 +10384,17 @@ components:
             BLOG, LINKEDIN, GITHUB, or OTHER
           type: array
           items:
-            type: array
+            $ref: '#/components/schemas/Url'
         phone_numbers:
           description: The phone numbers of the candidate
           type: array
           items:
-            type: array
+            $ref: '#/components/schemas/Phone'
         email_addresses:
           description: The email addresses of the candidate
           type: array
           items:
-            type: array
+            $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
           properties: {}
@@ -11136,3 +11139,10 @@ components:
         - shared_link
         - permission
         - field_mappings
+x-speakeasy-name-override:
+  - operationId: ^get.*
+    methodNameOverride: retrieve
+  - operationId: ^list.*
+    methodNameOverride: list
+  - operationId: ^new.*
+    methodNameOverride: create

@@ -120,7 +120,7 @@ export class UnifiedCandidateInput {
   tags?: (string | UnifiedTagOutput)[];
 
   @ApiPropertyOptional({
-    type: [],
+    type: [Url],
     description:
       'The urls of the candidate, possible values for Url type are WEBSITE, BLOG, LINKEDIN, GITHUB, or OTHER',
   })
@@ -128,14 +128,14 @@ export class UnifiedCandidateInput {
   urls?: Url[];
 
   @ApiPropertyOptional({
-    type: [],
+    type: [Phone],
     description: 'The phone numbers of the candidate',
   })
   @IsOptional()
   phone_numbers?: Phone[];
 
   @ApiPropertyOptional({
-    type: [],
+    type: [Email],
     description: 'The email addresses of the candidate',
   })
   @IsOptional()
