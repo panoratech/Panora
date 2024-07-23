@@ -177,7 +177,7 @@ export class ConnectionsController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getConnections',
     summary: 'List Connections',
   })
   @ApiResponse({ status: 200 })

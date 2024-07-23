@@ -37,7 +37,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getGroups',
+    operationId: 'getHrisGroups',
     summary: 'List a batch of Groups',
   })
   @ApiHeader({
@@ -73,7 +73,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getGroup',
+    operationId: 'getHrisGroup',
     summary: 'Retrieve a Group',
     description: 'Retrieve a group from any connected Hris software',
   })

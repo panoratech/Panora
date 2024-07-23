@@ -39,7 +39,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getFsGroups',
     summary: 'List a batch of Groups',
   })
   @ApiHeader({
@@ -76,7 +76,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'getFsGroup',
     summary: 'Retrieve a Group',
     description:
       'Retrieve a permission from any connected Filestorage software',

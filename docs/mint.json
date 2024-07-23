@@ -30,14 +30,14 @@
     "raiseIssue": true
   },
   "logo": {
-    "dark": "/logo/logo-panora-white-hq.png",
-    "light": "/logo/logo-panora-white.png"
+    "dark": "/logo/logo-panora-dark.png",
+    "light": "/logo/logo-panora-light.png"
   },
   "favicon": "logo/fav.png",
   "colors": {
-    "primary": "#085faf",
-    "light": "#085faf",
-    "dark": "#073763",
+    "primary": "#000000",
+"light": "#FFFFFF",
+"dark": "#000000",
     "anchors": {
       "from": "#000000",
       "to": "#000000"

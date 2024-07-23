@@ -186,7 +186,7 @@ paths:
       tags: *ref_1
   /connections:
     get:
-      operationId: list
+      operationId: getConnections
       summary: List Connections
       parameters: []
       responses:
@@ -2115,8 +2115,8 @@ paths:
       tags: *ref_38
   /projects/current:
     get:
-      operationId: getProjects
-      summary: Retrieve projects
+      operationId: getCurrentProject
+      summary: Retrieve the current project of the authenticated user
       parameters: []
       responses:
         '200':
@@ -3136,7 +3136,7 @@ paths:
       tags: *ref_51
   /hris/group:
     get:
-      operationId: getGroups
+      operationId: getHrisGroups
       summary: List a batch of Groups
       parameters:
         - name: x-connection-token
@@ -3179,7 +3179,7 @@ paths:
         - hris/group
   /hris/group/{id}:
     get:
-      operationId: getGroup
+      operationId: getHrisGroup
       summary: Retrieve a Group
       description: Retrieve a group from any connected Hris software
       parameters:
@@ -8298,7 +8298,7 @@ paths:
       tags: *ref_104
   /filestorage/groups:
     get:
-      operationId: list
+      operationId: getFsGroups
       summary: List a batch of Groups
       parameters:
         - name: x-connection-token
@@ -8341,7 +8341,7 @@ paths:
         - filestorage/groups
   /filestorage/groups/{id}:
     get:
-      operationId: retrieve
+      operationId: getFsGroup
       summary: Retrieve a Group
       description: Retrieve a permission from any connected Filestorage software
       parameters:
@@ -8377,7 +8377,7 @@ paths:
       tags: *ref_105
   /filestorage/users:
     get:
-      operationId: list
+      operationId: getUsers
       summary: List a batch of Users
       parameters:
         - name: x-connection-token
@@ -8420,7 +8420,7 @@ paths:
         - filestorage/users
   /filestorage/users/{id}:
     get:
-      operationId: retrieve
+      operationId: getUser
       summary: Retrieve a User
       description: Retrieve a permission from any connected Filestorage software
       parameters:

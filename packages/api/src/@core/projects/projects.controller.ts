@@ -23,7 +23,10 @@ export class ProjectsController {
     this.logger.setContext(ProjectsController.name);
   }
 
-  @ApiOperation({ operationId: 'getProjects', summary: 'Retrieve projects' })
+  @ApiOperation({
+    operationId: 'getCurrentProject',
+    summary: 'Retrieve the current project of the authenticated user',
+  })
   @ApiResponse({ status: 200 })
   @UseGuards(ApiKeyAuthGuard)
   @Get('current')
