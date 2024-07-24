@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { InvoiceService } from './services/invoice.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/invoice')
 @Controller('accounting/invoice')
 export class InvoiceController {
@@ -40,7 +42,7 @@ export class InvoiceController {
   }
 
   @ApiOperation({
-    operationId: 'getInvoices',
+    operationId: 'listAccountingInvoice',
     summary: 'List a batch of Invoices',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class InvoiceController {
   }
 
   @ApiOperation({
-    operationId: 'getInvoice',
+    operationId: 'retrieveAccountingInvoice',
     summary: 'Retrieve a Invoice',
     description: 'Retrieve a invoice from any connected Accounting software',
   })
@@ -120,7 +122,7 @@ export class InvoiceController {
   }
 
   @ApiOperation({
-    operationId: 'addInvoice',
+    operationId: 'createAccountingInvoice',
     summary: 'Create a Invoice',
     description: 'Create a invoice in any supported Accounting software',
   })

@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ExpenseService } from './services/expense.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/expense')
 @Controller('accounting/expense')
 export class ExpenseController {
@@ -40,7 +42,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'getExpenses',
+    operationId: 'listAccountingExpense',
     summary: 'List a batch of Expenses',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'getExpense',
+    operationId: 'retrieveAccountingExpense',
     summary: 'Retrieve a Expense',
     description: 'Retrieve a expense from any connected Accounting software',
   })
@@ -120,7 +122,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'addExpense',
+    operationId: 'createAccountingExpense',
     summary: 'Create a Expense',
     description: 'Create a expense in any supported Accounting software',
   })

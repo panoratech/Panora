@@ -18,6 +18,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { FolderService } from './services/folder.service';
@@ -26,6 +27,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('filestorage/folders')
 @Controller('filestorage/folders')
 export class FolderController {
@@ -38,7 +40,7 @@ export class FolderController {
   }
 
   @ApiOperation({
-    operationId: 'getFolders',
+    operationId: 'listFilestorageFolder',
     summary: 'List a batch of Folders',
   })
   @ApiHeader({
@@ -75,7 +77,7 @@ export class FolderController {
   }
 
   @ApiOperation({
-    operationId: 'getFolder',
+    operationId: 'retrieveFilestorageFolder',
     summary: 'Retrieve a Folder',
     description: 'Retrieve a folder from any connected Filestorage software',
   })
@@ -119,7 +121,7 @@ export class FolderController {
   }
 
   @ApiOperation({
-    operationId: 'addFolder',
+    operationId: 'createFilestorageFolder',
     summary: 'Create a Folder',
     description: 'Create a folder in any supported Filestorage software',
   })

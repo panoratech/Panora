@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TaxRateService } from './services/taxrate.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/taxrate')
 @Controller('accounting/taxrate')
 export class TaxRateController {
@@ -40,7 +42,7 @@ export class TaxRateController {
   }
 
   @ApiOperation({
-    operationId: 'getTaxRates',
+    operationId: 'listAccountingTaxRate',
     summary: 'List a batch of TaxRates',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class TaxRateController {
   }
 
   @ApiOperation({
-    operationId: 'getTaxRate',
+    operationId: 'retrieveAccountingTaxRate',
     summary: 'Retrieve a TaxRate',
     description: 'Retrieve a taxrate from any connected Accounting software',
   })

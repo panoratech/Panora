@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TransactionService } from './services/transaction.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/transaction')
 @Controller('accounting/transaction')
 export class TransactionController {
@@ -40,7 +42,7 @@ export class TransactionController {
   }
 
   @ApiOperation({
-    operationId: 'getTransactions',
+    operationId: 'listAccountingTransaction',
     summary: 'List a batch of Transactions',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class TransactionController {
   }
 
   @ApiOperation({
-    operationId: 'getTransaction',
+    operationId: 'retrieveAccountingTransaction',
     summary: 'Retrieve a Transaction',
     description:
       'Retrieve a transaction from any connected Accounting software',

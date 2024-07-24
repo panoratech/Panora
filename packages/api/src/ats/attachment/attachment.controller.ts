@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import {
@@ -28,6 +29,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { AttachmentService } from './services/attachment.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/attachment')
 @Controller('ats/attachment')
 export class AttachmentController {
@@ -40,7 +42,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsAttachments',
+    operationId: 'listAtsAttachment',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsAttachment',
+    operationId: 'retrieveAtsAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Ats software',
   })
@@ -119,7 +121,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAtsAttachment',
+    operationId: 'createAtsAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Ats software',
   })

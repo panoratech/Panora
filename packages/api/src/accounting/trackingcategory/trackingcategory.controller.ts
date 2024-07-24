@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TrackingCategoryService } from './services/trackingcategory.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/trackingcategory')
 @Controller('accounting/trackingcategory')
 export class TrackingCategoryController {
@@ -40,7 +42,7 @@ export class TrackingCategoryController {
   }
 
   @ApiOperation({
-    operationId: 'getTrackingCategorys',
+    operationId: 'listAccountingTrackingCategorys',
     summary: 'List a batch of TrackingCategorys',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class TrackingCategoryController {
   }
 
   @ApiOperation({
-    operationId: 'getTrackingCategory',
+    operationId: 'retrieveAccountingTrackingCategory',
     summary: 'Retrieve a TrackingCategory',
     description:
       'Retrieve a trackingcategory from any connected Accounting software',

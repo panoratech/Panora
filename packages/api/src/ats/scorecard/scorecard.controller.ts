@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ScoreCardService } from './services/scorecard.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/scorecard')
 @Controller('ats/scorecard')
 export class ScoreCardController {
@@ -40,7 +42,7 @@ export class ScoreCardController {
   }
 
   @ApiOperation({
-    operationId: 'getScoreCards',
+    operationId: 'listAtsScorecard',
     summary: 'List a batch of ScoreCards',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class ScoreCardController {
   }
 
   @ApiOperation({
-    operationId: 'getScoreCard',
+    operationId: 'retrieveAtsScorecard',
     summary: 'Retrieve a ScoreCard',
     description: 'Retrieve a scorecard from any connected Ats software',
   })

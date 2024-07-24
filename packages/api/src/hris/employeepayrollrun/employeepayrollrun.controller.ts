@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { EmployeePayrollRunService } from './services/employeepayrollrun.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/employeepayrollrun')
 @Controller('hris/employeepayrollrun')
 export class EmployeePayrollRunController {
@@ -40,7 +42,7 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployeePayrollRuns',
+    operationId: 'listHrisEmployeePayrollRun',
     summary: 'List a batch of EmployeePayrollRuns',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployeePayrollRun',
+    operationId: 'retrieveHrisEmployeePayrollRun',
     summary: 'Retrieve a EmployeePayrollRun',
     description:
       'Retrieve a employeepayrollrun from any connected Hris software',

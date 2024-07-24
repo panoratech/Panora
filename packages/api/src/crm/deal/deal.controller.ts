@@ -28,7 +28,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/deals')
 @Controller('crm/deals')
 export class DealController {
@@ -41,7 +41,7 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'getDeals',
+    operationId: 'listCrmDeals',
     summary: 'List a batch of Deals',
   })
   @ApiHeader({
@@ -78,7 +78,7 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'getDeal',
+    operationId: 'retrieveCrmDeal',
     summary: 'Retrieve a Deal',
     description: 'Retrieve a deal from any connected Crm software',
   })
@@ -121,7 +121,7 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'addDeal',
+    operationId: 'createCrmDeal',
     summary: 'Create a Deal',
     description: 'Create a deal in any supported Crm software',
   })

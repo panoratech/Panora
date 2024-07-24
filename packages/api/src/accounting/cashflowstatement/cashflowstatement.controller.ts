@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { CashflowStatementService } from './services/cashflowstatement.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/cashflowstatement')
 @Controller('accounting/cashflowstatement')
 export class CashflowStatementController {
@@ -40,7 +42,7 @@ export class CashflowStatementController {
   }
 
   @ApiOperation({
-    operationId: 'getCashflowStatements',
+    operationId: 'listAccountingCashflowStatement',
     summary: 'List a batch of CashflowStatements',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class CashflowStatementController {
   }
 
   @ApiOperation({
-    operationId: 'getCashflowStatement',
+    operationId: 'retrieveAccountingCashflowStatement',
     summary: 'Retrieve a CashflowStatement',
     description:
       'Retrieve a cashflowstatement from any connected Accounting software',

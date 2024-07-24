@@ -18,6 +18,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { FileService } from './services/file.service';
@@ -26,6 +27,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('filestorage/files')
 @Controller('filestorage/files')
 export class FileController {
@@ -38,7 +40,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'getFiles',
+    operationId: 'listFilestorageFile',
     summary: 'List a batch of Files',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'getFile',
+    operationId: 'retrieveFilestorageFile',
     summary: 'Retrieve a File',
     description: 'Retrieve a file from any connected Filestorage software',
   })
@@ -120,7 +122,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'addFile',
+    operationId: 'createFilestorageFile',
     summary: 'Create a File',
     description: 'Create a file in any supported Filestorage software',
   })

@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import {
@@ -28,6 +29,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { CandidateService } from './services/candidate.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/candidate')
 @Controller('ats/candidate')
 export class CandidateController {
@@ -40,7 +42,7 @@ export class CandidateController {
   }
 
   @ApiOperation({
-    operationId: 'getCandidates',
+    operationId: 'listAtsCandidate', // Updated operationId
     summary: 'List a batch of Candidates',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class CandidateController {
   }
 
   @ApiOperation({
-    operationId: 'getCandidate',
+    operationId: 'retrieveAtsCandidate', // Updated operationId
     summary: 'Retrieve a Candidate',
     description: 'Retrieve a candidate from any connected Ats software',
   })
@@ -119,7 +121,7 @@ export class CandidateController {
   }
 
   @ApiOperation({
-    operationId: 'addCandidate',
+    operationId: 'createAtsCandidate', // Updated operationId
     summary: 'Create a Candidate',
     description: 'Create a candidate in any supported Ats software',
   })

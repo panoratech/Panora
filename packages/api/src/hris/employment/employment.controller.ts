@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { EmploymentService } from './services/employment.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/employment')
 @Controller('hris/employment')
 export class EmploymentController {
@@ -40,7 +42,7 @@ export class EmploymentController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployments',
+    operationId: 'listHrisEmployment',
     summary: 'List a batch of Employments',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class EmploymentController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployment',
+    operationId: 'retrieveHrisEmployment',
     summary: 'Retrieve a Employment',
     description: 'Retrieve a employment from any connected Hris software',
   })

@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import {
@@ -28,6 +29,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ApplicationService } from './services/application.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/application')
 @Controller('ats/application')
 export class ApplicationController {
@@ -40,7 +42,7 @@ export class ApplicationController {
   }
 
   @ApiOperation({
-    operationId: 'getApplications',
+    operationId: 'listAtsApplication',
     summary: 'List a batch of Applications',
   })
   @ApiHeader({
@@ -76,9 +78,9 @@ export class ApplicationController {
   }
 
   @ApiOperation({
-    operationId: 'getApplication',
-    summary: 'Retrieve a Application',
-    description: 'Retrieve a application from any connected Ats software',
+    operationId: 'retrieveAtsApplication',
+    summary: 'Retrieve an Application',
+    description: 'Retrieve an application from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
@@ -119,9 +121,9 @@ export class ApplicationController {
   }
 
   @ApiOperation({
-    operationId: 'addApplication',
-    summary: 'Create a Application',
-    description: 'Create a application in any supported Ats software',
+    operationId: 'createAtsApplication',
+    summary: 'Create an Application',
+    description: 'Create an application in any supported Ats software',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -30,7 +30,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/attachments')
 @Controller('ticketing/attachments')
 export class AttachmentController {
@@ -43,7 +43,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAttachments',
+    operationId: 'listTicketingAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -81,7 +81,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAttachment',
+    operationId: 'retrieveTicketingAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Ticketing software',
   })
@@ -125,41 +125,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'downloadAttachment',
-    summary: 'Download a Attachment',
-    description: 'Download a attachment from any connected Ticketing software',
-  })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    type: String,
-    description: 'id of the attachment you want to retrive.',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Ticketing software.',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Get(':id/download')
-  downloadAttachment(
-    @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    return this.attachmentService.downloadAttachment(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addTicketingAttachment',
+    operationId: 'createTicketingAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Ticketing software',
   })

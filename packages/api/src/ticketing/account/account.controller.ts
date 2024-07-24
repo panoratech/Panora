@@ -24,7 +24,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { UnifiedAccountOutput } from './types/model.unified';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/accounts')
 @Controller('ticketing/accounts')
 export class AccountController {
@@ -37,7 +37,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAccounts',
+    operationId: 'listTicketingAccount',
     summary: 'List a batch of Accounts',
   })
   @ApiHeader({
@@ -74,7 +74,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAccount',
+    operationId: 'retrieveTicketingAccount',
     summary: 'Retrieve an Account',
     description: 'Retrieve an account from any connected Ticketing software',
   })

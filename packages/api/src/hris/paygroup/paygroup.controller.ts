@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { PayGroupService } from './services/paygroup.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/paygroup')
 @Controller('hris/paygroup')
 export class PayGroupController {
@@ -40,7 +42,7 @@ export class PayGroupController {
   }
 
   @ApiOperation({
-    operationId: 'getPayGroups',
+    operationId: 'listHrisPaygroup',
     summary: 'List a batch of PayGroups',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class PayGroupController {
   }
 
   @ApiOperation({
-    operationId: 'getPayGroup',
+    operationId: 'retrieveHrisPaygroup',
     summary: 'Retrieve a PayGroup',
     description: 'Retrieve a paygroup from any connected Hris software',
   })

@@ -29,7 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/tickets')
 @Controller('ticketing/tickets')
 export class TicketController {
@@ -42,7 +42,7 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'getTickets',
+    operationId: 'listTicketingTicket',
     summary: 'List a batch of Tickets',
   })
   @ApiHeader({
@@ -79,7 +79,7 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'getTicket',
+    operationId: 'retrieveTicketingTicket',
     summary: 'Retrieve a Ticket',
     description: 'Retrieve a ticket from any connected Ticketing software',
   })
@@ -123,7 +123,7 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'addTicket',
+    operationId: 'createTicketingTicket',
     summary: 'Create a Ticket',
     description: 'Create a ticket in any supported Ticketing software',
   })

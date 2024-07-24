@@ -22,10 +22,10 @@ async function bootstrap() {
     .setVersion('1.0')
     .addServer('https://api.panora.dev', 'Production server')
     .addServer('https://api-sandbox.panora.dev', 'Sandbox server')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'MyBearerAuth',
-    )
+    .addSecurity('bearer', {
+      type: 'http',
+      scheme: 'bearer',
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
 

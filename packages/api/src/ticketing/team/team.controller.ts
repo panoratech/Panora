@@ -24,7 +24,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { UnifiedTeamOutput } from './types/model.unified';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/teams')
 @Controller('ticketing/teams')
 export class TeamController {
@@ -37,7 +37,7 @@ export class TeamController {
   }
 
   @ApiOperation({
-    operationId: 'getTeams',
+    operationId: 'listTicketingTeams',
     summary: 'List a batch of Teams',
   })
   @ApiHeader({
@@ -74,7 +74,7 @@ export class TeamController {
   }
 
   @ApiOperation({
-    operationId: 'getTeam',
+    operationId: 'retrieveTicketingTeam',
     summary: 'Retrieve a Team',
     description: 'Retrieve a team from any connected Ticketing software',
   })

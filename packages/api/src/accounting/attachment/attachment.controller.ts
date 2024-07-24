@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { AttachmentService } from './services/attachment.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/attachment')
 @Controller('accounting/attachment')
 export class AttachmentController {
@@ -40,7 +42,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAttachments',
+    operationId: 'listAccountingAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAttachment',
+    operationId: 'retrieveAccountingAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Accounting software',
   })
@@ -120,7 +122,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAccountingAttachment',
+    operationId: 'createAccountingAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Accounting software',
   })

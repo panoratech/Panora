@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { AddressService } from './services/address.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/address')
 @Controller('accounting/address')
 export class AddressController {
@@ -40,7 +42,7 @@ export class AddressController {
   }
 
   @ApiOperation({
-    operationId: 'getAddresss',
+    operationId: 'listAccountingAddress',
     summary: 'List a batch of Addresss',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class AddressController {
   }
 
   @ApiOperation({
-    operationId: 'getAddress',
+    operationId: 'retrieveAccountingAddress',
     summary: 'Retrieve a Address',
     description: 'Retrieve a address from any connected Accounting software',
   })

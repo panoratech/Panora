@@ -15,8 +15,9 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
-  ApiTags,
+ ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { DepartmentService } from './services/department.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/department')
 @Controller('ats/department')
 export class DepartmentController {

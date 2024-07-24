@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TagService } from './services/tag.service';
@@ -25,6 +26,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/tag')
 @Controller('ats/tag')
 export class TagController {
@@ -37,7 +39,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsTags',
+    operationId: 'listAtsTags',
     summary: 'List a batch of Tags',
   })
   @ApiHeader({
@@ -73,7 +75,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsTag',
+    operationId: 'retrieveAtsTag',
     summary: 'Retrieve a Tag',
     description: 'Retrieve a tag from any connected Ats software',
   })

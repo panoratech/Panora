@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { EmployerBenefitService } from './services/employerbenefit.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/employerbenefit')
 @Controller('hris/employerbenefit')
 export class EmployerBenefitController {
@@ -40,7 +42,7 @@ export class EmployerBenefitController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployerBenefits',
+    operationId: 'listHrisEmployerBenefit',
     summary: 'List a batch of EmployerBenefits',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class EmployerBenefitController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployerBenefit',
+    operationId: 'retrieveHrisEmployerBenefit',
     summary: 'Retrieve a EmployerBenefit',
     description: 'Retrieve a employerbenefit from any connected Hris software',
   })

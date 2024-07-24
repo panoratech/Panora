@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { DependentService } from './services/dependent.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/dependent')
 @Controller('hris/dependent')
 export class DependentController {
@@ -40,7 +42,7 @@ export class DependentController {
   }
 
   @ApiOperation({
-    operationId: 'getDependents',
+    operationId: 'listHrisDependents',
     summary: 'List a batch of Dependents',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class DependentController {
   }
 
   @ApiOperation({
-    operationId: 'getDependent',
+    operationId: 'retrieveHrisDependent',
     summary: 'Retrieve a Dependent',
     description: 'Retrieve a dependent from any connected Hris software',
   })

@@ -31,7 +31,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/collections')
 @Controller('ticketing/collections')
 export class CollectionController {
@@ -44,7 +44,7 @@ export class CollectionController {
   }
 
   @ApiOperation({
-    operationId: 'getCollections',
+    operationId: 'listTicketingCollections',
     summary: 'List a batch of Collections',
   })
   @ApiHeader({
@@ -81,7 +81,7 @@ export class CollectionController {
   }
 
   @ApiOperation({
-    operationId: 'getCollection',
+    operationId: 'retrieveCollection',
     summary: 'Retrieve a Collection',
     description: 'Retrieve a collection from any connected Ticketing software',
   })

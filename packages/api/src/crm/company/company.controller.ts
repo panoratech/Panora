@@ -30,7 +30,7 @@ import {
   UnifiedCompanyOutput,
 } from './types/model.unified';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/companies')
 @Controller('crm/companies')
 export class CompanyController {
@@ -43,7 +43,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanies',
+    operationId: 'listCrmCompany',
     summary: 'List a batch of Companies',
   })
   @ApiHeader({
@@ -80,7 +80,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmCompany',
+    operationId: 'retrieveCrmCompany',
     summary: 'Retrieve a Company',
     description: 'Retrieve a company from any connected Crm software',
   })
@@ -123,7 +123,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'addCrmCompany',
+    operationId: 'createCrmCompany',
     summary: 'Create a Company',
     description: 'Create a company in any supported Crm software',
   })

@@ -31,7 +31,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/engagements')
 @Controller('crm/engagements')
 export class EngagementController {
@@ -44,7 +44,7 @@ export class EngagementController {
   }
 
   @ApiOperation({
-    operationId: 'getEngagements',
+    operationId: 'listCrmEngagements',
     summary: 'List a batch of Engagements',
   })
   @ApiHeader({
@@ -82,7 +82,7 @@ export class EngagementController {
   }
 
   @ApiOperation({
-    operationId: 'getEngagement',
+    operationId: 'retrieveCrmEngagement',
     summary: 'Retrieve a Engagement',
     description: 'Retrieve a engagement from any connected Crm software',
   })
@@ -125,7 +125,7 @@ export class EngagementController {
   }
 
   @ApiOperation({
-    operationId: 'addEngagement',
+    operationId: 'createCrmEngagement',
     summary: 'Create a Engagement',
     description: 'Create a engagement in any supported Crm software',
   })

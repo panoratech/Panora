@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { EmployeeService } from './services/employee.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/employee')
 @Controller('hris/employee')
 export class EmployeeController {
@@ -40,7 +42,7 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployees',
+    operationId: 'listHrisEmployee',
     summary: 'List a batch of Employees',
   })
   @ApiHeader({
@@ -76,9 +78,9 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployee',
-    summary: 'Retrieve a Employee',
-    description: 'Retrieve a employee from any connected Hris software',
+    operationId: 'retrieveHrisEmployee',
+    summary: 'Retrieve an Employee',
+    description: 'Retrieve an employee from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
@@ -119,9 +121,9 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'addEmployee',
-    summary: 'Create a Employee',
-    description: 'Create a employee in any supported Hris software',
+    operationId: 'createHrisEmployee',
+    summary: 'Create an Employee',
+    description: 'Create an employee in any supported Hris software',
   })
   @ApiHeader({
     name: 'x-connection-token',

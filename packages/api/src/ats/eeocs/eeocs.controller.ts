@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { UnifiedEeocsInput, UnifiedEeocsOutput } from './types/model.unified';
@@ -25,6 +26,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { EeocsService } from './services/eeocs.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/eeocs')
 @Controller('ats/eeocs')
 export class EeocsController {
@@ -37,7 +39,7 @@ export class EeocsController {
   }
 
   @ApiOperation({
-    operationId: 'getEeocss',
+    operationId: 'listAtsEeocs', // Updated operationId
     summary: 'List a batch of Eeocss',
   })
   @ApiHeader({
@@ -73,7 +75,7 @@ export class EeocsController {
   }
 
   @ApiOperation({
-    operationId: 'getEeocs',
+    operationId: 'retrieveAtsEeocs', // Updated operationId
     summary: 'Retrieve a Eeocs',
     description: 'Retrieve a eeocs from any connected Ats software',
   })

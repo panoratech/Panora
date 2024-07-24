@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ContactService } from './services/contact.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/contact')
 @Controller('accounting/contact')
 export class ContactController {
@@ -40,7 +42,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingContacts',
+    operationId: 'listAccountingContacts',
     summary: 'List a batch of Contacts',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingContact',
+    operationId: 'retrieveAccountingContact',
     summary: 'Retrieve a Contact',
     description: 'Retrieve a contact from any connected Accounting software',
   })
@@ -120,7 +122,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addAccountingContact',
+    operationId: 'createAccountingContact',
     summary: 'Create a Contact',
     description: 'Create a contact in any supported Accounting software',
   })

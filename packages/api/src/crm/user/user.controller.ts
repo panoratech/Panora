@@ -24,7 +24,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/users')
 @Controller('crm/users')
 export class UserController {
@@ -37,7 +37,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmUsers',
+    operationId: 'listCrmUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -74,7 +74,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmUser',
+    operationId: 'retrieveCrmUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Crm software',
   })

@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TimeoffBalanceService } from './services/timeoffbalance.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/timeoffbalance')
 @Controller('hris/timeoffbalance')
 export class TimeoffBalanceController {
@@ -40,7 +42,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoffBalances',
+    operationId: 'listHrisTimeoffbalance',
     summary: 'List a batch of TimeoffBalances',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoffBalance',
+    operationId: 'retrieveHrisTimeoffbalance',
     summary: 'Retrieve a TimeoffBalance',
     description: 'Retrieve a timeoffbalance from any connected Hris software',
   })

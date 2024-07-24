@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { LocationService } from './services/location.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/location')
 @Controller('hris/location')
 export class LocationController {
@@ -40,7 +42,7 @@ export class LocationController {
   }
 
   @ApiOperation({
-    operationId: 'getLocations',
+    operationId: 'listHrisLocation',
     summary: 'List a batch of Locations',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class LocationController {
   }
 
   @ApiOperation({
-    operationId: 'getLocation',
+    operationId: 'retrieveHrisLocation',
     summary: 'Retrieve a Location',
     description: 'Retrieve a location from any connected Hris software',
   })

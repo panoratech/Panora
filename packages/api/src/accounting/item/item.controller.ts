@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { ItemService } from './services/item.service';
@@ -25,6 +26,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/item')
 @Controller('accounting/item')
 export class ItemController {
@@ -37,7 +39,7 @@ export class ItemController {
   }
 
   @ApiOperation({
-    operationId: 'getItems',
+    operationId: 'listAccountingItem',
     summary: 'List a batch of Items',
   })
   @ApiHeader({
@@ -73,7 +75,7 @@ export class ItemController {
   }
 
   @ApiOperation({
-    operationId: 'getItem',
+    operationId: 'retrieveAccountingItem',
     summary: 'Retrieve a Item',
     description: 'Retrieve a item from any connected Accounting software',
   })

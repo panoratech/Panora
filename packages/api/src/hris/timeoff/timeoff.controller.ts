@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { TimeoffService } from './services/timeoff.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/timeoff')
 @Controller('hris/timeoff')
 export class TimeoffController {
@@ -40,7 +42,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoffs',
+    operationId: 'listHrisTimeoffs',
     summary: 'List a batch of Timeoffs',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoff',
+    operationId: 'retrieveHrisTimeoff',
     summary: 'Retrieve a Timeoff',
     description: 'Retrieve a timeoff from any connected Hris software',
   })
@@ -119,7 +121,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'addTimeoff',
+    operationId: 'createHrisTimeoff',
     summary: 'Create a Timeoff',
     description: 'Create a timeoff in any supported Hris software',
   })

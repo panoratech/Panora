@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import {
@@ -28,6 +29,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { AccountService } from './services/account.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/account')
 @Controller('accounting/account')
 export class AccountController {
@@ -40,7 +42,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAccounts',
+    operationId: 'listAccountingAccounts',
     summary: 'List a batch of Accounts',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAccount',
+    operationId: 'retrieveAccountingAccount',
     summary: 'Retrieve a Account',
     description: 'Retrieve a account from any connected Accounting software',
   })
@@ -120,7 +122,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'addAccount',
+    operationId: 'createAccountingAccount',
     summary: 'Create a Account',
     description: 'Create a account in any supported Accounting software',
   })

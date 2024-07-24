@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { BalanceSheetService } from './services/balancesheet.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/balancesheet')
 @Controller('accounting/balancesheet')
 export class BalanceSheetController {
@@ -40,7 +42,7 @@ export class BalanceSheetController {
   }
 
   @ApiOperation({
-    operationId: 'getBalanceSheets',
+    operationId: 'listAccountingBalanceSheets',
     summary: 'List a batch of BalanceSheets',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class BalanceSheetController {
   }
 
   @ApiOperation({
-    operationId: 'getBalanceSheet',
+    operationId: 'retrieveAccountingBalanceSheet',
     summary: 'Retrieve a BalanceSheet',
     description:
       'Retrieve a balancesheet from any connected Accounting software',

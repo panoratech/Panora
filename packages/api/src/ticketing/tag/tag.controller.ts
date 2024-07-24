@@ -24,7 +24,7 @@ import { UnifiedTagOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/tags')
 @Controller('ticketing/tags')
 export class TagController {
@@ -37,7 +37,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingTags',
+    operationId: 'listTicketingTags',
     summary: 'List a batch of Tags',
   })
   @ApiHeader({
@@ -74,7 +74,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingTag',
+    operationId: 'retrieveTicketingTag',
     summary: 'Retrieve a Tag',
     description: 'Retrieve a tag from any connected Ticketing software',
   })

@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import {
@@ -28,6 +29,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ActivityService } from './services/activity.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/activity')
 @Controller('ats/activity')
 export class ActivityController {
@@ -40,8 +42,8 @@ export class ActivityController {
   }
 
   @ApiOperation({
-    operationId: 'getActivitys',
-    summary: 'List a batch of Activitys',
+    operationId: 'listAtsActivity',
+    summary: 'List a batch of Activities',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -76,7 +78,7 @@ export class ActivityController {
   }
 
   @ApiOperation({
-    operationId: 'getActivity',
+    operationId: 'retrieveAtsActivity',
     summary: 'Retrieve a Activity',
     description: 'Retrieve a activity from any connected Ats software',
   })
@@ -119,7 +121,7 @@ export class ActivityController {
   }
 
   @ApiOperation({
-    operationId: 'addActivity',
+    operationId: 'createAtsActivity',
     summary: 'Create a Activity',
     description: 'Create a activity in any supported Ats software',
   })

@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { PhoneNumberService } from './services/phonenumber.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/phonenumber')
 @Controller('accounting/phonenumber')
 export class PhoneNumberController {
@@ -40,7 +42,7 @@ export class PhoneNumberController {
   }
 
   @ApiOperation({
-    operationId: 'getPhoneNumbers',
+    operationId: 'listAccountingPhonenumber',
     summary: 'List a batch of PhoneNumbers',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class PhoneNumberController {
   }
 
   @ApiOperation({
-    operationId: 'getPhoneNumber',
+    operationId: 'retrieveAccountingPhonenumber',
     summary: 'Retrieve a PhoneNumber',
     description:
       'Retrieve a phonenumber from any connected Accounting software',

@@ -24,7 +24,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/stages')
 @Controller('crm/stages')
 export class StageController {
@@ -37,7 +37,7 @@ export class StageController {
   }
 
   @ApiOperation({
-    operationId: 'getStages',
+    operationId: 'listCrmStages',
     summary: 'List a batch of Stages',
   })
   @ApiHeader({
@@ -74,7 +74,7 @@ export class StageController {
   }
 
   @ApiOperation({
-    operationId: 'getStage',
+    operationId: 'retrieveCrmStage',
     summary: 'Retrieve a Stage',
     description: 'Retrieve a stage from any connected Crm software',
   })

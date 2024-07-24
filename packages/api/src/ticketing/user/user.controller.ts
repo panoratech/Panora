@@ -24,7 +24,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { UnifiedUserOutput } from './types/model.unified';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/users')
 @Controller('ticketing/users')
 export class UserController {
@@ -37,7 +37,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingUsers',
+    operationId: 'listTicketingUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -71,7 +71,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingUser',
+    operationId: 'retrieveTicketingUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Ticketing software',
   })

@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { PurchaseOrderService } from './services/purchaseorder.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/purchaseorder')
 @Controller('accounting/purchaseorder')
 export class PurchaseOrderController {
@@ -40,7 +42,7 @@ export class PurchaseOrderController {
   }
 
   @ApiOperation({
-    operationId: 'getPurchaseOrders',
+    operationId: 'listAccountingPurchaseOrder',
     summary: 'List a batch of PurchaseOrders',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class PurchaseOrderController {
   }
 
   @ApiOperation({
-    operationId: 'getPurchaseOrder',
+    operationId: 'retrieveAccountingPurchaseOrder',
     summary: 'Retrieve a PurchaseOrder',
     description:
       'Retrieve a purchaseorder from any connected Accounting software',
@@ -121,7 +123,7 @@ export class PurchaseOrderController {
   }
 
   @ApiOperation({
-    operationId: 'addPurchaseOrder',
+    operationId: 'createAccountingPurchaseOrder',
     summary: 'Create a PurchaseOrder',
     description: 'Create a purchaseorder in any supported Accounting software',
   })

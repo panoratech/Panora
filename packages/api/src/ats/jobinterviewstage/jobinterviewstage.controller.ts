@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { JobInterviewStageService } from './services/jobinterviewstage.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/jobinterviewstage')
 @Controller('ats/jobinterviewstage')
 export class JobInterviewStageController {
@@ -40,7 +42,7 @@ export class JobInterviewStageController {
   }
 
   @ApiOperation({
-    operationId: 'getJobInterviewStages',
+    operationId: 'listAtsJobInterviewStage',
     summary: 'List a batch of JobInterviewStages',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class JobInterviewStageController {
   }
 
   @ApiOperation({
-    operationId: 'getJobInterviewStage',
+    operationId: 'retrieveAtsJobInterviewStage',
     summary: 'Retrieve a JobInterviewStage',
     description: 'Retrieve a jobinterviewstage from any connected Ats software',
   })

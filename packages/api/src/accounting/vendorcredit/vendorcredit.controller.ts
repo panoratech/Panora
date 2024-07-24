@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { VendorCreditService } from './services/vendorcredit.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/vendorcredit')
 @Controller('accounting/vendorcredit')
 export class VendorCreditController {
@@ -40,7 +42,7 @@ export class VendorCreditController {
   }
 
   @ApiOperation({
-    operationId: 'getVendorCredits',
+    operationId: 'listAccountingVendorCredit',
     summary: 'List a batch of VendorCredits',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class VendorCreditController {
   }
 
   @ApiOperation({
-    operationId: 'getVendorCredit',
+    operationId: 'retrieveAccountingVendorCredit',
     summary: 'Retrieve a VendorCredit',
     description:
       'Retrieve a vendorcredit from any connected Accounting software',

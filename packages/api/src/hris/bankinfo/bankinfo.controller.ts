@@ -16,6 +16,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { BankInfoService } from './services/bankinfo.service';
@@ -27,6 +28,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/bankinfo')
 @Controller('hris/bankinfo')
 export class BankinfoController {
@@ -39,7 +41,7 @@ export class BankinfoController {
   }
 
   @ApiOperation({
-    operationId: 'getBankinfos',
+    operationId: 'listHrisBankinfo', // Updated operationId
     summary: 'List a batch of Bankinfos',
   })
   @ApiHeader({
@@ -75,7 +77,7 @@ export class BankinfoController {
   }
 
   @ApiOperation({
-    operationId: 'getBankinfo',
+    operationId: 'retrieveHrisBankinfo', // Updated operationId
     summary: 'Retrieve a Bankinfo',
     description: 'Retrieve a bankinfo from any connected Hris software',
   })

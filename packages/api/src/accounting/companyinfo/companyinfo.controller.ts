@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { CompanyInfoService } from './services/companyinfo.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/companyinfo')
 @Controller('accounting/companyinfo')
 export class CompanyInfoController {
@@ -40,7 +42,7 @@ export class CompanyInfoController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanyInfos',
+    operationId: 'listAccountingCompanyInfos',
     summary: 'List a batch of CompanyInfos',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class CompanyInfoController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanyInfo',
+    operationId: 'retrieveAccountingCompanyInfo',
     summary: 'Retrieve a CompanyInfo',
     description:
       'Retrieve a companyinfo from any connected Accounting software',

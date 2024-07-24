@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { AutomationService } from './services/automation.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/automation')
 @Controller('marketingautomation/automation')
 export class AutomationController {
@@ -40,7 +42,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'getAutomations',
+    operationId: 'listMarketingautomationAutomation',
     summary: 'List a batch of Automations',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'getAutomation',
+    operationId: 'retrieveMarketingautomationAutomation',
     summary: 'Retrieve a Automation',
     description:
       'Retrieve a automation from any connected Marketingautomation software',
@@ -121,7 +123,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'addAutomation',
+    operationId: 'createMarketingautomationAutomation',
     summary: 'Create a Automation',
     description:
       'Create a automation in any supported Marketingautomation software',

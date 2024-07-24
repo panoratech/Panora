@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { CampaignService } from './services/campaign.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/campaign')
 @Controller('marketingautomation/campaign')
 export class CampaignController {
@@ -40,7 +42,7 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'getCampaigns',
+    operationId: 'listMarketingautomationCampaign', // Updated operationId
     summary: 'List a batch of Campaigns',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'getCampaign',
+    operationId: 'retrieveMarketingautomationCampaign', // Updated operationId
     summary: 'Retrieve a Campaign',
     description:
       'Retrieve a campaign from any connected Marketingautomation software',
@@ -121,7 +123,7 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'addCampaign',
+    operationId: 'createMarketingautomationCampaign', // Updated operationId
     summary: 'Create a Campaign',
     description:
       'Create a campaign in any supported Marketingautomation software',

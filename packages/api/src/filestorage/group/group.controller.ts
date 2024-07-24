@@ -19,6 +19,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { GroupService } from './services/group.service';
@@ -27,6 +28,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('filestorage/groups')
 @Controller('filestorage/groups')
 export class GroupController {
@@ -39,7 +41,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getFsGroups',
+    operationId: 'listFilestorageGroup',
     summary: 'List a batch of Groups',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getFsGroup',
+    operationId: 'retrieveFilestorageGroup',
     summary: 'Retrieve a Group',
     description:
       'Retrieve a permission from any connected Filestorage software',

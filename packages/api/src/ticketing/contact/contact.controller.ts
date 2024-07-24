@@ -24,7 +24,7 @@ import {
 import { ContactService } from './services/contact.service';
 import { UnifiedContactOutput } from './types/model.unified';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/contacts')
 @Controller('ticketing/contacts')
 export class ContactController {
@@ -37,7 +37,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingContacts',
+    operationId: 'listTicketingContacts',
     summary: 'List all Contacts',
   })
   @ApiHeader({
@@ -74,7 +74,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingContact',
+    operationId: 'retrieveTicketingContact',
     summary: 'Retrieve a Contact',
     description: 'Retrieve a contact from any connected Ticketing software',
   })

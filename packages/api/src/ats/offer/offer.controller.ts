@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { OfferService } from './services/offer.service';
@@ -25,6 +26,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/offer')
 @Controller('ats/offer')
 export class OfferController {
@@ -37,7 +39,7 @@ export class OfferController {
   }
 
   @ApiOperation({
-    operationId: 'getOffers',
+    operationId: 'listAtsOffer',
     summary: 'List a batch of Offers',
   })
   @ApiHeader({
@@ -73,7 +75,7 @@ export class OfferController {
   }
 
   @ApiOperation({
-    operationId: 'getOffer',
+    operationId: 'retrieveAtsOffer',
     summary: 'Retrieve a Offer',
     description: 'Retrieve a offer from any connected Ats software',
   })

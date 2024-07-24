@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { PaymentService } from './services/payment.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/payment')
 @Controller('accounting/payment')
 export class PaymentController {
@@ -40,7 +42,7 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'getPayments',
+    operationId: 'listAccountingPayment',
     summary: 'List a batch of Payments',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'getPayment',
+    operationId: 'retrieveAccountingPayment',
     summary: 'Retrieve a Payment',
     description: 'Retrieve a payment from any connected Accounting software',
   })
@@ -120,7 +122,7 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'addPayment',
+    operationId: 'createAccountingPayment',
     summary: 'Create a Payment',
     description: 'Create a payment in any supported Accounting software',
   })

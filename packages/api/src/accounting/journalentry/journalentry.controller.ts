@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { JournalEntryService } from './services/journalentry.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/journalentry')
 @Controller('accounting/journalentry')
 export class JournalEntryController {
@@ -40,7 +42,7 @@ export class JournalEntryController {
   }
 
   @ApiOperation({
-    operationId: 'getJournalEntrys',
+    operationId: 'listAccountingJournalEntry',
     summary: 'List a batch of JournalEntrys',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class JournalEntryController {
   }
 
   @ApiOperation({
-    operationId: 'getJournalEntry',
+    operationId: 'retrieveAccountingJournalEntry',
     summary: 'Retrieve a JournalEntry',
     description:
       'Retrieve a journalentry from any connected Accounting software',
@@ -121,7 +123,7 @@ export class JournalEntryController {
   }
 
   @ApiOperation({
-    operationId: 'addJournalEntry',
+    operationId: 'createAccountingJournalEntry',
     summary: 'Create a JournalEntry',
     description: 'Create a journalentry in any supported Accounting software',
   })

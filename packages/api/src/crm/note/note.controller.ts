@@ -27,7 +27,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/notes')
 @Controller('crm/notes')
 export class NoteController {
@@ -40,7 +40,7 @@ export class NoteController {
   }
 
   @ApiOperation({
-    operationId: 'getNotes',
+    operationId: 'listCrmNote',
     summary: 'List a batch of Notes',
   })
   @ApiHeader({
@@ -77,7 +77,7 @@ export class NoteController {
   }
 
   @ApiOperation({
-    operationId: 'getNote',
+    operationId: 'retrieveCrmNote',
     summary: 'Retrieve a Note',
     description: 'Retrieve a note from any connected Crm software',
   })
@@ -120,7 +120,7 @@ export class NoteController {
   }
 
   @ApiOperation({
-    operationId: 'addNote',
+    operationId: 'createCrmNote',
     summary: 'Create a Note',
     description: 'Create a note in any supported Crm software',
   })

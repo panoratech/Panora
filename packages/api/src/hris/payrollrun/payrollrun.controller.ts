@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { PayrollRunService } from './services/payrollrun.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/payrollrun')
 @Controller('hris/payrollrun')
 export class PayrollRunController {
@@ -40,7 +42,7 @@ export class PayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'getPayrollRuns',
+    operationId: 'listHrisPayrollRuns',
     summary: 'List a batch of PayrollRuns',
   })
   @ApiHeader({

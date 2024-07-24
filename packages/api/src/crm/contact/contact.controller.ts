@@ -31,7 +31,7 @@ import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/contacts')
 @Controller('crm/contacts')
 export class ContactController {

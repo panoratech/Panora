@@ -28,7 +28,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/tasks')
 @Controller('crm/tasks')
 export class TaskController {
@@ -41,7 +41,7 @@ export class TaskController {
   }
 
   @ApiOperation({
-    operationId: 'getTasks',
+    operationId: 'listCrmTask',
     summary: 'List a batch of Tasks',
   })
   @ApiHeader({
@@ -79,7 +79,7 @@ export class TaskController {
   }
 
   @ApiOperation({
-    operationId: 'getTask',
+    operationId: 'retrieveCrmTask',
     summary: 'Retrieve a Task',
     description: 'Retrieve a task from any connected Crm software',
   })
@@ -122,7 +122,7 @@ export class TaskController {
   }
 
   @ApiOperation({
-    operationId: 'addTask',
+    operationId: 'createCrmTask',
     summary: 'Create a Task',
     description: 'Create a task in any supported Crm software',
   })

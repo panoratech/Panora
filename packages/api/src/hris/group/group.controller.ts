@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { GroupService } from './services/group.service';
@@ -25,6 +26,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/group')
 @Controller('hris/group')
 export class GroupController {
@@ -37,7 +39,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getHrisGroups',
+    operationId: 'listHrisGroup',
     summary: 'List a batch of Groups',
   })
   @ApiHeader({
@@ -73,7 +75,7 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getHrisGroup',
+    operationId: 'retrieveHrisGroup',
     summary: 'Retrieve a Group',
     description: 'Retrieve a group from any connected Hris software',
   })

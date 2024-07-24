@@ -17,6 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ApiCustomResponse } from '@@core/utils/types';
 import { IncomeStatementService } from './services/incomestatement.service';
@@ -28,6 +29,7 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/incomestatement')
 @Controller('accounting/incomestatement')
 export class IncomeStatementController {
@@ -40,7 +42,7 @@ export class IncomeStatementController {
   }
 
   @ApiOperation({
-    operationId: 'getIncomeStatements',
+    operationId: 'listAccountingIncomeStatement',
     summary: 'List a batch of IncomeStatements',
   })
   @ApiHeader({
@@ -76,7 +78,7 @@ export class IncomeStatementController {
   }
 
   @ApiOperation({
-    operationId: 'getIncomeStatement',
+    operationId: 'retrieveAccountingIncomeStatement',
     summary: 'Retrieve a IncomeStatement',
     description:
       'Retrieve a incomestatement from any connected Accounting software',
