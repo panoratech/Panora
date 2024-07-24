@@ -279,7 +279,8 @@ export type GithubTicketInput = {
     assignee?: string,
     milestone?: string | number,
     labels?: string[],
-    assignees?: string[]
+    assignees?: string[],
+    [key: string]: any,
 
 }
 
