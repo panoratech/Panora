@@ -28,21 +28,6 @@ async function bootstrap() {
     )
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  // Add x-speakeasy-name-override
-  document['x-speakeasy-name-override'] = [
-    {
-      operationId: '^get.*',
-      methodNameOverride: 'retrieve',
-    },
-    {
-      operationId: '^list.*',
-      methodNameOverride: 'list',
-    },
-    {
-      operationId: '^new.*',
-      methodNameOverride: 'create',
-    },
-  ];
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
