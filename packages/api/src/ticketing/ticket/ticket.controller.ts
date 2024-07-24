@@ -165,38 +165,4 @@ export class TicketController {
       throw new Error(error);
     }
   }
-
-  @ApiOperation({
-    operationId: 'updateTicket',
-    summary: 'Update a Ticket',
-    description: 'Update a ticket in any supported Ticketing software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Ticketing software.',
-  })
-  @ApiBody({ type: UnifiedTicketInput })
-  @ApiCustomResponse(UnifiedTicketOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Put()
-  async updateTicket(
-    @Body() unfiedTicketData: UnifiedTicketInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      return;
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
 }
