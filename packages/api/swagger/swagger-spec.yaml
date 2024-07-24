@@ -434,6 +434,42 @@ paths:
                 $ref: '#/components/schemas/UnifiedTicketOutput'
       tags: *ref_4
       security: *ref_5
+    put:
+      operationId: updateTicket
+      summary: Update a Ticket
+      description: Update a ticket in any supported Ticketing software
+      parameters:
+        - name: x-connection-token
+          required: true
+          in: header
+          description: The connection token
+          schema:
+            type: string
+        - name: remote_data
+          required: false
+          in: query
+          description: Set to true to include data from the original Ticketing software.
+          schema:
+            type: boolean
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnifiedTicketInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - properties:
+                      data:
+                        $ref: '#/components/schemas/UnifiedTicketOutput'
+      tags: *ref_4
+      security: *ref_5
   /ticketing/tickets/{id}:
     get:
       operationId: getTicket
@@ -8628,7 +8664,7 @@ servers:
     description: Sandbox server
 components:
   securitySchemes:
-    JWT:
+    MyBearerAuth:
       scheme: bearer
       bearerFormat: JWT
       type: http

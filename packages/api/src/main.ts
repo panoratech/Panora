@@ -24,7 +24,7 @@ async function bootstrap() {
     .addServer('https://api-sandbox.panora.dev', 'Sandbox server')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'JWT',
+      'MyBearerAuth',
     )
     .build();
   const document = SwaggerModule.createDocument(app, config);
