@@ -1,3 +1,3 @@
-export class UnifiedPayGroupInput {}
+export class UnifiedHrisPaygroupInput {}
 
-export class UnifiedPayGroupOutput extends UnifiedPayGroupInput {}
+export class UnifiedHrisPaygroupOutput extends UnifiedHrisPaygroupInput {}

@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedTrackingCategoryInput,
-  UnifiedTrackingCategoryOutput,
+  UnifiedAccountingTrackingcategoryInput,
+  UnifiedAccountingTrackingcategoryOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -33,7 +33,7 @@ export class TrackingCategoryService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTrackingCategoryOutput> {
+  ): Promise<UnifiedAccountingTrackingcategoryOutput> {
     return;
   }
 
@@ -44,7 +44,7 @@ export class TrackingCategoryService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedTrackingCategoryOutput[]> {
+  ): Promise<UnifiedAccountingTrackingcategoryOutput[]> {
     return;
   }
 }

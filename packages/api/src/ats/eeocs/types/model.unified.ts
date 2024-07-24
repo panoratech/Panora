@@ -34,7 +34,7 @@ export type EeocsVeteranStatus =
   | 'I_IDENTIFY_AS_ONE_OR_MORE_OF_THE_CLASSIFICATIONS_OF_A_PROTECTED_VETERAN'
   | 'I_DONT_WISH_TO_ANSWER';
 
-export class UnifiedEeocsInput {
+export class UnifiedAtsEeocsInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the candidate',
@@ -110,7 +110,7 @@ export class UnifiedEeocsInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedEeocsOutput extends UnifiedEeocsInput {
+export class UnifiedAtsEeocsOutput extends UnifiedAtsEeocsInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the EEOC' })
   @IsUUID()
   @IsOptional()

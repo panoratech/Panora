@@ -19,12 +19,16 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { UnifiedEeocsInput, UnifiedEeocsOutput } from './types/model.unified';
+
+import {
+  UnifiedAtsEeocsInput,
+  UnifiedAtsEeocsOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { EeocsService } from './services/eeocs.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ats/eeocs')
@@ -48,7 +52,7 @@ export class EeocsController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEeocsOutput)
+  @ApiPaginatedResponse(UnifiedAtsEeocsOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEeocss(
@@ -97,7 +101,7 @@ export class EeocsController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEeocsOutput)
+  @ApiGetCustomResponse(UnifiedAtsEeocsOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

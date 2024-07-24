@@ -10,7 +10,7 @@ import {
 
 export type InterviewStatus = 'SCHEDULED' | 'AWAITING_FEEDBACK' | 'COMPLETED';
 
-export class UnifiedInterviewInput {
+export class UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The status of the interview',
@@ -104,7 +104,7 @@ export class UnifiedInterviewInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedInterviewOutput extends UnifiedInterviewInput {
+export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the interview',

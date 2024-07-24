@@ -19,15 +19,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EmployeeService } from './services/employee.service';
 import {
-  UnifiedEmployeeInput,
-  UnifiedEmployeeOutput,
+  UnifiedHrisEmployeeInput,
+  UnifiedHrisEmployeeOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('hris/employee')
@@ -51,7 +56,7 @@ export class EmployeeController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmployeeOutput)
+  @ApiPaginatedResponse(UnifiedHrisEmployeeOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEmployees(
@@ -100,7 +105,7 @@ export class EmployeeController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmployeeOutput)
+  @ApiGetCustomResponse(UnifiedHrisEmployeeOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -137,12 +142,12 @@ export class EmployeeController {
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
   })
-  @ApiBody({ type: UnifiedEmployeeInput })
-  @ApiCustomResponse(UnifiedEmployeeOutput)
+  @ApiBody({ type: UnifiedHrisEmployeeInput })
+  @ApiPostCustomResponse(UnifiedHrisEmployeeOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addEmployee(
-    @Body() unifiedEmployeeData: UnifiedEmployeeInput,
+    @Body() unifiedEmployeeData: UnifiedHrisEmployeeInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

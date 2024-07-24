@@ -1,3 +1,3 @@
-export class UnifiedJournalEntryInput {}
+export class UnifiedAccountingJournalentryInput {}
 
-export class UnifiedJournalEntryOutput extends UnifiedJournalEntryInput {}
+export class UnifiedAccountingJournalentryOutput extends UnifiedAccountingJournalentryInput {}

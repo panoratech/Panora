@@ -7,7 +7,7 @@ import {
   IsArray,
 } from 'class-validator';
 
-export class UnifiedApplicationInput {
+export class UnifiedAtsApplicationInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
@@ -88,7 +88,7 @@ export class UnifiedApplicationInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedApplicationOutput extends UnifiedApplicationInput {
+export class UnifiedAtsApplicationOutput extends UnifiedAtsApplicationInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the application',

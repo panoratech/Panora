@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { ICandidateService } from '../types';
 import { OriginalCandidateOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedCandidateOutput } from '../types/model.unified';
+import { UnifiedAtsCandidateOutput } from '../types/model.unified';
 import { ats_candidates as AtsCandidate } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -19,8 +19,8 @@ import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { Utils } from '@ats/@lib/@utils';
-import { UnifiedAttachmentOutput } from '@ats/attachment/types/model.unified';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { UnifiedAtsAttachmentOutput } from '@ats/attachment/types/model.unified';
+import { UnifiedAtsTagOutput } from '@ats/tag/types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -111,7 +111,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedCandidateOutput,
+        UnifiedAtsCandidateOutput,
         OriginalCandidateOutput,
         ICandidateService
       >(integrationId, linkedUserId, 'ats', 'candidate', service, []);
@@ -123,7 +123,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    candidates: UnifiedCandidateOutput[],
+    candidates: UnifiedAtsCandidateOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsCandidate[]> {
@@ -240,7 +240,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       };
 
       const updateOrCreateCandidate = async (
-        candidate: UnifiedCandidateOutput,
+        candidate: UnifiedAtsCandidateOutput,
         originId: string,
       ) => {
         const existingCandidate = await this.prisma.ats_candidates.findFirst({
@@ -320,7 +320,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             candidate.attachments,
             originSource,
             candidate.attachments.map(
-              (att: UnifiedAttachmentOutput) => att.remote_data,
+              (att: UnifiedAtsAttachmentOutput) => att.remote_data,
             ),
             { candidate_id },
           );
@@ -333,7 +333,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             linkedUserId,
             candidate.tags,
             originSource,
-            candidate.tags.map((tag: UnifiedTagOutput) => tag.remote_data),
+            candidate.tags.map((tag: UnifiedAtsTagOutput) => tag.remote_data),
           );
           await this.prisma.ats_candidates.update({
             where: {

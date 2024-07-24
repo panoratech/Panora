@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedTaxRateOutput } from '../types/model.unified';
+import { UnifiedAccountingTaxrateOutput } from '../types/model.unified';
 import { ITaxRateService } from '../types';
 import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 

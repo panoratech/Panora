@@ -2,8 +2,8 @@ import { ITaskMapper } from '@crm/task/types';
 import { ZohoTaskInput, ZohoTaskOutput } from './types';
 import {
   TaskStatus,
-  UnifiedTaskInput,
-  UnifiedTaskOutput,
+  UnifiedCrmTaskInput,
+  UnifiedCrmTaskOutput,
 } from '@crm/task/types/model.unified';
 import { Utils } from '@crm/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -44,7 +44,7 @@ export class ZohoTaskMapper implements ITaskMapper {
   }
 
   async desunify(
-    source: UnifiedTaskInput,
+    source: UnifiedCrmTaskInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -60,7 +60,7 @@ export class ZohoTaskMapper implements ITaskMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
+  ): Promise<UnifiedCrmTaskOutput | UnifiedCrmTaskOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleTaskToUnified(
         source,
@@ -83,14 +83,14 @@ export class ZohoTaskMapper implements ITaskMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTaskOutput> {
+  ): Promise<UnifiedCrmTaskOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
         field_mappings[mapping.slug] = task[mapping.remote_id];
       }
     }
-    const res: UnifiedTaskOutput = {
+    const res: UnifiedCrmTaskOutput = {
       remote_id: task.id,
       remote_data: task,
       content: task.Description,

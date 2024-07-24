@@ -19,15 +19,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { InvoiceService } from './services/invoice.service';
 import {
-  UnifiedInvoiceInput,
-  UnifiedInvoiceOutput,
+  UnifiedAccountingInvoiceInput,
+  UnifiedAccountingInvoiceOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('accounting/invoice')
@@ -51,7 +56,7 @@ export class InvoiceController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedInvoiceOutput)
+  @ApiPaginatedResponse(UnifiedAccountingInvoiceOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getInvoices(
@@ -101,7 +106,7 @@ export class InvoiceController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedInvoiceOutput)
+  @ApiGetCustomResponse(UnifiedAccountingInvoiceOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -139,12 +144,12 @@ export class InvoiceController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedInvoiceInput })
-  @ApiCustomResponse(UnifiedInvoiceOutput)
+  @ApiBody({ type: UnifiedAccountingInvoiceInput })
+  @ApiPostCustomResponse(UnifiedAccountingInvoiceOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addInvoice(
-    @Body() unifiedInvoiceData: UnifiedInvoiceInput,
+    @Body() unifiedInvoiceData: UnifiedAccountingInvoiceInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

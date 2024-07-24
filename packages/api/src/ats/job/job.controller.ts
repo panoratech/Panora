@@ -19,12 +19,13 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { JobService } from './services/job.service';
-import { UnifiedJobInput, UnifiedJobOutput } from './types/model.unified';
+import { UnifiedAtsJobInput, UnifiedAtsJobOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ats/job')
@@ -48,7 +49,7 @@ export class JobController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedJobOutput)
+  @ApiPaginatedResponse(UnifiedAtsJobOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getJobs(
@@ -97,7 +98,7 @@ export class JobController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedJobOutput)
+  @ApiGetCustomResponse(UnifiedAtsJobOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

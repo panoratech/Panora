@@ -4,6 +4,7 @@ import { MagicLinkService } from './magic-link.service';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';
 import {
   ApiBody,
+  ApiExcludeController,
   ApiOperation,
   ApiQuery,
   ApiResponse,
@@ -11,6 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 @ApiTags('magic-links')
+@ApiExcludeController()
 @Controller('magic-links')
 export class MagicLinkController {
   constructor(

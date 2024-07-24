@@ -21,15 +21,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EngagementService } from './services/engagement.service';
 import {
-  UnifiedEngagementInput,
-  UnifiedEngagementOutput,
+  UnifiedCrmEngagementInput,
+  UnifiedCrmEngagementOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('crm/engagements')
@@ -53,7 +58,7 @@ export class EngagementController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEngagementOutput)
+  @ApiPaginatedResponse(UnifiedCrmEngagementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -104,7 +109,7 @@ export class EngagementController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEngagementOutput)
+  @ApiGetCustomResponse(UnifiedCrmEngagementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -141,12 +146,12 @@ export class EngagementController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
-  @ApiBody({ type: UnifiedEngagementInput })
-  @ApiCustomResponse(UnifiedEngagementOutput)
+  @ApiBody({ type: UnifiedCrmEngagementInput })
+  @ApiPostCustomResponse(UnifiedCrmEngagementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addEngagement(
-    @Body() unifiedEngagementData: UnifiedEngagementInput,
+    @Body() unifiedEngagementData: UnifiedCrmEngagementInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

@@ -1,3 +1,3 @@
-export class UnifiedTrackingCategoryInput {}
+export class UnifiedAccountingTrackingcategoryInput {}
 
-export class UnifiedTrackingCategoryOutput extends UnifiedTrackingCategoryInput {}
+export class UnifiedAccountingTrackingcategoryOutput extends UnifiedAccountingTrackingcategoryInput {}

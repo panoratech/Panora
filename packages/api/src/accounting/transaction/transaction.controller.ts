@@ -19,15 +19,16 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TransactionService } from './services/transaction.service';
 import {
-  UnifiedTransactionInput,
-  UnifiedTransactionOutput,
+  UnifiedAccountingTransactionInput,
+  UnifiedAccountingTransactionOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('accounting/transaction')
@@ -51,7 +52,7 @@ export class TransactionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTransactionOutput)
+  @ApiPaginatedResponse(UnifiedAccountingTransactionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTransactions(
@@ -102,7 +103,7 @@ export class TransactionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTransactionOutput)
+  @ApiGetCustomResponse(UnifiedAccountingTransactionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

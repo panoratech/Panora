@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedTicketingAttachmentInput,
+  UnifiedTicketingAttachmentOutput,
 } from './model.unified';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
@@ -18,7 +18,7 @@ export interface IAttachmentService extends IBaseObjectService {
 
 export interface IAttachmentMapper {
   desunify(
-    source: UnifiedAttachmentInput,
+    source: UnifiedTicketingAttachmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -32,5 +32,5 @@ export interface IAttachmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAttachmentOutput | UnifiedAttachmentOutput[]>;
+  ): Promise<UnifiedTicketingAttachmentOutput | UnifiedTicketingAttachmentOutput[]>;
 }

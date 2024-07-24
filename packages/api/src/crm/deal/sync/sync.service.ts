@@ -6,7 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { UnifiedDealOutput } from '../types/model.unified';
+import { UnifiedCrmDealOutput } from '../types/model.unified';
 import { IDealService } from '../types';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
 import { crm_deals as CrmDeal } from '@prisma/client';
@@ -105,7 +105,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedDealOutput,
+        UnifiedCrmDealOutput,
         OriginalDealOutput,
         IDealService
       >(integrationId, linkedUserId, 'crm', 'deal', service, []);
@@ -117,7 +117,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedDealOutput[],
+    data: UnifiedCrmDealOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmDeal[]> {
@@ -125,7 +125,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const deals_results: CrmDeal[] = [];
 
       const updateOrCreateDeal = async (
-        deal: UnifiedDealOutput,
+        deal: UnifiedCrmDealOutput,
         originId: string,
       ) => {
         const existingDeal = await this.prisma.crm_deals.findFirst({

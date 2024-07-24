@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IDepartmentService } from '../types';
 import { OriginalDepartmentOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedDepartmentOutput } from '../types/model.unified';
+import { UnifiedAtsDepartmentOutput } from '../types/model.unified';
 import { ats_departments as AtsDepartment } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -107,7 +107,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedDepartmentOutput,
+        UnifiedAtsDepartmentOutput,
         OriginalDepartmentOutput,
         IDepartmentService
       >(integrationId, linkedUserId, 'ats', 'department', service, []);
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    departments: UnifiedDepartmentOutput[],
+    departments: UnifiedAtsDepartmentOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsDepartment[]> {
@@ -127,7 +127,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const departments_results: AtsDepartment[] = [];
 
       const updateOrCreateDepartment = async (
-        department: UnifiedDepartmentOutput,
+        department: UnifiedAtsDepartmentOutput,
         originId: string,
       ) => {
         let existingDepartment;

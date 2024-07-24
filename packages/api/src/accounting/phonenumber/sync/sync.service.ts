@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedPhoneNumberOutput } from '../types/model.unified';
+import { UnifiedAccountingPhonenumberOutput } from '../types/model.unified';
 import { IPhoneNumberService } from '../types';
 import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 

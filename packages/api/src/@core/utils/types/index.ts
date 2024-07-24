@@ -1,24 +1,17 @@
-import { CrmObject, UnifiedCrm } from '@crm/@lib/@types';
-import { HrisObject, UnifiedHris } from '@hris/@lib/@types';
-import { AtsObject, UnifiedAts } from '@ats/@lib/@types';
 import { AccountingObject, UnifiedAccounting } from '@accounting/@lib/@types';
-import { TicketingObject, UnifiedTicketing } from '@ticketing/@lib/@types';
-import {
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiProperty,
-  ApiPropertyOptional,
-  getSchemaPath,
-} from '@nestjs/swagger';
-import { Type, applyDecorators } from '@nestjs/common';
+import { AtsObject, UnifiedAts } from '@ats/@lib/@types';
+import { CrmObject, UnifiedCrm } from '@crm/@lib/@types';
 import {
   FileStorageObject,
   UnifiedFileStorage,
 } from '@filestorage/@lib/@types';
+import { HrisObject, UnifiedHris } from '@hris/@lib/@types';
 import {
   MarketingAutomationObject,
   UnifiedMarketingAutomation,
 } from '@marketingautomation/@lib/@types';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { TicketingObject, UnifiedTicketing } from '@ticketing/@lib/@types';
 
 export type Unified =
   | UnifiedCrm
@@ -42,7 +35,6 @@ export type TargetObject =
 
 export type StandardObject = TargetObject;
 
-//API RESPONSE
 export class ApiResponse<T> {
   data: T;
   @ApiPropertyOptional()
@@ -52,25 +44,6 @@ export class ApiResponse<T> {
   @ApiProperty({ type: Number })
   statusCode: number;
 }
-
-export const ApiCustomResponse = <DataDto extends Type<unknown>>(
-  dataDto: DataDto,
-) =>
-  applyDecorators(
-    ApiExtraModels(ApiResponse, dataDto),
-    ApiOkResponse({
-      schema: {
-        allOf: [
-          { $ref: getSchemaPath(ApiResponse) },
-          {
-            properties: {
-              data: { $ref: getSchemaPath(dataDto) },
-            },
-          },
-        ],
-      },
-    }),
-  );
 
 export function getFileExtension(fileName: string): string | null {
   const parts = fileName.split('.');

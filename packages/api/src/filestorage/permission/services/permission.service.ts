@@ -8,8 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   PermissionRole,
   PermissionType,
-  UnifiedPermissionInput,
-  UnifiedPermissionOutput,
+  UnifiedFilestoragePermissionInput,
+  UnifiedFilestoragePermissionOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 
@@ -31,7 +31,7 @@ export class PermissionService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedPermissionOutput> {
+  ): Promise<UnifiedFilestoragePermissionOutput> {
     try {
       const permission = await this.prisma.fs_permissions.findUnique({
         where: {
@@ -63,8 +63,8 @@ export class PermissionService {
         [key]: value,
       }));
 
-      // Transform to UnifiedPermissionOutput format
-      const unifiedPermission: UnifiedPermissionOutput = {
+      // Transform to UnifiedFilestoragePermissionOutput format
+      const unifiedPermission: UnifiedFilestoragePermissionOutput = {
         id: permission.id_fs_permission,
         user_id: permission.user,
         group_id: permission.group,
@@ -76,7 +76,7 @@ export class PermissionService {
         modified_at: permission.modified_at,
       };
 
-      let res: UnifiedPermissionOutput = unifiedPermission;
+      let res: UnifiedFilestoragePermissionOutput = unifiedPermission;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -119,7 +119,7 @@ export class PermissionService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedPermissionOutput[];
+    data: UnifiedFilestoragePermissionOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -165,7 +165,7 @@ export class PermissionService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedPermissions: UnifiedPermissionOutput[] = await Promise.all(
+      const unifiedPermissions: UnifiedFilestoragePermissionOutput[] = await Promise.all(
         permissions.map(async (permission) => {
           // Fetch field mappings for the permission
           const values = await this.prisma.value.findMany({
@@ -192,7 +192,7 @@ export class PermissionService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedPermissionOutput format
+          // Transform to UnifiedFilestoragePermissionOutput format
           return {
             id: permission.id_fs_permission,
             user_id: permission.user,
@@ -207,10 +207,10 @@ export class PermissionService {
         }),
       );
 
-      let res: UnifiedPermissionOutput[] = unifiedPermissions;
+      let res: UnifiedFilestoragePermissionOutput[] = unifiedPermissions;
 
       if (remote_data) {
-        const remote_array_data: UnifiedPermissionOutput[] = await Promise.all(
+        const remote_array_data: UnifiedFilestoragePermissionOutput[] = await Promise.all(
           res.map(async (permission) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

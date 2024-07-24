@@ -19,15 +19,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import {
-  UnifiedActivityInput,
-  UnifiedActivityOutput,
+  UnifiedAtsActivityInput,
+  UnifiedAtsActivityOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ActivityService } from './services/activity.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ats/activity')
@@ -51,7 +56,7 @@ export class ActivityController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedActivityOutput)
+  @ApiPaginatedResponse(UnifiedAtsActivityOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getActivitys(
@@ -100,7 +105,7 @@ export class ActivityController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedActivityOutput)
+  @ApiGetCustomResponse(UnifiedAtsActivityOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -137,12 +142,12 @@ export class ActivityController {
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedActivityInput })
-  @ApiCustomResponse(UnifiedActivityOutput)
+  @ApiBody({ type: UnifiedAtsActivityInput })
+  @ApiPostCustomResponse(UnifiedAtsActivityOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addActivity(
-    @Body() unifiedActivityData: UnifiedActivityInput,
+    @Body() unifiedActivityData: UnifiedAtsActivityInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

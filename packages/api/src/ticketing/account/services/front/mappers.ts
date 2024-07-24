@@ -1,8 +1,8 @@
 import { IAccountMapper } from '@ticketing/account/types';
 import { FrontAccountInput, FrontAccountOutput } from './types';
 import {
-  UnifiedAccountInput,
-  UnifiedAccountOutput,
+  UnifiedTicketingAccountInput,
+  UnifiedTicketingAccountOutput,
 } from '@ticketing/account/types/model.unified';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
@@ -14,7 +14,7 @@ export class FrontAccountMapper implements IAccountMapper {
     this.mappersRegistry.registerService('ticketing', 'account', 'front', this);
   }
   desunify(
-    source: UnifiedAccountInput,
+    source: UnifiedTicketingAccountInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class FrontAccountMapper implements IAccountMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAccountOutput | UnifiedAccountOutput[] {
+  ): UnifiedTicketingAccountOutput | UnifiedTicketingAccountOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
@@ -50,7 +50,7 @@ export class FrontAccountMapper implements IAccountMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAccountOutput {
+  ): UnifiedTicketingAccountOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -58,7 +58,7 @@ export class FrontAccountMapper implements IAccountMapper {
       }
     }
 
-    const unifiedAccount: UnifiedAccountOutput = {
+    const unifiedAccount: UnifiedTicketingAccountOutput = {
       remote_id: account.id,
       name: account.name,
       domains: account.domains.flat(),

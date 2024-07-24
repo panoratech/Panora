@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedStageInput, UnifiedStageOutput } from './model.unified';
+import { UnifiedCrmStageInput, UnifiedCrmStageOutput } from './model.unified';
 import { OriginalStageOutput } from '@@core/utils/types/original/original.crm';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -10,7 +10,7 @@ export interface IStageService extends IBaseObjectService {
 
 export interface IStageMapper {
   desunify(
-    source: UnifiedStageInput,
+    source: UnifiedCrmStageInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -24,5 +24,5 @@ export interface IStageMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedStageOutput | UnifiedStageOutput[];
+  ): UnifiedCrmStageOutput | UnifiedCrmStageOutput[];
 }

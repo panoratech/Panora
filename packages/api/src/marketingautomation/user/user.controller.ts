@@ -19,12 +19,16 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { UserService } from './services/user.service';
-import { UnifiedUserInput, UnifiedUserOutput } from './types/model.unified';
+import {
+  UnifiedMarketingautomationUserInput,
+  UnifiedMarketingautomationUserOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/user')
@@ -48,7 +52,7 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getUsers(
@@ -99,7 +103,7 @@ export class UserController {
     description:
       'Set to true to include data from the original Marketingautomation software.',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

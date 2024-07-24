@@ -12,7 +12,7 @@ import {
 export type JobStatus = 'OPEN' | 'CLOSED' | 'DRAFT' | 'ARCHIVED' | 'PENDING';
 export type JobType = 'POSTING' | 'REQUISITION' | 'PROFILE';
 
-export class UnifiedJobInput {
+export class UnifiedAtsJobInput {
   @ApiPropertyOptional({ type: String, description: 'The name of the job' })
   @IsString()
   @IsOptional()
@@ -108,7 +108,7 @@ export class UnifiedJobInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedJobOutput extends UnifiedJobInput {
+export class UnifiedAtsJobOutput extends UnifiedAtsJobInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the job' })
   @IsUUID()
   @IsOptional()

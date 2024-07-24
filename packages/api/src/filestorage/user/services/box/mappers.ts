@@ -1,6 +1,6 @@
 import { BoxUserInput, BoxUserOutput } from './types';
 import {
-  UnifiedUserInput,
+  UnifiedFilestorageUserInput,
   UnifiedUserOutput,
 } from '@filestorage/user/types/model.unified';
 import { IUserMapper } from '@filestorage/user/types';
@@ -15,7 +15,7 @@ export class BoxUserMapper implements IUserMapper {
   }
 
   async desunify(
-    source: UnifiedUserInput,
+    source: UnifiedFilestorageUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;

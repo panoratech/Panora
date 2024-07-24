@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedCashflowStatementInput,
-  UnifiedCashflowStatementOutput,
+  UnifiedAccountingCashflowstatementInput,
+  UnifiedAccountingCashflowstatementOutput,
 } from './model.unified';
 import { OriginalCashflowStatementOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface ICashflowStatementService {
 
 export interface ICashflowStatementMapper {
   desunify(
-    source: UnifiedCashflowStatementInput,
+    source: UnifiedAccountingCashflowstatementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface ICashflowStatementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCashflowStatementOutput | UnifiedCashflowStatementOutput[]>;
+  ): Promise<UnifiedAccountingCashflowstatementOutput | UnifiedAccountingCashflowstatementOutput[]>;
 }

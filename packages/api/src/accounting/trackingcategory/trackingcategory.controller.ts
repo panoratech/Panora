@@ -19,15 +19,16 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TrackingCategoryService } from './services/trackingcategory.service';
 import {
-  UnifiedTrackingCategoryInput,
-  UnifiedTrackingCategoryOutput,
+  UnifiedAccountingTrackingcategoryInput,
+  UnifiedAccountingTrackingcategoryOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('accounting/trackingcategory')
@@ -51,7 +52,7 @@ export class TrackingCategoryController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTrackingCategoryOutput)
+  @ApiPaginatedResponse(UnifiedAccountingTrackingcategoryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTrackingCategorys(
@@ -102,7 +103,7 @@ export class TrackingCategoryController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTrackingCategoryOutput)
+  @ApiGetCustomResponse(UnifiedAccountingTrackingcategoryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

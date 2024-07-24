@@ -4,7 +4,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedFileInput, UnifiedFileOutput } from '../types/model.unified';
+import { UnifiedFilestorageFileInput, UnifiedFilestorageFileOutput } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
@@ -28,12 +28,12 @@ export class FileService {
   }
 
   async addFile(
-    unifiedFileData: UnifiedFileInput,
+    unifiedFileData: UnifiedFilestorageFileInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedFileOutput> {
+  ): Promise<UnifiedFilestorageFileOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       const customFieldMappings =
@@ -44,7 +44,7 @@ export class FileService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedFileInput>({
+        await this.coreUnification.desunify<UnifiedFilestorageFileInput>({
           sourceObject: unifiedFileData,
           targetType: FileStorageObject.file,
           providerName: integrationId,
@@ -73,7 +73,7 @@ export class FileService {
         vertical: 'filestorage',
         connectionId: connection_id,
         customFieldMappings: customFieldMappings,
-      })) as UnifiedFileOutput[];
+      })) as UnifiedFilestorageFileOutput[];
 
       const source_file = resp.data;
       const target_file = unifiedObject[0];
@@ -137,7 +137,7 @@ export class FileService {
   }
 
   async saveOrUpdateFile(
-    file: UnifiedFileOutput,
+    file: UnifiedFilestorageFileOutput,
     connection_id: string,
   ): Promise<string> {
     const existingFile = await this.prisma.fs_files.findFirst({
@@ -176,7 +176,7 @@ export class FileService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedFileOutput> {
+  ): Promise<UnifiedFilestorageFileOutput> {
     try {
       const file = await this.prisma.fs_files.findUnique({
         where: {
@@ -223,8 +223,8 @@ export class FileService {
           id_fs_file: file.id_fs_file,
         },
       });
-      // Transform to UnifiedFileOutput format
-      const unifiedFile: UnifiedFileOutput = {
+      // Transform to UnifiedFilestorageFileOutput format
+      const unifiedFile: UnifiedFilestorageFileOutput = {
         id: file.id_fs_file,
         name: file.name,
         file_url: file.file_url,
@@ -239,7 +239,7 @@ export class FileService {
         modified_at: file.modified_at,
       };
 
-      let res: UnifiedFileOutput = unifiedFile;
+      let res: UnifiedFilestorageFileOutput = unifiedFile;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -282,7 +282,7 @@ export class FileService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedFileOutput[];
+    data: UnifiedFilestorageFileOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -328,7 +328,7 @@ export class FileService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedFiles: UnifiedFileOutput[] = await Promise.all(
+      const unifiedFiles: UnifiedFilestorageFileOutput[] = await Promise.all(
         files.map(async (file) => {
           // Fetch field mappings for the file
           const values = await this.prisma.value.findMany({
@@ -371,7 +371,7 @@ export class FileService {
             },
           });
 
-          // Transform to UnifiedFileOutput format
+          // Transform to UnifiedFilestorageFileOutput format
           return {
             id: file.id_fs_file,
             name: file.name,
@@ -389,10 +389,10 @@ export class FileService {
         }),
       );
 
-      let res: UnifiedFileOutput[] = unifiedFiles;
+      let res: UnifiedFilestorageFileOutput[] = unifiedFiles;
 
       if (remote_data) {
-        const remote_array_data: UnifiedFileOutput[] = await Promise.all(
+        const remote_array_data: UnifiedFilestorageFileOutput[] = await Promise.all(
           res.map(async (file) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

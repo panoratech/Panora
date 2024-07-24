@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class UnifiedTeamInput {
+export class UnifiedTicketingTeamInput {
   @ApiProperty({
     type: String,
     description: 'The name of the team',
@@ -26,7 +26,7 @@ export class UnifiedTeamInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedTeamOutput extends UnifiedTeamInput {
+export class UnifiedTicketingTeamOutput extends UnifiedTicketingTeamInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the team' })
   @IsUUID()
   @IsOptional()

@@ -1,7 +1,7 @@
 import { AttioCompanyInput, AttioCompanyOutput } from './types';
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/@lib/@utils';
@@ -15,7 +15,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
     this.mappersRegistry.registerService('crm', 'company', 'attio', this);
   }
   async desunify(
-    source: UnifiedCompanyInput,
+    source: UnifiedCrmCompanyInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -94,7 +94,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
+  ): Promise<UnifiedCrmCompanyOutput | UnifiedCrmCompanyOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleCompanyToUnified(
         source,
@@ -121,7 +121,7 @@ export class AttioCompanyMapper implements ICompanyMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

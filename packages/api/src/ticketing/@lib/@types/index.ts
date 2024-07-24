@@ -1,47 +1,47 @@
 import { IAccountService } from '@ticketing/account/types';
 import {
-  UnifiedAccountInput,
-  UnifiedAccountOutput,
+  UnifiedTicketingAccountInput,
+  UnifiedTicketingAccountOutput,
 } from '@ticketing/account/types/model.unified';
 import { IAttachmentService } from '@ticketing/attachment/types';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedTicketingAttachmentInput,
+  UnifiedTicketingAttachmentOutput,
 } from '@ticketing/attachment/types/model.unified';
 import { ICommentService } from '@ticketing/comment/types';
 import {
-  UnifiedCommentInput,
-  UnifiedCommentOutput,
+  UnifiedTicketingCommentInput,
+  UnifiedTicketingCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { IContactService } from '@ticketing/contact/types';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedTicketingContactInput,
+  UnifiedTicketingContactOutput,
 } from '@ticketing/contact/types/model.unified';
 import { ITagService } from '@ticketing/tag/types';
 import {
-  UnifiedTagInput,
-  UnifiedTagOutput,
+  UnifiedTicketingTagInput,
+  UnifiedTicketingTagOutput,
 } from '@ticketing/tag/types/model.unified';
 import { ITeamService } from '@ticketing/team/types';
 import {
-  UnifiedTeamInput,
-  UnifiedTeamOutput,
+  UnifiedTicketingTeamInput,
+  UnifiedTicketingTeamOutput,
 } from '@ticketing/team/types/model.unified';
 import { ITicketService } from '@ticketing/ticket/types';
 import {
-  UnifiedTicketInput,
-  UnifiedTicketOutput,
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { IUserService } from '@ticketing/user/types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedTicketingUserInput,
+  UnifiedTicketingUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { ICollectionService } from '@ticketing/collection/types';
 import {
-  UnifiedCollectionInput,
-  UnifiedCollectionOutput,
+  UnifiedTicketingCollectionInput,
+  UnifiedTicketingCollectionOutput,
 } from '@ticketing/collection/types/model.unified';
 
 export enum TicketingObject {
@@ -57,24 +57,24 @@ export enum TicketingObject {
 }
 
 export type UnifiedTicketing =
-  | UnifiedTicketInput
-  | UnifiedTicketOutput
-  | UnifiedCommentInput
-  | UnifiedCommentOutput
-  | UnifiedUserInput
-  | UnifiedUserOutput
-  | UnifiedAccountInput
-  | UnifiedAccountOutput
-  | UnifiedContactInput
-  | UnifiedContactOutput
-  | UnifiedTeamInput
-  | UnifiedTeamOutput
-  | UnifiedTagInput
-  | UnifiedTagOutput
-  | UnifiedAttachmentInput
-  | UnifiedAttachmentOutput
-  | UnifiedCollectionInput
-  | UnifiedCollectionOutput;
+  | UnifiedTicketingTicketInput
+  | UnifiedTicketingTicketOutput
+  | UnifiedTicketingCommentInput
+  | UnifiedTicketingCommentOutput
+  | UnifiedTicketingUserInput
+  | UnifiedTicketingUserOutput
+  | UnifiedTicketingAccountInput
+  | UnifiedTicketingAccountOutput
+  | UnifiedTicketingContactInput
+  | UnifiedTicketingContactOutput
+  | UnifiedTicketingTeamInput
+  | UnifiedTicketingTeamOutput
+  | UnifiedTicketingTagInput
+  | UnifiedTicketingTagOutput
+  | UnifiedTicketingAttachmentInput
+  | UnifiedTicketingAttachmentOutput
+  | UnifiedTicketingCollectionInput
+  | UnifiedTicketingCollectionOutput;
 
 export type ITicketingService =
   | ITicketService

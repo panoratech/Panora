@@ -1,3 +1,3 @@
-export class UnifiedAddressInput {}
+export class UnifiedAccountingAddressInput {}
 
-export class UnifiedAddressOutput extends UnifiedAddressInput {}
+export class UnifiedAccountingAddressOutput extends UnifiedAccountingAddressInput {}

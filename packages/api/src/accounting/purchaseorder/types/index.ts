@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedPurchaseOrderInput,
-  UnifiedPurchaseOrderOutput,
+  UnifiedAccountingPurchaseorderInput,
+  UnifiedAccountingPurchaseorderOutput,
 } from './model.unified';
 import { OriginalPurchaseOrderOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IPurchaseOrderService {
 
 export interface IPurchaseOrderMapper {
   desunify(
-    source: UnifiedPurchaseOrderInput,
+    source: UnifiedAccountingPurchaseorderInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IPurchaseOrderMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedPurchaseOrderOutput | UnifiedPurchaseOrderOutput[]>;
+  ): Promise<UnifiedAccountingPurchaseorderOutput | UnifiedAccountingPurchaseorderOutput[]>;
 }

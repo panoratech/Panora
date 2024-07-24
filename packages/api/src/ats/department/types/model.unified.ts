@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
 
-export class UnifiedDepartmentInput {
+export class UnifiedAtsDepartmentInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The name of the department',
@@ -19,7 +19,7 @@ export class UnifiedDepartmentInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedDepartmentOutput extends UnifiedDepartmentInput {
+export class UnifiedAtsDepartmentOutput extends UnifiedAtsDepartmentInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the department',

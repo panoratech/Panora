@@ -1,9 +1,15 @@
-import { Body, Controller, Post, Param, Headers } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { Body, Controller, Headers, Param, Post } from '@nestjs/common';
+import {
+  ApiExcludeController,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('mw')
+@ApiExcludeController()
 @Controller('mw')
 export class MWHandlerController {
   constructor(

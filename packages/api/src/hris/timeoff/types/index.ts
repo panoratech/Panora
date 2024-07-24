@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTimeoffInput, UnifiedTimeoffOutput } from './model.unified';
+import { UnifiedHrisTimeoffInput, UnifiedHrisTimeoffOutput } from './model.unified';
 import { OriginalTimeoffOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface ITimeoffService {
 
 export interface ITimeoffMapper {
   desunify(
-    source: UnifiedTimeoffInput,
+    source: UnifiedHrisTimeoffInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface ITimeoffMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTimeoffOutput | UnifiedTimeoffOutput[]>;
+  ): Promise<UnifiedHrisTimeoffOutput | UnifiedHrisTimeoffOutput[]>;
 }

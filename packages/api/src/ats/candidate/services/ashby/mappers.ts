@@ -1,7 +1,7 @@
 import { AshbyCandidateInput, AshbyCandidateOutput } from './types';
 import {
-  UnifiedCandidateInput,
-  UnifiedCandidateOutput,
+  UnifiedAtsCandidateInput,
+  UnifiedAtsCandidateOutput,
 } from '@ats/candidate/types/model.unified';
 import { ICandidateMapper } from '@ats/candidate/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -13,8 +13,8 @@ import {
   OriginalTagOutput,
 } from '@@core/utils/types/original/original.ats';
 import { AtsObject } from '@ats/@lib/@types';
-import { UnifiedAttachmentOutput } from '@ats/attachment/types/model.unified';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { UnifiedAtsAttachmentOutput } from '@ats/attachment/types/model.unified';
+import { UnifiedAtsTagOutput } from '@ats/tag/types/model.unified';
 
 @Injectable()
 export class AshbyCandidateMapper implements ICandidateMapper {
@@ -27,7 +27,7 @@ export class AshbyCandidateMapper implements ICandidateMapper {
   }
 
   async desunify(
-    source: UnifiedCandidateInput,
+    source: UnifiedAtsCandidateInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -79,7 +79,7 @@ export class AshbyCandidateMapper implements ICandidateMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCandidateOutput | UnifiedCandidateOutput[]> {
+  ): Promise<UnifiedAtsCandidateOutput | UnifiedAtsCandidateOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleCandidateToUnified(
         source,
@@ -106,7 +106,7 @@ export class AshbyCandidateMapper implements ICandidateMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCandidateOutput> {
+  ): Promise<UnifiedAtsCandidateOutput> {
     let applications;
     if (candidate.applicationIds) {
       for (const uuid of candidate.applicationIds) {
@@ -128,7 +128,7 @@ export class AshbyCandidateMapper implements ICandidateMapper {
         vertical: 'ats',
         connectionId: connectionId,
         customFieldMappings: [],
-      })) as UnifiedAttachmentOutput[];
+      })) as UnifiedAtsAttachmentOutput[];
       opts = {
         attachments: attachments,
       };
@@ -144,7 +144,7 @@ export class AshbyCandidateMapper implements ICandidateMapper {
         vertical: 'ats',
         connectionId: connectionId,
         customFieldMappings: [],
-      })) as UnifiedAttachmentOutput[];
+      })) as UnifiedAtsAttachmentOutput[];
       opts = {
         attachments: [opts.attachments, ...attachments],
       };
@@ -159,7 +159,7 @@ export class AshbyCandidateMapper implements ICandidateMapper {
         vertical: 'ats',
         connectionId: connectionId,
         customFieldMappings: [],
-      })) as UnifiedTagOutput[];
+      })) as UnifiedAtsTagOutput[];
       opts = {
         tags: tags,
       };

@@ -4,7 +4,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
   ScoreCardRecommendation,
-  UnifiedScoreCardOutput,
+  UnifiedAtsScorecardOutput,
 } from '../types/model.unified';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ScoreCardService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedScoreCardOutput> {
+  ): Promise<UnifiedAtsScorecardOutput> {
     try {
       const scorecard = await this.prisma.ats_scorecards.findUnique({
         where: {
@@ -54,8 +54,8 @@ export class ScoreCardService {
         [key]: value,
       }));
 
-      // Transform to UnifiedScoreCardOutput format
-      const unifiedScoreCard: UnifiedScoreCardOutput = {
+      // Transform to UnifiedAtsScorecardOutput format
+      const unifiedScoreCard: UnifiedAtsScorecardOutput = {
         id: scorecard.id_ats_scorecard,
         overall_recommendation: scorecard.overall_recommendation,
         application_id: scorecard.id_ats_application,
@@ -68,7 +68,7 @@ export class ScoreCardService {
         modified_at: scorecard.modified_at,
       };
 
-      let res: UnifiedScoreCardOutput = unifiedScoreCard;
+      let res: UnifiedAtsScorecardOutput = unifiedScoreCard;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -110,7 +110,7 @@ export class ScoreCardService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedScoreCardOutput[];
+    data: UnifiedAtsScorecardOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -156,7 +156,7 @@ export class ScoreCardService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedScoreCards: UnifiedScoreCardOutput[] = await Promise.all(
+      const unifiedScoreCards: UnifiedAtsScorecardOutput[] = await Promise.all(
         scorecards.map(async (scorecard) => {
           // Fetch field mappings for the scorecard
           const values = await this.prisma.value.findMany({
@@ -185,7 +185,7 @@ export class ScoreCardService {
             }),
           );
 
-          // Transform to UnifiedScoreCardOutput format
+          // Transform to UnifiedAtsScorecardOutput format
           return {
             id: scorecard.id_ats_scorecard,
             overall_recommendation: scorecard.overall_recommendation,
@@ -201,10 +201,10 @@ export class ScoreCardService {
         }),
       );
 
-      let res: UnifiedScoreCardOutput[] = unifiedScoreCards;
+      let res: UnifiedAtsScorecardOutput[] = unifiedScoreCards;
 
       if (remote_data) {
-        const remote_array_data: UnifiedScoreCardOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsScorecardOutput[] = await Promise.all(
           res.map(async (scorecard) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export type TaskStatus = 'PENDING' | 'COMPLETED';
-export class UnifiedTaskInput {
+export class UnifiedCrmTaskInput {
   @ApiProperty({ type: String, description: 'The subject of the task' })
   @IsString()
   subject: string;
@@ -62,7 +62,7 @@ export class UnifiedTaskInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedTaskOutput extends UnifiedTaskInput {
+export class UnifiedCrmTaskOutput extends UnifiedCrmTaskInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the task' })
   @IsUUID()
   @IsOptional()

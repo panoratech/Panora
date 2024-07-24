@@ -8,7 +8,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class UnifiedCompanyInput {
+export class UnifiedCrmCompanyInput {
   @ApiProperty({ type: String, description: 'The name of the company' })
   @IsString()
   name: string;
@@ -68,7 +68,7 @@ export class UnifiedCompanyInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedCompanyOutput extends UnifiedCompanyInput {
+export class UnifiedCrmCompanyOutput extends UnifiedCrmCompanyInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the company' })
   @IsUUID()
   @IsOptional()

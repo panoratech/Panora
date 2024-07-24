@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedAutomationInput,
-  UnifiedAutomationOutput,
+  UnifiedMarketingautomationAutomationInput,
+  UnifiedMarketingautomationAutomationOutput,
 } from './model.unified';
 import { OriginalAutomationOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IAutomationService {
 
 export interface IAutomationMapper {
   desunify(
-    source: UnifiedAutomationInput,
+    source: UnifiedMarketingautomationAutomationInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IAutomationMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAutomationOutput | UnifiedAutomationOutput[]>;
+  ): Promise<UnifiedMarketingautomationAutomationOutput | UnifiedMarketingautomationAutomationOutput[]>;
 }

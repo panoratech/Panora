@@ -7,7 +7,7 @@ import {
   EeocsGender,
   EeocsRace,
   EeocsVeteranStatus,
-  UnifiedEeocsOutput,
+  UnifiedAtsEeocsOutput,
 } from '../types/model.unified';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class EeocsService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedEeocsOutput> {
+  ): Promise<UnifiedAtsEeocsOutput> {
     try {
       const eeocs = await this.prisma.ats_eeocs.findUnique({
         where: {
@@ -57,8 +57,8 @@ export class EeocsService {
         [key]: value,
       }));
 
-      // Transform to UnifiedEeocsOutput format
-      const unifiedEeocs: UnifiedEeocsOutput = {
+      // Transform to UnifiedAtsEeocsOutput format
+      const unifiedEeocs: UnifiedAtsEeocsOutput = {
         id: eeocs.id_ats_eeoc,
         candidate_id: eeocs.id_ats_candidate,
         submitted_at: String(eeocs.submitted_at),
@@ -72,7 +72,7 @@ export class EeocsService {
         modified_at: eeocs.modified_at,
       };
 
-      let res: UnifiedEeocsOutput = unifiedEeocs;
+      let res: UnifiedAtsEeocsOutput = unifiedEeocs;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -114,7 +114,7 @@ export class EeocsService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedEeocsOutput[];
+    data: UnifiedAtsEeocsOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -160,7 +160,7 @@ export class EeocsService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedEeocss: UnifiedEeocsOutput[] = await Promise.all(
+      const unifiedEeocss: UnifiedAtsEeocsOutput[] = await Promise.all(
         eeocss.map(async (eeocs) => {
           // Fetch field mappings for the EEOC
           const values = await this.prisma.value.findMany({
@@ -189,7 +189,7 @@ export class EeocsService {
             }),
           );
 
-          // Transform to UnifiedEeocsOutput format
+          // Transform to UnifiedAtsEeocsOutput format
           return {
             id: eeocs.id_ats_eeoc,
             candidate_id: eeocs.id_ats_candidate,
@@ -206,10 +206,10 @@ export class EeocsService {
         }),
       );
 
-      let res: UnifiedEeocsOutput[] = unifiedEeocss;
+      let res: UnifiedAtsEeocsOutput[] = unifiedEeocss;
 
       if (remote_data) {
-        const remote_array_data: UnifiedEeocsOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsEeocsOutput[] = await Promise.all(
           res.map(async (eeocs) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

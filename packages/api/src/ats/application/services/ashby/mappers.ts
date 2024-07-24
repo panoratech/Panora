@@ -1,7 +1,7 @@
 import { AshbyApplicationInput, AshbyApplicationOutput } from './types';
 import {
-  UnifiedApplicationInput,
-  UnifiedApplicationOutput,
+  UnifiedAtsApplicationInput,
+  UnifiedAtsApplicationOutput,
 } from '@ats/application/types/model.unified';
 import { IApplicationMapper } from '@ats/application/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -21,7 +21,7 @@ export class AshbyApplicationMapper implements IApplicationMapper {
   }
 
   async desunify(
-    source: UnifiedApplicationInput,
+    source: UnifiedAtsApplicationInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -65,7 +65,7 @@ export class AshbyApplicationMapper implements IApplicationMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedApplicationOutput | UnifiedApplicationOutput[]> {
+  ): Promise<UnifiedAtsApplicationOutput | UnifiedAtsApplicationOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleApplicationToUnified(
         source,
@@ -92,7 +92,7 @@ export class AshbyApplicationMapper implements IApplicationMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedApplicationOutput> {
+  ): Promise<UnifiedAtsApplicationOutput> {
     return {
       remote_id: application.id,
       remote_data: application,

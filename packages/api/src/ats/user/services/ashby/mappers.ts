@@ -1,7 +1,7 @@
 import { AshbyUserInput, AshbyUserOutput } from './types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedAtsUserInput,
+  UnifiedAtsUserOutput,
   UserAccessRole,
 } from '@ats/user/types/model.unified';
 import { IUserMapper } from '@ats/user/types';
@@ -40,7 +40,7 @@ export class AshbyUserMapper implements IUserMapper {
   }
 
   async desunify(
-    source: UnifiedUserInput,
+    source: UnifiedAtsUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -56,7 +56,7 @@ export class AshbyUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
+  ): Promise<UnifiedAtsUserOutput | UnifiedAtsUserOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleUserToUnified(
         source,
@@ -79,7 +79,7 @@ export class AshbyUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedAtsUserOutput> {
     return {
       remote_id: user.id,
       remote_data: user,

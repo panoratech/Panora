@@ -1,7 +1,7 @@
 import { Address } from '@crm/@lib/@types';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedCrmContactInput,
+  UnifiedCrmContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
 import { ZohoContactInput, ZohoContactOutput } from './types';
@@ -15,7 +15,7 @@ export class ZohoContactMapper implements IContactMapper {
     this.mappersRegistry.registerService('crm', 'contact', 'zoho', this);
   }
   desunify(
-    source: UnifiedContactInput,
+    source: UnifiedCrmContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -66,7 +66,7 @@ export class ZohoContactMapper implements IContactMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
+  ): Promise<UnifiedCrmContactOutput | UnifiedCrmContactOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleContactToUnified(
         source,
@@ -94,7 +94,7 @@ export class ZohoContactMapper implements IContactMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedCrmContactOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

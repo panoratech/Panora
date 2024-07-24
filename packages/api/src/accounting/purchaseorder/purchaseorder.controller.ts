@@ -19,15 +19,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { PurchaseOrderService } from './services/purchaseorder.service';
 import {
-  UnifiedPurchaseOrderInput,
-  UnifiedPurchaseOrderOutput,
+  UnifiedAccountingPurchaseorderInput,
+  UnifiedAccountingPurchaseorderOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('accounting/purchaseorder')
@@ -51,7 +56,7 @@ export class PurchaseOrderController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedPurchaseOrderOutput)
+  @ApiPaginatedResponse(UnifiedAccountingPurchaseorderOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getPurchaseOrders(
@@ -102,7 +107,7 @@ export class PurchaseOrderController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedPurchaseOrderOutput)
+  @ApiGetCustomResponse(UnifiedAccountingPurchaseorderOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -140,12 +145,12 @@ export class PurchaseOrderController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedPurchaseOrderInput })
-  @ApiCustomResponse(UnifiedPurchaseOrderOutput)
+  @ApiBody({ type: UnifiedAccountingPurchaseorderInput })
+  @ApiPostCustomResponse(UnifiedAccountingPurchaseorderOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addPurchaseOrder(
-    @Body() unifiedPurchaseOrderData: UnifiedPurchaseOrderInput,
+    @Body() unifiedPurchaseOrderData: UnifiedAccountingPurchaseorderInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

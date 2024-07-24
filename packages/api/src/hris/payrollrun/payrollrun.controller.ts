@@ -19,15 +19,19 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { PayrollRunService } from './services/payrollrun.service';
 import {
-  UnifiedPayrollRunInput,
-  UnifiedPayrollRunOutput,
+  UnifiedHrisPayrollrunInput,
+  UnifiedHrisPayrollrunOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('hris/payrollrun')
@@ -51,7 +55,7 @@ export class PayrollRunController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedPayrollRunOutput)
+  @ApiPaginatedResponse(UnifiedHrisPayrollrunOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getPayrollRuns(

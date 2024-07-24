@@ -16,7 +16,7 @@ import { ats_candidate_tags as AtsTag } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ITagService } from '../types';
-import { UnifiedTagOutput } from '../types/model.unified';
+import { UnifiedAtsTagOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -103,7 +103,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedTagOutput,
+        UnifiedAtsTagOutput,
         OriginalTagOutput,
         ITagService
       >(integrationId, linkedUserId, 'ats', 'tag', service, []);
@@ -115,7 +115,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    tags: UnifiedTagOutput[],
+    tags: UnifiedAtsTagOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsTag[]> {
@@ -123,7 +123,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const tags_results: AtsTag[] = [];
 
       const updateOrCreateTag = async (
-        tag: UnifiedTagOutput,
+        tag: UnifiedAtsTagOutput,
         originId: string,
       ) => {
         let existingTag;

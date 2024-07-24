@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class UnifiedAttachmentInput {
+export class UnifiedTicketingAttachmentInput {
   @ApiProperty({ type: String, description: 'The file name of the attachment' })
   @IsString()
   file_name: string;
@@ -43,7 +43,7 @@ export class UnifiedAttachmentInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
+export class UnifiedTicketingAttachmentOutput extends UnifiedTicketingAttachmentInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the attachment',

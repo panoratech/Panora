@@ -4,11 +4,11 @@ import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.t
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedTicketingAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { ICommentMapper } from '@ticketing/comment/types';
 import {
-  UnifiedCommentInput,
-  UnifiedCommentOutput,
+  UnifiedTicketingCommentInput,
+  UnifiedTicketingCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { FrontCommentInput, FrontCommentOutput } from './types';
 
@@ -22,7 +22,7 @@ export class FrontCommentMapper implements ICommentMapper {
     this.mappersRegistry.registerService('ticketing', 'comment', 'front', this);
   }
   async desunify(
-    source: UnifiedCommentInput,
+    source: UnifiedTicketingCommentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -43,7 +43,7 @@ export class FrontCommentMapper implements ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
+  ): Promise<UnifiedTicketingCommentOutput | UnifiedTicketingCommentOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleCommentToUnified(
         source,
@@ -69,7 +69,7 @@ export class FrontCommentMapper implements ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCommentOutput> {
+  ): Promise<UnifiedTicketingCommentOutput> {
     //map the front attachment to our unified version of attachment
     //unifying the original attachment object coming from Front
     let opts: any = {};
@@ -84,7 +84,7 @@ export class FrontCommentMapper implements ICommentMapper {
         vertical: 'ticketing',
         connectionId: connectionId,
         customFieldMappings: [],
-      })) as UnifiedAttachmentOutput[];
+      })) as UnifiedTicketingAttachmentOutput[];
       opts = {
         ...opts,
         attachments: attachments,

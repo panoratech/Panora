@@ -6,7 +6,7 @@ import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
   CollectionType,
-  UnifiedCollectionOutput,
+  UnifiedTicketingCollectionOutput,
 } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
@@ -27,7 +27,7 @@ export class CollectionService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCollectionOutput> {
+  ): Promise<UnifiedTicketingCollectionOutput> {
     try {
       const collection = await this.prisma.tcg_collections.findUnique({
         where: {
@@ -35,8 +35,8 @@ export class CollectionService {
         },
       });
 
-      // Transform to UnifiedCollectionOutput format
-      const unifiedCollection: UnifiedCollectionOutput = {
+      // Transform to UnifiedTicketingCollectionOutput format
+      const unifiedCollection: UnifiedTicketingCollectionOutput = {
         id: collection.id_tcg_collection,
         name: collection.name,
         description: collection.description,
@@ -84,7 +84,7 @@ export class CollectionService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedCollectionOutput[];
+    data: UnifiedTicketingCollectionOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -130,7 +130,7 @@ export class CollectionService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedCollections: UnifiedCollectionOutput[] = await Promise.all(
+      const unifiedCollections: UnifiedTicketingCollectionOutput[] = await Promise.all(
         collections.map(async (collection) => {
           return {
             id: collection.id_tcg_collection,
@@ -144,10 +144,10 @@ export class CollectionService {
         }),
       );
 
-      let res: UnifiedCollectionOutput[] = unifiedCollections;
+      let res: UnifiedTicketingCollectionOutput[] = unifiedCollections;
 
       if (remote_data) {
-        const remote_array_data: UnifiedCollectionOutput[] = await Promise.all(
+        const remote_array_data: UnifiedTicketingCollectionOutput[] = await Promise.all(
           res.map(async (collection) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

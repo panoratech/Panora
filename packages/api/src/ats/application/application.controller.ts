@@ -19,15 +19,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import {
-  UnifiedApplicationInput,
-  UnifiedApplicationOutput,
+  UnifiedAtsApplicationInput,
+  UnifiedAtsApplicationOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ApplicationService } from './services/application.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ats/application')
@@ -51,7 +56,7 @@ export class ApplicationController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedApplicationOutput)
+  @ApiPaginatedResponse(UnifiedAtsApplicationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getApplications(
@@ -100,7 +105,7 @@ export class ApplicationController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedApplicationOutput)
+  @ApiGetCustomResponse(UnifiedAtsApplicationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -137,12 +142,12 @@ export class ApplicationController {
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedApplicationInput })
-  @ApiCustomResponse(UnifiedApplicationOutput)
+  @ApiBody({ type: UnifiedAtsApplicationInput })
+  @ApiPostCustomResponse(UnifiedAtsApplicationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addApplication(
-    @Body() unifiedApplicationData: UnifiedApplicationInput,
+    @Body() unifiedApplicationData: UnifiedAtsApplicationInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

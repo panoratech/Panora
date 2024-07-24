@@ -4,8 +4,8 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedTicketingAttachmentInput,
+  UnifiedTicketingAttachmentOutput,
 } from '../types/model.unified';
 
 @Injectable()
@@ -19,12 +19,12 @@ export class AttachmentService {
   }
 
   async addAttachment(
-    unifiedAttachmentData: UnifiedAttachmentInput,
+    unifiedAttachmentData: UnifiedTicketingAttachmentInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedTicketingAttachmentOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -116,7 +116,7 @@ export class AttachmentService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedTicketingAttachmentOutput> {
     try {
       const attachment = await this.prisma.tcg_attachments.findUnique({
         where: {
@@ -148,8 +148,8 @@ export class AttachmentService {
         [key]: value,
       }));
 
-      // Transform to UnifiedAttachmentOutput format
-      let unifiedAttachment: UnifiedAttachmentOutput = {
+      // Transform to UnifiedTicketingAttachmentOutput format
+      let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
         id: attachment.id_tcg_attachment,
         file_name: attachment.file_name,
         file_url: attachment.file_url,
@@ -172,7 +172,7 @@ export class AttachmentService {
         };
       }
 
-      let res: UnifiedAttachmentOutput = unifiedAttachment;
+      let res: UnifiedTicketingAttachmentOutput = unifiedAttachment;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -216,7 +216,7 @@ export class AttachmentService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedAttachmentOutput[];
+    data: UnifiedTicketingAttachmentOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -262,7 +262,7 @@ export class AttachmentService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedAttachments: UnifiedAttachmentOutput[] = await Promise.all(
+      const unifiedAttachments: UnifiedTicketingAttachmentOutput[] = await Promise.all(
         attachments.map(async (attachment) => {
           // Fetch field mappings for the attachment
           const values = await this.prisma.value.findMany({
@@ -287,7 +287,7 @@ export class AttachmentService {
             fieldMappingsMap,
             ([key, value]) => ({ [key]: value }),
           );
-          let unifiedAttachment: UnifiedAttachmentOutput = {
+          let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
             id: attachment.id_tcg_attachment,
             file_name: attachment.file_name,
             file_url: attachment.file_url,
@@ -310,15 +310,15 @@ export class AttachmentService {
             };
           }
 
-          // Transform to UnifiedAttachmentOutput format
+          // Transform to UnifiedTicketingAttachmentOutput format
           return unifiedAttachment;
         }),
       );
 
-      let res: UnifiedAttachmentOutput[] = unifiedAttachments;
+      let res: UnifiedTicketingAttachmentOutput[] = unifiedAttachments;
 
       if (remote_data) {
-        const remote_array_data: UnifiedAttachmentOutput[] = await Promise.all(
+        const remote_array_data: UnifiedTicketingAttachmentOutput[] = await Promise.all(
           res.map(async (attachment) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -361,7 +361,7 @@ export class AttachmentService {
   async downloadAttachment(
     id_ticketing_attachment: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedTicketingAttachmentOutput> {
     return;
   }
 }

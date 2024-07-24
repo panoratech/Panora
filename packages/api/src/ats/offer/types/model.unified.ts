@@ -17,7 +17,7 @@ export type OfferStatus =
   | 'DENIED'
   | 'SIGNED'
   | 'DEPRECATED';
-export class UnifiedOfferInput {
+export class UnifiedAtsOfferInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the creator' })
   @IsUUID()
   @IsOptional()
@@ -91,7 +91,7 @@ export class UnifiedOfferInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedOfferOutput extends UnifiedOfferInput {
+export class UnifiedAtsOfferOutput extends UnifiedAtsOfferInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the offer' })
   @IsUUID()
   @IsOptional()

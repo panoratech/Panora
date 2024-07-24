@@ -11,7 +11,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { fs_shared_links as FileStorageSharedLink } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
-import { UnifiedSharedLinkOutput } from '../types/model.unified';
+import { UnifiedFilestorageSharedlinkOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -37,7 +37,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    sharedLinks: UnifiedSharedLinkOutput[],
+    sharedLinks: UnifiedFilestorageSharedlinkOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     extra?: {
@@ -49,7 +49,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const shared_links_results: FileStorageSharedLink[] = [];
 
       const updateOrCreateSharedLink = async (
-        sharedLink: UnifiedSharedLinkOutput,
+        sharedLink: UnifiedFilestorageSharedlinkOutput,
         originId: string,
       ) => {
         let existingSl;

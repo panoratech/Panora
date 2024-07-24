@@ -19,12 +19,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ActionService } from './services/action.service';
-import { UnifiedActionInput, UnifiedActionOutput } from './types/model.unified';
+import {
+  UnifiedMarketingautomationActionInput,
+  UnifiedMarketingautomationActionOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/action')
@@ -48,7 +56,7 @@ export class ActionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedActionOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationActionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getActions(
@@ -99,7 +107,7 @@ export class ActionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedActionOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationActionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -138,12 +146,12 @@ export class ActionController {
     description:
       'Set to true to include data from the original Marketingautomation software.',
   })
-  @ApiBody({ type: UnifiedActionInput })
-  @ApiCustomResponse(UnifiedActionOutput)
+  @ApiBody({ type: UnifiedMarketingautomationActionInput })
+  @ApiPostCustomResponse(UnifiedMarketingautomationActionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addAction(
-    @Body() unifiedActionData: UnifiedActionInput,
+    @Body() unifiedActionData: UnifiedMarketingautomationActionInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

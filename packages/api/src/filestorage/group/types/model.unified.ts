@@ -2,7 +2,7 @@ import { UnifiedUserOutput } from '@filestorage/user/types/model.unified';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
-export class UnifiedGroupInput {
+export class UnifiedFilestorageGroupInput {
   @ApiProperty({ type: String, description: 'The name of the group' })
   @IsString()
   name: string;
@@ -28,7 +28,7 @@ export class UnifiedGroupInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedGroupOutput extends UnifiedGroupInput {
+export class UnifiedFilestorageGroupOutput extends UnifiedFilestorageGroupInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the group',

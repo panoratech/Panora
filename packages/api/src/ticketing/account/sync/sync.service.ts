@@ -12,7 +12,7 @@ import { tcg_accounts as TicketingAccount } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IAccountService } from '../types';
-import { UnifiedAccountOutput } from '../types/model.unified';
+import { UnifiedTicketingAccountOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -102,7 +102,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         this.serviceRegistry.getService(integrationId);
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedAccountOutput,
+        UnifiedTicketingAccountOutput,
         OriginalAccountOutput,
         IAccountService
       >(
@@ -122,7 +122,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedAccountOutput[],
+    data: UnifiedTicketingAccountOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingAccount[]> {
@@ -130,7 +130,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const accounts_results: TicketingAccount[] = [];
 
       const updateOrCreateAccount = async (
-        account: UnifiedAccountOutput,
+        account: UnifiedTicketingAccountOutput,
         originId: string,
         connection_id: string,
       ) => {

@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTaxRateInput, UnifiedTaxRateOutput } from './model.unified';
+import { UnifiedAccountingTaxrateInput, UnifiedAccountingTaxrateOutput } from './model.unified';
 import { OriginalTaxRateOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface ITaxRateService {
 
 export interface ITaxRateMapper {
   desunify(
-    source: UnifiedTaxRateInput,
+    source: UnifiedAccountingTaxrateInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface ITaxRateMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTaxRateOutput | UnifiedTaxRateOutput[]>;
+  ): Promise<UnifiedAccountingTaxrateOutput | UnifiedAccountingTaxrateOutput[]>;
 }

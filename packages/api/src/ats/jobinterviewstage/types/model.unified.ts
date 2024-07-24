@@ -7,7 +7,7 @@ import {
   IsDateString,
 } from 'class-validator';
 
-export class UnifiedJobInterviewStageInput {
+export class UnifiedAtsJobinterviewstageInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The name of the job interview stage',
@@ -35,7 +35,7 @@ export class UnifiedJobInterviewStageInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedJobInterviewStageOutput extends UnifiedJobInterviewStageInput {
+export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewstageInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the job interview stage',

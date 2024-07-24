@@ -1,8 +1,8 @@
 import { ZendeskEngagementInput, ZendeskEngagementOutput } from './types';
 
 import {
-  UnifiedEngagementInput,
-  UnifiedEngagementOutput,
+  UnifiedCrmEngagementInput,
+  UnifiedCrmEngagementOutput,
 } from '@crm/engagement/types/model.unified';
 import { IEngagementMapper } from '@crm/engagement/types';
 import { Utils } from '@crm/@lib/@utils';
@@ -16,7 +16,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
   }
 
   async desunify(
-    source: UnifiedEngagementInput,
+    source: UnifiedCrmEngagementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -37,7 +37,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
   }
 
   private async desunifyCall(
-    source: UnifiedEngagementInput,
+    source: UnifiedCrmEngagementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -91,7 +91,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
+  ): Promise<UnifiedCrmEngagementOutput | UnifiedCrmEngagementOutput[]> {
     switch (engagement_type) {
       case 'CALL':
         return await this.unifyCall(source, connectionId, customFieldMappings);
@@ -138,7 +138,7 @@ export class ZendeskEngagementMapper implements IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput> {
+  ): Promise<UnifiedCrmEngagementOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

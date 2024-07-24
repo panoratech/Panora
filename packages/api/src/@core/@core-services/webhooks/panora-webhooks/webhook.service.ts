@@ -41,10 +41,17 @@ export class WebhookService {
     }
   }
 
-  async updateStatusWebhookEndpoint(id: string, active: boolean) {
+  async updateStatusWebhookEndpoint(
+    id: string,
+    active: boolean,
+    projectId: string,
+  ) {
     try {
       return await this.prisma.webhook_endpoints.update({
-        where: { id_webhook_endpoint: id },
+        where: {
+          id_webhook_endpoint: id,
+          id_project: projectId,
+        },
         data: { active: active },
       });
     } catch (error) {
@@ -52,7 +59,7 @@ export class WebhookService {
     }
   }
 
-  async createWebhookEndpoint(data: WebhookDto) {
+  async createWebhookEndpoint(data: WebhookDto, projectId: string) {
     try {
       return await this.prisma.webhook_endpoints.create({
         data: {
@@ -62,7 +69,7 @@ export class WebhookService {
           secret: uuidv4(),
           active: true,
           created_at: new Date(),
-          id_project: data.id_project,
+          id_project: projectId,
           scope: data.scope,
         },
       });
@@ -71,11 +78,12 @@ export class WebhookService {
     }
   }
 
-  async deleteWebhook(whId: string) {
+  async deleteWebhook(whId: string, projectId: string) {
     try {
       return await this.prisma.webhook_endpoints.delete({
         where: {
           id_webhook_endpoint: whId,
+          id_project: projectId,
         },
       });
     } catch (error) {
@@ -294,7 +302,7 @@ export class WebhookService {
           message: `Signature mismatch for the payload received with signature=${signature}`,
         });
       }
-      return 200;
+      return payload;
     } catch (error) {
       throw error;
     }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { UnifiedTicketingUserOutput } from '../types/model.unified';
 
 @Injectable()
 export class UserService {
@@ -15,7 +15,7 @@ export class UserService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedTicketingUserOutput> {
     try {
       const user = await this.prisma.tcg_users.findUnique({
         where: {
@@ -49,8 +49,8 @@ export class UserService {
         [key]: value,
       }));
 
-      // Transform to UnifiedUserOutput format
-      const unifiedUser: UnifiedUserOutput = {
+      // Transform to UnifiedTicketingUserOutput format
+      const unifiedUser: UnifiedTicketingUserOutput = {
         id: user.id_tcg_user,
         email_address: user.email_address,
         name: user.name,
@@ -99,7 +99,7 @@ export class UserService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedUserOutput[];
+    data: UnifiedTicketingUserOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -146,7 +146,7 @@ export class UserService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedUsers: UnifiedUserOutput[] = await Promise.all(
+      const unifiedUsers: UnifiedTicketingUserOutput[] = await Promise.all(
         users.map(async (user) => {
           // Fetch field mappings for the user
           const values = await this.prisma.value.findMany({
@@ -172,7 +172,7 @@ export class UserService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedUserOutput format
+          // Transform to UnifiedTicketingUserOutput format
           return {
             id: user.id_tcg_user,
             email_address: user.email_address,
@@ -186,10 +186,10 @@ export class UserService {
         }),
       );
 
-      let res: UnifiedUserOutput[] = unifiedUsers;
+      let res: UnifiedTicketingUserOutput[] = unifiedUsers;
 
       if (remote_data) {
-        const remote_array_data: UnifiedUserOutput[] = await Promise.all(
+        const remote_array_data: UnifiedTicketingUserOutput[] = await Promise.all(
           res.map(async (user) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

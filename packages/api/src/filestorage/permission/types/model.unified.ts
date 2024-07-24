@@ -4,7 +4,7 @@ import { IsUUID, IsOptional, IsString, IsIn } from 'class-validator';
 export type PermissionType = 'USER' | 'GROUP' | 'COMPANY' | 'ANYONE';
 export type PermissionRole = 'READ' | 'WRITE' | 'OWNER';
 
-export class UnifiedPermissionInput {
+export class UnifiedFilestoragePermissionInput {
   @ApiProperty({ type: [String], description: 'The roles of the permission' })
   @IsString()
   roles: (PermissionRole | string)[];
@@ -37,7 +37,7 @@ export class UnifiedPermissionInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedPermissionOutput extends UnifiedPermissionInput {
+export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermissionInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the permission',

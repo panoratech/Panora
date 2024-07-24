@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedDepartmentInput,
-  UnifiedDepartmentOutput,
+  UnifiedAtsDepartmentInput,
+  UnifiedAtsDepartmentOutput,
 } from './model.unified';
 import { OriginalDepartmentOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
@@ -18,7 +18,7 @@ export interface IDepartmentService extends IBaseObjectService {
 
 export interface IDepartmentMapper {
   desunify(
-    source: UnifiedDepartmentInput,
+    source: UnifiedAtsDepartmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -32,5 +32,5 @@ export interface IDepartmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDepartmentOutput | UnifiedDepartmentOutput[]>;
+  ): Promise<UnifiedAtsDepartmentOutput | UnifiedAtsDepartmentOutput[]>;
 }

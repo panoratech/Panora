@@ -12,7 +12,7 @@ export type AttachmentType =
   | 'COVER_LETTER'
   | 'OFFER_LETTER'
   | 'OTHER';
-export class UnifiedAttachmentInput {
+export class UnifiedAtsAttachmentInput {
   @ApiPropertyOptional({ type: String, description: 'The URL of the file' })
   @IsString()
   @IsOptional()
@@ -63,7 +63,7 @@ export class UnifiedAttachmentInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {
+export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the attachment',

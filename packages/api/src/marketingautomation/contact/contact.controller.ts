@@ -15,19 +15,24 @@ import {
   ApiOperation,
   ApiParam,
   ApiQuery,
- ApiTags,
+  ApiTags,
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ContactService } from './services/contact.service';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedMarketingautomationContactInput,
+  UnifiedMarketingautomationContactOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/contact')
@@ -51,7 +56,7 @@ export class ContactController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getContacts(
@@ -102,7 +107,7 @@ export class ContactController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -141,12 +146,12 @@ export class ContactController {
     description:
       'Set to true to include data from the original Marketingautomation software.',
   })
-  @ApiBody({ type: UnifiedContactInput })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiBody({ type: UnifiedMarketingautomationContactInput })
+  @ApiPostCustomResponse(UnifiedMarketingautomationContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addContact(
-    @Body() unifiedContactData: UnifiedContactInput,
+    @Body() unifiedContactData: UnifiedMarketingautomationContactInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

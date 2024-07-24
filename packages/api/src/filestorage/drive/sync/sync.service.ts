@@ -15,7 +15,7 @@ import { fs_drives as FileStorageDrive } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IDriveService } from '../types';
-import { UnifiedDriveOutput } from '../types/model.unified';
+import { UnifiedFilestorageDriveOutput } from '../types/model.unified';
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
@@ -104,7 +104,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedDriveOutput,
+        UnifiedFilestorageDriveOutput,
         OriginalDriveOutput,
         IDriveService
       >(integrationId, linkedUserId, 'filestorage', 'drive', service, []);
@@ -116,7 +116,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    drives: UnifiedDriveOutput[],
+    drives: UnifiedFilestorageDriveOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<FileStorageDrive[]> {
@@ -124,7 +124,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const drives_results: FileStorageDrive[] = [];
 
       const updateOrCreateDrive = async (
-        drive: UnifiedDriveOutput,
+        drive: UnifiedFilestorageDriveOutput,
         originId: string,
       ) => {
         const existingDrive = await this.prisma.fs_drives.findFirst({

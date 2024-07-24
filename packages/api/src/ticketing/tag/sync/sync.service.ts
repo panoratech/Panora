@@ -16,7 +16,7 @@ import { tcg_tags as TicketingTag } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ITagService } from '../types';
-import { UnifiedTagOutput } from '../types/model.unified';
+import { UnifiedTicketingTagOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -125,7 +125,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedTagOutput,
+        UnifiedTicketingTagOutput,
         OriginalTagOutput,
         ITagService
       >(integrationId, linkedUserId, 'ticketing', 'tag', service, [
@@ -150,7 +150,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    tags: UnifiedTagOutput[],
+    tags: UnifiedTicketingTagOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     id_ticket: string,
@@ -159,7 +159,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const tags_results: TicketingTag[] = [];
 
       const updateOrCreateTag = async (
-        tag: UnifiedTagOutput,
+        tag: UnifiedTicketingTagOutput,
         originId: string,
         connection_id: string,
         id_ticket: string,

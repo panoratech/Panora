@@ -1,7 +1,7 @@
 import { ZohoNoteInput, ZohoNoteOutput } from './types';
 import {
-  UnifiedNoteInput,
-  UnifiedNoteOutput,
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/@lib/@utils';
@@ -14,7 +14,7 @@ export class ZohoNoteMapper implements INoteMapper {
     this.mappersRegistry.registerService('crm', 'note', 'zoho', this);
   }
   async desunify(
-    source: UnifiedNoteInput,
+    source: UnifiedCrmNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -68,7 +68,7 @@ export class ZohoNoteMapper implements INoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
+  ): Promise<UnifiedCrmNoteOutput | UnifiedCrmNoteOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleNoteToUnified(
         source,
@@ -91,7 +91,7 @@ export class ZohoNoteMapper implements INoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput> {
+  ): Promise<UnifiedCrmNoteOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -99,7 +99,7 @@ export class ZohoNoteMapper implements INoteMapper {
       }
     }
 
-    const res: UnifiedNoteOutput = {
+    const res: UnifiedCrmNoteOutput = {
       remote_id: note.id,
       remote_data: note,
       content: note.Note_Content,

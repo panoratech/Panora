@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedActivityInput, UnifiedActivityOutput } from './model.unified';
+import { UnifiedAtsActivityInput, UnifiedAtsActivityOutput } from './model.unified';
 import { OriginalActivityOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface IActivityService extends IBaseObjectService {
 
 export interface IActivityMapper {
   desunify(
-    source: UnifiedActivityInput,
+    source: UnifiedAtsActivityInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface IActivityMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedActivityOutput | UnifiedActivityOutput[]>;
+  ): Promise<UnifiedAtsActivityOutput | UnifiedAtsActivityOutput[]>;
 }

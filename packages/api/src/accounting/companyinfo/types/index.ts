@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedCompanyInfoInput,
-  UnifiedCompanyInfoOutput,
+  UnifiedAccountingCompanyinfoInput,
+  UnifiedAccountingCompanyinfoOutput,
 } from './model.unified';
 import { OriginalCompanyInfoOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface ICompanyInfoService {
 
 export interface ICompanyInfoMapper {
   desunify(
-    source: UnifiedCompanyInfoInput,
+    source: UnifiedAccountingCompanyinfoInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface ICompanyInfoMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyInfoOutput | UnifiedCompanyInfoOutput[]>;
+  ): Promise<UnifiedAccountingCompanyinfoOutput | UnifiedAccountingCompanyinfoOutput[]>;
 }

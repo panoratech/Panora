@@ -1,14 +1,14 @@
 import { BoxSharedLinkInput, BoxSharedLinkOutput } from './types';
 import {
-  UnifiedSharedLinkInput,
-  UnifiedSharedLinkOutput,
+  UnifiedFilestorageSharedlinkInput,
+  UnifiedFilestorageSharedlinkOutput,
 } from '@filestorage/sharedlink/types/model.unified';
 import { ISharedLinkMapper } from '@filestorage/sharedlink/types';
 import { Utils } from '@filestorage/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { OriginalPermissionOutput } from '@@core/utils/types/original/original.file-storage';
-import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
+import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class BoxSharedLinkMapper implements ISharedLinkMapper {
   }
 
   async desunify(
-    source: UnifiedSharedLinkInput,
+    source: UnifiedFilestorageSharedlinkInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -43,7 +43,7 @@ export class BoxSharedLinkMapper implements ISharedLinkMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedSharedLinkOutput | UnifiedSharedLinkOutput[]> {
+  ): Promise<UnifiedFilestorageSharedlinkOutput | UnifiedFilestorageSharedlinkOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleSharedLinkToUnified(
         source,
@@ -70,7 +70,7 @@ export class BoxSharedLinkMapper implements ISharedLinkMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedSharedLinkOutput> {
+  ): Promise<UnifiedFilestorageSharedlinkOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

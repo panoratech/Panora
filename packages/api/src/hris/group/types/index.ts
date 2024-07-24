@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedGroupInput, UnifiedGroupOutput } from './model.unified';
+import { UnifiedHrisGroupInput, UnifiedHrisGroupOutput } from './model.unified';
 import { OriginalGroupOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IGroupService {
 
 export interface IGroupMapper {
   desunify(
-    source: UnifiedGroupInput,
+    source: UnifiedHrisGroupInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IGroupMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedGroupOutput | UnifiedGroupOutput[]>;
+  ): Promise<UnifiedHrisGroupOutput | UnifiedHrisGroupOutput[]>;
 }

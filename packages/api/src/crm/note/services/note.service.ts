@@ -8,7 +8,7 @@ import { CrmObject } from '@crm/@lib/@types';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { INoteService } from '../types';
-import { UnifiedNoteInput, UnifiedNoteOutput } from '../types/model.unified';
+import { UnifiedCrmNoteInput, UnifiedCrmNoteOutput } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -28,12 +28,12 @@ export class NoteService {
   }
 
   async addNote(
-    unifiedNoteData: UnifiedNoteInput,
+    unifiedNoteData: UnifiedCrmNoteInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedNoteOutput> {
+  ): Promise<UnifiedCrmNoteOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateUserId(unifiedNoteData.user_id);
@@ -49,7 +49,7 @@ export class NoteService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedNoteInput>({
+        await this.coreUnification.desunify<UnifiedCrmNoteInput>({
           sourceObject: unifiedNoteData,
           targetType: CrmObject.note,
           providerName: integrationId,
@@ -73,7 +73,7 @@ export class NoteService {
         vertical: 'crm',
         connectionId: connection_id,
         customFieldMappings: [],
-      })) as UnifiedNoteOutput[];
+      })) as UnifiedCrmNoteOutput[];
 
       const source_note = resp.data;
       const target_note = unifiedObject[0];
@@ -181,7 +181,7 @@ export class NoteService {
   }
 
   async saveOrUpdateNote(
-    note: UnifiedNoteOutput,
+    note: UnifiedCrmNoteOutput,
     connection_id: string,
   ): Promise<string> {
     const existingNote = await this.prisma.crm_notes.findFirst({
@@ -219,7 +219,7 @@ export class NoteService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedNoteOutput> {
+  ): Promise<UnifiedCrmNoteOutput> {
     try {
       const note = await this.prisma.crm_notes.findUnique({
         where: {
@@ -250,8 +250,8 @@ export class NoteService {
         [key]: value,
       }));
 
-      // Transform to UnifiedNoteOutput format
-      const unifiedNote: UnifiedNoteOutput = {
+      // Transform to UnifiedCrmNoteOutput format
+      const unifiedNote: UnifiedCrmNoteOutput = {
         id: note.id_crm_note,
         content: note.content,
         company_id: note.id_crm_company,
@@ -264,7 +264,7 @@ export class NoteService {
         modified_at: note.modified_at,
       };
 
-      let res: UnifiedNoteOutput = {
+      let res: UnifiedCrmNoteOutput = {
         ...unifiedNote,
       };
 
@@ -310,7 +310,7 @@ export class NoteService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedNoteOutput[];
+    data: UnifiedCrmNoteOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -356,7 +356,7 @@ export class NoteService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedNotes: UnifiedNoteOutput[] = await Promise.all(
+      const unifiedNotes: UnifiedCrmNoteOutput[] = await Promise.all(
         notes.map(async (note) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -382,7 +382,7 @@ export class NoteService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedNoteOutput format
+          // Transform to UnifiedCrmNoteOutput format
           return {
             id: note.id_crm_note,
             content: note.content,
@@ -398,10 +398,10 @@ export class NoteService {
         }),
       );
 
-      let res: UnifiedNoteOutput[] = unifiedNotes;
+      let res: UnifiedCrmNoteOutput[] = unifiedNotes;
 
       if (remote_data) {
-        const remote_array_data: UnifiedNoteOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmNoteOutput[] = await Promise.all(
           res.map(async (note) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

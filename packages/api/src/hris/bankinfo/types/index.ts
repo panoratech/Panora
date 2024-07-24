@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedBankInfoInput, UnifiedBankInfoOutput } from './model.unified';
+import { UnifiedHrisBankinfoInput, UnifiedHrisBankinfoOutput } from './model.unified';
 import { OriginalBankInfoOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IBankInfoService {
 
 export interface IBankinfoMapper {
   desunify(
-    source: UnifiedBankInfoInput,
+    source: UnifiedHrisBankinfoInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IBankinfoMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedBankInfoOutput | UnifiedBankInfoOutput[]>;
+  ): Promise<UnifiedHrisBankinfoOutput | UnifiedHrisBankinfoOutput[]>;
 }

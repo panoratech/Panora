@@ -19,12 +19,16 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ItemService } from './services/item.service';
-import { UnifiedItemInput, UnifiedItemOutput } from './types/model.unified';
+import {
+  UnifiedAccountingItemInput,
+  UnifiedAccountingItemOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('accounting/item')
@@ -48,7 +52,7 @@ export class ItemController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedItemOutput)
+  @ApiPaginatedResponse(UnifiedAccountingItemOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getItems(
@@ -98,7 +102,7 @@ export class ItemController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedItemOutput)
+  @ApiGetCustomResponse(UnifiedAccountingItemOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

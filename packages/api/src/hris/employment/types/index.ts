@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedEmploymentInput,
-  UnifiedEmploymentOutput,
+  UnifiedHrisEmploymentInput,
+  UnifiedHrisEmploymentOutput,
 } from './model.unified';
 import { OriginalEmploymentOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IEmploymentService {
 
 export interface IEmploymentMapper {
   desunify(
-    source: UnifiedEmploymentInput,
+    source: UnifiedHrisEmploymentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IEmploymentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEmploymentOutput | UnifiedEmploymentOutput[]>;
+  ): Promise<UnifiedHrisEmploymentOutput | UnifiedHrisEmploymentOutput[]>;
 }

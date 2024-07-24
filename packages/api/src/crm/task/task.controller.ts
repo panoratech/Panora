@@ -21,12 +21,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TaskService } from './services/task.service';
-import { UnifiedTaskInput, UnifiedTaskOutput } from './types/model.unified';
+import {
+  UnifiedCrmTaskInput,
+  UnifiedCrmTaskOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('crm/tasks')
@@ -50,7 +58,7 @@ export class TaskController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTaskOutput)
+  @ApiPaginatedResponse(UnifiedCrmTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -101,7 +109,7 @@ export class TaskController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTaskOutput)
+  @ApiGetCustomResponse(UnifiedCrmTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -138,12 +146,12 @@ export class TaskController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
-  @ApiBody({ type: UnifiedTaskInput })
-  @ApiCustomResponse(UnifiedTaskOutput)
+  @ApiBody({ type: UnifiedCrmTaskInput })
+  @ApiPostCustomResponse(UnifiedCrmTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addTask(
-    @Body() unifiedTaskData: UnifiedTaskInput,
+    @Body() unifiedTaskData: UnifiedCrmTaskInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

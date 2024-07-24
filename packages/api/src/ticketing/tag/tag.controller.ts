@@ -17,12 +17,13 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TagService } from './services/tag.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { UnifiedTagOutput } from './types/model.unified';
+import { UnifiedTicketingTagOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ticketing/tags')
@@ -46,7 +47,7 @@ export class TagController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTagOutput)
+  @ApiPaginatedResponse(UnifiedTicketingTagOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -97,7 +98,7 @@ export class TagController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTagOutput)
+  @ApiGetCustomResponse(UnifiedTicketingTagOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

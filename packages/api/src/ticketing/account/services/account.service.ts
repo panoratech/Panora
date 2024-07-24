@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedAccountOutput } from '../types/model.unified';
+import { UnifiedTicketingAccountOutput } from '../types/model.unified';
 
 @Injectable()
 export class AccountService {
@@ -15,7 +15,7 @@ export class AccountService {
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAccountOutput> {
+  ): Promise<UnifiedTicketingAccountOutput> {
     try {
       const account = await this.prisma.tcg_accounts.findUnique({
         where: {
@@ -47,8 +47,8 @@ export class AccountService {
         [key]: value,
       }));
 
-      // Transform to UnifiedAccountOutput format
-      const unifiedAccount: UnifiedAccountOutput = {
+      // Transform to UnifiedTicketingAccountOutput format
+      const unifiedAccount: UnifiedTicketingAccountOutput = {
         id: account.id_tcg_account,
         name: account.name,
         domains: account.domains,
@@ -58,7 +58,7 @@ export class AccountService {
         modified_at: account.modified_at,
       };
 
-      let res: UnifiedAccountOutput = unifiedAccount;
+      let res: UnifiedTicketingAccountOutput = unifiedAccount;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -100,7 +100,7 @@ export class AccountService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedAccountOutput[];
+    data: UnifiedTicketingAccountOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -148,7 +148,7 @@ export class AccountService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedAccounts: UnifiedAccountOutput[] = await Promise.all(
+      const unifiedAccounts: UnifiedTicketingAccountOutput[] = await Promise.all(
         accounts.map(async (account) => {
           // Fetch field mappings for the account
           const values = await this.prisma.value.findMany({
@@ -174,7 +174,7 @@ export class AccountService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedAccountOutput format
+          // Transform to UnifiedTicketingAccountOutput format
           return {
             id: account.id_tcg_account,
             name: account.name,
@@ -187,10 +187,10 @@ export class AccountService {
         }),
       );
 
-      let res: UnifiedAccountOutput[] = unifiedAccounts;
+      let res: UnifiedTicketingAccountOutput[] = unifiedAccounts;
 
       if (remote_data) {
-        const remote_array_data: UnifiedAccountOutput[] = await Promise.all(
+        const remote_array_data: UnifiedTicketingAccountOutput[] = await Promise.all(
           res.map(async (account) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

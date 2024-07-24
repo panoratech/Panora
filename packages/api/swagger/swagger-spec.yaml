@@ -35,49 +35,10 @@ paths:
             application/json:
               schema:
                 type: string
-  /auth/register:
-    post:
-      operationId: signUp
-      summary: Register
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUserDto'
-      responses:
-        '201':
-          description: ''
-      tags: &ref_0
-        - auth
-  /auth/login:
-    post:
-      operationId: signIn
-      summary: Log In
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_0
-  /auth/users:
+  /webhook:
     get:
-      operationId: getPanoraCoreUsers
-      summary: Get users
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: *ref_0
-  /auth/profile:
-    get:
-      operationId: AuthController_getProfile
+      operationId: listWebhooks
+      summary: 'List webhooks '
       parameters: []
       responses:
         '200':
@@ -85,136 +46,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VerifyUserDto'
-        '201':
-          description: ''
-      tags: *ref_0
-  /auth/api-keys:
-    get:
-      operationId: getApiKeys
-      summary: Retrieve API Keys
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: *ref_0
-  /auth/api-keys/{id}:
-    delete:
-      operationId: deleteApiKey
-      summary: Delete API Keys
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-        '201':
-          description: ''
-      tags: *ref_0
-  /auth/generate-apikey:
-    post:
-      operationId: generateApiKey
-      summary: Create API Key
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ApiKeyDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_0
-  /auth/refresh-token:
-    post:
-      operationId: refreshAccessToken
-      summary: Refresh Access Token
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RefreshDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_0
-  /connections/oauth/callback:
-    get:
-      operationId: handleOAuthCallback
-      summary: Capture oAuth callback
-      parameters:
-        - name: code
-          required: true
-          in: query
-          schema:
-            type: string
-        - name: state
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags: &ref_1
-        - connections
-  /connections/apikey/callback:
-    post:
-      operationId: handleApiKeyCallback
-      summary: Capture api key callback
-      parameters:
-        - name: state
-          required: true
-          in: query
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BodyDataType'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_1
-  /connections:
-    get:
-      operationId: getConnections
-      summary: List Connections
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: *ref_1
-  /connections/list:
-    get:
-      operationId: ConnectionsController_list2
-      parameters:
-        - name: projectid
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags: *ref_1
-  /webhook:
-    get:
-      operationId: getWebhooksMetadata
-      summary: 'Retrieve webhooks metadata '
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: &ref_2
+                type: array
+                items:
+                  $ref: '#/components/schemas/WebhookResponse'
+      tags: &ref_0
         - webhook
     post:
       operationId: createWebhookMetadata
@@ -229,7 +64,11 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_2
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResponse'
+      tags: *ref_0
   /webhook/{id}:
     delete:
       operationId: deleteWebhook
@@ -241,11 +80,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ''
         '201':
           description: ''
-      tags: *ref_2
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResponse'
+      tags: *ref_0
     put:
       operationId: updateWebhookStatus
       summary: Update webhook status
@@ -256,9 +97,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        '201':
           description: ''
-      tags: *ref_2
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResponse'
+      tags: *ref_0
   /webhook/verifyEvent:
     post:
       operationId: verifyEvent
@@ -273,80 +118,11 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_2
-  /managed-webhooks/{id_connection}:
-    get:
-      operationId: getManagedWebhooks
-      summary: Retrieve managed webhooks
-      parameters:
-        - name: id_connection
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags: &ref_3
-        - managed-webhooks
-    put:
-      operationId: updateManagedWebhooksStatus
-      summary: Update managed webhook status
-      parameters:
-        - name: id_connection
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags: *ref_3
-  /managed-webhooks:
-    post:
-      operationId: createManagedWebhook
-      summary: Create managed webhook
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ManagedWebhooksDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_3
-  /managed-webhooks/remoteThirdPartyCreation:
-    post:
-      operationId: createRemoteThirdPartyWebhook
-      summary: Create Remote Third Party Webhook
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RemoteThirdPartyCreationDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_3
-  /mw/{endpoint_uuid}:
-    post:
-      operationId: handleThirdPartyWebhook
-      summary: Handle Third Party Webhook
-      parameters:
-        - name: endpoint_uuid
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '201':
-          description: ''
-      tags:
-        - mw
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventPayload'
+      tags: *ref_0
   /ticketing/tickets:
     get:
       operationId: listTicketingTicket
@@ -384,13 +160,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTicketOutput'
-      tags: &ref_4
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedTicketingTicketOutput'
+      tags: &ref_1
         - ticketing/tickets
-      security: &ref_5
+      security: &ref_2
         - bearer: []
     post:
       operationId: createTicketingTicket
@@ -414,26 +192,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedTicketInput'
+              $ref: '#/components/schemas/UnifiedTicketingTicketInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTicketOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedTicketOutput'
-      tags: *ref_4
-      security: *ref_5
+                $ref: '#/components/schemas/UnifiedTicketingTicketOutput'
+      tags: *ref_1
+      security: *ref_2
   /ticketing/tickets/{id}:
     get:
       operationId: retrieveTicketingTicket
@@ -464,13 +232,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTicketOutput'
-      tags: *ref_4
-      security: *ref_5
+                $ref: '#/components/schemas/UnifiedTicketingTicketOutput'
+      tags: *ref_1
+      security: *ref_2
   /ticketing/users:
     get:
       operationId: listTicketingUsers
@@ -508,13 +272,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: &ref_6
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedTicketingUserOutput'
+      tags: &ref_3
         - ticketing/users
-      security: &ref_7
+      security: &ref_4
         - bearer: []
   /ticketing/users/{id}:
     get:
@@ -546,13 +312,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_6
-      security: *ref_7
+                $ref: '#/components/schemas/UnifiedTicketingUserOutput'
+      tags: *ref_3
+      security: *ref_4
   /ticketing/accounts:
     get:
       operationId: listTicketingAccount
@@ -590,13 +352,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedAccountOutput'
-      tags: &ref_8
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedTicketingAccountOutput'
+      tags: &ref_5
         - ticketing/accounts
-      security: &ref_9
+      security: &ref_6
         - bearer: []
   /ticketing/accounts/{id}:
     get:
@@ -628,13 +392,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAccountOutput'
-      tags: *ref_8
-      security: *ref_9
+                $ref: '#/components/schemas/UnifiedTicketingAccountOutput'
+      tags: *ref_5
+      security: *ref_6
   /ticketing/contacts:
     get:
       operationId: listTicketingContacts
@@ -672,13 +432,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: &ref_10
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedTicketingContactOutput'
+      tags: &ref_7
         - ticketing/contacts
-      security: &ref_11
+      security: &ref_8
         - bearer: []
   /ticketing/contacts/{id}:
     get:
@@ -711,12 +473,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_10
-      security: *ref_11
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedTicketingContactOutput'
+      tags: *ref_7
+      security: *ref_8
   /sync/status/{vertical}:
     get:
       operationId: getSyncStatus
@@ -730,7 +494,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: &ref_12
+      tags: &ref_9
         - sync
   /sync/resync:
     post:
@@ -740,9 +504,7 @@ paths:
       responses:
         '200':
           description: ''
-        '201':
-          description: ''
-      tags: *ref_12
+      tags: *ref_9
   /crm/companies:
     get:
       operationId: listCrmCompany
@@ -780,13 +542,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCompanyOutput'
-      tags: &ref_13
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedCrmCompanyOutput'
+      tags: &ref_10
         - crm/companies
-      security: &ref_14
+      security: &ref_11
         - bearer: []
     post:
       operationId: createCrmCompany
@@ -810,26 +574,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedCompanyInput'
+              $ref: '#/components/schemas/UnifiedCrmCompanyInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCompanyOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedCompanyOutput'
-      tags: *ref_13
-      security: *ref_14
+                $ref: '#/components/schemas/UnifiedCrmCompanyOutput'
+      tags: *ref_10
+      security: *ref_11
   /crm/companies/{id}:
     get:
       operationId: retrieveCrmCompany
@@ -860,13 +614,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCompanyOutput'
-      tags: *ref_13
-      security: *ref_14
+                $ref: '#/components/schemas/UnifiedCrmCompanyOutput'
+      tags: *ref_10
+      security: *ref_11
   /crm/contacts:
     get:
       operationId: listCrmContacts
@@ -904,13 +654,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: &ref_15
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedCrmContactOutput'
+      tags: &ref_12
         - crm/contacts
-      security: &ref_16
+      security: &ref_13
         - bearer: []
     post:
       operationId: addCrmContact
@@ -934,26 +686,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedContactInput'
+              $ref: '#/components/schemas/UnifiedCrmContactInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_15
-      security: *ref_16
+                $ref: '#/components/schemas/UnifiedCrmContactOutput'
+      tags: *ref_12
+      security: *ref_13
   /crm/contacts/{id}:
     get:
       operationId: getCrmContact
@@ -984,13 +726,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_15
-      security: *ref_16
+                $ref: '#/components/schemas/UnifiedCrmContactOutput'
+      tags: *ref_12
+      security: *ref_13
   /crm/deals:
     get:
       operationId: listCrmDeals
@@ -1028,13 +766,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedDealOutput'
-      tags: &ref_17
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedCrmDealOutput'
+      tags: &ref_14
         - crm/deals
-      security: &ref_18
+      security: &ref_15
         - bearer: []
     post:
       operationId: createCrmDeal
@@ -1058,26 +798,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedDealInput'
+              $ref: '#/components/schemas/UnifiedCrmDealInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDealOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedDealOutput'
-      tags: *ref_17
-      security: *ref_18
+                $ref: '#/components/schemas/UnifiedCrmDealOutput'
+      tags: *ref_14
+      security: *ref_15
   /crm/deals/{id}:
     get:
       operationId: retrieveCrmDeal
@@ -1108,13 +838,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDealOutput'
-      tags: *ref_17
-      security: *ref_18
+                $ref: '#/components/schemas/UnifiedCrmDealOutput'
+      tags: *ref_14
+      security: *ref_15
   /crm/engagements:
     get:
       operationId: listCrmEngagements
@@ -1152,13 +878,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedEngagementOutput'
-      tags: &ref_19
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedCrmEngagementOutput'
+      tags: &ref_16
         - crm/engagements
-      security: &ref_20
+      security: &ref_17
         - bearer: []
     post:
       operationId: createCrmEngagement
@@ -1182,26 +910,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedEngagementInput'
+              $ref: '#/components/schemas/UnifiedCrmEngagementInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEngagementOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedEngagementOutput'
-      tags: *ref_19
-      security: *ref_20
+                $ref: '#/components/schemas/UnifiedCrmEngagementOutput'
+      tags: *ref_16
+      security: *ref_17
   /crm/engagements/{id}:
     get:
       operationId: retrieveCrmEngagement
@@ -1232,13 +950,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEngagementOutput'
-      tags: *ref_19
-      security: *ref_20
+                $ref: '#/components/schemas/UnifiedCrmEngagementOutput'
+      tags: *ref_16
+      security: *ref_17
   /crm/notes:
     get:
       operationId: listCrmNote
@@ -1276,13 +990,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedNoteOutput'
-      tags: &ref_21
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedCrmNoteOutput'
+      tags: &ref_18
         - crm/notes
-      security: &ref_22
+      security: &ref_19
         - bearer: []
     post:
       operationId: createCrmNote
@@ -1306,26 +1022,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedNoteInput'
+              $ref: '#/components/schemas/UnifiedCrmNoteInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedNoteOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedNoteOutput'
-      tags: *ref_21
-      security: *ref_22
+                $ref: '#/components/schemas/UnifiedCrmNoteOutput'
+      tags: *ref_18
+      security: *ref_19
   /crm/notes/{id}:
     get:
       operationId: retrieveCrmNote
@@ -1356,13 +1062,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedNoteOutput'
-      tags: *ref_21
-      security: *ref_22
+                $ref: '#/components/schemas/UnifiedCrmNoteOutput'
+      tags: *ref_18
+      security: *ref_19
   /crm/stages:
     get:
       operationId: listCrmStages
@@ -1400,13 +1102,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedStageOutput'
-      tags: &ref_23
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedCrmStageOutput'
+      tags: &ref_20
         - crm/stages
-      security: &ref_24
+      security: &ref_21
         - bearer: []
   /crm/stages/{id}:
     get:
@@ -1438,13 +1142,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedStageOutput'
-      tags: *ref_23
-      security: *ref_24
+                $ref: '#/components/schemas/UnifiedCrmStageOutput'
+      tags: *ref_20
+      security: *ref_21
   /crm/tasks:
     get:
       operationId: listCrmTask
@@ -1482,13 +1182,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTaskOutput'
-      tags: &ref_25
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedCrmTaskOutput'
+      tags: &ref_22
         - crm/tasks
-      security: &ref_26
+      security: &ref_23
         - bearer: []
     post:
       operationId: createCrmTask
@@ -1512,26 +1214,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedTaskInput'
+              $ref: '#/components/schemas/UnifiedCrmTaskInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTaskOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedTaskOutput'
-      tags: *ref_25
-      security: *ref_26
+                $ref: '#/components/schemas/UnifiedCrmTaskOutput'
+      tags: *ref_22
+      security: *ref_23
   /crm/tasks/{id}:
     get:
       operationId: retrieveCrmTask
@@ -1562,13 +1254,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTaskOutput'
-      tags: *ref_25
-      security: *ref_26
+                $ref: '#/components/schemas/UnifiedCrmTaskOutput'
+      tags: *ref_22
+      security: *ref_23
   /crm/users:
     get:
       operationId: listCrmUsers
@@ -1606,13 +1294,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: &ref_27
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedCrmUserOutput'
+      tags: &ref_24
         - crm/users
-      security: &ref_28
+      security: &ref_25
         - bearer: []
   /crm/users/{id}:
     get:
@@ -1644,13 +1334,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_27
-      security: *ref_28
+                $ref: '#/components/schemas/UnifiedCrmUserOutput'
+      tags: *ref_24
+      security: *ref_25
   /ticketing/collections:
     get:
       operationId: listTicketingCollections
@@ -1688,13 +1374,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCollectionOutput'
-      tags: &ref_29
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedTicketingCollectionOutput
+      tags: &ref_26
         - ticketing/collections
-      security: &ref_30
+      security: &ref_27
         - bearer: []
   /ticketing/collections/{id}:
     get:
@@ -1726,13 +1415,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCollectionOutput'
-      tags: *ref_29
-      security: *ref_30
+                $ref: '#/components/schemas/UnifiedTicketingCollectionOutput'
+      tags: *ref_26
+      security: *ref_27
   /ticketing/comments:
     get:
       operationId: listTicketingComments
@@ -1770,13 +1455,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCommentOutput'
-      tags: &ref_31
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedTicketingCommentOutput'
+      tags: &ref_28
         - ticketing/comments
-      security: &ref_32
+      security: &ref_29
         - bearer: []
     post:
       operationId: createTicketingComment
@@ -1800,26 +1487,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedCommentInput'
+              $ref: '#/components/schemas/UnifiedTicketingCommentInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCommentOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedCommentOutput'
-      tags: *ref_31
-      security: *ref_32
+                $ref: '#/components/schemas/UnifiedTicketingCommentOutput'
+      tags: *ref_28
+      security: *ref_29
   /ticketing/comments/{id}:
     get:
       operationId: retrieveTicketingComment
@@ -1851,12 +1528,14 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCommentOutput'
-      tags: *ref_31
-      security: *ref_32
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedTicketingCommentOutput'
+      tags: *ref_28
+      security: *ref_29
   /ticketing/tags:
     get:
       operationId: listTicketingTags
@@ -1894,13 +1573,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTagOutput'
-      tags: &ref_33
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedTicketingTagOutput'
+      tags: &ref_30
         - ticketing/tags
-      security: &ref_34
+      security: &ref_31
         - bearer: []
   /ticketing/tags/{id}:
     get:
@@ -1932,13 +1613,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTagOutput'
-      tags: *ref_33
-      security: *ref_34
+                $ref: '#/components/schemas/UnifiedTicketingTagOutput'
+      tags: *ref_30
+      security: *ref_31
   /ticketing/teams:
     get:
       operationId: listTicketingTeams
@@ -1976,13 +1653,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTeamOutput'
-      tags: &ref_35
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedTicketingTeamOutput'
+      tags: &ref_32
         - ticketing/teams
-      security: &ref_36
+      security: &ref_33
         - bearer: []
   /ticketing/teams/{id}:
     get:
@@ -2014,13 +1693,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTeamOutput'
-      tags: *ref_35
-      security: *ref_36
+                $ref: '#/components/schemas/UnifiedTicketingTeamOutput'
+      tags: *ref_32
+      security: *ref_33
   /linked-users:
     post:
       operationId: addLinkedUser
@@ -2035,7 +1710,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: &ref_37
+      tags: &ref_34
         - linked-users
     get:
       operationId: fetchLinkedUsers
@@ -2044,7 +1719,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_37
+      tags: *ref_34
   /linked-users/batch:
     post:
       operationId: addBatchLinkedUsers
@@ -2059,7 +1734,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_37
+      tags: *ref_34
   /linked-users/single:
     get:
       operationId: getLinkedUser
@@ -2073,7 +1748,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_37
+      tags: *ref_34
   /linked-users/fromRemoteId:
     get:
       operationId: linkedUserFromRemoteId
@@ -2087,65 +1762,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_37
-  /organisations:
-    get:
-      operationId: getOrganisations
-      summary: Retrieve Organisations
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: &ref_38
-        - organisations
-  /organisations/create:
-    post:
-      operationId: createOrganisation
-      summary: Create an Organisation
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateOrganizationDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_38
-  /projects/current:
-    get:
-      operationId: getCurrentProject
-      summary: Retrieve the current project of the authenticated user
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: &ref_39
-        - projects
-  /projects:
-    get:
-      operationId: getProjects
-      summary: Retrieve projects
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: *ref_39
-    post:
-      operationId: createProject
-      summary: Create a project
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateProjectDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_39
+      tags: *ref_34
   /field-mappings/entities:
     get:
       operationId: getFieldMappingsEntities
@@ -2154,7 +1771,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: &ref_40
+      tags: &ref_35
         - field-mappings
   /field-mappings/attribute:
     get:
@@ -2164,7 +1781,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_40
+      tags: *ref_35
   /field-mappings/value:
     get:
       operationId: getFieldMappingValues
@@ -2173,7 +1790,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_40
+      tags: *ref_35
   /field-mappings/define:
     post:
       operationId: defineTargetField
@@ -2188,7 +1805,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_40
+      tags: *ref_35
   /field-mappings:
     post:
       operationId: createCustomField
@@ -2203,7 +1820,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_40
+      tags: *ref_35
   /field-mappings/map:
     post:
       operationId: mapField
@@ -2218,7 +1835,7 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_40
+      tags: *ref_35
   /field-mappings/properties:
     get:
       operationId: getCustomProviderProperties
@@ -2242,82 +1859,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_40
-  /events:
-    get:
-      operationId: getPanoraCoreEvents
-      summary: Retrieve Events
-      parameters:
-        - name: page
-          required: false
-          in: query
-          schema:
-            minimum: 1
-            default: 1
-            type: number
-        - name: limit
-          required: false
-          in: query
-          schema:
-            minimum: 1
-            default: 10
-            type: number
-      responses:
-        '200':
-          description: ''
-      tags: &ref_41
-        - events
-  /events/count:
-    get:
-      operationId: getEventsCount
-      summary: Retrieve Events Count
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: number
-      tags: *ref_41
-  /magic-links:
-    post:
-      operationId: createMagicLink
-      summary: Create a Magic Link
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateMagicLinkDto'
-      responses:
-        '201':
-          description: ''
-      tags: &ref_42
-        - magic-links
-    get:
-      operationId: getMagicLinks
-      summary: Retrieve Magic Links
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: *ref_42
-  /magic-links/single:
-    get:
-      operationId: getMagicLink
-      summary: Retrieve a Magic Link
-      parameters:
-        - name: id
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags: *ref_42
+      tags: *ref_35
   /passthrough:
     post:
       operationId: passthroughRequest
@@ -2359,144 +1901,6 @@ paths:
                 $ref: '#/components/schemas/PassThroughResponse'
       tags:
         - passthrough
-  /connections-strategies/create:
-    post:
-      operationId: createConnectionStrategy
-      summary: Create Connection Strategy
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateConnectionStrategyDto'
-      responses:
-        '201':
-          description: ''
-      tags: &ref_43
-        - connections-strategies
-  /connections-strategies/toggle:
-    post:
-      operationId: toggleConnectionStrategy
-      summary: Activate/Deactivate Connection Strategy
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ToggleStrategyDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_43
-  /connections-strategies/delete:
-    post:
-      operationId: deleteConnectionStrategy
-      summary: Delete Connection Strategy
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DeleteCSDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_43
-  /connections-strategies/update:
-    post:
-      operationId: updateConnectionStrategy
-      summary: Update Connection Strategy
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateCSDto'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_43
-  /connections-strategies/credentials:
-    post:
-      operationId: getConnectionStrategyCredentials
-      summary: Get Connection Strategy Credential
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConnectionStrategyCredentials'
-      responses:
-        '201':
-          description: ''
-      tags: *ref_43
-  /connections-strategies/getCredentials:
-    get:
-      operationId: getCredentials
-      summary: Fetch credentials info needed for connections
-      parameters:
-        - name: projectId
-          required: true
-          in: query
-          schema:
-            type: string
-        - name: type
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags: *ref_43
-  /connections-strategies/getConnectionStrategiesForProject:
-    get:
-      operationId: getConnectionStrategiesForProject
-      summary: Fetch All Connection Strategies for Project
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags: *ref_43
-  /project-connectors:
-    post:
-      operationId: updateConnectorsToProject
-      summary: Update Connectors for a project
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProjectConnectorsDto'
-      responses:
-        '201':
-          description: ''
-      tags: &ref_44
-        - project-connectors
-    get:
-      operationId: getConnectorsFromProject
-      summary: Retrieve connectors by Project Id
-      parameters:
-        - name: projectId
-          required: true
-          in: query
-          schema:
-            type: string
-        - name: getConnectorsFromProject
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-      tags: *ref_44
   /hris/bankinfo:
     get:
       operationId: listHrisBankinfo
@@ -2534,13 +1938,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedBankInfoOutput'
-      tags: &ref_45
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisBankinfoOutput'
+      tags: &ref_36
         - hris/bankinfo
-      security: &ref_46
+      security: &ref_37
         - bearer: []
   /hris/bankinfo/{id}:
     get:
@@ -2572,13 +1978,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedBankInfoOutput'
-      tags: *ref_45
-      security: *ref_46
+                $ref: '#/components/schemas/UnifiedHrisBankinfoOutput'
+      tags: *ref_36
+      security: *ref_37
   /hris/benefit:
     get:
       operationId: listHrisBenefit
@@ -2616,13 +2018,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedBenefitOutput'
-      tags: &ref_47
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisBenefitOutput'
+      tags: &ref_38
         - hris/benefit
-      security: &ref_48
+      security: &ref_39
         - bearer: []
   /hris/benefit/{id}:
     get:
@@ -2654,13 +2058,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedBenefitOutput'
-      tags: *ref_47
-      security: *ref_48
+                $ref: '#/components/schemas/UnifiedHrisBenefitOutput'
+      tags: *ref_38
+      security: *ref_39
   /hris/company:
     get:
       operationId: listHrisCompanys
@@ -2698,10 +2098,12 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCompanyOutput'
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisCompanyOutput'
       tags:
         - hris/company
       security:
@@ -2743,13 +2145,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedDependentOutput'
-      tags: &ref_49
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisDependentOutput'
+      tags: &ref_40
         - hris/dependent
-      security: &ref_50
+      security: &ref_41
         - bearer: []
   /hris/dependent/{id}:
     get:
@@ -2781,13 +2185,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDependentOutput'
-      tags: *ref_49
-      security: *ref_50
+                $ref: '#/components/schemas/UnifiedHrisDependentOutput'
+      tags: *ref_40
+      security: *ref_41
   /hris/employeepayrollrun:
     get:
       operationId: listHrisEmployeePayrollRun
@@ -2825,13 +2225,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedEmployeePayrollRunOutput'
-      tags: &ref_51
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedHrisEmployeepayrollrunOutput
+      tags: &ref_42
         - hris/employeepayrollrun
-      security: &ref_52
+      security: &ref_43
         - bearer: []
   /hris/employeepayrollrun/{id}:
     get:
@@ -2863,13 +2266,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmployeePayrollRunOutput'
-      tags: *ref_51
-      security: *ref_52
+                $ref: '#/components/schemas/UnifiedHrisEmployeepayrollrunOutput'
+      tags: *ref_42
+      security: *ref_43
   /hris/employee:
     get:
       operationId: listHrisEmployee
@@ -2907,13 +2306,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedEmployeeOutput'
-      tags: &ref_53
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
+      tags: &ref_44
         - hris/employee
-      security: &ref_54
+      security: &ref_45
         - bearer: []
     post:
       operationId: createHrisEmployee
@@ -2937,26 +2338,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedEmployeeInput'
+              $ref: '#/components/schemas/UnifiedHrisEmployeeInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmployeeOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedEmployeeOutput'
-      tags: *ref_53
-      security: *ref_54
+                $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
+      tags: *ref_44
+      security: *ref_45
   /hris/employee/{id}:
     get:
       operationId: retrieveHrisEmployee
@@ -2987,13 +2378,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmployeeOutput'
-      tags: *ref_53
-      security: *ref_54
+                $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
+      tags: *ref_44
+      security: *ref_45
   /hris/employerbenefit:
     get:
       operationId: listHrisEmployerBenefit
@@ -3031,13 +2418,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedEmployerBenefitOutput'
-      tags: &ref_55
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedHrisEmployerbenefitOutput
+      tags: &ref_46
         - hris/employerbenefit
-      security: &ref_56
+      security: &ref_47
         - bearer: []
   /hris/employerbenefit/{id}:
     get:
@@ -3069,13 +2459,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmployerBenefitOutput'
-      tags: *ref_55
-      security: *ref_56
+                $ref: '#/components/schemas/UnifiedHrisEmployerbenefitOutput'
+      tags: *ref_46
+      security: *ref_47
   /hris/employment:
     get:
       operationId: listHrisEmployment
@@ -3113,13 +2499,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedEmploymentOutput'
-      tags: &ref_57
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisEmploymentOutput'
+      tags: &ref_48
         - hris/employment
-      security: &ref_58
+      security: &ref_49
         - bearer: []
   /hris/employment/{id}:
     get:
@@ -3151,13 +2539,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmploymentOutput'
-      tags: *ref_57
-      security: *ref_58
+                $ref: '#/components/schemas/UnifiedHrisEmploymentOutput'
+      tags: *ref_48
+      security: *ref_49
   /hris/group:
     get:
       operationId: listHrisGroup
@@ -3195,13 +2579,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedGroupOutput'
-      tags: &ref_59
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisGroupOutput'
+      tags: &ref_50
         - hris/group
-      security: &ref_60
+      security: &ref_51
         - bearer: []
   /hris/group/{id}:
     get:
@@ -3233,13 +2619,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedGroupOutput'
-      tags: *ref_59
-      security: *ref_60
+                $ref: '#/components/schemas/UnifiedHrisGroupOutput'
+      tags: *ref_50
+      security: *ref_51
   /hris/location:
     get:
       operationId: listHrisLocation
@@ -3277,13 +2659,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedLocationOutput'
-      tags: &ref_61
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisLocationOutput'
+      tags: &ref_52
         - hris/location
-      security: &ref_62
+      security: &ref_53
         - bearer: []
   /hris/location/{id}:
     get:
@@ -3315,13 +2699,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedLocationOutput'
-      tags: *ref_61
-      security: *ref_62
+                $ref: '#/components/schemas/UnifiedHrisLocationOutput'
+      tags: *ref_52
+      security: *ref_53
   /hris/paygroup:
     get:
       operationId: listHrisPaygroup
@@ -3359,13 +2739,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedPayGroupOutput'
-      tags: &ref_63
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisPaygroupOutput'
+      tags: &ref_54
         - hris/paygroup
-      security: &ref_64
+      security: &ref_55
         - bearer: []
   /hris/paygroup/{id}:
     get:
@@ -3397,13 +2779,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPayGroupOutput'
-      tags: *ref_63
-      security: *ref_64
+                $ref: '#/components/schemas/UnifiedHrisPaygroupOutput'
+      tags: *ref_54
+      security: *ref_55
   /hris/payrollrun:
     get:
       operationId: listHrisPayrollRuns
@@ -3441,10 +2819,12 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedPayrollRunOutput'
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisPayrollrunOutput'
       tags:
         - hris/payrollrun
       security:
@@ -3486,13 +2866,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTimeoffOutput'
-      tags: &ref_65
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
+      tags: &ref_56
         - hris/timeoff
-      security: &ref_66
+      security: &ref_57
         - bearer: []
     post:
       operationId: createHrisTimeoff
@@ -3516,26 +2898,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedTimeoffInput'
+              $ref: '#/components/schemas/UnifiedHrisTimeoffInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTimeoffOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedTimeoffOutput'
-      tags: *ref_65
-      security: *ref_66
+                $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
+      tags: *ref_56
+      security: *ref_57
   /hris/timeoff/{id}:
     get:
       operationId: retrieveHrisTimeoff
@@ -3566,13 +2938,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTimeoffOutput'
-      tags: *ref_65
-      security: *ref_66
+                $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
+      tags: *ref_56
+      security: *ref_57
   /hris/timeoffbalance:
     get:
       operationId: listHrisTimeoffbalance
@@ -3610,13 +2978,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTimeoffBalanceOutput'
-      tags: &ref_67
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedHrisTimeoffbalanceOutput'
+      tags: &ref_58
         - hris/timeoffbalance
-      security: &ref_68
+      security: &ref_59
         - bearer: []
   /hris/timeoffbalance/{id}:
     get:
@@ -3648,13 +3018,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTimeoffBalanceOutput'
-      tags: *ref_67
-      security: *ref_68
+                $ref: '#/components/schemas/UnifiedHrisTimeoffbalanceOutput'
+      tags: *ref_58
+      security: *ref_59
   /marketingautomation/action:
     get:
       operationId: listMarketingautomationAction
@@ -3692,13 +3058,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedActionOutput'
-      tags: &ref_69
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedMarketingautomationActionOutput
+      tags: &ref_60
         - marketingautomation/action
-      security: &ref_70
+      security: &ref_61
         - bearer: []
     post:
       operationId: createMarketingautomationAction
@@ -3724,26 +3093,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedActionInput'
+              $ref: '#/components/schemas/UnifiedMarketingautomationActionInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedActionOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedActionOutput'
-      tags: *ref_69
-      security: *ref_70
+                $ref: '#/components/schemas/UnifiedMarketingautomationActionOutput'
+      tags: *ref_60
+      security: *ref_61
   /marketingautomation/action/{id}:
     get:
       operationId: retrieveMarketingautomationAction
@@ -3776,13 +3135,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedActionOutput'
-      tags: *ref_69
-      security: *ref_70
+                $ref: '#/components/schemas/UnifiedMarketingautomationActionOutput'
+      tags: *ref_60
+      security: *ref_61
   /marketingautomation/automation:
     get:
       operationId: listMarketingautomationAutomation
@@ -3820,13 +3175,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedAutomationOutput'
-      tags: &ref_71
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedMarketingautomationAutomationOutput
+      tags: &ref_62
         - marketingautomation/automation
-      security: &ref_72
+      security: &ref_63
         - bearer: []
     post:
       operationId: createMarketingautomationAutomation
@@ -3852,26 +3210,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedAutomationInput'
+              $ref: '#/components/schemas/UnifiedMarketingautomationAutomationInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAutomationOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedAutomationOutput'
-      tags: *ref_71
-      security: *ref_72
+                $ref: >-
+                  #/components/schemas/UnifiedMarketingautomationAutomationOutput
+      tags: *ref_62
+      security: *ref_63
   /marketingautomation/automation/{id}:
     get:
       operationId: retrieveMarketingautomationAutomation
@@ -3904,13 +3253,10 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAutomationOutput'
-      tags: *ref_71
-      security: *ref_72
+                $ref: >-
+                  #/components/schemas/UnifiedMarketingautomationAutomationOutput
+      tags: *ref_62
+      security: *ref_63
   /marketingautomation/campaign:
     get:
       operationId: listMarketingautomationCampaign
@@ -3948,13 +3294,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: &ref_73
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedCampaignOutput'
+      tags: &ref_64
         - marketingautomation/campaign
-      security: &ref_74
+      security: &ref_65
         - bearer: []
     post:
       operationId: createMarketingautomationCampaign
@@ -3980,26 +3328,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedCampaignInput'
+              $ref: '#/components/schemas/UnifiedMarketingautomationCampaignInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCampaignOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: *ref_73
-      security: *ref_74
+      tags: *ref_64
+      security: *ref_65
   /marketingautomation/campaign/{id}:
     get:
       operationId: retrieveMarketingautomationCampaign
@@ -4032,13 +3370,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: *ref_73
-      security: *ref_74
+                $ref: '#/components/schemas/UnifiedCampaignOutput'
+      tags: *ref_64
+      security: *ref_65
   /marketingautomation/contact:
     get:
       operationId: getMarketingAutomationContacts
@@ -4076,13 +3410,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: &ref_75
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedMarketingautomationContactOutput
+      tags: &ref_66
         - marketingautomation/contact
-      security: &ref_76
+      security: &ref_67
         - bearer: []
     post:
       operationId: addMarketingAutomationContact
@@ -4108,26 +3445,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedContactInput'
+              $ref: '#/components/schemas/UnifiedMarketingautomationContactInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_75
-      security: *ref_76
+                $ref: '#/components/schemas/UnifiedMarketingautomationContactOutput'
+      tags: *ref_66
+      security: *ref_67
   /marketingautomation/contact/{id}:
     get:
       operationId: getMarketingAutomationContact
@@ -4160,13 +3487,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_75
-      security: *ref_76
+                $ref: '#/components/schemas/UnifiedMarketingautomationContactOutput'
+      tags: *ref_66
+      security: *ref_67
   /marketingautomation/email:
     get:
       operationId: getEmails
@@ -4204,13 +3527,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedEmailOutput'
-      tags: &ref_77
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedMarketingautomationEmailOutput
+      tags: &ref_68
         - marketingautomation/email
-      security: &ref_78
+      security: &ref_69
         - bearer: []
   /marketingautomation/email/{id}:
     get:
@@ -4244,13 +3570,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEmailOutput'
-      tags: *ref_77
-      security: *ref_78
+                $ref: '#/components/schemas/UnifiedMarketingautomationEmailOutput'
+      tags: *ref_68
+      security: *ref_69
   /marketingautomation/event:
     get:
       operationId: getMarketingAutomationEvents
@@ -4288,13 +3610,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedEventOutput'
-      tags: &ref_79
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedMarketingautomationEventOutput
+      tags: &ref_70
         - marketingautomation/event
-      security: &ref_80
+      security: &ref_71
         - bearer: []
   /marketingautomation/event/{id}:
     get:
@@ -4328,13 +3653,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEventOutput'
-      tags: *ref_79
-      security: *ref_80
+                $ref: '#/components/schemas/UnifiedMarketingautomationEventOutput'
+      tags: *ref_70
+      security: *ref_71
   /marketingautomation/list:
     get:
       operationId: getLists
@@ -4372,13 +3693,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedListOutput'
-      tags: &ref_81
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedMarketingautomationListOutput
+      tags: &ref_72
         - marketingautomation/list
-      security: &ref_82
+      security: &ref_73
         - bearer: []
     post:
       operationId: addList
@@ -4404,26 +3728,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedListInput'
+              $ref: '#/components/schemas/UnifiedMarketingautomationListInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedListOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedListOutput'
-      tags: *ref_81
-      security: *ref_82
+                $ref: '#/components/schemas/UnifiedMarketingautomationListOutput'
+      tags: *ref_72
+      security: *ref_73
   /marketingautomation/list/{id}:
     get:
       operationId: getList
@@ -4456,13 +3770,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedListOutput'
-      tags: *ref_81
-      security: *ref_82
+                $ref: '#/components/schemas/UnifiedMarketingautomationListOutput'
+      tags: *ref_72
+      security: *ref_73
   /marketingautomation/message:
     get:
       operationId: getMessages
@@ -4500,13 +3810,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedMessageOutput'
-      tags: &ref_83
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedMarketingautomationMessageOutput
+      tags: &ref_74
         - marketingautomation/message
-      security: &ref_84
+      security: &ref_75
         - bearer: []
   /marketingautomation/message/{id}:
     get:
@@ -4540,13 +3853,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedMessageOutput'
-      tags: *ref_83
-      security: *ref_84
+                $ref: '#/components/schemas/UnifiedMarketingautomationMessageOutput'
+      tags: *ref_74
+      security: *ref_75
   /marketingautomation/template:
     get:
       operationId: getTemplates
@@ -4584,13 +3893,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTemplateOutput'
-      tags: &ref_85
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedMarketingautomationTemplateOutput
+      tags: &ref_76
         - marketingautomation/template
-      security: &ref_86
+      security: &ref_77
         - bearer: []
     post:
       operationId: addTemplate
@@ -4616,26 +3928,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedTemplateInput'
+              $ref: '#/components/schemas/UnifiedMarketingautomationTemplateInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTemplateOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedTemplateOutput'
-      tags: *ref_85
-      security: *ref_86
+                $ref: '#/components/schemas/UnifiedMarketingautomationTemplateOutput'
+      tags: *ref_76
+      security: *ref_77
   /marketingautomation/template/{id}:
     get:
       operationId: getTemplate
@@ -4668,13 +3970,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTemplateOutput'
-      tags: *ref_85
-      security: *ref_86
+                $ref: '#/components/schemas/UnifiedMarketingautomationTemplateOutput'
+      tags: *ref_76
+      security: *ref_77
   /marketingautomation/user:
     get:
       operationId: getMarketingAutomationUsers
@@ -4712,13 +4010,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: &ref_87
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedMarketingautomationUserOutput
+      tags: &ref_78
         - marketingautomation/user
-      security: &ref_88
+      security: &ref_79
         - bearer: []
   /marketingautomation/user/{id}:
     get:
@@ -4752,13 +4053,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_87
-      security: *ref_88
+                $ref: '#/components/schemas/UnifiedMarketingautomationUserOutput'
+      tags: *ref_78
+      security: *ref_79
   /ats/activity:
     get:
       operationId: listAtsActivity
@@ -4796,13 +4093,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedActivityOutput'
-      tags: &ref_89
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsActivityOutput'
+      tags: &ref_80
         - ats/activity
-      security: &ref_90
+      security: &ref_81
         - bearer: []
     post:
       operationId: createAtsActivity
@@ -4826,26 +4125,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedActivityInput'
+              $ref: '#/components/schemas/UnifiedAtsActivityInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedActivityOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedActivityOutput'
-      tags: *ref_89
-      security: *ref_90
+                $ref: '#/components/schemas/UnifiedAtsActivityOutput'
+      tags: *ref_80
+      security: *ref_81
   /ats/activity/{id}:
     get:
       operationId: retrieveAtsActivity
@@ -4876,13 +4165,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedActivityOutput'
-      tags: *ref_89
-      security: *ref_90
+                $ref: '#/components/schemas/UnifiedAtsActivityOutput'
+      tags: *ref_80
+      security: *ref_81
   /ats/application:
     get:
       operationId: listAtsApplication
@@ -4920,13 +4205,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedApplicationOutput'
-      tags: &ref_91
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
+      tags: &ref_82
         - ats/application
-      security: &ref_92
+      security: &ref_83
         - bearer: []
     post:
       operationId: createAtsApplication
@@ -4950,26 +4237,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedApplicationInput'
+              $ref: '#/components/schemas/UnifiedAtsApplicationInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedApplicationOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedApplicationOutput'
-      tags: *ref_91
-      security: *ref_92
+                $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
+      tags: *ref_82
+      security: *ref_83
   /ats/application/{id}:
     get:
       operationId: retrieveAtsApplication
@@ -5000,13 +4277,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedApplicationOutput'
-      tags: *ref_91
-      security: *ref_92
+                $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
+      tags: *ref_82
+      security: *ref_83
   /ats/attachment:
     get:
       operationId: listAtsAttachment
@@ -5044,13 +4317,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: &ref_93
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
+      tags: &ref_84
         - ats/attachment
-      security: &ref_94
+      security: &ref_85
         - bearer: []
     post:
       operationId: createAtsAttachment
@@ -5074,26 +4349,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedAttachmentInput'
+              $ref: '#/components/schemas/UnifiedAtsAttachmentInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_93
-      security: *ref_94
+                $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
+      tags: *ref_84
+      security: *ref_85
   /ats/attachment/{id}:
     get:
       operationId: retrieveAtsAttachment
@@ -5124,13 +4389,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_93
-      security: *ref_94
+                $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
+      tags: *ref_84
+      security: *ref_85
   /ats/candidate:
     get:
       operationId: listAtsCandidate
@@ -5168,13 +4429,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCandidateOutput'
-      tags: &ref_95
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
+      tags: &ref_86
         - ats/candidate
-      security: &ref_96
+      security: &ref_87
         - bearer: []
     post:
       operationId: createAtsCandidate
@@ -5198,26 +4461,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedCandidateInput'
+              $ref: '#/components/schemas/UnifiedAtsCandidateInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCandidateOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedCandidateOutput'
-      tags: *ref_95
-      security: *ref_96
+                $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
+      tags: *ref_86
+      security: *ref_87
   /ats/candidate/{id}:
     get:
       operationId: retrieveAtsCandidate
@@ -5248,13 +4501,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCandidateOutput'
-      tags: *ref_95
-      security: *ref_96
+                $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
+      tags: *ref_86
+      security: *ref_87
   /ats/department:
     get:
       operationId: getDepartments
@@ -5292,13 +4541,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedDepartmentOutput'
-      tags: &ref_97
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsDepartmentOutput'
+      tags: &ref_88
         - ats/department
-      security: &ref_98
+      security: &ref_89
         - bearer: []
   /ats/department/{id}:
     get:
@@ -5330,13 +4581,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDepartmentOutput'
-      tags: *ref_97
-      security: *ref_98
+                $ref: '#/components/schemas/UnifiedAtsDepartmentOutput'
+      tags: *ref_88
+      security: *ref_89
   /ats/interview:
     get:
       operationId: listAtsInterview
@@ -5374,13 +4621,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedInterviewOutput'
-      tags: &ref_99
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
+      tags: &ref_90
         - ats/interview
-      security: &ref_100
+      security: &ref_91
         - bearer: []
     post:
       operationId: createAtsInterview
@@ -5404,26 +4653,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedInterviewInput'
+              $ref: '#/components/schemas/UnifiedAtsInterviewInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedInterviewOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedInterviewOutput'
-      tags: *ref_99
-      security: *ref_100
+                $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
+      tags: *ref_90
+      security: *ref_91
   /ats/interview/{id}:
     get:
       operationId: retrieveAtsInterview
@@ -5454,13 +4693,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedInterviewOutput'
-      tags: *ref_99
-      security: *ref_100
+                $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
+      tags: *ref_90
+      security: *ref_91
   /ats/jobinterviewstage:
     get:
       operationId: listAtsJobInterviewStage
@@ -5498,13 +4733,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedJobInterviewStageOutput'
-      tags: &ref_101
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAtsJobinterviewstageOutput
+      tags: &ref_92
         - ats/jobinterviewstage
-      security: &ref_102
+      security: &ref_93
         - bearer: []
   /ats/jobinterviewstage/{id}:
     get:
@@ -5536,13 +4774,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedJobInterviewStageOutput'
-      tags: *ref_101
-      security: *ref_102
+                $ref: '#/components/schemas/UnifiedAtsJobinterviewstageOutput'
+      tags: *ref_92
+      security: *ref_93
   /ats/job:
     get:
       operationId: listAtsJob
@@ -5580,13 +4814,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedJobOutput'
-      tags: &ref_103
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsJobOutput'
+      tags: &ref_94
         - ats/job
-      security: &ref_104
+      security: &ref_95
         - bearer: []
   /ats/job/{id}:
     get:
@@ -5618,13 +4854,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedJobOutput'
-      tags: *ref_103
-      security: *ref_104
+                $ref: '#/components/schemas/UnifiedAtsJobOutput'
+      tags: *ref_94
+      security: *ref_95
   /ats/offer:
     get:
       operationId: listAtsOffer
@@ -5662,13 +4894,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedOfferOutput'
-      tags: &ref_105
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsOfferOutput'
+      tags: &ref_96
         - ats/offer
-      security: &ref_106
+      security: &ref_97
         - bearer: []
   /ats/offer/{id}:
     get:
@@ -5700,13 +4934,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedOfferOutput'
-      tags: *ref_105
-      security: *ref_106
+                $ref: '#/components/schemas/UnifiedAtsOfferOutput'
+      tags: *ref_96
+      security: *ref_97
   /ats/office:
     get:
       operationId: listAtsOffice
@@ -5744,13 +4974,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedOfficeOutput'
-      tags: &ref_107
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsOfficeOutput'
+      tags: &ref_98
         - ats/office
-      security: &ref_108
+      security: &ref_99
         - bearer: []
   /ats/office/{id}:
     get:
@@ -5782,13 +5014,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedOfficeOutput'
-      tags: *ref_107
-      security: *ref_108
+                $ref: '#/components/schemas/UnifiedAtsOfficeOutput'
+      tags: *ref_98
+      security: *ref_99
   /ats/rejectreason:
     get:
       operationId: getRejectReasons
@@ -5826,13 +5054,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedRejectReasonOutput'
-      tags: &ref_109
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsRejectreasonOutput'
+      tags: &ref_100
         - ats/rejectreason
-      security: &ref_110
+      security: &ref_101
         - bearer: []
   /ats/rejectreason/{id}:
     get:
@@ -5864,13 +5094,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedRejectReasonOutput'
-      tags: *ref_109
-      security: *ref_110
+                $ref: '#/components/schemas/UnifiedAtsRejectreasonOutput'
+      tags: *ref_100
+      security: *ref_101
   /ats/scorecard:
     get:
       operationId: listAtsScorecard
@@ -5908,13 +5134,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedScoreCardOutput'
-      tags: &ref_111
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsScorecardOutput'
+      tags: &ref_102
         - ats/scorecard
-      security: &ref_112
+      security: &ref_103
         - bearer: []
   /ats/scorecard/{id}:
     get:
@@ -5946,13 +5174,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedScoreCardOutput'
-      tags: *ref_111
-      security: *ref_112
+                $ref: '#/components/schemas/UnifiedAtsScorecardOutput'
+      tags: *ref_102
+      security: *ref_103
   /ats/tag:
     get:
       operationId: listAtsTags
@@ -5990,13 +5214,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTagOutput'
-      tags: &ref_113
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsTagOutput'
+      tags: &ref_104
         - ats/tag
-      security: &ref_114
+      security: &ref_105
         - bearer: []
   /ats/tag/{id}:
     get:
@@ -6028,13 +5254,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTagOutput'
-      tags: *ref_113
-      security: *ref_114
+                $ref: '#/components/schemas/UnifiedAtsTagOutput'
+      tags: *ref_104
+      security: *ref_105
   /ats/user:
     get:
       operationId: listAtsUsers
@@ -6072,13 +5294,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: &ref_115
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsUserOutput'
+      tags: &ref_106
         - ats/user
-      security: &ref_116
+      security: &ref_107
         - bearer: []
   /ats/user/{id}:
     get:
@@ -6110,13 +5334,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_115
-      security: *ref_116
+                $ref: '#/components/schemas/UnifiedAtsUserOutput'
+      tags: *ref_106
+      security: *ref_107
   /ats/eeocs:
     get:
       operationId: listAtsEeocs
@@ -6154,13 +5374,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedEeocsOutput'
-      tags: &ref_117
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAtsEeocsOutput'
+      tags: &ref_108
         - ats/eeocs
-      security: &ref_118
+      security: &ref_109
         - bearer: []
   /ats/eeocs/{id}:
     get:
@@ -6192,13 +5414,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedEeocsOutput'
-      tags: *ref_117
-      security: *ref_118
+                $ref: '#/components/schemas/UnifiedAtsEeocsOutput'
+      tags: *ref_108
+      security: *ref_109
   /accounting/account:
     get:
       operationId: listAccountingAccounts
@@ -6236,13 +5454,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedAccountOutput'
-      tags: &ref_119
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
+      tags: &ref_110
         - accounting/account
-      security: &ref_120
+      security: &ref_111
         - bearer: []
     post:
       operationId: createAccountingAccount
@@ -6266,26 +5486,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedAccountInput'
+              $ref: '#/components/schemas/UnifiedAccountingAccountInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAccountOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedAccountOutput'
-      tags: *ref_119
-      security: *ref_120
+                $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
+      tags: *ref_110
+      security: *ref_111
   /accounting/account/{id}:
     get:
       operationId: retrieveAccountingAccount
@@ -6316,13 +5526,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAccountOutput'
-      tags: *ref_119
-      security: *ref_120
+                $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
+      tags: *ref_110
+      security: *ref_111
   /accounting/address:
     get:
       operationId: listAccountingAddress
@@ -6360,13 +5566,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedAddressOutput'
-      tags: &ref_121
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAccountingAddressOutput'
+      tags: &ref_112
         - accounting/address
-      security: &ref_122
+      security: &ref_113
         - bearer: []
   /accounting/address/{id}:
     get:
@@ -6398,13 +5606,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAddressOutput'
-      tags: *ref_121
-      security: *ref_122
+                $ref: '#/components/schemas/UnifiedAccountingAddressOutput'
+      tags: *ref_112
+      security: *ref_113
   /accounting/attachment:
     get:
       operationId: listAccountingAttachments
@@ -6442,13 +5646,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: &ref_123
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingAttachmentOutput
+      tags: &ref_114
         - accounting/attachment
-      security: &ref_124
+      security: &ref_115
         - bearer: []
     post:
       operationId: createAccountingAttachment
@@ -6472,26 +5679,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedAttachmentInput'
+              $ref: '#/components/schemas/UnifiedAccountingAttachmentInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_123
-      security: *ref_124
+                $ref: '#/components/schemas/UnifiedAccountingAttachmentOutput'
+      tags: *ref_114
+      security: *ref_115
   /accounting/attachment/{id}:
     get:
       operationId: retrieveAccountingAttachment
@@ -6522,13 +5719,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_123
-      security: *ref_124
+                $ref: '#/components/schemas/UnifiedAccountingAttachmentOutput'
+      tags: *ref_114
+      security: *ref_115
   /accounting/balancesheet:
     get:
       operationId: listAccountingBalanceSheets
@@ -6566,13 +5759,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedBalanceSheetOutput'
-      tags: &ref_125
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingBalancesheetOutput
+      tags: &ref_116
         - accounting/balancesheet
-      security: &ref_126
+      security: &ref_117
         - bearer: []
   /accounting/balancesheet/{id}:
     get:
@@ -6604,13 +5800,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedBalanceSheetOutput'
-      tags: *ref_125
-      security: *ref_126
+                $ref: '#/components/schemas/UnifiedAccountingBalancesheetOutput'
+      tags: *ref_116
+      security: *ref_117
   /accounting/cashflowstatement:
     get:
       operationId: listAccountingCashflowStatement
@@ -6648,13 +5840,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCashflowStatementOutput'
-      tags: &ref_127
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingCashflowstatementOutput
+      tags: &ref_118
         - accounting/cashflowstatement
-      security: &ref_128
+      security: &ref_119
         - bearer: []
   /accounting/cashflowstatement/{id}:
     get:
@@ -6686,13 +5881,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCashflowStatementOutput'
-      tags: *ref_127
-      security: *ref_128
+                $ref: '#/components/schemas/UnifiedAccountingCashflowstatementOutput'
+      tags: *ref_118
+      security: *ref_119
   /accounting/companyinfo:
     get:
       operationId: listAccountingCompanyInfos
@@ -6730,13 +5921,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCompanyInfoOutput'
-      tags: &ref_129
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingCompanyinfoOutput
+      tags: &ref_120
         - accounting/companyinfo
-      security: &ref_130
+      security: &ref_121
         - bearer: []
   /accounting/companyinfo/{id}:
     get:
@@ -6768,13 +5962,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCompanyInfoOutput'
-      tags: *ref_129
-      security: *ref_130
+                $ref: '#/components/schemas/UnifiedAccountingCompanyinfoOutput'
+      tags: *ref_120
+      security: *ref_121
   /accounting/contact:
     get:
       operationId: listAccountingContacts
@@ -6812,13 +6002,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: &ref_131
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAccountingContactOutput'
+      tags: &ref_122
         - accounting/contact
-      security: &ref_132
+      security: &ref_123
         - bearer: []
     post:
       operationId: createAccountingContact
@@ -6842,26 +6034,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedContactInput'
+              $ref: '#/components/schemas/UnifiedAccountingContactInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_131
-      security: *ref_132
+                $ref: '#/components/schemas/UnifiedAccountingContactOutput'
+      tags: *ref_122
+      security: *ref_123
   /accounting/contact/{id}:
     get:
       operationId: retrieveAccountingContact
@@ -6892,13 +6074,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedContactOutput'
-      tags: *ref_131
-      security: *ref_132
+                $ref: '#/components/schemas/UnifiedAccountingContactOutput'
+      tags: *ref_122
+      security: *ref_123
   /accounting/creditnote:
     get:
       operationId: listAccountingCreditNote
@@ -6936,13 +6114,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedCreditNoteOutput'
-      tags: &ref_133
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingCreditnoteOutput
+      tags: &ref_124
         - accounting/creditnote
-      security: &ref_134
+      security: &ref_125
         - bearer: []
   /accounting/creditnote/{id}:
     get:
@@ -6974,13 +6155,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedCreditNoteOutput'
-      tags: *ref_133
-      security: *ref_134
+                $ref: '#/components/schemas/UnifiedAccountingCreditnoteOutput'
+      tags: *ref_124
+      security: *ref_125
   /accounting/expense:
     get:
       operationId: listAccountingExpense
@@ -7018,13 +6195,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedExpenseOutput'
-      tags: &ref_135
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
+      tags: &ref_126
         - accounting/expense
-      security: &ref_136
+      security: &ref_127
         - bearer: []
     post:
       operationId: createAccountingExpense
@@ -7048,26 +6227,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedExpenseInput'
+              $ref: '#/components/schemas/UnifiedAccountingExpenseInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedExpenseOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedExpenseOutput'
-      tags: *ref_135
-      security: *ref_136
+                $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
+      tags: *ref_126
+      security: *ref_127
   /accounting/expense/{id}:
     get:
       operationId: retrieveAccountingExpense
@@ -7098,13 +6267,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedExpenseOutput'
-      tags: *ref_135
-      security: *ref_136
+                $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
+      tags: *ref_126
+      security: *ref_127
   /accounting/incomestatement:
     get:
       operationId: listAccountingIncomeStatement
@@ -7142,13 +6307,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedIncomeStatementOutput'
-      tags: &ref_137
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingIncomestatementOutput
+      tags: &ref_128
         - accounting/incomestatement
-      security: &ref_138
+      security: &ref_129
         - bearer: []
   /accounting/incomestatement/{id}:
     get:
@@ -7180,13 +6348,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedIncomeStatementOutput'
-      tags: *ref_137
-      security: *ref_138
+                $ref: '#/components/schemas/UnifiedAccountingIncomestatementOutput'
+      tags: *ref_128
+      security: *ref_129
   /accounting/invoice:
     get:
       operationId: listAccountingInvoice
@@ -7224,13 +6388,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedInvoiceOutput'
-      tags: &ref_139
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
+      tags: &ref_130
         - accounting/invoice
-      security: &ref_140
+      security: &ref_131
         - bearer: []
     post:
       operationId: createAccountingInvoice
@@ -7254,26 +6420,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedInvoiceInput'
+              $ref: '#/components/schemas/UnifiedAccountingInvoiceInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedInvoiceOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedInvoiceOutput'
-      tags: *ref_139
-      security: *ref_140
+                $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
+      tags: *ref_130
+      security: *ref_131
   /accounting/invoice/{id}:
     get:
       operationId: retrieveAccountingInvoice
@@ -7304,13 +6460,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedInvoiceOutput'
-      tags: *ref_139
-      security: *ref_140
+                $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
+      tags: *ref_130
+      security: *ref_131
   /accounting/item:
     get:
       operationId: listAccountingItem
@@ -7348,13 +6500,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedItemOutput'
-      tags: &ref_141
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAccountingItemOutput'
+      tags: &ref_132
         - accounting/item
-      security: &ref_142
+      security: &ref_133
         - bearer: []
   /accounting/item/{id}:
     get:
@@ -7386,13 +6540,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedItemOutput'
-      tags: *ref_141
-      security: *ref_142
+                $ref: '#/components/schemas/UnifiedAccountingItemOutput'
+      tags: *ref_132
+      security: *ref_133
   /accounting/journalentry:
     get:
       operationId: listAccountingJournalEntry
@@ -7430,13 +6580,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedJournalEntryOutput'
-      tags: &ref_143
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingJournalentryOutput
+      tags: &ref_134
         - accounting/journalentry
-      security: &ref_144
+      security: &ref_135
         - bearer: []
     post:
       operationId: createAccountingJournalEntry
@@ -7460,26 +6613,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedJournalEntryInput'
+              $ref: '#/components/schemas/UnifiedAccountingJournalentryInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedJournalEntryOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedJournalEntryOutput'
-      tags: *ref_143
-      security: *ref_144
+                $ref: '#/components/schemas/UnifiedAccountingJournalentryOutput'
+      tags: *ref_134
+      security: *ref_135
   /accounting/journalentry/{id}:
     get:
       operationId: retrieveAccountingJournalEntry
@@ -7510,13 +6653,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedJournalEntryOutput'
-      tags: *ref_143
-      security: *ref_144
+                $ref: '#/components/schemas/UnifiedAccountingJournalentryOutput'
+      tags: *ref_134
+      security: *ref_135
   /accounting/payment:
     get:
       operationId: listAccountingPayment
@@ -7554,13 +6693,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedPaymentOutput'
-      tags: &ref_145
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
+      tags: &ref_136
         - accounting/payment
-      security: &ref_146
+      security: &ref_137
         - bearer: []
     post:
       operationId: createAccountingPayment
@@ -7584,26 +6725,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedPaymentInput'
+              $ref: '#/components/schemas/UnifiedAccountingPaymentInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPaymentOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedPaymentOutput'
-      tags: *ref_145
-      security: *ref_146
+                $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
+      tags: *ref_136
+      security: *ref_137
   /accounting/payment/{id}:
     get:
       operationId: retrieveAccountingPayment
@@ -7634,13 +6765,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPaymentOutput'
-      tags: *ref_145
-      security: *ref_146
+                $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
+      tags: *ref_136
+      security: *ref_137
   /accounting/phonenumber:
     get:
       operationId: listAccountingPhonenumber
@@ -7678,13 +6805,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedPhoneNumberOutput'
-      tags: &ref_147
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingPhonenumberOutput
+      tags: &ref_138
         - accounting/phonenumber
-      security: &ref_148
+      security: &ref_139
         - bearer: []
   /accounting/phonenumber/{id}:
     get:
@@ -7716,13 +6846,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPhoneNumberOutput'
-      tags: *ref_147
-      security: *ref_148
+                $ref: '#/components/schemas/UnifiedAccountingPhonenumberOutput'
+      tags: *ref_138
+      security: *ref_139
   /accounting/purchaseorder:
     get:
       operationId: listAccountingPurchaseOrder
@@ -7760,13 +6886,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
-      tags: &ref_149
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingPurchaseorderOutput
+      tags: &ref_140
         - accounting/purchaseorder
-      security: &ref_150
+      security: &ref_141
         - bearer: []
     post:
       operationId: createAccountingPurchaseOrder
@@ -7790,26 +6919,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedPurchaseOrderInput'
+              $ref: '#/components/schemas/UnifiedAccountingPurchaseorderInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
-      tags: *ref_149
-      security: *ref_150
+                $ref: '#/components/schemas/UnifiedAccountingPurchaseorderOutput'
+      tags: *ref_140
+      security: *ref_141
   /accounting/purchaseorder/{id}:
     get:
       operationId: retrieveAccountingPurchaseOrder
@@ -7840,13 +6959,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedPurchaseOrderOutput'
-      tags: *ref_149
-      security: *ref_150
+                $ref: '#/components/schemas/UnifiedAccountingPurchaseorderOutput'
+      tags: *ref_140
+      security: *ref_141
   /accounting/taxrate:
     get:
       operationId: listAccountingTaxRate
@@ -7884,13 +6999,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTaxRateOutput'
-      tags: &ref_151
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedAccountingTaxrateOutput'
+      tags: &ref_142
         - accounting/taxrate
-      security: &ref_152
+      security: &ref_143
         - bearer: []
   /accounting/taxrate/{id}:
     get:
@@ -7922,13 +7039,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTaxRateOutput'
-      tags: *ref_151
-      security: *ref_152
+                $ref: '#/components/schemas/UnifiedAccountingTaxrateOutput'
+      tags: *ref_142
+      security: *ref_143
   /accounting/trackingcategory:
     get:
       operationId: listAccountingTrackingCategorys
@@ -7966,13 +7079,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTrackingCategoryOutput'
-      tags: &ref_153
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingTrackingcategoryOutput
+      tags: &ref_144
         - accounting/trackingcategory
-      security: &ref_154
+      security: &ref_145
         - bearer: []
   /accounting/trackingcategory/{id}:
     get:
@@ -8004,13 +7120,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTrackingCategoryOutput'
-      tags: *ref_153
-      security: *ref_154
+                $ref: '#/components/schemas/UnifiedAccountingTrackingcategoryOutput'
+      tags: *ref_144
+      security: *ref_145
   /accounting/transaction:
     get:
       operationId: listAccountingTransaction
@@ -8048,13 +7160,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedTransactionOutput'
-      tags: &ref_155
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingTransactionOutput
+      tags: &ref_146
         - accounting/transaction
-      security: &ref_156
+      security: &ref_147
         - bearer: []
   /accounting/transaction/{id}:
     get:
@@ -8086,13 +7201,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedTransactionOutput'
-      tags: *ref_155
-      security: *ref_156
+                $ref: '#/components/schemas/UnifiedAccountingTransactionOutput'
+      tags: *ref_146
+      security: *ref_147
   /accounting/vendorcredit:
     get:
       operationId: listAccountingVendorCredit
@@ -8130,13 +7241,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedVendorCreditOutput'
-      tags: &ref_157
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedAccountingVendorcreditOutput
+      tags: &ref_148
         - accounting/vendorcredit
-      security: &ref_158
+      security: &ref_149
         - bearer: []
   /accounting/vendorcredit/{id}:
     get:
@@ -8168,13 +7282,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedVendorCreditOutput'
-      tags: *ref_157
-      security: *ref_158
+                $ref: '#/components/schemas/UnifiedAccountingVendorcreditOutput'
+      tags: *ref_148
+      security: *ref_149
   /filestorage/drives:
     get:
       operationId: listFilestorageDrives
@@ -8212,13 +7322,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedDriveOutput'
-      tags: &ref_159
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedFilestorageDriveOutput'
+      tags: &ref_150
         - filestorage/drives
-      security: &ref_160
+      security: &ref_151
         - bearer: []
   /filestorage/drives/{id}:
     get:
@@ -8250,13 +7362,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedDriveOutput'
-      tags: *ref_159
-      security: *ref_160
+                $ref: '#/components/schemas/UnifiedFilestorageDriveOutput'
+      tags: *ref_150
+      security: *ref_151
   /filestorage/files:
     get:
       operationId: listFilestorageFile
@@ -8294,13 +7402,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedFileOutput'
-      tags: &ref_161
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
+      tags: &ref_152
         - filestorage/files
-      security: &ref_162
+      security: &ref_153
         - bearer: []
     post:
       operationId: createFilestorageFile
@@ -8323,26 +7433,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedFileInput'
+              $ref: '#/components/schemas/UnifiedFilestorageFileInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedFileOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedFileOutput'
-      tags: *ref_161
-      security: *ref_162
+                $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
+      tags: *ref_152
+      security: *ref_153
   /filestorage/files/{id}:
     get:
       operationId: retrieveFilestorageFile
@@ -8373,13 +7473,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedFileOutput'
-      tags: *ref_161
-      security: *ref_162
+                $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
+      tags: *ref_152
+      security: *ref_153
   /filestorage/folders:
     get:
       operationId: listFilestorageFolder
@@ -8417,13 +7513,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedFolderOutput'
-      tags: &ref_163
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
+      tags: &ref_154
         - filestorage/folders
-      security: &ref_164
+      security: &ref_155
         - bearer: []
     post:
       operationId: createFilestorageFolder
@@ -8446,26 +7544,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedFolderInput'
+              $ref: '#/components/schemas/UnifiedFilestorageFolderInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedFolderOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedFolderOutput'
-      tags: *ref_163
-      security: *ref_164
+                $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
+      tags: *ref_154
+      security: *ref_155
   /filestorage/folders/{id}:
     get:
       operationId: retrieveFilestorageFolder
@@ -8496,13 +7584,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedFolderOutput'
-      tags: *ref_163
-      security: *ref_164
+                $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
+      tags: *ref_154
+      security: *ref_155
   /filestorage/groups:
     get:
       operationId: listFilestorageGroup
@@ -8540,13 +7624,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedGroupOutput'
-      tags: &ref_165
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedFilestorageGroupOutput'
+      tags: &ref_156
         - filestorage/groups
-      security: &ref_166
+      security: &ref_157
         - bearer: []
   /filestorage/groups/{id}:
     get:
@@ -8578,13 +7664,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedGroupOutput'
-      tags: *ref_165
-      security: *ref_166
+                $ref: '#/components/schemas/UnifiedFilestorageGroupOutput'
+      tags: *ref_156
+      security: *ref_157
   /filestorage/users:
     get:
       operationId: getUsers
@@ -8622,13 +7704,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: &ref_167
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedUserOutput'
+      tags: &ref_158
         - filestorage/users
-      security: &ref_168
+      security: &ref_159
         - bearer: []
   /filestorage/users/{id}:
     get:
@@ -8660,13 +7744,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_167
-      security: *ref_168
+                $ref: '#/components/schemas/UnifiedUserOutput'
+      tags: *ref_158
+      security: *ref_159
   /ticketing/attachments:
     get:
       operationId: listTicketingAttachments
@@ -8704,13 +7784,16 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
+                  - $ref: '#/components/schemas/PaginatedDto'
                   - properties:
                       data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: &ref_169
+                        type: array
+                        items:
+                          $ref: >-
+                            #/components/schemas/UnifiedTicketingAttachmentOutput
+      tags: &ref_160
         - ticketing/attachments
-      security: &ref_170
+      security: &ref_161
         - bearer: []
     post:
       operationId: createTicketingAttachment
@@ -8734,26 +7817,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UnifiedAttachmentInput'
+              $ref: '#/components/schemas/UnifiedTicketingAttachmentInput'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
         '201':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_169
-      security: *ref_170
+                $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
+      tags: *ref_160
+      security: *ref_161
   /ticketing/attachments/{id}:
     get:
       operationId: retrieveTicketingAttachment
@@ -8784,13 +7857,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ApiResponse'
-                  - properties:
-                      data:
-                        $ref: '#/components/schemas/UnifiedAttachmentOutput'
-      tags: *ref_169
-      security: *ref_170
+                $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
+      tags: *ref_160
+      security: *ref_161
 info:
   title: Unified Panora API
   description: The Panora API description
@@ -8808,144 +7877,103 @@ components:
       type: http
       scheme: bearer
   schemas:
-    CreateUserDto:
+    WebhookResponse:
       type: object
       properties:
-        first_name:
+        id_webhook_endpoint:
           type: string
-        last_name:
+          description: The unique UUID of the webhook.
+        endpoint_description:
           type: string
-        email:
+          description: The description of the webhook.
+        url:
           type: string
-        strategy:
+          description: The endpoint url of the webhook.
+        secret:
           type: string
-        password_hash:
+          description: The secret of the webhook.
+        active:
+          type: boolean
+          description: The status of the webhook.
+        created_at:
+          format: date-time
           type: string
-        id_organisation:
+          description: The created date  of the webhook.
+        scope:
+          description: The events that the webhook listen to.
+          type: array
+          items:
+            type: string
+        id_project:
           type: string
+          description: The project id tied to the webhook.
+        last_update:
+          format: date-time
+          type: string
+          description: The last update date of the webhook.
       required:
-        - first_name
-        - last_name
-        - email
-        - strategy
-    LoginDto:
-      type: object
-      properties:
-        id_user:
-          type: string
-        email:
-          type: string
-        password_hash:
-          type: string
-      required:
-        - email
-        - password_hash
-    VerifyUserDto:
-      type: object
-      properties:
-        id_user:
-          type: string
-        email:
-          type: string
-        first_name:
-          type: string
-        last_name:
-          type: string
-      required:
-        - id_user
-        - email
-        - first_name
-        - last_name
-    ApiKeyDto:
-      type: object
-      properties:
-        projectId:
-          type: string
-        userId:
-          type: string
-        keyName:
-          type: string
-      required:
-        - projectId
-        - userId
-        - keyName
-    RefreshDto:
-      type: object
-      properties:
-        projectId:
-          type: string
-      required:
-        - projectId
-    BodyDataType:
-      type: object
-      properties: {}
+        - id_webhook_endpoint
+        - endpoint_description
+        - url
+        - secret
+        - active
+        - created_at
+        - scope
+        - id_project
+        - last_update
     WebhookDto:
       type: object
       properties:
         url:
           type: string
+          description: The endpoint url of the webhook.
         description:
           type: string
-        id_project:
-          type: string
+          description: The description of the webhook.
         scope:
+          description: The events that the webhook listen to.
           type: array
           items:
             type: string
       required:
         - url
-        - id_project
+        - description
         - scope
+    EventPayload:
+      type: object
+      properties: {}
     SignatureVerificationDto:
       type: object
       properties:
+        payload:
+          type: object
+          description: The payload event of the webhook.
         signature:
           type: string
+          description: The signature of the webhook.
         secret:
           type: string
+          description: The secret of the webhook.
       required:
+        - payload
         - signature
         - secret
-    ManagedWebhooksDto:
+    PaginatedDto:
       type: object
       properties:
-        id_connection:
+        prev_cursor:
           type: string
-        scopes:
+        next_cursor:
+          type: string
+        data:
           type: array
           items:
-            type: string
-        api_version:
-          type: string
-        remote_signature_secret:
-          type: string
+            type: object
       required:
-        - id_connection
-        - scopes
-    RemoteThirdPartyCreationDto:
-      type: object
-      properties:
-        id_connection:
-          type: string
-        mw_ids:
-          type: array
-          items:
-            type: string
-      required:
-        - id_connection
-        - mw_ids
-    ApiResponse:
-      type: object
-      properties:
-        message:
-          type: string
-        error:
-          type: string
-        statusCode:
-          type: number
-      required:
-        - statusCode
-    UnifiedCommentInput:
+        - prev_cursor
+        - next_cursor
+        - data
+    UnifiedTicketingCommentInput:
       type: object
       properties:
         body:
@@ -8982,7 +8010,7 @@ components:
             type: string
       required:
         - body
-    UnifiedTicketOutput:
+    UnifiedTicketingTicketOutput:
       type: object
       properties:
         name:
@@ -9031,7 +8059,7 @@ components:
         comment:
           description: The comment of the ticket
           allOf:
-            - $ref: '#/components/schemas/UnifiedCommentInput'
+            - $ref: '#/components/schemas/UnifiedTicketingCommentInput'
         account_id:
           type: string
           description: The UUID of the account which the ticket belongs to
@@ -9068,7 +8096,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedTicketInput:
+    UnifiedTicketingTicketInput:
       type: object
       properties:
         name:
@@ -9117,7 +8145,7 @@ components:
         comment:
           description: The comment of the ticket
           allOf:
-            - $ref: '#/components/schemas/UnifiedCommentInput'
+            - $ref: '#/components/schemas/UnifiedTicketingCommentInput'
         account_id:
           type: string
           description: The UUID of the account which the ticket belongs to
@@ -9136,18 +8164,23 @@ components:
         - name
         - description
         - field_mappings
-    UnifiedUserOutput:
+    UnifiedTicketingUserOutput:
       type: object
       properties:
         name:
           type: string
           description: The name of the user
-        email:
+        email_address:
           type: string
-          description: The email of the user
-        is_me:
-          type: boolean
-          description: Whether the user is the one who linked this account.
+          description: The email address of the user
+        teams:
+          description: The teams whose the user is part of
+          type: array
+          items:
+            type: string
+        account_id:
+          type: string
+          description: The account or organization the user is part of
         field_mappings:
           type: object
           properties: {}
@@ -9168,18 +8201,86 @@ components:
           properties: {}
       required:
         - name
-        - email
-        - is_me
+        - email_address
         - field_mappings
         - remote_data
         - created_at
         - modified_at
-    UnifiedAccountOutput:
+    UnifiedTicketingAccountOutput:
       type: object
-      properties: {}
-    UnifiedContactOutput:
+      properties:
+        name:
+          type: string
+          description: The name of the account
+        domains:
+          description: The domains of the account
+          type: array
+          items:
+            type: string
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the account
+        remote_id:
+          type: string
+          description: The id of the account in the context of the 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: object
+          properties: {}
+        modified_at:
+          type: object
+          properties: {}
+      required:
+        - name
+        - field_mappings
+        - remote_data
+        - created_at
+        - modified_at
+    UnifiedTicketingContactOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          description: The name of the contact
+        email_address:
+          type: string
+          description: The email address of the contact
+        phone_number:
+          type: string
+          description: The phone number of the contact
+        details:
+          type: string
+          description: The details of the contact
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the contact
+        remote_id:
+          type: string
+          description: The id of the contact in the context of the 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: object
+          properties: {}
+        modified_at:
+          type: object
+          properties: {}
+      required:
+        - name
+        - email_address
+        - field_mappings
+        - remote_data
+        - created_at
+        - modified_at
     Email:
       type: object
       properties:
@@ -9250,10 +8351,63 @@ components:
       required:
         - phone_number
         - phone_type
-    UnifiedCompanyOutput:
+    UnifiedCrmCompanyOutput:
       type: object
-      properties: {}
-    UnifiedCompanyInput:
+      properties:
+        name:
+          type: string
+          description: The name of the company
+        industry:
+          type: string
+          description: >-
+            The industry of the company. Authorized values can be found in the
+            Industry enum.
+        number_of_employees:
+          type: number
+          description: The number of employees of the company
+        user_id:
+          type: string
+          description: The UUID of the user who owns the company
+        email_addresses:
+          description: The email addresses of the company
+          type: array
+          items:
+            $ref: '#/components/schemas/Email'
+        addresses:
+          description: The addresses of the company
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        phone_numbers:
+          description: The phone numbers of the company
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the company
+        remote_id:
+          type: string
+          description: The id of the company in the context of the Crm 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: object
+          properties: {}
+        modified_at:
+          type: object
+          properties: {}
+      required:
+        - name
+        - field_mappings
+        - remote_data
+        - created_at
+        - modified_at
+    UnifiedCrmCompanyInput:
       type: object
       properties:
         name:
@@ -9291,10 +8445,93 @@ components:
       required:
         - name
         - field_mappings
-    UnifiedContactInput:
+    UnifiedCrmContactOutput:
       type: object
-      properties: {}
-    UnifiedDealOutput:
+      properties:
+        first_name:
+          type: string
+          description: The first name of the contact
+        last_name:
+          type: string
+          description: The last name of the contact
+        email_addresses:
+          description: The email addresses of the contact
+          type: array
+          items:
+            $ref: '#/components/schemas/Email'
+        phone_numbers:
+          description: The phone numbers of the contact
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        addresses:
+          description: The addresses of the contact
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        user_id:
+          type: string
+          description: The UUID of the user who owns the contact
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the contact
+        remote_id:
+          type: string
+          description: The id of the contact in the context of the Crm 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: object
+          properties: {}
+        modified_at:
+          type: object
+          properties: {}
+      required:
+        - first_name
+        - last_name
+        - field_mappings
+        - remote_data
+        - created_at
+        - modified_at
+    UnifiedCrmContactInput:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: The first name of the contact
+        last_name:
+          type: string
+          description: The last name of the contact
+        email_addresses:
+          description: The email addresses of the contact
+          type: array
+          items:
+            $ref: '#/components/schemas/Email'
+        phone_numbers:
+          description: The phone numbers of the contact
+          type: array
+          items:
+            $ref: '#/components/schemas/Phone'
+        addresses:
+          description: The addresses of the contact
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        user_id:
+          type: string
+          description: The UUID of the user who owns the contact
+        field_mappings:
+          type: object
+          properties: {}
+      required:
+        - first_name
+        - last_name
+        - field_mappings
+    UnifiedCrmDealOutput:
       type: object
       properties:
         name:
@@ -9341,7 +8578,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedDealInput:
+    UnifiedCrmDealInput:
       type: object
       properties:
         name:
@@ -9370,7 +8607,7 @@ components:
         - description
         - amount
         - field_mappings
-    UnifiedEngagementOutput:
+    UnifiedCrmEngagementOutput:
       type: object
       properties:
         content:
@@ -9432,7 +8669,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedEngagementInput:
+    UnifiedCrmEngagementInput:
       type: object
       properties:
         content:
@@ -9476,7 +8713,7 @@ components:
       required:
         - type
         - field_mappings
-    UnifiedNoteOutput:
+    UnifiedCrmNoteOutput:
       type: object
       properties:
         content:
@@ -9518,7 +8755,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedNoteInput:
+    UnifiedCrmNoteInput:
       type: object
       properties:
         content:
@@ -9542,7 +8779,7 @@ components:
       required:
         - content
         - field_mappings
-    UnifiedStageOutput:
+    UnifiedCrmStageOutput:
       type: object
       properties:
         stage_name:
@@ -9572,7 +8809,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedTaskOutput:
+    UnifiedCrmTaskOutput:
       type: object
       properties:
         subject:
@@ -9627,7 +8864,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedTaskInput:
+    UnifiedCrmTaskInput:
       type: object
       properties:
         subject:
@@ -9664,7 +8901,41 @@ components:
         - content
         - status
         - field_mappings
-    UnifiedCollectionOutput:
+    UnifiedCrmUserOutput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the user
+        email:
+          type: string
+          description: The email of the user
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the user
+        remote_id:
+          type: string
+          description: The id of the user in the context of the Crm 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: object
+          properties: {}
+        modified_at:
+          type: object
+          properties: {}
+      required:
+        - name
+        - email
+        - field_mappings
+        - remote_data
+        - created_at
+        - modified_at
+    UnifiedTicketingCollectionOutput:
       type: object
       properties:
         name:
@@ -9698,7 +8969,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedCommentOutput:
+    UnifiedTicketingCommentOutput:
       type: object
       properties:
         body:
@@ -9753,15 +9024,12 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedTagOutput:
+    UnifiedTicketingTagOutput:
       type: object
       properties:
         name:
           type: string
           description: The name of the tag
-        id_ats_candidate:
-          type: string
-          description: The UUID of the candidate
         field_mappings:
           type: object
           properties: {}
@@ -9770,22 +9038,23 @@ components:
           description: The UUID of the tag
         remote_id:
           type: string
-          description: The remote ID of the tag in the context of the 3rd Party
+          description: The id of the tag in the context of the 3rd Party
         remote_data:
           type: object
           properties: {}
         created_at:
-          type: string
-          format: date-time
-          description: The creation date of the tag
+          type: object
+          properties: {}
         modified_at:
-          type: string
-          format: date-time
-          description: The modification date of the tag
+          type: object
+          properties: {}
       required:
+        - name
         - field_mappings
         - remote_data
-    UnifiedTeamOutput:
+        - created_at
+        - modified_at
+    UnifiedTicketingTeamOutput:
       type: object
       properties:
         name:
@@ -9846,28 +9115,6 @@ components:
         - linked_user_origin_ids
         - alias
         - id_project
-    CreateOrganizationDto:
-      type: object
-      properties:
-        name:
-          type: string
-        stripe_customer_id:
-          type: string
-      required:
-        - name
-        - stripe_customer_id
-    CreateProjectDto:
-      type: object
-      properties:
-        name:
-          type: string
-        id_organization:
-          type: string
-        id_user:
-          type: string
-      required:
-        - name
-        - id_user
     DefineTargetFieldDto:
       type: object
       properties:
@@ -9925,22 +9172,6 @@ components:
         - source_custom_field_id
         - source_provider
         - linked_user_id
-    CreateMagicLinkDto:
-      type: object
-      properties:
-        linked_user_origin_id:
-          type: string
-        email:
-          type: string
-        alias:
-          type: string
-        id_project:
-          type: string
-      required:
-        - linked_user_origin_id
-        - email
-        - alias
-        - id_project
     PassThroughRequestDto:
       type: object
       properties:
@@ -9974,203 +9205,103 @@ components:
         - url
         - status
         - data
-    CreateConnectionStrategyDto:
-      type: object
-      properties:
-        type:
-          type: string
-        attributes:
-          type: array
-          items:
-            type: string
-        values:
-          type: array
-          items:
-            type: string
-      required:
-        - type
-        - attributes
-        - values
-    ToggleStrategyDto:
-      type: object
-      properties:
-        id_cs:
-          type: string
-      required:
-        - id_cs
-    DeleteCSDto:
-      type: object
-      properties:
-        id:
-          type: string
-      required:
-        - id
-    UpdateCSDto:
-      type: object
-      properties:
-        id_cs:
-          type: string
-        status:
-          type: boolean
-        attributes:
-          type: array
-          items:
-            type: string
-        values:
-          type: array
-          items:
-            type: string
-      required:
-        - id_cs
-        - status
-        - attributes
-        - values
-    ConnectionStrategyCredentials:
-      type: object
-      properties:
-        type:
-          type: string
-        attributes:
-          type: array
-          items:
-            type: string
-      required:
-        - type
-        - attributes
-    ProjectConnectorsDto:
-      type: object
-      properties:
-        column:
-          type: string
-        status:
-          type: boolean
-      required:
-        - column
-        - status
-    UnifiedBankInfoOutput:
+    UnifiedHrisBankinfoOutput:
       type: object
       properties: {}
-    UnifiedBenefitOutput:
+    UnifiedHrisBenefitOutput:
       type: object
       properties: {}
-    UnifiedDependentOutput:
+    UnifiedHrisCompanyOutput:
       type: object
       properties: {}
-    UnifiedEmployeePayrollRunOutput:
+    UnifiedHrisDependentOutput:
       type: object
       properties: {}
-    UnifiedEmployeeOutput:
+    UnifiedHrisEmployeepayrollrunOutput:
       type: object
       properties: {}
-    UnifiedEmployeeInput:
+    UnifiedHrisEmployeeOutput:
       type: object
       properties: {}
-    UnifiedEmployerBenefitOutput:
+    UnifiedHrisEmployeeInput:
       type: object
       properties: {}
-    UnifiedEmploymentOutput:
+    UnifiedHrisEmployerbenefitOutput:
       type: object
       properties: {}
-    UnifiedGroupOutput:
-      type: object
-      properties:
-        name:
-          type: string
-          description: The name of the group
-        users:
-          description: Uuids of users of the group
-          type: array
-          items:
-            type: string
-        remote_was_deleted:
-          type: boolean
-          description: >-
-            Indicates whether or not this object has been deleted in the third
-            party platform.
-        field_mappings:
-          type: object
-          properties: {}
-        id:
-          type: string
-          description: The UUID of the group
-        remote_id:
-          type: string
-          description: The id of the group in the context of the 3rd Party
-        remote_data:
-          type: object
-          properties: {}
-        created_at:
-          type: object
-          properties: {}
-        modified_at:
-          type: object
-          properties: {}
-      required:
-        - name
-        - users
-        - remote_was_deleted
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
-    UnifiedLocationOutput:
+    UnifiedHrisEmploymentOutput:
       type: object
       properties: {}
-    UnifiedPayGroupOutput:
+    UnifiedHrisGroupOutput:
       type: object
       properties: {}
-    UnifiedPayrollRunOutput:
+    UnifiedHrisLocationOutput:
       type: object
       properties: {}
-    UnifiedTimeoffOutput:
+    UnifiedHrisPaygroupOutput:
       type: object
       properties: {}
-    UnifiedTimeoffInput:
+    UnifiedHrisPayrollrunOutput:
       type: object
       properties: {}
-    UnifiedTimeoffBalanceOutput:
+    UnifiedHrisTimeoffOutput:
       type: object
       properties: {}
-    UnifiedActionOutput:
+    UnifiedHrisTimeoffInput:
       type: object
       properties: {}
-    UnifiedActionInput:
+    UnifiedHrisTimeoffbalanceOutput:
       type: object
       properties: {}
-    UnifiedAutomationOutput:
+    UnifiedMarketingautomationActionOutput:
       type: object
       properties: {}
-    UnifiedAutomationInput:
+    UnifiedMarketingautomationActionInput:
+      type: object
+      properties: {}
+    UnifiedMarketingautomationAutomationOutput:
+      type: object
+      properties: {}
+    UnifiedMarketingautomationAutomationInput:
       type: object
       properties: {}
     UnifiedCampaignOutput:
       type: object
       properties: {}
-    UnifiedCampaignInput:
+    UnifiedMarketingautomationCampaignInput:
       type: object
       properties: {}
-    UnifiedEmailOutput:
+    UnifiedMarketingautomationContactOutput:
       type: object
       properties: {}
-    UnifiedEventOutput:
+    UnifiedMarketingautomationContactInput:
       type: object
       properties: {}
-    UnifiedListOutput:
+    UnifiedMarketingautomationEmailOutput:
       type: object
       properties: {}
-    UnifiedListInput:
+    UnifiedMarketingautomationEventOutput:
       type: object
       properties: {}
-    UnifiedMessageOutput:
+    UnifiedMarketingautomationListOutput:
       type: object
       properties: {}
-    UnifiedTemplateOutput:
+    UnifiedMarketingautomationListInput:
       type: object
       properties: {}
-    UnifiedTemplateInput:
+    UnifiedMarketingautomationMessageOutput:
       type: object
       properties: {}
-    UnifiedActivityOutput:
+    UnifiedMarketingautomationTemplateOutput:
+      type: object
+      properties: {}
+    UnifiedMarketingautomationTemplateInput:
+      type: object
+      properties: {}
+    UnifiedMarketingautomationUserOutput:
+      type: object
+      properties: {}
+    UnifiedAtsActivityOutput:
       type: object
       properties:
         activity_type:
@@ -10215,7 +9346,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedActivityInput:
+    UnifiedAtsActivityInput:
       type: object
       properties:
         activity_type:
@@ -10242,7 +9373,7 @@ components:
           properties: {}
       required:
         - field_mappings
-    UnifiedApplicationOutput:
+    UnifiedAtsApplicationOutput:
       type: object
       properties:
         applied_at:
@@ -10299,7 +9430,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedApplicationInput:
+    UnifiedAtsApplicationInput:
       type: object
       properties:
         applied_at:
@@ -10338,24 +9469,29 @@ components:
           properties: {}
       required:
         - field_mappings
-    UnifiedAttachmentOutput:
+    UnifiedAtsAttachmentOutput:
       type: object
       properties:
-        file_name:
-          type: string
-          description: The file name of the attachment
         file_url:
           type: string
-          description: The file url of the attachment
-        uploader:
+          description: The URL of the file
+        file_name:
           type: string
-          description: The uploader's UUID of the attachment
-        ticket_id:
+          description: The name of the file
+        attachment_type:
           type: string
-          description: The UUID of the ticket the attachment is tied to
-        comment_id:
+          description: The type of the file
+        remote_created_at:
           type: string
-          description: The UUID of the comment the attachment is tied to
+          format: date-time
+          description: The remote creation date of the attachment
+        remote_modified_at:
+          type: string
+          format: date-time
+          description: The remote modification date of the attachment
+        candidate_id:
+          type: string
+          description: The UUID of the candidate
         field_mappings:
           type: object
           properties: {}
@@ -10364,7 +9500,7 @@ components:
           description: The UUID of the attachment
         remote_id:
           type: string
-          description: The id of the attachment in the context of the 3rd Party
+          description: The remote ID of the attachment
         remote_data:
           type: object
           properties: {}
@@ -10375,43 +9511,42 @@ components:
           type: object
           properties: {}
       required:
-        - file_name
-        - file_url
-        - uploader
         - field_mappings
         - remote_data
         - created_at
         - modified_at
-    UnifiedAttachmentInput:
+    UnifiedAtsAttachmentInput:
       type: object
       properties:
-        file_name:
-          type: string
-          description: The file name of the attachment
         file_url:
           type: string
-          description: The file url of the attachment
-        uploader:
+          description: The URL of the file
+        file_name:
           type: string
-          description: The uploader's UUID of the attachment
-        ticket_id:
+          description: The name of the file
+        attachment_type:
           type: string
-          description: The UUID of the ticket the attachment is tied to
-        comment_id:
+          description: The type of the file
+        remote_created_at:
           type: string
-          description: The UUID of the comment the attachment is tied to
+          format: date-time
+          description: The remote creation date of the attachment
+        remote_modified_at:
+          type: string
+          format: date-time
+          description: The remote modification date of the attachment
+        candidate_id:
+          type: string
+          description: The UUID of the candidate
         field_mappings:
           type: object
           properties: {}
       required:
-        - file_name
-        - file_url
-        - uploader
         - field_mappings
     Url:
       type: object
       properties: {}
-    UnifiedCandidateOutput:
+    UnifiedAtsCandidateOutput:
       type: object
       properties:
         first_name:
@@ -10502,7 +9637,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedCandidateInput:
+    UnifiedAtsCandidateInput:
       type: object
       properties:
         first_name:
@@ -10575,7 +9710,7 @@ components:
           properties: {}
       required:
         - field_mappings
-    UnifiedDepartmentOutput:
+    UnifiedAtsDepartmentOutput:
       type: object
       properties:
         name:
@@ -10604,7 +9739,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedInterviewOutput:
+    UnifiedAtsInterviewOutput:
       type: object
       properties:
         status:
@@ -10666,7 +9801,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedInterviewInput:
+    UnifiedAtsInterviewInput:
       type: object
       properties:
         status:
@@ -10710,7 +9845,7 @@ components:
           properties: {}
       required:
         - field_mappings
-    UnifiedJobInterviewStageOutput:
+    UnifiedAtsJobinterviewstageOutput:
       type: object
       properties:
         name:
@@ -10747,7 +9882,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedJobOutput:
+    UnifiedAtsJobOutput:
       type: object
       properties:
         name:
@@ -10819,7 +9954,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedOfferOutput:
+    UnifiedAtsOfferOutput:
       type: object
       properties:
         created_by:
@@ -10870,7 +10005,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedOfficeOutput:
+    UnifiedAtsOfficeOutput:
       type: object
       properties:
         name:
@@ -10902,7 +10037,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedRejectReasonOutput:
+    UnifiedAtsRejectreasonOutput:
       type: object
       properties:
         name:
@@ -10931,7 +10066,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedScoreCardOutput:
+    UnifiedAtsScorecardOutput:
       type: object
       properties:
         overall_recommendation:
@@ -10974,7 +10109,88 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedEeocsOutput:
+    UnifiedAtsTagOutput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the tag
+        id_ats_candidate:
+          type: string
+          description: The UUID of the candidate
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the tag
+        remote_id:
+          type: string
+          description: The remote ID of the tag in the context of the 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: string
+          format: date-time
+          description: The creation date of the tag
+        modified_at:
+          type: string
+          format: date-time
+          description: The modification date of the tag
+      required:
+        - field_mappings
+        - remote_data
+    UnifiedAtsUserOutput:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: The first name of the user
+        last_name:
+          type: string
+          description: The last name of the user
+        email:
+          type: string
+          description: The email of the user
+        disabled:
+          type: boolean
+          description: Whether the user is disabled
+        access_role:
+          type: string
+          description: The access role of the user
+        remote_created_at:
+          type: string
+          format: date-time
+          description: The remote creation date of the user
+        remote_modified_at:
+          type: string
+          format: date-time
+          description: The remote modification date of the user
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the user
+        remote_id:
+          type: string
+          description: The remote ID of the user in the context of the 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: object
+          properties: {}
+        modified_at:
+          type: object
+          properties: {}
+      required:
+        - field_mappings
+        - remote_data
+        - created_at
+        - modified_at
+    UnifiedAtsEeocsOutput:
       type: object
       properties:
         candidate_id:
@@ -11019,76 +10235,91 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedAccountInput:
+    UnifiedAccountingAccountOutput:
       type: object
       properties: {}
-    UnifiedAddressOutput:
+    UnifiedAccountingAccountInput:
       type: object
       properties: {}
-    UnifiedBalanceSheetOutput:
+    UnifiedAccountingAddressOutput:
       type: object
       properties: {}
-    UnifiedCashflowStatementOutput:
+    UnifiedAccountingAttachmentOutput:
       type: object
       properties: {}
-    UnifiedCompanyInfoOutput:
+    UnifiedAccountingAttachmentInput:
       type: object
       properties: {}
-    UnifiedCreditNoteOutput:
+    UnifiedAccountingBalancesheetOutput:
       type: object
       properties: {}
-    UnifiedExpenseOutput:
+    UnifiedAccountingCashflowstatementOutput:
       type: object
       properties: {}
-    UnifiedExpenseInput:
+    UnifiedAccountingCompanyinfoOutput:
       type: object
       properties: {}
-    UnifiedIncomeStatementOutput:
+    UnifiedAccountingContactOutput:
       type: object
       properties: {}
-    UnifiedInvoiceOutput:
+    UnifiedAccountingContactInput:
       type: object
       properties: {}
-    UnifiedInvoiceInput:
+    UnifiedAccountingCreditnoteOutput:
       type: object
       properties: {}
-    UnifiedItemOutput:
+    UnifiedAccountingExpenseOutput:
       type: object
       properties: {}
-    UnifiedJournalEntryOutput:
+    UnifiedAccountingExpenseInput:
       type: object
       properties: {}
-    UnifiedJournalEntryInput:
+    UnifiedAccountingIncomestatementOutput:
       type: object
       properties: {}
-    UnifiedPaymentOutput:
+    UnifiedAccountingInvoiceOutput:
       type: object
       properties: {}
-    UnifiedPaymentInput:
+    UnifiedAccountingInvoiceInput:
       type: object
       properties: {}
-    UnifiedPhoneNumberOutput:
+    UnifiedAccountingItemOutput:
       type: object
       properties: {}
-    UnifiedPurchaseOrderOutput:
+    UnifiedAccountingJournalentryOutput:
       type: object
       properties: {}
-    UnifiedPurchaseOrderInput:
+    UnifiedAccountingJournalentryInput:
       type: object
       properties: {}
-    UnifiedTaxRateOutput:
+    UnifiedAccountingPaymentOutput:
       type: object
       properties: {}
-    UnifiedTrackingCategoryOutput:
+    UnifiedAccountingPaymentInput:
       type: object
       properties: {}
-    UnifiedTransactionOutput:
+    UnifiedAccountingPhonenumberOutput:
       type: object
       properties: {}
-    UnifiedVendorCreditOutput:
+    UnifiedAccountingPurchaseorderOutput:
       type: object
       properties: {}
-    UnifiedDriveOutput:
+    UnifiedAccountingPurchaseorderInput:
+      type: object
+      properties: {}
+    UnifiedAccountingTaxrateOutput:
+      type: object
+      properties: {}
+    UnifiedAccountingTrackingcategoryOutput:
+      type: object
+      properties: {}
+    UnifiedAccountingTransactionOutput:
+      type: object
+      properties: {}
+    UnifiedAccountingVendorcreditOutput:
+      type: object
+      properties: {}
+    UnifiedFilestorageDriveOutput:
       type: object
       properties:
         name:
@@ -11126,7 +10357,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedFileOutput:
+    UnifiedFilestorageFileOutput:
       type: object
       properties:
         name:
@@ -11180,7 +10411,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedFileInput:
+    UnifiedFilestorageFileInput:
       type: object
       properties:
         name:
@@ -11216,7 +10447,7 @@ components:
         - permission
         - shared_link
         - field_mappings
-    UnifiedFolderOutput:
+    UnifiedFilestorageFolderOutput:
       type: object
       properties:
         name:
@@ -11274,7 +10505,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedFolderInput:
+    UnifiedFilestorageFolderInput:
       type: object
       properties:
         name:
@@ -11313,4 +10544,154 @@ components:
         - parent_folder_id
         - shared_link
         - permission
+        - field_mappings
+    UnifiedFilestorageGroupOutput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the group
+        users:
+          description: Uuids of users of the group
+          type: array
+          items:
+            type: string
+        remote_was_deleted:
+          type: boolean
+          description: >-
+            Indicates whether or not this object has been deleted in the third
+            party platform.
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the group
+        remote_id:
+          type: string
+          description: The id of the group in the context of the 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: object
+          properties: {}
+        modified_at:
+          type: object
+          properties: {}
+      required:
+        - name
+        - users
+        - remote_was_deleted
+        - field_mappings
+        - remote_data
+        - created_at
+        - modified_at
+    UnifiedUserOutput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the user
+        email:
+          type: string
+          description: The email of the user
+        is_me:
+          type: boolean
+          description: Whether the user is the one who linked this account.
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the user
+        remote_id:
+          type: string
+          description: The id of the user in the context of the 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: object
+          properties: {}
+        modified_at:
+          type: object
+          properties: {}
+      required:
+        - name
+        - email
+        - is_me
+        - field_mappings
+        - remote_data
+        - created_at
+        - modified_at
+    UnifiedTicketingAttachmentOutput:
+      type: object
+      properties:
+        file_name:
+          type: string
+          description: The file name of the attachment
+        file_url:
+          type: string
+          description: The file url of the attachment
+        uploader:
+          type: string
+          description: The uploader's UUID of the attachment
+        ticket_id:
+          type: string
+          description: The UUID of the ticket the attachment is tied to
+        comment_id:
+          type: string
+          description: The UUID of the comment the attachment is tied to
+        field_mappings:
+          type: object
+          properties: {}
+        id:
+          type: string
+          description: The UUID of the attachment
+        remote_id:
+          type: string
+          description: The id of the attachment in the context of the 3rd Party
+        remote_data:
+          type: object
+          properties: {}
+        created_at:
+          type: object
+          properties: {}
+        modified_at:
+          type: object
+          properties: {}
+      required:
+        - file_name
+        - file_url
+        - uploader
+        - field_mappings
+        - remote_data
+        - created_at
+        - modified_at
+    UnifiedTicketingAttachmentInput:
+      type: object
+      properties:
+        file_name:
+          type: string
+          description: The file name of the attachment
+        file_url:
+          type: string
+          description: The file url of the attachment
+        uploader:
+          type: string
+          description: The uploader's UUID of the attachment
+        ticket_id:
+          type: string
+          description: The UUID of the ticket the attachment is tied to
+        comment_id:
+          type: string
+          description: The UUID of the comment the attachment is tied to
+        field_mappings:
+          type: object
+          properties: {}
+      required:
+        - file_name
+        - file_url
+        - uploader
         - field_mappings

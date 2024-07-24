@@ -17,12 +17,13 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TeamService } from './services/team.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { UnifiedTeamOutput } from './types/model.unified';
+import { UnifiedTicketingTeamOutput } from './types/model.unified';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ticketing/teams')
@@ -46,7 +47,7 @@ export class TeamController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTeamOutput)
+  @ApiPaginatedResponse(UnifiedTicketingTeamOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -97,7 +98,7 @@ export class TeamController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTeamOutput)
+  @ApiGetCustomResponse(UnifiedTicketingTeamOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

@@ -8,12 +8,12 @@ import {
   OriginalTagOutput,
 } from '@@core/utils/types/original/original.ats';
 import { AtsObject } from '@ats/@lib/@types';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { UnifiedAtsTagOutput } from '@ats/tag/types/model.unified';
 import { url } from 'inspector';
 import { IAttachmentMapper } from '@ats/attachment/types';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAtsAttachmentInput,
+  UnifiedAtsAttachmentOutput,
 } from '@ats/attachment/types/model.unified';
 import axios from 'axios';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
@@ -32,7 +32,7 @@ export class AshbyAttachmentMapper implements IAttachmentMapper {
   }
 
   async desunify(
-    source: UnifiedAttachmentInput,
+    source: UnifiedAtsAttachmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -53,7 +53,7 @@ export class AshbyAttachmentMapper implements IAttachmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAttachmentOutput | UnifiedAttachmentOutput[]> {
+  ): Promise<UnifiedAtsAttachmentOutput | UnifiedAtsAttachmentOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleAttachmentToUnified(
         source,
@@ -80,7 +80,7 @@ export class AshbyAttachmentMapper implements IAttachmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedAtsAttachmentOutput> {
     let url;
     if (attachment.handle) {
       // fetch the url given the handle

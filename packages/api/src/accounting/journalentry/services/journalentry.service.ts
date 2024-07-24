@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedJournalEntryInput,
-  UnifiedJournalEntryOutput,
+  UnifiedAccountingJournalentryInput,
+  UnifiedAccountingJournalentryOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -29,12 +29,12 @@ export class JournalEntryService {
   }
 
   async addJournalEntry(
-    unifiedJournalEntryData: UnifiedJournalEntryInput,
+    unifiedJournalEntryData: UnifiedAccountingJournalentryInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedJournalEntryOutput> {
+  ): Promise<UnifiedAccountingJournalentryOutput> {
     return;
   }
 
@@ -43,7 +43,7 @@ export class JournalEntryService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedJournalEntryOutput> {
+  ): Promise<UnifiedAccountingJournalentryOutput> {
     return;
   }
 
@@ -54,7 +54,7 @@ export class JournalEntryService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedJournalEntryOutput[]> {
+  ): Promise<UnifiedAccountingJournalentryOutput[]> {
     return;
   }
 }

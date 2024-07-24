@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedDealInput, UnifiedDealOutput } from './model.unified';
+import { UnifiedCrmDealInput, UnifiedCrmDealOutput } from './model.unified';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface IDealService extends IBaseObjectService {
 
 export interface IDealMapper {
   desunify(
-    source: UnifiedDealInput,
+    source: UnifiedCrmDealInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface IDealMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]>;
+  ): Promise<UnifiedCrmDealOutput | UnifiedCrmDealOutput[]>;
 }

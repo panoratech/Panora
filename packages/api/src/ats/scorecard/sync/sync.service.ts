@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IScoreCardService } from '../types';
 import { OriginalScoreCardOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedScoreCardOutput } from '../types/model.unified';
+import { UnifiedAtsScorecardOutput } from '../types/model.unified';
 import { ats_scorecards as AtsScoreCard } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -107,7 +107,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedScoreCardOutput,
+        UnifiedAtsScorecardOutput,
         OriginalScoreCardOutput,
         IScoreCardService
       >(integrationId, linkedUserId, 'ats', 'scorecard', service, []);
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    scoreCards: UnifiedScoreCardOutput[],
+    scoreCards: UnifiedAtsScorecardOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsScoreCard[]> {
@@ -127,7 +127,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const scoreCards_results: AtsScoreCard[] = [];
 
       const updateOrCreateScoreCard = async (
-        scoreCard: UnifiedScoreCardOutput,
+        scoreCard: UnifiedAtsScorecardOutput,
         originId: string,
       ) => {
         let existingScoreCard;

@@ -20,12 +20,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { NoteService } from './services/note.service';
-import { UnifiedNoteInput, UnifiedNoteOutput } from './types/model.unified';
+import {
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('crm/notes')
@@ -49,7 +57,7 @@ export class NoteController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedNoteOutput)
+  @ApiPaginatedResponse(UnifiedCrmNoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -99,7 +107,7 @@ export class NoteController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedNoteOutput)
+  @ApiGetCustomResponse(UnifiedCrmNoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -136,12 +144,12 @@ export class NoteController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
-  @ApiBody({ type: UnifiedNoteInput })
-  @ApiCustomResponse(UnifiedNoteOutput)
+  @ApiBody({ type: UnifiedCrmNoteInput })
+  @ApiPostCustomResponse(UnifiedCrmNoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addNote(
-    @Body() unifiedNoteData: UnifiedNoteInput,
+    @Body() unifiedNoteData: UnifiedCrmNoteInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

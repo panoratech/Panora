@@ -19,15 +19,16 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EmployerBenefitService } from './services/employerbenefit.service';
 import {
-  UnifiedEmployerBenefitInput,
-  UnifiedEmployerBenefitOutput,
+  UnifiedHrisEmployerbenefitInput,
+  UnifiedHrisEmployerbenefitOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('hris/employerbenefit')
@@ -51,7 +52,7 @@ export class EmployerBenefitController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmployerBenefitOutput)
+  @ApiPaginatedResponse(UnifiedHrisEmployerbenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEmployerBenefits(
@@ -100,7 +101,7 @@ export class EmployerBenefitController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmployerBenefitOutput)
+  @ApiGetCustomResponse(UnifiedHrisEmployerbenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

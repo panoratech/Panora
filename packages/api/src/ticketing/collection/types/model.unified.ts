@@ -3,7 +3,7 @@ import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export type CollectionType = 'PROJECT' | 'LIST';
 
-export class UnifiedCollectionInput {
+export class UnifiedTicketingCollectionInput {
   @ApiProperty({
     type: String,
     description: 'The name of the collection',
@@ -31,7 +31,7 @@ export class UnifiedCollectionInput {
   collection_type?: CollectionType | string;
 }
 
-export class UnifiedCollectionOutput extends UnifiedCollectionInput {
+export class UnifiedTicketingCollectionOutput extends UnifiedTicketingCollectionInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the collection',

@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedGroupInput, UnifiedGroupOutput } from './model.unified';
+import { UnifiedFilestorageGroupInput, UnifiedFilestorageGroupOutput } from './model.unified';
 import { OriginalGroupOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface IGroupService extends IBaseObjectService {
 
 export interface IGroupMapper {
   desunify(
-    source: UnifiedGroupInput,
+    source: UnifiedFilestorageGroupInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface IGroupMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedGroupOutput | UnifiedGroupOutput[]>;
+  ): Promise<UnifiedFilestorageGroupOutput | UnifiedFilestorageGroupOutput[]>;
 }

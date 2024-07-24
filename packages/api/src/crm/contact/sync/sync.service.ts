@@ -3,7 +3,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedContactOutput } from '@crm/contact/types/model.unified';
+import { UnifiedCrmContactOutput } from '@crm/contact/types/model.unified';
 import { CrmObject } from '@crm/@lib/@types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
@@ -115,7 +115,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedContactOutput,
+        UnifiedCrmContactOutput,
         OriginalContactOutput,
         IContactService
       >(integrationId, linkedUserId, 'crm', 'contact', service, []);
@@ -127,7 +127,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedContactOutput[],
+    data: UnifiedCrmContactOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmContact[]> {
@@ -135,7 +135,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const contacts_results: CrmContact[] = [];
 
       const updateOrCreateContact = async (
-        contact: UnifiedContactOutput,
+        contact: UnifiedCrmContactOutput,
         originId: string,
       ) => {
         const existingContact = await this.prisma.crm_contacts.findFirst({

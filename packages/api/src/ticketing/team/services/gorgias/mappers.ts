@@ -1,8 +1,8 @@
 import { ITeamMapper } from '@ticketing/team/types';
 import { GorgiasTeamInput, GorgiasTeamOutput } from './types';
 import {
-  UnifiedTeamInput,
-  UnifiedTeamOutput,
+  UnifiedTicketingTeamInput,
+  UnifiedTicketingTeamOutput,
 } from '@ticketing/team/types/model.unified';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
@@ -14,7 +14,7 @@ export class GorgiasTeamMapper implements ITeamMapper {
     this.mappersRegistry.registerService('ticketing', 'team', 'gorgias', this);
   }
   desunify(
-    source: UnifiedTeamInput,
+    source: UnifiedTicketingTeamInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class GorgiasTeamMapper implements ITeamMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTeamOutput | UnifiedTeamOutput[] {
+  ): UnifiedTicketingTeamOutput | UnifiedTicketingTeamOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
@@ -46,8 +46,8 @@ export class GorgiasTeamMapper implements ITeamMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTeamOutput {
-    const unifiedTeam: UnifiedTeamOutput = {
+  ): UnifiedTicketingTeamOutput {
+    const unifiedTeam: UnifiedTicketingTeamOutput = {
       remote_id: String(team.id),
       remote_data: team,
       name: team.name,

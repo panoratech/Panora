@@ -5,10 +5,10 @@ import { FileStorageObject } from '@filestorage/@lib/@types';
 import { Utils } from '@filestorage/@lib/@utils';
 import { IFileMapper } from '@filestorage/file/types';
 import {
-  UnifiedFileInput,
-  UnifiedFileOutput,
+  UnifiedFilestorageFileInput,
+  UnifiedFilestorageFileOutput,
 } from '@filestorage/file/types/model.unified';
-import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
+import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { BoxFileInput, BoxFileOutput } from './types';
 
@@ -23,7 +23,7 @@ export class BoxFileMapper implements IFileMapper {
   }
 
   async desunify(
-    source: UnifiedFileInput,
+    source: UnifiedFilestorageFileInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -39,7 +39,7 @@ export class BoxFileMapper implements IFileMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedFileOutput | UnifiedFileOutput[]> {
+  ): Promise<UnifiedFilestorageFileOutput | UnifiedFilestorageFileOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleFileToUnified(
         source,
@@ -62,7 +62,7 @@ export class BoxFileMapper implements IFileMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedFileOutput> {
+  ): Promise<UnifiedFilestorageFileOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -80,7 +80,7 @@ export class BoxFileMapper implements IFileMapper {
         vertical: 'filestorage',
         connectionId: connectionId,
         customFieldMappings: [],
-      })) as UnifiedSharedLinkOutput[];
+      })) as UnifiedFilestorageSharedlinkOutput[];
       opts = {
         shared_link: sharedLinks[0],
       };

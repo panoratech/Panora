@@ -19,15 +19,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import {
-  UnifiedCandidateInput,
-  UnifiedCandidateOutput,
+  UnifiedAtsCandidateInput,
+  UnifiedAtsCandidateOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { CandidateService } from './services/candidate.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ats/candidate')
@@ -51,7 +56,7 @@ export class CandidateController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCandidateOutput)
+  @ApiPaginatedResponse(UnifiedAtsCandidateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCandidates(
@@ -100,7 +105,7 @@ export class CandidateController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCandidateOutput)
+  @ApiGetCustomResponse(UnifiedAtsCandidateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -137,12 +142,12 @@ export class CandidateController {
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedCandidateInput })
-  @ApiCustomResponse(UnifiedCandidateOutput)
+  @ApiBody({ type: UnifiedAtsCandidateInput })
+  @ApiPostCustomResponse(UnifiedAtsCandidateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addCandidate(
-    @Body() unifiedCandidateData: UnifiedCandidateInput,
+    @Body() unifiedCandidateData: UnifiedAtsCandidateInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

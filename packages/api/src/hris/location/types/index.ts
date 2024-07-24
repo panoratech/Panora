@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedLocationInput, UnifiedLocationOutput } from './model.unified';
+import { UnifiedHrisLocationInput, UnifiedHrisLocationOutput } from './model.unified';
 import { OriginalLocationOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface ILocationService {
 
 export interface ILocationMapper {
   desunify(
-    source: UnifiedLocationInput,
+    source: UnifiedHrisLocationInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface ILocationMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedLocationOutput | UnifiedLocationOutput[]>;
+  ): Promise<UnifiedHrisLocationOutput | UnifiedHrisLocationOutput[]>;
 }

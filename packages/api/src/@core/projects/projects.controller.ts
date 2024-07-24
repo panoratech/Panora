@@ -7,13 +7,20 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExcludeController,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { LoggerService } from '../@core-services/logger/logger.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectsService } from './projects.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('projects')
+@ApiExcludeController()
 @Controller('projects')
 export class ProjectsController {
   constructor(
@@ -31,7 +38,7 @@ export class ProjectsController {
   @UseGuards(ApiKeyAuthGuard)
   @Get('current')
   getCurrentProject(@Request() req: any) {
-    const projectId = req.user.projectId;
+    const projectId = req.user.id_project;
     return projectId;
   }
 

@@ -1,7 +1,7 @@
 import { ZendeskNoteInput, ZendeskNoteOutput } from './types';
 import {
-  UnifiedNoteInput,
-  UnifiedNoteOutput,
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/@lib/@utils';
@@ -14,7 +14,7 @@ export class ZendeskNoteMapper implements INoteMapper {
     this.mappersRegistry.registerService('crm', 'note', 'zendesk', this);
   }
   async desunify(
-    source: UnifiedNoteInput,
+    source: UnifiedCrmNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -65,7 +65,7 @@ export class ZendeskNoteMapper implements INoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
+  ): Promise<UnifiedCrmNoteOutput | UnifiedCrmNoteOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleNoteToUnified(
         source,
@@ -88,7 +88,7 @@ export class ZendeskNoteMapper implements INoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput> {
+  ): Promise<UnifiedCrmNoteOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

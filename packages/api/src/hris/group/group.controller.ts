@@ -19,12 +19,16 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { GroupService } from './services/group.service';
-import { UnifiedGroupInput, UnifiedGroupOutput } from './types/model.unified';
+import {
+  UnifiedHrisGroupInput,
+  UnifiedHrisGroupOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('hris/group')
@@ -48,7 +52,7 @@ export class GroupController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedGroupOutput)
+  @ApiPaginatedResponse(UnifiedHrisGroupOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getGroups(
@@ -97,7 +101,7 @@ export class GroupController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedGroupOutput)
+  @ApiGetCustomResponse(UnifiedHrisGroupOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

@@ -1,3 +1,3 @@
-export class UnifiedEmployerBenefitInput {}
+export class UnifiedHrisEmployerbenefitInput {}
 
-export class UnifiedEmployerBenefitOutput extends UnifiedEmployerBenefitInput {}
+export class UnifiedHrisEmployerbenefitOutput extends UnifiedHrisEmployerbenefitInput {}

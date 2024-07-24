@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAccountingAttachmentInput,
+  UnifiedAccountingAttachmentOutput,
 } from './model.unified';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IAttachmentService {
 
 export interface IAttachmentMapper {
   desunify(
-    source: UnifiedAttachmentInput,
+    source: UnifiedAccountingAttachmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IAttachmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAttachmentOutput | UnifiedAttachmentOutput[]>;
+  ): Promise<UnifiedAccountingAttachmentOutput | UnifiedAccountingAttachmentOutput[]>;
 }

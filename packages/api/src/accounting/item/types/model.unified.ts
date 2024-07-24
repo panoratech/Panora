@@ -1,3 +1,3 @@
-export class UnifiedItemInput {}
+export class UnifiedAccountingItemInput {}
 
-export class UnifiedItemOutput extends UnifiedItemInput {}
+export class UnifiedAccountingItemOutput extends UnifiedAccountingItemInput {}

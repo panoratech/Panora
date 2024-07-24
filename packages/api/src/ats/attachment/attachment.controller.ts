@@ -19,15 +19,20 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAtsAttachmentInput,
+  UnifiedAtsAttachmentOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { AttachmentService } from './services/attachment.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ats/attachment')
@@ -51,7 +56,7 @@ export class AttachmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @ApiPaginatedResponse(UnifiedAtsAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getAttachments(
@@ -100,7 +105,7 @@ export class AttachmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @ApiGetCustomResponse(UnifiedAtsAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -137,12 +142,12 @@ export class AttachmentController {
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedAttachmentInput })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @ApiBody({ type: UnifiedAtsAttachmentInput })
+  @ApiPostCustomResponse(UnifiedAtsAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addAttachment(
-    @Body() unifiedAttachmentData: UnifiedAttachmentInput,
+    @Body() unifiedAttachmentData: UnifiedAtsAttachmentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

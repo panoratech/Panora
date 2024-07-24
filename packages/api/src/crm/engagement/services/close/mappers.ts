@@ -10,8 +10,8 @@ import {
 } from './types';
 import {
   EngagementDirection,
-  UnifiedEngagementInput,
-  UnifiedEngagementOutput,
+  UnifiedCrmEngagementInput,
+  UnifiedCrmEngagementOutput,
 } from '@crm/engagement/types/model.unified';
 import { IEngagementMapper } from '@crm/engagement/types';
 import { Utils } from '@crm/@lib/@utils';
@@ -44,7 +44,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
   }
 
   async desunify(
-    source: UnifiedEngagementInput,
+    source: UnifiedCrmEngagementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -65,7 +65,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
   }
 
   private async desunifyCall(
-    source: UnifiedEngagementInput,
+    source: UnifiedCrmEngagementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -121,7 +121,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
   }
 
   private async desunifyMeeting(
-    source: UnifiedEngagementInput,
+    source: UnifiedCrmEngagementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -131,7 +131,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
   }
 
   private async desunifyEmail(
-    source: UnifiedEngagementInput,
+    source: UnifiedCrmEngagementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -185,7 +185,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
+  ): Promise<UnifiedCrmEngagementOutput | UnifiedCrmEngagementOutput[]> {
     switch (engagement_type) {
       case 'CALL':
         return await this.unifyCall(
@@ -300,7 +300,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput> {
+  ): Promise<UnifiedCrmEngagementOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -368,7 +368,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput> {
+  ): Promise<UnifiedCrmEngagementOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -446,7 +446,7 @@ export class CloseEngagementMapper implements IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput> {
+  ): Promise<UnifiedCrmEngagementOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

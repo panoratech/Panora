@@ -1,8 +1,8 @@
 import { ITeamMapper } from '@ticketing/team/types';
 import { ZendeskTeamInput, ZendeskTeamOutput } from './types';
 import {
-  UnifiedTeamInput,
-  UnifiedTeamOutput,
+  UnifiedTicketingTeamInput,
+  UnifiedTicketingTeamOutput,
 } from '@ticketing/team/types/model.unified';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
@@ -15,7 +15,7 @@ export class ZendeskTeamMapper implements ITeamMapper {
   }
 
   desunify(
-    source: UnifiedTeamInput,
+    source: UnifiedTicketingTeamInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,7 +31,7 @@ export class ZendeskTeamMapper implements ITeamMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTeamOutput | UnifiedTeamOutput[] {
+  ): UnifiedTicketingTeamOutput | UnifiedTicketingTeamOutput[] {
     if (!Array.isArray(source)) {
       return this.mapSingleTeamToUnified(
         source,
@@ -51,8 +51,8 @@ export class ZendeskTeamMapper implements ITeamMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTeamOutput {
-    const unifiedTeam: UnifiedTeamOutput = {
+  ): UnifiedTicketingTeamOutput {
+    const unifiedTeam: UnifiedTicketingTeamOutput = {
       remote_id: String(team.id),
       remote_data: team,
       name: team.name,

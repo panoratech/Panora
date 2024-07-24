@@ -1,3 +1,3 @@
-export class UnifiedLocationInput {}
+export class UnifiedHrisLocationInput {}
 
-export class UnifiedLocationOutput extends UnifiedLocationInput {}
+export class UnifiedHrisLocationOutput extends UnifiedHrisLocationInput {}

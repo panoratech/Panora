@@ -9,11 +9,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { tcg_comments as TicketingComment } from '@prisma/client';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedTicketingAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ICommentService } from '../types';
-import { UnifiedCommentOutput } from '../types/model.unified';
+import { UnifiedTicketingCommentOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedCommentOutput,
+        UnifiedTicketingCommentOutput,
         OriginalCommentOutput,
         ICommentService
       >(integrationId, linkedUserId, 'ticketing', 'comment', service, [
@@ -138,7 +138,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    comments: UnifiedCommentOutput[],
+    comments: UnifiedTicketingCommentOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     id_ticket?: string,
@@ -147,7 +147,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const comments_results: TicketingComment[] = [];
 
       const updateOrCreateComment = async (
-        comment: UnifiedCommentOutput,
+        comment: UnifiedTicketingCommentOutput,
         originId: string,
         connection_id: string,
         id_ticket?: string,
@@ -221,7 +221,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             linkedUserId,
             comment.attachments,
             originSource,
-            comment.attachments.map((att: UnifiedAttachmentOutput) => {
+            comment.attachments.map((att: UnifiedTicketingAttachmentOutput) => {
               return att.remote_data;
             }),
             {

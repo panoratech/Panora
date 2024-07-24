@@ -1,6 +1,6 @@
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedCrmContactInput,
+  UnifiedCrmContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
 import { AttioContactInput, AttioContactOutput } from './types';
@@ -16,7 +16,7 @@ export class AttioContactMapper implements IContactMapper {
   }
 
   async desunify(
-    source: UnifiedContactInput,
+    source: UnifiedCrmContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -90,7 +90,7 @@ export class AttioContactMapper implements IContactMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
+  ): Promise<UnifiedCrmContactOutput | UnifiedCrmContactOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleContactToUnified(
         source,
@@ -118,7 +118,7 @@ export class AttioContactMapper implements IContactMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedCrmContactOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

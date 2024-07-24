@@ -10,6 +10,7 @@ import {
 import { LoggerService } from '../@core-services/logger/logger.service';
 import {
   ApiBody,
+  ApiExcludeController,
   ApiOperation,
   ApiQuery,
   ApiResponse,
@@ -19,6 +20,7 @@ import { ProjectConnectorsService } from './project-connectors.service';
 import { ProjectConnectorsDto } from './dto/project-connectors.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 @ApiTags('project-connectors')
+@ApiExcludeController()
 @Controller('project-connectors')
 export class ProjectConnectorsController {
   constructor(

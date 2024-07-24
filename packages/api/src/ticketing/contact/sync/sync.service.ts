@@ -12,7 +12,7 @@ import { tcg_contacts as TicketingContact } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IContactService } from '../types';
-import { UnifiedContactOutput } from '../types/model.unified';
+import { UnifiedTicketingContactOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -103,7 +103,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         this.serviceRegistry.getService(integrationId);
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedContactOutput,
+        UnifiedTicketingContactOutput,
         OriginalContactOutput,
         IContactService
       >(
@@ -123,7 +123,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    contacts: UnifiedContactOutput[],
+    contacts: UnifiedTicketingContactOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     account_id?: string,
@@ -132,7 +132,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const contacts_results: TicketingContact[] = [];
 
       const updateOrCreateContact = async (
-        contact: UnifiedContactOutput,
+        contact: UnifiedTicketingContactOutput,
         originId: string,
         connection_id: string,
       ) => {

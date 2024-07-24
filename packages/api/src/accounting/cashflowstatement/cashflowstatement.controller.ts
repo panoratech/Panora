@@ -19,15 +19,16 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { CashflowStatementService } from './services/cashflowstatement.service';
 import {
-  UnifiedCashflowStatementInput,
-  UnifiedCashflowStatementOutput,
+  UnifiedAccountingCashflowstatementInput,
+  UnifiedAccountingCashflowstatementOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('accounting/cashflowstatement')
@@ -51,7 +52,7 @@ export class CashflowStatementController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCashflowStatementOutput)
+  @ApiPaginatedResponse(UnifiedAccountingCashflowstatementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCashflowStatements(
@@ -102,7 +103,7 @@ export class CashflowStatementController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCashflowStatementOutput)
+  @ApiGetCustomResponse(UnifiedAccountingCashflowstatementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
