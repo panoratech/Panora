@@ -63,7 +63,7 @@ const ProviderModal = () => {
   const [openSuccessDialog,setOpenSuccessDialog] = useState<boolean>(false);
   const [currentProviderLogoURL,setCurrentProviderLogoURL] = useState<string>('')
   const [currentProvider,setCurrentProvider] = useState<string>('')
-
+  const [redirectIngressUri, setRedirectIngressUri] = useState<string | null>(null);
   const {mutate : createApiKeyConnection} = useCreateApiKeyConnection();
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
   const {data: connectorsForProject} = useProjectConnectors(isProjectIdReady ? projectId : null);
@@ -83,6 +83,14 @@ const ProviderModal = () => {
     const uniqueId = queryParams.get('uniqueLink');
     if (uniqueId) {
       setUniqueMagicLinkId(uniqueId);
+    }
+  }, []);
+
+  useEffect(() => { 
+    const queryParams = new URLSearchParams(window.location.search);
+    const redirectIngressUri = queryParams.get('redirectIngressUri');
+    if (redirectIngressUri) {
+      setRedirectIngressUri(redirectIngressUri);
     }
   }, []);
 
@@ -118,6 +126,7 @@ const ProviderModal = () => {
     returnUrl: window.location.href,
     projectId: projectId,
     linkedUserId: magicLink?.id_linked_user as string,
+    redirectIngressUri,
     onSuccess: () => {
       console.log('OAuth successful');
       setOpenSuccessDialog(true);
