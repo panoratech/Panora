@@ -8,6 +8,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: string
   /health:
     get:
       operationId: health
@@ -16,6 +20,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: number
   /webhook:
     get:
       operationId: listWebhooks
@@ -63,6 +71,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -81,6 +91,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -499,6 +511,8 @@ paths:
       parameters: []
       responses:
         '200':
+          description: ''
+        '201':
           description: ''
       tags: *ref_9
       x-speakeasy-group: sync
@@ -1873,6 +1887,12 @@ paths:
               $ref: '#/components/schemas/PassThroughRequestDto'
       responses:
         '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassThroughResponse'
+        '201':
           description: ''
           content:
             application/json:
@@ -8016,6 +8036,7 @@ components:
           description: The unique UUID of the webhook.
         endpoint_description:
           type: string
+          nullable: true
           description: The description of the webhook.
         url:
           type: string
@@ -8041,6 +8062,7 @@ components:
         last_update:
           format: date-time
           type: string
+          nullable: true
           description: The last update date of the webhook.
       required:
         - id_webhook_endpoint
@@ -8068,7 +8090,6 @@ components:
             type: string
       required:
         - url
-        - description
         - scope
     EventPayload:
       type: object

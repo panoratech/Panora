@@ -1,3 +1,5 @@
+import { GithubUserMapper } from './services/github/mappers';
+import { GithubService } from './services/github';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
 import { FrontService } from './services/front';
@@ -39,6 +41,8 @@ import { ZendeskUserMapper } from './services/zendesk/mappers';
     JiraUserMapper,
     GorgiasUserMapper,
     GitlabUserMapper,
+    GithubService,
+    GithubUserMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService, IngestDataService],
 })
