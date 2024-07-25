@@ -8,7 +8,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { ServiceRegistry } from '../services/registry.service';
 import { CrmObject } from '@crm/@lib/@types';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { UnifiedCrmUserOutput } from '../types/model.unified';
 import { IUserService } from '../types';
 import { crm_users as CrmUser } from '@prisma/client';
 import { OriginalUserOutput } from '@@core/utils/types/original/original.crm';
@@ -110,7 +110,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedUserOutput,
+        UnifiedCrmUserOutput,
         OriginalUserOutput,
         IUserService
       >(integrationId, linkedUserId, 'crm', 'user', service, []);
@@ -122,7 +122,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedUserOutput[],
+    data: UnifiedCrmUserOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmUser[]> {
@@ -130,7 +130,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const users_results: CrmUser[] = [];
 
       const updateOrCreateUser = async (
-        user: UnifiedUserOutput,
+        user: UnifiedCrmUserOutput,
         originId: string,
       ) => {
         const existingUser = await this.prisma.crm_users.findFirst({

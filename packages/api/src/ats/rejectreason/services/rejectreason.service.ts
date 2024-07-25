@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedRejectReasonOutput } from '../types/model.unified';
+import { UnifiedAtsRejectreasonOutput } from '../types/model.unified';
 
 @Injectable()
 export class RejectReasonService {
@@ -15,7 +15,7 @@ export class RejectReasonService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedRejectReasonOutput> {
+  ): Promise<UnifiedAtsRejectreasonOutput> {
     try {
       const rejectReason = await this.prisma.ats_reject_reasons.findUnique({
         where: {
@@ -53,8 +53,8 @@ export class RejectReasonService {
         [key]: value,
       }));
 
-      // Transform to UnifiedRejectReasonOutput format
-      const unifiedRejectReason: UnifiedRejectReasonOutput = {
+      // Transform to UnifiedAtsRejectreasonOutput format
+      const unifiedRejectReason: UnifiedAtsRejectreasonOutput = {
         id: rejectReason.id_ats_reject_reason,
         name: rejectReason.name,
         field_mappings: field_mappings,
@@ -63,7 +63,7 @@ export class RejectReasonService {
         modified_at: rejectReason.modified_at,
       };
 
-      let res: UnifiedRejectReasonOutput = unifiedRejectReason;
+      let res: UnifiedAtsRejectreasonOutput = unifiedRejectReason;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -105,7 +105,7 @@ export class RejectReasonService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedRejectReasonOutput[];
+    data: UnifiedAtsRejectreasonOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -150,7 +150,7 @@ export class RejectReasonService {
       if (cursor) {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
-      const unifiedRejectReasons: UnifiedRejectReasonOutput[] =
+      const unifiedRejectReasons: UnifiedAtsRejectreasonOutput[] =
         await Promise.all(
           rejectReasons.map(async (rejectReason) => {
             // Fetch field mappings for the reject reason
@@ -180,7 +180,7 @@ export class RejectReasonService {
               }),
             );
 
-            // Transform to UnifiedRejectReasonOutput format
+            // Transform to UnifiedAtsRejectreasonOutput format
             return {
               id: rejectReason.id_ats_reject_reason,
               name: rejectReason.name,
@@ -192,10 +192,10 @@ export class RejectReasonService {
           }),
         );
 
-      let res: UnifiedRejectReasonOutput[] = unifiedRejectReasons;
+      let res: UnifiedAtsRejectreasonOutput[] = unifiedRejectReasons;
 
       if (remote_data) {
-        const remote_array_data: UnifiedRejectReasonOutput[] =
+        const remote_array_data: UnifiedAtsRejectreasonOutput[] =
           await Promise.all(
             res.map(async (rejectReason) => {
               const resp = await this.prisma.remote_data.findFirst({

@@ -17,17 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import {
-  UnifiedAccountInput,
-  UnifiedAccountOutput,
+  UnifiedAccountingAccountInput,
+  UnifiedAccountingAccountOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { AccountService } from './services/account.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/account')
 @Controller('accounting/account')
 export class AccountController {
@@ -40,7 +47,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAccounts',
+    operationId: 'listAccountingAccounts',
     summary: 'List a batch of Accounts',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class AccountController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAccountOutput)
+  @ApiPaginatedResponse(UnifiedAccountingAccountOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getAccounts(
@@ -76,7 +83,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAccount',
+    operationId: 'retrieveAccountingAccount',
     summary: 'Retrieve a Account',
     description: 'Retrieve a account from any connected Accounting software',
   })
@@ -99,7 +106,7 @@ export class AccountController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAccountOutput)
+  @ApiGetCustomResponse(UnifiedAccountingAccountOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -120,7 +127,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'addAccount',
+    operationId: 'createAccountingAccount',
     summary: 'Create a Account',
     description: 'Create a account in any supported Accounting software',
   })
@@ -137,12 +144,12 @@ export class AccountController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedAccountInput })
-  @ApiCustomResponse(UnifiedAccountOutput)
+  @ApiBody({ type: UnifiedAccountingAccountInput })
+  @ApiPostCustomResponse(UnifiedAccountingAccountOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addAccount(
-    @Body() unifiedAccountData: UnifiedAccountInput,
+    @Body() unifiedAccountData: UnifiedAccountingAccountInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

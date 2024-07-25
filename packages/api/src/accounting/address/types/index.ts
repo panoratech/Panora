@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedAddressInput, UnifiedAddressOutput } from './model.unified';
+import { UnifiedAccountingAddressInput, UnifiedAccountingAddressOutput } from './model.unified';
 import { OriginalAddressOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IAddressService {
 
 export interface IAddressMapper {
   desunify(
-    source: UnifiedAddressInput,
+    source: UnifiedAccountingAddressInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IAddressMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAddressOutput | UnifiedAddressOutput[]>;
+  ): Promise<UnifiedAccountingAddressOutput | UnifiedAccountingAddressOutput[]>;
 }

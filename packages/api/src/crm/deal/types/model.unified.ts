@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class UnifiedDealInput {
+export class UnifiedCrmDealInput {
   @ApiProperty({ type: String, description: 'The name of the deal' })
   @IsString()
   name: string;
@@ -47,7 +47,7 @@ export class UnifiedDealInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedDealOutput extends UnifiedDealInput {
+export class UnifiedCrmDealOutput extends UnifiedCrmDealInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the deal' })
   @IsUUID()
   @IsOptional()

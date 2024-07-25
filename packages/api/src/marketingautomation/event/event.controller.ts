@@ -17,14 +17,23 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EventService } from './services/event.service';
-import { UnifiedEventInput, UnifiedEventOutput } from './types/model.unified';
+import {
+  UnifiedMarketingautomationEventInput,
+  UnifiedMarketingautomationEventOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/event')
 @Controller('marketingautomation/event')
 export class EventController {
@@ -37,7 +46,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationEvents',
+    operationId: 'listMarketingAutomationEvents',
     summary: 'List a batch of Events',
   })
   @ApiHeader({
@@ -46,7 +55,7 @@ export class EventController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEventOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationEventOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEvents(
@@ -73,7 +82,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'getEvent',
+    operationId: 'retrieveMarketingautomationEvent',
     summary: 'Retrieve a Event',
     description:
       'Retrieve a event from any connected Marketingautomation software',
@@ -97,7 +106,7 @@ export class EventController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEventOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationEventOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

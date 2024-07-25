@@ -1,44 +1,44 @@
 import { ICompanyService } from '@crm/company/types';
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { IContactService } from '@crm/contact/types';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedCrmContactInput,
+  UnifiedCrmContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IDealService } from '@crm/deal/types';
 import {
-  UnifiedDealInput,
-  UnifiedDealOutput,
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IEngagementService } from '@crm/engagement/types';
 import {
-  UnifiedEngagementInput,
-  UnifiedEngagementOutput,
+  UnifiedCrmEngagementInput,
+  UnifiedCrmEngagementOutput,
 } from '@crm/engagement/types/model.unified';
 
 import { INoteService } from '@crm/note/types';
 import {
-  UnifiedNoteInput,
-  UnifiedNoteOutput,
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
 } from '@crm/note/types/model.unified';
 import { IStageService } from '@crm/stage/types';
 import {
-  UnifiedStageInput,
-  UnifiedStageOutput,
+  UnifiedCrmStageInput,
+  UnifiedCrmStageOutput,
 } from '@crm/stage/types/model.unified';
 import { ITaskService } from '@crm/task/types';
 import {
-  UnifiedTaskInput,
-  UnifiedTaskOutput,
+  UnifiedCrmTaskInput,
+  UnifiedCrmTaskOutput,
 } from '@crm/task/types/model.unified';
 import { IUserService } from '@crm/user/types/';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedCrmUserInput,
+  UnifiedCrmUserOutput,
 } from '@crm/user/types/model.unified';
 import { IsIn, IsOptional, IsString } from 'class-validator';
 
@@ -55,22 +55,22 @@ export enum CrmObject {
 }
 
 export type UnifiedCrm =
-  | UnifiedContactInput
-  | UnifiedContactOutput
-  | UnifiedCompanyInput
-  | UnifiedCompanyOutput
-  | UnifiedDealInput
-  | UnifiedDealOutput
-  | UnifiedEngagementInput
-  | UnifiedEngagementOutput
-  | UnifiedNoteInput
-  | UnifiedNoteOutput
-  | UnifiedStageInput
-  | UnifiedStageOutput
-  | UnifiedTaskInput
-  | UnifiedTaskOutput
-  | UnifiedUserInput
-  | UnifiedUserOutput;
+  | UnifiedCrmContactInput
+  | UnifiedCrmContactOutput
+  | UnifiedCrmCompanyInput
+  | UnifiedCrmCompanyOutput
+  | UnifiedCrmDealInput
+  | UnifiedCrmDealOutput
+  | UnifiedCrmEngagementInput
+  | UnifiedCrmEngagementOutput
+  | UnifiedCrmNoteInput
+  | UnifiedCrmNoteOutput
+  | UnifiedCrmStageInput
+  | UnifiedCrmStageOutput
+  | UnifiedCrmTaskInput
+  | UnifiedCrmTaskOutput
+  | UnifiedCrmUserInput
+  | UnifiedCrmUserOutput;
 
 export type ICrmService =
   | IContactService

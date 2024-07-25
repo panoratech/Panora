@@ -1,8 +1,9 @@
 import { Address, Email, Phone } from '@crm/@lib/@types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class UnifiedContactInput {
+export class UnifiedCrmContactInput {
   @ApiProperty({ type: String, description: 'The first name of the contact' })
   @IsString()
   first_name: string;
@@ -16,6 +17,7 @@ export class UnifiedContactInput {
     description: 'The email addresses of the contact',
   })
   @IsOptional()
+  @Type(() => Email)
   email_addresses?: Email[];
 
   @ApiPropertyOptional({
@@ -23,6 +25,7 @@ export class UnifiedContactInput {
     description: 'The phone numbers of the contact',
   })
   @IsOptional()
+  @Type(() => Phone)
   phone_numbers?: Phone[];
 
   @ApiPropertyOptional({
@@ -30,6 +33,7 @@ export class UnifiedContactInput {
     description: 'The addresses of the contact',
   })
   @IsOptional()
+  @Type(() => Address)
   addresses?: Address[];
 
   @ApiPropertyOptional({
@@ -49,7 +53,7 @@ export class UnifiedContactInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedContactOutput extends UnifiedContactInput {
+export class UnifiedCrmContactOutput extends UnifiedCrmContactInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the contact' })
   @IsUUID()
   @IsOptional()

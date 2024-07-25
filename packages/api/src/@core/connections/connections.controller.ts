@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBody,
+  ApiExcludeController,
   ApiOperation,
   ApiQuery,
   ApiResponse,
@@ -37,6 +38,7 @@ export class BodyDataType {
 }
 
 @ApiTags('connections')
+@ApiExcludeController()
 @Controller('connections')
 export class ConnectionsController {
   constructor(
@@ -177,7 +179,7 @@ export class ConnectionsController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getConnections',
     summary: 'List Connections',
   })
   @ApiResponse({ status: 200 })

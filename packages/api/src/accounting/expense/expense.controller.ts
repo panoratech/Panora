@@ -17,17 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ExpenseService } from './services/expense.service';
 import {
-  UnifiedExpenseInput,
-  UnifiedExpenseOutput,
+  UnifiedAccountingExpenseInput,
+  UnifiedAccountingExpenseOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/expense')
 @Controller('accounting/expense')
 export class ExpenseController {
@@ -40,7 +47,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'getExpenses',
+    operationId: 'listAccountingExpense',
     summary: 'List a batch of Expenses',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class ExpenseController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedExpenseOutput)
+  @ApiPaginatedResponse(UnifiedAccountingExpenseOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getExpenses(
@@ -76,7 +83,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'getExpense',
+    operationId: 'retrieveAccountingExpense',
     summary: 'Retrieve a Expense',
     description: 'Retrieve a expense from any connected Accounting software',
   })
@@ -99,7 +106,7 @@ export class ExpenseController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedExpenseOutput)
+  @ApiGetCustomResponse(UnifiedAccountingExpenseOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -120,7 +127,7 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'addExpense',
+    operationId: 'createAccountingExpense',
     summary: 'Create a Expense',
     description: 'Create a expense in any supported Accounting software',
   })
@@ -137,12 +144,12 @@ export class ExpenseController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedExpenseInput })
-  @ApiCustomResponse(UnifiedExpenseOutput)
+  @ApiBody({ type: UnifiedAccountingExpenseInput })
+  @ApiPostCustomResponse(UnifiedAccountingExpenseOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addExpense(
-    @Body() unifiedExpenseData: UnifiedExpenseInput,
+    @Body() unifiedExpenseData: UnifiedAccountingExpenseInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

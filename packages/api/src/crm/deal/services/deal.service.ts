@@ -8,7 +8,7 @@ import { CrmObject } from '@crm/@lib/@types';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { IDealService } from '../types';
-import { UnifiedDealInput, UnifiedDealOutput } from '../types/model.unified';
+import { UnifiedCrmDealInput, UnifiedCrmDealOutput } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -28,19 +28,19 @@ export class DealService {
   }
 
   async addDeal(
-    unifiedDealData: UnifiedDealInput,
+    unifiedDealData: UnifiedCrmDealInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedDealOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateStageId(unifiedDealData.stage_id);
       await this.validateUserId(unifiedDealData.user_id);
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedDealInput>({
+        await this.coreUnification.desunify<UnifiedCrmDealInput>({
           sourceObject: unifiedDealData,
           targetType: CrmObject.deal,
           providerName: integrationId,
@@ -64,7 +64,7 @@ export class DealService {
         vertical: 'crm',
         connectionId: connection_id,
         customFieldMappings: [],
-      })) as UnifiedDealOutput[];
+      })) as UnifiedCrmDealOutput[];
 
       const source_deal = resp.data;
       const target_deal = unifiedObject[0];
@@ -145,7 +145,7 @@ export class DealService {
   }
 
   async saveOrUpdateDeal(
-    deal: UnifiedDealOutput,
+    deal: UnifiedCrmDealOutput,
     connection_id: string,
   ): Promise<string> {
     const existingDeal = await this.prisma.crm_deals.findFirst({
@@ -184,7 +184,7 @@ export class DealService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedDealOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     try {
       const deal = await this.prisma.crm_deals.findUnique({
         where: {
@@ -215,8 +215,8 @@ export class DealService {
         [key]: value,
       }));
 
-      // Transform to UnifiedDealOutput format
-      const unifiedDeal: UnifiedDealOutput = {
+      // Transform to UnifiedCrmDealOutput format
+      const unifiedDeal: UnifiedCrmDealOutput = {
         id: deal.id_crm_deal,
         name: deal.name,
         description: deal.description,
@@ -230,7 +230,7 @@ export class DealService {
         modified_at: deal.modified_at,
       };
 
-      let res: UnifiedDealOutput = {
+      let res: UnifiedCrmDealOutput = {
         ...unifiedDeal,
       };
 
@@ -277,7 +277,7 @@ export class DealService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedDealOutput[];
+    data: UnifiedCrmDealOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -323,7 +323,7 @@ export class DealService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedDeals: UnifiedDealOutput[] = await Promise.all(
+      const unifiedDeals: UnifiedCrmDealOutput[] = await Promise.all(
         deals.map(async (deal) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -349,7 +349,7 @@ export class DealService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedDealOutput format
+          // Transform to UnifiedCrmDealOutput format
           return {
             id: deal.id_crm_deal,
             name: deal.name,
@@ -366,10 +366,10 @@ export class DealService {
         }),
       );
 
-      let res: UnifiedDealOutput[] = unifiedDeals;
+      let res: UnifiedCrmDealOutput[] = unifiedDeals;
 
       if (remote_data) {
-        const remote_array_data: UnifiedDealOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmDealOutput[] = await Promise.all(
           res.map(async (deal) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

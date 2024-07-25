@@ -203,7 +203,7 @@ export class AuthService {
     try {
       const jwtPayload = {
         sub: userId,
-        projectId: projectId,
+        project_id: projectId,
       };
       return {
         access_token: this.jwtService.sign(jwtPayload, {
@@ -270,12 +270,12 @@ export class AuthService {
       });
     } catch (error) {
       throw error;
-    } 
+    }
   }
 
   async getProjectIdForApiKey(apiKey: string) {
-    try{
-    // Decode the JWT to verify if it's valid and get the payload
+    try {
+      // Decode the JWT to verify if it's valid and get the payload
       const decoded = this.jwtService.verify(apiKey, {
         secret: process.env.JWT_SECRET,
       });
@@ -288,7 +288,7 @@ export class AuthService {
       });
 
       return saved_api_key.id_project;
-    }catch(error){
+    } catch (error) {
       throw error;
     }
   }

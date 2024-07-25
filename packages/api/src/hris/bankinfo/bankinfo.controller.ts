@@ -16,17 +16,23 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { BankInfoService } from './services/bankinfo.service';
 import {
-  UnifiedBankInfoInput,
-  UnifiedBankInfoOutput,
+  UnifiedHrisBankinfoInput,
+  UnifiedHrisBankinfoOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/bankinfo')
 @Controller('hris/bankinfo')
 export class BankinfoController {
@@ -39,7 +45,7 @@ export class BankinfoController {
   }
 
   @ApiOperation({
-    operationId: 'getBankinfos',
+    operationId: 'listHrisBankinfo', // Updated operationId
     summary: 'List a batch of Bankinfos',
   })
   @ApiHeader({
@@ -48,7 +54,7 @@ export class BankinfoController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedBankInfoOutput)
+  @ApiPaginatedResponse(UnifiedHrisBankinfoOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getBankinfos(
@@ -75,7 +81,7 @@ export class BankinfoController {
   }
 
   @ApiOperation({
-    operationId: 'getBankinfo',
+    operationId: 'retrieveHrisBankinfo', // Updated operationId
     summary: 'Retrieve a Bankinfo',
     description: 'Retrieve a bankinfo from any connected Hris software',
   })
@@ -97,7 +103,7 @@ export class BankinfoController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedBankInfoOutput)
+  @ApiGetCustomResponse(UnifiedHrisBankinfoOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

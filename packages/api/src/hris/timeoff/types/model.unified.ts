@@ -1,3 +1,3 @@
-export class UnifiedTimeoffInput {}
+export class UnifiedHrisTimeoffInput {}
 
-export class UnifiedTimeoffOutput extends UnifiedTimeoffInput {}
+export class UnifiedHrisTimeoffOutput extends UnifiedHrisTimeoffInput {}

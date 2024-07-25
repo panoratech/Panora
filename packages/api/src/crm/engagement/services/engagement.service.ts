@@ -11,8 +11,8 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { IEngagementService } from '../types';
 import {
-  UnifiedEngagementInput,
-  UnifiedEngagementOutput,
+  UnifiedCrmEngagementInput,
+  UnifiedCrmEngagementOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 
@@ -31,12 +31,12 @@ export class EngagementService {
   }
 
   async addEngagement(
-    unifiedEngagementData: UnifiedEngagementInput,
+    unifiedEngagementData: UnifiedCrmEngagementInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedEngagementOutput> {
+  ): Promise<UnifiedCrmEngagementOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateCompanyId(unifiedEngagementData.company_id);
@@ -51,7 +51,7 @@ export class EngagementService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedEngagementInput>({
+        await this.coreUnification.desunify<UnifiedCrmEngagementInput>({
           sourceObject: unifiedEngagementData,
           targetType: CrmObject.engagement,
           providerName: integrationId,
@@ -80,7 +80,7 @@ export class EngagementService {
         extraParams: {
           engagement_type: unifiedEngagementData.type.toUpperCase(),
         },
-      })) as UnifiedEngagementOutput[];
+      })) as UnifiedCrmEngagementOutput[];
 
       const source_engagement = resp.data;
       const target_engagement = unifiedObject[0];
@@ -186,7 +186,7 @@ export class EngagementService {
   }
 
   async saveOrUpdateEngagement(
-    engagement: UnifiedEngagementOutput,
+    engagement: UnifiedCrmEngagementOutput,
     connection_id: string,
   ): Promise<string> {
     const existingEngagement = await this.prisma.crm_engagements.findFirst({
@@ -228,7 +228,7 @@ export class EngagementService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedEngagementOutput> {
+  ): Promise<UnifiedCrmEngagementOutput> {
     try {
       const engagement = await this.prisma.crm_engagements.findUnique({
         where: {
@@ -259,8 +259,8 @@ export class EngagementService {
         [key]: value,
       }));
 
-      // Transform to UnifiedEngagementOutput format
-      const unifiedEngagement: UnifiedEngagementOutput = {
+      // Transform to UnifiedCrmEngagementOutput format
+      const unifiedEngagement: UnifiedCrmEngagementOutput = {
         id: engagement.id_crm_engagement,
         content: engagement.content,
         direction: engagement.direction,
@@ -277,7 +277,7 @@ export class EngagementService {
         contacts: engagement.contacts,
       };
 
-      let res: UnifiedEngagementOutput = {
+      let res: UnifiedCrmEngagementOutput = {
         ...unifiedEngagement,
       };
 
@@ -323,7 +323,7 @@ export class EngagementService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedEngagementOutput[];
+    data: UnifiedCrmEngagementOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -369,7 +369,7 @@ export class EngagementService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedEngagements: UnifiedEngagementOutput[] = await Promise.all(
+      const unifiedEngagements: UnifiedCrmEngagementOutput[] = await Promise.all(
         engagements.map(async (engagement) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -395,7 +395,7 @@ export class EngagementService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedEngagementOutput format
+          // Transform to UnifiedCrmEngagementOutput format
           return {
             id: engagement.id_crm_engagement,
             content: engagement.content,
@@ -415,10 +415,10 @@ export class EngagementService {
         }),
       );
 
-      let res: UnifiedEngagementOutput[] = unifiedEngagements;
+      let res: UnifiedCrmEngagementOutput[] = unifiedEngagements;
 
       if (remote_data) {
-        const remote_array_data: UnifiedEngagementOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmEngagementOutput[] = await Promise.all(
           res.map(async (engagement) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedOfficeOutput } from '../types/model.unified';
+import { UnifiedAtsOfficeOutput } from '../types/model.unified';
 
 @Injectable()
 export class OfficeService {
@@ -15,7 +15,7 @@ export class OfficeService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedOfficeOutput> {
+  ): Promise<UnifiedAtsOfficeOutput> {
     try {
       const office = await this.prisma.ats_offices.findUnique({
         where: {
@@ -51,8 +51,8 @@ export class OfficeService {
         [key]: value,
       }));
 
-      // Transform to UnifiedOfficeOutput format
-      const unifiedOffice: UnifiedOfficeOutput = {
+      // Transform to UnifiedAtsOfficeOutput format
+      const unifiedOffice: UnifiedAtsOfficeOutput = {
         id: office.id_ats_office,
         name: office.name,
         location: office.location,
@@ -62,7 +62,7 @@ export class OfficeService {
         modified_at: office.modified_at,
       };
 
-      let res: UnifiedOfficeOutput = unifiedOffice;
+      let res: UnifiedAtsOfficeOutput = unifiedOffice;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -104,7 +104,7 @@ export class OfficeService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedOfficeOutput[];
+    data: UnifiedAtsOfficeOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -150,7 +150,7 @@ export class OfficeService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedOffices: UnifiedOfficeOutput[] = await Promise.all(
+      const unifiedOffices: UnifiedAtsOfficeOutput[] = await Promise.all(
         offices.map(async (office) => {
           // Fetch field mappings for the office
           const values = await this.prisma.value.findMany({
@@ -179,7 +179,7 @@ export class OfficeService {
             }),
           );
 
-          // Transform to UnifiedOfficeOutput format
+          // Transform to UnifiedAtsOfficeOutput format
           return {
             id: office.id_ats_office,
             name: office.name,
@@ -192,10 +192,10 @@ export class OfficeService {
         }),
       );
 
-      let res: UnifiedOfficeOutput[] = unifiedOffices;
+      let res: UnifiedAtsOfficeOutput[] = unifiedOffices;
 
       if (remote_data) {
-        const remote_array_data: UnifiedOfficeOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsOfficeOutput[] = await Promise.all(
           res.map(async (office) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

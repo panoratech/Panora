@@ -17,14 +17,15 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { StageService } from './services/stage.service';
-import { UnifiedStageOutput } from './types/model.unified';
+import { UnifiedCrmStageOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/stages')
 @Controller('crm/stages')
 export class StageController {
@@ -37,7 +38,7 @@ export class StageController {
   }
 
   @ApiOperation({
-    operationId: 'getStages',
+    operationId: 'listCrmStages',
     summary: 'List a batch of Stages',
   })
   @ApiHeader({
@@ -46,7 +47,7 @@ export class StageController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedStageOutput)
+  @ApiPaginatedResponse(UnifiedCrmStageOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -74,7 +75,7 @@ export class StageController {
   }
 
   @ApiOperation({
-    operationId: 'getStage',
+    operationId: 'retrieveCrmStage',
     summary: 'Retrieve a Stage',
     description: 'Retrieve a stage from any connected Crm software',
   })
@@ -96,7 +97,7 @@ export class StageController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedStageOutput)
+  @ApiGetCustomResponse(UnifiedCrmStageOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

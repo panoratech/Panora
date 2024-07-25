@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedGroupOutput } from '../types/model.unified';
+import { UnifiedFilestorageGroupOutput } from '../types/model.unified';
 
 @Injectable()
 export class GroupService {
@@ -14,7 +14,7 @@ export class GroupService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedGroupOutput> {
+  ): Promise<UnifiedFilestorageGroupOutput> {
     try {
       const group = await this.prisma.fs_groups.findUnique({
         where: {
@@ -65,8 +65,8 @@ export class GroupService {
         usersArray = await Promise.all(fetchedUsers);
       }
 
-      // Transform to UnifiedGroupOutput format
-      const unifiedGroup: UnifiedGroupOutput = {
+      // Transform to UnifiedFilestorageGroupOutput format
+      const unifiedGroup: UnifiedFilestorageGroupOutput = {
         id: group.id_fs_group,
         name: group.name,
         users: usersArray,
@@ -77,7 +77,7 @@ export class GroupService {
         modified_at: group.modified_at,
       };
 
-      let res: UnifiedGroupOutput = unifiedGroup;
+      let res: UnifiedFilestorageGroupOutput = unifiedGroup;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -119,7 +119,7 @@ export class GroupService {
     remote_data?: any,
     cursor?: string,
   ): Promise<{
-    data: UnifiedGroupOutput[];
+    data: UnifiedFilestorageGroupOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -165,7 +165,7 @@ export class GroupService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedGroups: UnifiedGroupOutput[] = await Promise.all(
+      const unifiedGroups: UnifiedFilestorageGroupOutput[] = await Promise.all(
         groups.map(async (group) => {
           // Fetch field mappings for the group
           const values = await this.prisma.value.findMany({
@@ -209,7 +209,7 @@ export class GroupService {
             usersArray = await Promise.all(fetchedUsers);
           }
 
-          // Transform to UnifiedGroupOutput format
+          // Transform to UnifiedFilestorageGroupOutput format
           return {
             id: group.id_fs_group,
             name: group.name,
@@ -223,10 +223,10 @@ export class GroupService {
         }),
       );
 
-      let res: UnifiedGroupOutput[] = unifiedGroups;
+      let res: UnifiedFilestorageGroupOutput[] = unifiedGroups;
 
       if (remote_data) {
-        const remote_array_data: UnifiedGroupOutput[] = await Promise.all(
+        const remote_array_data: UnifiedFilestorageGroupOutput[] = await Promise.all(
           res.map(async (group) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

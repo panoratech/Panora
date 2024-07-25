@@ -12,7 +12,7 @@ import { tcg_collections as TicketingCollection } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ICollectionService } from '../types';
-import { UnifiedCollectionOutput } from '../types/model.unified';
+import { UnifiedTicketingCollectionOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -103,7 +103,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedCollectionOutput,
+        UnifiedTicketingCollectionOutput,
         OriginalCollectionOutput,
         ICollectionService
       >(integrationId, linkedUserId, 'ticketing', 'collection', service, []);
@@ -115,7 +115,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedCollectionOutput[],
+    data: UnifiedTicketingCollectionOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     id_ticket?: string,
@@ -124,7 +124,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const collections_results: TicketingCollection[] = [];
 
       const updateOrCreateCollection = async (
-        collection: UnifiedCollectionOutput,
+        collection: UnifiedTicketingCollectionOutput,
         originId: string,
         connection_id: string,
         id_ticket?: string,

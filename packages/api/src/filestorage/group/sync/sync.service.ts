@@ -9,7 +9,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { ApiResponse } from '@@core/utils/types';
 import { IGroupService } from '../types';
-import { UnifiedGroupOutput } from '../types/model.unified';
+import { UnifiedFilestorageGroupOutput } from '../types/model.unified';
 import { fs_groups as FileStorageGroup } from '@prisma/client';
 import { FILESTORAGE_PROVIDERS } from '@panora/shared';
 import { FileStorageObject } from '@filestorage/@lib/@types';
@@ -106,7 +106,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedGroupOutput,
+        UnifiedFilestorageGroupOutput,
         OriginalGroupOutput,
         IGroupService
       >(integrationId, linkedUserId, 'filestorage', 'group', service, []);
@@ -118,7 +118,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    groups: UnifiedGroupOutput[],
+    groups: UnifiedFilestorageGroupOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<FileStorageGroup[]> {
@@ -126,7 +126,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const groups_results: FileStorageGroup[] = [];
 
       const updateOrCreateGroup = async (
-        group: UnifiedGroupOutput,
+        group: UnifiedFilestorageGroupOutput,
         originId: string,
       ) => {
         const existingGroup = await this.prisma.fs_groups.findFirst({

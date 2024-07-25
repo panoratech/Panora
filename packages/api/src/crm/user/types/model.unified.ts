@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class UnifiedUserInput {
+export class UnifiedCrmUserInput {
   @ApiProperty({ type: String, description: 'The name of the user' })
   @IsString()
   name: string;
@@ -19,7 +19,7 @@ export class UnifiedUserInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedUserOutput extends UnifiedUserInput {
+export class UnifiedCrmUserOutput extends UnifiedCrmUserInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the user' })
   @IsUUID()
   @IsOptional()

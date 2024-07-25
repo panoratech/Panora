@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedFolderInput, UnifiedFolderOutput } from './model.unified';
+import { UnifiedFilestorageFolderInput, UnifiedFilestorageFolderOutput } from './model.unified';
 import { OriginalFolderOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface IFolderService extends IBaseObjectService {
 
 export interface IFolderMapper {
   desunify(
-    source: UnifiedFolderInput,
+    source: UnifiedFilestorageFolderInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface IFolderMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedFolderOutput | UnifiedFolderOutput[]>;
+  ): Promise<UnifiedFilestorageFolderOutput | UnifiedFilestorageFolderOutput[]>;
 }

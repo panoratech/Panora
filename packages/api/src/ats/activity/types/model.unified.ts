@@ -10,7 +10,7 @@ import {
 export type ActivityType = 'NOTE' | 'EMAIL' | 'OTHER';
 export type ActivityVisibility = 'ADMIN_ONLY' | 'PUBLIC' | 'PRIVATE';
 
-export class UnifiedActivityInput {
+export class UnifiedAtsActivityInput {
   @ApiPropertyOptional({ type: String, description: 'The type of activity' })
   @IsIn(['NOTE', 'EMAIL', 'OTHER'])
   @IsOptional()
@@ -66,7 +66,7 @@ export class UnifiedActivityInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedActivityOutput extends UnifiedActivityInput {
+export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the activity',

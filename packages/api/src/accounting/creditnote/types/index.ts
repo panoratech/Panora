@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedCreditNoteInput,
-  UnifiedCreditNoteOutput,
+  UnifiedAccountingCreditnoteInput,
+  UnifiedAccountingCreditnoteOutput,
 } from './model.unified';
 import { OriginalCreditNoteOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface ICreditNoteService {
 
 export interface ICreditNoteMapper {
   desunify(
-    source: UnifiedCreditNoteInput,
+    source: UnifiedAccountingCreditnoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface ICreditNoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCreditNoteOutput | UnifiedCreditNoteOutput[]>;
+  ): Promise<UnifiedAccountingCreditnoteOutput | UnifiedAccountingCreditnoteOutput[]>;
 }

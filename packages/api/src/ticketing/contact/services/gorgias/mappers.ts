@@ -1,8 +1,8 @@
 import { IContactMapper } from '@ticketing/contact/types';
 import { GorgiasContactInput, GorgiasContactOutput } from './types';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedTicketingContactInput,
+  UnifiedTicketingContactOutput,
 } from '@ticketing/contact/types/model.unified';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
@@ -19,7 +19,7 @@ export class GorgiasContactMapper implements IContactMapper {
     );
   }
   desunify(
-    source: UnifiedContactInput,
+    source: UnifiedTicketingContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -35,7 +35,7 @@ export class GorgiasContactMapper implements IContactMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): UnifiedTicketingContactOutput | UnifiedTicketingContactOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
@@ -55,8 +55,8 @@ export class GorgiasContactMapper implements IContactMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput {
-    const unifiedContact: UnifiedContactOutput = {
+  ): UnifiedTicketingContactOutput {
+    const unifiedContact: UnifiedTicketingContactOutput = {
       remote_id: String(contact.id),
       remote_data: contact,
       name: contact.name,

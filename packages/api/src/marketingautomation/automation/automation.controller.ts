@@ -17,17 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { AutomationService } from './services/automation.service';
 import {
-  UnifiedAutomationInput,
-  UnifiedAutomationOutput,
+  UnifiedMarketingautomationAutomationInput,
+  UnifiedMarketingautomationAutomationOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/automation')
 @Controller('marketingautomation/automation')
 export class AutomationController {
@@ -40,7 +47,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'getAutomations',
+    operationId: 'listMarketingautomationAutomation',
     summary: 'List a batch of Automations',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class AutomationController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAutomationOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationAutomationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getAutomations(
@@ -76,7 +83,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'getAutomation',
+    operationId: 'retrieveMarketingautomationAutomation',
     summary: 'Retrieve a Automation',
     description:
       'Retrieve a automation from any connected Marketingautomation software',
@@ -100,7 +107,7 @@ export class AutomationController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAutomationOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationAutomationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -121,7 +128,7 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'addAutomation',
+    operationId: 'createMarketingautomationAutomation',
     summary: 'Create a Automation',
     description:
       'Create a automation in any supported Marketingautomation software',
@@ -139,12 +146,12 @@ export class AutomationController {
     description:
       'Set to true to include data from the original Marketingautomation software.',
   })
-  @ApiBody({ type: UnifiedAutomationInput })
-  @ApiCustomResponse(UnifiedAutomationOutput)
+  @ApiBody({ type: UnifiedMarketingautomationAutomationInput })
+  @ApiPostCustomResponse(UnifiedMarketingautomationAutomationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addAutomation(
-    @Body() unifiedAutomationData: UnifiedAutomationInput,
+    @Body() unifiedAutomationData: UnifiedMarketingautomationAutomationInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

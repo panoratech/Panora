@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@panora/shared": "^1.4.0",
-    "@panora/typescript-sdk": "^1.0.3",
     "@radix-ui/react-label": "^2.0.2",
     "react-hook-form": "^7.51.2",
     "@hookform/resolvers": "^3.3.4",

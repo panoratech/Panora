@@ -3,8 +3,8 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Injectable } from '@nestjs/common';
 import {
-  UnifiedAccountInput,
-  UnifiedAccountOutput,
+  UnifiedAccountingAccountInput,
+  UnifiedAccountingAccountOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -23,11 +23,11 @@ export class AccountService {
   }
 
   async addAccount(
-    unifiedAccountData: UnifiedAccountInput,
+    unifiedAccountData: UnifiedAccountingAccountInput,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAccountOutput> {
+  ): Promise<UnifiedAccountingAccountOutput> {
     return;
   }
 
@@ -36,7 +36,7 @@ export class AccountService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAccountOutput> {
+  ): Promise<UnifiedAccountingAccountOutput> {
     return;
   }
 
@@ -47,7 +47,7 @@ export class AccountService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedAccountOutput[]> {
+  ): Promise<UnifiedAccountingAccountOutput[]> {
     return;
   }
 }

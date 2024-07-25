@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { UnifiedTagOutput } from '../types/model.unified';
+import { UnifiedAtsTagOutput } from '../types/model.unified';
 import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class TagService {
@@ -14,7 +14,7 @@ export class TagService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTagOutput> {
+  ): Promise<UnifiedAtsTagOutput> {
     try {
       const tag = await this.prisma.ats_candidate_tags.findUnique({
         where: {
@@ -50,8 +50,8 @@ export class TagService {
         [key]: value,
       }));
 
-      // Transform to UnifiedTagOutput format
-      const unifiedTag: UnifiedTagOutput = {
+      // Transform to UnifiedAtsTagOutput format
+      const unifiedTag: UnifiedAtsTagOutput = {
         id: tag.id_ats_candidate_tag,
         name: tag.name,
         field_mappings: field_mappings,
@@ -60,7 +60,7 @@ export class TagService {
         modified_at: String(tag.modified_at),
       };
 
-      let res: UnifiedTagOutput = unifiedTag;
+      let res: UnifiedAtsTagOutput = unifiedTag;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -102,7 +102,7 @@ export class TagService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedTagOutput[];
+    data: UnifiedAtsTagOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -148,7 +148,7 @@ export class TagService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedTags: UnifiedTagOutput[] = await Promise.all(
+      const unifiedTags: UnifiedAtsTagOutput[] = await Promise.all(
         tags.map(async (tag) => {
           // Fetch field mappings for the tag
           const values = await this.prisma.value.findMany({
@@ -177,7 +177,7 @@ export class TagService {
             }),
           );
 
-          // Transform to UnifiedTagOutput format
+          // Transform to UnifiedAtsTagOutput format
           return {
             id: tag.id_ats_candidate_tag,
             name: tag.name,
@@ -191,10 +191,10 @@ export class TagService {
         }),
       );
 
-      let res: UnifiedTagOutput[] = unifiedTags;
+      let res: UnifiedAtsTagOutput[] = unifiedTags;
 
       if (remote_data) {
-        const remote_array_data: UnifiedTagOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsTagOutput[] = await Promise.all(
           res.map(async (tag) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

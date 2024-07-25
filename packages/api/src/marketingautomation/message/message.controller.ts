@@ -17,17 +17,23 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { MessageService } from './services/message.service';
 import {
-  UnifiedMessageInput,
-  UnifiedMessageOutput,
+  UnifiedMarketingautomationMessageInput,
+  UnifiedMarketingautomationMessageOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/message')
 @Controller('marketingautomation/message')
 export class MessageController {
@@ -40,7 +46,7 @@ export class MessageController {
   }
 
   @ApiOperation({
-    operationId: 'getMessages',
+    operationId: 'listMarketingautomationMessages',
     summary: 'List a batch of Messages',
   })
   @ApiHeader({
@@ -49,7 +55,7 @@ export class MessageController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedMessageOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationMessageOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getMessages(
@@ -76,7 +82,7 @@ export class MessageController {
   }
 
   @ApiOperation({
-    operationId: 'getMessage',
+    operationId: 'retrieveMarketingautomationMessage',
     summary: 'Retrieve a Message',
     description:
       'Retrieve a message from any connected Marketingautomation software',
@@ -100,7 +106,7 @@ export class MessageController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedMessageOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationMessageOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

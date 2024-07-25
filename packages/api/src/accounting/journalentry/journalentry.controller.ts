@@ -17,17 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { JournalEntryService } from './services/journalentry.service';
 import {
-  UnifiedJournalEntryInput,
-  UnifiedJournalEntryOutput,
+  UnifiedAccountingJournalentryInput,
+  UnifiedAccountingJournalentryOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/journalentry')
 @Controller('accounting/journalentry')
 export class JournalEntryController {
@@ -40,7 +47,7 @@ export class JournalEntryController {
   }
 
   @ApiOperation({
-    operationId: 'getJournalEntrys',
+    operationId: 'listAccountingJournalEntry',
     summary: 'List a batch of JournalEntrys',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class JournalEntryController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedJournalEntryOutput)
+  @ApiPaginatedResponse(UnifiedAccountingJournalentryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getJournalEntrys(
@@ -76,7 +83,7 @@ export class JournalEntryController {
   }
 
   @ApiOperation({
-    operationId: 'getJournalEntry',
+    operationId: 'retrieveAccountingJournalEntry',
     summary: 'Retrieve a JournalEntry',
     description:
       'Retrieve a journalentry from any connected Accounting software',
@@ -100,7 +107,7 @@ export class JournalEntryController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedJournalEntryOutput)
+  @ApiGetCustomResponse(UnifiedAccountingJournalentryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -121,7 +128,7 @@ export class JournalEntryController {
   }
 
   @ApiOperation({
-    operationId: 'addJournalEntry',
+    operationId: 'createAccountingJournalEntry',
     summary: 'Create a JournalEntry',
     description: 'Create a journalentry in any supported Accounting software',
   })
@@ -138,12 +145,12 @@ export class JournalEntryController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedJournalEntryInput })
-  @ApiCustomResponse(UnifiedJournalEntryOutput)
+  @ApiBody({ type: UnifiedAccountingJournalentryInput })
+  @ApiPostCustomResponse(UnifiedAccountingJournalentryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addJournalEntry(
-    @Body() unifiedJournalEntryData: UnifiedJournalEntryInput,
+    @Body() unifiedJournalEntryData: UnifiedAccountingJournalentryInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

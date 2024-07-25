@@ -1,0 +1,26 @@
+---
+title: "Gitlab"
+description: ""
+---
+
+# Common Objects
+
+ | Unified Model | Supported                           | Provider Endpoints                           |
+| -------- | ------------------------------------- | ------------------------------------- |
+| Account      | No 🚫 |  |
+| Attachment      | No 🚫  | Coming Soon |
+| Collection   | Yes ✅ | /projects?membership=true | 
+| Comment   | Yes ✅| /projects/:remote_collection_id/issues/:remote_ticket_id/notes | 
+| Contact   | No 🚫|  |
+| Tag   | Yes ✅|  [/groups/:group.id/labels, /groups] | 
+| Team   | No 🚫|  | 
+| Ticket   | Yes ✅ | [/projects/:remote_collection_id/issues , /issues?scope=created_by_me&scope=assigned_to_me , /projects/:remote_collection_id/issues/:remote_ticket_id/notes]  |
+| User   | Yes ✅| [/groups , /groups/:group.id/members] |
+
+
+
+
+| Features | Supported                           |
+| -------- | ------------------------------------- |
+| Scopes     |api read_api read_user create_runner k8s_proxy read_repository write_repository sudo admin_mode read_service_ping openid profile email|
+| Realtime webhook     | No 🚫|

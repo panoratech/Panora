@@ -17,17 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { AttachmentService } from './services/attachment.service';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAccountingAttachmentInput,
+  UnifiedAccountingAttachmentOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/attachment')
 @Controller('accounting/attachment')
 export class AttachmentController {
@@ -40,7 +47,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAttachments',
+    operationId: 'listAccountingAttachments',
     summary: 'List a batch of Attachments',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class AttachmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @ApiPaginatedResponse(UnifiedAccountingAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getAttachments(
@@ -76,7 +83,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAttachment',
+    operationId: 'retrieveAccountingAttachment',
     summary: 'Retrieve a Attachment',
     description: 'Retrieve a attachment from any connected Accounting software',
   })
@@ -99,7 +106,7 @@ export class AttachmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @ApiGetCustomResponse(UnifiedAccountingAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -120,7 +127,7 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'addAccountingAttachment',
+    operationId: 'createAccountingAttachment',
     summary: 'Create a Attachment',
     description: 'Create a attachment in any supported Accounting software',
   })
@@ -137,12 +144,12 @@ export class AttachmentController {
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedAttachmentInput })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @ApiBody({ type: UnifiedAccountingAttachmentInput })
+  @ApiPostCustomResponse(UnifiedAccountingAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addAttachment(
-    @Body() unifiedAttachmentData: UnifiedAttachmentInput,
+    @Body() unifiedAttachmentData: UnifiedAccountingAttachmentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

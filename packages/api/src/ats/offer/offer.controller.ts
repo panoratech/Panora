@@ -17,14 +17,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { OfferService } from './services/offer.service';
-import { UnifiedOfferInput, UnifiedOfferOutput } from './types/model.unified';
+import {
+  UnifiedAtsOfferInput,
+  UnifiedAtsOfferOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/offer')
 @Controller('ats/offer')
 export class OfferController {
@@ -37,7 +43,7 @@ export class OfferController {
   }
 
   @ApiOperation({
-    operationId: 'getOffers',
+    operationId: 'listAtsOffer',
     summary: 'List a batch of Offers',
   })
   @ApiHeader({
@@ -46,7 +52,7 @@ export class OfferController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedOfferOutput)
+  @ApiPaginatedResponse(UnifiedAtsOfferOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getOffers(
@@ -73,7 +79,7 @@ export class OfferController {
   }
 
   @ApiOperation({
-    operationId: 'getOffer',
+    operationId: 'retrieveAtsOffer',
     summary: 'Retrieve a Offer',
     description: 'Retrieve a offer from any connected Ats software',
   })
@@ -95,7 +101,7 @@ export class OfferController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedOfferOutput)
+  @ApiGetCustomResponse(UnifiedAtsOfferOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

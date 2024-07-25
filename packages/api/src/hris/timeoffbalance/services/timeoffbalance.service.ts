@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedTimeoffBalanceInput,
-  UnifiedTimeoffBalanceOutput,
+  UnifiedHrisTimeoffbalanceInput,
+  UnifiedHrisTimeoffbalanceOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -33,7 +33,7 @@ export class TimeoffBalanceService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTimeoffBalanceOutput> {
+  ): Promise<UnifiedHrisTimeoffbalanceOutput> {
     return;
   }
 
@@ -44,7 +44,7 @@ export class TimeoffBalanceService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedTimeoffBalanceOutput[]> {
+  ): Promise<UnifiedHrisTimeoffbalanceOutput[]> {
     return;
   }
 }

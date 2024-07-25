@@ -1,3 +1,3 @@
-export class UnifiedPayrollRunInput {}
+export class UnifiedHrisPayrollrunInput {}
 
-export class UnifiedPayrollRunOutput extends UnifiedPayrollRunInput {}
+export class UnifiedHrisPayrollrunOutput extends UnifiedHrisPayrollrunInput {}

@@ -1,0 +1,11 @@
+---
+title: "2. Metadata"
+description: "We welcome all contributions to Panora; from small UI enhancements to brand new integrations. We love seeing community members level up and give people power-ups!"
+icon: "star"
+---
+
+# Ensure 3rd party metadata is set
+
+Look into the `packages/shared/src/connectors/metadata.ts` [file](https://github.com/panoratech/Panora/blob/main/packages/shared/src/connectors/metadata.ts) and check if the provider you want to build has its metadata set inside the `CONNECTORS_METADATA` object.
+
+It should be available (if not [contact us](https://app.cal.com/rflih/30)) with `active` field set to `false` meaning the integration has not been built.

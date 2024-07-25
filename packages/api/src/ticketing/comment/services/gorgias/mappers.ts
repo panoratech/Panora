@@ -4,11 +4,11 @@ import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.t
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedTicketingAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { ICommentMapper } from '@ticketing/comment/types';
 import {
-  UnifiedCommentInput,
-  UnifiedCommentOutput,
+  UnifiedTicketingCommentInput,
+  UnifiedTicketingCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { GorgiasCommentInput, GorgiasCommentOutput } from './types';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
@@ -31,7 +31,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
   }
 
   async desunify(
-    source: UnifiedCommentInput,
+    source: UnifiedTicketingCommentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -94,7 +94,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
+  ): Promise<UnifiedTicketingCommentOutput | UnifiedTicketingCommentOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleCommentToUnified(
         source,
@@ -120,7 +120,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCommentOutput> {
+  ): Promise<UnifiedTicketingCommentOutput> {
     let opts: any = {};
 
     if (comment.attachments && comment.attachments.length > 0) {
@@ -133,7 +133,7 @@ export class GorgiasCommentMapper implements ICommentMapper {
         vertical: 'ticketing',
         connectionId: connectionId,
         customFieldMappings: [],
-      })) as UnifiedAttachmentOutput[];
+      })) as UnifiedTicketingAttachmentOutput[];
       opts = {
         ...opts,
         attachments: attachments,

@@ -17,17 +17,23 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { DepartmentService } from './services/department.service';
 import {
-  UnifiedDepartmentInput,
-  UnifiedDepartmentOutput,
+  UnifiedAtsDepartmentInput,
+  UnifiedAtsDepartmentOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/department')
 @Controller('ats/department')
 export class DepartmentController {
@@ -40,7 +46,7 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'getDepartments',
+    operationId: 'listAtsDepartments',
     summary: 'List a batch of Departments',
   })
   @ApiHeader({
@@ -49,7 +55,7 @@ export class DepartmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDepartmentOutput)
+  @ApiPaginatedResponse(UnifiedAtsDepartmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getDepartments(
@@ -76,7 +82,7 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'getDepartment',
+    operationId: 'retrieveAtsDepartment',
     summary: 'Retrieve a Department',
     description: 'Retrieve a department from any connected Ats software',
   })
@@ -98,7 +104,7 @@ export class DepartmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDepartmentOutput)
+  @ApiGetCustomResponse(UnifiedAtsDepartmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedTicketingAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export type CommentCreatorType = 'USER' | 'CONTACT';
 
-export class UnifiedCommentInput {
+export class UnifiedTicketingCommentInput {
   @ApiProperty({ type: String, description: 'The body of the comment' })
   @IsString()
   body: string;
@@ -67,10 +67,10 @@ export class UnifiedCommentInput {
     description: 'The attachements UUIDs tied to the comment',
   })
   @IsOptional()
-  attachments?: (string | UnifiedAttachmentOutput)[]; //UUIDs of Attachments objects
+  attachments?: (string | UnifiedTicketingAttachmentOutput)[]; //UUIDs of Attachments objects
 }
 
-export class UnifiedCommentOutput extends UnifiedCommentInput {
+export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the comment' })
   @IsUUID()
   @IsOptional()

@@ -36,14 +36,6 @@ export class PipedriveService implements IEngagementService {
           vertical: 'crm',
         },
       });
-      console.log(
-        'req is ' +
-          connection.account_url +
-          ' data is ' +
-          JSON.stringify(engagementData) +
-          ' token is ' +
-          this.cryptoService.decrypt(connection.access_token),
-      );
       const resp = await axios.post(
         `${connection.account_url}/activities`,
         JSON.stringify(engagementData),

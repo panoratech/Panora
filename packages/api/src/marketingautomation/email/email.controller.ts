@@ -17,14 +17,23 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EmailService } from './services/email.service';
-import { UnifiedEmailInput, UnifiedEmailOutput } from './types/model.unified';
+import {
+  UnifiedMarketingautomationEmailInput,
+  UnifiedMarketingautomationEmailOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/email')
 @Controller('marketingautomation/email')
 export class EmailController {
@@ -37,7 +46,7 @@ export class EmailController {
   }
 
   @ApiOperation({
-    operationId: 'getEmails',
+    operationId: 'listMarketingautomationEmails',
     summary: 'List a batch of Emails',
   })
   @ApiHeader({
@@ -46,7 +55,7 @@ export class EmailController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmailOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationEmailOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEmails(
@@ -73,7 +82,7 @@ export class EmailController {
   }
 
   @ApiOperation({
-    operationId: 'getEmail',
+    operationId: 'retrieveMarketingautomationEmail',
     summary: 'Retrieve a Email',
     description:
       'Retrieve a email from any connected Marketingautomation software',
@@ -97,7 +106,7 @@ export class EmailController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmailOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationEmailOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

@@ -15,14 +15,19 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
 import { DriveService } from './services/drive.service';
-import { UnifiedDriveOutput } from './types/model.unified';
+import { UnifiedFilestorageDriveOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('filestorage/drives')
 @Controller('filestorage/drives')
 export class DriveController {
@@ -35,7 +40,7 @@ export class DriveController {
   }
 
   @ApiOperation({
-    operationId: 'getDrives',
+    operationId: 'listFilestorageDrives',
     summary: 'List a batch of Drives',
   })
   @ApiHeader({
@@ -44,7 +49,7 @@ export class DriveController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDriveOutput)
+  @ApiPaginatedResponse(UnifiedFilestorageDriveOutput)
   @UseGuards(ApiKeyAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
@@ -73,7 +78,7 @@ export class DriveController {
   }
 
   @ApiOperation({
-    operationId: 'getDrive',
+    operationId: 'retrieveFilestorageDrive',
     summary: 'Retrieve a Drive',
     description: 'Retrieve a drive from any connected Filestorage software',
   })
@@ -96,7 +101,7 @@ export class DriveController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDriveOutput)
+  @ApiGetCustomResponse(UnifiedFilestorageDriveOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

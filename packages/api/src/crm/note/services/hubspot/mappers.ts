@@ -2,8 +2,8 @@ import { MappersRegistry } from '@@core/@core-services/registries/mappers.regist
 import { Utils } from '@crm/@lib/@utils';
 import { INoteMapper } from '@crm/note/types';
 import {
-  UnifiedNoteInput,
-  UnifiedNoteOutput,
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
 } from '@crm/note/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { HubspotNoteInput, HubspotNoteOutput } from './types';
@@ -14,7 +14,7 @@ export class HubspotNoteMapper implements INoteMapper {
     this.mappersRegistry.registerService('crm', 'note', 'hubspot', this);
   }
   async desunify(
-    source: UnifiedNoteInput,
+    source: UnifiedCrmNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -100,7 +100,7 @@ export class HubspotNoteMapper implements INoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
+  ): Promise<UnifiedCrmNoteOutput | UnifiedCrmNoteOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleNoteToUnified(
         source,
@@ -123,7 +123,7 @@ export class HubspotNoteMapper implements INoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput> {
+  ): Promise<UnifiedCrmNoteOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

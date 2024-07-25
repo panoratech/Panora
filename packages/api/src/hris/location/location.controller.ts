@@ -17,17 +17,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { LocationService } from './services/location.service';
 import {
-  UnifiedLocationInput,
-  UnifiedLocationOutput,
+  UnifiedHrisLocationInput,
+  UnifiedHrisLocationOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/location')
 @Controller('hris/location')
 export class LocationController {
@@ -40,7 +43,7 @@ export class LocationController {
   }
 
   @ApiOperation({
-    operationId: 'getLocations',
+    operationId: 'listHrisLocation',
     summary: 'List a batch of Locations',
   })
   @ApiHeader({
@@ -49,7 +52,7 @@ export class LocationController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedLocationOutput)
+  @ApiPaginatedResponse(UnifiedHrisLocationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getLocations(
@@ -76,7 +79,7 @@ export class LocationController {
   }
 
   @ApiOperation({
-    operationId: 'getLocation',
+    operationId: 'retrieveHrisLocation',
     summary: 'Retrieve a Location',
     description: 'Retrieve a location from any connected Hris software',
   })
@@ -98,7 +101,7 @@ export class LocationController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedLocationOutput)
+  @ApiGetCustomResponse(UnifiedHrisLocationOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

@@ -1,3 +1,3 @@
-export class UnifiedAttachmentInput {}
+export class UnifiedAccountingAttachmentInput {}
 
-export class UnifiedAttachmentOutput extends UnifiedAttachmentInput {}
+export class UnifiedAccountingAttachmentOutput extends UnifiedAccountingAttachmentInput {}

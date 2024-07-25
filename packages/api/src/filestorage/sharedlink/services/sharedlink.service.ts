@@ -5,7 +5,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedSharedLinkOutput } from '../types/model.unified';
+import { UnifiedFilestorageSharedlinkOutput } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class SharedLinkService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedSharedLinkOutput> {
+  ): Promise<UnifiedFilestorageSharedlinkOutput> {
     try {
       const sharedlink = await this.prisma.fs_shared_links.findUnique({
         where: {
@@ -58,8 +58,8 @@ export class SharedLinkService {
         [key]: value,
       }));
 
-      // Transform to UnifiedSharedLinkOutput format
-      const unifiedSharedLink: UnifiedSharedLinkOutput = {
+      // Transform to UnifiedFilestorageSharedlinkOutput format
+      const unifiedSharedLink: UnifiedFilestorageSharedlinkOutput = {
         id: sharedlink.id_fs_shared_link,
         url: sharedlink.url,
         download_url: sharedlink.download_url,
@@ -73,7 +73,7 @@ export class SharedLinkService {
         modified_at: sharedlink.modified_at,
       };
 
-      let res: UnifiedSharedLinkOutput = unifiedSharedLink;
+      let res: UnifiedFilestorageSharedlinkOutput = unifiedSharedLink;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -116,7 +116,7 @@ export class SharedLinkService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedSharedLinkOutput[];
+    data: UnifiedFilestorageSharedlinkOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -162,7 +162,7 @@ export class SharedLinkService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedSharedLinks: UnifiedSharedLinkOutput[] = await Promise.all(
+      const unifiedSharedLinks: UnifiedFilestorageSharedlinkOutput[] = await Promise.all(
         sharedlinks.map(async (sharedlink) => {
           // Fetch field mappings for the shared link
           const values = await this.prisma.value.findMany({
@@ -189,7 +189,7 @@ export class SharedLinkService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedSharedLinkOutput format
+          // Transform to UnifiedFilestorageSharedlinkOutput format
           return {
             id: sharedlink.id_fs_shared_link,
             url: sharedlink.url,
@@ -206,10 +206,10 @@ export class SharedLinkService {
         }),
       );
 
-      let res: UnifiedSharedLinkOutput[] = unifiedSharedLinks;
+      let res: UnifiedFilestorageSharedlinkOutput[] = unifiedSharedLinks;
 
       if (remote_data) {
-        const remote_array_data: UnifiedSharedLinkOutput[] = await Promise.all(
+        const remote_array_data: UnifiedFilestorageSharedlinkOutput[] = await Promise.all(
           res.map(async (sharedlink) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

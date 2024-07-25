@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedTaxRateInput,
-  UnifiedTaxRateOutput,
+  UnifiedAccountingTaxrateInput,
+  UnifiedAccountingTaxrateOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -33,7 +33,7 @@ export class TaxRateService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTaxRateOutput> {
+  ): Promise<UnifiedAccountingTaxrateOutput> {
     return;
   }
 
@@ -44,7 +44,7 @@ export class TaxRateService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedTaxRateOutput[]> {
+  ): Promise<UnifiedAccountingTaxrateOutput[]> {
     return;
   }
 }

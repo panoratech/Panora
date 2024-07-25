@@ -17,17 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EmployeeService } from './services/employee.service';
 import {
-  UnifiedEmployeeInput,
-  UnifiedEmployeeOutput,
+  UnifiedHrisEmployeeInput,
+  UnifiedHrisEmployeeOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/employee')
 @Controller('hris/employee')
 export class EmployeeController {
@@ -40,7 +47,7 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployees',
+    operationId: 'listHrisEmployee',
     summary: 'List a batch of Employees',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class EmployeeController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmployeeOutput)
+  @ApiPaginatedResponse(UnifiedHrisEmployeeOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEmployees(
@@ -76,9 +83,9 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployee',
-    summary: 'Retrieve a Employee',
-    description: 'Retrieve a employee from any connected Hris software',
+    operationId: 'retrieveHrisEmployee',
+    summary: 'Retrieve an Employee',
+    description: 'Retrieve an employee from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
@@ -98,7 +105,7 @@ export class EmployeeController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmployeeOutput)
+  @ApiGetCustomResponse(UnifiedHrisEmployeeOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -119,9 +126,9 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'addEmployee',
-    summary: 'Create a Employee',
-    description: 'Create a employee in any supported Hris software',
+    operationId: 'createHrisEmployee',
+    summary: 'Create an Employee',
+    description: 'Create an employee in any supported Hris software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -135,12 +142,12 @@ export class EmployeeController {
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
   })
-  @ApiBody({ type: UnifiedEmployeeInput })
-  @ApiCustomResponse(UnifiedEmployeeOutput)
+  @ApiBody({ type: UnifiedHrisEmployeeInput })
+  @ApiPostCustomResponse(UnifiedHrisEmployeeOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addEmployee(
-    @Body() unifiedEmployeeData: UnifiedEmployeeInput,
+    @Body() unifiedEmployeeData: UnifiedHrisEmployeeInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

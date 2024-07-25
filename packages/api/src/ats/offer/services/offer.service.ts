@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { OfferStatus, UnifiedOfferOutput } from '../types/model.unified';
+import { OfferStatus, UnifiedAtsOfferOutput } from '../types/model.unified';
 
 @Injectable()
 export class OfferService {
@@ -15,7 +15,7 @@ export class OfferService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedOfferOutput> {
+  ): Promise<UnifiedAtsOfferOutput> {
     try {
       const offer = await this.prisma.ats_offers.findUnique({
         where: {
@@ -51,8 +51,8 @@ export class OfferService {
         [key]: value,
       }));
 
-      // Transform to UnifiedOfferOutput format
-      const unifiedOffer: UnifiedOfferOutput = {
+      // Transform to UnifiedAtsOfferOutput format
+      const unifiedOffer: UnifiedAtsOfferOutput = {
         id: offer.id_ats_offer,
         created_by: offer.created_by,
         remote_created_at: String(offer.remote_created_at),
@@ -67,7 +67,7 @@ export class OfferService {
         modified_at: offer.modified_at,
       };
 
-      let res: UnifiedOfferOutput = unifiedOffer;
+      let res: UnifiedAtsOfferOutput = unifiedOffer;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -109,7 +109,7 @@ export class OfferService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedOfferOutput[];
+    data: UnifiedAtsOfferOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -154,7 +154,7 @@ export class OfferService {
       if (cursor) {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
-      const unifiedOffers: UnifiedOfferOutput[] = await Promise.all(
+      const unifiedOffers: UnifiedAtsOfferOutput[] = await Promise.all(
         offers.map(async (offer) => {
           // Fetch field mappings for the offer
           const values = await this.prisma.value.findMany({
@@ -183,7 +183,7 @@ export class OfferService {
             }),
           );
 
-          // Transform to UnifiedOfferOutput format
+          // Transform to UnifiedAtsOfferOutput format
           return {
             id: offer.id_ats_offer,
             created_by: offer.created_by,
@@ -201,10 +201,10 @@ export class OfferService {
         }),
       );
 
-      let res: UnifiedOfferOutput[] = unifiedOffers;
+      let res: UnifiedAtsOfferOutput[] = unifiedOffers;
 
       if (remote_data) {
-        const remote_array_data: UnifiedOfferOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsOfferOutput[] = await Promise.all(
           res.map(async (offer) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

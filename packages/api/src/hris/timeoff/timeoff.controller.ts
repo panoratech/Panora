@@ -17,17 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TimeoffService } from './services/timeoff.service';
 import {
-  UnifiedTimeoffInput,
-  UnifiedTimeoffOutput,
+  UnifiedHrisTimeoffInput,
+  UnifiedHrisTimeoffOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/timeoff')
 @Controller('hris/timeoff')
 export class TimeoffController {
@@ -40,7 +47,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoffs',
+    operationId: 'listHrisTimeoffs',
     summary: 'List a batch of Timeoffs',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class TimeoffController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTimeoffOutput)
+  @ApiPaginatedResponse(UnifiedHrisTimeoffOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTimeoffs(
@@ -76,7 +83,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoff',
+    operationId: 'retrieveHrisTimeoff',
     summary: 'Retrieve a Timeoff',
     description: 'Retrieve a timeoff from any connected Hris software',
   })
@@ -98,7 +105,7 @@ export class TimeoffController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTimeoffOutput)
+  @ApiGetCustomResponse(UnifiedHrisTimeoffOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -119,7 +126,7 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'addTimeoff',
+    operationId: 'createHrisTimeoff',
     summary: 'Create a Timeoff',
     description: 'Create a timeoff in any supported Hris software',
   })
@@ -135,12 +142,12 @@ export class TimeoffController {
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
   })
-  @ApiBody({ type: UnifiedTimeoffInput })
-  @ApiCustomResponse(UnifiedTimeoffOutput)
+  @ApiBody({ type: UnifiedHrisTimeoffInput })
+  @ApiPostCustomResponse(UnifiedHrisTimeoffOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addTimeoff(
-    @Body() unifiedTimeoffData: UnifiedTimeoffInput,
+    @Body() unifiedTimeoffData: UnifiedHrisTimeoffInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

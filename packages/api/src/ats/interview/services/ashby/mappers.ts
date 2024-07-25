@@ -1,8 +1,8 @@
 import { AshbyInterviewInput, AshbyInterviewOutput } from './types';
 import {
   InterviewStatus,
-  UnifiedInterviewInput,
-  UnifiedInterviewOutput,
+  UnifiedAtsInterviewInput,
+  UnifiedAtsInterviewOutput,
 } from '@ats/interview/types/model.unified';
 import { IInterviewMapper } from '@ats/interview/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -44,7 +44,7 @@ export class AshbyInterviewMapper implements IInterviewMapper {
   }
 
   async desunify(
-    source: UnifiedInterviewInput,
+    source: UnifiedAtsInterviewInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -60,7 +60,7 @@ export class AshbyInterviewMapper implements IInterviewMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedInterviewOutput | UnifiedInterviewOutput[]> {
+  ): Promise<UnifiedAtsInterviewOutput | UnifiedAtsInterviewOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleInterviewToUnified(
         source,
@@ -87,7 +87,7 @@ export class AshbyInterviewMapper implements IInterviewMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedInterviewOutput> {
+  ): Promise<UnifiedAtsInterviewOutput> {
     let interviewers;
     if (interview.interviewEvents[0].interviewerUserIds) {
       for (const uuid of interview.interviewEvents[0].interviewerUserIds) {

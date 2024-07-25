@@ -17,17 +17,23 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { CreditNoteService } from './services/creditnote.service';
 import {
-  UnifiedCreditNoteInput,
-  UnifiedCreditNoteOutput,
+  UnifiedAccountingCreditnoteInput,
+  UnifiedAccountingCreditnoteOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/creditnote')
 @Controller('accounting/creditnote')
 export class CreditNoteController {
@@ -40,7 +46,7 @@ export class CreditNoteController {
   }
 
   @ApiOperation({
-    operationId: 'getCreditNotes',
+    operationId: 'listAccountingCreditNote',
     summary: 'List a batch of CreditNotes',
   })
   @ApiHeader({
@@ -49,7 +55,7 @@ export class CreditNoteController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCreditNoteOutput)
+  @ApiPaginatedResponse(UnifiedAccountingCreditnoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCreditNotes(
@@ -76,7 +82,7 @@ export class CreditNoteController {
   }
 
   @ApiOperation({
-    operationId: 'getCreditNote',
+    operationId: 'retrieveAccountingCreditNote',
     summary: 'Retrieve a CreditNote',
     description: 'Retrieve a creditnote from any connected Accounting software',
   })
@@ -99,7 +105,7 @@ export class CreditNoteController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCreditNoteOutput)
+  @ApiGetCustomResponse(UnifiedAccountingCreditnoteOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

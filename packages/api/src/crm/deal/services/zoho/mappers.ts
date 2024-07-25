@@ -1,7 +1,7 @@
 import { ZohoDealInput, ZohoDealOutput } from './types';
 import {
-  UnifiedDealInput,
-  UnifiedDealOutput,
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/@lib/@utils';
@@ -9,7 +9,7 @@ import { MappersRegistry } from '@@core/@core-services/registries/mappers.regist
 import { Injectable } from '@nestjs/common';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CrmObject } from '@crm/@lib/@types';
-import { UnifiedStageOutput } from '@crm/stage/types/model.unified';
+import { UnifiedCrmStageOutput } from '@crm/stage/types/model.unified';
 import { ZohoStageOutput } from '@crm/stage/services/zoho/types';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
 
@@ -23,7 +23,7 @@ export class ZohoDealMapper implements IDealMapper {
     this.mappersRegistry.registerService('crm', 'deal', 'zoho', this);
   }
   async desunify(
-    source: UnifiedDealInput,
+    source: UnifiedCrmDealInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -72,7 +72,7 @@ export class ZohoDealMapper implements IDealMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
+  ): Promise<UnifiedCrmDealOutput | UnifiedCrmDealOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleDealToUnified(
         source,
@@ -95,14 +95,14 @@ export class ZohoDealMapper implements IDealMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
         field_mappings[mapping.slug] = deal[mapping.remote_id];
       }
     }
-    const res: UnifiedDealOutput = {
+    const res: UnifiedCrmDealOutput = {
       remote_id: deal.id,
       remote_data: deal,
       name: deal.Deal_Name,
@@ -114,7 +114,7 @@ export class ZohoDealMapper implements IDealMapper {
     if (deal.Stage) {
       // we insert right way inside our db as there are no endpoint to do so in the Zoho api
       const stage = await this.ingestService.ingestData<
-        UnifiedStageOutput,
+        UnifiedCrmStageOutput,
         ZohoStageOutput
       >(
         [

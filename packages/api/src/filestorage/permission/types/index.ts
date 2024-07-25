@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedPermissionInput,
-  UnifiedPermissionOutput,
+  UnifiedFilestoragePermissionInput,
+  UnifiedFilestoragePermissionOutput,
 } from './model.unified';
 import { OriginalPermissionOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
@@ -18,7 +18,7 @@ export interface IPermissionService extends IBaseObjectService {
 
 export interface IPermissionMapper {
   desunify(
-    source: UnifiedPermissionInput,
+    source: UnifiedFilestoragePermissionInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -32,5 +32,5 @@ export interface IPermissionMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedPermissionOutput | UnifiedPermissionOutput[]>;
+  ): Promise<UnifiedFilestoragePermissionOutput | UnifiedFilestoragePermissionOutput[]>;
 }

@@ -6,8 +6,8 @@ import {
 } from './types';
 import {
   EngagementType,
-  UnifiedEngagementInput,
-  UnifiedEngagementOutput,
+  UnifiedCrmEngagementInput,
+  UnifiedCrmEngagementOutput,
 } from '@crm/engagement/types/model.unified';
 import { IEngagementMapper } from '@crm/engagement/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -21,7 +21,7 @@ export class ZohoEngagementMapper implements IEngagementMapper {
   }
 
   desunify(
-    source: UnifiedEngagementInput,
+    source: UnifiedCrmEngagementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -38,7 +38,7 @@ export class ZohoEngagementMapper implements IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]> {
+  ): Promise<UnifiedCrmEngagementOutput | UnifiedCrmEngagementOutput[]> {
     switch (engagement_type) {
       case 'CALL':
         return await this.unifyCall(
@@ -118,7 +118,7 @@ export class ZohoEngagementMapper implements IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput> {
+  ): Promise<UnifiedCrmEngagementOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -184,7 +184,7 @@ export class ZohoEngagementMapper implements IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput> {
+  ): Promise<UnifiedCrmEngagementOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

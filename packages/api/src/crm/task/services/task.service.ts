@@ -10,8 +10,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { ITaskService } from '../types';
 import {
   TaskStatus,
-  UnifiedTaskInput,
-  UnifiedTaskOutput,
+  UnifiedCrmTaskInput,
+  UnifiedCrmTaskOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
@@ -32,12 +32,12 @@ export class TaskService {
   }
 
   async addTask(
-    unifiedTaskData: UnifiedTaskInput,
+    unifiedTaskData: UnifiedCrmTaskInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTaskOutput> {
+  ): Promise<UnifiedCrmTaskOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateCompanyId(unifiedTaskData.company_id);
@@ -52,7 +52,7 @@ export class TaskService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedTaskInput>({
+        await this.coreUnification.desunify<UnifiedCrmTaskInput>({
           sourceObject: unifiedTaskData,
           targetType: CrmObject.task,
           providerName: integrationId,
@@ -76,7 +76,7 @@ export class TaskService {
         vertical: 'crm',
         connectionId: connection_id,
         customFieldMappings: [],
-      })) as UnifiedTaskOutput[];
+      })) as UnifiedCrmTaskOutput[];
 
       const source_task = resp.data;
       const target_task = unifiedObject[0];
@@ -165,7 +165,7 @@ export class TaskService {
   }
 
   async saveOrUpdateTask(
-    task: UnifiedTaskOutput,
+    task: UnifiedCrmTaskOutput,
     connection_id: string,
   ): Promise<string> {
     const existingTask = await this.prisma.crm_tasks.findFirst({
@@ -205,7 +205,7 @@ export class TaskService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTaskOutput> {
+  ): Promise<UnifiedCrmTaskOutput> {
     try {
       const task = await this.prisma.crm_tasks.findUnique({
         where: {
@@ -236,8 +236,8 @@ export class TaskService {
         [key]: value,
       }));
 
-      // Transform to UnifiedTaskOutput format
-      const unifiedTask: UnifiedTaskOutput = {
+      // Transform to UnifiedCrmTaskOutput format
+      const unifiedTask: UnifiedCrmTaskOutput = {
         id: task.id_crm_task,
         subject: task.subject,
         content: task.content,
@@ -252,7 +252,7 @@ export class TaskService {
         modified_at: task.modified_at,
       };
 
-      let res: UnifiedTaskOutput = {
+      let res: UnifiedCrmTaskOutput = {
         ...unifiedTask,
       };
 
@@ -299,7 +299,7 @@ export class TaskService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedTaskOutput[];
+    data: UnifiedCrmTaskOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -345,7 +345,7 @@ export class TaskService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedTasks: UnifiedTaskOutput[] = await Promise.all(
+      const unifiedTasks: UnifiedCrmTaskOutput[] = await Promise.all(
         tasks.map(async (task) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -371,7 +371,7 @@ export class TaskService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedTaskOutput format
+          // Transform to UnifiedCrmTaskOutput format
           return {
             id: task.id_crm_task,
             subject: task.subject,
@@ -389,10 +389,10 @@ export class TaskService {
         }),
       );
 
-      let res: UnifiedTaskOutput[] = unifiedTasks;
+      let res: UnifiedCrmTaskOutput[] = unifiedTasks;
 
       if (remote_data) {
-        const remote_array_data: UnifiedTaskOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmTaskOutput[] = await Promise.all(
           res.map(async (task) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

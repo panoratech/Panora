@@ -1,7 +1,7 @@
 import { IUserMapper } from '@ticketing/user/types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedTicketingUserInput,
+  UnifiedTicketingUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { JiraUserInput, JiraUserOutput } from './types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -14,7 +14,7 @@ export class JiraUserMapper implements IUserMapper {
     this.mappersRegistry.registerService('ticketing', 'user', 'jira', this);
   }
   desunify(
-    source: UnifiedUserInput,
+    source: UnifiedTicketingUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class JiraUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
+  ): Promise<UnifiedTicketingUserOutput | UnifiedTicketingUserOutput[]> {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
@@ -48,8 +48,8 @@ export class JiraUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput {
-    const unifiedUser: UnifiedUserOutput = {
+  ): UnifiedTicketingUserOutput {
+    const unifiedUser: UnifiedTicketingUserOutput = {
       remote_id: user.accountId,
       remote_data: user,
       name: `${user.displayName}`,

@@ -17,17 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import {
-  UnifiedCandidateInput,
-  UnifiedCandidateOutput,
+  UnifiedAtsCandidateInput,
+  UnifiedAtsCandidateOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { CandidateService } from './services/candidate.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/candidate')
 @Controller('ats/candidate')
 export class CandidateController {
@@ -40,7 +47,7 @@ export class CandidateController {
   }
 
   @ApiOperation({
-    operationId: 'getCandidates',
+    operationId: 'listAtsCandidate', // Updated operationId
     summary: 'List a batch of Candidates',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class CandidateController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCandidateOutput)
+  @ApiPaginatedResponse(UnifiedAtsCandidateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCandidates(
@@ -76,7 +83,7 @@ export class CandidateController {
   }
 
   @ApiOperation({
-    operationId: 'getCandidate',
+    operationId: 'retrieveAtsCandidate', // Updated operationId
     summary: 'Retrieve a Candidate',
     description: 'Retrieve a candidate from any connected Ats software',
   })
@@ -98,7 +105,7 @@ export class CandidateController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCandidateOutput)
+  @ApiGetCustomResponse(UnifiedAtsCandidateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -119,7 +126,7 @@ export class CandidateController {
   }
 
   @ApiOperation({
-    operationId: 'addCandidate',
+    operationId: 'createAtsCandidate', // Updated operationId
     summary: 'Create a Candidate',
     description: 'Create a candidate in any supported Ats software',
   })
@@ -135,12 +142,12 @@ export class CandidateController {
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
   })
-  @ApiBody({ type: UnifiedCandidateInput })
-  @ApiCustomResponse(UnifiedCandidateOutput)
+  @ApiBody({ type: UnifiedAtsCandidateInput })
+  @ApiPostCustomResponse(UnifiedAtsCandidateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addCandidate(
-    @Body() unifiedCandidateData: UnifiedCandidateInput,
+    @Body() unifiedCandidateData: UnifiedAtsCandidateInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

@@ -21,14 +21,22 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { DealService } from './services/deal.service';
-import { UnifiedDealInput, UnifiedDealOutput } from './types/model.unified';
+import {
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/deals')
 @Controller('crm/deals')
 export class DealController {
@@ -41,7 +49,7 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'getDeals',
+    operationId: 'listCrmDeals',
     summary: 'List a batch of Deals',
   })
   @ApiHeader({
@@ -50,7 +58,7 @@ export class DealController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDealOutput)
+  @ApiPaginatedResponse(UnifiedCrmDealOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -78,7 +86,7 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'getDeal',
+    operationId: 'retrieveCrmDeal',
     summary: 'Retrieve a Deal',
     description: 'Retrieve a deal from any connected Crm software',
   })
@@ -100,7 +108,7 @@ export class DealController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDealOutput)
+  @ApiGetCustomResponse(UnifiedCrmDealOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -121,7 +129,7 @@ export class DealController {
   }
 
   @ApiOperation({
-    operationId: 'addDeal',
+    operationId: 'createCrmDeal',
     summary: 'Create a Deal',
     description: 'Create a deal in any supported Crm software',
   })
@@ -137,12 +145,12 @@ export class DealController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
-  @ApiBody({ type: UnifiedDealInput })
-  @ApiCustomResponse(UnifiedDealOutput)
+  @ApiBody({ type: UnifiedCrmDealInput })
+  @ApiPostCustomResponse(UnifiedCrmDealOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addDeal(
-    @Body() unifiedDealData: UnifiedDealInput,
+    @Body() unifiedDealData: UnifiedCrmDealInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

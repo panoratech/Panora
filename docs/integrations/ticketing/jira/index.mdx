@@ -1,0 +1,25 @@
+---
+title: "Jira"
+description: ""
+---
+
+# Common Objects
+ 
+
+| Unified Model | Supported                           | Provider Endpoints                           |
+| -------- | ------------------------------------- | ------------------------------------- |
+| Account      | No 🚫 |   |
+| Attachment      | No 🚫  | Coming Soon|
+| Collection   | Yes ✅ | /project/search | 
+| Comment   | Yes ✅| /issue/:remote_ticket_id/comment | 
+| Contact   | No 🚫 | |
+| Tag   | Yes ✅| /issue/:remote_ticket_id?fields=labels  |
+| Team   | Yes ✅| /groups/picker  |  
+| Ticket   | Yes ✅ | [/issuetype/project?projectId=:remote_collection_id , /issuetype , /issue , /issue/:remote_ticket_id/comment , /search]  |
+| User   | Yes ✅| [/users/search , /users/emails?accountId=${accountId}] |
+
+
+| Features | Supported                           |
+| -------- | ------------------------------------- |
+| Scopes     |read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider offline_access|
+| Realtime webhook     | No 🚫|

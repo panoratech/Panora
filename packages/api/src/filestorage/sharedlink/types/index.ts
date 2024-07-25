@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedSharedLinkInput,
-  UnifiedSharedLinkOutput,
+  UnifiedFilestorageSharedlinkInput,
+  UnifiedFilestorageSharedlinkOutput,
 } from './model.unified';
 import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
@@ -18,7 +18,7 @@ export interface ISharedLinkService extends IBaseObjectService {
 
 export interface ISharedLinkMapper {
   desunify(
-    source: UnifiedSharedLinkInput,
+    source: UnifiedFilestorageSharedlinkInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -32,5 +32,5 @@ export interface ISharedLinkMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedSharedLinkOutput | UnifiedSharedLinkOutput[]>;
+  ): Promise<UnifiedFilestorageSharedlinkOutput | UnifiedFilestorageSharedlinkOutput[]>;
 }

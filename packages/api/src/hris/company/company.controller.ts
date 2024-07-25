@@ -17,17 +17,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
-} from './types/model.unified';
+
+import { UnifiedHrisCompanyOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { CompanyService } from './services/company.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/company')
 @Controller('hris/company')
 export class CompanyController {
@@ -40,7 +43,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanys',
+    operationId: 'listHrisCompanys',
     summary: 'List a batch of Companys',
   })
   @ApiHeader({
@@ -49,7 +52,7 @@ export class CompanyController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCompanyOutput)
+  @ApiPaginatedResponse(UnifiedHrisCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCompanys(

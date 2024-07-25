@@ -4,8 +4,8 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
   InterviewStatus,
-  UnifiedInterviewInput,
-  UnifiedInterviewOutput,
+  UnifiedAtsInterviewInput,
+  UnifiedAtsInterviewOutput,
 } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ApiResponse } from '@@core/utils/types';
@@ -33,12 +33,12 @@ export class InterviewService {
   }
 
   async addInterview(
-    unifiedInterviewData: UnifiedInterviewInput,
+    unifiedInterviewData: UnifiedAtsInterviewInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedInterviewOutput> {
+  ): Promise<UnifiedAtsInterviewOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
 
@@ -50,7 +50,7 @@ export class InterviewService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedInterviewInput>({
+        await this.coreUnification.desunify<UnifiedAtsInterviewInput>({
           sourceObject: unifiedInterviewData,
           targetType: AtsObject.interview,
           providerName: integrationId,
@@ -77,7 +77,7 @@ export class InterviewService {
         vertical: 'ats',
         connectionId: connection_id,
         customFieldMappings: customFieldMappings,
-      })) as UnifiedInterviewOutput[];
+      })) as UnifiedAtsInterviewOutput[];
 
       const source_interview = resp.data;
       const target_interview = unifiedObject[0];
@@ -141,7 +141,7 @@ export class InterviewService {
   }
 
   async saveOrUpdateInterview(
-    interview: UnifiedInterviewOutput,
+    interview: UnifiedAtsInterviewOutput,
     connection_id: string,
   ): Promise<string> {
     const existingInterview = await this.prisma.ats_interviews.findFirst({
@@ -186,7 +186,7 @@ export class InterviewService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedInterviewOutput> {
+  ): Promise<UnifiedAtsInterviewOutput> {
     try {
       const interview = await this.prisma.ats_interviews.findUnique({
         where: {
@@ -218,8 +218,8 @@ export class InterviewService {
         [key]: value,
       }));
 
-      // Transform to UnifiedInterviewOutput format
-      const unifiedInterview: UnifiedInterviewOutput = {
+      // Transform to UnifiedAtsInterviewOutput format
+      const unifiedInterview: UnifiedAtsInterviewOutput = {
         id: interview.id_ats_interview,
         status: interview.status,
         application_id: interview.id_ats_application,
@@ -237,7 +237,7 @@ export class InterviewService {
         modified_at: interview.modified_at,
       };
 
-      let res: UnifiedInterviewOutput = unifiedInterview;
+      let res: UnifiedAtsInterviewOutput = unifiedInterview;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -281,7 +281,7 @@ export class InterviewService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedInterviewOutput[];
+    data: UnifiedAtsInterviewOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -327,7 +327,7 @@ export class InterviewService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedInterviews: UnifiedInterviewOutput[] = await Promise.all(
+      const unifiedInterviews: UnifiedAtsInterviewOutput[] = await Promise.all(
         interviews.map(async (interview) => {
           // Fetch field mappings for the interview
           const values = await this.prisma.value.findMany({
@@ -354,7 +354,7 @@ export class InterviewService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedInterviewOutput format
+          // Transform to UnifiedAtsInterviewOutput format
           return {
             id: interview.id_ats_interview,
             status: interview.status,
@@ -375,10 +375,10 @@ export class InterviewService {
         }),
       );
 
-      let res: UnifiedInterviewOutput[] = unifiedInterviews;
+      let res: UnifiedAtsInterviewOutput[] = unifiedInterviews;
 
       if (remote_data) {
-        const remote_array_data: UnifiedInterviewOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsInterviewOutput[] = await Promise.all(
           res.map(async (interview) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

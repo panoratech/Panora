@@ -1,7 +1,7 @@
 import { Email, Phone, Url } from '@ats/@lib/@types';
-import { UnifiedApplicationOutput } from '@ats/application/types/model.unified';
-import { UnifiedAttachmentOutput } from '@ats/attachment/types/model.unified';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { UnifiedAtsApplicationOutput } from '@ats/application/types/model.unified';
+import { UnifiedAtsAttachmentOutput } from '@ats/attachment/types/model.unified';
+import { UnifiedAtsTagOutput } from '@ats/tag/types/model.unified';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -11,7 +11,7 @@ import {
   IsDateString,
 } from 'class-validator';
 
-export class UnifiedCandidateInput {
+export class UnifiedAtsCandidateInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The first name of the candidate',
@@ -101,7 +101,7 @@ export class UnifiedCandidateInput {
   })
   @IsString({ each: true })
   @IsOptional()
-  attachments?: (string | UnifiedAttachmentOutput)[];
+  attachments?: (string | UnifiedAtsAttachmentOutput)[];
 
   @ApiPropertyOptional({
     type: [String],
@@ -109,7 +109,7 @@ export class UnifiedCandidateInput {
   })
   @IsString({ each: true })
   @IsOptional()
-  applications?: (string | UnifiedApplicationOutput)[];
+  applications?: (string | UnifiedAtsApplicationOutput)[];
 
   @ApiPropertyOptional({
     type: [String],
@@ -117,10 +117,10 @@ export class UnifiedCandidateInput {
   })
   @IsString({ each: true })
   @IsOptional()
-  tags?: (string | UnifiedTagOutput)[];
+  tags?: (string | UnifiedAtsTagOutput)[];
 
   @ApiPropertyOptional({
-    type: [],
+    type: [Url],
     description:
       'The urls of the candidate, possible values for Url type are WEBSITE, BLOG, LINKEDIN, GITHUB, or OTHER',
   })
@@ -128,14 +128,14 @@ export class UnifiedCandidateInput {
   urls?: Url[];
 
   @ApiPropertyOptional({
-    type: [],
+    type: [Phone],
     description: 'The phone numbers of the candidate',
   })
   @IsOptional()
   phone_numbers?: Phone[];
 
   @ApiPropertyOptional({
-    type: [],
+    type: [Email],
     description: 'The email addresses of the candidate',
   })
   @IsOptional()
@@ -150,7 +150,7 @@ export class UnifiedCandidateInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedCandidateOutput extends UnifiedCandidateInput {
+export class UnifiedAtsCandidateOutput extends UnifiedAtsCandidateInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the candidate',

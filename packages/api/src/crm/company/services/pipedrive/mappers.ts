@@ -1,6 +1,6 @@
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { PipedriveCompanyInput, PipedriveCompanyOutput } from './types';
@@ -15,7 +15,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
   }
 
   async desunify(
-    source: UnifiedCompanyInput,
+    source: UnifiedCrmCompanyInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -64,7 +64,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
+  ): Promise<UnifiedCrmCompanyOutput | UnifiedCrmCompanyOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleCompanyToUnified(
         source,
@@ -91,7 +91,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

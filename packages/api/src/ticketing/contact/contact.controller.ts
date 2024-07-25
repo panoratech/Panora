@@ -2,7 +2,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import {
   Controller,
   Get,
@@ -22,9 +22,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ContactService } from './services/contact.service';
-import { UnifiedContactOutput } from './types/model.unified';
+import { UnifiedTicketingContactOutput } from './types/model.unified';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/contacts')
 @Controller('ticketing/contacts')
 export class ContactController {
@@ -37,7 +38,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingContacts',
+    operationId: 'listTicketingContacts',
     summary: 'List all Contacts',
   })
   @ApiHeader({
@@ -46,7 +47,7 @@ export class ContactController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiPaginatedResponse(UnifiedTicketingContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -74,7 +75,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingContact',
+    operationId: 'retrieveTicketingContact',
     summary: 'Retrieve a Contact',
     description: 'Retrieve a contact from any connected Ticketing software',
   })
@@ -97,7 +98,7 @@ export class ContactController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiPaginatedResponse(UnifiedTicketingContactOutput)
   @Get(':id')
   @UseGuards(ApiKeyAuthGuard)
   async retrieve(

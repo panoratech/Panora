@@ -4,7 +4,7 @@ import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 export type EngagementDirection = 'INBOUND' | 'OUTBOUND';
 export type EngagementType = 'EMAIL' | 'CALL' | 'MEETING';
 
-export class UnifiedEngagementInput {
+export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The content of the engagement',
@@ -82,7 +82,7 @@ export class UnifiedEngagementInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedEngagementOutput extends UnifiedEngagementInput {
+export class UnifiedCrmEngagementOutput extends UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the engagement',

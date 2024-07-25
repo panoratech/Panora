@@ -6,7 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedCampaignInput,
+  UnifiedMarketingautomationCampaignInput,
   UnifiedCampaignOutput,
 } from '../types/model.unified';
 
@@ -28,7 +28,7 @@ export class CampaignService {
   }
 
   async addCampaign(
-    unifiedCampaignData: UnifiedCampaignInput,
+    unifiedCampaignData: UnifiedMarketingautomationCampaignInput,
     connectionId: string,
     integrationId: string,
     linkedUserId: string,

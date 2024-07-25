@@ -15,7 +15,7 @@ import { crm_deals_stages as CrmStage } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IStageService } from '../types';
-import { UnifiedStageOutput } from '../types/model.unified';
+import { UnifiedCrmStageOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -128,7 +128,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedStageOutput,
+        UnifiedCrmStageOutput,
         OriginalStageOutput,
         IStageService
       >(integrationId, linkedUserId, 'crm', 'stage', service, [
@@ -147,7 +147,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedStageOutput[],
+    data: UnifiedCrmStageOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     deal_id: string,
@@ -156,7 +156,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const stages_results: CrmStage[] = [];
 
       const updateOrCreateStage = async (
-        stage: UnifiedStageOutput,
+        stage: UnifiedCrmStageOutput,
         originId: string,
       ) => {
         const baseData: any = {

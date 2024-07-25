@@ -17,17 +17,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { JobInterviewStageService } from './services/jobinterviewstage.service';
 import {
-  UnifiedJobInterviewStageInput,
-  UnifiedJobInterviewStageOutput,
+  UnifiedAtsJobinterviewstageInput,
+  UnifiedAtsJobinterviewstageOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/jobinterviewstage')
 @Controller('ats/jobinterviewstage')
 export class JobInterviewStageController {
@@ -40,7 +43,7 @@ export class JobInterviewStageController {
   }
 
   @ApiOperation({
-    operationId: 'getJobInterviewStages',
+    operationId: 'listAtsJobInterviewStage',
     summary: 'List a batch of JobInterviewStages',
   })
   @ApiHeader({
@@ -49,7 +52,7 @@ export class JobInterviewStageController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedJobInterviewStageOutput)
+  @ApiPaginatedResponse(UnifiedAtsJobinterviewstageOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getJobInterviewStages(
@@ -76,7 +79,7 @@ export class JobInterviewStageController {
   }
 
   @ApiOperation({
-    operationId: 'getJobInterviewStage',
+    operationId: 'retrieveAtsJobInterviewStage',
     summary: 'Retrieve a JobInterviewStage',
     description: 'Retrieve a jobinterviewstage from any connected Ats software',
   })
@@ -98,7 +101,7 @@ export class JobInterviewStageController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedJobInterviewStageOutput)
+  @ApiGetCustomResponse(UnifiedAtsJobinterviewstageOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

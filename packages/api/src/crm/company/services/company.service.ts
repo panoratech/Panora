@@ -10,8 +10,8 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { ICompanyService } from '../types';
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
@@ -32,18 +32,18 @@ export class CompanyService {
   }
 
   async addCompany(
-    unifiedCompanyData: UnifiedCompanyInput,
+    unifiedCompanyData: UnifiedCrmCompanyInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateUserId(unifiedCompanyData.user_id);
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedCompanyInput>({
+        await this.coreUnification.desunify<UnifiedCrmCompanyInput>({
           sourceObject: unifiedCompanyData,
           targetType: CrmObject.company,
           providerName: integrationId,
@@ -67,7 +67,7 @@ export class CompanyService {
         vertical: 'crm',
         connectionId: connection_id,
         customFieldMappings: [],
-      })) as UnifiedCompanyOutput[];
+      })) as UnifiedCrmCompanyOutput[];
 
       const source_company = resp.data;
       const target_company = unifiedObject[0];
@@ -136,7 +136,7 @@ export class CompanyService {
   }
 
   async saveOrUpdateCompany(
-    company: UnifiedCompanyOutput,
+    company: UnifiedCrmCompanyOutput,
     connection_id: string,
   ): Promise<string> {
     const existingCompany = await this.prisma.crm_companies.findFirst({
@@ -338,7 +338,7 @@ export class CompanyService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     try {
       const company = await this.prisma.crm_companies.findUnique({
         where: {
@@ -374,8 +374,8 @@ export class CompanyService {
       const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
         [key]: value,
       }));
-      // Transform to UnifiedCompanyOutput format
-      const unifiedCompany: UnifiedCompanyOutput = {
+      // Transform to UnifiedCrmCompanyOutput format
+      const unifiedCompany: UnifiedCrmCompanyOutput = {
         id: company.id_crm_company,
         name: company.name,
         industry: company.industry,
@@ -398,7 +398,7 @@ export class CompanyService {
         modified_at: company.modified_at,
       };
 
-      let res: UnifiedCompanyOutput = {
+      let res: UnifiedCrmCompanyOutput = {
         ...unifiedCompany,
       };
 
@@ -446,7 +446,7 @@ export class CompanyService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedCompanyOutput[];
+    data: UnifiedCrmCompanyOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -497,7 +497,7 @@ export class CompanyService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedCompanies: UnifiedCompanyOutput[] = await Promise.all(
+      const unifiedCompanies: UnifiedCrmCompanyOutput[] = await Promise.all(
         companies.map(async (company) => {
           const values = await this.prisma.value.findMany({
             where: {
@@ -522,7 +522,7 @@ export class CompanyService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedCompanyOutput format
+          // Transform to UnifiedCrmCompanyOutput format
           return {
             id: company.id_crm_company,
             name: company.name,
@@ -548,10 +548,10 @@ export class CompanyService {
         }),
       );
 
-      let res: UnifiedCompanyOutput[] = unifiedCompanies;
+      let res: UnifiedCrmCompanyOutput[] = unifiedCompanies;
 
       if (remote_data) {
-        const remote_array_data: UnifiedCompanyOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmCompanyOutput[] = await Promise.all(
           res.map(async (company) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedPaymentInput, UnifiedPaymentOutput } from './model.unified';
+import { UnifiedAccountingPaymentInput, UnifiedAccountingPaymentOutput } from './model.unified';
 import { OriginalPaymentOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IPaymentService {
 
 export interface IPaymentMapper {
   desunify(
-    source: UnifiedPaymentInput,
+    source: UnifiedAccountingPaymentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IPaymentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedPaymentOutput | UnifiedPaymentOutput[]>;
+  ): Promise<UnifiedAccountingPaymentOutput | UnifiedAccountingPaymentOutput[]>;
 }

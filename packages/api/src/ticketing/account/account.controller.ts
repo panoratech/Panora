@@ -17,14 +17,15 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { AccountService } from './services/account.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { UnifiedAccountOutput } from './types/model.unified';
+import { UnifiedTicketingAccountOutput } from './types/model.unified';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/accounts')
 @Controller('ticketing/accounts')
 export class AccountController {
@@ -37,7 +38,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAccounts',
+    operationId: 'listTicketingAccount',
     summary: 'List a batch of Accounts',
   })
   @ApiHeader({
@@ -46,7 +47,7 @@ export class AccountController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAccountOutput)
+  @ApiPaginatedResponse(UnifiedTicketingAccountOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -74,7 +75,7 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAccount',
+    operationId: 'retrieveTicketingAccount',
     summary: 'Retrieve an Account',
     description: 'Retrieve an account from any connected Ticketing software',
   })
@@ -97,7 +98,7 @@ export class AccountController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAccountOutput)
+  @ApiGetCustomResponse(UnifiedTicketingAccountOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

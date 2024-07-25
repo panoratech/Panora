@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedCompanyInput, UnifiedCompanyOutput } from './model.unified';
+import {
+  UnifiedHrisCompanyInput,
+  UnifiedHrisCompanyOutput,
+} from './model.unified';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +20,7 @@ export interface ICompanyService {
 
 export interface ICompanyMapper {
   desunify(
-    source: UnifiedCompanyInput,
+    source: UnifiedHrisCompanyInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +34,5 @@ export interface ICompanyMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]>;
+  ): Promise<UnifiedHrisCompanyOutput | UnifiedHrisCompanyOutput[]>;
 }

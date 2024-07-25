@@ -1,15 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { UnifiedAttachmentInput } from '@ticketing/attachment/types/model.unified';
-import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
-import { UnifiedCommentInput } from '@ticketing/comment/types/model.unified';
-import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
+import { UnifiedTicketingAttachmentInput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedTicketingCollectionOutput } from '@ticketing/collection/types/model.unified';
+import { UnifiedTicketingCommentInput } from '@ticketing/comment/types/model.unified';
+import { UnifiedTicketingTagOutput } from '@ticketing/tag/types/model.unified';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export type TicketType = 'BUG' | 'SUBTASK' | 'TASK' | 'TO-DO';
 export type TicketStatus = 'OPEN' | 'CLOSED';
 export type TicketPriority = 'HIGH' | 'MEDIUM' | 'LOW';
 
-export class UnifiedTicketInput {
+export class UnifiedTicketingTicketInput {
   @ApiProperty({
     type: String,
     description: 'The name of the ticket',
@@ -67,14 +67,14 @@ export class UnifiedTicketInput {
   })
   @IsUUID()
   @IsOptional()
-  collections?: (string | UnifiedCollectionOutput)[];
+  collections?: (string | UnifiedTicketingCollectionOutput)[];
 
   @ApiPropertyOptional({
     type: [String],
     description: 'The tags names of the ticket',
   })
   @IsOptional()
-  tags?: (string | UnifiedTagOutput)[]; // tags names
+  tags?: (string | UnifiedTicketingTagOutput)[]; // tags names
 
   @ApiPropertyOptional({
     type: Date,
@@ -102,11 +102,11 @@ export class UnifiedTicketInput {
   assigned_to?: string[]; //UUID of Users objects
 
   @ApiPropertyOptional({
-    type: UnifiedCommentInput,
+    type: UnifiedTicketingCommentInput,
     description: 'The comment of the ticket',
   })
   @IsOptional()
-  comment?: UnifiedCommentInput;
+  comment?: UnifiedTicketingCommentInput;
 
   @ApiPropertyOptional({
     type: String,
@@ -130,7 +130,7 @@ export class UnifiedTicketInput {
     description: 'The attachements UUIDs tied to the ticket',
   })
   @IsOptional()
-  attachments?: (string | UnifiedAttachmentInput)[];
+  attachments?: (string | UnifiedTicketingAttachmentInput)[];
 
   @ApiPropertyOptional({
     type: {},
@@ -140,7 +140,7 @@ export class UnifiedTicketInput {
   @IsOptional()
   field_mappings?: Record<string, any>;
 }
-export class UnifiedTicketOutput extends UnifiedTicketInput {
+export class UnifiedTicketingTicketOutput extends UnifiedTicketingTicketInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the ticket' })
   @IsUUID()
   @IsOptional()

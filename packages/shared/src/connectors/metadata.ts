@@ -1398,7 +1398,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'greenhouse': {
         scopes: 'candidates.create candidates.view jobs.view',
         urls: {
-          docsUrl: '',
+          docsUrl: 'https://developers.greenhouse.io/harvest.html',
           apiUrl: 'https://api.greenhouse.io/v1/partner',
           authBaseUrl: 'https://api.greenhouse.io/oauth/authorize'
         },
@@ -1412,7 +1412,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'greenhouse_job_boards': {
         scopes: '',
         urls: {
-          docsUrl: '',
+          docsUrl: 'https://developers.greenhouse.io/job-board.html',
           apiUrl: ''
         },
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',

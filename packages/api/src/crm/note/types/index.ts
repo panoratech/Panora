@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedNoteInput, UnifiedNoteOutput } from './model.unified';
+import { UnifiedCrmNoteInput, UnifiedCrmNoteOutput } from './model.unified';
 import { OriginalNoteOutput } from '@@core/utils/types/original/original.crm';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface INoteService extends IBaseObjectService {
 
 export interface INoteMapper {
   desunify(
-    source: UnifiedNoteInput,
+    source: UnifiedCrmNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface INoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]>;
+  ): Promise<UnifiedCrmNoteOutput | UnifiedCrmNoteOutput[]>;
 }

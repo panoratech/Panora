@@ -21,17 +21,18 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { CollectionService } from './services/collection.service';
 import {
-  UnifiedCollectionInput,
-  UnifiedCollectionOutput,
+  UnifiedTicketingCollectionInput,
+  UnifiedTicketingCollectionOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/collections')
 @Controller('ticketing/collections')
 export class CollectionController {
@@ -44,7 +45,7 @@ export class CollectionController {
   }
 
   @ApiOperation({
-    operationId: 'getCollections',
+    operationId: 'listTicketingCollections',
     summary: 'List a batch of Collections',
   })
   @ApiHeader({
@@ -53,7 +54,7 @@ export class CollectionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCollectionOutput)
+  @ApiPaginatedResponse(UnifiedTicketingCollectionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -81,7 +82,7 @@ export class CollectionController {
   }
 
   @ApiOperation({
-    operationId: 'getCollection',
+    operationId: 'retrieveCollection',
     summary: 'Retrieve a Collection',
     description: 'Retrieve a collection from any connected Ticketing software',
   })
@@ -104,7 +105,7 @@ export class CollectionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCollectionOutput)
+  @ApiGetCustomResponse(UnifiedTicketingCollectionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

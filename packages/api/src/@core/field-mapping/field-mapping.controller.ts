@@ -14,10 +14,16 @@ import {
   DefineTargetFieldDto,
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
-import { ApiResponse, ApiTags, ApiBody, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiResponse,
+  ApiTags,
+  ApiBody,
+  ApiOperation,
+  ApiExcludeEndpoint,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
-@ApiTags('field-mappings')
+@ApiTags('fieldMappings')
 @Controller('field-mappings')
 export class FieldMappingController {
   constructor(
@@ -33,6 +39,7 @@ export class FieldMappingController {
   })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
+  @ApiExcludeEndpoint()
   @Get('entities')
   getEntities() {
     return this.fieldMappingService.getEntities();
@@ -43,6 +50,7 @@ export class FieldMappingController {
     summary: 'Retrieve field mappings',
   })
   @ApiResponse({ status: 200 })
+  @ApiExcludeEndpoint()
   @Get('attribute')
   @UseGuards(JwtAuthGuard)
   getAttributes(@Request() req: any) {
@@ -55,6 +63,7 @@ export class FieldMappingController {
     summary: 'Retrieve field mappings values',
   })
   @ApiResponse({ status: 200 })
+  @ApiExcludeEndpoint()
   @Get('value')
   @UseGuards(JwtAuthGuard)
   getValues() {
@@ -62,7 +71,7 @@ export class FieldMappingController {
   }
 
   @ApiOperation({
-    operationId: 'defineTargetField',
+    operationId: 'define',
     summary: 'Define target Field',
   })
   @ApiBody({ type: DefineTargetFieldDto })
@@ -82,7 +91,7 @@ export class FieldMappingController {
   }
 
   @ApiOperation({
-    operationId: 'createCustomField',
+    operationId: 'create',
     summary: 'Create Custom Field',
   })
   @ApiBody({ type: CustomFieldCreateDto })
@@ -94,7 +103,7 @@ export class FieldMappingController {
     return this.fieldMappingService.createCustomField(data, id_project);
   }
 
-  @ApiOperation({ operationId: 'mapField', summary: 'Map Custom Field' })
+  @ApiOperation({ operationId: 'map', summary: 'Map Custom Field' })
   @ApiBody({ type: MapFieldToProviderDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
@@ -108,6 +117,7 @@ export class FieldMappingController {
     summary: 'Retrieve Custom Properties',
   })
   @ApiResponse({ status: 200 })
+  @ApiExcludeEndpoint()
   @UseGuards(JwtAuthGuard)
   @Get('properties')
   getCustomProperties(

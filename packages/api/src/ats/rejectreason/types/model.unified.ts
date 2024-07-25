@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
-export class UnifiedRejectReasonInput {
+export class UnifiedAtsRejectreasonInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The name of the reject reason',
@@ -19,7 +19,7 @@ export class UnifiedRejectReasonInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedRejectReasonOutput extends UnifiedRejectReasonInput {
+export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the reject reason',

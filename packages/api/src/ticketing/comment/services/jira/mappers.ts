@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ICommentMapper } from '@ticketing/comment/types';
 import {
-  UnifiedCommentInput,
-  UnifiedCommentOutput,
+  UnifiedTicketingCommentInput,
+  UnifiedTicketingCommentOutput,
 } from '@ticketing/comment/types/model.unified';
 import { JiraCommentInput, JiraCommentOutput } from './types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
@@ -15,7 +15,7 @@ export class JiraCommentMapper implements ICommentMapper {
   }
 
   async desunify(
-    source: UnifiedCommentInput,
+    source: UnifiedTicketingCommentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -51,7 +51,7 @@ export class JiraCommentMapper implements ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
+  ): Promise<UnifiedTicketingCommentOutput | UnifiedTicketingCommentOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleCommentToUnified(
         source,
@@ -77,7 +77,7 @@ export class JiraCommentMapper implements ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCommentOutput> {
+  ): Promise<UnifiedTicketingCommentOutput> {
     let opts: any = {};
 
     if (comment.author.accountId) {

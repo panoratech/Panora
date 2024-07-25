@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedJournalEntryInput,
-  UnifiedJournalEntryOutput,
+  UnifiedAccountingJournalentryInput,
+  UnifiedAccountingJournalentryOutput,
 } from './model.unified';
 import { OriginalJournalEntryOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IJournalEntryService {
 
 export interface IJournalEntryMapper {
   desunify(
-    source: UnifiedJournalEntryInput,
+    source: UnifiedAccountingJournalentryInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IJournalEntryMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedJournalEntryOutput | UnifiedJournalEntryOutput[]>;
+  ): Promise<UnifiedAccountingJournalentryOutput | UnifiedAccountingJournalentryOutput[]>;
 }

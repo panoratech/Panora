@@ -1,3 +1,3 @@
-export class UnifiedCompanyInput {}
+export class UnifiedHrisCompanyInput {}
 
-export class UnifiedCompanyOutput extends UnifiedCompanyInput {}
+export class UnifiedHrisCompanyOutput extends UnifiedHrisCompanyInput {}

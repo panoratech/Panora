@@ -5,12 +5,11 @@ import Cookies from 'js-cookie';
 interface IWebhookDto {
     url: string;
     description?: string;
-    id_project: string;
     scope: string[];
 }
 const useCreateWebhook = () => {
     const add = async (data: IWebhookDto) => {
-        const response = await fetch(`${config.API_URL}/webhook`, {
+        const response = await fetch(`${config.API_URL}/webhook/internal`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

@@ -17,17 +17,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { BenefitService } from './services/benefit.service';
 import {
-  UnifiedBenefitInput,
-  UnifiedBenefitOutput,
+  UnifiedHrisBenefitInput,
+  UnifiedHrisBenefitOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/benefit')
 @Controller('hris/benefit')
 export class BenefitController {
@@ -40,7 +43,7 @@ export class BenefitController {
   }
 
   @ApiOperation({
-    operationId: 'getBenefits',
+    operationId: 'listHrisBenefit',
     summary: 'List a batch of Benefits',
   })
   @ApiHeader({
@@ -49,7 +52,7 @@ export class BenefitController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedBenefitOutput)
+  @ApiPaginatedResponse(UnifiedHrisBenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getBenefits(
@@ -76,7 +79,7 @@ export class BenefitController {
   }
 
   @ApiOperation({
-    operationId: 'getBenefit',
+    operationId: 'retrieveHrisBenefit',
     summary: 'Retrieve a Benefit',
     description: 'Retrieve a benefit from any connected Hris software',
   })
@@ -98,7 +101,7 @@ export class BenefitController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedBenefitOutput)
+  @ApiGetCustomResponse(UnifiedHrisBenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

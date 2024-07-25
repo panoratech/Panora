@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedEngagementInput,
-  UnifiedEngagementOutput,
+  UnifiedCrmEngagementInput,
+  UnifiedCrmEngagementOutput,
 } from './model.unified';
 import { OriginalEngagementOutput } from '@@core/utils/types/original/original.crm';
 import { ApiResponse } from '@@core/utils/types';
@@ -19,7 +19,7 @@ export interface IEngagementService extends IBaseObjectService {
 
 export interface IEngagementMapper {
   desunify(
-    source: UnifiedEngagementInput,
+    source: UnifiedCrmEngagementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IEngagementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEngagementOutput | UnifiedEngagementOutput[]>;
+  ): Promise<UnifiedCrmEngagementOutput | UnifiedCrmEngagementOutput[]>;
 }

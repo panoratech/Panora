@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedEeocsInput, UnifiedEeocsOutput } from './model.unified';
+import { UnifiedAtsEeocsInput, UnifiedAtsEeocsOutput } from './model.unified';
 import { OriginalEeocsOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface IEeocsService extends IBaseObjectService {
 
 export interface IEeocsMapper {
   desunify(
-    source: UnifiedEeocsInput,
+    source: UnifiedAtsEeocsInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface IEeocsMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEeocsOutput | UnifiedEeocsOutput[]>;
+  ): Promise<UnifiedAtsEeocsOutput | UnifiedAtsEeocsOutput[]>;
 }

@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedDependentInput, UnifiedDependentOutput } from './model.unified';
+import { UnifiedHrisDependentInput, UnifiedHrisDependentOutput } from './model.unified';
 import { OriginalDependentOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IDependentService {
 
 export interface IDependentMapper {
   desunify(
-    source: UnifiedDependentInput,
+    source: UnifiedHrisDependentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IDependentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDependentOutput | UnifiedDependentOutput[]>;
+  ): Promise<UnifiedHrisDependentOutput | UnifiedHrisDependentOutput[]>;
 }

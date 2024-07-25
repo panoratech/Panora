@@ -2,7 +2,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import {
   Body,
   Controller,
@@ -26,11 +26,16 @@ import {
 } from '@nestjs/swagger';
 import { CompanyService } from './services/company.service';
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from './types/model.unified';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/companies')
 @Controller('crm/companies')
 export class CompanyController {
@@ -43,7 +48,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanies',
+    operationId: 'listCrmCompany',
     summary: 'List a batch of Companies',
   })
   @ApiHeader({
@@ -52,7 +57,7 @@ export class CompanyController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCompanyOutput)
+  @ApiPaginatedResponse(UnifiedCrmCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -80,7 +85,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmCompany',
+    operationId: 'retrieveCrmCompany',
     summary: 'Retrieve a Company',
     description: 'Retrieve a company from any connected Crm software',
   })
@@ -102,7 +107,7 @@ export class CompanyController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCompanyOutput)
+  @ApiGetCustomResponse(UnifiedCrmCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -123,7 +128,7 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'addCrmCompany',
+    operationId: 'createCrmCompany',
     summary: 'Create a Company',
     description: 'Create a company in any supported Crm software',
   })
@@ -139,12 +144,12 @@ export class CompanyController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
-  @ApiBody({ type: UnifiedCompanyInput })
-  @ApiCustomResponse(UnifiedCompanyOutput)
+  @ApiBody({ type: UnifiedCrmCompanyInput })
+  @ApiPostCustomResponse(UnifiedCrmCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addCompany(
-    @Body() unifiedCompanyData: UnifiedCompanyInput,
+    @Body() unifiedCompanyData: UnifiedCrmCompanyInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

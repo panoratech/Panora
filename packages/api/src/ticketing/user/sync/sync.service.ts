@@ -12,7 +12,7 @@ import { tcg_users as TicketingUser } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IUserService } from '../types';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { UnifiedTicketingUserOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -103,7 +103,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedUserOutput,
+        UnifiedTicketingUserOutput,
         OriginalUserOutput,
         IUserService
       >(
@@ -123,7 +123,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedUserOutput[],
+    data: UnifiedTicketingUserOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingUser[]> {
@@ -131,7 +131,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const users_results: TicketingUser[] = [];
 
       const updateOrCreateUser = async (
-        user: UnifiedUserOutput,
+        user: UnifiedTicketingUserOutput,
         originId: string,
         connection_id: string,
       ) => {

@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IOfferService } from '../types';
 import { OriginalOfferOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedOfferOutput } from '../types/model.unified';
+import { UnifiedAtsOfferOutput } from '../types/model.unified';
 import { ats_offers as AtsOffer } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -104,7 +104,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedOfferOutput,
+        UnifiedAtsOfferOutput,
         OriginalOfferOutput,
         IOfferService
       >(integrationId, linkedUserId, 'ats', 'offer', service, []);
@@ -116,7 +116,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    offers: UnifiedOfferOutput[],
+    offers: UnifiedAtsOfferOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsOffer[]> {
@@ -124,7 +124,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const offers_results: AtsOffer[] = [];
 
       const updateOrCreateOffer = async (
-        offer: UnifiedOfferOutput,
+        offer: UnifiedAtsOfferOutput,
         originId: string,
       ) => {
         const existingOffer = await this.prisma.ats_offers.findFirst({

@@ -6,7 +6,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
-import { UnifiedCompanyOutput } from '../types/model.unified';
+import { UnifiedCrmCompanyOutput } from '../types/model.unified';
 import { ICompanyService } from '../types';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 import { crm_companies as CrmCompany } from '@prisma/client';
@@ -110,7 +110,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedCompanyOutput,
+        UnifiedCrmCompanyOutput,
         OriginalCompanyOutput,
         ICompanyService
       >(integrationId, linkedUserId, 'crm', 'company', service, []);
@@ -122,7 +122,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedCompanyOutput[],
+    data: UnifiedCrmCompanyOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmCompany[]> {
@@ -130,7 +130,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const companies_results: CrmCompany[] = [];
 
       const updateOrCreateCompany = async (
-        company: UnifiedCompanyOutput,
+        company: UnifiedCrmCompanyOutput,
         originId: string,
       ) => {
         const existingCompany = await this.prisma.crm_companies.findFirst({

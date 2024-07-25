@@ -22,7 +22,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
-@ApiTags('linked-users')
+@ApiTags('linkedUsers')
 @Controller('linked-users')
 export class LinkedUsersController {
   constructor(
@@ -32,7 +32,7 @@ export class LinkedUsersController {
     this.logger.setContext(LinkedUsersController.name);
   }
 
-  @ApiOperation({ operationId: 'addLinkedUser', summary: 'Add Linked User' })
+  @ApiOperation({ operationId: 'createLinkedUser', summary: 'Add Linked User' })
   @ApiBody({ type: CreateLinkedUserDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
@@ -42,7 +42,7 @@ export class LinkedUsersController {
   }
 
   @ApiOperation({
-    operationId: 'addBatchLinkedUsers',
+    operationId: 'importBatch',
     summary: 'Add Batch Linked Users',
   })
   @ApiBody({ type: CreateBatchLinkedUserDto })
@@ -54,7 +54,7 @@ export class LinkedUsersController {
   }
 
   @ApiOperation({
-    operationId: 'fetchLinkedUsers',
+    operationId: 'listLinkedUsers',
     summary: 'Retrieve Linked Users',
   })
   @ApiResponse({ status: 200 })
@@ -66,7 +66,7 @@ export class LinkedUsersController {
   }
 
   @ApiOperation({
-    operationId: 'getLinkedUser',
+    operationId: 'retrieveLinkedUser',
     summary: 'Retrieve a Linked User',
   })
   @ApiQuery({ name: 'id', required: true, type: String })
@@ -79,7 +79,7 @@ export class LinkedUsersController {
   }
 
   @ApiOperation({
-    operationId: 'linkedUserFromRemoteId',
+    operationId: 'remoteId',
     summary: 'Retrieve a Linked User From A Remote Id',
   })
   @ApiQuery({ name: 'remoteId', required: true, type: String })

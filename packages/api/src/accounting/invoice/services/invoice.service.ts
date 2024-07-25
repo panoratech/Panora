@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedInvoiceInput,
-  UnifiedInvoiceOutput,
+  UnifiedAccountingInvoiceInput,
+  UnifiedAccountingInvoiceOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -29,12 +29,12 @@ export class InvoiceService {
   }
 
   async addInvoice(
-    unifiedInvoiceData: UnifiedInvoiceInput,
+    unifiedInvoiceData: UnifiedAccountingInvoiceInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedInvoiceOutput> {
+  ): Promise<UnifiedAccountingInvoiceOutput> {
     return;
   }
 
@@ -43,7 +43,7 @@ export class InvoiceService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedInvoiceOutput> {
+  ): Promise<UnifiedAccountingInvoiceOutput> {
     return;
   }
 
@@ -54,7 +54,7 @@ export class InvoiceService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedInvoiceOutput[]> {
+  ): Promise<UnifiedAccountingInvoiceOutput[]> {
     return;
   }
 }

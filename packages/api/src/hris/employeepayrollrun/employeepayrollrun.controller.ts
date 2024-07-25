@@ -17,17 +17,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EmployeePayrollRunService } from './services/employeepayrollrun.service';
 import {
-  UnifiedEmployeePayrollRunInput,
-  UnifiedEmployeePayrollRunOutput,
+  UnifiedHrisEmployeepayrollrunInput,
+  UnifiedHrisEmployeepayrollrunOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/employeepayrollrun')
 @Controller('hris/employeepayrollrun')
 export class EmployeePayrollRunController {
@@ -40,7 +43,7 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployeePayrollRuns',
+    operationId: 'listHrisEmployeePayrollRun',
     summary: 'List a batch of EmployeePayrollRuns',
   })
   @ApiHeader({
@@ -49,7 +52,7 @@ export class EmployeePayrollRunController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
+  @ApiPaginatedResponse(UnifiedHrisEmployeepayrollrunOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEmployeePayrollRuns(
@@ -76,7 +79,7 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployeePayrollRun',
+    operationId: 'retrieveHrisEmployeePayrollRun',
     summary: 'Retrieve a EmployeePayrollRun',
     description:
       'Retrieve a employeepayrollrun from any connected Hris software',
@@ -99,7 +102,7 @@ export class EmployeePayrollRunController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
+  @ApiGetCustomResponse(UnifiedHrisEmployeepayrollrunOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

@@ -10,8 +10,8 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { IApplicationService } from '../types';
 import {
-  UnifiedApplicationInput,
-  UnifiedApplicationOutput,
+  UnifiedAtsApplicationInput,
+  UnifiedAtsApplicationOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -30,12 +30,12 @@ export class ApplicationService {
   }
 
   async addApplication(
-    unifiedApplicationData: UnifiedApplicationInput,
+    unifiedApplicationData: UnifiedAtsApplicationInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedApplicationOutput> {
+  ): Promise<UnifiedAtsApplicationOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
 
@@ -47,7 +47,7 @@ export class ApplicationService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedApplicationInput>({
+        await this.coreUnification.desunify<UnifiedAtsApplicationInput>({
           sourceObject: unifiedApplicationData,
           targetType: AtsObject.application,
           providerName: integrationId,
@@ -72,7 +72,7 @@ export class ApplicationService {
         vertical: 'ats',
         connectionId: connection_id,
         customFieldMappings: customFieldMappings,
-      })) as UnifiedApplicationOutput[];
+      })) as UnifiedAtsApplicationOutput[];
 
       const source_application = resp.data;
       const target_application = unifiedObject[0];
@@ -147,7 +147,7 @@ export class ApplicationService {
   }
 
   async saveOrUpdateApplication(
-    application: UnifiedApplicationOutput,
+    application: UnifiedAtsApplicationOutput,
     connection_id: string,
   ): Promise<string> {
     const existingApplication = await this.prisma.ats_applications.findFirst({
@@ -190,7 +190,7 @@ export class ApplicationService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedApplicationOutput> {
+  ): Promise<UnifiedAtsApplicationOutput> {
     try {
       const application = await this.prisma.ats_applications.findUnique({
         where: { id_ats_application: id_ats_application },
@@ -223,7 +223,7 @@ export class ApplicationService {
           return off.id_ats_offer;
         });
       }
-      const unifiedApplication: UnifiedApplicationOutput = {
+      const unifiedApplication: UnifiedAtsApplicationOutput = {
         id: application.id_ats_application,
         applied_at: String(application.applied_at) || null,
         rejected_at: String(application.rejected_at) || null,
@@ -242,7 +242,7 @@ export class ApplicationService {
         remote_modified_at: null,
       };
 
-      let res: UnifiedApplicationOutput = unifiedApplication;
+      let res: UnifiedAtsApplicationOutput = unifiedApplication;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: { ressource_owner_id: application.id_ats_application },
@@ -284,7 +284,7 @@ export class ApplicationService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedApplicationOutput[];
+    data: UnifiedAtsApplicationOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -324,7 +324,7 @@ export class ApplicationService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedApplications: UnifiedApplicationOutput[] = await Promise.all(
+      const unifiedApplications: UnifiedAtsApplicationOutput[] = await Promise.all(
         applications.map(async (application) => {
           const values = await this.prisma.value.findMany({
             where: {
@@ -376,10 +376,10 @@ export class ApplicationService {
         }),
       );
 
-      let res: UnifiedApplicationOutput[] = unifiedApplications;
+      let res: UnifiedAtsApplicationOutput[] = unifiedApplications;
 
       if (remote_data) {
-        const remote_array_data: UnifiedApplicationOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsApplicationOutput[] = await Promise.all(
           res.map(async (application) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: { ressource_owner_id: application.id },

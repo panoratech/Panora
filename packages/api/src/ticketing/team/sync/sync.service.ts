@@ -12,7 +12,7 @@ import { tcg_teams as TicketingTeam } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ITeamService } from '../types';
-import { UnifiedTeamOutput } from '../types/model.unified';
+import { UnifiedTicketingTeamOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -103,7 +103,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedTeamOutput,
+        UnifiedTicketingTeamOutput,
         OriginalTeamOutput,
         ITeamService
       >(integrationId, linkedUserId, 'ticketing', 'team', service, []);
@@ -115,7 +115,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    teams: UnifiedTeamOutput[],
+    teams: UnifiedTicketingTeamOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingTeam[]> {
@@ -123,7 +123,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const teams_results: TicketingTeam[] = [];
 
       const updateOrCreateTeam = async (
-        team: UnifiedTeamOutput,
+        team: UnifiedTicketingTeamOutput,
         originId: string,
         connection_id: string,
       ) => {

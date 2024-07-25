@@ -15,7 +15,7 @@ export type UserAccessRole =
   | 'LIMITED_TEAM_MEMBER'
   | 'INTERVIEWER';
 
-export class UnifiedUserInput {
+export class UnifiedAtsUserInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The first name of the user',
@@ -86,7 +86,7 @@ export class UnifiedUserInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedUserOutput extends UnifiedUserInput {
+export class UnifiedAtsUserOutput extends UnifiedAtsUserInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the user' })
   @IsUUID()
   @IsOptional()

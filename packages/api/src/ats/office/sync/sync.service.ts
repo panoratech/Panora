@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IOfficeService } from '../types';
 import { OriginalOfficeOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedOfficeOutput } from '../types/model.unified';
+import { UnifiedAtsOfficeOutput } from '../types/model.unified';
 import { ats_offices as AtsOffice } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -104,7 +104,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedOfficeOutput,
+        UnifiedAtsOfficeOutput,
         OriginalOfficeOutput,
         IOfficeService
       >(integrationId, linkedUserId, 'ats', 'office', service, []);
@@ -116,7 +116,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    offices: UnifiedOfficeOutput[],
+    offices: UnifiedAtsOfficeOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsOffice[]> {
@@ -124,7 +124,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const offices_results: AtsOffice[] = [];
 
       const updateOrCreateOffice = async (
-        office: UnifiedOfficeOutput,
+        office: UnifiedAtsOfficeOutput,
         originId: string,
       ) => {
         let existingOffice;

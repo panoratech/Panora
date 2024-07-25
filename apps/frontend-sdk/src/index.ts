@@ -17,7 +17,7 @@ interface ConnectOptions {
   vertical: ConnectorCategory;
   linkedUserId: string;
   credentials?: Credentials;
-  options: {
+  options?: {
     onSuccess?: () => void;
     onError?: (error: Error) => void;
     overrideReturnUrl?: string;
@@ -65,7 +65,7 @@ class Panora {
   }
 
   async connect(options: ConnectOptions): Promise<Window | null> {
-    const { providerName, vertical, linkedUserId, credentials, options: {onSuccess, onError, overrideReturnUrl} } = options;
+    const { providerName, vertical, linkedUserId, credentials, options: {onSuccess, onError, overrideReturnUrl} = {} } = options;
 
     try {
       const projectId = await this.fetchProjectId();

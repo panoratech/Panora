@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
-export class UnifiedSharedLinkInput {
+export class UnifiedFilestorageSharedlinkInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The url of the shared link',
@@ -59,7 +59,7 @@ export class UnifiedSharedLinkInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedSharedLinkOutput extends UnifiedSharedLinkInput {
+export class UnifiedFilestorageSharedlinkOutput extends UnifiedFilestorageSharedlinkInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the shared link',

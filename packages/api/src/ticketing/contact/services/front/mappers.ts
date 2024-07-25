@@ -1,8 +1,8 @@
 import { IContactMapper } from '@ticketing/contact/types';
 import { FrontContactInput, FrontContactOutput } from './types';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedTicketingContactInput,
+  UnifiedTicketingContactOutput,
 } from '@ticketing/contact/types/model.unified';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
@@ -14,7 +14,7 @@ export class FrontContactMapper implements IContactMapper {
     this.mappersRegistry.registerService('ticketing', 'contact', 'front', this);
   }
   desunify(
-    source: UnifiedContactInput,
+    source: UnifiedTicketingContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class FrontContactMapper implements IContactMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): UnifiedTicketingContactOutput | UnifiedTicketingContactOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
@@ -50,7 +50,7 @@ export class FrontContactMapper implements IContactMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput {
+  ): UnifiedTicketingContactOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -64,7 +64,7 @@ export class FrontContactMapper implements IContactMapper {
       (handle) => handle.source === 'phone',
     );
 
-    const unifiedContact: UnifiedContactOutput = {
+    const unifiedContact: UnifiedTicketingContactOutput = {
       remote_id: contact.id,
       remote_data: contact,
       name: contact.name,

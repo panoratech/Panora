@@ -8,7 +8,13 @@ import {
   Request,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExcludeController,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ConnectionsStrategiesService } from './connections-strategies.service';
 import { CreateConnectionStrategyDto } from './dto/create-connections-strategies.dto';
 import { ToggleStrategyDto } from './dto/toggle.dto';
@@ -18,6 +24,7 @@ import { ConnectionStrategyCredentials } from './dto/get-connection-cs-credentia
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
 @ApiTags('connections-strategies')
+@ApiExcludeController()
 @Controller('connections-strategies')
 export class ConnectionsStrategiesController {
   constructor(

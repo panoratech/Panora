@@ -1,8 +1,8 @@
 import { AshbyOfferInput, AshbyOfferOutput } from './types';
 import {
   OfferStatus,
-  UnifiedOfferInput,
-  UnifiedOfferOutput,
+  UnifiedAtsOfferInput,
+  UnifiedAtsOfferOutput,
 } from '@ats/offer/types/model.unified';
 import { IOfferMapper } from '@ats/offer/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -43,7 +43,7 @@ export class AshbyOfferMapper implements IOfferMapper {
   }
 
   async desunify(
-    source: UnifiedOfferInput,
+    source: UnifiedAtsOfferInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -59,7 +59,7 @@ export class AshbyOfferMapper implements IOfferMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOfferOutput | UnifiedOfferOutput[]> {
+  ): Promise<UnifiedAtsOfferOutput | UnifiedAtsOfferOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleOfferToUnified(
         source,
@@ -82,7 +82,7 @@ export class AshbyOfferMapper implements IOfferMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOfferOutput> {
+  ): Promise<UnifiedAtsOfferOutput> {
     return {
       remote_id: offer.id,
       remote_data: offer,

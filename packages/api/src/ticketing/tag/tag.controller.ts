@@ -17,14 +17,15 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TagService } from './services/tag.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { UnifiedTagOutput } from './types/model.unified';
+import { UnifiedTicketingTagOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/tags')
 @Controller('ticketing/tags')
 export class TagController {
@@ -37,7 +38,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingTags',
+    operationId: 'listTicketingTags',
     summary: 'List a batch of Tags',
   })
   @ApiHeader({
@@ -46,7 +47,7 @@ export class TagController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTagOutput)
+  @ApiPaginatedResponse(UnifiedTicketingTagOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -74,7 +75,7 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingTag',
+    operationId: 'retrieveTicketingTag',
     summary: 'Retrieve a Tag',
     description: 'Retrieve a tag from any connected Ticketing software',
   })
@@ -97,7 +98,7 @@ export class TagController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTagOutput)
+  @ApiGetCustomResponse(UnifiedTicketingTagOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedEmailInput, UnifiedEmailOutput } from './model.unified';
+import { UnifiedMarketingautomationEmailInput, UnifiedMarketingautomationEmailOutput } from './model.unified';
 import { OriginalEmailOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IEmailService {
 
 export interface IEmailMapper {
   desunify(
-    source: UnifiedEmailInput,
+    source: UnifiedMarketingautomationEmailInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IEmailMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEmailOutput | UnifiedEmailOutput[]>;
+  ): Promise<UnifiedMarketingautomationEmailOutput | UnifiedMarketingautomationEmailOutput[]>;
 }

@@ -80,7 +80,6 @@ const AddWebhook = () => {
             createWebhookPromise({
                 url: values.url,
                 description: values.description,
-                id_project: idProject,
                 scope: selectedScopes,
             }),
             {

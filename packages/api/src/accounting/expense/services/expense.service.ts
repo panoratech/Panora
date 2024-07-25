@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedExpenseInput,
-  UnifiedExpenseOutput,
+  UnifiedAccountingExpenseInput,
+  UnifiedAccountingExpenseOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -29,12 +29,12 @@ export class ExpenseService {
   }
 
   async addExpense(
-    unifiedExpenseData: UnifiedExpenseInput,
+    unifiedExpenseData: UnifiedAccountingExpenseInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedExpenseOutput> {
+  ): Promise<UnifiedAccountingExpenseOutput> {
     return;
   }
 
@@ -43,7 +43,7 @@ export class ExpenseService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedExpenseOutput> {
+  ): Promise<UnifiedAccountingExpenseOutput> {
     return;
   }
 
@@ -54,7 +54,7 @@ export class ExpenseService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedExpenseOutput[]> {
+  ): Promise<UnifiedAccountingExpenseOutput[]> {
     return;
   }
 }

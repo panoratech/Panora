@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IJobInterviewStageService } from '../types';
 import { OriginalJobInterviewStageOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedJobInterviewStageOutput } from '../types/model.unified';
+import { UnifiedAtsJobinterviewstageOutput } from '../types/model.unified';
 import { ats_job_interview_stages as AtsJobInterviewStage } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -107,7 +107,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedJobInterviewStageOutput,
+        UnifiedAtsJobinterviewstageOutput,
         OriginalJobInterviewStageOutput,
         IJobInterviewStageService
       >(integrationId, linkedUserId, 'ats', 'jobinterviewstage', service, []);
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    jobInterviewStages: UnifiedJobInterviewStageOutput[],
+    jobInterviewStages: UnifiedAtsJobinterviewstageOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsJobInterviewStage[]> {
@@ -127,7 +127,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const jobInterviewStages_results: AtsJobInterviewStage[] = [];
 
       const updateOrCreateJobInterviewStage = async (
-        jobInterviewStage: UnifiedJobInterviewStageOutput,
+        jobInterviewStage: UnifiedAtsJobinterviewstageOutput,
         originId: string,
       ) => {
         const existingJobInterviewStage =

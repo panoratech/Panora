@@ -17,14 +17,23 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { UserService } from './services/user.service';
-import { UnifiedUserInput, UnifiedUserOutput } from './types/model.unified';
+import {
+  UnifiedAtsUserInput,
+  UnifiedAtsUserOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/user')
 @Controller('ats/user')
 export class UserController {
@@ -37,7 +46,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsUsers',
+    operationId: 'listAtsUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -46,7 +55,7 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiPaginatedResponse(UnifiedAtsUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getUsers(
@@ -73,7 +82,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsUser',
+    operationId: 'retrieveAtsUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Ats software',
   })
@@ -95,7 +104,7 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiGetCustomResponse(UnifiedAtsUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

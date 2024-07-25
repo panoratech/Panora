@@ -17,17 +17,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { CompanyInfoService } from './services/companyinfo.service';
 import {
-  UnifiedCompanyInfoInput,
-  UnifiedCompanyInfoOutput,
+  UnifiedAccountingCompanyinfoInput,
+  UnifiedAccountingCompanyinfoOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('accounting/companyinfo')
 @Controller('accounting/companyinfo')
 export class CompanyInfoController {
@@ -40,7 +43,7 @@ export class CompanyInfoController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanyInfos',
+    operationId: 'listAccountingCompanyInfos',
     summary: 'List a batch of CompanyInfos',
   })
   @ApiHeader({
@@ -49,7 +52,7 @@ export class CompanyInfoController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCompanyInfoOutput)
+  @ApiPaginatedResponse(UnifiedAccountingCompanyinfoOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCompanyInfos(
@@ -76,7 +79,7 @@ export class CompanyInfoController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanyInfo',
+    operationId: 'retrieveAccountingCompanyInfo',
     summary: 'Retrieve a CompanyInfo',
     description:
       'Retrieve a companyinfo from any connected Accounting software',
@@ -100,7 +103,7 @@ export class CompanyInfoController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCompanyInfoOutput)
+  @ApiGetCustomResponse(UnifiedAccountingCompanyinfoOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

@@ -8,7 +8,7 @@ interface IWebhookDto {
 
 const useDeleteWebhook = () => {
     const remove = async (webhookData: IWebhookDto) => {
-        const response = await fetch(`${config.API_URL}/webhook/${webhookData.id_webhook}`, {
+        const response = await fetch(`${config.API_URL}/webhook/internal/${webhookData.id_webhook}`, {
             method: 'DELETE',
             headers: {
             'Content-Type': 'application/json',

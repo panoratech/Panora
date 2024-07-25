@@ -10,6 +10,7 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  Put,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -21,14 +22,22 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
 import { TicketService } from './services/ticket.service';
-import { UnifiedTicketInput, UnifiedTicketOutput } from './types/model.unified';
+import {
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+import { UnifiedCrmContactOutput } from '@crm/contact/types/model.unified';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('ticketing/tickets')
 @Controller('ticketing/tickets')
 export class TicketController {
@@ -41,7 +50,7 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'getTickets',
+    operationId: 'listTicketingTicket',
     summary: 'List a batch of Tickets',
   })
   @ApiHeader({
@@ -50,7 +59,7 @@ export class TicketController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTicketOutput)
+  @ApiPaginatedResponse(UnifiedTicketingTicketOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -78,7 +87,7 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'getTicket',
+    operationId: 'retrieveTicketingTicket',
     summary: 'Retrieve a Ticket',
     description: 'Retrieve a ticket from any connected Ticketing software',
   })
@@ -101,7 +110,7 @@ export class TicketController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTicketOutput)
+  @ApiGetCustomResponse(UnifiedTicketingTicketOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -122,7 +131,7 @@ export class TicketController {
   }
 
   @ApiOperation({
-    operationId: 'addTicket',
+    operationId: 'createTicketingTicket',
     summary: 'Create a Ticket',
     description: 'Create a ticket in any supported Ticketing software',
   })
@@ -139,12 +148,12 @@ export class TicketController {
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  @ApiBody({ type: UnifiedTicketInput })
-  @ApiCustomResponse(UnifiedTicketOutput)
+  @ApiBody({ type: UnifiedTicketingTicketInput })
+  @ApiPostCustomResponse(UnifiedTicketingTicketOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addTicket(
-    @Body() unfiedTicketData: UnifiedTicketInput,
+    @Body() unifiedTicketData: UnifiedTicketingTicketInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
@@ -154,7 +163,7 @@ export class TicketController {
           connection_token,
         );
       return this.ticketService.addTicket(
-        unfiedTicketData,
+        unifiedTicketData,
         connectionId,
         remoteSource,
         linkedUserId,

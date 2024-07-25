@@ -279,7 +279,7 @@ import {
   ApiTags,
   ApiHeader,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ${ObjectCap}Service } from './services/${objectType}.service';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
@@ -308,7 +308,7 @@ private connectionUtils: ConnectionUtils
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
+  @ApiPaginatedResponse(Unified${ObjectCap}Output)
 @UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
@@ -349,7 +349,7 @@ private connectionUtils: ConnectionUtils
     description:
       'Set to true to include data from the original ${VerticalCap} software.',
   })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
+  @ApiPaginatedResponse(Unified${ObjectCap}Output)
 @UseGuards(ApiKeyAuthGuard)  @Get(':id')
   retrieve(
     @Param('id') id: string,
@@ -377,7 +377,7 @@ private connectionUtils: ConnectionUtils
       'Set to true to include data from the original ${VerticalCap} software.',
   })
   @ApiBody({ type: Unified${ObjectCap}Input })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
+  @ApiGetCustomResponse(Unified${ObjectCap}Output)
 @UseGuards(ApiKeyAuthGuard)  @Post()
   async create(
     @Body() unified${ObjectCap}Data: Unified${ObjectCap}Input,

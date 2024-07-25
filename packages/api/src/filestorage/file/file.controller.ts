@@ -18,14 +18,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { FileService } from './services/file.service';
-import { UnifiedFileInput, UnifiedFileOutput } from './types/model.unified';
+import {
+  UnifiedFilestorageFileInput,
+  UnifiedFilestorageFileOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('filestorage/files')
 @Controller('filestorage/files')
 export class FileController {
@@ -38,7 +48,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'getFiles',
+    operationId: 'listFilestorageFile',
     summary: 'List a batch of Files',
   })
   @ApiHeader({
@@ -47,7 +57,7 @@ export class FileController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedFileOutput)
+  @ApiPaginatedResponse(UnifiedFilestorageFileOutput)
   @UseGuards(ApiKeyAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
@@ -76,7 +86,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'getFile',
+    operationId: 'retrieveFilestorageFile',
     summary: 'Retrieve a File',
     description: 'Retrieve a file from any connected Filestorage software',
   })
@@ -99,7 +109,7 @@ export class FileController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedFileOutput)
+  @ApiGetCustomResponse(UnifiedFilestorageFileOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -120,7 +130,7 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'addFile',
+    operationId: 'createFilestorageFile',
     summary: 'Create a File',
     description: 'Create a file in any supported Filestorage software',
   })
@@ -130,12 +140,12 @@ export class FileController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiBody({ type: UnifiedFileInput })
-  @ApiCustomResponse(UnifiedFileOutput)
+  @ApiBody({ type: UnifiedFilestorageFileInput })
+  @ApiPostCustomResponse(UnifiedFilestorageFileOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addFile(
-    @Body() unifiedFileData: UnifiedFileInput,
+    @Body() unifiedFileData: UnifiedFilestorageFileInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

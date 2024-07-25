@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IAttachmentService } from '../types';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedAttachmentOutput } from '../types/model.unified';
+import { UnifiedAtsAttachmentOutput } from '../types/model.unified';
 import { ats_candidate_attachments as AtsAttachment } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -52,7 +52,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    attachments: UnifiedAttachmentOutput[],
+    attachments: UnifiedAtsAttachmentOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     candidate_id?: string,
@@ -61,7 +61,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const attachments_results: AtsAttachment[] = [];
 
       const updateOrCreateAttachment = async (
-        attachment: UnifiedAttachmentOutput,
+        attachment: UnifiedAtsAttachmentOutput,
         originId: string,
       ) => {
         let existingAttachment;

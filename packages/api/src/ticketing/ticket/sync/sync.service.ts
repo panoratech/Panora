@@ -9,13 +9,13 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { tcg_tickets as TicketingTicket } from '@prisma/client';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
-import { UnifiedCollectionOutput } from '@ticketing/collection/types/model.unified';
-import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
+import { UnifiedTicketingAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedTicketingCollectionOutput } from '@ticketing/collection/types/model.unified';
+import { UnifiedTicketingTagOutput } from '@ticketing/tag/types/model.unified';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ITicketService } from '../types';
-import { UnifiedTicketOutput } from '../types/model.unified';
+import { UnifiedTicketingTicketOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -105,7 +105,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         this.serviceRegistry.getService(integrationId);
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedTicketOutput,
+        UnifiedTicketingTicketOutput,
         OriginalTicketOutput,
         ITicketService
       >(
@@ -125,7 +125,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    tickets: UnifiedTicketOutput[],
+    tickets: UnifiedTicketingTicketOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingTicket[]> {
@@ -133,7 +133,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const tickets_results: TicketingTicket[] = [];
 
       const updateOrCreateTicket = async (
-        ticket: UnifiedTicketOutput,
+        ticket: UnifiedTicketingTicketOutput,
         originId: string,
         connection_id: string,
       ) => {
@@ -215,7 +215,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 ticket.collections,
                 originSource,
                 ticket.collections.map(
-                  (col: UnifiedCollectionOutput) => col.remote_data,
+                  (col: UnifiedTicketingCollectionOutput) => col.remote_data,
                 ),
               );
             collections = coll.map((c) => c.id_tcg_collection as string);
@@ -238,7 +238,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             ticket.attachments,
             originSource,
             ticket.attachments.map(
-              (att: UnifiedAttachmentOutput) => att.remote_data,
+              (att: UnifiedTicketingAttachmentOutput) => att.remote_data,
             ),
             {
               object_name: 'ticket',
@@ -260,7 +260,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 linkedUserId,
                 ticket.tags,
                 originSource,
-                ticket.tags.map((tag: UnifiedTagOutput) => tag.remote_data),
+                ticket.tags.map((tag: UnifiedTicketingTagOutput) => tag.remote_data),
               );
             TAGS = tags.map((t) => t.id_tcg_tag as string);
           }

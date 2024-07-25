@@ -13,7 +13,7 @@ export type ScoreCardRecommendation =
   | 'STRONG_YES'
   | 'NO_DECISION';
 
-export class UnifiedScoreCardInput {
+export class UnifiedAtsScorecardInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The overall recommendation',
@@ -65,7 +65,7 @@ export class UnifiedScoreCardInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedScoreCardOutput extends UnifiedScoreCardInput {
+export class UnifiedAtsScorecardOutput extends UnifiedAtsScorecardInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the scorecard',

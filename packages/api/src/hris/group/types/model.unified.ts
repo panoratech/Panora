@@ -1,3 +1,3 @@
-export class UnifiedGroupInput {}
+export class UnifiedHrisGroupInput {}
 
-export class UnifiedGroupOutput extends UnifiedGroupInput {}
+export class UnifiedHrisGroupOutput extends UnifiedHrisGroupInput {}

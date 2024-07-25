@@ -17,17 +17,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ScoreCardService } from './services/scorecard.service';
 import {
-  UnifiedScoreCardInput,
-  UnifiedScoreCardOutput,
+  UnifiedAtsScorecardInput,
+  UnifiedAtsScorecardOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('ats/scorecard')
 @Controller('ats/scorecard')
 export class ScoreCardController {
@@ -40,7 +43,7 @@ export class ScoreCardController {
   }
 
   @ApiOperation({
-    operationId: 'getScoreCards',
+    operationId: 'listAtsScorecard',
     summary: 'List a batch of ScoreCards',
   })
   @ApiHeader({
@@ -49,7 +52,7 @@ export class ScoreCardController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedScoreCardOutput)
+  @ApiPaginatedResponse(UnifiedAtsScorecardOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getScoreCards(
@@ -76,7 +79,7 @@ export class ScoreCardController {
   }
 
   @ApiOperation({
-    operationId: 'getScoreCard',
+    operationId: 'retrieveAtsScorecard',
     summary: 'Retrieve a ScoreCard',
     description: 'Retrieve a scorecard from any connected Ats software',
   })
@@ -98,7 +101,7 @@ export class ScoreCardController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedScoreCardOutput)
+  @ApiGetCustomResponse(UnifiedAtsScorecardOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

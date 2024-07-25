@@ -4,7 +4,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { UnifiedCrmUserOutput } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class UserService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedCrmUserOutput> {
     try {
       const user = await this.prisma.crm_users.findUnique({
         where: {
@@ -55,8 +55,8 @@ export class UserService {
         [key]: value,
       }));
 
-      // Transform to UnifiedUserOutput format
-      const unifiedUser: UnifiedUserOutput = {
+      // Transform to UnifiedCrmUserOutput format
+      const unifiedUser: UnifiedCrmUserOutput = {
         id: user.id_crm_user,
         name: user.name,
         email: user.email,
@@ -66,7 +66,7 @@ export class UserService {
         modified_at: user.modified_at,
       };
 
-      let res: UnifiedUserOutput = {
+      let res: UnifiedCrmUserOutput = {
         ...unifiedUser,
       };
 
@@ -111,7 +111,7 @@ export class UserService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedUserOutput[];
+    data: UnifiedCrmUserOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -157,7 +157,7 @@ export class UserService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedUsers: UnifiedUserOutput[] = await Promise.all(
+      const unifiedUsers: UnifiedCrmUserOutput[] = await Promise.all(
         users.map(async (user) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -183,7 +183,7 @@ export class UserService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedUserOutput format
+          // Transform to UnifiedCrmUserOutput format
           return {
             id: user.id_crm_user,
             name: user.name,
@@ -196,10 +196,10 @@ export class UserService {
         }),
       );
 
-      let res: UnifiedUserOutput[] = unifiedUsers;
+      let res: UnifiedCrmUserOutput[] = unifiedUsers;
 
       if (remote_data) {
-        const remote_array_data: UnifiedUserOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmUserOutput[] = await Promise.all(
           res.map(async (user) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

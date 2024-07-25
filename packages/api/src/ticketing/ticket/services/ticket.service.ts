@@ -12,8 +12,8 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { ITicketService } from '../types';
 import {
-  UnifiedTicketInput,
-  UnifiedTicketOutput,
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 
@@ -33,12 +33,12 @@ export class TicketService {
   }
 
   async addTicket(
-    unifiedTicketData: UnifiedTicketInput,
+    unifiedTicketData: UnifiedTicketingTicketInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTicketOutput> {
+  ): Promise<UnifiedTicketingTicketOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateAccountId(unifiedTicketData.account_id);
@@ -61,7 +61,7 @@ export class TicketService {
         );
       //desunify the data according to the target obj wanted
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedTicketInput>({
+        await this.coreUnification.desunify<UnifiedTicketingTicketInput>({
           sourceObject: unifiedTicketData,
           targetType: TicketingObject.ticket,
           providerName: integrationId,
@@ -93,7 +93,7 @@ export class TicketService {
         vertical: 'ticketing',
         connectionId: connection_id,
         customFieldMappings: customFieldMappings,
-      })) as UnifiedTicketOutput[];
+      })) as UnifiedTicketingTicketOutput[];
 
       // add the ticket inside our db
       const source_ticket = resp.data;
@@ -234,7 +234,7 @@ export class TicketService {
   }
 
   async saveOrUpdateTicket(
-    ticket: UnifiedTicketOutput,
+    ticket: UnifiedTicketingTicketOutput,
     connection_id: string,
   ): Promise<string> {
     const existingTicket = await this.prisma.tcg_tickets.findFirst({
@@ -278,7 +278,7 @@ export class TicketService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTicketOutput> {
+  ): Promise<UnifiedTicketingTicketOutput> {
     try {
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
@@ -347,8 +347,8 @@ export class TicketService {
         },
       });
 
-      // Transform to UnifiedTicketOutput format
-      const unifiedTicket: UnifiedTicketOutput = {
+      // Transform to UnifiedTicketingTicketOutput format
+      const unifiedTicket: UnifiedTicketingTicketOutput = {
         id: ticket.id_tcg_ticket,
         name: ticket.name || null,
         status: ticket.status || null,
@@ -405,7 +405,7 @@ export class TicketService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedTicketOutput[];
+    data: UnifiedTicketingTicketOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -457,7 +457,7 @@ export class TicketService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedTickets: UnifiedTicketOutput[] = await Promise.all(
+      const unifiedTickets: UnifiedTicketingTicketOutput[] = await Promise.all(
         tickets.map(async (ticket) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -519,8 +519,8 @@ export class TicketService {
               id_tcg_ticket: ticket.id_tcg_ticket,
             },
           });
-          // Transform to UnifiedTicketOutput format
-          const unifiedTicket: UnifiedTicketOutput = {
+          // Transform to UnifiedTicketingTicketOutput format
+          const unifiedTicket: UnifiedTicketingTicketOutput = {
             id: ticket.id_tcg_ticket,
             name: ticket.name || null,
             status: ticket.status || null,
@@ -543,9 +543,9 @@ export class TicketService {
         }),
       );
 
-      let res: UnifiedTicketOutput[] = unifiedTickets;
+      let res: UnifiedTicketingTicketOutput[] = unifiedTickets;
       if (remote_data) {
-        const remote_array_data: UnifiedTicketOutput[] = await Promise.all(
+        const remote_array_data: UnifiedTicketingTicketOutput[] = await Promise.all(
           res.map(async (ticket) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

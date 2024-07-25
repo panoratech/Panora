@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAccountingAttachmentInput,
+  UnifiedAccountingAttachmentOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -28,12 +28,12 @@ export class AttachmentService {
   }
 
   async addAttachment(
-    unifiedAttachmentData: UnifiedAttachmentInput,
+    unifiedAttachmentData: UnifiedAccountingAttachmentInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedAccountingAttachmentOutput> {
     return;
   }
 
@@ -42,7 +42,7 @@ export class AttachmentService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedAccountingAttachmentOutput> {
     return;
   }
 
@@ -53,7 +53,7 @@ export class AttachmentService {
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedAttachmentOutput[]> {
+  ): Promise<UnifiedAccountingAttachmentOutput[]> {
     return;
   }
 }

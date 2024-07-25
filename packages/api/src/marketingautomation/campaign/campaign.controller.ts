@@ -17,17 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { CampaignService } from './services/campaign.service';
 import {
-  UnifiedCampaignInput,
+  UnifiedMarketingautomationCampaignInput,
   UnifiedCampaignOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/campaign')
 @Controller('marketingautomation/campaign')
 export class CampaignController {
@@ -40,7 +47,7 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'getCampaigns',
+    operationId: 'listMarketingautomationCampaign', // Updated operationId
     summary: 'List a batch of Campaigns',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class CampaignController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCampaignOutput)
+  @ApiPaginatedResponse(UnifiedCampaignOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCampaigns(
@@ -76,7 +83,7 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'getCampaign',
+    operationId: 'retrieveMarketingautomationCampaign', // Updated operationId
     summary: 'Retrieve a Campaign',
     description:
       'Retrieve a campaign from any connected Marketingautomation software',
@@ -100,7 +107,7 @@ export class CampaignController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCampaignOutput)
+  @ApiGetCustomResponse(UnifiedCampaignOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -121,7 +128,7 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'addCampaign',
+    operationId: 'createMarketingautomationCampaign', // Updated operationId
     summary: 'Create a Campaign',
     description:
       'Create a campaign in any supported Marketingautomation software',
@@ -139,12 +146,12 @@ export class CampaignController {
     description:
       'Set to true to include data from the original Marketingautomation software.',
   })
-  @ApiBody({ type: UnifiedCampaignInput })
-  @ApiCustomResponse(UnifiedCampaignOutput)
+  @ApiBody({ type: UnifiedMarketingautomationCampaignInput })
+  @ApiPostCustomResponse(UnifiedCampaignOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addCampaign(
-    @Body() unifiedCampaignData: UnifiedCampaignInput,
+    @Body() unifiedCampaignData: UnifiedMarketingautomationCampaignInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

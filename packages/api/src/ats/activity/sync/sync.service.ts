@@ -16,7 +16,7 @@ import { ats_activities as AtsActivity } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IActivityService } from '../types';
-import { UnifiedActivityOutput } from '../types/model.unified';
+import { UnifiedAtsActivityOutput } from '../types/model.unified';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 
 @Injectable()
@@ -127,7 +127,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedActivityOutput,
+        UnifiedAtsActivityOutput,
         OriginalActivityOutput,
         IActivityService
       >(integrationId, linkedUserId, 'ats', 'activity', service, [
@@ -146,7 +146,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    activities: UnifiedActivityOutput[],
+    activities: UnifiedAtsActivityOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     id_candidate?: string,
@@ -155,7 +155,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const activities_results: AtsActivity[] = [];
 
       const updateOrCreateActivity = async (
-        activity: UnifiedActivityOutput,
+        activity: UnifiedAtsActivityOutput,
         originId: string,
       ) => {
         let existingActivity;

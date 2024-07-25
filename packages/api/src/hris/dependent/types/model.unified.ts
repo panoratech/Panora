@@ -1,3 +1,3 @@
-export class UnifiedDependentInput {}
+export class UnifiedHrisDependentInput {}
 
-export class UnifiedDependentOutput extends UnifiedDependentInput {}
+export class UnifiedHrisDependentOutput extends UnifiedHrisDependentInput {}

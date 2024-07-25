@@ -1,8 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
   AttachmentType,
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAtsAttachmentInput,
+  UnifiedAtsAttachmentOutput,
 } from './model.unified';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IAttachmentService extends IBaseObjectService {
 
 export interface IAttachmentMapper {
   desunify(
-    source: UnifiedAttachmentInput,
+    source: UnifiedAtsAttachmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IAttachmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAttachmentOutput | UnifiedAttachmentOutput[]>;
+  ): Promise<UnifiedAtsAttachmentOutput | UnifiedAtsAttachmentOutput[]>;
 }

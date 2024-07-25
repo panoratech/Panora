@@ -3,8 +3,8 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  UnifiedFolderInput,
-  UnifiedFolderOutput,
+  UnifiedFilestorageFolderInput,
+  UnifiedFilestorageFolderOutput,
 } from '../types/model.unified';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -30,12 +30,12 @@ export class FolderService {
   }
 
   async addFolder(
-    unifiedFolderData: UnifiedFolderInput,
+    unifiedFolderData: UnifiedFilestorageFolderInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedFolderOutput> {
+  ): Promise<UnifiedFilestorageFolderOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       const customFieldMappings =
@@ -46,7 +46,7 @@ export class FolderService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedFolderInput>({
+        await this.coreUnification.desunify<UnifiedFilestorageFolderInput>({
           sourceObject: unifiedFolderData,
           targetType: FileStorageObject.folder,
           providerName: integrationId,
@@ -75,7 +75,7 @@ export class FolderService {
         vertical: 'filestorage',
         connectionId: connection_id,
         customFieldMappings: customFieldMappings,
-      })) as UnifiedFolderOutput[];
+      })) as UnifiedFilestorageFolderOutput[];
 
       const source_folder = resp.data;
       const target_folder = unifiedObject[0];
@@ -139,7 +139,7 @@ export class FolderService {
   }
 
   async saveOrUpdateFolder(
-    folder: UnifiedFolderOutput,
+    folder: UnifiedFilestorageFolderOutput,
     connection_id: string,
   ): Promise<string> {
     const existingFolder = await this.prisma.fs_folders.findFirst({
@@ -179,7 +179,7 @@ export class FolderService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedFolderOutput> {
+  ): Promise<UnifiedFilestorageFolderOutput> {
     try {
       const folder = await this.prisma.fs_folders.findUnique({
         where: {
@@ -226,8 +226,8 @@ export class FolderService {
         },
       });
 
-      // Transform to UnifiedFolderOutput format
-      const unifiedFolder: UnifiedFolderOutput = {
+      // Transform to UnifiedFilestorageFolderOutput format
+      const unifiedFolder: UnifiedFilestorageFolderOutput = {
         id: folder.id_fs_folder,
         folder_url: folder.folder_url,
         size: String(folder.size),
@@ -281,7 +281,7 @@ export class FolderService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedFolderOutput[];
+    data: UnifiedFilestorageFolderOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -327,7 +327,7 @@ export class FolderService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedFolders: UnifiedFolderOutput[] = await Promise.all(
+      const unifiedFolders: UnifiedFilestorageFolderOutput[] = await Promise.all(
         folders.map(async (folder) => {
           // Fetch field mappings for the folder
           const values = await this.prisma.value.findMany({
@@ -370,7 +370,7 @@ export class FolderService {
             },
           });
 
-          // Transform to UnifiedFolderOutput format
+          // Transform to UnifiedFilestorageFolderOutput format
           return {
             id: folder.id_fs_folder,
             folder_url: folder.folder_url,
@@ -389,10 +389,10 @@ export class FolderService {
         }),
       );
 
-      let res: UnifiedFolderOutput[] = unifiedFolders;
+      let res: UnifiedFilestorageFolderOutput[] = unifiedFolders;
 
       if (remote_data) {
-        const remote_array_data: UnifiedFolderOutput[] = await Promise.all(
+        const remote_array_data: UnifiedFilestorageFolderOutput[] = await Promise.all(
           res.map(async (folder) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

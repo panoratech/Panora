@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedDepartmentOutput } from '../types/model.unified';
+import { UnifiedAtsDepartmentOutput } from '../types/model.unified';
 
 @Injectable()
 export class DepartmentService {
@@ -15,7 +15,7 @@ export class DepartmentService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedDepartmentOutput> {
+  ): Promise<UnifiedAtsDepartmentOutput> {
     try {
       const department = await this.prisma.ats_departments.findUnique({
         where: {
@@ -51,8 +51,8 @@ export class DepartmentService {
         [key]: value,
       }));
 
-      // Transform to UnifiedDepartmentOutput format
-      const unifiedDepartment: UnifiedDepartmentOutput = {
+      // Transform to UnifiedAtsDepartmentOutput format
+      const unifiedDepartment: UnifiedAtsDepartmentOutput = {
         id: department.id_ats_department,
         name: department.name,
         field_mappings: field_mappings,
@@ -61,7 +61,7 @@ export class DepartmentService {
         modified_at: department.modified_at,
       };
 
-      let res: UnifiedDepartmentOutput = unifiedDepartment;
+      let res: UnifiedAtsDepartmentOutput = unifiedDepartment;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -103,7 +103,7 @@ export class DepartmentService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedDepartmentOutput[];
+    data: UnifiedAtsDepartmentOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -149,7 +149,7 @@ export class DepartmentService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedDepartments: UnifiedDepartmentOutput[] = await Promise.all(
+      const unifiedDepartments: UnifiedAtsDepartmentOutput[] = await Promise.all(
         departments.map(async (department) => {
           // Fetch field mappings for the department
           const values = await this.prisma.value.findMany({
@@ -178,7 +178,7 @@ export class DepartmentService {
             }),
           );
 
-          // Transform to UnifiedDepartmentOutput format
+          // Transform to UnifiedAtsDepartmentOutput format
           return {
             id: department.id_ats_department,
             name: department.name,
@@ -190,10 +190,10 @@ export class DepartmentService {
         }),
       );
 
-      let res: UnifiedDepartmentOutput[] = unifiedDepartments;
+      let res: UnifiedAtsDepartmentOutput[] = unifiedDepartments;
 
       if (remote_data) {
-        const remote_array_data: UnifiedDepartmentOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsDepartmentOutput[] = await Promise.all(
           res.map(async (department) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

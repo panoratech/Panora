@@ -1,10 +1,10 @@
 import { ICommentMapper } from '@ticketing/comment/types';
 import { ZendeskCommentInput, ZendeskCommentOutput } from './types';
 import {
-  UnifiedCommentInput,
-  UnifiedCommentOutput,
+  UnifiedTicketingCommentInput,
+  UnifiedTicketingCommentOutput,
 } from '@ticketing/comment/types/model.unified';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedTicketingAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.ticketing';
 import { Utils } from '@ticketing/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -30,7 +30,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
   }
 
   async desunify(
-    source: UnifiedCommentInput,
+    source: UnifiedTicketingCommentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -72,7 +72,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]> {
+  ): Promise<UnifiedTicketingCommentOutput | UnifiedTicketingCommentOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleCommentToUnified(
         source,
@@ -98,7 +98,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCommentOutput> {
+  ): Promise<UnifiedTicketingCommentOutput> {
     let opts: any = {};
 
     if (comment.attachments && comment.attachments.length > 0) {
@@ -111,7 +111,7 @@ export class ZendeskCommentMapper implements ICommentMapper {
         vertical: 'ticketing',
         connectionId: connectionId,
         customFieldMappings: [],
-      })) as UnifiedAttachmentOutput[];
+      })) as UnifiedTicketingAttachmentOutput[];
       opts = {
         ...opts,
         attachments: attachments,

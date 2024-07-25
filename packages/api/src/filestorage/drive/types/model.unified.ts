@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
-export class UnifiedDriveInput {
+export class UnifiedFilestorageDriveInput {
   @ApiProperty({ type: String, description: 'The name of the drive' })
   @IsString()
   name: string;
@@ -26,7 +26,7 @@ export class UnifiedDriveInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedDriveOutput extends UnifiedDriveInput {
+export class UnifiedFilestorageDriveOutput extends UnifiedFilestorageDriveInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the drive' })
   @IsUUID()
   @IsOptional()

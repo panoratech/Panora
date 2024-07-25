@@ -30,14 +30,14 @@
     "raiseIssue": true
   },
   "logo": {
-    "dark": "/logo/logo-panora-white-hq.png",
-    "light": "/logo/logo-panora-white.png"
+    "dark": "/logo/logo-panora-dark.png",
+    "light": "/logo/logo-panora-light.png"
   },
   "favicon": "logo/fav.png",
   "colors": {
-    "primary": "#085faf",
-    "light": "#085faf",
-    "dark": "#073763",
+    "primary": "#000000",
+"light": "#FFFFFF",
+"dark": "#000000",
     "anchors": {
       "from": "#000000",
       "to": "#000000"
@@ -59,7 +59,7 @@
   },
   "tabs": [
     {
-      "name": "Crm",
+      "name": "CRM",
       "url": "crm"
     },
     {
@@ -69,6 +69,10 @@
     {
       "name": "API Reference",
       "url": "api-reference"
+    },
+    {
+      "name": "Integrations",
+      "url": "integrations"
     }
   ],
   "anchors": [
@@ -78,7 +82,8 @@
       "group": "Documentation",
       "pages": [
         "welcome",
-        "quick-start"
+        "quick-start",
+        "integrations-catalog"
       ]
     },
     {
@@ -161,6 +166,55 @@
     {
       "group": "",
       "pages": [
+        {
+          "group": "CRM",
+          "pages": [
+            "integrations/crm/index", 
+            "integrations/crm/hubspot/index",
+            "integrations/crm/zoho/index",
+            "integrations/crm/close/index",
+            "integrations/crm/attio/index",
+            "integrations/crm/zendesk/index",
+            "integrations/crm/pipedrive/index"
+          ]
+        },            
+        {
+          "group": "Ticketing",
+          "pages": [
+            "integrations/ticketing/index",  
+            "integrations/ticketing/zendesk/index",
+            "integrations/ticketing/jira/index",
+            "integrations/ticketing/gitlab/index",
+            "integrations/ticketing/front/index"
+          ]
+        }, 
+        {
+          "group": "ATS",
+          "pages": [
+            "integrations/ats/index", 
+            "integrations/ats/ashby/index"
+          ]
+        }, 
+        {
+          "group": "File Storage",
+          "pages": [
+            "integrations/filestorage/index", 
+            "integrations/filestorage/box/index"
+          ]
+        },
+        {
+          "group": "Ecommerce",
+          "pages": [
+            "integrations/ecommerce/index", 
+            "integrations/ecommerce/shopify/index"
+          ]
+        }
+
+      ]
+    },
+    {
+      "group": "",
+      "pages": [
         "api-reference/introduction",
         "api-reference/authentication",
         "api-reference/errors",
@@ -171,7 +225,7 @@
       "group": "Unified Objects",
       "pages": [
         {
-          "group": "Crm", 
+          "group": "CRM", 
           "pages": [
             {
               "group": "Contact",
@@ -414,6 +468,7 @@
     {
       "group": "Recipes",
       "pages": [
+        "recipes/frontend-sdk", 
         "recipes/embed-catalog", 
         "recipes/import-existing-users", 
         "recipes/catch-connection-token",
@@ -433,7 +488,7 @@
       "group": "Devtools",
       "pages": [
         {
-          "group": "SDKs",
+          "group": "Backend SDKs",
           "pages": ["backend-sdk/typescript", "backend-sdk/python"]
         }
       ]
@@ -452,8 +507,25 @@
     {
       "group": "Open-Source",
       "pages": [
-        "open-source/self-host-guide",
-        "open-source/contributors"
+        {
+          "group": "Selfhost",
+          "icon": "house-laptop",
+          "pages": [
+            "open-source/selfhost/self-host-guide",
+            "open-source/selfhost/envVariables",
+            "open-source/selfhost/ngrok"
+          ]
+        }, 
+        {
+          "group": "Build a connector",
+          "icon": "star",
+          "pages": [
+            "open-source/contributors/setup",
+            "open-source/contributors/metadata",
+            "open-source/contributors/build",
+            "open-source/contributors/test"
+          ]
+        }
       ]
     },
     {

@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedPayGroupInput, UnifiedPayGroupOutput } from './model.unified';
+import { UnifiedHrisPaygroupInput, UnifiedHrisPaygroupOutput } from './model.unified';
 import { OriginalPayGroupOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IPayGroupService {
 
 export interface IPayGroupMapper {
   desunify(
-    source: UnifiedPayGroupInput,
+    source: UnifiedHrisPaygroupInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IPayGroupMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedPayGroupOutput | UnifiedPayGroupOutput[]>;
+  ): Promise<UnifiedHrisPaygroupOutput | UnifiedHrisPaygroupOutput[]>;
 }

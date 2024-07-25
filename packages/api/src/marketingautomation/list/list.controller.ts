@@ -17,14 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ListService } from './services/list.service';
-import { UnifiedListInput, UnifiedListOutput } from './types/model.unified';
+import {
+  UnifiedMarketingautomationListInput,
+  UnifiedMarketingautomationListOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/list')
 @Controller('marketingautomation/list')
 export class ListController {
@@ -37,7 +47,7 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'getLists',
+    operationId: 'listMarketingautomationLists',
     summary: 'List a batch of Lists',
   })
   @ApiHeader({
@@ -46,7 +56,7 @@ export class ListController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedListOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationListOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getLists(
@@ -73,7 +83,7 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'getList',
+    operationId: 'retrieveMarketingautomationList',
     summary: 'Retrieve a List',
     description:
       'Retrieve a list from any connected Marketingautomation software',
@@ -97,7 +107,7 @@ export class ListController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedListOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationListOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -118,7 +128,7 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'addList',
+    operationId: 'createMarketingautomationList',
     summary: 'Create a List',
     description: 'Create a list in any supported Marketingautomation software',
   })
@@ -135,12 +145,12 @@ export class ListController {
     description:
       'Set to true to include data from the original Marketingautomation software.',
   })
-  @ApiBody({ type: UnifiedListInput })
-  @ApiCustomResponse(UnifiedListOutput)
+  @ApiBody({ type: UnifiedMarketingautomationListInput })
+  @ApiPostCustomResponse(UnifiedMarketingautomationListOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addList(
-    @Body() unifiedListData: UnifiedListInput,
+    @Body() unifiedListData: UnifiedMarketingautomationListInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

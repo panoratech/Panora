@@ -1,9 +1,9 @@
-import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
-import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
+import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
+import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/types/model.unified';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
-export class UnifiedFolderInput {
+export class UnifiedFilestorageFolderInput {
   @ApiProperty({ type: String, description: 'The name of the folder' })
   @IsString()
   name: string;
@@ -39,14 +39,14 @@ export class UnifiedFolderInput {
     description: 'The UUID of the shared link tied to the folder',
   })
   @IsString()
-  shared_link: string | UnifiedSharedLinkOutput;
+  shared_link: string | UnifiedFilestorageSharedlinkOutput;
 
   @ApiProperty({
     type: String,
     description: 'The UUID of the permission tied to the folder',
   })
   @IsString()
-  permission: string | UnifiedPermissionOutput;
+  permission: string | UnifiedFilestoragePermissionOutput;
 
   @ApiPropertyOptional({
     type: {},
@@ -57,7 +57,7 @@ export class UnifiedFolderInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedFolderOutput extends UnifiedFolderInput {
+export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInput {
   @ApiPropertyOptional({ type: String, description: 'The UUID of the folder' })
   @IsUUID()
   @IsOptional()

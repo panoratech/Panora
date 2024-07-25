@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
-import { UnifiedContactOutput } from '../types/model.unified';
+import { UnifiedTicketingContactOutput } from '../types/model.unified';
 
 @Injectable()
 export class ContactService {
@@ -16,7 +16,7 @@ export class ContactService {
     linkedUserId: string,
     integrationId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedTicketingContactOutput> {
     try {
       const contact = await this.prisma.tcg_contacts.findUnique({
         where: {
@@ -48,8 +48,8 @@ export class ContactService {
         [key]: value,
       }));
 
-      // Transform to UnifiedContactOutput format
-      const unifiedContact: UnifiedContactOutput = {
+      // Transform to UnifiedTicketingContactOutput format
+      const unifiedContact: UnifiedTicketingContactOutput = {
         id: contact.id_tcg_contact,
         email_address: contact.email_address,
         name: contact.name,
@@ -98,7 +98,7 @@ export class ContactService {
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedContactOutput[];
+    data: UnifiedTicketingContactOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -145,7 +145,7 @@ export class ContactService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedContacts: UnifiedContactOutput[] = await Promise.all(
+      const unifiedContacts: UnifiedTicketingContactOutput[] = await Promise.all(
         contacts.map(async (contact) => {
           // Fetch field mappings for the contact
           const values = await this.prisma.value.findMany({
@@ -171,7 +171,7 @@ export class ContactService {
             ([key, value]) => ({ [key]: value }),
           );
 
-          // Transform to UnifiedContactOutput format
+          // Transform to UnifiedTicketingContactOutput format
           return {
             id: contact.id_tcg_contact,
             email_address: contact.email_address,
@@ -186,10 +186,10 @@ export class ContactService {
         }),
       );
 
-      let res: UnifiedContactOutput[] = unifiedContacts;
+      let res: UnifiedTicketingContactOutput[] = unifiedContacts;
 
       if (remote_data) {
-        const remote_array_data: UnifiedContactOutput[] = await Promise.all(
+        const remote_array_data: UnifiedTicketingContactOutput[] = await Promise.all(
           res.map(async (contact) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {

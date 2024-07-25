@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedEmployerBenefitInput,
-  UnifiedEmployerBenefitOutput,
+  UnifiedHrisEmployerbenefitInput,
+  UnifiedHrisEmployerbenefitOutput,
 } from './model.unified';
 import { OriginalEmployerBenefitOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IEmployerBenefitService {
 
 export interface IEmployerBenefitMapper {
   desunify(
-    source: UnifiedEmployerBenefitInput,
+    source: UnifiedHrisEmployerbenefitInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IEmployerBenefitMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEmployerBenefitOutput | UnifiedEmployerBenefitOutput[]>;
+  ): Promise<UnifiedHrisEmployerbenefitOutput | UnifiedHrisEmployerbenefitOutput[]>;
 }

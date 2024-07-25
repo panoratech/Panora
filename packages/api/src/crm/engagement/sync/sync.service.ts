@@ -17,7 +17,7 @@ import { crm_engagements as CrmEngagement } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IEngagementService } from '../types';
-import { UnifiedEngagementOutput } from '../types/model.unified';
+import { UnifiedCrmEngagementOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -117,7 +117,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedEngagementOutput,
+        UnifiedCrmEngagementOutput,
         OriginalEngagementOutput,
         IEngagementService
       >(integrationId, linkedUserId, 'crm', 'engagement', service, [
@@ -136,7 +136,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedEngagementOutput[],
+    data: UnifiedCrmEngagementOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmEngagement[]> {
@@ -144,7 +144,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const engagements_results: CrmEngagement[] = [];
 
       const updateOrCreateEngagement = async (
-        engagement: UnifiedEngagementOutput,
+        engagement: UnifiedCrmEngagementOutput,
         originId: string,
       ) => {
         let existingEngagement;

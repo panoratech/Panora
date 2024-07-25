@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedOfferInput, UnifiedOfferOutput } from './model.unified';
+import { UnifiedAtsOfferInput, UnifiedAtsOfferOutput } from './model.unified';
 import { OriginalOfferOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface IOfferService extends IBaseObjectService {
 
 export interface IOfferMapper {
   desunify(
-    source: UnifiedOfferInput,
+    source: UnifiedAtsOfferInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface IOfferMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOfferOutput | UnifiedOfferOutput[]>;
+  ): Promise<UnifiedAtsOfferOutput | UnifiedAtsOfferOutput[]>;
 }

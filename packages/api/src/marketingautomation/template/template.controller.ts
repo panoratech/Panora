@@ -11,23 +11,30 @@ import {
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
-  ApiBody,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TemplateService } from './services/template.service';
 import {
-  UnifiedTemplateInput,
-  UnifiedTemplateOutput,
+  UnifiedMarketingautomationTemplateInput,
+  UnifiedMarketingautomationTemplateOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/template')
 @Controller('marketingautomation/template')
 export class TemplateController {
@@ -40,7 +47,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'getTemplates',
+    operationId: 'listMarketingautomationTemplates',
     summary: 'List a batch of Templates',
   })
   @ApiHeader({
@@ -49,7 +56,7 @@ export class TemplateController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTemplateOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationTemplateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTemplates(
@@ -76,7 +83,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'getTemplate',
+    operationId: 'retrieveMarketingautomationTemplate',
     summary: 'Retrieve a Template',
     description:
       'Retrieve a template from any connected Marketingautomation software',
@@ -100,7 +107,7 @@ export class TemplateController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTemplateOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationTemplateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -121,7 +128,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'addTemplate',
+    operationId: 'createMarketingautomationTemplate',
     summary: 'Create a Template',
     description:
       'Create a template in any supported Marketingautomation software',
@@ -139,12 +146,12 @@ export class TemplateController {
     description:
       'Set to true to include data from the original Marketingautomation software.',
   })
-  @ApiBody({ type: UnifiedTemplateInput })
-  @ApiCustomResponse(UnifiedTemplateOutput)
+  @ApiBody({ type: UnifiedMarketingautomationTemplateInput })
+  @ApiPostCustomResponse(UnifiedMarketingautomationTemplateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addTemplate(
-    @Body() unifiedTemplateData: UnifiedTemplateInput,
+    @Body() unifiedTemplateData: UnifiedMarketingautomationTemplateInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {

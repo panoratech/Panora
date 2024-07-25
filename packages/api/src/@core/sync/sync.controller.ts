@@ -16,7 +16,7 @@ export class SyncController {
   }
 
   @ApiOperation({
-    operationId: 'getSyncStatus',
+    operationId: 'status',
     summary: 'Retrieve sync status of a certain vertical',
   })
   @ApiResponse({ status: 200 })

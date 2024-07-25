@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedJobInput, UnifiedJobOutput } from './model.unified';
+import { UnifiedAtsJobInput, UnifiedAtsJobOutput } from './model.unified';
 import { OriginalJobOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface IJobService extends IBaseObjectService {
 
 export interface IJobMapper {
   desunify(
-    source: UnifiedJobInput,
+    source: UnifiedAtsJobInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface IJobMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedJobOutput | UnifiedJobOutput[]>;
+  ): Promise<UnifiedAtsJobOutput | UnifiedAtsJobOutput[]>;
 }

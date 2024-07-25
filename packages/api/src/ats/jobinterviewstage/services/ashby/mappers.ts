@@ -3,8 +3,8 @@ import {
   AshbyJobInterviewStageOutput,
 } from './types';
 import {
-  UnifiedJobInterviewStageInput,
-  UnifiedJobInterviewStageOutput,
+  UnifiedAtsJobinterviewstageInput,
+  UnifiedAtsJobinterviewstageOutput,
 } from '@ats/jobinterviewstage/types/model.unified';
 import { IJobInterviewStageMapper } from '@ats/jobinterviewstage/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -28,7 +28,7 @@ export class AshbyJobInterviewStageMapper implements IJobInterviewStageMapper {
   }
 
   async desunify(
-    source: UnifiedJobInterviewStageInput,
+    source: UnifiedAtsJobinterviewstageInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -45,7 +45,7 @@ export class AshbyJobInterviewStageMapper implements IJobInterviewStageMapper {
       remote_id: string;
     }[],
   ): Promise<
-    UnifiedJobInterviewStageOutput | UnifiedJobInterviewStageOutput[]
+    UnifiedAtsJobinterviewstageOutput | UnifiedAtsJobinterviewstageOutput[]
   > {
     if (!Array.isArray(source)) {
       return await this.mapSingleJobInterviewStageToUnified(
@@ -73,7 +73,7 @@ export class AshbyJobInterviewStageMapper implements IJobInterviewStageMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedJobInterviewStageOutput> {
+  ): Promise<UnifiedAtsJobinterviewstageOutput> {
     return {
       remote_id: jobinterviewstage.id,
       remote_data: jobinterviewstage,

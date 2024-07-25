@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IJobService } from '../types';
 import { OriginalJobOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedJobOutput } from '../types/model.unified';
+import { UnifiedAtsJobOutput } from '../types/model.unified';
 import { ats_jobs as AtsJob } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -104,7 +104,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedJobOutput,
+        UnifiedAtsJobOutput,
         OriginalJobOutput,
         IJobService
       >(integrationId, linkedUserId, 'ats', 'job', service, []);
@@ -116,7 +116,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    jobs: UnifiedJobOutput[],
+    jobs: UnifiedAtsJobOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsJob[]> {
@@ -124,7 +124,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const jobs_results: AtsJob[] = [];
 
       const updateOrCreateJob = async (
-        job: UnifiedJobOutput,
+        job: UnifiedAtsJobOutput,
         originId: string,
       ) => {
         const existingJob = await this.prisma.ats_jobs.findFirst({

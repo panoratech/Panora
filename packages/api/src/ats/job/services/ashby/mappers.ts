@@ -1,8 +1,8 @@
 import { AshbyJobInput, AshbyJobOutput } from './types';
 import {
   JobStatus,
-  UnifiedJobInput,
-  UnifiedJobOutput,
+  UnifiedAtsJobInput,
+  UnifiedAtsJobOutput,
 } from '@ats/job/types/model.unified';
 import { IJobMapper } from '@ats/job/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -21,7 +21,7 @@ export class AshbyJobMapper implements IJobMapper {
   }
 
   async desunify(
-    source: UnifiedJobInput,
+    source: UnifiedAtsJobInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -37,7 +37,7 @@ export class AshbyJobMapper implements IJobMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedJobOutput | UnifiedJobOutput[]> {
+  ): Promise<UnifiedAtsJobOutput | UnifiedAtsJobOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleJobToUnified(
         source,
@@ -60,7 +60,7 @@ export class AshbyJobMapper implements IJobMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedJobOutput> {
+  ): Promise<UnifiedAtsJobOutput> {
     let department;
     if (job.departmentId) {
       department = await this.utils.getDepartmentUuidFromRemoteId(

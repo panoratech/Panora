@@ -15,14 +15,20 @@ import {
   ApiTags,
   ApiHeader,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { UserService } from './services/user.service';
 import { UnifiedUserOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('filestorage/users')
 @Controller('filestorage/users')
 export class UserController {
@@ -35,7 +41,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'listFilestorageUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -44,7 +50,7 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiPaginatedResponse(UnifiedUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -72,7 +78,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'retrieve',
+    operationId: 'retrieveFilestorageUser',
     summary: 'Retrieve a User',
     description:
       'Retrieve a permission from any connected Filestorage software',
@@ -96,7 +102,7 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiGetCustomResponse(UnifiedUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

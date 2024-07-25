@@ -17,14 +17,15 @@ import {
   ApiHeader,
   ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { UserService } from './services/user.service';
-import { UnifiedUserOutput } from './types/model.unified';
+import { UnifiedCrmUserOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('bearer')
 @ApiTags('crm/users')
 @Controller('crm/users')
 export class UserController {
@@ -37,7 +38,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmUsers',
+    operationId: 'listCrmUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -46,7 +47,7 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiPaginatedResponse(UnifiedCrmUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
@@ -74,7 +75,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmUser',
+    operationId: 'retrieveCrmUser',
     summary: 'Retrieve a User',
     description: 'Retrieve a user from any connected Crm software',
   })
@@ -96,7 +97,7 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiGetCustomResponse(UnifiedCrmUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

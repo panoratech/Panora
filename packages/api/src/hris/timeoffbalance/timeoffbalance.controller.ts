@@ -17,17 +17,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TimeoffBalanceService } from './services/timeoffbalance.service';
 import {
-  UnifiedTimeoffBalanceInput,
-  UnifiedTimeoffBalanceOutput,
+  UnifiedHrisTimeoffbalanceInput,
+  UnifiedHrisTimeoffbalanceOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
+@ApiBearerAuth('bearer')
 @ApiTags('hris/timeoffbalance')
 @Controller('hris/timeoffbalance')
 export class TimeoffBalanceController {
@@ -40,7 +43,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoffBalances',
+    operationId: 'listHrisTimeoffbalance',
     summary: 'List a batch of TimeoffBalances',
   })
   @ApiHeader({
@@ -49,7 +52,7 @@ export class TimeoffBalanceController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTimeoffBalanceOutput)
+  @ApiPaginatedResponse(UnifiedHrisTimeoffbalanceOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTimeoffBalances(
@@ -76,7 +79,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoffBalance',
+    operationId: 'retrieveHrisTimeoffbalance',
     summary: 'Retrieve a TimeoffBalance',
     description: 'Retrieve a timeoffbalance from any connected Hris software',
   })
@@ -98,7 +101,7 @@ export class TimeoffBalanceController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTimeoffBalanceOutput)
+  @ApiGetCustomResponse(UnifiedHrisTimeoffbalanceOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

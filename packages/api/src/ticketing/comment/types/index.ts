@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedCommentInput, UnifiedCommentOutput } from './model.unified';
+import { UnifiedTicketingCommentInput, UnifiedTicketingCommentOutput } from './model.unified';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface ICommentService extends IBaseObjectService {
 }
 export interface ICommentMapper {
   desunify(
-    source: UnifiedCommentInput,
+    source: UnifiedTicketingCommentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,7 +29,7 @@ export interface ICommentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCommentOutput | UnifiedCommentOutput[]>;
+  ): Promise<UnifiedTicketingCommentOutput | UnifiedTicketingCommentOutput[]>;
 }
 
 export type Comment = {

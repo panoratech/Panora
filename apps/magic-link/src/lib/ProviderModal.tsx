@@ -50,6 +50,7 @@ const ProviderModal = () => {
   const [openApiKeyDialog,setOpenApiKeyDialog] = useState<boolean>(false);
   const [projectId, setProjectId] = useState<string>("");
   const [data, setData] = useState<Provider[]>([]);
+  const [isProjectIdReady, setIsProjectIdReady] = useState(false);
   const [errorResponse,setErrorResponse] = useState<{
     errorPresent: boolean; errorMessage : string
   }>({errorPresent:false,errorMessage:''})
@@ -58,14 +59,14 @@ const ProviderModal = () => {
     status: boolean; provider: string
   }>({status: false, provider: ''});
 
-  const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState<string>('');
+  const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState<string | null>(null);
   const [openSuccessDialog,setOpenSuccessDialog] = useState<boolean>(false);
   const [currentProviderLogoURL,setCurrentProviderLogoURL] = useState<string>('')
   const [currentProvider,setCurrentProvider] = useState<string>('')
-
+  const [redirectIngressUri, setRedirectIngressUri] = useState<string | null>(null);
   const {mutate : createApiKeyConnection} = useCreateApiKeyConnection();
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
-  const {data: connectorsForProject} = useProjectConnectors(projectId);
+  const {data: connectorsForProject} = useProjectConnectors(isProjectIdReady ? projectId : null);
 
   // const form = useForm<z.infer<typeof formSchema>>({
   //   resolver: zodResolver(formSchema),
@@ -86,30 +87,38 @@ const ProviderModal = () => {
   }, []);
 
   useEffect(() => { 
+    const queryParams = new URLSearchParams(window.location.search);
+    const redirectIngressUri = queryParams.get('redirectIngressUri');
+    if (redirectIngressUri) {
+      setRedirectIngressUri(redirectIngressUri);
+    }
+  }, []);
+
+  useEffect(() => { 
     if (magicLink) {
       setProjectId(magicLink?.id_project);
+      setIsProjectIdReady(true);
     }
   }, [magicLink]);
 
 
   useEffect(()=>{
-    const PROVIDERS = selectedCategory == "All" ? providersArray() : providersArray(selectedCategory);
-    const getConnectorsToDisplay = () => {
-      // First, check if the company selected custom connectors in the UI or not
-      const unwanted_connectors = transformConnectorsStatus(connectorsForProject).filter(connector => connector.status === "false"); 
-      // Filter out the providers present in the unwanted connectors array
-      const filteredProviders = PROVIDERS.filter(provider => {
-          return !unwanted_connectors.some( (unwanted) => 
-            unwanted.category === provider.vertical && unwanted.connector_name === provider.name
-          );
-      });
-      return filteredProviders;
+    if (isProjectIdReady && connectorsForProject) { 
+      const PROVIDERS = selectedCategory == "All" ? providersArray() : providersArray(selectedCategory);
+      const getConnectorsToDisplay = () => {
+        // First, check if the company selected custom connectors in the UI or not
+        const unwanted_connectors = transformConnectorsStatus(connectorsForProject).filter(connector => connector.status === "false"); 
+        // Filter out the providers present in the unwanted connectors array
+        const filteredProviders = PROVIDERS.filter(provider => {
+            return !unwanted_connectors.some( (unwanted) => 
+              unwanted.category === provider.vertical && unwanted.connector_name === provider.name
+            );
+        });
+        return filteredProviders;
+      }     
+        setData(getConnectorsToDisplay())
     }
-
-    if(connectorsForProject) {
-      setData(getConnectorsToDisplay())
-    }
-  }, [connectorsForProject, selectedCategory])
+  }, [connectorsForProject, selectedCategory, isProjectIdReady])
 
   const { open, isReady } = useOAuth({
     providerName: selectedProvider?.provider!,
@@ -117,6 +126,7 @@ const ProviderModal = () => {
     returnUrl: window.location.href,
     projectId: projectId,
     linkedUserId: magicLink?.id_linked_user as string,
+    redirectIngressUri,
     onSuccess: () => {
       console.log('OAuth successful');
       setOpenSuccessDialog(true);
