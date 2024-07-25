@@ -180,7 +180,7 @@ For the sake of this guide, let's map the common object `contact` under `crm` ca
       docker build -t validate_connectors -f ./packages/api/Dockerfile.validate-connectors .
     ```
     ```bash
-      docker run -v $(pwd):/app/ -e VERTICAL=crm -e OBJECT_TYPE=contact validate_connectors
+      docker run -v "$(pwd):/app/" -e VERTICAL=crm -e OBJECT_TYPE=contact validate_connectors
     ```    
 
     The script will automatically scan the `/crm/contact/services` folder and detect any new service folder so all dependencies and imports are updated across the codebase.
