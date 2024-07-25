@@ -8002,6 +8002,8 @@ servers:
     description: Production server
   - url: https://api-sandbox.panora.dev
     description: Sandbox server
+  - url: https://api-dev.panora.dev
+    description: Development server
 components:
   securitySchemes:
     bearer:

@@ -47,6 +47,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addServer('https://api.panora.dev', 'Production server')
     .addServer('https://api-sandbox.panora.dev', 'Sandbox server')
+    .addServer('https://api-dev.panora.dev', 'Development server')
     .addSecurity('bearer', {
       type: 'http',
       scheme: 'bearer',
