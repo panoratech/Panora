@@ -64,7 +64,7 @@ export class WebhookController {
     return this.webhookService.getWebhookEndpoints(projectId);
   }
 
-  @ApiOperation({ operationId: 'deleteWebhook', summary: 'Delete Webhook' })
+  @ApiOperation({ operationId: 'delete', summary: 'Delete Webhook' })
   @ApiPostCustomResponse(WebhookResponse)
   @Delete(':id')
   @UseGuards(ApiKeyAuthGuard)
@@ -84,7 +84,7 @@ export class WebhookController {
   }
 
   @ApiOperation({
-    operationId: 'updateWebhookStatus',
+    operationId: 'updateStatus',
     summary: 'Update webhook status',
   })
   @UseGuards(ApiKeyAuthGuard)

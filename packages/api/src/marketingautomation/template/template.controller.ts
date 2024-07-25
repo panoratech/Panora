@@ -47,7 +47,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'getTemplates',
+    operationId: 'listMarketingautomationTemplates',
     summary: 'List a batch of Templates',
   })
   @ApiHeader({
@@ -83,7 +83,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'getTemplate',
+    operationId: 'retrieveMarketingautomationTemplate',
     summary: 'Retrieve a Template',
     description:
       'Retrieve a template from any connected Marketingautomation software',
@@ -128,7 +128,7 @@ export class TemplateController {
   }
 
   @ApiOperation({
-    operationId: 'addTemplate',
+    operationId: 'createMarketingautomationTemplate',
     summary: 'Create a Template',
     description:
       'Create a template in any supported Marketingautomation software',

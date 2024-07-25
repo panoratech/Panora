@@ -88,7 +88,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmContact',
+    operationId: 'retrieveCrmContact',
     summary: 'Retrieve a CRM Contact',
     description: 'Retrieve a contact from any connected CRM',
   })
@@ -131,7 +131,7 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'addCrmContact',
+    operationId: 'createCrmContact',
     summary: 'Create CRM Contact',
     description: 'Create a contact in any supported CRM',
   })

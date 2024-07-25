@@ -28,7 +28,10 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/message')
@@ -43,7 +46,7 @@ export class MessageController {
   }
 
   @ApiOperation({
-    operationId: 'getMessages',
+    operationId: 'listMarketingautomationMessages',
     summary: 'List a batch of Messages',
   })
   @ApiHeader({
@@ -79,7 +82,7 @@ export class MessageController {
   }
 
   @ApiOperation({
-    operationId: 'getMessage',
+    operationId: 'retrieveMarketingautomationMessage',
     summary: 'Retrieve a Message',
     description:
       'Retrieve a message from any connected Marketingautomation software',

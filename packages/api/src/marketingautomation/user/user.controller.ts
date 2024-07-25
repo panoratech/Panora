@@ -28,7 +28,10 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/user')
@@ -43,7 +46,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationUsers',
+    operationId: 'listMarketingAutomationUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -79,7 +82,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationUser',
+    operationId: 'retrieveMarketingAutomationUser',
     summary: 'Retrieve a User',
     description:
       'Retrieve a user from any connected Marketingautomation software',

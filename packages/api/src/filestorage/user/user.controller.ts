@@ -41,7 +41,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUsers',
+    operationId: 'listFilestorageUsers',
     summary: 'List a batch of Users',
   })
   @ApiHeader({
@@ -78,7 +78,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getUser',
+    operationId: 'retrieveFilestorageUser',
     summary: 'Retrieve a User',
     description:
       'Retrieve a permission from any connected Filestorage software',

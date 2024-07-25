@@ -28,7 +28,10 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ats/department')
@@ -43,7 +46,7 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'getDepartments',
+    operationId: 'listAtsDepartments',
     summary: 'List a batch of Departments',
   })
   @ApiHeader({
@@ -79,7 +82,7 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'getDepartment',
+    operationId: 'retrieveAtsDepartment',
     summary: 'Retrieve a Department',
     description: 'Retrieve a department from any connected Ats software',
   })

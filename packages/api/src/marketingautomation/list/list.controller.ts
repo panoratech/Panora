@@ -47,7 +47,7 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'getLists',
+    operationId: 'listMarketingautomationLists',
     summary: 'List a batch of Lists',
   })
   @ApiHeader({
@@ -83,7 +83,7 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'getList',
+    operationId: 'retrieveMarketingautomationList',
     summary: 'Retrieve a List',
     description:
       'Retrieve a list from any connected Marketingautomation software',
@@ -128,7 +128,7 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'addList',
+    operationId: 'createMarketingautomationList',
     summary: 'Create a List',
     description: 'Create a list in any supported Marketingautomation software',
   })

@@ -2,39 +2,20 @@ openapi: 3.0.0
 paths:
   /:
     get:
-      operationId: AppController_hello
+      operationId: home
+      summary: ''
       parameters: []
       responses:
         '200':
           description: ''
-          content:
-            application/json:
-              schema:
-                type: string
   /health:
     get:
-      operationId: getHealth
+      operationId: health
       summary: ''
       parameters: []
       responses:
         '200':
           description: ''
-          content:
-            application/json:
-              schema:
-                type: number
-  /protected:
-    get:
-      operationId: getHelloProtected
-      summary: ''
-      parameters: []
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: string
   /webhook:
     get:
       operationId: listWebhooks
@@ -73,7 +54,7 @@ paths:
       x-speakeasy-group: webhook
   /webhook/{id}:
     delete:
-      operationId: deleteWebhook
+      operationId: delete
       summary: Delete Webhook
       parameters:
         - name: id
@@ -91,7 +72,7 @@ paths:
       tags: *ref_0
       x-speakeasy-group: webhook
     put:
-      operationId: updateWebhookStatus
+      operationId: updateStatus
       summary: Update webhook status
       parameters:
         - name: id
@@ -497,7 +478,7 @@ paths:
       x-speakeasy-group: ticketing.contacts
   /sync/status/{vertical}:
     get:
-      operationId: getSyncStatus
+      operationId: status
       summary: Retrieve sync status of a certain vertical
       parameters:
         - name: vertical
@@ -685,7 +666,7 @@ paths:
         - bearer: []
       x-speakeasy-group: crm.contacts
     post:
-      operationId: addCrmContact
+      operationId: createCrmContact
       summary: Create CRM Contact
       description: Create a contact in any supported CRM
       parameters:
@@ -719,7 +700,7 @@ paths:
       x-speakeasy-group: crm.contacts
   /crm/contacts/{id}:
     get:
-      operationId: getCrmContact
+      operationId: retrieveCrmContact
       summary: Retrieve a CRM Contact
       description: Retrieve a contact from any connected CRM
       parameters:
@@ -3410,7 +3391,7 @@ paths:
       x-speakeasy-group: marketingautomation.campaign
   /marketingautomation/contact:
     get:
-      operationId: getMarketingAutomationContacts
+      operationId: listMarketingAutomationContacts
       summary: List a batch of Contacts
       parameters:
         - name: x-connection-token
@@ -3458,7 +3439,7 @@ paths:
         - bearer: []
       x-speakeasy-group: marketingautomation.contact
     post:
-      operationId: addMarketingAutomationContact
+      operationId: createMarketingAutomationContact
       summary: Create a Contact
       description: Create a contact in any supported Marketingautomation software
       parameters:
@@ -3494,7 +3475,7 @@ paths:
       x-speakeasy-group: marketingautomation.contact
   /marketingautomation/contact/{id}:
     get:
-      operationId: getMarketingAutomationContact
+      operationId: retrieveMarketingAutomationContact
       summary: Retrieve a Contact
       description: Retrieve a contact from any connected Marketingautomation software
       parameters:
@@ -3530,7 +3511,7 @@ paths:
       x-speakeasy-group: marketingautomation.contact
   /marketingautomation/email:
     get:
-      operationId: getEmails
+      operationId: listMarketingautomationEmails
       summary: List a batch of Emails
       parameters:
         - name: x-connection-token
@@ -3579,7 +3560,7 @@ paths:
       x-speakeasy-group: marketingautomation.email
   /marketingautomation/email/{id}:
     get:
-      operationId: getEmail
+      operationId: retrieveMarketingautomationEmail
       summary: Retrieve a Email
       description: Retrieve a email from any connected Marketingautomation software
       parameters:
@@ -3615,7 +3596,7 @@ paths:
       x-speakeasy-group: marketingautomation.email
   /marketingautomation/event:
     get:
-      operationId: getMarketingAutomationEvents
+      operationId: listMarketingAutomationEvents
       summary: List a batch of Events
       parameters:
         - name: x-connection-token
@@ -3664,7 +3645,7 @@ paths:
       x-speakeasy-group: marketingautomation.event
   /marketingautomation/event/{id}:
     get:
-      operationId: getEvent
+      operationId: retrieveMarketingautomationEvent
       summary: Retrieve a Event
       description: Retrieve a event from any connected Marketingautomation software
       parameters:
@@ -3700,7 +3681,7 @@ paths:
       x-speakeasy-group: marketingautomation.event
   /marketingautomation/list:
     get:
-      operationId: getLists
+      operationId: listMarketingautomationLists
       summary: List a batch of Lists
       parameters:
         - name: x-connection-token
@@ -3748,7 +3729,7 @@ paths:
         - bearer: []
       x-speakeasy-group: marketingautomation.list
     post:
-      operationId: addList
+      operationId: createMarketingautomationList
       summary: Create a List
       description: Create a list in any supported Marketingautomation software
       parameters:
@@ -3784,7 +3765,7 @@ paths:
       x-speakeasy-group: marketingautomation.list
   /marketingautomation/list/{id}:
     get:
-      operationId: getList
+      operationId: retrieveMarketingautomationList
       summary: Retrieve a List
       description: Retrieve a list from any connected Marketingautomation software
       parameters:
@@ -3820,7 +3801,7 @@ paths:
       x-speakeasy-group: marketingautomation.list
   /marketingautomation/message:
     get:
-      operationId: getMessages
+      operationId: listMarketingautomationMessages
       summary: List a batch of Messages
       parameters:
         - name: x-connection-token
@@ -3869,7 +3850,7 @@ paths:
       x-speakeasy-group: marketingautomation.message
   /marketingautomation/message/{id}:
     get:
-      operationId: getMessage
+      operationId: retrieveMarketingautomationMessage
       summary: Retrieve a Message
       description: Retrieve a message from any connected Marketingautomation software
       parameters:
@@ -3905,7 +3886,7 @@ paths:
       x-speakeasy-group: marketingautomation.message
   /marketingautomation/template:
     get:
-      operationId: getTemplates
+      operationId: listMarketingautomationTemplates
       summary: List a batch of Templates
       parameters:
         - name: x-connection-token
@@ -3953,7 +3934,7 @@ paths:
         - bearer: []
       x-speakeasy-group: marketingautomation.template
     post:
-      operationId: addTemplate
+      operationId: createMarketingautomationTemplate
       summary: Create a Template
       description: Create a template in any supported Marketingautomation software
       parameters:
@@ -3989,7 +3970,7 @@ paths:
       x-speakeasy-group: marketingautomation.template
   /marketingautomation/template/{id}:
     get:
-      operationId: getTemplate
+      operationId: retrieveMarketingautomationTemplate
       summary: Retrieve a Template
       description: Retrieve a template from any connected Marketingautomation software
       parameters:
@@ -4025,7 +4006,7 @@ paths:
       x-speakeasy-group: marketingautomation.template
   /marketingautomation/user:
     get:
-      operationId: getMarketingAutomationUsers
+      operationId: listMarketingAutomationUsers
       summary: List a batch of Users
       parameters:
         - name: x-connection-token
@@ -4074,7 +4055,7 @@ paths:
       x-speakeasy-group: marketingautomation.user
   /marketingautomation/user/{id}:
     get:
-      operationId: getMarketingAutomationUser
+      operationId: retrieveMarketingAutomationUser
       summary: Retrieve a User
       description: Retrieve a user from any connected Marketingautomation software
       parameters:
@@ -4570,7 +4551,7 @@ paths:
       x-speakeasy-group: ats.candidate
   /ats/department:
     get:
-      operationId: getDepartments
+      operationId: listAtsDepartments
       summary: List a batch of Departments
       parameters:
         - name: x-connection-token
@@ -4618,7 +4599,7 @@ paths:
       x-speakeasy-group: ats.department
   /ats/department/{id}:
     get:
-      operationId: getDepartment
+      operationId: retrieveAtsDepartment
       summary: Retrieve a Department
       description: Retrieve a department from any connected Ats software
       parameters:
@@ -5096,7 +5077,7 @@ paths:
       x-speakeasy-group: ats.office
   /ats/rejectreason:
     get:
-      operationId: getRejectReasons
+      operationId: listAtsRejectReasons
       summary: List a batch of RejectReasons
       parameters:
         - name: x-connection-token
@@ -5144,7 +5125,7 @@ paths:
       x-speakeasy-group: ats.rejectreason
   /ats/rejectreason/{id}:
     get:
-      operationId: getRejectReason
+      operationId: retrieveAtsRejectReason
       summary: Retrieve a RejectReason
       description: Retrieve a rejectreason from any connected Ats software
       parameters:
@@ -7814,7 +7795,7 @@ paths:
       x-speakeasy-group: filestorage.groups
   /filestorage/users:
     get:
-      operationId: getUsers
+      operationId: listFilestorageUsers
       summary: List a batch of Users
       parameters:
         - name: x-connection-token
@@ -7862,7 +7843,7 @@ paths:
       x-speakeasy-group: filestorage.users
   /filestorage/users/{id}:
     get:
-      operationId: getUser
+      operationId: retrieveFilestorageUser
       summary: Retrieve a User
       description: Retrieve a permission from any connected Filestorage software
       parameters:

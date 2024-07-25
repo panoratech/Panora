@@ -28,7 +28,10 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('marketingautomation/event')
@@ -43,7 +46,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationEvents',
+    operationId: 'listMarketingAutomationEvents',
     summary: 'List a batch of Events',
   })
   @ApiHeader({
@@ -79,7 +82,7 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'getEvent',
+    operationId: 'retrieveMarketingautomationEvent',
     summary: 'Retrieve a Event',
     description:
       'Retrieve a event from any connected Marketingautomation software',
