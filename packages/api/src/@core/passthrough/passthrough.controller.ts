@@ -22,7 +22,7 @@ export class PassthroughController {
   }
 
   @ApiOperation({
-    operationId: 'passthroughRequest',
+    operationId: 'request',
     summary: 'Make a passthrough request',
   })
   @ApiQuery({ name: 'integrationId', required: true, type: String })
