@@ -7992,8 +7992,8 @@ paths:
       security: *ref_161
       x-speakeasy-group: ticketing.attachments
 info:
-  title: Unified Panora API
-  description: The Panora API description
+  title: Panora API
+  description: A unified API to ship integrations
   version: '1.0'
   contact: {}
 tags: []
