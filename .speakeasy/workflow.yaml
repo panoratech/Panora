@@ -1,4 +1,5 @@
 workflowVersion: 1.0.0
+speakeasyVersion: latest
 sources:
     merge-code-samples-into-spec:
         inputs:
@@ -6,4 +7,6 @@ sources:
         overlays:
             - location: registry.speakeasyapi.dev/panora/panora/code-samples-typescript-my-first-target:main
         output: docs/openapi-with-code-samples.json
+        registry:
+            location: registry.speakeasyapi.dev/panora/panora/merge-code-samples-into-spec
 targets: {}
