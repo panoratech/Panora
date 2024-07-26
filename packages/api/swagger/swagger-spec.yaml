@@ -2,7 +2,7 @@ openapi: 3.0.0
 paths:
   /:
     get:
-      operationId: home
+      operationId: hello
       summary: ''
       parameters: []
       responses:
@@ -8012,8 +8012,8 @@ paths:
       security: *ref_161
       x-speakeasy-group: ticketing.attachments
 info:
-  title: Unified Panora API
-  description: The Panora API description
+  title: Panora API
+  description: A unified API to ship integrations
   version: '1.0'
   contact: {}
 tags: []
@@ -8022,6 +8022,8 @@ servers:
     description: Production server
   - url: https://api-sandbox.panora.dev
     description: Sandbox server
+  - url: https://api-dev.panora.dev
+    description: Development server
 components:
   securitySchemes:
     bearer:

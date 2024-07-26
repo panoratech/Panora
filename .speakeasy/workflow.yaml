@@ -1,0 +1,9 @@
+workflowVersion: 1.0.0
+sources:
+    merge-code-samples-into-spec:
+        inputs:
+            - location: registry.speakeasyapi.dev/panora/panora/panora-open-api-swagger
+        overlays:
+            - location: registry.speakeasyapi.dev/panora/panora/code-samples-typescript-my-first-target:main
+        output: docs/openapi-with-code-samples.json
+targets: {}
