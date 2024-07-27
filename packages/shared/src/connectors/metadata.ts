@@ -480,7 +480,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'github': {
-        scopes: 'repo user project',
+        scopes: 'repo user project read:org repo:status write:repo_hook',
         urls: {
           docsUrl: 'https://docs.github.com/fr/rest',
           apiUrl: 'https://api.github.com',
@@ -488,7 +488,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }

@@ -101,7 +101,7 @@ export class GithubService implements ITicketService {
             });
 
             const resp = await axios.get(
-                `${connection.account_url}/issues?filer=all`,
+                `${connection.account_url}/issues?filter=all&state=open`,
                 {
                     headers: {
                         'Content-Type': 'application/json',
