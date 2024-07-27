@@ -60,7 +60,6 @@ export class WebhookProcessor {
           deliveryAttempt.webhooks_payloads.data,
           deliveryAttempt.webhook_endpoints.secret,
         );
-        console.log('Signature is ...' + JSON.stringify(signature));
         const response = await axios.post(
           deliveryAttempt.webhook_endpoints.url,
           {
