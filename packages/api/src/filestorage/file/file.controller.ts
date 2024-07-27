@@ -49,7 +49,7 @@ export class FileController {
 
   @ApiOperation({
     operationId: 'listFilestorageFile',
-    summary: 'List a batch of Files',
+    summary: 'List  Files',
   })
   @ApiHeader({
     name: 'x-connection-token',

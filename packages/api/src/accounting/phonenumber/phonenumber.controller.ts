@@ -44,7 +44,7 @@ export class PhoneNumberController {
 
   @ApiOperation({
     operationId: 'listAccountingPhonenumber',
-    summary: 'List a batch of PhoneNumbers',
+    summary: 'List  PhoneNumbers',
   })
   @ApiHeader({
     name: 'x-connection-token',

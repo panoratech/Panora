@@ -39,7 +39,7 @@ export class TeamController {
 
   @ApiOperation({
     operationId: 'listTicketingTeams',
-    summary: 'List a batch of Teams',
+    summary: 'List  Teams',
   })
   @ApiHeader({
     name: 'x-connection-token',

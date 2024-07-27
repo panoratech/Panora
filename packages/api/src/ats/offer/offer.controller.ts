@@ -44,7 +44,7 @@ export class OfferController {
 
   @ApiOperation({
     operationId: 'listAtsOffer',
-    summary: 'List a batch of Offers',
+    summary: 'List  Offers',
   })
   @ApiHeader({
     name: 'x-connection-token',

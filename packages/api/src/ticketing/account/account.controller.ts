@@ -39,7 +39,7 @@ export class AccountController {
 
   @ApiOperation({
     operationId: 'listTicketingAccount',
-    summary: 'List a batch of Accounts',
+    summary: 'List  Accounts',
   })
   @ApiHeader({
     name: 'x-connection-token',

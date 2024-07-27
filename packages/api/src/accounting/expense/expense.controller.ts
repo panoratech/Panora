@@ -48,7 +48,7 @@ export class ExpenseController {
 
   @ApiOperation({
     operationId: 'listAccountingExpense',
-    summary: 'List a batch of Expenses',
+    summary: 'List  Expenses',
   })
   @ApiHeader({
     name: 'x-connection-token',

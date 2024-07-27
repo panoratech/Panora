@@ -48,7 +48,7 @@ export class InterviewController {
 
   @ApiOperation({
     operationId: 'listAtsInterview', // Updated operationId
-    summary: 'List a batch of Interviews',
+    summary: 'List  Interviews',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -44,7 +44,7 @@ export class LocationController {
 
   @ApiOperation({
     operationId: 'listHrisLocation',
-    summary: 'List a batch of Locations',
+    summary: 'List  Locations',
   })
   @ApiHeader({
     name: 'x-connection-token',

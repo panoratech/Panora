@@ -48,7 +48,7 @@ export class JournalEntryController {
 
   @ApiOperation({
     operationId: 'listAccountingJournalEntry',
-    summary: 'List a batch of JournalEntrys',
+    summary: 'List  JournalEntrys',
   })
   @ApiHeader({
     name: 'x-connection-token',

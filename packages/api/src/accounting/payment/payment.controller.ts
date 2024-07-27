@@ -48,7 +48,7 @@ export class PaymentController {
 
   @ApiOperation({
     operationId: 'listAccountingPayment',
-    summary: 'List a batch of Payments',
+    summary: 'List  Payments',
   })
   @ApiHeader({
     name: 'x-connection-token',

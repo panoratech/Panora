@@ -48,7 +48,7 @@ export class ApplicationController {
 
   @ApiOperation({
     operationId: 'listAtsApplication',
-    summary: 'List a batch of Applications',
+    summary: 'List  Applications',
   })
   @ApiHeader({
     name: 'x-connection-token',

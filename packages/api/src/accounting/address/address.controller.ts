@@ -44,7 +44,7 @@ export class AddressController {
 
   @ApiOperation({
     operationId: 'listAccountingAddress',
-    summary: 'List a batch of Addresss',
+    summary: 'List  Addresss',
   })
   @ApiHeader({
     name: 'x-connection-token',

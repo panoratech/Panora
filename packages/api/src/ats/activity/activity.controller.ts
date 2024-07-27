@@ -47,7 +47,7 @@ export class ActivityController {
 
   @ApiOperation({
     operationId: 'listAtsActivity',
-    summary: 'List a batch of Activities',
+    summary: 'List  Activities',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -44,7 +44,7 @@ export class ScoreCardController {
 
   @ApiOperation({
     operationId: 'listAtsScorecard',
-    summary: 'List a batch of ScoreCards',
+    summary: 'List  ScoreCards',
   })
   @ApiHeader({
     name: 'x-connection-token',

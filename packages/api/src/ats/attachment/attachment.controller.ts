@@ -48,7 +48,7 @@ export class AttachmentController {
 
   @ApiOperation({
     operationId: 'listAtsAttachment',
-    summary: 'List a batch of Attachments',
+    summary: 'List  Attachments',
   })
   @ApiHeader({
     name: 'x-connection-token',

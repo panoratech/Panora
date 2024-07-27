@@ -47,7 +47,7 @@ export class EmailController {
 
   @ApiOperation({
     operationId: 'listMarketingautomationEmails',
-    summary: 'List a batch of Emails',
+    summary: 'List  Emails',
   })
   @ApiHeader({
     name: 'x-connection-token',

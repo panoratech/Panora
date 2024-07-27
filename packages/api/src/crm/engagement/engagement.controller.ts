@@ -50,7 +50,7 @@ export class EngagementController {
 
   @ApiOperation({
     operationId: 'listCrmEngagements',
-    summary: 'List a batch of Engagements',
+    summary: 'List  Engagements',
   })
   @ApiHeader({
     name: 'x-connection-token',

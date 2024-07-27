@@ -50,7 +50,7 @@ export class DealController {
 
   @ApiOperation({
     operationId: 'listCrmDeals',
-    summary: 'List a batch of Deals',
+    summary: 'List  Deals',
   })
   @ApiHeader({
     name: 'x-connection-token',

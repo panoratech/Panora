@@ -48,7 +48,7 @@ export class InvoiceController {
 
   @ApiOperation({
     operationId: 'listAccountingInvoice',
-    summary: 'List a batch of Invoices',
+    summary: 'List  Invoices',
   })
   @ApiHeader({
     name: 'x-connection-token',

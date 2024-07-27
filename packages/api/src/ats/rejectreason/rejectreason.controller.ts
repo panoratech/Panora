@@ -47,7 +47,7 @@ export class RejectReasonController {
 
   @ApiOperation({
     operationId: 'listAtsRejectReasons',
-    summary: 'List a batch of RejectReasons',
+    summary: 'List  RejectReasons',
   })
   @ApiHeader({
     name: 'x-connection-token',

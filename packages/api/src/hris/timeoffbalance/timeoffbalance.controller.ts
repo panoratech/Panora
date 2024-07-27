@@ -44,7 +44,7 @@ export class TimeoffBalanceController {
 
   @ApiOperation({
     operationId: 'listHrisTimeoffbalance',
-    summary: 'List a batch of TimeoffBalances',
+    summary: 'List  TimeoffBalances',
   })
   @ApiHeader({
     name: 'x-connection-token',

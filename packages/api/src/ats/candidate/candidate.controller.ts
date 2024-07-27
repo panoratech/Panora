@@ -48,7 +48,7 @@ export class CandidateController {
 
   @ApiOperation({
     operationId: 'listAtsCandidate', // Updated operationId
-    summary: 'List a batch of Candidates',
+    summary: 'List  Candidates',
   })
   @ApiHeader({
     name: 'x-connection-token',

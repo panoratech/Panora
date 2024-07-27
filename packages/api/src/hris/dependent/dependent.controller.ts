@@ -44,7 +44,7 @@ export class DependentController {
 
   @ApiOperation({
     operationId: 'listHrisDependents',
-    summary: 'List a batch of Dependents',
+    summary: 'List  Dependents',
   })
   @ApiHeader({
     name: 'x-connection-token',

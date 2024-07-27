@@ -42,7 +42,7 @@ export class UserController {
 
   @ApiOperation({
     operationId: 'listFilestorageUsers',
-    summary: 'List a batch of Users',
+    summary: 'List  Users',
   })
   @ApiHeader({
     name: 'x-connection-token',

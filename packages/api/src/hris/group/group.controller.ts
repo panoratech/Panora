@@ -44,7 +44,7 @@ export class GroupController {
 
   @ApiOperation({
     operationId: 'listHrisGroup',
-    summary: 'List a batch of Groups',
+    summary: 'List  Groups',
   })
   @ApiHeader({
     name: 'x-connection-token',

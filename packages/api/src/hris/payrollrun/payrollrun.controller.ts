@@ -47,7 +47,7 @@ export class PayrollRunController {
 
   @ApiOperation({
     operationId: 'listHrisPayrollRuns',
-    summary: 'List a batch of PayrollRuns',
+    summary: 'List  PayrollRuns',
   })
   @ApiHeader({
     name: 'x-connection-token',

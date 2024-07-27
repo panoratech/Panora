@@ -48,7 +48,7 @@ export class EmployeeController {
 
   @ApiOperation({
     operationId: 'listHrisEmployee',
-    summary: 'List a batch of Employees',
+    summary: 'List  Employees',
   })
   @ApiHeader({
     name: 'x-connection-token',

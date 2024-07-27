@@ -44,7 +44,7 @@ export class VendorCreditController {
 
   @ApiOperation({
     operationId: 'listAccountingVendorCredit',
-    summary: 'List a batch of VendorCredits',
+    summary: 'List  VendorCredits',
   })
   @ApiHeader({
     name: 'x-connection-token',

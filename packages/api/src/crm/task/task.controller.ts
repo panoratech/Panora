@@ -50,7 +50,7 @@ export class TaskController {
 
   @ApiOperation({
     operationId: 'listCrmTask',
-    summary: 'List a batch of Tasks',
+    summary: 'List  Tasks',
   })
   @ApiHeader({
     name: 'x-connection-token',

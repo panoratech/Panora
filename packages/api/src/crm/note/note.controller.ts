@@ -49,7 +49,7 @@ export class NoteController {
 
   @ApiOperation({
     operationId: 'listCrmNote',
-    summary: 'List a batch of Notes',
+    summary: 'List  Notes',
   })
   @ApiHeader({
     name: 'x-connection-token',

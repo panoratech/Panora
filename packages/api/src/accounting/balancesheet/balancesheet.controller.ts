@@ -44,7 +44,7 @@ export class BalanceSheetController {
 
   @ApiOperation({
     operationId: 'listAccountingBalanceSheets',
-    summary: 'List a batch of BalanceSheets',
+    summary: 'List  BalanceSheets',
   })
   @ApiHeader({
     name: 'x-connection-token',

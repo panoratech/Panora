@@ -44,7 +44,7 @@ export class CompanyController {
 
   @ApiOperation({
     operationId: 'listHrisCompanys',
-    summary: 'List a batch of Companys',
+    summary: 'List  Companys',
   })
   @ApiHeader({
     name: 'x-connection-token',

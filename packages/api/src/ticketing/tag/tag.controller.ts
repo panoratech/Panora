@@ -39,7 +39,7 @@ export class TagController {
 
   @ApiOperation({
     operationId: 'listTicketingTags',
-    summary: 'List a batch of Tags',
+    summary: 'List  Tags',
   })
   @ApiHeader({
     name: 'x-connection-token',

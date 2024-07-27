@@ -47,7 +47,7 @@ export class MessageController {
 
   @ApiOperation({
     operationId: 'listMarketingautomationMessages',
-    summary: 'List a batch of Messages',
+    summary: 'List  Messages',
   })
   @ApiHeader({
     name: 'x-connection-token',
