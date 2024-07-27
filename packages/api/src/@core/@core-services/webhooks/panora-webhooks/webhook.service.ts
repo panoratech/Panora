@@ -20,6 +20,7 @@ export class WebhookService {
 
   generateSignature(payload: any, secret: string): string {
     try {
+      this.logger.log('PAYLOAD IS ' + JSON.stringify(payload));
       return createHmac('sha256', secret)
         .update(JSON.stringify(payload))
         .digest('hex');
@@ -294,6 +295,12 @@ export class WebhookService {
     secret: string,
   ) {
     try {
+      this.logger.log(
+        '(verify) PAYLOAD IS ' +
+          JSON.stringify(payload) +
+          ' data from payload is ' +
+          JSON.stringify(payload.data),
+      );
       const expected = this.generateSignature(payload.data, secret);
       if (expected !== signature) {
         throw new WebhooksError({
