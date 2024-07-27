@@ -48,12 +48,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log(`Syncing users....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -100,7 +100,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId, wh_real_time_trigger } = param;
       const service: IUserService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ticketing, commonObject: user} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
         UnifiedTicketingUserOutput,

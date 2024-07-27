@@ -51,12 +51,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log(`Syncing stages....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -90,7 +90,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                       //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
                       const deals = await this.prisma.crm_deals.findMany({
                         where: {
-                          id_connection: connection.id_connection,
+                          id_connection: connection?.id_connection,
                         },
                       });
                       for (const deal of deals) {
@@ -125,7 +125,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId, deal_id } = data;
       const service: IStageService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:crm, commonObject: stage} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
         UnifiedCrmStageOutput,
