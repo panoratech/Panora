@@ -45,12 +45,11 @@ export class LinkedUsersService {
       throw error;
     }
   }
-  async addLinkedUser(data: CreateLinkedUserDto) {
+  async addLinkedUser(data: CreateLinkedUserDto, id_project: string) {
     try {
-      const { id_project, ...rest } = data;
       const res = await this.prisma.linked_users.create({
         data: {
-          ...rest,
+          ...data,
           id_linked_user: uuidv4(),
           id_project: id_project,
         },
@@ -60,9 +59,12 @@ export class LinkedUsersService {
       throw error;
     }
   }
-  async addBatchLinkedUsers(data: CreateBatchLinkedUserDto) {
+  async addBatchLinkedUsers(
+    data: CreateBatchLinkedUserDto,
+    id_project: string,
+  ) {
     try {
-      const { linked_user_origin_ids, alias, id_project } = data;
+      const { linked_user_origin_ids, alias } = data;
 
       const linkedUsersData = linked_user_origin_ids.map((id) => ({
         id_linked_user: uuidv4(), // Ensure each user gets a unique ID

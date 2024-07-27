@@ -5,8 +5,6 @@ export class CreateLinkedUserDto {
   linked_user_origin_id: string;
   @ApiProperty()
   alias: string;
-  @ApiProperty()
-  id_project: string;
 }
 
 export class CreateBatchLinkedUserDto {
@@ -14,6 +12,4 @@ export class CreateBatchLinkedUserDto {
   linked_user_origin_ids: string[];
   @ApiProperty()
   alias: string;
-  @ApiProperty()
-  id_project: string;
 }
