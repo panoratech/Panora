@@ -1,0 +1,55 @@
+---
+title: "TypeScript"
+description: "Introduction to our Typescript SDK"
+---
+
+## Installing & instantiating the Typescript SDK
+<Info>
+  You can find the Typescript SDK on NPM
+  [here](https://www.npmjs.com/package/@panora/sdk-typescript)
+</Info>
+
+```bash
+npm i @panora/typescript-sdk
+```
+
+Instantiate the SDK:
+
+<Tip>Go to your dashboard to get your [API Key](https://dashboard.panora.dev/api-keys)</Tip>
+
+```javascript
+import { PanoraSDK } from "@panora/typescript-sdk";
+
+const sdk = new PanoraSDK("YOUR_API_KEY");
+```
+
+### List all connections to your app
+
+```javascript
+import { PanoraSDK } from "@panora/typescript-sdk";
+
+const sdk = new PanoraSDK("YOUR_API_KEY");
+
+(async () => {
+  const result = await sdk.connections.getConnections();
+  console.log(result);
+})();
+```
+
+This will list all the connections available, across all users. You should get an object similar to this one below. Read more about the `connection` object here in the [API reference](/connections/overview) or the [glossary](/glossary/connection-object).
+
+```json
+{
+  "id_connection": "6cd057cb-39df-44ce-9be8-ax9d167c3940",
+  "status": "valid",
+  "provider_slug": "hubspot",
+  "account_url": null,
+  "token_type": "oauth",
+  "access_token": "904570287538dddf72fd821e4d5cec51:66266ee62310752d4a243c12b133656edd5af42947a832f4439c710334e045e59782107d40e856c27e813b7a6ed068100376b3ff83d1c8237330ba034605dd846650524e6fcfb708e3f62b1401d8a0dc3d90022cdf9ad1c76fc9209f3a5d153f6e33bbb8f6642600a6c9a098e81fb1e2da0fdff0455b7823519fba195b5065b4319a314013e22f934c80e4f60bec4385989c92c2dd9036d19f720e85b10325c42dc8a035c363e279af0e4ab2c4cd016051c5b32bf6009bf0df0aa8565d048856",
+  "refresh_token": "904570287538dddf72fd821e4d5cec51:58d9c1492b908caef83885b467d1ab1ea9fc6994a59ed4392edbb5365b89a02a8a4995347d8ec37037192a96856e2c24",
+  "expiration_timestamp": "2023-12-20T18:44:44.869Z",
+  "created_at": "2023-12-10T18:20:06.275Z",
+  "id_project": "801f9ede-c698-4e66-a7fc-48d19eebaa4f",
+  "id_linked_user": "d7a0af02-0f9b-40a6-86a9-612dcfe341fe"
+}
+```

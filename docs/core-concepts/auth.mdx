@@ -1,0 +1,168 @@
+---
+title: "Authentication"
+description: "Learn how to authenticate your requests to the Panora API."
+icon: "key"
+---
+
+<Note>
+  This guide assumes you have a Panora account, or a working self-hosted version
+</Note>
+
+### The Panora API uses two parameters to indentify requests.
+
+- `API key` which is a Bearer Acess Token used to authenticate yourself to our backend.
+- `connection_token` which serves to identify which of your user's you're making API calls for.
+
+Depending on your setup, you should make requests to one of those endpoints:
+
+<Tabs>
+  <Tab title="US Servers">
+      `https://api.panora.dev/`
+  </Tab>
+
+  <Tab title="EU Servers">
+      `https://api-eu.panora.dev/`
+  </Tab>
+
+  <Tab title="Self-Hosted">
+      `http://localhost:3000/`
+  </Tab>
+</Tabs>
+
+## Learn how to generate your API Keys
+
+
+    **Creating your API Key**  <br/>      
+    Go to your [dashboard](https://dashboard.panora.dev), and visit the _API Keys_ [section](https://dashboard.panora.dev/api-keys). Click the `Create New Key` button.
+    <Frame type="glass">
+        <img src="/images/api-keys.png" />
+    </Frame>
+    <Info>
+    Safely store your API Key
+    Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+    </Info>
+## Catch connection tokens
+
+A `connection_token` is created everytime a user connects an account to your platform.<br/>
+Once you've set up the auth flow through [magic-link or using the embedded snippet](/quick-start), you need to setup a [webhook](/webhooks/overview) and listen to events tagged as `connection.created`.
+
+<Info>
+  The `connection_token` is a string, located in the _data_ object, inside a
+  `connection.created` event.
+</Info>
+
+```json Example connection.created event
+{
+    "id_event": "dc2d12b9-dd07-4e33-a244-d0560a9eeed7",
+    "type": "connection.created",
+    "data": {
+        "id" : "6fc7017a-6596-4b05-81b6-595296a59f87"
+        "connection_token": "MY_CONNECTION_TOKEN",
+        "provider_slug": "hubspot",
+        ...
+    },
+    ...
+}
+```
+
+Congrats ! You have everything you need to make authenticated requests.
+
+## Make your first API request with your `API Key` and a `connection_token`
+
+Take a look at these examples to understand the concept.
+We also recommend practising by looking at the specific verticals you want to integrate.
+
+<Info>
+  You can find the Typescript SDK on NPM
+  [here](https://www.npmjs.com/package/@panora/sdk-typescript)
+</Info>
+In this example, we will create a contact in a CRM. Visit other sections of the [documentation](/ticketing/overview) to find category-specific examples.
+<CodeGroup>
+  ```javascript TypeScript
+  import { PanoraSDK } from '@panora/sdk-typescript';
+
+  const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+
+  const input = {
+      first_name: 'tom',
+      last_name: 'jedusor',
+      email_addresses: [
+        {
+          'email_address': 'tom@jedusor.com',
+          'email_address_type': 'PERSONAL'
+        }
+      ],
+      phone_numbers: [
+        {
+          'phone_number': '+33650438278',
+          'phone_type': 'MOBILE'
+        }
+      ],
+  };
+
+  const result = await sdk.crmContact.addContact(input, 'MY_USER_CONNECTION_TOKEN', {
+      remoteData: true,
+  });
+
+  console.log(result);
+  ```
+
+  ```python Python
+  from panorasdk import PanoraSDK
+
+  sdk = PanoraSDK()
+
+  sdk.set_access_token("MY_API_KEY")
+
+  request_body = {
+    'first_name': 'tom',
+    'last_name': 'jedusor',
+    'email_addresses': [
+      {
+        'email_address': 'tom@jedusor.com',
+        'email_address_type': 'PERSONAL'
+      }
+    ],
+    'phone_numbers': [
+      {
+        'phone_number': '+33650438278',
+        'phone_type': 'MOBILE'
+      }
+    ]
+  }
+
+  results = sdk.crm_contact.add_contact(
+      request_input = request_body,
+      connection_token = 'MY_USER_CONNECTION_TOKEN',
+      remote_data = True
+  )
+
+  print(results)
+  ```
+
+  ```shell Curl
+  curl --request POST \
+  --url https://api.panora.dev/crm/contacts \
+  --header 'Authorization: Bearer <MY_API_KEY>' \
+  --header 'Content-Type: application/json' \
+  --header 'x-connection-token: <MY_USER_CONNECTION_TOKEN>' \
+  --data '{
+      "first_name": "tom",
+      "last_name": "jedusor",
+      "email_addresses": [
+        {
+          "email_address": "tom@jedusor.com",
+          "email_address_type": "PERSONAL"
+        }
+      ],
+      "phone_numbers": [
+        {
+          "phone_number": "+33650438278",
+          "phone_type": "MOBILE"
+        }
+      ]
+    }'
+  ```
+</CodeGroup>
+
+Read more about our SDKs in [TypeScript](/backend-sdk/typescript), [Python](/backend-sdk/python).

@@ -1,0 +1,58 @@
+---
+title: 'The tickets object'
+description: 'Introduction to our Ticketing `ticket` Unified Model'
+---
+
+## The Unified `ticket` Object
+The `ticket` object is used to represent an existing ticket in a ticketing system.
+
+### Properties
+
+<RequestExample>
+```json JSON
+{
+    "id_tcg_ticket": "f4e1ff72-e727-409a-8935-a63a63d4891e",
+    "first_name": "John",
+    "last_name": "Doe",
+    "email_addresses": [
+        {
+            "email_address": "johndoe@work.com",
+            "email_address_type": "work"
+        },
+        {
+            "email_address": "johndoe@personal.com",
+            "email_address_type": "phone"
+        }
+    ],
+    "remote_data": {
+    }
+}
+```
+
+</RequestExample>
+
+<ResponseField name="contact" type="Contact Object">
+  <Expandable title="properties" defaultOpen="true">
+  
+    <ResponseField name="id_contact" type="uuid">
+      Panora Defined UUID for this contact
+    </ResponseField>
+
+    <ResponseField name="first_name" type="string" required>
+      The full name of the `contact`
+    </ResponseField>
+
+    <ResponseField name="last_name" type="string" required>
+      The last name of this `contact`
+    </ResponseField>
+
+    <ResponseField name="field_mappings" type="array">
+      Array containing all the non-standard data points for this `contact`. Requires mapping.
+    </ResponseField>
+
+    <ResponseField name="remote_data" type="json">
+      Original data, as provided by the source CRM
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>

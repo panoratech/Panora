@@ -1,0 +1,277 @@
+---
+title: "Quickstart Guide"
+icon: hockey-puck
+---
+
+To enable webhook events, you need to register webhook endpoints. After you register them, Panora can push real-time event data to your application’s webhook endpoint when [events](/webhooks/events/overview) happen in your Panora account. Panora uses HTTPS to send webhook events to your app as a JSON payload that includes an [Event object](/webhooks/events/overview).
+
+<Steps>
+    <Step title="Create a webhook endpoint handler to receive event data POST requests.">
+        <Note>
+            **TYPES OF EVENTS** <br/>
+            Use the Panora API reference to identify the [Event objects](/webhooks/events/overview) your webhook handler needs to process.
+        </Note>
+        Set up an HTTP or HTTPS endpoint function that can accept webhook requests with a POST method. If you’re still developing your endpoint function on your local machine, it can use HTTP. After it’s publicly accessible, your webhook endpoint function must use HTTPS.
+        Set up your endpoint function so that it:
+        - Handles POST requests with a JSON payload consisting of an event object.
+        - Quickly returns a successful status code (`2xx`) prior to any complex logic that could cause a timeout. For example, you must return a `200` response before updating a customer’s invoice as paid in your accounting system.
+
+        **Example endpoint** <br/>
+        This code snippet is a webhook function configured to check that the event type was received, to handle the event, and return a 200 response.
+
+        <CodeGroup>
+
+        ```javascript Node
+        // This example uses Express to receive webhooks
+        import express, { Request, Response } from 'express';
+        const app = express();
+        app.use(express.json());
+
+        // Match the raw body to content type application/json
+        // If you are using Express v4 - v4.16 you need to use body-parser, not express, to retrieve the request body
+        app.post('/webhook', (request, response) => {
+            const event = request.body;
+
+            // Handle the event
+            switch (event.type) {
+                case 'crm.contact.created':
+                    const contactData = event.data;
+                    // Then define and call a method to handle the successful contact creation.
+                    // handleContactCreationSucceeded(contactData);
+                    break;
+                case 'crm.company.created':
+                    const companyData = event.data;
+                    // Then define and call a method to handle the successful company creation.
+                    // handleCompanyCreationSucceeded(companyData);
+                    break;
+                // ... handle other event types
+                default:
+                    console.log(`Unhandled event type ${event.type}`);
+            }
+
+            // Return a response to acknowledge receipt of the event
+            response.json({
+                received: true
+            });
+        });
+
+        app.listen(8000, () => console.log('Running on port 8000'));
+        ```
+
+        ```python Python
+        import json
+        from django.http import HttpResponse
+
+        # Using Django
+        @csrf_exempt
+        def my_webhook_view(request):
+            event = request.body
+
+            # Handle the event
+            if event.type == 'crm.contact.created':
+                contact_data = event.data
+                # Then define and call a method to handle the successful contact creation.
+                # handle_contact_creation_succeeded(contact_data)
+            elif event.type == 'crm.company.created':
+                company_data = event.data
+                # Then define and call a method to handle the successful company creation.
+                # handle_company_creation_succeeded(company_data)
+            # ... handle other event types
+            else:
+                print('Unhandled event type {}'.format(event.type))
+
+            return HttpResponse(status=200)
+        ```
+
+        </CodeGroup>
+    </Step>
+    <Step title="Register your endpoint within Panora using the Dashboard or the API.">
+        Register the webhook endpoint’s accessible URL using the _Webhooks_ [section](https://dashboard.panora.dev/configuration) or the API so Panora knows where to deliver events.<br/>
+
+        **Webhook URL format** <br/>
+
+        The URL format to register a webhook endpoint is:
+        ```
+        https://<your-website>/<your-webhook-endpoint>
+        ```
+        For example, if your domain is `https://mycompanysite.com` and the route to your webhook endpoint is `@app.route('/panora_webhooks', methods=['POST'])`, specify `https://mycompanysite.com/panora_webhooks` as the Endpoint URL. <br/>
+
+        **Add a webhook endpoint** <br/>
+
+        Navigate to the _Configuration_ [section](https://dashboard.panora.dev/configuration) and head to the Webhooks tab. <br/>
+        <video
+        controls
+        className="w-full aspect-video"
+        src="/images/webhooks.mp4"
+        ></video>
+
+
+        **Register a webhook endpoint with the Panora API** <br/>
+
+        You can also programmatically create [webhook endpoints](/api-reference/webhook/add-webhook-metadata). <br/>
+
+        The following example creates an endpoint that notifies you when a connection is created.
+
+        <CodeGroup>
+        ```shell Curl
+        curl --request POST \
+             --url https://api.panora.dev/webhook \
+             --header 'Authorization: Bearer <MY_API_KEY>' \
+             --header 'Content-Type: application/json' \
+             --data '{
+                "url": "https://example.com/my/webhook/endpoint",
+                "description": "Receive Connection Creation Events",
+                "scope": [
+                    "connection.created"
+                ]
+             }'
+        ```
+
+        ```ts Typescript
+        import { PanoraSDK } from '@panora/sdk-typescript';
+
+        const sdk = new PanoraSDK({ accessToken: MY_API_KEY});
+
+        const input = {
+            description: 'Receive Connection Creation Events',
+            scope: ['connection.created'],
+            url: 'https://example.com/my/webhook/endpoint',
+        };
+        const result = await sdk.webhook.createWebhookMetadata(input);
+        console.log(result);
+        ```
+
+        ```python Python
+        from panorasdk import PanoraSDK
+
+        sdk = PanoraSDK()
+
+        sdk.set_access_token("MY_API_KEY")
+
+        request_body = {
+            description: 'Receive Connection Creation Events',
+            scope: ['connection.created'],
+            url: 'https://example.com/my/webhook/endpoint',
+        }
+
+        results = sdk.webhook.create_webhook_metadata(
+            request_input = request_body,
+        )
+
+        print(results)
+        ```
+        </CodeGroup>
+
+    </Step>
+    <Step title="Secure your webhook endpoint.">
+        We highly recommend you secure your integration by ensuring your handler verifies that all webhook requests are generated by Panora. You can choose to verify webhook signatures using our official libraries or verify them manually.<br/>
+
+        **Verify webhook signatures with official library** <br/>
+
+        We recommend using our official libraries to verify signatures. You perform the verification by providing the event payload, the `Panora-Signature` header, and the endpoint’s secret. If verification fails, you get an error.
+
+        <CodeGroup>
+        ```javascript Node
+        import express, { Request, Response } from 'express';
+        import { PanoraSDK } from '@panora/sdk-typescript';
+
+        // Set your api key
+        // See your keys here: https://dashboard.panora.dev/api-keys
+        const panora = new PanoraSDK({ accessToken: "MY_API_KEY" });
+
+        // Find your endpoint's secret in your webhook settings in the Config Page
+        const endpointSecret = 'whsec_...';
+
+        // This example uses Express to receive webhooks
+        const app = express();
+
+        app.use(express.json());
+
+        // Match the raw body to content type application/json
+        app.post('/webhook', async (request, response) => {
+            const sig = request.headers['panora-signature'];
+
+            let event;
+
+            try {
+                // Verifies that the event comes from Panora and not from malicious sender
+                event = await panora.webhook.verifyEvent(request.body, sig, endpointSecret);
+            }
+            catch (err) {
+                response.status(400).send(`Webhook Error: ${err.message}`);
+            }
+
+            // Handle the event
+            switch (event.type) {
+                case 'crm.contact.created':
+                    const contactData = event.data;
+                    // Then define and call a method to handle the successful contact creation.
+                    // handleContactCreationSucceeded(contactData);
+                    break;
+                case 'crm.company.created':
+                    const companyData = event.data;
+                    // Then define and call a method to handle the successful company creation.
+                    // handleCompanyCreationSucceeded(companyData);
+                    break;
+                // ... handle other event types
+                default:
+                    console.log(`Unhandled event type ${event.type}`);
+            }
+
+            // Return a response to acknowledge receipt of the event
+            response.json({received: true});
+        });
+
+        app.listen(8080, () => console.log('Running on port 8080'));
+        ```
+
+
+        ```python Python
+        from panorasdk import PanoraSDK
+        from django.http import HttpResponse
+
+        # Set your secret key.
+        # See your keys here: https://dashboard.panora.dev/api-keys
+        panora = PanoraSDK('YOUR_API_KEY')
+
+        # Find your endpoint's secret in your webhook settings in the Config Page
+        endpoint_secret = 'whsec_...'
+
+
+        # Using Django
+        @csrf_exempt
+        def my_webhook_view(request):
+            payload = request.body
+            sig_header = request.META['panora-signature']
+            event = None
+
+            try:
+                # Verifies that the event comes from Panora and not from malicious sender
+                event = panora.webhook.verify_event(
+                    payload, sig_header, endpoint_secret
+                )
+            except ValueError as e:
+                # Invalid payload
+                print('Error parsing payload: {}'.format(str(e)))
+                return HttpResponse(status=400)
+
+            # Handle the event
+            if event.type == 'crm.contact.created':
+                contact_data = event.data
+                # Then define and call a method to handle the successful contact creation.
+                # handle_contact_creation_succeeded(contact_data)
+            elif event.type == 'crm.company.created':
+                company_data = event.data
+                # Then define and call a method to handle the successful company creation.
+                # handle_company_creation_succeeded(company_data)
+            # ... handle other event types
+            else:
+                print('Unhandled event type {}'.format(event.type))
+
+            return HttpResponse(status=200)
+        ```
+        </CodeGroup>
+
+    </Step>
+
+</Steps>

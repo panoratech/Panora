@@ -1,0 +1,86 @@
+---
+title: "Import Your Existing Users"
+description: ""
+icon: "users"
+---
+
+
+Typically, we recommend creating a Panora linked user each time a new user is created in your application.
+We also recommend to import all existing users from your application within Panora.
+Without doing that, you can't integrate with Panora.
+
+## Using the UI
+
+#### You can add a single linked user
+
+<Frame type="glass">
+  <video
+    controls
+    className="w-full aspect-video"
+    src="/images/linkedusers.mp4"
+  ></video>
+</Frame>
+
+#### You can add a batch of linked users by using the drag n drop tool
+<Info>Currently, we only accept .txt or .csv files that contains your remote ids separated by a comma.</Info>
+<Frame type="glass">
+  <video
+    controls
+    className="w-full aspect-video"
+    src="/images/linkedusersbatch.mp4"
+  ></video>
+</Frame>
+
+## Using our API
+
+This code adds a single/batch of linked accounts inside Panora. It helps us have an exact mapping of your existing users inside our system.
+These endpoint return [Linked Account object(s)](/glossary/linked-account-object). Depending on how you architect your system, you might want to store this object's identifier (`id_linked_user`) for later use in your database.
+
+<CodeGroup> 
+ ```shell Import a single existing user
+  curl --request POST \
+      --url https://api.panora.dev/linked-users \
+      --header 'Authorization: Bearer <MY_API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+          "linked_user_origin_id": "acme_user_1", # your remote id (id representing your existing user inside your system)
+          "alias": "acme", # your company name
+          "id_project": "ikloqqkq90-djsddhjs-prs12dj",
+      }'
+  ```
+  ```shell Import a batch of existing users
+  curl --request POST \
+      --url https://api.panora.dev/linked-users/batch \
+      --header 'Authorization: Bearer <MY_API_KEY>' \
+      --header 'Content-Type: application/json' \
+      --data '{
+          "linked_user_origin_ids": ["acme_user_1", "acme_user_2", "acme_user_3"], # array of remote ids (ids representing your existing users inside your system)
+          "alias": "acme", # your company name
+          "id_project": "ikloqqkq90-djsddhjs-prs12dj",
+      }'
+  ```
+</CodeGroup>
+
+# How to fetch linked users
+
+You must know how to fetch linked users as [you'll have to use them in the UI widget prop](/recipes/embed-catalog).
+
+## Fetch using our library functions
+
+At any point in your code, if you have successfully added your linked users (see above) you'll be able to fetch them by calling :
+
+- `linkedUserFromRemoteId(remote_id: string)` where `remote_id` is the id of the user inside your system and this function returns a [LinkedUser object](/glossary/linked-account-object).
+- `fetchLinkedUsers()` where this function returns an array of [LinkedUser objects](/glossary/linked-account-object) for your `projectId`.
+
+<CodeGroup>
+ ```shell linkedUserFromRemoteId
+    curl --request GET \
+            --url https://api.panora.dev/linked-users/fromRemoteId?remoteId=acme_id_1 \
+            --header 'Authorization: Bearer <MY_API_KEY>' \
+    ```
+    ```shell fetchLinkedUsers
+    curl --request GET \
+            --url https://api.panora.dev/linked-users \
+            --header 'Authorization: Bearer <MY_API_KEY>' \
+    ```
+</CodeGroup>

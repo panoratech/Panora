@@ -1,0 +1,25 @@
+---
+title: "Linked Account Object"
+description: "Understand the linked account object."
+icon: "user"
+---
+
+#### The `linked-user` object represents a user entity inside our system.
+
+```json JSON
+{
+  "id_linked_user": "6cd057cb-39df-44ce-9be8-ab9d167c3940",
+  "linked_user_origin_id": "acme-id-be129f-4nce-uh22",
+  "alias": "acme",
+  "id_project": "6cd057cb-39df-44ce-9be8-ab9d167c3940"
+}
+```
+
+- `id_linked_user` is the **id** of the user inside **our** system.
+- `linked_user_origin_id` is the **id** of the user inside **your** system.
+- `alias` is the name of your system/company. <br/>
+
+It holds information about **user's data**
+that exist in your **own product**.
+
+The idea is to have a deep copy of all your user's information inside our own database.

@@ -1,0 +1,106 @@
+---
+title: "Custom Fields"
+description: "Easily extend Panora's unified model to recognize specific fields"
+icon: "code"
+---
+
+## Overview
+
+Creating a `Field Mapping` involves two majors actions:
+
+- Defining a custom field on Panora's side
+- Mapping it to a field from your customer's software.
+
+In this video we define a field and then once a connection is available we fetch fields inside your user's software so you can map the custom field with Panora.
+
+In our case we first creating a custom field inside Hubspot called `favorite_color` and then we do the field mapping within Panora.
+
+You must have a connection, hence a valid linked user so you can create custom fields on their behalf. In this example, we create the custom field in the linked user software but in real use case it would be already done by him and Panora would fetch all fields to map.
+<Frame type="glass">
+  <video
+    controls
+    className="w-full aspect-video"
+    src="/images/customfields1.mp4"
+  ></video>
+</Frame>
+
+## Create a custom field mapping using our UI dashboard
+
+<Steps>
+
+    <Step title="Login to your Dashboard">
+    Login to your [account dashboard](https://dashboard.panora.dev) and click on _Configuration_ [section](https://dashboard.panora.dev/configuration) and go to tab **Field Mapping**.
+    </Step>
+
+    <Step title="Define your custom field">
+    Click `Define a custom field`. Select a unified object you want to extend, and give your custom field a slug and a friendly name. You also need to select a data type.
+    </Step>
+
+    <Step title="Map your custom field to a remote field">
+
+Now, click on the `Map a custom field` button. To finish the mapping, select the custom field you just created, and fill the fields `Provider` and `Linked User Id`.
+
+</Step>
+
+    <Step>
+
+You will now find all the fields your user has in its software. Pick the one that you want to map to. Click `Map`.
+
+</Step>
+
+</Steps>
+
+## Create a custom field mapping using our API
+
+The following example creates a custom field mapping in two steps (**define and map**) where we map a remote field called `hair_color_hubspot_123_id` (existing in the `Husbpot` provider) and mapping it to the `crm.contact` unified model of Panora under the name of `hair_color`.
+
+```shell Create custom field
+curl --request POST \
+         --url https://api.panora.dev/field-mappings \
+         --header 'Authorization: Bearer <MY_API_KEY>' \
+         --header 'Content-Type: application/json' \
+         --data '{
+            "object_type_owner": "crm.contact",
+            "name": "hair_color",
+            "description": "My hair_color field mapping",
+            "data_type": "text",
+            "source_custom_field_id": "hair_color_hubspot_123_id",  # id of the remote field inside the remote provider
+            "source_provider": "hubspot",
+            "linked_user_id": "acme_customer_a"
+         }'
+```
+<Info>You may want to define it in two steps if you miss some information to map in the 1st step.</Info>
+
+The following example creates a custom field mapping in two steps (**define and map**) where we map a remote field called `hair_color_hubspot_123_id` (existing in the `Husbpot` provider) and mapping it to the `crm.contact` unified model of Panora under the name of `hair_color`.
+
+        <CodeGroup>
+        ```shell Define custom field
+        curl --request POST \
+             --url https://api.panora.dev/field-mappings/define \
+             --header 'Authorization: Bearer <MY_API_KEY>' \
+             --header 'Content-Type: application/json' \
+             --data '{
+                "object_type_owner": "crm.contact",
+                "name": "hair_color",
+                "description": "My hair_color field mapping",
+                "data_type": "text"
+             }'
+        ```
+
+        ```shell Map custom field
+        curl --request POST \
+             --url https://api.panora.dev/field-mappings/map \
+             --header 'Authorization: Bearer <MY_API_KEY>' \
+             --header 'Content-Type: application/json' \
+             --data '{
+                "attributeId": "id_defined_field", # retrieve that from response of the /define request
+                "source_custom_field_id": "hair_color_hubspot_123_id", # id of the remote field inside the remote provider
+                "source_provider": "hubspot",
+                "linked_user_id": "acme_customer_a"
+             }'
+        ```
+        </CodeGroup>
+
+[✏️ Suggest an update](https://tally.so/r/mRD1QQ?feedback_source=custom_fields)
+
+[Need help? Come chat on Discord!](https://discord.gg/G7fr4HNyTb)

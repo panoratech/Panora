@@ -1,0 +1,47 @@
+---
+title: "Set up Ngrok"
+description: ""
+---
+<Steps>
+  <Step title="Create ngrok.yml file">
+    ```bash 
+    cp ngrok.yml.example ngrok.yml 
+    ```
+  </Step>
+  <Step title="Fill the mandatory variables">
+    ```bash 
+        version: 2
+        authtoken: AUTH_TOKEN # Grab your auth token here 
+        log_level: debug
+        log: stdout
+
+        tunnels:
+        api-tunnel:
+            proto: http
+            addr: 3000
+            domain: DOMAIN # Grab your domain here
+    ```
+    - AUTH_TOKEN can be found [in your ngrok dashboard](https://dashboard.ngrok.com/get-started/your-authtoken)
+    - DOMAIN can be found also [in your ngrok dashboard](https://dashboard.ngrok.com/cloud-edge/domains)
+  </Step>
+  <Step title="Enable Ngrok in the Dockerfiles">
+    Uncomment ngrok service in docker-compose[.dev, .source].yml. The following code **MUST BE** uncommented.
+   ```bash 
+        ngrok:
+        image: ngrok/ngrok:latest
+        restart: always
+        command:
+            - "start"
+            - "--all"
+            - "--config"
+            - "/etc/ngrok.yml"
+        volumes:
+            - ./ngrok.yml:/etc/ngrok.yml
+        ports:
+        - 4040:4040
+        network_mode: "host"
+    ```
+  </Step>
+</Steps>
+That's all ! After launching the dockers, all requests targeted at REDIRECT_TUNNEL_INGRESS or WEBHOOK_INGRESS are effectively tunneled to your backend server !
+
