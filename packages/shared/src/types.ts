@@ -1,5 +1,3 @@
-import { CONNECTORS_METADATA } from "./connectors/metadata";
-
 export enum AuthStrategy {
     oauth2 = '0Auth2',
     api_key = 'API Key',
@@ -51,4 +49,3 @@ export type VerticalConfig = {
 export type ProvidersConfig = {
     [vertical: string]: VerticalConfig;
 }
-
