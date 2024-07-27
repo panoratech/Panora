@@ -95,6 +95,7 @@ const ProviderModal = () => {
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
     const param = queryParams.get('redirectIngressUri');
+    console.log("redirectIngressUri is "+ param)
     if (param !== null && param !== undefined) {
       setRedirectIngressUri({
         status: true,
