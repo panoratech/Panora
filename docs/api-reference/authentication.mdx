@@ -1,0 +1,103 @@
+---
+title: "Authentication"
+description: ""
+---
+
+The Panora API uses [API keys](/core-concepts/auth) to authenticate requests. You can view and manage your API keys in the [Panora Dashboard](https://dashboard.panora.dev/api-keys).
+
+Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+
+Use your API key by setting it in the initial configuration of Panora. The Node.js library will then automatically send this key in each request.
+
+All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). Calls made over plain HTTP will fail. API requests without authentication will also fail.
+
+You also have to catch a [connection token](/core-concepts/auth) which contains metadata about the end-user.
+
+<Info>In this example, we will create a contact in a CRM. Visit other sections of the [documentation](/ticketing/overview) to find category-specific examples.</Info>
+<CodeGroup>
+  ```javascript TypeScript
+  import { PanoraSDK } from '@panora/sdk-typescript';
+
+  const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+
+  const input = {
+      first_name: 'tom',
+      last_name: 'jedusor',
+      email_addresses: [
+        {
+          'email_address': 'tom@jedusor.com',
+          'email_address_type': 'PERSONAL'
+        }
+      ],
+      phone_numbers: [
+        {
+          'phone_number': '+33650438278',
+          'phone_type': 'MOBILE'
+        }
+      ],
+  };
+
+  const result = await sdk.crmContact.addContact(input, 'MY_USER_CONNECTION_TOKEN', {
+    remoteData: true,
+  });
+
+  console.log(result);
+  ```
+
+  ```python Python
+  from panorasdk import PanoraSDK
+
+  sdk = PanoraSDK()
+
+  sdk.set_access_token("MY_API_KEY")
+
+  request_body = {
+    'first_name': 'tom',
+    'last_name': 'jedusor',
+    'email_addresses': [
+      {
+        'email_address': 'tom@jedusor.com',
+        'email_address_type': 'PERSONAL'
+      }
+    ],
+    'phone_numbers': [
+      {
+        'phone_number': '+33650438278',
+        'phone_type': 'MOBILE'
+      }
+    ]
+  }
+
+  results = sdk.crm_contact.add_contact(
+    request_input = request_body,
+    connection_token = 'MY_USER_CONNECTION_TOKEN',
+    remote_data = True
+  )
+
+  print(results)
+  ```
+
+  ```shell curl
+  curl --request POST \
+  --url https://api.panora.dev/crm/contacts \
+  --header 'Authorization: Bearer <MY_API_KEY>' \
+  --header 'Content-Type: application/json' \
+  --header 'x-connection-token: <MY_USER_CONNECTION_TOKEN>' \
+  --data '{
+      "first_name": "tom",
+      "last_name": "jedusor",
+      "email_addresses": [
+        {
+          "email_address": "tom@jedusor.com",
+          "email_address_type": "PERSONAL"
+        }
+      ],
+      "phone_numbers": [
+        {
+          "phone_number": "+33650438278",
+          "phone_type": "MOBILE"
+        }
+      ]
+    }'
+  ```
+</CodeGroup>

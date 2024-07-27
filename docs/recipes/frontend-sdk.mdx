@@ -1,0 +1,55 @@
+---
+title: "Frontend SDK"
+description: "Use the frontend SDK to integrate your end-user's tools seamlessly within your product."
+icon: "play"
+---
+
+# Step 1: Import the code snippet
+
+<CodeGroup>
+    ```shell React
+    pnpm i @panora/frontend-sdk
+    ```
+</CodeGroup>
+
+#### Use the SDK
+
+<Frame type="glass">
+    <video
+    controls
+    className="block"
+    src="https://res.cloudinary.com/ddnkw2lm4/video/upload/v1721689772/frontend-sdk-video_szqdb6.mp4"
+    alt="Hero Light"
+    />
+</Frame>
+
+You must import both `@panora/shared` (which contains the types). 
+
+<Note>
+  For the `vertical` prop, learn more about values accepted
+  [here](/glossary/metadata/category).
+</Note>
+
+<CodeGroup>
+    ```javascript React
+    import { ConnectorCategory } from '@panora/shared'
+    import Panora from '@panora/frontend-sdk'
+
+    const panora = new Panora({ apiKey: 'YOUR_PRIVATE_API_KEY', overrideApiUrl: 'http://localhost:3000' });
+
+    const MyPage = () => {
+        return (
+            // kickstart the connection (OAuth, ApiKey, Basic)
+            panora.connect({
+                providerName: "hubspot",
+                vertical: ConnectorCategory.Crm,
+                linkedUserId: "4c6ca51b-7b23-4e3a-9309-24d2d331a04d",
+            })
+        )
+    } 
+    ```
+</CodeGroup>
+
+By default, for OAuth we use Panora managed OAuth apps but if we dont have one registered OR you want to use your own, check this [guide](/recipes/add-custom-provider-creds) and it will automatically use these custom credentials !
+
+Congrats ! You should be able to connect !

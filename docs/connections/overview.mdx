@@ -1,0 +1,74 @@
+---
+title: 'The connection object'
+description: "Introduction to Panora's `connection` concept"
+---
+
+## The `connection` object represents an access right to a user's data
+
+
+<RequestExample>
+```json JSON
+{
+    "id_connection": "6cd057cb-39df-44ce-9be8-ab9d167c3940",
+    "status": "valid",
+    "connection_token": "e6d46c3763dc3e85fb078eae952654bd4f4861b313b7ccae201b91aa37532b71",
+    "provider_slug": "hubspot",
+    "account_url": null,
+    "expiration_timestamp": "2023-12-20T18:44:44.869Z",
+    "created_at": "2023-12-10T18:20:06.275Z",
+    "id_project": "801f9ede-c698-4e66-a7fc-48d19eebaa4f",
+    "id_linked_user": "d7a0af02-0f9b-40a6-86a9-612dcfe341fe"
+}
+```
+</RequestExample>
+
+
+<ResponseField name="connection" type="Connection Object">
+  <Expandable title="properties" defaultOpen="true">
+
+    <ResponseField name="id_connection" type="uuid">
+      Panora Defined UUID for this connection
+    </ResponseField>
+
+    <ResponseField name="status" type="string" required>
+      The status of the `connection`. Can be `active`, or `expired`
+    </ResponseField>
+
+    <ResponseField name="provider_slug" type="string" required>
+      The provider slug for this `connection`
+    </ResponseField>
+
+    <ResponseField name="account_url" type="string">
+      The account URL for this `connection`. Optionnal.
+    </ResponseField>
+
+    <ResponseField name="token_type" type="string" required>
+      The token type for this `connection`
+    </ResponseField>
+
+    <ResponseField name="access_token" type="string" required>
+      The access token for this `connection`
+    </ResponseField>
+
+    <ResponseField name="refresh_token" type="string" required>
+      The refresh token for this `connection`
+    </ResponseField>
+
+    <ResponseField name="expiration_timestamp" type="string" required>
+      The expiration timestamp for this `connection`
+    </ResponseField>
+
+    <ResponseField name="created_at" type="string" required>
+      The creation timestamp for this `connection`
+    </ResponseField>
+
+    <ResponseField name="id_project" type="uuid" required>
+      The project UUID this `connection` belongs to.
+    </ResponseField>
+
+    <ResponseField name="id_linked_user" type="uuid" required>
+      The linked user UUID this `connection` belongs to.
+    </ResponseField>
+    
+  </Expandable>
+</ResponseField>

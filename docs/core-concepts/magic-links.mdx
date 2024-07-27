@@ -1,0 +1,43 @@
+---
+title: "Magic Links"
+description: "Use Magic Links to invite your users to grant you access to their data without a dedicated website. Create a full connection flow in just a few clicks. **No code required.**"
+icon: "wand-magic-sparkles"
+---
+
+<Frame type="glass">
+  <video
+    controls
+    className="w-full aspect-video"
+    src="/images/magiclinks.mp4"
+  ></video>
+</Frame>
+
+## Send your first Magic Link
+
+[We recommend listening to webhooks to get notified once a user connects and catch the connection token used for requests.
+](/recipes/catch-connection-token)
+
+<Steps>
+
+<Step>Login to your [account dashboard](https://dashboard.panora.dev)</Step>
+
+<Step>
+  Go to the _Connections_ [section](https://dashboard.panora.dev/connections)
+  and click button `Create a Magic Link`
+</Step>
+
+<Step>Click `Create a Unique Magic Link`</Step>
+
+<Step>
+  You'll be asked for two informations: an `Origin User Email` and an `Origin
+  User Identifier`. The `Origin User Identifier` is the id of the user you're
+  inviting, as represented in your systems. If you already have created a
+  [Linked User](/recipes/import-existing-users) you have the option to select
+  it.
+</Step>
+
+<Step>Click `Generate`</Step>
+
+</Steps>
+<Info> You may see CLIENT_ID not found for some providers. It means we don't have an OAuth Panora App published yet so you may need to input your own credentials. (see this [guide](/recipes/add-custom-provider-creds))</Info>
+Once the user successfully completes the granting auth flow, the connection will have a `status` value of `valid`.

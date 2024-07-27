@@ -1,0 +1,84 @@
+---
+title: "Frontend Widget"
+description: ""
+icon: "square-terminal"
+---
+
+# Step 1: Import the code snippet
+
+<CodeGroup>
+    ```shell React
+    pnpm i @panora/embedded-card-react
+    ```
+</CodeGroup>
+
+    <video
+    controls
+    className="block"
+    src="https://res.cloudinary.com/ddnkw2lm4/video/upload/v1721689769/embed-video_zhptka.mp4"
+    alt="Hero Light"
+    />
+
+#### Import a single connector card
+
+You must import both `@panora/shared` (which contains the types) and `@panora/embedded-card-react`. 
+
+Don't forget to import the styles as well `import "@panora/embedded-card-react/dist/index.css";`
+
+<Note>
+  By default, all connectors are rendered but you have the option to use the
+  `category` prop to filter them by category. Learn more about values accepted
+  [here](/glossary/metadata/category).
+</Note>
+
+<CodeGroup>
+    ```javascript React
+    import "@panora/embedded-card-react/dist/index.css";
+    import { PanoraProviderCard } from "@panora/embedded-card-react";
+    import { ConnectorCategory } from '@panora/shared'
+
+    const MyPage = () => {
+        return (
+            <PanoraProviderCard 
+                name={"hubspot"} // name of the provider  
+                category={ConnectorCategory.Crm} 
+                projectId={"f9e9601e-d6da-471a-9777-94257e9b4f00"} 
+                linkedUserId={"4c6ca51b-7b23-4e3a-9309-24d2d331a04d"} 
+                optionalApiUrl={"http://localhost:3000"} // Optional (only if you are in selfhost mode and want to use localhost:3000), by default: api.panora.dev
+            />
+        )
+    } 
+    ```
+</CodeGroup>
+#### Import the whole connector catalog
+<CodeGroup>
+    ```javascript React
+    import "@panora/embedded-card-react/dist/index.css";
+    import { PanoraDynamicCatalogCard } from "@panora/embedded-card-react";
+    import { ConnectorCategory } from '@panora/shared'
+
+    const MyPage = () => {
+        return (
+            <PanoraDynamicCatalogCard
+                category={ConnectorCategory.Crm} 
+                projectId={"f9e9601e-d6da-471a-9777-94257e9b4f00"} 
+                linkedUserId={"4c6ca51b-7b23-4e3a-9309-24d2d331a04d"} 
+                optionalApiUrl="http://localhost:3000"
+            />
+        )
+    }
+    ```
+</CodeGroup>
+
+Congrats ! You should be able to see the displayed connectors !
+
+
+# Step 2 (optional): Select your own connectors
+ 
+ <Frame type="glass">
+    <img src="/images/custom-connectors-widget.png" />
+</Frame>
+
+You have the ability to choose which connectors will be rendered (also applied to magic-link).
+
+Go to _Manage Catalog Widget_ [section](https://dashboard.panora.dev/configuration), locate the connector you wish to add/remove and switch it on/off.

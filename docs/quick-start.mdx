@@ -1,0 +1,241 @@
+---
+title: "Quickstart Guide"
+description: "This 5 minutes checklist helps you get all the requirements to start adding integrations to your product. "
+icon: "star"
+---
+
+## **Prerequisites**
+
+Before you begin, make sure you have the following:
+
+- A cloud [account](https://tally.so/r/w5ZoaN?source=docs_welcome) (or see our guide [here](/open-source/self-host-guide) on getting started with the selfhost version)
+- An API key, see our guide [here](/core-concepts/auth)
+- Node JS v18.17.1 or newer installed on your computer
+
+## **Step 1: Get access to your users data**
+
+You either have the option to use a [**no-code magic link**](/core-concepts/magic-links) or the [**embedded frontend snippet**](/recipes/embed-catalog) to get access to your user's data.
+Choose the one that fits your needs !
+
+[We recommend listening to webhooks to get notified once a user connects and catch the connection token used for requests.
+](/recipes/catch-connection-token)
+
+<Steps titleSize="h3">
+  <Step title="No Code: Magic links">
+    Let's send our first magic link so you can ask your customers to grant you access to their tools, without writing code.
+    <Frame type="glass">
+      <video
+        controls
+        className="block"
+        src="/images/magiclinkquickstart.mp4"
+        alt="Hero Light"
+      />
+    </Frame>
+
+    <Steps>
+      <Step>Login to your [account dashboard](https://dashboard.panora.dev)</Step>
+      <Step>
+        Go to _Connections_ [section](https://dashboard.panora.dev/connections) and click button `Create a Magic Link`
+      </Step>
+      <Step>Click `Create a Unique Magic Link`</Step>
+      <Step>
+        You'll be asked for two informations: an `Origin User Email` (of the user
+        you're creating the link for) and an `Origin User Identifier`. The `Origin
+        User Identifier` is the id of the user you're inviting, as represented in your
+        sofwtare. If you already have created a [Linked User](/recipes/import-existing-users) you have the option to select
+        it.
+      </Step>
+      <Step>Click `Generate`</Step>
+    </Steps>
+
+  </Step>
+
+  <Step title="For Developers: Native Integration">
+    Embed Panora into your product with our native component to collect access to use user's data.
+    <Info>
+      You can find the component on NPM
+      [here](https://www.npmjs.com/package/@panora/embedded-card-react)
+    </Info>
+    <Steps>
+        <Step title="Install the package in your code:">
+            <CodeGroup>
+                ```shell React
+                npm i @panora/embedded-card-react
+                ```
+            </CodeGroup>
+        </Step>
+
+        <Step title="Import the component and the styles in your integrations page:">
+            <CodeGroup>
+                ```javascript React
+                import "@panora/embedded-card-react/dist/index.css";
+                import PanoraProviderCard from "@panora/embedded-card-react";
+                import PanoraDynamicCatalog from "@panora/embedded-card-react";
+                ```
+            </CodeGroup>
+        </Step>
+
+        <Step title="Use the catalog in your integrations page">
+            You can either import a single connector card or a catalog of all connectors that you select in the UI dashboard configuration (see [here](/recipes/embed-catalog) for more details).
+            <Info>In order to fill the `linkedUserId` prop, use your own remote id that exist in your system **OR** check this [recipe](/recipes/import-existing-users) ! </Info>
+            <CodeGroup>
+                ```javascript Single Connector Card
+                import "@panora/embedded-card-react/dist/index.css";
+                import { PanoraProviderCard } from "@panora/embedded-card-react";
+                import { ConnectorCategory } from '@panora/shared'
+
+                <PanoraProviderCard
+                    name={"hubspot"} // name of the provider
+                    category={ConnectorCategory.Crm} // category where provider belongs to
+                    projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} // the project id tied to your organization
+                    returnUrl={"https://acme.inc"} // the url you want to redirect users to after the connection flow is successful
+                    linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  // the linked id of the user if already created in Panora system or user's info in your system
+                />
+                ```
+                ```javascript Whole Connector Catalog
+                import "@panora/embedded-card-react/dist/index.css";
+                import { PanoraDynamicCatalogCard } from "@panora/embedded-card-react";
+                import { ConnectorCategory } from '@panora/shared'
+                
+                <PanoraDynamicCatalogCard
+                    category={ConnectorCategory.Crm} // optional but if provided it returns only connectors of the category
+                    projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} // the project id tied to your organization
+                    returnUrl={"https://acme.inc"} // the url you want to redirect users to after the connection flow is successful
+                    linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  // the linked id of the user if already created in Panora system or user's info in your system
+                />
+                ```
+            </CodeGroup>
+            You should see a card or catalog being rendered client-side !
+
+            __insert photo__
+        </Step>
+    </Steps>
+
+  </Step>
+</Steps>
+
+Once the user successfully completes the granting auth flow, the connection will have a `status` value of `valid`.
+
+## **Step 2: Send your first unified API requests**
+
+### _Create a contact in a CRM_
+
+      <Check>
+        We assume for this tutorial that you have a valid Panora API Key, and a
+        `connection_token`. Find help [here](/core-concepts/auth).
+      </Check>
+      <Info>
+        You can find the Typescript SDK on NPM
+        [here](https://www.npmjs.com/package/@panora/sdk-typescript)
+      </Info>
+      In this example, we will create a contact in a CRM. Visit other sections of the [documentation](/api-reference/introduction) to find category-specific examples.
+      <CodeGroup>
+        ```javascript TypeScript
+        import { PanoraSDK } from '@panora/sdk-typescript';
+
+        const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+
+        const input = {
+            first_name: 'tom',
+            last_name: 'jedusor',
+            email_addresses: [
+              {
+                'email_address': 'tom@jedusor.com',
+                'email_address_type': 'PERSONAL'
+              }
+            ],
+            phone_numbers: [
+              {
+                'phone_number': '+33650438278',
+                'phone_type': 'MOBILE'
+              }
+            ],
+        };
+
+        const result = await sdk.crmContact.addContact(input, 'MY_USER_CONNECTION_TOKEN', {
+            remoteData: true,
+        });
+
+        console.log(result);
+        ```
+
+        ```python Python
+        from panorasdk import PanoraSDK
+
+        sdk = PanoraSDK()
+
+        sdk.set_access_token("MY_API_KEY")
+
+        request_body = {
+          'first_name': 'tom',
+          'last_name': 'jedusor',
+          'email_addresses': [
+            {
+              'email_address': 'tom@jedusor.com',
+              'email_address_type': 'PERSONAL'
+            }
+          ],
+          'phone_numbers': [
+            {
+              'phone_number': '+33650438278',
+              'phone_type': 'MOBILE'
+            }
+          ]
+        }
+
+        results = sdk.crm_contact.add_contact(
+            request_input = request_body,
+            connection_token = 'MY_USER_CONNECTION_TOKEN',
+            remote_data = True
+        )
+
+        print(results)
+        ```
+
+        ```shell curl
+        curl --request POST \
+        --url https://api.panora.dev/crm/contacts \
+        --header 'Authorization: Bearer <MY_API_KEY>' \
+        --header 'Content-Type: application/json' \
+        --header 'x-connection-token: <MY_USER_CONNECTION_TOKEN>' \
+        --data '{
+            "first_name": "tom",
+            "last_name": "jedusor",
+            "email_addresses": [
+              {
+                "email_address": "tom@jedusor.com",
+                "email_address_type": "PERSONAL"
+              }
+            ],
+            "phone_numbers": [
+              {
+                "phone_number": "+33650438278",
+                "phone_type": "MOBILE"
+              }
+            ]
+          }'
+        ```
+      </CodeGroup>
+
+Let’s break down what’s happening here:
+
+- We import the `Panora SDK`, which provides a convenient way to interact with the Panora Unified API.
+- We create an instance of the `Panora SDK` client, passing in our API key.
+- We call the `sdk.crmContact.addContact` method to add a contact inside a 3rd party. We specify the input we want to use (see [here](/crm/contacts/overview) for reference).
+- Finally, we print the response.
+
+## Next Steps
+
+Congratulations, you’ve successfully sent your first unified API request with Panora! Here are some next steps to continue your journey.
+
+### Listen to events using a webhook
+
+Visit our [webhooks section](/webhooks/overview).
+
+### API resources
+
+Drop into our [API documentation](/api-reference/introduction) for more details on the available endpoints and parameters.
+
+Check out our [client SDKs](/backend-sdk/typescript) for a set of tools to make it easier for you to build with and integrate Panora into your applications.
+
+[✏️ Suggest an update](https://tally.so/r/mRD1QQ?feedback_source=home_quick-start)
