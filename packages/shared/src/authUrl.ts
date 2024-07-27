@@ -19,7 +19,7 @@ interface AuthParams {
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
 export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, rediectUriIngress }: AuthParams) => {
-  const encodedRedirectUrl = encodeURIComponent(`${rediectUriIngress && rediectUriIngress.status == true ? rediectUriIngress.value : apiUrl}/connections/oauth/callback`); 
+  const encodedRedirectUrl = encodeURIComponent(`${rediectUriIngress && rediectUriIngress.status === true ? rediectUriIngress.value : apiUrl}/connections/oauth/callback`); 
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
