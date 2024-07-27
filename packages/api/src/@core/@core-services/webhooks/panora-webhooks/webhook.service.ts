@@ -5,7 +5,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { WebhooksError } from '@@core/utils/errors';
 import { WebhookDto } from './dto/webhook.dto';
 import axios from 'axios';
-import crypto from 'crypto';
+import { createHmac } from 'crypto';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 
 @Injectable()
@@ -20,8 +20,7 @@ export class WebhookService {
 
   generateSignature(payload: any, secret: string): string {
     try {
-      return crypto
-        .createHmac('sha256', secret)
+      return createHmac('sha256', secret)
         .update(JSON.stringify(payload))
         .digest('hex');
     } catch (error) {

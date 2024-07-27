@@ -44,27 +44,33 @@ export class WebhookProcessor {
           webhooks_payloads: true,
         },
       });
-    
-      const event = await this.prisma.events.findUnique({
-        where: {
-          id_event: deliveryAttempt.id_event
-        }
-      })
+
+    const event = await this.prisma.events.findUnique({
+      where: {
+        id_event: deliveryAttempt.id_event,
+      },
+    });
 
     // Check if the endpoint is active
     if (deliveryAttempt.webhook_endpoints.active) {
       try {
         // Send the payload to the endpoint URL
+        //create a signature
+        const signature = this.webhookService.generateSignature(
+          deliveryAttempt.webhooks_payloads.data,
+          deliveryAttempt.webhook_endpoints.secret,
+        );
+        console.log('Signature is ...' + JSON.stringify(signature));
         const response = await axios.post(
           deliveryAttempt.webhook_endpoints.url,
           {
             id_event: deliveryAttempt.id_event,
             data: deliveryAttempt.webhooks_payloads.data,
-            type: event.type
+            type: event.type,
           },
           {
             headers: {
-              'Panora-Signature': deliveryAttempt.webhook_endpoints.secret,
+              'Panora-Signature': signature,
             },
           },
         );
