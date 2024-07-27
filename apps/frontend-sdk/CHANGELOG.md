@@ -1,5 +1,11 @@
 # @panora/frontend-sdk
 
+## 1.2.0
+
+### Minor Changes
+
+- f39a671: projectid param
+
 ## 1.1.1
 
 ### Patch Changes
