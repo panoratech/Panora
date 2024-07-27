@@ -129,13 +129,13 @@ export class ConnectionsController {
 
   @ApiOperation({
     operationId: 'handleApiKeyCallback',
-    summary: 'Capture api key callback',
+    summary: 'Capture api key or basic auth callback',
   })
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiBody({ type: BodyDataType })
   @UseGuards(JwtAuthGuard)
   @ApiResponse({ status: 201 })
-  @Post('apikey/callback')
+  @Post('basicorapikey/callback')
   async handleApiKeyCallback(@Query() query: any, @Body() body: BodyDataType) {
     try {
       const { state } = query;

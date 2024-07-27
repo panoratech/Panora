@@ -21,7 +21,7 @@ interface IApiKeyConnectionDto {
 const useCreateApiKeyConnection = () => {
     const createApiKeyConnection = async (apiKeyConnectionData : IApiKeyConnectionDto) => {
         const response = await fetch(
-            `${apiKeyConnectionData.api_url}/connections/apikey/callback?state=${encodeURIComponent(JSON.stringify(apiKeyConnectionData.query))}`, {
+            `${apiKeyConnectionData.api_url}/connections/basicorapikey/callback?state=${encodeURIComponent(JSON.stringify(apiKeyConnectionData.query))}`, {
             method: 'POST',
             body: JSON.stringify(apiKeyConnectionData.data),
             headers: {

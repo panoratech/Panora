@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ConnectorCategory, constructAuthUrl } from '@panora/shared';
 
 interface PanoraConfig {
-  apiKey: string;
+  projectId: string;
   overrideApiUrl?: string;
 }
 
@@ -37,45 +37,26 @@ interface IGConnectionDto {
 }
 
 class Panora {
-  private API_KEY: string;
   private apiUrl: string;
   private projectId: string | null = null;
 
   constructor(config: PanoraConfig) {
-    this.API_KEY = config.apiKey;
+    this.projectId = config.projectId;
     this.apiUrl = config.overrideApiUrl || 'https://api.panora.dev';
-  }
-
-  private async fetchProjectId(): Promise<string> {
-    if (this.projectId) {
-      return this.projectId;
-    }
-    try {
-      const response = await axios.get(`${this.apiUrl}/projects/current`, {
-        headers: {
-          'Authorization': `Bearer ${this.API_KEY}`
-        }
-      });
-
-      this.projectId = response.data;
-      return this.projectId as string;
-    } catch (error) {
-      throw new Error('Failed to fetch project ID');
-    }
   }
 
   async connect(options: ConnectOptions): Promise<Window | null> {
     const { providerName, vertical, linkedUserId, credentials, options: {onSuccess, onError, overrideReturnUrl} = {} } = options;
 
     try {
-      const projectId = await this.fetchProjectId();
+      if(!this.projectId) throw new ReferenceError("ProjectId is invalid or undefined")
 
       if (credentials) {
         // Handle API Key or Basic Auth
-        return this.handleCredentialsAuth(projectId, providerName, vertical, linkedUserId, credentials, onSuccess, onError);
+        return this.handleCredentialsAuth(this.projectId, providerName, vertical, linkedUserId, credentials, onSuccess, onError);
       } else {
         // Handle OAuth
-        return this.handleOAuth(projectId, providerName, vertical, linkedUserId, overrideReturnUrl, onSuccess, onError);
+        return this.handleOAuth(this.projectId, providerName, vertical, linkedUserId, overrideReturnUrl, onSuccess, onError);
       }
     } catch (error) {
       if (onError) {
@@ -112,7 +93,6 @@ class Panora {
           body: JSON.stringify(connectionData.data),
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.API_KEY}`
           },
         }
       );
