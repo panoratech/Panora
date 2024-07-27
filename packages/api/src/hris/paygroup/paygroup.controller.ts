@@ -44,7 +44,7 @@ export class PayGroupController {
 
   @ApiOperation({
     operationId: 'listHrisPaygroup',
-    summary: 'List a batch of PayGroups',
+    summary: 'List  PayGroups',
   })
   @ApiHeader({
     name: 'x-connection-token',

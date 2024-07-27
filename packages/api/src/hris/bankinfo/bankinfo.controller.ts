@@ -46,7 +46,7 @@ export class BankinfoController {
 
   @ApiOperation({
     operationId: 'listHrisBankinfo', // Updated operationId
-    summary: 'List a batch of Bankinfos',
+    summary: 'List  Bankinfos',
   })
   @ApiHeader({
     name: 'x-connection-token',

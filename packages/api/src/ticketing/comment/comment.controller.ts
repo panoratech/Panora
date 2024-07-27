@@ -50,7 +50,7 @@ export class CommentController {
 
   @ApiOperation({
     operationId: 'listTicketingComments',
-    summary: 'List a batch of Comments',
+    summary: 'List  Comments',
   })
   @ApiHeader({
     name: 'x-connection-token',

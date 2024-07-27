@@ -44,7 +44,7 @@ export class OfficeController {
 
   @ApiOperation({
     operationId: 'listAtsOffice',
-    summary: 'List a batch of Offices',
+    summary: 'List  Offices',
   })
   @ApiHeader({
     name: 'x-connection-token',

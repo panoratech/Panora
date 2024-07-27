@@ -12,7 +12,6 @@ export const randomString = () => {
   }
   return result;
 }
-
 function getActiveProvidersForVertical(vertical: string): VerticalConfig {
   const verticalConfig = CONNECTORS_METADATA[vertical.toLowerCase()];
   if (!verticalConfig) {

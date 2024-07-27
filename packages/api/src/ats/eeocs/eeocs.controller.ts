@@ -44,7 +44,7 @@ export class EeocsController {
 
   @ApiOperation({
     operationId: 'listAtsEeocs', // Updated operationId
-    summary: 'List a batch of Eeocss',
+    summary: 'List  Eeocss',
   })
   @ApiHeader({
     name: 'x-connection-token',

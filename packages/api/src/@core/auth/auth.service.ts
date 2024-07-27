@@ -310,7 +310,7 @@ export class AuthService {
       if (!saved_api_key) {
         throw new ReferenceError('Api Key undefined');
       }
-      if (String(decoded.projectId) !== String(saved_api_key.id_project)) {
+      if (String(decoded.project_id) !== String(saved_api_key.id_project)) {
         throw new ReferenceError(
           'Failed to validate API key: projectId mismatch.',
         );

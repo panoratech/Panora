@@ -50,7 +50,7 @@ export class FolderController {
 
   @ApiOperation({
     operationId: 'listFilestorageFolder',
-    summary: 'List a batch of Folders',
+    summary: 'List  Folders',
   })
   @ApiHeader({
     name: 'x-connection-token',

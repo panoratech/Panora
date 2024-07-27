@@ -9,7 +9,10 @@ type UseOAuthProps = {
   returnUrl: string;              // Return URL after OAuth flow
   projectId: string;              // Project ID
   linkedUserId: string;           // Linked User ID
-  redirectIngressUri: string | null;        // URL of the User's Server
+  redirectIngressUri: {
+    status: boolean;
+    value: string | null;
+  }     // URL of the User's Server
   onSuccess: () => void;
 };
 

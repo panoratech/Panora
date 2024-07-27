@@ -44,7 +44,7 @@ export class BenefitController {
 
   @ApiOperation({
     operationId: 'listHrisBenefit',
-    summary: 'List a batch of Benefits',
+    summary: 'List  Benefits',
   })
   @ApiHeader({
     name: 'x-connection-token',

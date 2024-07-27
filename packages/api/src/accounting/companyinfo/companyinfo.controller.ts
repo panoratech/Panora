@@ -44,7 +44,7 @@ export class CompanyInfoController {
 
   @ApiOperation({
     operationId: 'listAccountingCompanyInfos',
-    summary: 'List a batch of CompanyInfos',
+    summary: 'List  CompanyInfos',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -44,7 +44,7 @@ export class TaxRateController {
 
   @ApiOperation({
     operationId: 'listAccountingTaxRate',
-    summary: 'List a batch of TaxRates',
+    summary: 'List  TaxRates',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -153,7 +153,7 @@ export class WebhookController {
 
   @ApiOperation({
     operationId: 'verifyEvent',
-    summary: 'Verify payload sgnature of the webhook',
+    summary: 'Verify payload signature of the webhook',
   })
   @ApiBody({ type: SignatureVerificationDto })
   @ApiPostCustomResponse(EventPayload)

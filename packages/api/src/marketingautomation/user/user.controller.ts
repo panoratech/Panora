@@ -47,7 +47,7 @@ export class UserController {
 
   @ApiOperation({
     operationId: 'listMarketingAutomationUsers',
-    summary: 'List a batch of Users',
+    summary: 'List  Users',
   })
   @ApiHeader({
     name: 'x-connection-token',

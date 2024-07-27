@@ -44,7 +44,7 @@ export class EmployeePayrollRunController {
 
   @ApiOperation({
     operationId: 'listHrisEmployeePayrollRun',
-    summary: 'List a batch of EmployeePayrollRuns',
+    summary: 'List  EmployeePayrollRuns',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -9,7 +9,7 @@ interface ILinkedUserDto {
 }
 const useCreateLinkedUser = () => {    
     const add = async (linkedUserData: ILinkedUserDto) => {
-        const response = await fetch(`${config.API_URL}/linked-users`, {
+        const response = await fetch(`${config.API_URL}/linked-users/internal`, {
             method: 'POST',
             body: JSON.stringify(linkedUserData),
             headers: {

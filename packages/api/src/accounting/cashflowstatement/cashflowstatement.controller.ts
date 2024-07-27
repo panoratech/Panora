@@ -44,7 +44,7 @@ export class CashflowStatementController {
 
   @ApiOperation({
     operationId: 'listAccountingCashflowStatement',
-    summary: 'List a batch of CashflowStatements',
+    summary: 'List  CashflowStatements',
   })
   @ApiHeader({
     name: 'x-connection-token',

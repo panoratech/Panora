@@ -48,7 +48,7 @@ export class TemplateController {
 
   @ApiOperation({
     operationId: 'listMarketingautomationTemplates',
-    summary: 'List a batch of Templates',
+    summary: 'List  Templates',
   })
   @ApiHeader({
     name: 'x-connection-token',

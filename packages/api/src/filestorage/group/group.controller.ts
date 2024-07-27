@@ -49,7 +49,7 @@ export class GroupController {
 
   @ApiOperation({
     operationId: 'listFilestorageGroup',
-    summary: 'List a batch of Groups',
+    summary: 'List  Groups',
   })
   @ApiHeader({
     name: 'x-connection-token',

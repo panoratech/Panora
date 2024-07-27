@@ -48,7 +48,7 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'listMarketingAutomationContacts',
-    summary: 'List a batch of Contacts',
+    summary: 'List  Contacts',
   })
   @ApiHeader({
     name: 'x-connection-token',

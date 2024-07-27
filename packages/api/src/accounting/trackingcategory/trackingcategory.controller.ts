@@ -44,7 +44,7 @@ export class TrackingCategoryController {
 
   @ApiOperation({
     operationId: 'listAccountingTrackingCategorys',
-    summary: 'List a batch of TrackingCategorys',
+    summary: 'List  TrackingCategorys',
   })
   @ApiHeader({
     name: 'x-connection-token',

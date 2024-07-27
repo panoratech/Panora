@@ -63,7 +63,13 @@ const ProviderModal = () => {
   const [openSuccessDialog,setOpenSuccessDialog] = useState<boolean>(false);
   const [currentProviderLogoURL,setCurrentProviderLogoURL] = useState<string>('')
   const [currentProvider,setCurrentProvider] = useState<string>('')
-  const [redirectIngressUri, setRedirectIngressUri] = useState<string | null>(null);
+  const [redirectIngressUri, setRedirectIngressUri] = useState<{
+    status: boolean;
+    value: string | null;
+  }>({
+    status: false,
+    value: null
+  });
   const {mutate : createApiKeyConnection} = useCreateApiKeyConnection();
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
   const {data: connectorsForProject} = useProjectConnectors(isProjectIdReady ? projectId : null);
@@ -88,9 +94,13 @@ const ProviderModal = () => {
 
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
-    const redirectIngressUri = queryParams.get('redirectIngressUri');
-    if (redirectIngressUri) {
-      setRedirectIngressUri(redirectIngressUri);
+    const param = queryParams.get('redirectIngressUri');
+    console.log("redirectIngressUri is "+ param)
+    if (param !== null && param !== undefined) {
+      setRedirectIngressUri({
+        status: true,
+        value: param
+      });
     }
   }, []);
 

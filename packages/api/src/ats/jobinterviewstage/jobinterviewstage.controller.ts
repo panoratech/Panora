@@ -44,7 +44,7 @@ export class JobInterviewStageController {
 
   @ApiOperation({
     operationId: 'listAtsJobInterviewStage',
-    summary: 'List a batch of JobInterviewStages',
+    summary: 'List  JobInterviewStages',
   })
   @ApiHeader({
     name: 'x-connection-token',

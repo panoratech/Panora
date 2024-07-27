@@ -39,7 +39,7 @@ export class StageController {
 
   @ApiOperation({
     operationId: 'listCrmStages',
-    summary: 'List a batch of Stages',
+    summary: 'List  Stages',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -46,7 +46,7 @@ export class CollectionController {
 
   @ApiOperation({
     operationId: 'listTicketingCollections',
-    summary: 'List a batch of Collections',
+    summary: 'List  Collections',
   })
   @ApiHeader({
     name: 'x-connection-token',

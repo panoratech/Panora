@@ -47,7 +47,7 @@ export class CreditNoteController {
 
   @ApiOperation({
     operationId: 'listAccountingCreditNote',
-    summary: 'List a batch of CreditNotes',
+    summary: 'List  CreditNotes',
   })
   @ApiHeader({
     name: 'x-connection-token',

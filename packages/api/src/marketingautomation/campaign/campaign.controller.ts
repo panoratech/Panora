@@ -48,7 +48,7 @@ export class CampaignController {
 
   @ApiOperation({
     operationId: 'listMarketingautomationCampaign', // Updated operationId
-    summary: 'List a batch of Campaigns',
+    summary: 'List  Campaigns',
   })
   @ApiHeader({
     name: 'x-connection-token',

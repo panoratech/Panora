@@ -48,7 +48,7 @@ export class PurchaseOrderController {
 
   @ApiOperation({
     operationId: 'listAccountingPurchaseOrder',
-    summary: 'List a batch of PurchaseOrders',
+    summary: 'List  PurchaseOrders',
   })
   @ApiHeader({
     name: 'x-connection-token',

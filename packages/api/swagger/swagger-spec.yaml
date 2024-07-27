@@ -104,7 +104,7 @@ paths:
   /webhook/verifyEvent:
     post:
       operationId: verifyEvent
-      summary: Verify payload sgnature of the webhook
+      summary: Verify payload signature of the webhook
       parameters: []
       requestBody:
         required: true
@@ -124,7 +124,7 @@ paths:
   /ticketing/tickets:
     get:
       operationId: listTicketingTicket
-      summary: List a batch of Tickets
+      summary: List  Tickets
       parameters:
         - name: x-connection-token
           required: true
@@ -239,7 +239,7 @@ paths:
   /ticketing/users:
     get:
       operationId: listTicketingUsers
-      summary: List a batch of Users
+      summary: List  Users
       parameters:
         - name: x-connection-token
           required: true
@@ -321,7 +321,7 @@ paths:
   /ticketing/accounts:
     get:
       operationId: listTicketingAccount
-      summary: List a batch of Accounts
+      summary: List  Accounts
       parameters:
         - name: x-connection-token
           required: true
@@ -519,7 +519,7 @@ paths:
   /crm/companies:
     get:
       operationId: listCrmCompany
-      summary: List a batch of Companies
+      summary: List  Companies
       parameters:
         - name: x-connection-token
           required: true
@@ -749,7 +749,7 @@ paths:
   /crm/deals:
     get:
       operationId: listCrmDeals
-      summary: List a batch of Deals
+      summary: List  Deals
       parameters:
         - name: x-connection-token
           required: true
@@ -864,7 +864,7 @@ paths:
   /crm/engagements:
     get:
       operationId: listCrmEngagements
-      summary: List a batch of Engagements
+      summary: List  Engagements
       parameters:
         - name: x-connection-token
           required: true
@@ -979,7 +979,7 @@ paths:
   /crm/notes:
     get:
       operationId: listCrmNote
-      summary: List a batch of Notes
+      summary: List  Notes
       parameters:
         - name: x-connection-token
           required: true
@@ -1094,7 +1094,7 @@ paths:
   /crm/stages:
     get:
       operationId: listCrmStages
-      summary: List a batch of Stages
+      summary: List  Stages
       parameters:
         - name: x-connection-token
           required: true
@@ -1176,7 +1176,7 @@ paths:
   /crm/tasks:
     get:
       operationId: listCrmTask
-      summary: List a batch of Tasks
+      summary: List  Tasks
       parameters:
         - name: x-connection-token
           required: true
@@ -1291,7 +1291,7 @@ paths:
   /crm/users:
     get:
       operationId: listCrmUsers
-      summary: List a batch of Users
+      summary: List  Users
       parameters:
         - name: x-connection-token
           required: true
@@ -1373,7 +1373,7 @@ paths:
   /ticketing/collections:
     get:
       operationId: listTicketingCollections
-      summary: List a batch of Collections
+      summary: List  Collections
       parameters:
         - name: x-connection-token
           required: true
@@ -1456,7 +1456,7 @@ paths:
   /ticketing/comments:
     get:
       operationId: listTicketingComments
-      summary: List a batch of Comments
+      summary: List  Comments
       parameters:
         - name: x-connection-token
           required: true
@@ -1577,7 +1577,7 @@ paths:
   /ticketing/tags:
     get:
       operationId: listTicketingTags
-      summary: List a batch of Tags
+      summary: List  Tags
       parameters:
         - name: x-connection-token
           required: true
@@ -1659,7 +1659,7 @@ paths:
   /ticketing/teams:
     get:
       operationId: listTicketingTeams
-      summary: List a batch of Teams
+      summary: List  Teams
       parameters:
         - name: x-connection-token
           required: true
@@ -1903,7 +1903,7 @@ paths:
   /hris/bankinfo:
     get:
       operationId: listHrisBankinfo
-      summary: List a batch of Bankinfos
+      summary: List  Bankinfos
       parameters:
         - name: x-connection-token
           required: true
@@ -1985,7 +1985,7 @@ paths:
   /hris/benefit:
     get:
       operationId: listHrisBenefit
-      summary: List a batch of Benefits
+      summary: List  Benefits
       parameters:
         - name: x-connection-token
           required: true
@@ -2067,7 +2067,7 @@ paths:
   /hris/company:
     get:
       operationId: listHrisCompanys
-      summary: List a batch of Companys
+      summary: List  Companys
       parameters:
         - name: x-connection-token
           required: true
@@ -2115,7 +2115,7 @@ paths:
   /hris/dependent:
     get:
       operationId: listHrisDependents
-      summary: List a batch of Dependents
+      summary: List  Dependents
       parameters:
         - name: x-connection-token
           required: true
@@ -2197,7 +2197,7 @@ paths:
   /hris/employeepayrollrun:
     get:
       operationId: listHrisEmployeePayrollRun
-      summary: List a batch of EmployeePayrollRuns
+      summary: List  EmployeePayrollRuns
       parameters:
         - name: x-connection-token
           required: true
@@ -2280,7 +2280,7 @@ paths:
   /hris/employee:
     get:
       operationId: listHrisEmployee
-      summary: List a batch of Employees
+      summary: List  Employees
       parameters:
         - name: x-connection-token
           required: true
@@ -2395,7 +2395,7 @@ paths:
   /hris/employerbenefit:
     get:
       operationId: listHrisEmployerBenefit
-      summary: List a batch of EmployerBenefits
+      summary: List  EmployerBenefits
       parameters:
         - name: x-connection-token
           required: true
@@ -2478,7 +2478,7 @@ paths:
   /hris/employment:
     get:
       operationId: listHrisEmployment
-      summary: List a batch of Employments
+      summary: List  Employments
       parameters:
         - name: x-connection-token
           required: true
@@ -2560,7 +2560,7 @@ paths:
   /hris/group:
     get:
       operationId: listHrisGroup
-      summary: List a batch of Groups
+      summary: List  Groups
       parameters:
         - name: x-connection-token
           required: true
@@ -2642,7 +2642,7 @@ paths:
   /hris/location:
     get:
       operationId: listHrisLocation
-      summary: List a batch of Locations
+      summary: List  Locations
       parameters:
         - name: x-connection-token
           required: true
@@ -2724,7 +2724,7 @@ paths:
   /hris/paygroup:
     get:
       operationId: listHrisPaygroup
-      summary: List a batch of PayGroups
+      summary: List  PayGroups
       parameters:
         - name: x-connection-token
           required: true
@@ -2806,7 +2806,7 @@ paths:
   /hris/payrollrun:
     get:
       operationId: listHrisPayrollRuns
-      summary: List a batch of PayrollRuns
+      summary: List  PayrollRuns
       parameters:
         - name: x-connection-token
           required: true
@@ -2854,7 +2854,7 @@ paths:
   /hris/timeoff:
     get:
       operationId: listHrisTimeoffs
-      summary: List a batch of Timeoffs
+      summary: List  Timeoffs
       parameters:
         - name: x-connection-token
           required: true
@@ -2969,7 +2969,7 @@ paths:
   /hris/timeoffbalance:
     get:
       operationId: listHrisTimeoffbalance
-      summary: List a batch of TimeoffBalances
+      summary: List  TimeoffBalances
       parameters:
         - name: x-connection-token
           required: true
@@ -3051,7 +3051,7 @@ paths:
   /marketingautomation/action:
     get:
       operationId: listMarketingautomationAction
-      summary: List a batch of Actions
+      summary: List  Actions
       parameters:
         - name: x-connection-token
           required: true
@@ -3171,7 +3171,7 @@ paths:
   /marketingautomation/automation:
     get:
       operationId: listMarketingautomationAutomation
-      summary: List a batch of Automations
+      summary: List  Automations
       parameters:
         - name: x-connection-token
           required: true
@@ -3293,7 +3293,7 @@ paths:
   /marketingautomation/campaign:
     get:
       operationId: listMarketingautomationCampaign
-      summary: List a batch of Campaigns
+      summary: List  Campaigns
       parameters:
         - name: x-connection-token
           required: true
@@ -3412,7 +3412,7 @@ paths:
   /marketingautomation/contact:
     get:
       operationId: listMarketingAutomationContacts
-      summary: List a batch of Contacts
+      summary: List  Contacts
       parameters:
         - name: x-connection-token
           required: true
@@ -3532,7 +3532,7 @@ paths:
   /marketingautomation/email:
     get:
       operationId: listMarketingautomationEmails
-      summary: List a batch of Emails
+      summary: List  Emails
       parameters:
         - name: x-connection-token
           required: true
@@ -3617,7 +3617,7 @@ paths:
   /marketingautomation/event:
     get:
       operationId: listMarketingAutomationEvents
-      summary: List a batch of Events
+      summary: List  Events
       parameters:
         - name: x-connection-token
           required: true
@@ -3702,7 +3702,7 @@ paths:
   /marketingautomation/list:
     get:
       operationId: listMarketingautomationLists
-      summary: List a batch of Lists
+      summary: List  Lists
       parameters:
         - name: x-connection-token
           required: true
@@ -3822,7 +3822,7 @@ paths:
   /marketingautomation/message:
     get:
       operationId: listMarketingautomationMessages
-      summary: List a batch of Messages
+      summary: List  Messages
       parameters:
         - name: x-connection-token
           required: true
@@ -3907,7 +3907,7 @@ paths:
   /marketingautomation/template:
     get:
       operationId: listMarketingautomationTemplates
-      summary: List a batch of Templates
+      summary: List  Templates
       parameters:
         - name: x-connection-token
           required: true
@@ -4027,7 +4027,7 @@ paths:
   /marketingautomation/user:
     get:
       operationId: listMarketingAutomationUsers
-      summary: List a batch of Users
+      summary: List  Users
       parameters:
         - name: x-connection-token
           required: true
@@ -4112,7 +4112,7 @@ paths:
   /ats/activity:
     get:
       operationId: listAtsActivity
-      summary: List a batch of Activities
+      summary: List  Activities
       parameters:
         - name: x-connection-token
           required: true
@@ -4227,7 +4227,7 @@ paths:
   /ats/application:
     get:
       operationId: listAtsApplication
-      summary: List a batch of Applications
+      summary: List  Applications
       parameters:
         - name: x-connection-token
           required: true
@@ -4342,7 +4342,7 @@ paths:
   /ats/attachment:
     get:
       operationId: listAtsAttachment
-      summary: List a batch of Attachments
+      summary: List  Attachments
       parameters:
         - name: x-connection-token
           required: true
@@ -4457,7 +4457,7 @@ paths:
   /ats/candidate:
     get:
       operationId: listAtsCandidate
-      summary: List a batch of Candidates
+      summary: List  Candidates
       parameters:
         - name: x-connection-token
           required: true
@@ -4572,7 +4572,7 @@ paths:
   /ats/department:
     get:
       operationId: listAtsDepartments
-      summary: List a batch of Departments
+      summary: List  Departments
       parameters:
         - name: x-connection-token
           required: true
@@ -4654,7 +4654,7 @@ paths:
   /ats/interview:
     get:
       operationId: listAtsInterview
-      summary: List a batch of Interviews
+      summary: List  Interviews
       parameters:
         - name: x-connection-token
           required: true
@@ -4769,7 +4769,7 @@ paths:
   /ats/jobinterviewstage:
     get:
       operationId: listAtsJobInterviewStage
-      summary: List a batch of JobInterviewStages
+      summary: List  JobInterviewStages
       parameters:
         - name: x-connection-token
           required: true
@@ -4852,7 +4852,7 @@ paths:
   /ats/job:
     get:
       operationId: listAtsJob
-      summary: List a batch of Jobs
+      summary: List  Jobs
       parameters:
         - name: x-connection-token
           required: true
@@ -4934,7 +4934,7 @@ paths:
   /ats/offer:
     get:
       operationId: listAtsOffer
-      summary: List a batch of Offers
+      summary: List  Offers
       parameters:
         - name: x-connection-token
           required: true
@@ -5016,7 +5016,7 @@ paths:
   /ats/office:
     get:
       operationId: listAtsOffice
-      summary: List a batch of Offices
+      summary: List  Offices
       parameters:
         - name: x-connection-token
           required: true
@@ -5098,7 +5098,7 @@ paths:
   /ats/rejectreason:
     get:
       operationId: listAtsRejectReasons
-      summary: List a batch of RejectReasons
+      summary: List  RejectReasons
       parameters:
         - name: x-connection-token
           required: true
@@ -5180,7 +5180,7 @@ paths:
   /ats/scorecard:
     get:
       operationId: listAtsScorecard
-      summary: List a batch of ScoreCards
+      summary: List  ScoreCards
       parameters:
         - name: x-connection-token
           required: true
@@ -5262,7 +5262,7 @@ paths:
   /ats/tag:
     get:
       operationId: listAtsTags
-      summary: List a batch of Tags
+      summary: List  Tags
       parameters:
         - name: x-connection-token
           required: true
@@ -5344,7 +5344,7 @@ paths:
   /ats/user:
     get:
       operationId: listAtsUsers
-      summary: List a batch of Users
+      summary: List  Users
       parameters:
         - name: x-connection-token
           required: true
@@ -5426,7 +5426,7 @@ paths:
   /ats/eeocs:
     get:
       operationId: listAtsEeocs
-      summary: List a batch of Eeocss
+      summary: List  Eeocss
       parameters:
         - name: x-connection-token
           required: true
@@ -5508,7 +5508,7 @@ paths:
   /accounting/account:
     get:
       operationId: listAccountingAccounts
-      summary: List a batch of Accounts
+      summary: List  Accounts
       parameters:
         - name: x-connection-token
           required: true
@@ -5623,7 +5623,7 @@ paths:
   /accounting/address:
     get:
       operationId: listAccountingAddress
-      summary: List a batch of Addresss
+      summary: List  Addresss
       parameters:
         - name: x-connection-token
           required: true
@@ -5705,7 +5705,7 @@ paths:
   /accounting/attachment:
     get:
       operationId: listAccountingAttachments
-      summary: List a batch of Attachments
+      summary: List  Attachments
       parameters:
         - name: x-connection-token
           required: true
@@ -5821,7 +5821,7 @@ paths:
   /accounting/balancesheet:
     get:
       operationId: listAccountingBalanceSheets
-      summary: List a batch of BalanceSheets
+      summary: List  BalanceSheets
       parameters:
         - name: x-connection-token
           required: true
@@ -5904,7 +5904,7 @@ paths:
   /accounting/cashflowstatement:
     get:
       operationId: listAccountingCashflowStatement
-      summary: List a batch of CashflowStatements
+      summary: List  CashflowStatements
       parameters:
         - name: x-connection-token
           required: true
@@ -5987,7 +5987,7 @@ paths:
   /accounting/companyinfo:
     get:
       operationId: listAccountingCompanyInfos
-      summary: List a batch of CompanyInfos
+      summary: List  CompanyInfos
       parameters:
         - name: x-connection-token
           required: true
@@ -6070,7 +6070,7 @@ paths:
   /accounting/contact:
     get:
       operationId: listAccountingContacts
-      summary: List a batch of Contacts
+      summary: List  Contacts
       parameters:
         - name: x-connection-token
           required: true
@@ -6185,7 +6185,7 @@ paths:
   /accounting/creditnote:
     get:
       operationId: listAccountingCreditNote
-      summary: List a batch of CreditNotes
+      summary: List  CreditNotes
       parameters:
         - name: x-connection-token
           required: true
@@ -6268,7 +6268,7 @@ paths:
   /accounting/expense:
     get:
       operationId: listAccountingExpense
-      summary: List a batch of Expenses
+      summary: List  Expenses
       parameters:
         - name: x-connection-token
           required: true
@@ -6383,7 +6383,7 @@ paths:
   /accounting/incomestatement:
     get:
       operationId: listAccountingIncomeStatement
-      summary: List a batch of IncomeStatements
+      summary: List  IncomeStatements
       parameters:
         - name: x-connection-token
           required: true
@@ -6466,7 +6466,7 @@ paths:
   /accounting/invoice:
     get:
       operationId: listAccountingInvoice
-      summary: List a batch of Invoices
+      summary: List  Invoices
       parameters:
         - name: x-connection-token
           required: true
@@ -6581,7 +6581,7 @@ paths:
   /accounting/item:
     get:
       operationId: listAccountingItem
-      summary: List a batch of Items
+      summary: List  Items
       parameters:
         - name: x-connection-token
           required: true
@@ -6663,7 +6663,7 @@ paths:
   /accounting/journalentry:
     get:
       operationId: listAccountingJournalEntry
-      summary: List a batch of JournalEntrys
+      summary: List  JournalEntrys
       parameters:
         - name: x-connection-token
           required: true
@@ -6779,7 +6779,7 @@ paths:
   /accounting/payment:
     get:
       operationId: listAccountingPayment
-      summary: List a batch of Payments
+      summary: List  Payments
       parameters:
         - name: x-connection-token
           required: true
@@ -6894,7 +6894,7 @@ paths:
   /accounting/phonenumber:
     get:
       operationId: listAccountingPhonenumber
-      summary: List a batch of PhoneNumbers
+      summary: List  PhoneNumbers
       parameters:
         - name: x-connection-token
           required: true
@@ -6977,7 +6977,7 @@ paths:
   /accounting/purchaseorder:
     get:
       operationId: listAccountingPurchaseOrder
-      summary: List a batch of PurchaseOrders
+      summary: List  PurchaseOrders
       parameters:
         - name: x-connection-token
           required: true
@@ -7093,7 +7093,7 @@ paths:
   /accounting/taxrate:
     get:
       operationId: listAccountingTaxRate
-      summary: List a batch of TaxRates
+      summary: List  TaxRates
       parameters:
         - name: x-connection-token
           required: true
@@ -7175,7 +7175,7 @@ paths:
   /accounting/trackingcategory:
     get:
       operationId: listAccountingTrackingCategorys
-      summary: List a batch of TrackingCategorys
+      summary: List  TrackingCategorys
       parameters:
         - name: x-connection-token
           required: true
@@ -7258,7 +7258,7 @@ paths:
   /accounting/transaction:
     get:
       operationId: listAccountingTransaction
-      summary: List a batch of Transactions
+      summary: List  Transactions
       parameters:
         - name: x-connection-token
           required: true
@@ -7341,7 +7341,7 @@ paths:
   /accounting/vendorcredit:
     get:
       operationId: listAccountingVendorCredit
-      summary: List a batch of VendorCredits
+      summary: List  VendorCredits
       parameters:
         - name: x-connection-token
           required: true
@@ -7424,7 +7424,7 @@ paths:
   /filestorage/drives:
     get:
       operationId: listFilestorageDrives
-      summary: List a batch of Drives
+      summary: List  Drives
       parameters:
         - name: x-connection-token
           required: true
@@ -7506,7 +7506,7 @@ paths:
   /filestorage/files:
     get:
       operationId: listFilestorageFile
-      summary: List a batch of Files
+      summary: List  Files
       parameters:
         - name: x-connection-token
           required: true
@@ -7620,7 +7620,7 @@ paths:
   /filestorage/folders:
     get:
       operationId: listFilestorageFolder
-      summary: List a batch of Folders
+      summary: List  Folders
       parameters:
         - name: x-connection-token
           required: true
@@ -7734,7 +7734,7 @@ paths:
   /filestorage/groups:
     get:
       operationId: listFilestorageGroup
-      summary: List a batch of Groups
+      summary: List  Groups
       parameters:
         - name: x-connection-token
           required: true
@@ -7816,7 +7816,7 @@ paths:
   /filestorage/users:
     get:
       operationId: listFilestorageUsers
-      summary: List a batch of Users
+      summary: List  Users
       parameters:
         - name: x-connection-token
           required: true
@@ -7898,7 +7898,7 @@ paths:
   /ticketing/attachments:
     get:
       operationId: listTicketingAttachments
-      summary: List a batch of Attachments
+      summary: List  Attachments
       parameters:
         - name: x-connection-token
           required: true

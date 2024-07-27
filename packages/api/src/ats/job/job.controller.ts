@@ -41,7 +41,7 @@ export class JobController {
 
   @ApiOperation({
     operationId: 'listAtsJob',
-    summary: 'List a batch of Jobs',
+    summary: 'List  Jobs',
   })
   @ApiHeader({
     name: 'x-connection-token',

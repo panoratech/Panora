@@ -44,7 +44,7 @@ export class TransactionController {
 
   @ApiOperation({
     operationId: 'listAccountingTransaction',
-    summary: 'List a batch of Transactions',
+    summary: 'List  Transactions',
   })
   @ApiHeader({
     name: 'x-connection-token',

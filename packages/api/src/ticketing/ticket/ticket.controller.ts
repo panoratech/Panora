@@ -51,7 +51,7 @@ export class TicketController {
 
   @ApiOperation({
     operationId: 'listTicketingTicket',
-    summary: 'List a batch of Tickets',
+    summary: 'List  Tickets',
   })
   @ApiHeader({
     name: 'x-connection-token',

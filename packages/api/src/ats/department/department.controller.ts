@@ -47,7 +47,7 @@ export class DepartmentController {
 
   @ApiOperation({
     operationId: 'listAtsDepartments',
-    summary: 'List a batch of Departments',
+    summary: 'List  Departments',
   })
   @ApiHeader({
     name: 'x-connection-token',

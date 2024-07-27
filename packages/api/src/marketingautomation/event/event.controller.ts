@@ -47,7 +47,7 @@ export class EventController {
 
   @ApiOperation({
     operationId: 'listMarketingAutomationEvents',
-    summary: 'List a batch of Events',
+    summary: 'List  Events',
   })
   @ApiHeader({
     name: 'x-connection-token',

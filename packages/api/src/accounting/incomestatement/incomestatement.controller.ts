@@ -44,7 +44,7 @@ export class IncomeStatementController {
 
   @ApiOperation({
     operationId: 'listAccountingIncomeStatement',
-    summary: 'List a batch of IncomeStatements',
+    summary: 'List  IncomeStatements',
   })
   @ApiHeader({
     name: 'x-connection-token',

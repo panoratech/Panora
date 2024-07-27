@@ -44,7 +44,7 @@ export class ItemController {
 
   @ApiOperation({
     operationId: 'listAccountingItem',
-    summary: 'List a batch of Items',
+    summary: 'List  Items',
   })
   @ApiHeader({
     name: 'x-connection-token',

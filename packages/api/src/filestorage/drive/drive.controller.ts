@@ -41,7 +41,7 @@ export class DriveController {
 
   @ApiOperation({
     operationId: 'listFilestorageDrives',
-    summary: 'List a batch of Drives',
+    summary: 'List  Drives',
   })
   @ApiHeader({
     name: 'x-connection-token',
