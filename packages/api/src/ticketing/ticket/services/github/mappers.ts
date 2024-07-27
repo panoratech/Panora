@@ -179,7 +179,7 @@ export class GithubTicketMapper implements ITicketMapper {
             remote_data: ticket,
             name: ticket.title,
             description: ticket.body || null,
-            due_date: new Date(ticket.milestone.due_on),
+            due_date: ticket.milestone?.due_on ? new Date(ticket.milestone?.due_on) : null,
             field_mappings,
             ...opts,
         };
