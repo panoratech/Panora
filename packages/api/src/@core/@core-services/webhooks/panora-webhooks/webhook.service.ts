@@ -19,6 +19,9 @@ export class WebhookService {
   }
 
   generateSignature(payload: any, secret: string): string {
+    console.log(
+      `signing payload=${JSON.stringify(payload)} over secret=${secret}`,
+    );
     try {
       return createHmac('sha256', secret)
         .update(JSON.stringify(payload))
@@ -298,7 +301,7 @@ export class WebhookService {
       if (expected !== signature) {
         throw new WebhooksError({
           name: 'INVALID_SIGNATURE_ERROR',
-          message: `Signature mismatch for the payload received with signature=${signature}`,
+          message: `Signature mismatch for the payload received with expected=${expected} and signature=${signature}`,
         });
       }
       return payload;
