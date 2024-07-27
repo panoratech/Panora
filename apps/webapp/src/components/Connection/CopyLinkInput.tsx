@@ -13,14 +13,16 @@ const CopyLinkInput = () => {
 
   const {uniqueLink} = useMagicLinkStore();
 
-  let param: any;
+  let link: string;
   if(config.DISTRIBUTION == 'selfhost' && config.REDIRECT_WEBHOOK_INGRESS) {
-    param = `&redirectIngressUri=${config.REDIRECT_WEBHOOK_INGRESS}`
+    link = `${config.MAGIC_LINK_DOMAIN}/?uniqueLink=${uniqueLink}&redirectIngressUri=${config.REDIRECT_WEBHOOK_INGRESS}`
+  }else{
+    link = `${config.MAGIC_LINK_DOMAIN}/?uniqueLink=${uniqueLink}`
   }
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(`${config.MAGIC_LINK_DOMAIN}/?uniqueLink=${uniqueLink}${param}`);
+      await navigator.clipboard.writeText(link);
       toast.success("Magic link copied", {
         action: {
           label: "Close",
@@ -39,7 +41,7 @@ const CopyLinkInput = () => {
       {uniqueLink !== 'https://' ? 
       <>
         <Input
-          defaultValue={`${config.MAGIC_LINK_DOMAIN}/?uniqueLink=${uniqueLink}${param}`}
+          defaultValue={link}
           readOnly
           className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
         /> 
