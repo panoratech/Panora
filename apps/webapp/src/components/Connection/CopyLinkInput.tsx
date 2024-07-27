@@ -12,8 +12,10 @@ const CopyLinkInput = () => {
   const [copied, setCopied] = useState(false);
 
   const {uniqueLink} = useMagicLinkStore();
-  const INGRESS_REDIRECT = config.DISTRIBUTION == 'selfhost' && config.REDIRECT_WEBHOOK_INGRESS;
-
+  let INGRESS_REDIRECT : string | null = null;
+  if(config.DISTRIBUTION == 'selfhost' && config.REDIRECT_WEBHOOK_INGRESS) {
+    INGRESS_REDIRECT = config.REDIRECT_WEBHOOK_INGRESS
+  }
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(`${config.MAGIC_LINK_DOMAIN}/?uniqueLink=${uniqueLink}&redirectIngressUri=${INGRESS_REDIRECT}`);

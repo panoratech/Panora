@@ -55,7 +55,10 @@ export default function ConnectionTable() {
     connectionToken: connection.connection_token!
   }))
 
-  const INGRESS_REDIRECT = config.DISTRIBUTION == 'selfhost' && config.REDIRECT_WEBHOOK_INGRESS;
+  let INGRESS_REDIRECT : string | null = null;
+  if(config.DISTRIBUTION == 'selfhost' && config.REDIRECT_WEBHOOK_INGRESS) {
+    INGRESS_REDIRECT = config.REDIRECT_WEBHOOK_INGRESS
+  }
   
   return (
     <>
