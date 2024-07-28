@@ -4,19 +4,22 @@ description: ""
 icon: album-collection
 ---
 
-## ATS
 
-<CardGroup cols={2}>
-  <Card title="Ashby" href="/integrations/ats/ashby/index" icon={
-    <img src="https://images.ctfassets.net/p03bi75xct27/2tVvkghDdMJxzkMca2QLnr/31b520c5e07db0103948af171fb54e99/ashby_logo_square.jpeg?q=80&fm=webp&w=2048" />
-  } horizontal>
-  </Card>
-</CardGroup>
-
-
-## CRM
-
-<CardGroup cols={2}>
+<Tabs>
+  <Tab title="ATS">
+    <CardGroup cols={2}>
+    <Card title="Ashby" href="/integrations/ats/ashby/index" icon={
+      <img src="https://images.ctfassets.net/p03bi75xct27/2tVvkghDdMJxzkMca2QLnr/31b520c5e07db0103948af171fb54e99/ashby_logo_square.jpeg?q=80&fm=webp&w=2048" />
+    } horizontal>
+    </Card>
+  </CardGroup>
+  </Tab>
+  <Tab title="Accounting">
+    Coming soon!
+  </Tab>
+  <Tab title="CRM">
+  A single schema to push and pull CRM data across platforms.
+    <CardGroup cols={2}>
   <Card title="Hubspot" href="/integrations/crm/hubspot/index" icon={
     <img src="https://assets-global.website-files.com/6421a177cdeeaf3c6791b745/64d61202dd99e63d40d446f6_hubspot%20logo.png" />
   } horizontal>
@@ -42,31 +45,26 @@ icon: album-collection
   } horizontal>
   </Card>
 </CardGroup>
-
-
-# Ecommerce
-
-<CardGroup cols={2}>
+  </Tab>
+  <Tab title="Ecommerce">
+    <CardGroup cols={2}>
   <Card title="Shopify" href="/integrations/ecommerce/shopify/index" icon={
     <img src="https://cdn.freebiesupply.com/logos/large/2x/shopify-logo-png-transparent.png" />
   } horizontal>
   </Card>
 </CardGroup>
-
-
-# File Storage
-
-<CardGroup cols={2}>
+  </Tab>
+    <Tab title="File Storage">
+    <CardGroup cols={2}>
   <Card title="Box" href="/integrations/filestorage/box/index" icon={
     <img src="https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/95b201e8-845a-4064-a9b2-a8eb49d19ca3.png?w=128&h=128&fit=max&dpr=3&auto=format&q=50" />
   } horizontal>
   </Card>
 </CardGroup>
 
-
-# Ticketing
-
-<CardGroup cols={2}>
+  </Tab>
+  <Tab title="Ticketing">
+    <CardGroup cols={2}>
   <Card title="Zendesk" href="/integrations/ticketing/zendesk/index" icon={
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s" />
   } horizontal>
@@ -84,4 +82,9 @@ icon: album-collection
   } horizontal>
   </Card>
 </CardGroup>
+  </Tab>
+
+</Tabs>
+
+
 

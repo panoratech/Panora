@@ -73,6 +73,10 @@
             "url": "crm"
         },
         {
+            "name": "File Storage",
+            "url": "file-storage"
+        },
+        {
             "name": "Ticketing",
             "url": "ticketing"
         },
@@ -94,8 +98,8 @@
         {
             "group": "",
             "pages": [
-                "crm/overview",
-                "crm/quickstart"
+                "crm/quickstart",
+                "crm/overview"
             ]
         },
         {
@@ -168,8 +172,62 @@
                 }
             ]
         },
+
+
         {
-            "group": "Accounting",
+            "group": "",
+            "pages": [
+                "file-storage/overview"            
+            ]
+        },
+
+        {
+            "group": "File Storage Objects",
+            "pages": [
+                {
+                    "group": "Drives",
+                    "pages": [
+                        "file-storage/drives/list-drives",
+                        "file-storage/drives/retrieve-a-drive"
+                    ]
+                },
+                {
+                    "group": "Files",
+                    "pages": [
+                        "file-storage/files/create-a-file",
+                        "file-storage/files/list-files",
+                        "file-storage/files/retrieve-a-file"
+                    ]
+                },
+                {
+                    "group": "Folders",
+                    "pages": [
+                        "file-storage/olders/create-a-folder",
+                        "file-storage/olders/list-folders",
+                        "file-storage/olders/retrieve-a-folder"
+                    ]
+                },
+                {
+                    "group": "Groups",
+                    "pages": [
+                        "file-storage/groups/list-groups",
+                        "file-storage/groups/retrieve-a-group"
+                    ]
+                },
+                {
+                    "group": "Users",
+                    "pages": [
+                        "file-storage/users/list-users",
+                        "file-storage/users/retrieve-a-user"
+                    ]
+                }
+            ]
+        },
+        
+
+
+        {
+            "group": "Accounting Objects",
             "pages": [
                 {
                     "group": "Accounting Balance Sheets",
@@ -339,8 +397,17 @@
                 }
             ]
         },
+
         {
-            "group": "ATS",
+            "group": "",
+            "pages": [
+                "ats/overview"            
+            ]
+        },
+
+
+        {
+            "group": "ATS Objects",
             "pages": [
                 {
                     "group": "Activities",
@@ -461,8 +528,8 @@
         {
             "group": "",
             "pages": [
-                "ticketing/overview",
-                "ticketing/quickstart"
+                "ticketing/quickstart",
+                "ticketing/overview"
             ]
         },
         {
