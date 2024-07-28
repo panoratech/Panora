@@ -233,12 +233,6 @@
             "group": "Accounting Objects",
             "pages": [
                 {
-                    "group": "Accounting Balance Sheets",
-                    "pages": [
-                        "accounting/accountingbalancesheets/retrieve-a-balancesheet"
-                    ]
-                },
-                {
                     "group": "Accounts",
                     "pages": [
                         "accounting/accounts/create-a-account",
@@ -612,7 +606,8 @@
                 "api-reference/introduction",
                 "api-reference/authentication",
                 "api-reference/errors",
-                "api-reference/pagination"
+                "api-reference/pagination",
+                "api-reference/postman"
             ]
         },
         {
