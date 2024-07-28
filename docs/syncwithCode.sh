@@ -2,11 +2,18 @@
 # This will import integration tables from codebase
 
 # CRM
-grep '^|' ./packages/api/src/crm/README.md > docs/snippets/crm-catalog.mdx
-grep '^|' ./packages/api/src/crm/contact/README.md > docs/snippets/crm-contact-catalog.mdx
+grep '^|' ../packages/api/src/crm/README.md > snippets/crm-catalog.mdx
+grep '^|' ../packages/api/src/crm/contact/README.md > snippets/crm-contact-catalog.mdx
 
 # Ticketing
-grep '^|' ./packages/api/src/ticketing/README.md > docs/snippets/ticketing-catalog.mdx
+grep '^|' ../packages/api/src/ticketing/README.md > snippets/ticketing-catalog.mdx
+
+#ATS 
+grep '^|' ../packages/api/src/ats/README.md > snippets/ats-catalog.mdx
+
+# File Storage
+grep '^|' ../packages/api/src/filestorage/README.md > snippets/filestorage-catalog.mdx
 
 npx @mintlify/scraping@latest openapi-file openapi-with-code-samples.yaml -o objects
+
 echo "Copy Done!"
