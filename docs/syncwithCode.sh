@@ -8,4 +8,5 @@ grep '^|' ./packages/api/src/crm/contact/README.md > docs/snippets/crm-contact-c
 # Ticketing
 grep '^|' ./packages/api/src/ticketing/README.md > docs/snippets/ticketing-catalog.mdx
 
+npx @mintlify/scraping@latest openapi-file openapi-with-code-samples.yaml -o objects
 echo "Copy Done!"
