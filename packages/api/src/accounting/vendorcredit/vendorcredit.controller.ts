@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/vendorcredit')
-@Controller('accounting/vendorcredit')
+@ApiTags('accounting/vendorcredits')
+@Controller('accounting/vendorcredits')
 export class VendorCreditController {
   constructor(
     private readonly vendorcreditService: VendorCreditService,

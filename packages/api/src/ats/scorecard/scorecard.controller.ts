@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/scorecard')
-@Controller('ats/scorecard')
+@ApiTags('ats/scorecards')
+@Controller('ats/scorecards')
 export class ScoreCardController {
   constructor(
     private readonly scorecardService: ScoreCardService,

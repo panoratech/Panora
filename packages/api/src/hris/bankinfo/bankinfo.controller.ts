@@ -33,8 +33,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/bankinfo')
-@Controller('hris/bankinfo')
+@ApiTags('hris/bankinfos')
+@Controller('hris/bankinfos')
 export class BankinfoController {
   constructor(
     private readonly bankinfoService: BankInfoService,

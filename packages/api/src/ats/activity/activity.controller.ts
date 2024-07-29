@@ -34,8 +34,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/activity')
-@Controller('ats/activity')
+@ApiTags('ats/activities')
+@Controller('ats/activities')
 export class ActivityController {
   constructor(
     private readonly activityService: ActivityService,

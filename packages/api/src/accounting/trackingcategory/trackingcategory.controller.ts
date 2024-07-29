@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/trackingcategory')
-@Controller('accounting/trackingcategory')
+@ApiTags('accounting/trackingcategories')
+@Controller('accounting/trackingcategories')
 export class TrackingCategoryController {
   constructor(
     private readonly trackingcategoryService: TrackingCategoryService,

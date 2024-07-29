@@ -34,8 +34,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('marketingautomation/event')
-@Controller('marketingautomation/event')
+@ApiTags('marketingautomation/events')
+@Controller('marketingautomation/events')
 export class EventController {
   constructor(
     private readonly eventService: EventService,

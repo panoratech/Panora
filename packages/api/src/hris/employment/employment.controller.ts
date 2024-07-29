@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/employment')
-@Controller('hris/employment')
+@ApiTags('hris/employments')
+@Controller('hris/employments')
 export class EmploymentController {
   constructor(
     private readonly employmentService: EmploymentService,

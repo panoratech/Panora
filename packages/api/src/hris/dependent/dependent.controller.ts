@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/dependent')
-@Controller('hris/dependent')
+@ApiTags('hris/dependents')
+@Controller('hris/dependents')
 export class DependentController {
   constructor(
     private readonly dependentService: DependentService,

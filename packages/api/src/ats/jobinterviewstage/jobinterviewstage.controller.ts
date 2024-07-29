@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/jobinterviewstage')
-@Controller('ats/jobinterviewstage')
+@ApiTags('ats/jobinterviewstages')
+@Controller('ats/jobinterviewstages')
 export class JobInterviewStageController {
   constructor(
     private readonly jobinterviewstageService: JobInterviewStageService,

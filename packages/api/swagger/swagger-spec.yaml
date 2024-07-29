@@ -1880,7 +1880,7 @@ paths:
                 $ref: '#/components/schemas/PassThroughResponse'
       tags:
         - passthrough
-  /hris/bankinfo:
+  /hris/bankinfos:
     get:
       operationId: listHrisBankinfo
       summary: List  Bankinfos
@@ -1924,11 +1924,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisBankinfoOutput'
       tags: &ref_36
-        - hris/bankinfo
+        - hris/bankinfos
       security: &ref_37
         - bearer: []
-      x-speakeasy-group: hris.bankinfo
-  /hris/bankinfo/{id}:
+      x-speakeasy-group: hris.bankinfos
+  /hris/bankinfos/{id}:
     get:
       operationId: retrieveHrisBankinfo
       summary: Retrieve a Bankinfo
@@ -1961,8 +1961,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisBankinfoOutput'
       tags: *ref_36
       security: *ref_37
-      x-speakeasy-group: hris.bankinfo
-  /hris/benefit:
+      x-speakeasy-group: hris.bankinfos
+  /hris/benefits:
     get:
       operationId: listHrisBenefit
       summary: List  Benefits
@@ -2006,11 +2006,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisBenefitOutput'
       tags: &ref_38
-        - hris/benefit
+        - hris/benefits
       security: &ref_39
         - bearer: []
-      x-speakeasy-group: hris.benefit
-  /hris/benefit/{id}:
+      x-speakeasy-group: hris.benefits
+  /hris/benefits/{id}:
     get:
       operationId: retrieveHrisBenefit
       summary: Retrieve a Benefit
@@ -2043,8 +2043,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisBenefitOutput'
       tags: *ref_38
       security: *ref_39
-      x-speakeasy-group: hris.benefit
-  /hris/company:
+      x-speakeasy-group: hris.benefits
+  /hris/companies:
     get:
       operationId: listHrisCompanys
       summary: List  Companys
@@ -2088,11 +2088,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisCompanyOutput'
       tags:
-        - hris/company
+        - hris/companies
       security:
         - bearer: []
-      x-speakeasy-group: hris.company
-  /hris/dependent:
+      x-speakeasy-group: hris.companies
+  /hris/dependents:
     get:
       operationId: listHrisDependents
       summary: List  Dependents
@@ -2136,11 +2136,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisDependentOutput'
       tags: &ref_40
-        - hris/dependent
+        - hris/dependents
       security: &ref_41
         - bearer: []
-      x-speakeasy-group: hris.dependent
-  /hris/dependent/{id}:
+      x-speakeasy-group: hris.dependents
+  /hris/dependents/{id}:
     get:
       operationId: retrieveHrisDependent
       summary: Retrieve a Dependent
@@ -2173,8 +2173,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisDependentOutput'
       tags: *ref_40
       security: *ref_41
-      x-speakeasy-group: hris.dependent
-  /hris/employeepayrollrun:
+      x-speakeasy-group: hris.dependents
+  /hris/employeepayrollruns:
     get:
       operationId: listHrisEmployeePayrollRun
       summary: List  EmployeePayrollRuns
@@ -2219,11 +2219,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedHrisEmployeepayrollrunOutput
       tags: &ref_42
-        - hris/employeepayrollrun
+        - hris/employeepayrollruns
       security: &ref_43
         - bearer: []
-      x-speakeasy-group: hris.employeepayrollrun
-  /hris/employeepayrollrun/{id}:
+      x-speakeasy-group: hris.employeepayrollruns
+  /hris/employeepayrollruns/{id}:
     get:
       operationId: retrieveHrisEmployeePayrollRun
       summary: Retrieve a EmployeePayrollRun
@@ -2256,8 +2256,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisEmployeepayrollrunOutput'
       tags: *ref_42
       security: *ref_43
-      x-speakeasy-group: hris.employeepayrollrun
-  /hris/employee:
+      x-speakeasy-group: hris.employeepayrollruns
+  /hris/employees:
     get:
       operationId: listHrisEmployee
       summary: List  Employees
@@ -2301,10 +2301,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
       tags: &ref_44
-        - hris/employee
+        - hris/employees
       security: &ref_45
         - bearer: []
-      x-speakeasy-group: hris.employee
+      x-speakeasy-group: hris.employees
     post:
       operationId: createHrisEmployee
       summary: Create an Employee
@@ -2337,8 +2337,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
       tags: *ref_44
       security: *ref_45
-      x-speakeasy-group: hris.employee
-  /hris/employee/{id}:
+      x-speakeasy-group: hris.employees
+  /hris/employees/{id}:
     get:
       operationId: retrieveHrisEmployee
       summary: Retrieve an Employee
@@ -2371,8 +2371,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
       tags: *ref_44
       security: *ref_45
-      x-speakeasy-group: hris.employee
-  /hris/employerbenefit:
+      x-speakeasy-group: hris.employees
+  /hris/employerbenefits:
     get:
       operationId: listHrisEmployerBenefit
       summary: List  EmployerBenefits
@@ -2417,11 +2417,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedHrisEmployerbenefitOutput
       tags: &ref_46
-        - hris/employerbenefit
+        - hris/employerbenefits
       security: &ref_47
         - bearer: []
-      x-speakeasy-group: hris.employerbenefit
-  /hris/employerbenefit/{id}:
+      x-speakeasy-group: hris.employerbenefits
+  /hris/employerbenefits/{id}:
     get:
       operationId: retrieveHrisEmployerBenefit
       summary: Retrieve a EmployerBenefit
@@ -2454,8 +2454,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisEmployerbenefitOutput'
       tags: *ref_46
       security: *ref_47
-      x-speakeasy-group: hris.employerbenefit
-  /hris/employment:
+      x-speakeasy-group: hris.employerbenefits
+  /hris/employments:
     get:
       operationId: listHrisEmployment
       summary: List  Employments
@@ -2499,11 +2499,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisEmploymentOutput'
       tags: &ref_48
-        - hris/employment
+        - hris/employments
       security: &ref_49
         - bearer: []
-      x-speakeasy-group: hris.employment
-  /hris/employment/{id}:
+      x-speakeasy-group: hris.employments
+  /hris/employments/{id}:
     get:
       operationId: retrieveHrisEmployment
       summary: Retrieve a Employment
@@ -2536,8 +2536,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisEmploymentOutput'
       tags: *ref_48
       security: *ref_49
-      x-speakeasy-group: hris.employment
-  /hris/group:
+      x-speakeasy-group: hris.employments
+  /hris/groups:
     get:
       operationId: listHrisGroup
       summary: List  Groups
@@ -2581,11 +2581,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisGroupOutput'
       tags: &ref_50
-        - hris/group
+        - hris/groups
       security: &ref_51
         - bearer: []
-      x-speakeasy-group: hris.group
-  /hris/group/{id}:
+      x-speakeasy-group: hris.groups
+  /hris/groups/{id}:
     get:
       operationId: retrieveHrisGroup
       summary: Retrieve a Group
@@ -2618,8 +2618,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisGroupOutput'
       tags: *ref_50
       security: *ref_51
-      x-speakeasy-group: hris.group
-  /hris/location:
+      x-speakeasy-group: hris.groups
+  /hris/locations:
     get:
       operationId: listHrisLocation
       summary: List  Locations
@@ -2663,11 +2663,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisLocationOutput'
       tags: &ref_52
-        - hris/location
+        - hris/locations
       security: &ref_53
         - bearer: []
-      x-speakeasy-group: hris.location
-  /hris/location/{id}:
+      x-speakeasy-group: hris.locations
+  /hris/locations/{id}:
     get:
       operationId: retrieveHrisLocation
       summary: Retrieve a Location
@@ -2700,8 +2700,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisLocationOutput'
       tags: *ref_52
       security: *ref_53
-      x-speakeasy-group: hris.location
-  /hris/paygroup:
+      x-speakeasy-group: hris.locations
+  /hris/paygroups:
     get:
       operationId: listHrisPaygroup
       summary: List  PayGroups
@@ -2745,11 +2745,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisPaygroupOutput'
       tags: &ref_54
-        - hris/paygroup
+        - hris/paygroups
       security: &ref_55
         - bearer: []
-      x-speakeasy-group: hris.paygroup
-  /hris/paygroup/{id}:
+      x-speakeasy-group: hris.paygroups
+  /hris/paygroups/{id}:
     get:
       operationId: retrieveHrisPaygroup
       summary: Retrieve a PayGroup
@@ -2782,8 +2782,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisPaygroupOutput'
       tags: *ref_54
       security: *ref_55
-      x-speakeasy-group: hris.paygroup
-  /hris/payrollrun:
+      x-speakeasy-group: hris.paygroups
+  /hris/payrollruns:
     get:
       operationId: listHrisPayrollRuns
       summary: List  PayrollRuns
@@ -2827,11 +2827,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisPayrollrunOutput'
       tags:
-        - hris/payrollrun
+        - hris/payrollruns
       security:
         - bearer: []
-      x-speakeasy-group: hris.payrollrun
-  /hris/timeoff:
+      x-speakeasy-group: hris.payrollruns
+  /hris/timeoffs:
     get:
       operationId: listHrisTimeoffs
       summary: List  Timeoffs
@@ -2875,10 +2875,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
       tags: &ref_56
-        - hris/timeoff
+        - hris/timeoffs
       security: &ref_57
         - bearer: []
-      x-speakeasy-group: hris.timeoff
+      x-speakeasy-group: hris.timeoffs
     post:
       operationId: createHrisTimeoff
       summary: Create a Timeoff
@@ -2911,8 +2911,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
       tags: *ref_56
       security: *ref_57
-      x-speakeasy-group: hris.timeoff
-  /hris/timeoff/{id}:
+      x-speakeasy-group: hris.timeoffs
+  /hris/timeoffs/{id}:
     get:
       operationId: retrieveHrisTimeoff
       summary: Retrieve a Timeoff
@@ -2945,8 +2945,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
       tags: *ref_56
       security: *ref_57
-      x-speakeasy-group: hris.timeoff
-  /hris/timeoffbalance:
+      x-speakeasy-group: hris.timeoffs
+  /hris/timeoffbalances:
     get:
       operationId: listHrisTimeoffbalance
       summary: List  TimeoffBalances
@@ -2990,11 +2990,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedHrisTimeoffbalanceOutput'
       tags: &ref_58
-        - hris/timeoffbalance
+        - hris/timeoffbalances
       security: &ref_59
         - bearer: []
-      x-speakeasy-group: hris.timeoffbalance
-  /hris/timeoffbalance/{id}:
+      x-speakeasy-group: hris.timeoffbalances
+  /hris/timeoffbalances/{id}:
     get:
       operationId: retrieveHrisTimeoffbalance
       summary: Retrieve a TimeoffBalance
@@ -3027,8 +3027,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedHrisTimeoffbalanceOutput'
       tags: *ref_58
       security: *ref_59
-      x-speakeasy-group: hris.timeoffbalance
-  /marketingautomation/action:
+      x-speakeasy-group: hris.timeoffbalances
+  /marketingautomation/actions:
     get:
       operationId: listMarketingautomationAction
       summary: List  Actions
@@ -3073,10 +3073,10 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationActionOutput
       tags: &ref_60
-        - marketingautomation/action
+        - marketingautomation/actions
       security: &ref_61
         - bearer: []
-      x-speakeasy-group: marketingautomation.action
+      x-speakeasy-group: marketingautomation.actions
     post:
       operationId: createMarketingautomationAction
       summary: Create a Action
@@ -3111,8 +3111,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationActionOutput'
       tags: *ref_60
       security: *ref_61
-      x-speakeasy-group: marketingautomation.action
-  /marketingautomation/action/{id}:
+      x-speakeasy-group: marketingautomation.actions
+  /marketingautomation/actions/{id}:
     get:
       operationId: retrieveMarketingautomationAction
       summary: Retrieve a Action
@@ -3147,8 +3147,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationActionOutput'
       tags: *ref_60
       security: *ref_61
-      x-speakeasy-group: marketingautomation.action
-  /marketingautomation/automation:
+      x-speakeasy-group: marketingautomation.actions
+  /marketingautomation/automations:
     get:
       operationId: listMarketingautomationAutomation
       summary: List  Automations
@@ -3193,10 +3193,10 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationAutomationOutput
       tags: &ref_62
-        - marketingautomation/automation
+        - marketingautomation/automations
       security: &ref_63
         - bearer: []
-      x-speakeasy-group: marketingautomation.automation
+      x-speakeasy-group: marketingautomation.automations
     post:
       operationId: createMarketingautomationAutomation
       summary: Create a Automation
@@ -3232,8 +3232,8 @@ paths:
                   #/components/schemas/UnifiedMarketingautomationAutomationOutput
       tags: *ref_62
       security: *ref_63
-      x-speakeasy-group: marketingautomation.automation
-  /marketingautomation/automation/{id}:
+      x-speakeasy-group: marketingautomation.automations
+  /marketingautomation/automations/{id}:
     get:
       operationId: retrieveMarketingautomationAutomation
       summary: Retrieve a Automation
@@ -3269,8 +3269,8 @@ paths:
                   #/components/schemas/UnifiedMarketingautomationAutomationOutput
       tags: *ref_62
       security: *ref_63
-      x-speakeasy-group: marketingautomation.automation
-  /marketingautomation/campaign:
+      x-speakeasy-group: marketingautomation.automations
+  /marketingautomation/campaigns:
     get:
       operationId: listMarketingautomationCampaign
       summary: List  Campaigns
@@ -3314,10 +3314,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedCampaignOutput'
       tags: &ref_64
-        - marketingautomation/campaign
+        - marketingautomation/campaigns
       security: &ref_65
         - bearer: []
-      x-speakeasy-group: marketingautomation.campaign
+      x-speakeasy-group: marketingautomation.campaigns
     post:
       operationId: createMarketingautomationCampaign
       summary: Create a Campaign
@@ -3352,8 +3352,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedCampaignOutput'
       tags: *ref_64
       security: *ref_65
-      x-speakeasy-group: marketingautomation.campaign
-  /marketingautomation/campaign/{id}:
+      x-speakeasy-group: marketingautomation.campaigns
+  /marketingautomation/campaigns/{id}:
     get:
       operationId: retrieveMarketingautomationCampaign
       summary: Retrieve a Campaign
@@ -3388,8 +3388,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedCampaignOutput'
       tags: *ref_64
       security: *ref_65
-      x-speakeasy-group: marketingautomation.campaign
-  /marketingautomation/contact:
+      x-speakeasy-group: marketingautomation.campaigns
+  /marketingautomation/contacts:
     get:
       operationId: listMarketingAutomationContacts
       summary: List  Contacts
@@ -3434,10 +3434,10 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationContactOutput
       tags: &ref_66
-        - marketingautomation/contact
+        - marketingautomation/contacts
       security: &ref_67
         - bearer: []
-      x-speakeasy-group: marketingautomation.contact
+      x-speakeasy-group: marketingautomation.contacts
     post:
       operationId: createMarketingAutomationContact
       summary: Create a Contact
@@ -3472,8 +3472,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationContactOutput'
       tags: *ref_66
       security: *ref_67
-      x-speakeasy-group: marketingautomation.contact
-  /marketingautomation/contact/{id}:
+      x-speakeasy-group: marketingautomation.contacts
+  /marketingautomation/contacts/{id}:
     get:
       operationId: retrieveMarketingAutomationContact
       summary: Retrieve a Contact
@@ -3508,8 +3508,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationContactOutput'
       tags: *ref_66
       security: *ref_67
-      x-speakeasy-group: marketingautomation.contact
-  /marketingautomation/email:
+      x-speakeasy-group: marketingautomation.contacts
+  /marketingautomation/emails:
     get:
       operationId: listMarketingautomationEmails
       summary: List  Emails
@@ -3554,11 +3554,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationEmailOutput
       tags: &ref_68
-        - marketingautomation/email
+        - marketingautomation/emails
       security: &ref_69
         - bearer: []
-      x-speakeasy-group: marketingautomation.email
-  /marketingautomation/email/{id}:
+      x-speakeasy-group: marketingautomation.emails
+  /marketingautomation/emails/{id}:
     get:
       operationId: retrieveMarketingautomationEmail
       summary: Retrieve a Email
@@ -3593,8 +3593,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationEmailOutput'
       tags: *ref_68
       security: *ref_69
-      x-speakeasy-group: marketingautomation.email
-  /marketingautomation/event:
+      x-speakeasy-group: marketingautomation.emails
+  /marketingautomation/events:
     get:
       operationId: listMarketingAutomationEvents
       summary: List  Events
@@ -3639,11 +3639,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationEventOutput
       tags: &ref_70
-        - marketingautomation/event
+        - marketingautomation/events
       security: &ref_71
         - bearer: []
-      x-speakeasy-group: marketingautomation.event
-  /marketingautomation/event/{id}:
+      x-speakeasy-group: marketingautomation.events
+  /marketingautomation/events/{id}:
     get:
       operationId: retrieveMarketingautomationEvent
       summary: Retrieve a Event
@@ -3678,8 +3678,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationEventOutput'
       tags: *ref_70
       security: *ref_71
-      x-speakeasy-group: marketingautomation.event
-  /marketingautomation/list:
+      x-speakeasy-group: marketingautomation.events
+  /marketingautomation/lists:
     get:
       operationId: listMarketingautomationLists
       summary: List  Lists
@@ -3724,10 +3724,10 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationListOutput
       tags: &ref_72
-        - marketingautomation/list
+        - marketingautomation/lists
       security: &ref_73
         - bearer: []
-      x-speakeasy-group: marketingautomation.list
+      x-speakeasy-group: marketingautomation.lists
     post:
       operationId: createMarketingautomationList
       summary: Create a List
@@ -3762,8 +3762,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationListOutput'
       tags: *ref_72
       security: *ref_73
-      x-speakeasy-group: marketingautomation.list
-  /marketingautomation/list/{id}:
+      x-speakeasy-group: marketingautomation.lists
+  /marketingautomation/lists/{id}:
     get:
       operationId: retrieveMarketingautomationList
       summary: Retrieve a List
@@ -3798,8 +3798,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationListOutput'
       tags: *ref_72
       security: *ref_73
-      x-speakeasy-group: marketingautomation.list
-  /marketingautomation/message:
+      x-speakeasy-group: marketingautomation.lists
+  /marketingautomation/messages:
     get:
       operationId: listMarketingautomationMessages
       summary: List  Messages
@@ -3844,11 +3844,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationMessageOutput
       tags: &ref_74
-        - marketingautomation/message
+        - marketingautomation/messages
       security: &ref_75
         - bearer: []
-      x-speakeasy-group: marketingautomation.message
-  /marketingautomation/message/{id}:
+      x-speakeasy-group: marketingautomation.messages
+  /marketingautomation/messages/{id}:
     get:
       operationId: retrieveMarketingautomationMessage
       summary: Retrieve a Message
@@ -3883,8 +3883,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationMessageOutput'
       tags: *ref_74
       security: *ref_75
-      x-speakeasy-group: marketingautomation.message
-  /marketingautomation/template:
+      x-speakeasy-group: marketingautomation.messages
+  /marketingautomation/templates:
     get:
       operationId: listMarketingautomationTemplates
       summary: List  Templates
@@ -3929,10 +3929,10 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationTemplateOutput
       tags: &ref_76
-        - marketingautomation/template
+        - marketingautomation/templates
       security: &ref_77
         - bearer: []
-      x-speakeasy-group: marketingautomation.template
+      x-speakeasy-group: marketingautomation.templates
     post:
       operationId: createMarketingautomationTemplate
       summary: Create a Template
@@ -3967,8 +3967,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationTemplateOutput'
       tags: *ref_76
       security: *ref_77
-      x-speakeasy-group: marketingautomation.template
-  /marketingautomation/template/{id}:
+      x-speakeasy-group: marketingautomation.templates
+  /marketingautomation/templates/{id}:
     get:
       operationId: retrieveMarketingautomationTemplate
       summary: Retrieve a Template
@@ -4003,8 +4003,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationTemplateOutput'
       tags: *ref_76
       security: *ref_77
-      x-speakeasy-group: marketingautomation.template
-  /marketingautomation/user:
+      x-speakeasy-group: marketingautomation.templates
+  /marketingautomation/users:
     get:
       operationId: listMarketingAutomationUsers
       summary: List  Users
@@ -4049,11 +4049,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationUserOutput
       tags: &ref_78
-        - marketingautomation/user
+        - marketingautomation/users
       security: &ref_79
         - bearer: []
-      x-speakeasy-group: marketingautomation.user
-  /marketingautomation/user/{id}:
+      x-speakeasy-group: marketingautomation.users
+  /marketingautomation/users/{id}:
     get:
       operationId: retrieveMarketingAutomationUser
       summary: Retrieve a User
@@ -4088,8 +4088,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedMarketingautomationUserOutput'
       tags: *ref_78
       security: *ref_79
-      x-speakeasy-group: marketingautomation.user
-  /ats/activity:
+      x-speakeasy-group: marketingautomation.users
+  /ats/activities:
     get:
       operationId: listAtsActivity
       summary: List  Activities
@@ -4133,10 +4133,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsActivityOutput'
       tags: &ref_80
-        - ats/activity
+        - ats/activities
       security: &ref_81
         - bearer: []
-      x-speakeasy-group: ats.activity
+      x-speakeasy-group: ats.activities
     post:
       operationId: createAtsActivity
       summary: Create a Activity
@@ -4169,8 +4169,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsActivityOutput'
       tags: *ref_80
       security: *ref_81
-      x-speakeasy-group: ats.activity
-  /ats/activity/{id}:
+      x-speakeasy-group: ats.activities
+  /ats/activities/{id}:
     get:
       operationId: retrieveAtsActivity
       summary: Retrieve a Activity
@@ -4203,8 +4203,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsActivityOutput'
       tags: *ref_80
       security: *ref_81
-      x-speakeasy-group: ats.activity
-  /ats/application:
+      x-speakeasy-group: ats.activities
+  /ats/applications:
     get:
       operationId: listAtsApplication
       summary: List  Applications
@@ -4248,10 +4248,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
       tags: &ref_82
-        - ats/application
+        - ats/applications
       security: &ref_83
         - bearer: []
-      x-speakeasy-group: ats.application
+      x-speakeasy-group: ats.applications
     post:
       operationId: createAtsApplication
       summary: Create an Application
@@ -4284,8 +4284,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
       tags: *ref_82
       security: *ref_83
-      x-speakeasy-group: ats.application
-  /ats/application/{id}:
+      x-speakeasy-group: ats.applications
+  /ats/applications/{id}:
     get:
       operationId: retrieveAtsApplication
       summary: Retrieve an Application
@@ -4318,8 +4318,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
       tags: *ref_82
       security: *ref_83
-      x-speakeasy-group: ats.application
-  /ats/attachment:
+      x-speakeasy-group: ats.applications
+  /ats/attachments:
     get:
       operationId: listAtsAttachment
       summary: List  Attachments
@@ -4363,10 +4363,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
       tags: &ref_84
-        - ats/attachment
+        - ats/attachments
       security: &ref_85
         - bearer: []
-      x-speakeasy-group: ats.attachment
+      x-speakeasy-group: ats.attachments
     post:
       operationId: createAtsAttachment
       summary: Create a Attachment
@@ -4399,8 +4399,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
       tags: *ref_84
       security: *ref_85
-      x-speakeasy-group: ats.attachment
-  /ats/attachment/{id}:
+      x-speakeasy-group: ats.attachments
+  /ats/attachments/{id}:
     get:
       operationId: retrieveAtsAttachment
       summary: Retrieve a Attachment
@@ -4433,8 +4433,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
       tags: *ref_84
       security: *ref_85
-      x-speakeasy-group: ats.attachment
-  /ats/candidate:
+      x-speakeasy-group: ats.attachments
+  /ats/candidates:
     get:
       operationId: listAtsCandidate
       summary: List  Candidates
@@ -4478,10 +4478,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
       tags: &ref_86
-        - ats/candidate
+        - ats/candidates
       security: &ref_87
         - bearer: []
-      x-speakeasy-group: ats.candidate
+      x-speakeasy-group: ats.candidates
     post:
       operationId: createAtsCandidate
       summary: Create a Candidate
@@ -4514,8 +4514,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
       tags: *ref_86
       security: *ref_87
-      x-speakeasy-group: ats.candidate
-  /ats/candidate/{id}:
+      x-speakeasy-group: ats.candidates
+  /ats/candidates/{id}:
     get:
       operationId: retrieveAtsCandidate
       summary: Retrieve a Candidate
@@ -4548,8 +4548,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
       tags: *ref_86
       security: *ref_87
-      x-speakeasy-group: ats.candidate
-  /ats/department:
+      x-speakeasy-group: ats.candidates
+  /ats/departments:
     get:
       operationId: listAtsDepartments
       summary: List  Departments
@@ -4593,11 +4593,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsDepartmentOutput'
       tags: &ref_88
-        - ats/department
+        - ats/departments
       security: &ref_89
         - bearer: []
-      x-speakeasy-group: ats.department
-  /ats/department/{id}:
+      x-speakeasy-group: ats.departments
+  /ats/departments/{id}:
     get:
       operationId: retrieveAtsDepartment
       summary: Retrieve a Department
@@ -4630,8 +4630,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsDepartmentOutput'
       tags: *ref_88
       security: *ref_89
-      x-speakeasy-group: ats.department
-  /ats/interview:
+      x-speakeasy-group: ats.departments
+  /ats/interviews:
     get:
       operationId: listAtsInterview
       summary: List  Interviews
@@ -4675,10 +4675,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
       tags: &ref_90
-        - ats/interview
+        - ats/interviews
       security: &ref_91
         - bearer: []
-      x-speakeasy-group: ats.interview
+      x-speakeasy-group: ats.interviews
     post:
       operationId: createAtsInterview
       summary: Create a Interview
@@ -4711,8 +4711,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
       tags: *ref_90
       security: *ref_91
-      x-speakeasy-group: ats.interview
-  /ats/interview/{id}:
+      x-speakeasy-group: ats.interviews
+  /ats/interviews/{id}:
     get:
       operationId: retrieveAtsInterview
       summary: Retrieve a Interview
@@ -4745,8 +4745,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
       tags: *ref_90
       security: *ref_91
-      x-speakeasy-group: ats.interview
-  /ats/jobinterviewstage:
+      x-speakeasy-group: ats.interviews
+  /ats/jobinterviewstages:
     get:
       operationId: listAtsJobInterviewStage
       summary: List  JobInterviewStages
@@ -4791,11 +4791,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAtsJobinterviewstageOutput
       tags: &ref_92
-        - ats/jobinterviewstage
+        - ats/jobinterviewstages
       security: &ref_93
         - bearer: []
-      x-speakeasy-group: ats.jobinterviewstage
-  /ats/jobinterviewstage/{id}:
+      x-speakeasy-group: ats.jobinterviewstages
+  /ats/jobinterviewstages/{id}:
     get:
       operationId: retrieveAtsJobInterviewStage
       summary: Retrieve a JobInterviewStage
@@ -4828,8 +4828,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsJobinterviewstageOutput'
       tags: *ref_92
       security: *ref_93
-      x-speakeasy-group: ats.jobinterviewstage
-  /ats/job:
+      x-speakeasy-group: ats.jobinterviewstages
+  /ats/jobs:
     get:
       operationId: listAtsJob
       summary: List  Jobs
@@ -4873,11 +4873,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsJobOutput'
       tags: &ref_94
-        - ats/job
+        - ats/jobs
       security: &ref_95
         - bearer: []
-      x-speakeasy-group: ats.job
-  /ats/job/{id}:
+      x-speakeasy-group: ats.jobs
+  /ats/jobs/{id}:
     get:
       operationId: retrieveAtsJob
       summary: Retrieve a Job
@@ -4910,8 +4910,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsJobOutput'
       tags: *ref_94
       security: *ref_95
-      x-speakeasy-group: ats.job
-  /ats/offer:
+      x-speakeasy-group: ats.jobs
+  /ats/offers:
     get:
       operationId: listAtsOffer
       summary: List  Offers
@@ -4955,11 +4955,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsOfferOutput'
       tags: &ref_96
-        - ats/offer
+        - ats/offers
       security: &ref_97
         - bearer: []
-      x-speakeasy-group: ats.offer
-  /ats/offer/{id}:
+      x-speakeasy-group: ats.offers
+  /ats/offers/{id}:
     get:
       operationId: retrieveAtsOffer
       summary: Retrieve a Offer
@@ -4992,8 +4992,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsOfferOutput'
       tags: *ref_96
       security: *ref_97
-      x-speakeasy-group: ats.offer
-  /ats/office:
+      x-speakeasy-group: ats.offers
+  /ats/ offices:
     get:
       operationId: listAtsOffice
       summary: List  Offices
@@ -5037,11 +5037,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsOfficeOutput'
       tags: &ref_98
-        - ats/office
+        - ats/offices
       security: &ref_99
         - bearer: []
-      x-speakeasy-group: ats.office
-  /ats/office/{id}:
+      x-speakeasy-group: ats. offices
+  /ats/ offices/{id}:
     get:
       operationId: retrieveAtsOffice
       summary: Retrieve a Office
@@ -5074,8 +5074,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsOfficeOutput'
       tags: *ref_98
       security: *ref_99
-      x-speakeasy-group: ats.office
-  /ats/rejectreason:
+      x-speakeasy-group: ats. offices
+  /ats/rejectreasons:
     get:
       operationId: listAtsRejectReasons
       summary: List  RejectReasons
@@ -5119,11 +5119,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsRejectreasonOutput'
       tags: &ref_100
-        - ats/rejectreason
+        - ats/rejectreasons
       security: &ref_101
         - bearer: []
-      x-speakeasy-group: ats.rejectreason
-  /ats/rejectreason/{id}:
+      x-speakeasy-group: ats.rejectreasons
+  /ats/rejectreasons/{id}:
     get:
       operationId: retrieveAtsRejectReason
       summary: Retrieve a RejectReason
@@ -5156,8 +5156,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsRejectreasonOutput'
       tags: *ref_100
       security: *ref_101
-      x-speakeasy-group: ats.rejectreason
-  /ats/scorecard:
+      x-speakeasy-group: ats.rejectreasons
+  /ats/scorecards:
     get:
       operationId: listAtsScorecard
       summary: List  ScoreCards
@@ -5201,11 +5201,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsScorecardOutput'
       tags: &ref_102
-        - ats/scorecard
+        - ats/scorecards
       security: &ref_103
         - bearer: []
-      x-speakeasy-group: ats.scorecard
-  /ats/scorecard/{id}:
+      x-speakeasy-group: ats.scorecards
+  /ats/scorecards/{id}:
     get:
       operationId: retrieveAtsScorecard
       summary: Retrieve a ScoreCard
@@ -5238,8 +5238,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsScorecardOutput'
       tags: *ref_102
       security: *ref_103
-      x-speakeasy-group: ats.scorecard
-  /ats/tag:
+      x-speakeasy-group: ats.scorecards
+  /ats/tags:
     get:
       operationId: listAtsTags
       summary: List  Tags
@@ -5283,11 +5283,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsTagOutput'
       tags: &ref_104
-        - ats/tag
+        - ats/tags
       security: &ref_105
         - bearer: []
-      x-speakeasy-group: ats.tag
-  /ats/tag/{id}:
+      x-speakeasy-group: ats.tags
+  /ats/tags/{id}:
     get:
       operationId: retrieveAtsTag
       summary: Retrieve a Tag
@@ -5320,8 +5320,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsTagOutput'
       tags: *ref_104
       security: *ref_105
-      x-speakeasy-group: ats.tag
-  /ats/user:
+      x-speakeasy-group: ats.tags
+  /ats/users:
     get:
       operationId: listAtsUsers
       summary: List  Users
@@ -5365,11 +5365,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAtsUserOutput'
       tags: &ref_106
-        - ats/user
+        - ats/users
       security: &ref_107
         - bearer: []
-      x-speakeasy-group: ats.user
-  /ats/user/{id}:
+      x-speakeasy-group: ats.users
+  /ats/users/{id}:
     get:
       operationId: retrieveAtsUser
       summary: Retrieve a User
@@ -5402,7 +5402,7 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsUserOutput'
       tags: *ref_106
       security: *ref_107
-      x-speakeasy-group: ats.user
+      x-speakeasy-group: ats.users
   /ats/eeocs:
     get:
       operationId: listAtsEeocs
@@ -5485,7 +5485,7 @@ paths:
       tags: *ref_108
       security: *ref_109
       x-speakeasy-group: ats.eeocs
-  /accounting/account:
+  /accounting/accounts:
     get:
       operationId: listAccountingAccounts
       summary: List  Accounts
@@ -5529,10 +5529,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
       tags: &ref_110
-        - accounting/account
+        - accounting/accounts
       security: &ref_111
         - bearer: []
-      x-speakeasy-group: accounting.account
+      x-speakeasy-group: accounting.accounts
     post:
       operationId: createAccountingAccount
       summary: Create a Account
@@ -5565,8 +5565,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
       tags: *ref_110
       security: *ref_111
-      x-speakeasy-group: accounting.account
-  /accounting/account/{id}:
+      x-speakeasy-group: accounting.accounts
+  /accounting/accounts/{id}:
     get:
       operationId: retrieveAccountingAccount
       summary: Retrieve a Account
@@ -5599,8 +5599,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
       tags: *ref_110
       security: *ref_111
-      x-speakeasy-group: accounting.account
-  /accounting/address:
+      x-speakeasy-group: accounting.accounts
+  /accounting/addresses:
     get:
       operationId: listAccountingAddress
       summary: List  Addresss
@@ -5644,11 +5644,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingAddressOutput'
       tags: &ref_112
-        - accounting/address
+        - accounting/addresses
       security: &ref_113
         - bearer: []
-      x-speakeasy-group: accounting.address
-  /accounting/address/{id}:
+      x-speakeasy-group: accounting.addresses
+  /accounting/addresses/{id}:
     get:
       operationId: retrieveAccountingAddress
       summary: Retrieve a Address
@@ -5681,8 +5681,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingAddressOutput'
       tags: *ref_112
       security: *ref_113
-      x-speakeasy-group: accounting.address
-  /accounting/attachment:
+      x-speakeasy-group: accounting.addresses
+  /accounting/attachments:
     get:
       operationId: listAccountingAttachments
       summary: List  Attachments
@@ -5727,10 +5727,10 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingAttachmentOutput
       tags: &ref_114
-        - accounting/attachment
+        - accounting/attachments
       security: &ref_115
         - bearer: []
-      x-speakeasy-group: accounting.attachment
+      x-speakeasy-group: accounting.attachments
     post:
       operationId: createAccountingAttachment
       summary: Create a Attachment
@@ -5763,8 +5763,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingAttachmentOutput'
       tags: *ref_114
       security: *ref_115
-      x-speakeasy-group: accounting.attachment
-  /accounting/attachment/{id}:
+      x-speakeasy-group: accounting.attachments
+  /accounting/attachments/{id}:
     get:
       operationId: retrieveAccountingAttachment
       summary: Retrieve a Attachment
@@ -5797,8 +5797,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingAttachmentOutput'
       tags: *ref_114
       security: *ref_115
-      x-speakeasy-group: accounting.attachment
-  /accounting/balancesheet:
+      x-speakeasy-group: accounting.attachments
+  /accounting/balancesheets:
     get:
       operationId: listAccountingBalanceSheets
       summary: List  BalanceSheets
@@ -5843,11 +5843,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingBalancesheetOutput
       tags: &ref_116
-        - accounting/balancesheet
+        - accounting/balancesheets
       security: &ref_117
         - bearer: []
-      x-speakeasy-group: accounting.balancesheet
-  /accounting/balancesheet/{id}:
+      x-speakeasy-group: accounting.balancesheets
+  /accounting/balancesheets/{id}:
     get:
       operationId: retrieveAccountingBalanceSheet
       summary: Retrieve a BalanceSheet
@@ -5880,8 +5880,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingBalancesheetOutput'
       tags: *ref_116
       security: *ref_117
-      x-speakeasy-group: accounting.balancesheet
-  /accounting/cashflowstatement:
+      x-speakeasy-group: accounting.balancesheets
+  /accounting/cashflowstatements:
     get:
       operationId: listAccountingCashflowStatement
       summary: List  CashflowStatements
@@ -5926,11 +5926,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingCashflowstatementOutput
       tags: &ref_118
-        - accounting/cashflowstatement
+        - accounting/cashflowstatements
       security: &ref_119
         - bearer: []
-      x-speakeasy-group: accounting.cashflowstatement
-  /accounting/cashflowstatement/{id}:
+      x-speakeasy-group: accounting.cashflowstatements
+  /accounting/cashflowstatements/{id}:
     get:
       operationId: retrieveAccountingCashflowStatement
       summary: Retrieve a CashflowStatement
@@ -5963,8 +5963,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingCashflowstatementOutput'
       tags: *ref_118
       security: *ref_119
-      x-speakeasy-group: accounting.cashflowstatement
-  /accounting/companyinfo:
+      x-speakeasy-group: accounting.cashflowstatements
+  /accounting/companyinfos:
     get:
       operationId: listAccountingCompanyInfos
       summary: List  CompanyInfos
@@ -6009,11 +6009,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingCompanyinfoOutput
       tags: &ref_120
-        - accounting/companyinfo
+        - accounting/companyinfos
       security: &ref_121
         - bearer: []
-      x-speakeasy-group: accounting.companyinfo
-  /accounting/companyinfo/{id}:
+      x-speakeasy-group: accounting.companyinfos
+  /accounting/companyinfos/{id}:
     get:
       operationId: retrieveAccountingCompanyInfo
       summary: Retrieve a CompanyInfo
@@ -6046,8 +6046,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingCompanyinfoOutput'
       tags: *ref_120
       security: *ref_121
-      x-speakeasy-group: accounting.companyinfo
-  /accounting/contact:
+      x-speakeasy-group: accounting.companyinfos
+  /accounting/contacts:
     get:
       operationId: listAccountingContacts
       summary: List  Contacts
@@ -6091,10 +6091,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingContactOutput'
       tags: &ref_122
-        - accounting/contact
+        - accounting/contacts
       security: &ref_123
         - bearer: []
-      x-speakeasy-group: accounting.contact
+      x-speakeasy-group: accounting.contacts
     post:
       operationId: createAccountingContact
       summary: Create a Contact
@@ -6127,8 +6127,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingContactOutput'
       tags: *ref_122
       security: *ref_123
-      x-speakeasy-group: accounting.contact
-  /accounting/contact/{id}:
+      x-speakeasy-group: accounting.contacts
+  /accounting/contacts/{id}:
     get:
       operationId: retrieveAccountingContact
       summary: Retrieve a Contact
@@ -6161,8 +6161,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingContactOutput'
       tags: *ref_122
       security: *ref_123
-      x-speakeasy-group: accounting.contact
-  /accounting/creditnote:
+      x-speakeasy-group: accounting.contacts
+  /accounting/creditnotes:
     get:
       operationId: listAccountingCreditNote
       summary: List  CreditNotes
@@ -6207,11 +6207,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingCreditnoteOutput
       tags: &ref_124
-        - accounting/creditnote
+        - accounting/creditnotes
       security: &ref_125
         - bearer: []
-      x-speakeasy-group: accounting.creditnote
-  /accounting/creditnote/{id}:
+      x-speakeasy-group: accounting.creditnotes
+  /accounting/creditnotes/{id}:
     get:
       operationId: retrieveAccountingCreditNote
       summary: Retrieve a CreditNote
@@ -6244,8 +6244,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingCreditnoteOutput'
       tags: *ref_124
       security: *ref_125
-      x-speakeasy-group: accounting.creditnote
-  /accounting/expense:
+      x-speakeasy-group: accounting.creditnotes
+  /accounting/expenses:
     get:
       operationId: listAccountingExpense
       summary: List  Expenses
@@ -6289,10 +6289,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
       tags: &ref_126
-        - accounting/expense
+        - accounting/expenses
       security: &ref_127
         - bearer: []
-      x-speakeasy-group: accounting.expense
+      x-speakeasy-group: accounting.expenses
     post:
       operationId: createAccountingExpense
       summary: Create a Expense
@@ -6325,8 +6325,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
       tags: *ref_126
       security: *ref_127
-      x-speakeasy-group: accounting.expense
-  /accounting/expense/{id}:
+      x-speakeasy-group: accounting.expenses
+  /accounting/expenses/{id}:
     get:
       operationId: retrieveAccountingExpense
       summary: Retrieve a Expense
@@ -6359,8 +6359,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
       tags: *ref_126
       security: *ref_127
-      x-speakeasy-group: accounting.expense
-  /accounting/incomestatement:
+      x-speakeasy-group: accounting.expenses
+  /accounting/incomestatements:
     get:
       operationId: listAccountingIncomeStatement
       summary: List  IncomeStatements
@@ -6405,11 +6405,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingIncomestatementOutput
       tags: &ref_128
-        - accounting/incomestatement
+        - accounting/incomestatements
       security: &ref_129
         - bearer: []
-      x-speakeasy-group: accounting.incomestatement
-  /accounting/incomestatement/{id}:
+      x-speakeasy-group: accounting.incomestatements
+  /accounting/incomestatements/{id}:
     get:
       operationId: retrieveAccountingIncomeStatement
       summary: Retrieve a IncomeStatement
@@ -6442,8 +6442,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingIncomestatementOutput'
       tags: *ref_128
       security: *ref_129
-      x-speakeasy-group: accounting.incomestatement
-  /accounting/invoice:
+      x-speakeasy-group: accounting.incomestatements
+  /accounting/invoices:
     get:
       operationId: listAccountingInvoice
       summary: List  Invoices
@@ -6487,10 +6487,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
       tags: &ref_130
-        - accounting/invoice
+        - accounting/invoices
       security: &ref_131
         - bearer: []
-      x-speakeasy-group: accounting.invoice
+      x-speakeasy-group: accounting.invoices
     post:
       operationId: createAccountingInvoice
       summary: Create a Invoice
@@ -6523,8 +6523,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
       tags: *ref_130
       security: *ref_131
-      x-speakeasy-group: accounting.invoice
-  /accounting/invoice/{id}:
+      x-speakeasy-group: accounting.invoices
+  /accounting/invoices/{id}:
     get:
       operationId: retrieveAccountingInvoice
       summary: Retrieve a Invoice
@@ -6557,8 +6557,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
       tags: *ref_130
       security: *ref_131
-      x-speakeasy-group: accounting.invoice
-  /accounting/item:
+      x-speakeasy-group: accounting.invoices
+  /accounting/items:
     get:
       operationId: listAccountingItem
       summary: List  Items
@@ -6602,11 +6602,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingItemOutput'
       tags: &ref_132
-        - accounting/item
+        - accounting/items
       security: &ref_133
         - bearer: []
-      x-speakeasy-group: accounting.item
-  /accounting/item/{id}:
+      x-speakeasy-group: accounting.items
+  /accounting/items/{id}:
     get:
       operationId: retrieveAccountingItem
       summary: Retrieve a Item
@@ -6639,8 +6639,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingItemOutput'
       tags: *ref_132
       security: *ref_133
-      x-speakeasy-group: accounting.item
-  /accounting/journalentry:
+      x-speakeasy-group: accounting.items
+  /accounting/journalentries:
     get:
       operationId: listAccountingJournalEntry
       summary: List  JournalEntrys
@@ -6685,10 +6685,10 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingJournalentryOutput
       tags: &ref_134
-        - accounting/journalentry
+        - accounting/journalentries
       security: &ref_135
         - bearer: []
-      x-speakeasy-group: accounting.journalentry
+      x-speakeasy-group: accounting.journalentries
     post:
       operationId: createAccountingJournalEntry
       summary: Create a JournalEntry
@@ -6721,8 +6721,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingJournalentryOutput'
       tags: *ref_134
       security: *ref_135
-      x-speakeasy-group: accounting.journalentry
-  /accounting/journalentry/{id}:
+      x-speakeasy-group: accounting.journalentries
+  /accounting/journalentries/{id}:
     get:
       operationId: retrieveAccountingJournalEntry
       summary: Retrieve a JournalEntry
@@ -6755,8 +6755,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingJournalentryOutput'
       tags: *ref_134
       security: *ref_135
-      x-speakeasy-group: accounting.journalentry
-  /accounting/payment:
+      x-speakeasy-group: accounting.journalentries
+  /accounting/payments:
     get:
       operationId: listAccountingPayment
       summary: List  Payments
@@ -6800,10 +6800,10 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
       tags: &ref_136
-        - accounting/payment
+        - accounting/payments
       security: &ref_137
         - bearer: []
-      x-speakeasy-group: accounting.payment
+      x-speakeasy-group: accounting.payments
     post:
       operationId: createAccountingPayment
       summary: Create a Payment
@@ -6836,8 +6836,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
       tags: *ref_136
       security: *ref_137
-      x-speakeasy-group: accounting.payment
-  /accounting/payment/{id}:
+      x-speakeasy-group: accounting.payments
+  /accounting/payments/{id}:
     get:
       operationId: retrieveAccountingPayment
       summary: Retrieve a Payment
@@ -6870,8 +6870,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
       tags: *ref_136
       security: *ref_137
-      x-speakeasy-group: accounting.payment
-  /accounting/phonenumber:
+      x-speakeasy-group: accounting.payments
+  /accounting/phonenumbers:
     get:
       operationId: listAccountingPhonenumber
       summary: List  PhoneNumbers
@@ -6916,11 +6916,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingPhonenumberOutput
       tags: &ref_138
-        - accounting/phonenumber
+        - accounting/phonenumbers
       security: &ref_139
         - bearer: []
-      x-speakeasy-group: accounting.phonenumber
-  /accounting/phonenumber/{id}:
+      x-speakeasy-group: accounting.phonenumbers
+  /accounting/phonenumbers/{id}:
     get:
       operationId: retrieveAccountingPhonenumber
       summary: Retrieve a PhoneNumber
@@ -6953,8 +6953,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingPhonenumberOutput'
       tags: *ref_138
       security: *ref_139
-      x-speakeasy-group: accounting.phonenumber
-  /accounting/purchaseorder:
+      x-speakeasy-group: accounting.phonenumbers
+  /accounting/purchaseorders:
     get:
       operationId: listAccountingPurchaseOrder
       summary: List  PurchaseOrders
@@ -6999,10 +6999,10 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingPurchaseorderOutput
       tags: &ref_140
-        - accounting/purchaseorder
+        - accounting/purchaseorders
       security: &ref_141
         - bearer: []
-      x-speakeasy-group: accounting.purchaseorder
+      x-speakeasy-group: accounting.purchaseorders
     post:
       operationId: createAccountingPurchaseOrder
       summary: Create a PurchaseOrder
@@ -7035,8 +7035,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingPurchaseorderOutput'
       tags: *ref_140
       security: *ref_141
-      x-speakeasy-group: accounting.purchaseorder
-  /accounting/purchaseorder/{id}:
+      x-speakeasy-group: accounting.purchaseorders
+  /accounting/purchaseorders/{id}:
     get:
       operationId: retrieveAccountingPurchaseOrder
       summary: Retrieve a PurchaseOrder
@@ -7069,8 +7069,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingPurchaseorderOutput'
       tags: *ref_140
       security: *ref_141
-      x-speakeasy-group: accounting.purchaseorder
-  /accounting/taxrate:
+      x-speakeasy-group: accounting.purchaseorders
+  /accounting/taxrates:
     get:
       operationId: listAccountingTaxRate
       summary: List  TaxRates
@@ -7114,11 +7114,11 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingTaxrateOutput'
       tags: &ref_142
-        - accounting/taxrate
+        - accounting/taxrates
       security: &ref_143
         - bearer: []
-      x-speakeasy-group: accounting.taxrate
-  /accounting/taxrate/{id}:
+      x-speakeasy-group: accounting.taxrates
+  /accounting/taxrates/{id}:
     get:
       operationId: retrieveAccountingTaxRate
       summary: Retrieve a TaxRate
@@ -7151,8 +7151,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingTaxrateOutput'
       tags: *ref_142
       security: *ref_143
-      x-speakeasy-group: accounting.taxrate
-  /accounting/trackingcategory:
+      x-speakeasy-group: accounting.taxrates
+  /accounting/trackingcategories:
     get:
       operationId: listAccountingTrackingCategorys
       summary: List  TrackingCategorys
@@ -7197,11 +7197,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingTrackingcategoryOutput
       tags: &ref_144
-        - accounting/trackingcategory
+        - accounting/trackingcategories
       security: &ref_145
         - bearer: []
-      x-speakeasy-group: accounting.trackingcategory
-  /accounting/trackingcategory/{id}:
+      x-speakeasy-group: accounting.trackingcategories
+  /accounting/trackingcategories/{id}:
     get:
       operationId: retrieveAccountingTrackingCategory
       summary: Retrieve a TrackingCategory
@@ -7234,8 +7234,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingTrackingcategoryOutput'
       tags: *ref_144
       security: *ref_145
-      x-speakeasy-group: accounting.trackingcategory
-  /accounting/transaction:
+      x-speakeasy-group: accounting.trackingcategories
+  /accounting/transactions:
     get:
       operationId: listAccountingTransaction
       summary: List  Transactions
@@ -7280,11 +7280,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingTransactionOutput
       tags: &ref_146
-        - accounting/transaction
+        - accounting/transactions
       security: &ref_147
         - bearer: []
-      x-speakeasy-group: accounting.transaction
-  /accounting/transaction/{id}:
+      x-speakeasy-group: accounting.transactions
+  /accounting/transactions/{id}:
     get:
       operationId: retrieveAccountingTransaction
       summary: Retrieve a Transaction
@@ -7317,8 +7317,8 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingTransactionOutput'
       tags: *ref_146
       security: *ref_147
-      x-speakeasy-group: accounting.transaction
-  /accounting/vendorcredit:
+      x-speakeasy-group: accounting.transactions
+  /accounting/vendorcredits:
     get:
       operationId: listAccountingVendorCredit
       summary: List  VendorCredits
@@ -7363,11 +7363,11 @@ paths:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingVendorcreditOutput
       tags: &ref_148
-        - accounting/vendorcredit
+        - accounting/vendorcredits
       security: &ref_149
         - bearer: []
-      x-speakeasy-group: accounting.vendorcredit
-  /accounting/vendorcredit/{id}:
+      x-speakeasy-group: accounting.vendorcredits
+  /accounting/vendorcredits/{id}:
     get:
       operationId: retrieveAccountingVendorCredit
       summary: Retrieve a VendorCredit
@@ -7400,7 +7400,7 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingVendorcreditOutput'
       tags: *ref_148
       security: *ref_149
-      x-speakeasy-group: accounting.vendorcredit
+      x-speakeasy-group: accounting.vendorcredits
   /filestorage/drives:
     get:
       operationId: listFilestorageDrives
@@ -9227,12 +9227,9 @@ components:
           type: string
         alias:
           type: string
-        id_project:
-          type: string
       required:
         - linked_user_origin_id
         - alias
-        - id_project
     CreateBatchLinkedUserDto:
       type: object
       properties:
@@ -9242,12 +9239,9 @@ components:
             type: string
         alias:
           type: string
-        id_project:
-          type: string
       required:
         - linked_user_origin_ids
         - alias
-        - id_project
     DefineTargetFieldDto:
       type: object
       properties:

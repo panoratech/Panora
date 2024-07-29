@@ -28,8 +28,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/tag')
-@Controller('ats/tag')
+@ApiTags('ats/tags')
+@Controller('ats/tags')
 export class TagController {
   constructor(
     private readonly tagService: TagService,

@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('marketingautomation/campaign')
-@Controller('marketingautomation/campaign')
+@ApiTags('marketingautomation/campaigns')
+@Controller('marketingautomation/campaigns')
 export class CampaignController {
   constructor(
     private readonly campaignService: CampaignService,

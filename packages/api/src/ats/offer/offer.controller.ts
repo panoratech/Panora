@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/offer')
-@Controller('ats/offer')
+@ApiTags('ats/offers')
+@Controller('ats/offers')
 export class OfferController {
   constructor(
     private readonly offerService: OfferService,
