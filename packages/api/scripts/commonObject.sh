@@ -4,6 +4,9 @@
 # THIS SCRIPT GENERATES THE BOILERPLATE FOR NEW COMMON OBJECTS
 # Usage: ./commonObject.sh "account,other_object" "accounting"
 
+# Warning: if the objectCap does not end with the letter 's'
+[[ ! $ObjectCap =~ s$ ]] && echo "Warning: ObjectCap does not end with the letter 's' - this object maybe doesn't comply with RESTful naming conventions"
+
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <object_types_comma_separated> <vertical_object>"
     exit 1
