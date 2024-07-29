@@ -34,8 +34,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/department')
-@Controller('ats/department')
+@ApiTags('ats/departments')
+@Controller('ats/departments')
 export class DepartmentController {
   constructor(
     private readonly departmentService: DepartmentService,

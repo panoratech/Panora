@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/office')
-@Controller('ats/office')
+@ApiTags('ats/offices')
+@Controller('ats/ offices')
 export class OfficeController {
   constructor(
     private readonly officeService: OfficeService,

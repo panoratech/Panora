@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/paygroup')
-@Controller('hris/paygroup')
+@ApiTags('hris/paygroups')
+@Controller('hris/paygroups')
 export class PayGroupController {
   constructor(
     private readonly paygroupService: PayGroupService,

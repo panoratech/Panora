@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/location')
-@Controller('hris/location')
+@ApiTags('hris/locations')
+@Controller('hris/locations')
 export class LocationController {
   constructor(
     private readonly locationService: LocationService,

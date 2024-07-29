@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/timeoff')
-@Controller('hris/timeoff')
+@ApiTags('hris/timeoffs')
+@Controller('hris/timeoffs')
 export class TimeoffController {
   constructor(
     private readonly timeoffService: TimeoffService,

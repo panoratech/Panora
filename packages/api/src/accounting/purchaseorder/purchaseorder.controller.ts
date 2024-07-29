@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/purchaseorder')
-@Controller('accounting/purchaseorder')
+@ApiTags('accounting/purchaseorders')
+@Controller('accounting/purchaseorders')
 export class PurchaseOrderController {
   constructor(
     private readonly purchaseorderService: PurchaseOrderService,

@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/employeepayrollrun')
-@Controller('hris/employeepayrollrun')
+@ApiTags('hris/employeepayrollruns')
+@Controller('hris/employeepayrollruns')
 export class EmployeePayrollRunController {
   constructor(
     private readonly employeepayrollrunService: EmployeePayrollRunService,

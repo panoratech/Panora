@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/taxrate')
-@Controller('accounting/taxrate')
+@ApiTags('accounting/taxrates')
+@Controller('accounting/taxrates')
 export class TaxRateController {
   constructor(
     private readonly taxrateService: TaxRateService,

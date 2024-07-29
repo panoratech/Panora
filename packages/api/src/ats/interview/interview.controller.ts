@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/interview')
-@Controller('ats/interview')
+@ApiTags('ats/interviews')
+@Controller('ats/interviews')
 export class InterviewController {
   constructor(
     private readonly interviewService: InterviewService,

@@ -34,8 +34,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('marketingautomation/message')
-@Controller('marketingautomation/message')
+@ApiTags('marketingautomation/messages')
+@Controller('marketingautomation/messages')
 export class MessageController {
   constructor(
     private readonly messageService: MessageService,

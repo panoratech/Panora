@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/timeoffbalance')
-@Controller('hris/timeoffbalance')
+@ApiTags('hris/timeoffbalances')
+@Controller('hris/timeoffbalances')
 export class TimeoffBalanceController {
   constructor(
     private readonly timeoffbalanceService: TimeoffBalanceService,

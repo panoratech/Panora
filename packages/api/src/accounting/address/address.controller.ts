@@ -31,8 +31,8 @@ import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto'
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/address')
-@Controller('accounting/address')
+@ApiTags('accounting/addresses')
+@Controller('accounting/addresses')
 export class AddressController {
   constructor(
     private readonly addressService: AddressService,

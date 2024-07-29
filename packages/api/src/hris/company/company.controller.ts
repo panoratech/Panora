@@ -31,8 +31,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/company')
-@Controller('hris/company')
+@ApiTags('hris/companies')
+@Controller('hris/companies')
 export class CompanyController {
   constructor(
     private readonly companyService: CompanyService,

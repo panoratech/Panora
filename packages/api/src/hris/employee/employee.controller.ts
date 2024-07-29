@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/employee')
-@Controller('hris/employee')
+@ApiTags('hris/employees')
+@Controller('hris/employees')
 export class EmployeeController {
   constructor(
     private readonly employeeService: EmployeeService,

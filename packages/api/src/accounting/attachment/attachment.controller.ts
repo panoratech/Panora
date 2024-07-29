@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/attachment')
-@Controller('accounting/attachment')
+@ApiTags('accounting/attachments')
+@Controller('accounting/attachments')
 export class AttachmentController {
   constructor(
     private readonly attachmentService: AttachmentService,

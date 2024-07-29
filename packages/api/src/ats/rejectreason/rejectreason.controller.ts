@@ -34,8 +34,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/rejectreason')
-@Controller('ats/rejectreason')
+@ApiTags('ats/rejectreasons')
+@Controller('ats/rejectreasons')
 export class RejectReasonController {
   constructor(
     private readonly rejectreasonService: RejectReasonService,
