@@ -10,6 +10,7 @@ import { PrismaService } from '../@core-services/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
+import { ConflictException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -67,12 +68,8 @@ export class AuthService {
       });
 
       if (foundUser) {
-        new AuthError({
-          name: 'EMAIL_ALREADY_EXISTS_ERROR',
-          message: `Email already exists for user with email=${user.email}`,
-        });
+        throw new ConflictException(`Email already exists. Try resetting your password.`);
       }
-
       return await this.createUser(user);
     } catch (error) {
       throw error;
@@ -95,7 +92,7 @@ export class AuthService {
         },
       });
       await this.projectService.createProject({
-        name: 'Project 1',
+        name: 'My Project',
         id_user: user_.id_user,
       });
       return user_;
