@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/invoice')
-@Controller('accounting/invoice')
+@ApiTags('accounting/invoices')
+@Controller('accounting/invoices')
 export class InvoiceController {
   constructor(
     private readonly invoiceService: InvoiceService,

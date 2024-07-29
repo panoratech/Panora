@@ -34,8 +34,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/creditnote')
-@Controller('accounting/creditnote')
+@ApiTags('accounting/creditnotes')
+@Controller('accounting/creditnotes')
 export class CreditNoteController {
   constructor(
     private readonly creditnoteService: CreditNoteService,

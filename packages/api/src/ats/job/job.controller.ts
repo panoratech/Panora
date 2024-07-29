@@ -25,11 +25,14 @@ import { UnifiedAtsJobInput, UnifiedAtsJobOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('ats/job')
-@Controller('ats/job')
+@ApiTags('ats/jobs')
+@Controller('ats/jobs')
 export class JobController {
   constructor(
     private readonly jobService: JobService,

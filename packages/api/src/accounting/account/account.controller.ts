@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/account')
-@Controller('accounting/account')
+@ApiTags('accounting/accounts')
+@Controller('accounting/accounts')
 export class AccountController {
   constructor(
     private readonly accountService: AccountService,

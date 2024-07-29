@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('accounting/journalentry')
-@Controller('accounting/journalentry')
+@ApiTags('accounting/journalentries')
+@Controller('accounting/journalentries')
 export class JournalEntryController {
   constructor(
     private readonly journalentryService: JournalEntryService,

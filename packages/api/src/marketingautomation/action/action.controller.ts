@@ -35,8 +35,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('marketingautomation/action')
-@Controller('marketingautomation/action')
+@ApiTags('marketingautomation/actions')
+@Controller('marketingautomation/actions')
 export class ActionController {
   constructor(
     private readonly actionService: ActionService,

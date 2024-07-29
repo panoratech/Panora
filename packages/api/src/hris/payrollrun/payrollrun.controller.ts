@@ -34,8 +34,8 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
-@ApiTags('hris/payrollrun')
-@Controller('hris/payrollrun')
+@ApiTags('hris/payrollruns')
+@Controller('hris/payrollruns')
 export class PayrollRunController {
   constructor(
     private readonly payrollrunService: PayrollRunService,
