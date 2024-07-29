@@ -4,7 +4,7 @@
     "integrations": {
         "intercom": "kjwzw97u"
     },
-    "openapi": "https://raw.githubusercontent.com/panoratech/Panora/main/docs/openapi-with-code-samples.yaml",
+    "openapi": "https://raw.githubusercontent.com/panoratech/Panora/main/packages/api/swagger/swagger-spec.yaml",
     "primaryTab": {
         "name": "Home"
     },
