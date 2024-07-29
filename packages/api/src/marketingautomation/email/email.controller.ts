@@ -83,9 +83,9 @@ export class EmailController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingautomationEmail',
-    summary: 'Retrieve a Email',
+    summary: 'Retrieve Emails',
     description:
-      'Retrieve a email from any connected Marketingautomation software',
+      'Retrieve Emails from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',

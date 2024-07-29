@@ -76,8 +76,8 @@ export class TeamController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingTeam',
-    summary: 'Retrieve a Team',
-    description: 'Retrieve a team from any connected Ticketing software',
+    summary: 'Retrieve Teams',
+    description: 'Retrieve Teams from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',

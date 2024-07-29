@@ -76,8 +76,8 @@ export class TagController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingTag',
-    summary: 'Retrieve a Tag',
-    description: 'Retrieve a tag from any connected Ticketing software',
+    summary: 'Retrieve Tags',
+    description: 'Retrieve Tags from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',

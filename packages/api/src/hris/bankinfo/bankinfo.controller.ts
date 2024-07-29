@@ -82,8 +82,8 @@ export class BankinfoController {
 
   @ApiOperation({
     operationId: 'retrieveHrisBankinfo', // Updated operationId
-    summary: 'Retrieve a Bankinfo',
-    description: 'Retrieve a bankinfo from any connected Hris software',
+    summary: 'Retrieve Bank Infos',
+    description: 'Retrieve Bank Infos from any connected Hris software',
   })
   @ApiParam({
     name: 'id',

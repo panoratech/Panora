@@ -84,8 +84,8 @@ export class CandidateController {
 
   @ApiOperation({
     operationId: 'retrieveAtsCandidate', // Updated operationId
-    summary: 'Retrieve a Candidate',
-    description: 'Retrieve a candidate from any connected Ats software',
+    summary: 'Retrieve Candidates',
+    description: 'Retrieve Candidates from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
@@ -127,8 +127,8 @@ export class CandidateController {
 
   @ApiOperation({
     operationId: 'createAtsCandidate', // Updated operationId
-    summary: 'Create a Candidate',
-    description: 'Create a candidate in any supported Ats software',
+    summary: 'Create Candidates',
+    description: 'Create Candidates in any supported Ats software',
   })
   @ApiHeader({
     name: 'x-connection-token',

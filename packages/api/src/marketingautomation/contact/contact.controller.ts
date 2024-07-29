@@ -84,9 +84,9 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingAutomationContact',
-    summary: 'Retrieve a Contact',
+    summary: 'Retrieve Contacts',
     description:
-      'Retrieve a contact from any connected Marketingautomation software',
+      'Retrieve Contacts from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -129,7 +129,7 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'createMarketingAutomationContact',
-    summary: 'Create a Contact',
+    summary: 'Create Contact',
     description:
       'Create a contact in any supported Marketingautomation software',
   })

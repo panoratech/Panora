@@ -80,8 +80,8 @@ export class PayGroupController {
 
   @ApiOperation({
     operationId: 'retrieveHrisPaygroup',
-    summary: 'Retrieve a PayGroup',
-    description: 'Retrieve a paygroup from any connected Hris software',
+    summary: 'Retrieve Pay Groups',
+    description: 'Retrieve Pay Groups from any connected Hris software',
   })
   @ApiParam({
     name: 'id',

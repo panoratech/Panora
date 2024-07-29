@@ -80,9 +80,9 @@ export class TrackingCategoryController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingTrackingCategory',
-    summary: 'Retrieve a TrackingCategory',
+    summary: 'Retrieve Tracking Categories',
     description:
-      'Retrieve a trackingcategory from any connected Accounting software',
+      'Retrieve Tracking Categories from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

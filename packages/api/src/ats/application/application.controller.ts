@@ -84,8 +84,8 @@ export class ApplicationController {
 
   @ApiOperation({
     operationId: 'retrieveAtsApplication',
-    summary: 'Retrieve an Application',
-    description: 'Retrieve an application from any connected Ats software',
+    summary: 'Retrieve Applications',
+    description: 'Retrieve Applications from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
@@ -127,8 +127,8 @@ export class ApplicationController {
 
   @ApiOperation({
     operationId: 'createAtsApplication',
-    summary: 'Create an Application',
-    description: 'Create an application in any supported Ats software',
+    summary: 'Create Applications',
+    description: 'Create Applications in any supported Ats software',
   })
   @ApiHeader({
     name: 'x-connection-token',

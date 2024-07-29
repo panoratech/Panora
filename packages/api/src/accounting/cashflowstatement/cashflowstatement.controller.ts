@@ -80,9 +80,9 @@ export class CashflowStatementController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingCashflowStatement',
-    summary: 'Retrieve a CashflowStatement',
+    summary: 'Retrieve Cashflow Statements',
     description:
-      'Retrieve a cashflowstatement from any connected Accounting software',
+      'Retrieve Cashflow Statements from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

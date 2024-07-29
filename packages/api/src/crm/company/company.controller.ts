@@ -86,8 +86,8 @@ export class CompanyController {
 
   @ApiOperation({
     operationId: 'retrieveCrmCompany',
-    summary: 'Retrieve a Company',
-    description: 'Retrieve a company from any connected Crm software',
+    summary: 'Retrieve Companies',
+    description: 'Retrieve Companies from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
@@ -129,8 +129,8 @@ export class CompanyController {
 
   @ApiOperation({
     operationId: 'createCrmCompany',
-    summary: 'Create a Company',
-    description: 'Create a company in any supported Crm software',
+    summary: 'Create Companies',
+    description: 'Create Companies in any supported CRM software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -142,7 +142,7 @@ export class CompanyController {
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description: 'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original CRM software.',
   })
   @ApiBody({ type: UnifiedCrmCompanyInput })
   @ApiPostCustomResponse(UnifiedCrmCompanyOutput)

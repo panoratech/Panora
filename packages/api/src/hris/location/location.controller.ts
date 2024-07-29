@@ -80,8 +80,8 @@ export class LocationController {
 
   @ApiOperation({
     operationId: 'retrieveHrisLocation',
-    summary: 'Retrieve a Location',
-    description: 'Retrieve a location from any connected Hris software',
+    summary: 'Retrieve Locations',
+    description: 'Retrieve Locations from any connected Hris software',
   })
   @ApiParam({
     name: 'id',

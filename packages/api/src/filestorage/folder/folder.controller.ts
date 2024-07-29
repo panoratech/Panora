@@ -87,8 +87,8 @@ export class FolderController {
 
   @ApiOperation({
     operationId: 'retrieveFilestorageFolder',
-    summary: 'Retrieve a Folder',
-    description: 'Retrieve a folder from any connected Filestorage software',
+    summary: 'Retrieve Folders',
+    description: 'Retrieve Folders from any connected Filestorage software',
   })
   @ApiParam({
     name: 'id',
@@ -131,8 +131,8 @@ export class FolderController {
 
   @ApiOperation({
     operationId: 'createFilestorageFolder',
-    summary: 'Create a Folder',
-    description: 'Create a folder in any supported Filestorage software',
+    summary: 'Create Folders',
+    description: 'Create Folders in any supported Filestorage software',
   })
   @ApiHeader({
     name: 'x-connection-token',

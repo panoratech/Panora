@@ -84,8 +84,8 @@ export class PaymentController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingPayment',
-    summary: 'Retrieve a Payment',
-    description: 'Retrieve a payment from any connected Accounting software',
+    summary: 'Retrieve Payments',
+    description: 'Retrieve Payments from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -128,8 +128,8 @@ export class PaymentController {
 
   @ApiOperation({
     operationId: 'createAccountingPayment',
-    summary: 'Create a Payment',
-    description: 'Create a payment in any supported Accounting software',
+    summary: 'Create Payments',
+    description: 'Create Payments in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',

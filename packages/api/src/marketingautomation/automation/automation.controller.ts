@@ -84,9 +84,9 @@ export class AutomationController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingautomationAutomation',
-    summary: 'Retrieve a Automation',
+    summary: 'Retrieve Automations',
     description:
-      'Retrieve a automation from any connected Marketingautomation software',
+      'Retrieve Automations from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -129,7 +129,7 @@ export class AutomationController {
 
   @ApiOperation({
     operationId: 'createMarketingautomationAutomation',
-    summary: 'Create a Automation',
+    summary: 'Create Automation',
     description:
       'Create a automation in any supported Marketingautomation software',
   })

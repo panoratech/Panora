@@ -80,9 +80,9 @@ export class EmployeePayrollRunController {
 
   @ApiOperation({
     operationId: 'retrieveHrisEmployeePayrollRun',
-    summary: 'Retrieve a EmployeePayrollRun',
+    summary: 'Retrieve Employee Payroll Runs',
     description:
-      'Retrieve a employeepayrollrun from any connected Hris software',
+      'Retrieve Employee Payroll Runs from any connected Hris software',
   })
   @ApiParam({
     name: 'id',

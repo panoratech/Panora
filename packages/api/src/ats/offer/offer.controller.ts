@@ -80,8 +80,8 @@ export class OfferController {
 
   @ApiOperation({
     operationId: 'retrieveAtsOffer',
-    summary: 'Retrieve a Offer',
-    description: 'Retrieve a offer from any connected Ats software',
+    summary: 'Retrieve Offers',
+    description: 'Retrieve Offers from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

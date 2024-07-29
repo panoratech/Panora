@@ -83,8 +83,8 @@ export class DepartmentController {
 
   @ApiOperation({
     operationId: 'retrieveAtsDepartment',
-    summary: 'Retrieve a Department',
-    description: 'Retrieve a department from any connected Ats software',
+    summary: 'Retrieve Departments',
+    description: 'Retrieve Departments from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

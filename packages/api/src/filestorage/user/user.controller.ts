@@ -79,9 +79,9 @@ export class UserController {
 
   @ApiOperation({
     operationId: 'retrieveFilestorageUser',
-    summary: 'Retrieve a User',
+    summary: 'Retrieve Users',
     description:
-      'Retrieve a permission from any connected Filestorage software',
+      'Retrieve Users from any connected Filestorage software',
   })
   @ApiParam({
     name: 'id',

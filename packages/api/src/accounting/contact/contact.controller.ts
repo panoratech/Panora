@@ -84,8 +84,8 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingContact',
-    summary: 'Retrieve a Contact',
-    description: 'Retrieve a contact from any connected Accounting software',
+    summary: 'Retrieve Contacts',
+    description: 'Retrieve Contacts from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -128,8 +128,8 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'createAccountingContact',
-    summary: 'Create a Contact',
-    description: 'Create a contact in any supported Accounting software',
+    summary: 'Create Contacts',
+    description: 'Create contacts in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -80,9 +80,9 @@ export class VendorCreditController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingVendorCredit',
-    summary: 'Retrieve a VendorCredit',
+    summary: 'Retrieve Vendor Credits',
     description:
-      'Retrieve a vendorcredit from any connected Accounting software',
+      'Retrieve Vendor Credits from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

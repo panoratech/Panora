@@ -88,8 +88,8 @@ export class EngagementController {
 
   @ApiOperation({
     operationId: 'retrieveCrmEngagement',
-    summary: 'Retrieve a Engagement',
-    description: 'Retrieve a engagement from any connected Crm software',
+    summary: 'Retrieve Engagements',
+    description: 'Retrieve Engagements from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
@@ -131,8 +131,8 @@ export class EngagementController {
 
   @ApiOperation({
     operationId: 'createCrmEngagement',
-    summary: 'Create a Engagement',
-    description: 'Create a engagement in any supported Crm software',
+    summary: 'Create Engagements',
+    description: 'Create Engagements in any supported Crm software',
   })
   @ApiHeader({
     name: 'x-connection-token',

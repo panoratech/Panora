@@ -83,9 +83,9 @@ export class EventController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingautomationEvent',
-    summary: 'Retrieve a Event',
+    summary: 'Retrieve Events',
     description:
-      'Retrieve a event from any connected Marketingautomation software',
+      'Retrieve Events from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',

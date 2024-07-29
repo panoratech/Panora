@@ -80,8 +80,8 @@ export class AddressController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingAddress',
-    summary: 'Retrieve a Address',
-    description: 'Retrieve a address from any connected Accounting software',
+    summary: 'Retrieve Addresses',
+    description: 'Retrieve Addresses from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

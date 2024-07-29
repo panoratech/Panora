@@ -80,9 +80,9 @@ export class PhoneNumberController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingPhonenumber',
-    summary: 'Retrieve a PhoneNumber',
+    summary: 'Retrieve Phone Numbers',
     description:
-      'Retrieve a phonenumber from any connected Accounting software',
+      'Retrieve Phone Numbers from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

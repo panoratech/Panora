@@ -87,8 +87,8 @@ export class FileController {
 
   @ApiOperation({
     operationId: 'retrieveFilestorageFile',
-    summary: 'Retrieve a File',
-    description: 'Retrieve a file from any connected Filestorage software',
+    summary: 'Retrieve Files',
+    description: 'Retrieve Files from any connected Filestorage software',
   })
   @ApiParam({
     name: 'id',
@@ -131,8 +131,8 @@ export class FileController {
 
   @ApiOperation({
     operationId: 'createFilestorageFile',
-    summary: 'Create a File',
-    description: 'Create a file in any supported Filestorage software',
+    summary: 'Create Files',
+    description: 'Create Files in any supported Filestorage software',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -80,9 +80,9 @@ export class TransactionController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingTransaction',
-    summary: 'Retrieve a Transaction',
+    summary: 'Retrieve Transactions',
     description:
-      'Retrieve a transaction from any connected Accounting software',
+      'Retrieve Transactions from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

@@ -83,8 +83,8 @@ export class RejectReasonController {
 
   @ApiOperation({
     operationId: 'retrieveAtsRejectReason',
-    summary: 'Retrieve a RejectReason',
-    description: 'Retrieve a rejectreason from any connected Ats software',
+    summary: 'Retrieve Reject Reasons',
+    description: 'Retrieve Reject Reasons from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

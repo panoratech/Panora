@@ -80,8 +80,8 @@ export class JobInterviewStageController {
 
   @ApiOperation({
     operationId: 'retrieveAtsJobInterviewStage',
-    summary: 'Retrieve a JobInterviewStage',
-    description: 'Retrieve a jobinterviewstage from any connected Ats software',
+    summary: 'Retrieve Job Interview Stages',
+    description: 'Retrieve Job Interview Stages from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

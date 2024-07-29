@@ -80,8 +80,8 @@ export class ItemController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingItem',
-    summary: 'Retrieve a Item',
-    description: 'Retrieve a item from any connected Accounting software',
+    summary: 'Retrieve Items',
+    description: 'Retrieve Items from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

@@ -88,8 +88,8 @@ export class TaskController {
 
   @ApiOperation({
     operationId: 'retrieveCrmTask',
-    summary: 'Retrieve a Task',
-    description: 'Retrieve a task from any connected Crm software',
+    summary: 'Retrieve Tasks',
+    description: 'Retrieve Tasks from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
@@ -131,8 +131,8 @@ export class TaskController {
 
   @ApiOperation({
     operationId: 'createCrmTask',
-    summary: 'Create a Task',
-    description: 'Create a task in any supported Crm software',
+    summary: 'Create Tasks',
+    description: 'Create Tasks in any supported Crm software',
   })
   @ApiHeader({
     name: 'x-connection-token',

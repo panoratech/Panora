@@ -83,8 +83,8 @@ export class UserController {
 
   @ApiOperation({
     operationId: 'retrieveAtsUser',
-    summary: 'Retrieve a User',
-    description: 'Retrieve a user from any connected Ats software',
+    summary: 'Retrieve Users',
+    description: 'Retrieve Users from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

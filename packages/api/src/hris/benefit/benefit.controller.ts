@@ -80,8 +80,8 @@ export class BenefitController {
 
   @ApiOperation({
     operationId: 'retrieveHrisBenefit',
-    summary: 'Retrieve a Benefit',
-    description: 'Retrieve a benefit from any connected Hris software',
+    summary: 'Retrieve Benefits',
+    description: 'Retrieve Benefits from any connected Hris software',
   })
   @ApiParam({
     name: 'id',

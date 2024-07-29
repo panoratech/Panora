@@ -84,9 +84,9 @@ export class ListController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingautomationList',
-    summary: 'Retrieve a List',
+    summary: 'Retrieve Lists',
     description:
-      'Retrieve a list from any connected Marketingautomation software',
+      'Retrieve Lists from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -129,8 +129,8 @@ export class ListController {
 
   @ApiOperation({
     operationId: 'createMarketingautomationList',
-    summary: 'Create a List',
-    description: 'Create a list in any supported Marketingautomation software',
+    summary: 'Create Lists',
+    description: 'Create Lists in any supported Marketingautomation software',
   })
   @ApiHeader({
     name: 'x-connection-token',

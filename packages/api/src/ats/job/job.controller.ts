@@ -77,8 +77,8 @@ export class JobController {
 
   @ApiOperation({
     operationId: 'retrieveAtsJob',
-    summary: 'Retrieve a Job',
-    description: 'Retrieve a job from any connected Ats software',
+    summary: 'Retrieve Jobs',
+    description: 'Retrieve Jobs from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

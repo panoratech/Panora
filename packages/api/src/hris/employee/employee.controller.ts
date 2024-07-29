@@ -84,8 +84,8 @@ export class EmployeeController {
 
   @ApiOperation({
     operationId: 'retrieveHrisEmployee',
-    summary: 'Retrieve an Employee',
-    description: 'Retrieve an employee from any connected Hris software',
+    summary: 'Retrieven Employees',
+    description: 'Retrieven Employees from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
@@ -127,8 +127,8 @@ export class EmployeeController {
 
   @ApiOperation({
     operationId: 'createHrisEmployee',
-    summary: 'Create an Employee',
-    description: 'Create an employee in any supported Hris software',
+    summary: 'Create Employees',
+    description: 'Create Employees in any supported Hris software',
   })
   @ApiHeader({
     name: 'x-connection-token',

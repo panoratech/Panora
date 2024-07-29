@@ -84,9 +84,9 @@ export class CampaignController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingautomationCampaign', // Updated operationId
-    summary: 'Retrieve a Campaign',
+    summary: 'Retrieve Campaigns',
     description:
-      'Retrieve a campaign from any connected Marketingautomation software',
+      'Retrieve Campaigns from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -129,7 +129,7 @@ export class CampaignController {
 
   @ApiOperation({
     operationId: 'createMarketingautomationCampaign', // Updated operationId
-    summary: 'Create a Campaign',
+    summary: 'Create Campaign',
     description:
       'Create a campaign in any supported Marketingautomation software',
   })

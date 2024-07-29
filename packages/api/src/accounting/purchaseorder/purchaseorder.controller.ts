@@ -84,9 +84,9 @@ export class PurchaseOrderController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingPurchaseOrder',
-    summary: 'Retrieve a PurchaseOrder',
+    summary: 'Retrieve Purchase Orders',
     description:
-      'Retrieve a purchaseorder from any connected Accounting software',
+      'Retrieve Purchase Orders from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -129,8 +129,8 @@ export class PurchaseOrderController {
 
   @ApiOperation({
     operationId: 'createAccountingPurchaseOrder',
-    summary: 'Create a PurchaseOrder',
-    description: 'Create a purchaseorder in any supported Accounting software',
+    summary: 'Create Purchase Orders',
+    description: 'Create Purchase Orders in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',

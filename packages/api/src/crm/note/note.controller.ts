@@ -86,8 +86,8 @@ export class NoteController {
 
   @ApiOperation({
     operationId: 'retrieveCrmNote',
-    summary: 'Retrieve a Note',
-    description: 'Retrieve a note from any connected Crm software',
+    summary: 'Retrieve Notes',
+    description: 'Retrieve Notes from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
@@ -129,8 +129,8 @@ export class NoteController {
 
   @ApiOperation({
     operationId: 'createCrmNote',
-    summary: 'Create a Note',
-    description: 'Create a note in any supported Crm software',
+    summary: 'Create Notes',
+    description: 'Create Notes in any supported Crm software',
   })
   @ApiHeader({
     name: 'x-connection-token',

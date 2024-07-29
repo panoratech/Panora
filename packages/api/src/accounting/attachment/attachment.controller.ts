@@ -84,8 +84,8 @@ export class AttachmentController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingAttachment',
-    summary: 'Retrieve a Attachment',
-    description: 'Retrieve a attachment from any connected Accounting software',
+    summary: 'Retrieve Attachments',
+    description: 'Retrieve attachments from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -128,8 +128,8 @@ export class AttachmentController {
 
   @ApiOperation({
     operationId: 'createAccountingAttachment',
-    summary: 'Create a Attachment',
-    description: 'Create a attachment in any supported Accounting software',
+    summary: 'Create Attachments',
+    description: 'Create attachments in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',

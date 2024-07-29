@@ -159,8 +159,8 @@ paths:
       x-speakeasy-group: ticketing.tickets
     post:
       operationId: createTicketingTicket
-      summary: Create a Ticket
-      description: Create a ticket in any supported Ticketing software
+      summary: Create Tickets
+      description: Create Tickets in any supported Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -193,8 +193,8 @@ paths:
   /ticketing/tickets/{id}:
     get:
       operationId: retrieveTicketingTicket
-      summary: Retrieve a Ticket
-      description: Retrieve a ticket from any connected Ticketing software
+      summary: Retrieve Tickets
+      description: Retrieve Tickets from any connected Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -275,8 +275,8 @@ paths:
   /ticketing/users/{id}:
     get:
       operationId: retrieveTicketingUser
-      summary: Retrieve a User
-      description: Retrieve a user from any connected Ticketing software
+      summary: Retrieve Users
+      description: Retrieve Users from any connected Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -357,8 +357,8 @@ paths:
   /ticketing/accounts/{id}:
     get:
       operationId: retrieveTicketingAccount
-      summary: Retrieve an Account
-      description: Retrieve an account from any connected Ticketing software
+      summary: Retrieve Accounts
+      description: Retrieve Accounts from any connected Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -439,8 +439,8 @@ paths:
   /ticketing/contacts/{id}:
     get:
       operationId: retrieveTicketingContact
-      summary: Retrieve a Contact
-      description: Retrieve a contact from any connected Ticketing software
+      summary: Retrieve Contacts
+      description: Retrieve Contacts from any connected Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -552,8 +552,8 @@ paths:
       x-speakeasy-group: crm.companies
     post:
       operationId: createCrmCompany
-      summary: Create a Company
-      description: Create a company in any supported Crm software
+      summary: Create Companies
+      description: Create Companies in any supported CRM software
       parameters:
         - name: x-connection-token
           required: true
@@ -564,7 +564,7 @@ paths:
         - name: remote_data
           required: false
           in: query
-          description: Set to true to include data from the original Crm software.
+          description: Set to true to include data from the original CRM software.
           schema:
             type: boolean
       requestBody:
@@ -586,8 +586,8 @@ paths:
   /crm/companies/{id}:
     get:
       operationId: retrieveCrmCompany
-      summary: Retrieve a Company
-      description: Retrieve a company from any connected Crm software
+      summary: Retrieve Companies
+      description: Retrieve Companies from any connected Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -667,8 +667,8 @@ paths:
       x-speakeasy-group: crm.contacts
     post:
       operationId: createCrmContact
-      summary: Create CRM Contact
-      description: Create a contact in any supported CRM
+      summary: Create Contacts
+      description: Create Contacts in any supported CRM
       parameters:
         - name: x-connection-token
           required: true
@@ -701,8 +701,8 @@ paths:
   /crm/contacts/{id}:
     get:
       operationId: retrieveCrmContact
-      summary: Retrieve a CRM Contact
-      description: Retrieve a contact from any connected CRM
+      summary: Retrieve Contacts
+      description: Retrieve Contacts from any connected CRM
       parameters:
         - name: x-connection-token
           required: true
@@ -782,8 +782,8 @@ paths:
       x-speakeasy-group: crm.deals
     post:
       operationId: createCrmDeal
-      summary: Create a Deal
-      description: Create a deal in any supported Crm software
+      summary: Create Deals
+      description: Create Deals in any supported Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -816,8 +816,8 @@ paths:
   /crm/deals/{id}:
     get:
       operationId: retrieveCrmDeal
-      summary: Retrieve a Deal
-      description: Retrieve a deal from any connected Crm software
+      summary: Retrieve Deals
+      description: Retrieve Deals from any connected Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -897,8 +897,8 @@ paths:
       x-speakeasy-group: crm.engagements
     post:
       operationId: createCrmEngagement
-      summary: Create a Engagement
-      description: Create a engagement in any supported Crm software
+      summary: Create Engagements
+      description: Create Engagements in any supported Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -931,8 +931,8 @@ paths:
   /crm/engagements/{id}:
     get:
       operationId: retrieveCrmEngagement
-      summary: Retrieve a Engagement
-      description: Retrieve a engagement from any connected Crm software
+      summary: Retrieve Engagements
+      description: Retrieve Engagements from any connected Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -1012,8 +1012,8 @@ paths:
       x-speakeasy-group: crm.notes
     post:
       operationId: createCrmNote
-      summary: Create a Note
-      description: Create a note in any supported Crm software
+      summary: Create Notes
+      description: Create Notes in any supported Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -1046,8 +1046,8 @@ paths:
   /crm/notes/{id}:
     get:
       operationId: retrieveCrmNote
-      summary: Retrieve a Note
-      description: Retrieve a note from any connected Crm software
+      summary: Retrieve Notes
+      description: Retrieve Notes from any connected Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -1128,8 +1128,8 @@ paths:
   /crm/stages/{id}:
     get:
       operationId: retrieveCrmStage
-      summary: Retrieve a Stage
-      description: Retrieve a stage from any connected Crm software
+      summary: Retrieve Stages
+      description: Retrieve Stages from any connected Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -1209,8 +1209,8 @@ paths:
       x-speakeasy-group: crm.tasks
     post:
       operationId: createCrmTask
-      summary: Create a Task
-      description: Create a task in any supported Crm software
+      summary: Create Tasks
+      description: Create Tasks in any supported Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -1243,8 +1243,8 @@ paths:
   /crm/tasks/{id}:
     get:
       operationId: retrieveCrmTask
-      summary: Retrieve a Task
-      description: Retrieve a task from any connected Crm software
+      summary: Retrieve Tasks
+      description: Retrieve Tasks from any connected Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -1325,8 +1325,8 @@ paths:
   /crm/users/{id}:
     get:
       operationId: retrieveCrmUser
-      summary: Retrieve a User
-      description: Retrieve a user from any connected Crm software
+      summary: Retrieve Users
+      description: Retrieve Users from any connected Crm software
       parameters:
         - name: x-connection-token
           required: true
@@ -1408,8 +1408,8 @@ paths:
   /ticketing/collections/{id}:
     get:
       operationId: retrieveCollection
-      summary: Retrieve a Collection
-      description: Retrieve a collection from any connected Ticketing software
+      summary: Retrieve Collections
+      description: Retrieve Collections from any connected Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -1489,8 +1489,8 @@ paths:
       x-speakeasy-group: ticketing.comments
     post:
       operationId: createTicketingComment
-      summary: Create a Comment
-      description: Create a comment in any supported Ticketing software
+      summary: Create Comments
+      description: Create Comments in any supported Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -1523,8 +1523,8 @@ paths:
   /ticketing/comments/{id}:
     get:
       operationId: retrieveTicketingComment
-      summary: Retrieve a Comment
-      description: Retrieve a comment from any connected Ticketing software
+      summary: Retrieve Comments
+      description: Retrieve Comments from any connected Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -1611,8 +1611,8 @@ paths:
   /ticketing/tags/{id}:
     get:
       operationId: retrieveTicketingTag
-      summary: Retrieve a Tag
-      description: Retrieve a tag from any connected Ticketing software
+      summary: Retrieve Tags
+      description: Retrieve Tags from any connected Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -1693,8 +1693,8 @@ paths:
   /ticketing/teams/{id}:
     get:
       operationId: retrieveTicketingTeam
-      summary: Retrieve a Team
-      description: Retrieve a team from any connected Ticketing software
+      summary: Retrieve Teams
+      description: Retrieve Teams from any connected Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -1931,8 +1931,8 @@ paths:
   /hris/bankinfos/{id}:
     get:
       operationId: retrieveHrisBankinfo
-      summary: Retrieve a Bankinfo
-      description: Retrieve a bankinfo from any connected Hris software
+      summary: Retrieve Bank Infos
+      description: Retrieve Bank Infos from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2013,8 +2013,8 @@ paths:
   /hris/benefits/{id}:
     get:
       operationId: retrieveHrisBenefit
-      summary: Retrieve a Benefit
-      description: Retrieve a benefit from any connected Hris software
+      summary: Retrieve Benefits
+      description: Retrieve Benefits from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2143,8 +2143,8 @@ paths:
   /hris/dependents/{id}:
     get:
       operationId: retrieveHrisDependent
-      summary: Retrieve a Dependent
-      description: Retrieve a dependent from any connected Hris software
+      summary: Retrieve Dependents
+      description: Retrieve Dependents from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2226,8 +2226,8 @@ paths:
   /hris/employeepayrollruns/{id}:
     get:
       operationId: retrieveHrisEmployeePayrollRun
-      summary: Retrieve a EmployeePayrollRun
-      description: Retrieve a employeepayrollrun from any connected Hris software
+      summary: Retrieve Employee Payroll Runs
+      description: Retrieve Employee Payroll Runs from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2307,8 +2307,8 @@ paths:
       x-speakeasy-group: hris.employees
     post:
       operationId: createHrisEmployee
-      summary: Create an Employee
-      description: Create an employee in any supported Hris software
+      summary: Create Employees
+      description: Create Employees in any supported Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2341,8 +2341,8 @@ paths:
   /hris/employees/{id}:
     get:
       operationId: retrieveHrisEmployee
-      summary: Retrieve an Employee
-      description: Retrieve an employee from any connected Hris software
+      summary: Retrieven Employees
+      description: Retrieven Employees from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2424,8 +2424,8 @@ paths:
   /hris/employerbenefits/{id}:
     get:
       operationId: retrieveHrisEmployerBenefit
-      summary: Retrieve a EmployerBenefit
-      description: Retrieve a employerbenefit from any connected Hris software
+      summary: Retrieve Employer Benefits
+      description: Retrieve Employer Benefits from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2506,8 +2506,8 @@ paths:
   /hris/employments/{id}:
     get:
       operationId: retrieveHrisEmployment
-      summary: Retrieve a Employment
-      description: Retrieve a employment from any connected Hris software
+      summary: Retrieve Employments
+      description: Retrieve Employments from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2588,8 +2588,8 @@ paths:
   /hris/groups/{id}:
     get:
       operationId: retrieveHrisGroup
-      summary: Retrieve a Group
-      description: Retrieve a group from any connected Hris software
+      summary: Retrieve Groups
+      description: Retrieve Groups from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2670,8 +2670,8 @@ paths:
   /hris/locations/{id}:
     get:
       operationId: retrieveHrisLocation
-      summary: Retrieve a Location
-      description: Retrieve a location from any connected Hris software
+      summary: Retrieve Locations
+      description: Retrieve Locations from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2752,8 +2752,8 @@ paths:
   /hris/paygroups/{id}:
     get:
       operationId: retrieveHrisPaygroup
-      summary: Retrieve a PayGroup
-      description: Retrieve a paygroup from any connected Hris software
+      summary: Retrieve Pay Groups
+      description: Retrieve Pay Groups from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2881,8 +2881,8 @@ paths:
       x-speakeasy-group: hris.timeoffs
     post:
       operationId: createHrisTimeoff
-      summary: Create a Timeoff
-      description: Create a timeoff in any supported Hris software
+      summary: Create Timeoffs
+      description: Create Timeoffs in any supported Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2915,8 +2915,8 @@ paths:
   /hris/timeoffs/{id}:
     get:
       operationId: retrieveHrisTimeoff
-      summary: Retrieve a Timeoff
-      description: Retrieve a timeoff from any connected Hris software
+      summary: Retrieve Timeoffs
+      description: Retrieve Timeoffs from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -2997,8 +2997,8 @@ paths:
   /hris/timeoffbalances/{id}:
     get:
       operationId: retrieveHrisTimeoffbalance
-      summary: Retrieve a TimeoffBalance
-      description: Retrieve a timeoffbalance from any connected Hris software
+      summary: Retrieve Time off Balances
+      description: Retrieve Time off Balances from any connected Hris software
       parameters:
         - name: x-connection-token
           required: true
@@ -3079,7 +3079,7 @@ paths:
       x-speakeasy-group: marketingautomation.actions
     post:
       operationId: createMarketingautomationAction
-      summary: Create a Action
+      summary: Create Action
       description: Create a action in any supported Marketingautomation software
       parameters:
         - name: x-connection-token
@@ -3115,8 +3115,8 @@ paths:
   /marketingautomation/actions/{id}:
     get:
       operationId: retrieveMarketingautomationAction
-      summary: Retrieve a Action
-      description: Retrieve a action from any connected Marketingautomation software
+      summary: Retrieve Actions
+      description: Retrieve Actions from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -3199,7 +3199,7 @@ paths:
       x-speakeasy-group: marketingautomation.automations
     post:
       operationId: createMarketingautomationAutomation
-      summary: Create a Automation
+      summary: Create Automation
       description: Create a automation in any supported Marketingautomation software
       parameters:
         - name: x-connection-token
@@ -3236,8 +3236,8 @@ paths:
   /marketingautomation/automations/{id}:
     get:
       operationId: retrieveMarketingautomationAutomation
-      summary: Retrieve a Automation
-      description: Retrieve a automation from any connected Marketingautomation software
+      summary: Retrieve Automations
+      description: Retrieve Automations from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -3320,7 +3320,7 @@ paths:
       x-speakeasy-group: marketingautomation.campaigns
     post:
       operationId: createMarketingautomationCampaign
-      summary: Create a Campaign
+      summary: Create Campaign
       description: Create a campaign in any supported Marketingautomation software
       parameters:
         - name: x-connection-token
@@ -3356,8 +3356,8 @@ paths:
   /marketingautomation/campaigns/{id}:
     get:
       operationId: retrieveMarketingautomationCampaign
-      summary: Retrieve a Campaign
-      description: Retrieve a campaign from any connected Marketingautomation software
+      summary: Retrieve Campaigns
+      description: Retrieve Campaigns from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -3440,7 +3440,7 @@ paths:
       x-speakeasy-group: marketingautomation.contacts
     post:
       operationId: createMarketingAutomationContact
-      summary: Create a Contact
+      summary: Create Contact
       description: Create a contact in any supported Marketingautomation software
       parameters:
         - name: x-connection-token
@@ -3476,8 +3476,8 @@ paths:
   /marketingautomation/contacts/{id}:
     get:
       operationId: retrieveMarketingAutomationContact
-      summary: Retrieve a Contact
-      description: Retrieve a contact from any connected Marketingautomation software
+      summary: Retrieve Contacts
+      description: Retrieve Contacts from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -3561,8 +3561,8 @@ paths:
   /marketingautomation/emails/{id}:
     get:
       operationId: retrieveMarketingautomationEmail
-      summary: Retrieve a Email
-      description: Retrieve a email from any connected Marketingautomation software
+      summary: Retrieve Emails
+      description: Retrieve Emails from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -3646,8 +3646,8 @@ paths:
   /marketingautomation/events/{id}:
     get:
       operationId: retrieveMarketingautomationEvent
-      summary: Retrieve a Event
-      description: Retrieve a event from any connected Marketingautomation software
+      summary: Retrieve Events
+      description: Retrieve Events from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -3730,8 +3730,8 @@ paths:
       x-speakeasy-group: marketingautomation.lists
     post:
       operationId: createMarketingautomationList
-      summary: Create a List
-      description: Create a list in any supported Marketingautomation software
+      summary: Create Lists
+      description: Create Lists in any supported Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -3766,8 +3766,8 @@ paths:
   /marketingautomation/lists/{id}:
     get:
       operationId: retrieveMarketingautomationList
-      summary: Retrieve a List
-      description: Retrieve a list from any connected Marketingautomation software
+      summary: Retrieve Lists
+      description: Retrieve Lists from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -3851,8 +3851,8 @@ paths:
   /marketingautomation/messages/{id}:
     get:
       operationId: retrieveMarketingautomationMessage
-      summary: Retrieve a Message
-      description: Retrieve a message from any connected Marketingautomation software
+      summary: Retrieve Messages
+      description: Retrieve Messages from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -3935,7 +3935,7 @@ paths:
       x-speakeasy-group: marketingautomation.templates
     post:
       operationId: createMarketingautomationTemplate
-      summary: Create a Template
+      summary: Create Template
       description: Create a template in any supported Marketingautomation software
       parameters:
         - name: x-connection-token
@@ -3971,8 +3971,8 @@ paths:
   /marketingautomation/templates/{id}:
     get:
       operationId: retrieveMarketingautomationTemplate
-      summary: Retrieve a Template
-      description: Retrieve a template from any connected Marketingautomation software
+      summary: Retrieve Templates
+      description: Retrieve Templates from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -4056,8 +4056,8 @@ paths:
   /marketingautomation/users/{id}:
     get:
       operationId: retrieveMarketingAutomationUser
-      summary: Retrieve a User
-      description: Retrieve a user from any connected Marketingautomation software
+      summary: Retrieve Users
+      description: Retrieve Users from any connected Marketingautomation software
       parameters:
         - name: x-connection-token
           required: true
@@ -4139,8 +4139,8 @@ paths:
       x-speakeasy-group: ats.activities
     post:
       operationId: createAtsActivity
-      summary: Create a Activity
-      description: Create a activity in any supported Ats software
+      summary: Create Activities
+      description: Create Activities in any supported Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4173,8 +4173,8 @@ paths:
   /ats/activities/{id}:
     get:
       operationId: retrieveAtsActivity
-      summary: Retrieve a Activity
-      description: Retrieve a activity from any connected Ats software
+      summary: Retrieve Activities
+      description: Retrieve Activities from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4254,8 +4254,8 @@ paths:
       x-speakeasy-group: ats.applications
     post:
       operationId: createAtsApplication
-      summary: Create an Application
-      description: Create an application in any supported Ats software
+      summary: Create Applications
+      description: Create Applications in any supported Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4288,8 +4288,8 @@ paths:
   /ats/applications/{id}:
     get:
       operationId: retrieveAtsApplication
-      summary: Retrieve an Application
-      description: Retrieve an application from any connected Ats software
+      summary: Retrieve Applications
+      description: Retrieve Applications from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4369,8 +4369,8 @@ paths:
       x-speakeasy-group: ats.attachments
     post:
       operationId: createAtsAttachment
-      summary: Create a Attachment
-      description: Create a attachment in any supported Ats software
+      summary: Create Attachments
+      description: Create Attachments in any supported ATS software
       parameters:
         - name: x-connection-token
           required: true
@@ -4403,8 +4403,8 @@ paths:
   /ats/attachments/{id}:
     get:
       operationId: retrieveAtsAttachment
-      summary: Retrieve a Attachment
-      description: Retrieve a attachment from any connected Ats software
+      summary: Retrieve Attachments
+      description: Retrieve Attachments from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4484,8 +4484,8 @@ paths:
       x-speakeasy-group: ats.candidates
     post:
       operationId: createAtsCandidate
-      summary: Create a Candidate
-      description: Create a candidate in any supported Ats software
+      summary: Create Candidates
+      description: Create Candidates in any supported Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4518,8 +4518,8 @@ paths:
   /ats/candidates/{id}:
     get:
       operationId: retrieveAtsCandidate
-      summary: Retrieve a Candidate
-      description: Retrieve a candidate from any connected Ats software
+      summary: Retrieve Candidates
+      description: Retrieve Candidates from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4600,8 +4600,8 @@ paths:
   /ats/departments/{id}:
     get:
       operationId: retrieveAtsDepartment
-      summary: Retrieve a Department
-      description: Retrieve a department from any connected Ats software
+      summary: Retrieve Departments
+      description: Retrieve Departments from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4681,8 +4681,8 @@ paths:
       x-speakeasy-group: ats.interviews
     post:
       operationId: createAtsInterview
-      summary: Create a Interview
-      description: Create a interview in any supported Ats software
+      summary: Create Interviews
+      description: Create Interviews in any supported Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4715,8 +4715,8 @@ paths:
   /ats/interviews/{id}:
     get:
       operationId: retrieveAtsInterview
-      summary: Retrieve a Interview
-      description: Retrieve a interview from any connected Ats software
+      summary: Retrieve Interviews
+      description: Retrieve Interviews from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4798,8 +4798,8 @@ paths:
   /ats/jobinterviewstages/{id}:
     get:
       operationId: retrieveAtsJobInterviewStage
-      summary: Retrieve a JobInterviewStage
-      description: Retrieve a jobinterviewstage from any connected Ats software
+      summary: Retrieve Job Interview Stages
+      description: Retrieve Job Interview Stages from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4880,8 +4880,8 @@ paths:
   /ats/jobs/{id}:
     get:
       operationId: retrieveAtsJob
-      summary: Retrieve a Job
-      description: Retrieve a job from any connected Ats software
+      summary: Retrieve Jobs
+      description: Retrieve Jobs from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -4962,8 +4962,8 @@ paths:
   /ats/offers/{id}:
     get:
       operationId: retrieveAtsOffer
-      summary: Retrieve a Offer
-      description: Retrieve a offer from any connected Ats software
+      summary: Retrieve Offers
+      description: Retrieve Offers from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -5044,8 +5044,8 @@ paths:
   /ats/ offices/{id}:
     get:
       operationId: retrieveAtsOffice
-      summary: Retrieve a Office
-      description: Retrieve a office from any connected Ats software
+      summary: Retrieve Offices
+      description: Retrieve Offices from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -5126,8 +5126,8 @@ paths:
   /ats/rejectreasons/{id}:
     get:
       operationId: retrieveAtsRejectReason
-      summary: Retrieve a RejectReason
-      description: Retrieve a rejectreason from any connected Ats software
+      summary: Retrieve Reject Reasons
+      description: Retrieve Reject Reasons from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -5208,8 +5208,8 @@ paths:
   /ats/scorecards/{id}:
     get:
       operationId: retrieveAtsScorecard
-      summary: Retrieve a ScoreCard
-      description: Retrieve a scorecard from any connected Ats software
+      summary: Retrieve Score Cards
+      description: Retrieve Score Cards from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -5290,8 +5290,8 @@ paths:
   /ats/tags/{id}:
     get:
       operationId: retrieveAtsTag
-      summary: Retrieve a Tag
-      description: Retrieve a tag from any connected Ats software
+      summary: Retrieve Tags
+      description: Retrieve Tags from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -5372,8 +5372,8 @@ paths:
   /ats/users/{id}:
     get:
       operationId: retrieveAtsUser
-      summary: Retrieve a User
-      description: Retrieve a user from any connected Ats software
+      summary: Retrieve Users
+      description: Retrieve Users from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -5454,7 +5454,7 @@ paths:
   /ats/eeocs/{id}:
     get:
       operationId: retrieveAtsEeocs
-      summary: Retrieve a Eeocs
+      summary: Retrieve Eeocs
       description: Retrieve a eeocs from any connected Ats software
       parameters:
         - name: x-connection-token
@@ -5535,8 +5535,8 @@ paths:
       x-speakeasy-group: accounting.accounts
     post:
       operationId: createAccountingAccount
-      summary: Create a Account
-      description: Create a account in any supported Accounting software
+      summary: Accounts
+      description: Create accounts in any supported Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -5569,8 +5569,8 @@ paths:
   /accounting/accounts/{id}:
     get:
       operationId: retrieveAccountingAccount
-      summary: Retrieve a Account
-      description: Retrieve a account from any connected Accounting software
+      summary: Retrieve Accounts
+      description: Retrieve Accounts from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -5651,8 +5651,8 @@ paths:
   /accounting/addresses/{id}:
     get:
       operationId: retrieveAccountingAddress
-      summary: Retrieve a Address
-      description: Retrieve a address from any connected Accounting software
+      summary: Retrieve Addresses
+      description: Retrieve Addresses from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -5733,8 +5733,8 @@ paths:
       x-speakeasy-group: accounting.attachments
     post:
       operationId: createAccountingAttachment
-      summary: Create a Attachment
-      description: Create a attachment in any supported Accounting software
+      summary: Create Attachments
+      description: Create attachments in any supported Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -5767,8 +5767,8 @@ paths:
   /accounting/attachments/{id}:
     get:
       operationId: retrieveAccountingAttachment
-      summary: Retrieve a Attachment
-      description: Retrieve a attachment from any connected Accounting software
+      summary: Retrieve Attachments
+      description: Retrieve attachments from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -5850,8 +5850,8 @@ paths:
   /accounting/balancesheets/{id}:
     get:
       operationId: retrieveAccountingBalanceSheet
-      summary: Retrieve a BalanceSheet
-      description: Retrieve a balancesheet from any connected Accounting software
+      summary: Retrieve BalanceSheets
+      description: Retrieve BalanceSheets from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -5933,8 +5933,8 @@ paths:
   /accounting/cashflowstatements/{id}:
     get:
       operationId: retrieveAccountingCashflowStatement
-      summary: Retrieve a CashflowStatement
-      description: Retrieve a cashflowstatement from any connected Accounting software
+      summary: Retrieve Cashflow Statements
+      description: Retrieve Cashflow Statements from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6016,8 +6016,8 @@ paths:
   /accounting/companyinfos/{id}:
     get:
       operationId: retrieveAccountingCompanyInfo
-      summary: Retrieve a CompanyInfo
-      description: Retrieve a companyinfo from any connected Accounting software
+      summary: Retrieve Company Infos
+      description: Retrieve Company Infos from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6097,8 +6097,8 @@ paths:
       x-speakeasy-group: accounting.contacts
     post:
       operationId: createAccountingContact
-      summary: Create a Contact
-      description: Create a contact in any supported Accounting software
+      summary: Create Contacts
+      description: Create contacts in any supported Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6131,8 +6131,8 @@ paths:
   /accounting/contacts/{id}:
     get:
       operationId: retrieveAccountingContact
-      summary: Retrieve a Contact
-      description: Retrieve a contact from any connected Accounting software
+      summary: Retrieve Contacts
+      description: Retrieve Contacts from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6214,8 +6214,8 @@ paths:
   /accounting/creditnotes/{id}:
     get:
       operationId: retrieveAccountingCreditNote
-      summary: Retrieve a CreditNote
-      description: Retrieve a creditnote from any connected Accounting software
+      summary: Retrieve Credit Notes
+      description: Retrieve Credit Notes from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6295,8 +6295,8 @@ paths:
       x-speakeasy-group: accounting.expenses
     post:
       operationId: createAccountingExpense
-      summary: Create a Expense
-      description: Create a expense in any supported Accounting software
+      summary: Create Expenses
+      description: Create Expenses in any supported Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6329,8 +6329,8 @@ paths:
   /accounting/expenses/{id}:
     get:
       operationId: retrieveAccountingExpense
-      summary: Retrieve a Expense
-      description: Retrieve a expense from any connected Accounting software
+      summary: Retrieve Expenses
+      description: Retrieve Expenses from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6412,8 +6412,8 @@ paths:
   /accounting/incomestatements/{id}:
     get:
       operationId: retrieveAccountingIncomeStatement
-      summary: Retrieve a IncomeStatement
-      description: Retrieve a incomestatement from any connected Accounting software
+      summary: Retrieve Income Statements
+      description: Retrieve Income Statements from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6493,8 +6493,8 @@ paths:
       x-speakeasy-group: accounting.invoices
     post:
       operationId: createAccountingInvoice
-      summary: Create a Invoice
-      description: Create a invoice in any supported Accounting software
+      summary: Create Invoices
+      description: Create invoices in any supported Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6527,8 +6527,8 @@ paths:
   /accounting/invoices/{id}:
     get:
       operationId: retrieveAccountingInvoice
-      summary: Retrieve a Invoice
-      description: Retrieve a invoice from any connected Accounting software
+      summary: Retrieve Invoices
+      description: Retrieve Invoices from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6609,8 +6609,8 @@ paths:
   /accounting/items/{id}:
     get:
       operationId: retrieveAccountingItem
-      summary: Retrieve a Item
-      description: Retrieve a item from any connected Accounting software
+      summary: Retrieve Items
+      description: Retrieve Items from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6691,8 +6691,8 @@ paths:
       x-speakeasy-group: accounting.journalentries
     post:
       operationId: createAccountingJournalEntry
-      summary: Create a JournalEntry
-      description: Create a journalentry in any supported Accounting software
+      summary: Create Journal Entries
+      description: Create Journal Entries in any supported Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6725,8 +6725,8 @@ paths:
   /accounting/journalentries/{id}:
     get:
       operationId: retrieveAccountingJournalEntry
-      summary: Retrieve a JournalEntry
-      description: Retrieve a journalentry from any connected Accounting software
+      summary: Retrieve Journal Entries
+      description: Retrieve Journal Entries from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6806,8 +6806,8 @@ paths:
       x-speakeasy-group: accounting.payments
     post:
       operationId: createAccountingPayment
-      summary: Create a Payment
-      description: Create a payment in any supported Accounting software
+      summary: Create Payments
+      description: Create Payments in any supported Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6840,8 +6840,8 @@ paths:
   /accounting/payments/{id}:
     get:
       operationId: retrieveAccountingPayment
-      summary: Retrieve a Payment
-      description: Retrieve a payment from any connected Accounting software
+      summary: Retrieve Payments
+      description: Retrieve Payments from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -6923,8 +6923,8 @@ paths:
   /accounting/phonenumbers/{id}:
     get:
       operationId: retrieveAccountingPhonenumber
-      summary: Retrieve a PhoneNumber
-      description: Retrieve a phonenumber from any connected Accounting software
+      summary: Retrieve Phone Numbers
+      description: Retrieve Phone Numbers from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -7005,8 +7005,8 @@ paths:
       x-speakeasy-group: accounting.purchaseorders
     post:
       operationId: createAccountingPurchaseOrder
-      summary: Create a PurchaseOrder
-      description: Create a purchaseorder in any supported Accounting software
+      summary: Create Purchase Orders
+      description: Create Purchase Orders in any supported Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -7039,8 +7039,8 @@ paths:
   /accounting/purchaseorders/{id}:
     get:
       operationId: retrieveAccountingPurchaseOrder
-      summary: Retrieve a PurchaseOrder
-      description: Retrieve a purchaseorder from any connected Accounting software
+      summary: Retrieve Purchase Orders
+      description: Retrieve Purchase Orders from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -7121,8 +7121,8 @@ paths:
   /accounting/taxrates/{id}:
     get:
       operationId: retrieveAccountingTaxRate
-      summary: Retrieve a TaxRate
-      description: Retrieve a taxrate from any connected Accounting software
+      summary: Retrieve Tax Rates
+      description: Retrieve Tax Rates from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -7204,8 +7204,8 @@ paths:
   /accounting/trackingcategories/{id}:
     get:
       operationId: retrieveAccountingTrackingCategory
-      summary: Retrieve a TrackingCategory
-      description: Retrieve a trackingcategory from any connected Accounting software
+      summary: Retrieve Tracking Categories
+      description: Retrieve Tracking Categories from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -7287,8 +7287,8 @@ paths:
   /accounting/transactions/{id}:
     get:
       operationId: retrieveAccountingTransaction
-      summary: Retrieve a Transaction
-      description: Retrieve a transaction from any connected Accounting software
+      summary: Retrieve Transactions
+      description: Retrieve Transactions from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -7370,8 +7370,8 @@ paths:
   /accounting/vendorcredits/{id}:
     get:
       operationId: retrieveAccountingVendorCredit
-      summary: Retrieve a VendorCredit
-      description: Retrieve a vendorcredit from any connected Accounting software
+      summary: Retrieve Vendor Credits
+      description: Retrieve Vendor Credits from any connected Accounting software
       parameters:
         - name: x-connection-token
           required: true
@@ -7452,8 +7452,8 @@ paths:
   /filestorage/drives/{id}:
     get:
       operationId: retrieveFilestorageDrive
-      summary: Retrieve a Drive
-      description: Retrieve a drive from any connected Filestorage software
+      summary: Retrieve Drives
+      description: Retrieve Drives from any connected Filestorage software
       parameters:
         - name: x-connection-token
           required: true
@@ -7533,8 +7533,8 @@ paths:
       x-speakeasy-group: filestorage.files
     post:
       operationId: createFilestorageFile
-      summary: Create a File
-      description: Create a file in any supported Filestorage software
+      summary: Create Files
+      description: Create Files in any supported Filestorage software
       parameters:
         - name: x-connection-token
           required: true
@@ -7566,8 +7566,8 @@ paths:
   /filestorage/files/{id}:
     get:
       operationId: retrieveFilestorageFile
-      summary: Retrieve a File
-      description: Retrieve a file from any connected Filestorage software
+      summary: Retrieve Files
+      description: Retrieve Files from any connected Filestorage software
       parameters:
         - name: x-connection-token
           required: true
@@ -7647,8 +7647,8 @@ paths:
       x-speakeasy-group: filestorage.folders
     post:
       operationId: createFilestorageFolder
-      summary: Create a Folder
-      description: Create a folder in any supported Filestorage software
+      summary: Create Folders
+      description: Create Folders in any supported Filestorage software
       parameters:
         - name: x-connection-token
           required: true
@@ -7680,8 +7680,8 @@ paths:
   /filestorage/folders/{id}:
     get:
       operationId: retrieveFilestorageFolder
-      summary: Retrieve a Folder
-      description: Retrieve a folder from any connected Filestorage software
+      summary: Retrieve Folders
+      description: Retrieve Folders from any connected Filestorage software
       parameters:
         - name: x-connection-token
           required: true
@@ -7762,8 +7762,8 @@ paths:
   /filestorage/groups/{id}:
     get:
       operationId: retrieveFilestorageGroup
-      summary: Retrieve a Group
-      description: Retrieve a permission from any connected Filestorage software
+      summary: Retrieve Groups
+      description: Retrieve Groups from any connected Filestorage software
       parameters:
         - name: x-connection-token
           required: true
@@ -7844,8 +7844,8 @@ paths:
   /filestorage/users/{id}:
     get:
       operationId: retrieveFilestorageUser
-      summary: Retrieve a User
-      description: Retrieve a permission from any connected Filestorage software
+      summary: Retrieve Users
+      description: Retrieve Users from any connected Filestorage software
       parameters:
         - name: x-connection-token
           required: true
@@ -7926,8 +7926,8 @@ paths:
       x-speakeasy-group: ticketing.attachments
     post:
       operationId: createTicketingAttachment
-      summary: Create a Attachment
-      description: Create a attachment in any supported Ticketing software
+      summary: Create Attachments
+      description: Create Attachments in any supported Ticketing software
       parameters:
         - name: x-connection-token
           required: true
@@ -7960,8 +7960,8 @@ paths:
   /ticketing/attachments/{id}:
     get:
       operationId: retrieveTicketingAttachment
-      summary: Retrieve a Attachment
-      description: Retrieve a attachment from any connected Ticketing software
+      summary: Retrieve Attachments
+      description: Retrieve Attachments from any connected Ticketing software
       parameters:
         - name: x-connection-token
           required: true

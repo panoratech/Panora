@@ -87,8 +87,8 @@ export class DealController {
 
   @ApiOperation({
     operationId: 'retrieveCrmDeal',
-    summary: 'Retrieve a Deal',
-    description: 'Retrieve a deal from any connected Crm software',
+    summary: 'Retrieve Deals',
+    description: 'Retrieve Deals from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
@@ -130,8 +130,8 @@ export class DealController {
 
   @ApiOperation({
     operationId: 'createCrmDeal',
-    summary: 'Create a Deal',
-    description: 'Create a deal in any supported Crm software',
+    summary: 'Create Deals',
+    description: 'Create Deals in any supported Crm software',
   })
   @ApiHeader({
     name: 'x-connection-token',

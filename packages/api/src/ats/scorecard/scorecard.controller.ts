@@ -80,8 +80,8 @@ export class ScoreCardController {
 
   @ApiOperation({
     operationId: 'retrieveAtsScorecard',
-    summary: 'Retrieve a ScoreCard',
-    description: 'Retrieve a scorecard from any connected Ats software',
+    summary: 'Retrieve Score Cards',
+    description: 'Retrieve Score Cards from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

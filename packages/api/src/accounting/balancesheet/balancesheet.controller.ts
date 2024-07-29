@@ -80,9 +80,9 @@ export class BalanceSheetController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingBalanceSheet',
-    summary: 'Retrieve a BalanceSheet',
+    summary: 'Retrieve BalanceSheets',
     description:
-      'Retrieve a balancesheet from any connected Accounting software',
+      'Retrieve BalanceSheets from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

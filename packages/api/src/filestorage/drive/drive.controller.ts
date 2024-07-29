@@ -79,8 +79,8 @@ export class DriveController {
 
   @ApiOperation({
     operationId: 'retrieveFilestorageDrive',
-    summary: 'Retrieve a Drive',
-    description: 'Retrieve a drive from any connected Filestorage software',
+    summary: 'Retrieve Drives',
+    description: 'Retrieve Drives from any connected Filestorage software',
   })
   @ApiParam({
     name: 'id',

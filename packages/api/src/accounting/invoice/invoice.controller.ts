@@ -84,8 +84,8 @@ export class InvoiceController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingInvoice',
-    summary: 'Retrieve a Invoice',
-    description: 'Retrieve a invoice from any connected Accounting software',
+    summary: 'Retrieve Invoices',
+    description: 'Retrieve Invoices from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -128,8 +128,8 @@ export class InvoiceController {
 
   @ApiOperation({
     operationId: 'createAccountingInvoice',
-    summary: 'Create a Invoice',
-    description: 'Create a invoice in any supported Accounting software',
+    summary: 'Create Invoices',
+    description: 'Create invoices in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',

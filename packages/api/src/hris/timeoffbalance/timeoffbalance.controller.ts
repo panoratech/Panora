@@ -80,8 +80,8 @@ export class TimeoffBalanceController {
 
   @ApiOperation({
     operationId: 'retrieveHrisTimeoffbalance',
-    summary: 'Retrieve a TimeoffBalance',
-    description: 'Retrieve a timeoffbalance from any connected Hris software',
+    summary: 'Retrieve Time off Balances',
+    description: 'Retrieve Time off Balances from any connected Hris software',
   })
   @ApiParam({
     name: 'id',

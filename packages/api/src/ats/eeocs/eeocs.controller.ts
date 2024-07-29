@@ -80,7 +80,7 @@ export class EeocsController {
 
   @ApiOperation({
     operationId: 'retrieveAtsEeocs', // Updated operationId
-    summary: 'Retrieve a Eeocs',
+    summary: 'Retrieve Eeocs',
     description: 'Retrieve a eeocs from any connected Ats software',
   })
   @ApiParam({

@@ -76,8 +76,8 @@ export class AccountController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingAccount',
-    summary: 'Retrieve an Account',
-    description: 'Retrieve an account from any connected Ticketing software',
+    summary: 'Retrieve Accounts',
+    description: 'Retrieve Accounts from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',

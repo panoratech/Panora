@@ -86,9 +86,9 @@ export class GroupController {
 
   @ApiOperation({
     operationId: 'retrieveFilestorageGroup',
-    summary: 'Retrieve a Group',
+    summary: 'Retrieve Groups',
     description:
-      'Retrieve a permission from any connected Filestorage software',
+      'Retrieve Groups from any connected Filestorage software',
   })
   @ApiParam({
     name: 'id',

@@ -80,8 +80,8 @@ export class OfficeController {
 
   @ApiOperation({
     operationId: 'retrieveAtsOffice',
-    summary: 'Retrieve a Office',
-    description: 'Retrieve a office from any connected Ats software',
+    summary: 'Retrieve Offices',
+    description: 'Retrieve Offices from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
