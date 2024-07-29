@@ -89,8 +89,8 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'retrieveCrmContact',
-    summary: 'Retrieve a CRM Contact',
-    description: 'Retrieve a contact from any connected CRM',
+    summary: 'Retrieve Contacts',
+    description: 'Retrieve Contacts from any connected CRM',
   })
   @ApiParam({
     name: 'id',
@@ -132,8 +132,8 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'createCrmContact',
-    summary: 'Create CRM Contact',
-    description: 'Create a contact in any supported CRM',
+    summary: 'Create Contacts',
+    description: 'Create Contacts in any supported CRM',
   })
   @ApiHeader({
     name: 'x-connection-token',

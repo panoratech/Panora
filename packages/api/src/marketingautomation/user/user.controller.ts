@@ -83,9 +83,9 @@ export class UserController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingAutomationUser',
-    summary: 'Retrieve a User',
+    summary: 'Retrieve Users',
     description:
-      'Retrieve a user from any connected Marketingautomation software',
+      'Retrieve Users from any connected Marketingautomation software',
   })
   @ApiHeader({
     name: 'x-connection-token',

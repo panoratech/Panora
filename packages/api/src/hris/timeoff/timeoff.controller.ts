@@ -84,8 +84,8 @@ export class TimeoffController {
 
   @ApiOperation({
     operationId: 'retrieveHrisTimeoff',
-    summary: 'Retrieve a Timeoff',
-    description: 'Retrieve a timeoff from any connected Hris software',
+    summary: 'Retrieve Timeoffs',
+    description: 'Retrieve Timeoffs from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
@@ -127,8 +127,8 @@ export class TimeoffController {
 
   @ApiOperation({
     operationId: 'createHrisTimeoff',
-    summary: 'Create a Timeoff',
-    description: 'Create a timeoff in any supported Hris software',
+    summary: 'Create Timeoffs',
+    description: 'Create Timeoffs in any supported Hris software',
   })
   @ApiHeader({
     name: 'x-connection-token',

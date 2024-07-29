@@ -80,9 +80,9 @@ export class CompanyInfoController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingCompanyInfo',
-    summary: 'Retrieve a CompanyInfo',
+    summary: 'Retrieve Company Infos',
     description:
-      'Retrieve a companyinfo from any connected Accounting software',
+      'Retrieve Company Infos from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

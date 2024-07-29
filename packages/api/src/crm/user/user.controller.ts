@@ -76,8 +76,8 @@ export class UserController {
 
   @ApiOperation({
     operationId: 'retrieveCrmUser',
-    summary: 'Retrieve a User',
-    description: 'Retrieve a user from any connected Crm software',
+    summary: 'Retrieve Users',
+    description: 'Retrieve Users from any connected Crm software',
   })
   @ApiParam({
     name: 'id',

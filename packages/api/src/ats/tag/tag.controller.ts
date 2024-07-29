@@ -77,8 +77,8 @@ export class TagController {
 
   @ApiOperation({
     operationId: 'retrieveAtsTag',
-    summary: 'Retrieve a Tag',
-    description: 'Retrieve a tag from any connected Ats software',
+    summary: 'Retrieve Tags',
+    description: 'Retrieve Tags from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

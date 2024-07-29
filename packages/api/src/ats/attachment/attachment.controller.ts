@@ -84,8 +84,8 @@ export class AttachmentController {
 
   @ApiOperation({
     operationId: 'retrieveAtsAttachment',
-    summary: 'Retrieve a Attachment',
-    description: 'Retrieve a attachment from any connected Ats software',
+    summary: 'Retrieve Attachments',
+    description: 'Retrieve Attachments from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
@@ -127,8 +127,8 @@ export class AttachmentController {
 
   @ApiOperation({
     operationId: 'createAtsAttachment',
-    summary: 'Create a Attachment',
-    description: 'Create a attachment in any supported Ats software',
+    summary: 'Create Attachments',
+    description: 'Create Attachments in any supported ATS software',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -80,8 +80,8 @@ export class TaxRateController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingTaxRate',
-    summary: 'Retrieve a TaxRate',
-    description: 'Retrieve a taxrate from any connected Accounting software',
+    summary: 'Retrieve Tax Rates',
+    description: 'Retrieve Tax Rates from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

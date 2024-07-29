@@ -83,8 +83,8 @@ export class ActivityController {
 
   @ApiOperation({
     operationId: 'retrieveAtsActivity',
-    summary: 'Retrieve a Activity',
-    description: 'Retrieve a activity from any connected Ats software',
+    summary: 'Retrieve Activities',
+    description: 'Retrieve Activities from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
@@ -126,8 +126,8 @@ export class ActivityController {
 
   @ApiOperation({
     operationId: 'createAtsActivity',
-    summary: 'Create a Activity',
-    description: 'Create a activity in any supported Ats software',
+    summary: 'Create Activities',
+    description: 'Create Activities in any supported Ats software',
   })
   @ApiHeader({
     name: 'x-connection-token',

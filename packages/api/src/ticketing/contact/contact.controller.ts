@@ -76,8 +76,8 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingContact',
-    summary: 'Retrieve a Contact',
-    description: 'Retrieve a contact from any connected Ticketing software',
+    summary: 'Retrieve Contacts',
+    description: 'Retrieve Contacts from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',

@@ -80,9 +80,9 @@ export class IncomeStatementController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingIncomeStatement',
-    summary: 'Retrieve a IncomeStatement',
+    summary: 'Retrieve Income Statements',
     description:
-      'Retrieve a incomestatement from any connected Accounting software',
+      'Retrieve Income Statements from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

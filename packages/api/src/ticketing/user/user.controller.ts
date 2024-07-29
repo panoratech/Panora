@@ -73,8 +73,8 @@ export class UserController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingUser',
-    summary: 'Retrieve a User',
-    description: 'Retrieve a user from any connected Ticketing software',
+    summary: 'Retrieve Users',
+    description: 'Retrieve Users from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',

@@ -84,8 +84,8 @@ export class InterviewController {
 
   @ApiOperation({
     operationId: 'retrieveAtsInterview', // Updated operationId
-    summary: 'Retrieve a Interview',
-    description: 'Retrieve a interview from any connected Ats software',
+    summary: 'Retrieve Interviews',
+    description: 'Retrieve Interviews from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
@@ -127,8 +127,8 @@ export class InterviewController {
 
   @ApiOperation({
     operationId: 'createAtsInterview', // Updated operationId
-    summary: 'Create a Interview',
-    description: 'Create a interview in any supported Ats software',
+    summary: 'Create Interviews',
+    description: 'Create Interviews in any supported Ats software',
   })
   @ApiHeader({
     name: 'x-connection-token',

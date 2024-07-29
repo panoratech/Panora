@@ -87,8 +87,8 @@ export class AttachmentController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingAttachment',
-    summary: 'Retrieve a Attachment',
-    description: 'Retrieve a attachment from any connected Ticketing software',
+    summary: 'Retrieve Attachments',
+    description: 'Retrieve Attachments from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
@@ -131,8 +131,8 @@ export class AttachmentController {
 
   @ApiOperation({
     operationId: 'createTicketingAttachment',
-    summary: 'Create a Attachment',
-    description: 'Create a attachment in any supported Ticketing software',
+    summary: 'Create Attachments',
+    description: 'Create Attachments in any supported Ticketing software',
   })
   @ApiHeader({
     name: 'x-connection-token',

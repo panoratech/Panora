@@ -88,8 +88,8 @@ export class TicketController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingTicket',
-    summary: 'Retrieve a Ticket',
-    description: 'Retrieve a ticket from any connected Ticketing software',
+    summary: 'Retrieve Tickets',
+    description: 'Retrieve Tickets from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
@@ -132,8 +132,8 @@ export class TicketController {
 
   @ApiOperation({
     operationId: 'createTicketingTicket',
-    summary: 'Create a Ticket',
-    description: 'Create a ticket in any supported Ticketing software',
+    summary: 'Create Tickets',
+    description: 'Create Tickets in any supported Ticketing software',
   })
   @ApiHeader({
     name: 'x-connection-token',

@@ -83,9 +83,9 @@ export class MessageController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingautomationMessage',
-    summary: 'Retrieve a Message',
+    summary: 'Retrieve Messages',
     description:
-      'Retrieve a message from any connected Marketingautomation software',
+      'Retrieve Messages from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',

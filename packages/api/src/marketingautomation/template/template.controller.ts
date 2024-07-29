@@ -84,9 +84,9 @@ export class TemplateController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingautomationTemplate',
-    summary: 'Retrieve a Template',
+    summary: 'Retrieve Templates',
     description:
-      'Retrieve a template from any connected Marketingautomation software',
+      'Retrieve Templates from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
@@ -129,7 +129,7 @@ export class TemplateController {
 
   @ApiOperation({
     operationId: 'createMarketingautomationTemplate',
-    summary: 'Create a Template',
+    summary: 'Create Template',
     description:
       'Create a template in any supported Marketingautomation software',
   })

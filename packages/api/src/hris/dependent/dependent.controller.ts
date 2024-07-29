@@ -80,8 +80,8 @@ export class DependentController {
 
   @ApiOperation({
     operationId: 'retrieveHrisDependent',
-    summary: 'Retrieve a Dependent',
-    description: 'Retrieve a dependent from any connected Hris software',
+    summary: 'Retrieve Dependents',
+    description: 'Retrieve Dependents from any connected Hris software',
   })
   @ApiParam({
     name: 'id',

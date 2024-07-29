@@ -83,8 +83,8 @@ export class CreditNoteController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingCreditNote',
-    summary: 'Retrieve a CreditNote',
-    description: 'Retrieve a creditnote from any connected Accounting software',
+    summary: 'Retrieve Credit Notes',
+    description: 'Retrieve Credit Notes from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',

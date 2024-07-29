@@ -84,8 +84,8 @@ export class AccountController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingAccount',
-    summary: 'Retrieve a Account',
-    description: 'Retrieve a account from any connected Accounting software',
+    summary: 'Retrieve Accounts',
+    description: 'Retrieve Accounts from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -128,8 +128,8 @@ export class AccountController {
 
   @ApiOperation({
     operationId: 'createAccountingAccount',
-    summary: 'Create a Account',
-    description: 'Create a account in any supported Accounting software',
+     Accounts',
+    description: 'Create accounts in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',

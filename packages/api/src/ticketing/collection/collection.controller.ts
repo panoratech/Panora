@@ -83,8 +83,8 @@ export class CollectionController {
 
   @ApiOperation({
     operationId: 'retrieveCollection',
-    summary: 'Retrieve a Collection',
-    description: 'Retrieve a collection from any connected Ticketing software',
+    summary: 'Retrieve Collections',
+    description: 'Retrieve Collections from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',

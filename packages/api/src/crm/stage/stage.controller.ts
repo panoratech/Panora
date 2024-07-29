@@ -76,8 +76,8 @@ export class StageController {
 
   @ApiOperation({
     operationId: 'retrieveCrmStage',
-    summary: 'Retrieve a Stage',
-    description: 'Retrieve a stage from any connected Crm software',
+    summary: 'Retrieve Stages',
+    description: 'Retrieve Stages from any connected Crm software',
   })
   @ApiParam({
     name: 'id',

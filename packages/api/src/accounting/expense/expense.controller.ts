@@ -84,8 +84,8 @@ export class ExpenseController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingExpense',
-    summary: 'Retrieve a Expense',
-    description: 'Retrieve a expense from any connected Accounting software',
+    summary: 'Retrieve Expenses',
+    description: 'Retrieve Expenses from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -128,8 +128,8 @@ export class ExpenseController {
 
   @ApiOperation({
     operationId: 'createAccountingExpense',
-    summary: 'Create a Expense',
-    description: 'Create a expense in any supported Accounting software',
+    summary: 'Create Expenses',
+    description: 'Create Expenses in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',

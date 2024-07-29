@@ -87,8 +87,8 @@ export class CommentController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingComment',
-    summary: 'Retrieve a Comment',
-    description: 'Retrieve a comment from any connected Ticketing software',
+    summary: 'Retrieve Comments',
+    description: 'Retrieve Comments from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
@@ -131,8 +131,8 @@ export class CommentController {
 
   @ApiOperation({
     operationId: 'createTicketingComment',
-    summary: 'Create a Comment',
-    description: 'Create a comment in any supported Ticketing software',
+    summary: 'Create Comments',
+    description: 'Create Comments in any supported Ticketing software',
   })
   @ApiHeader({
     name: 'x-connection-token',

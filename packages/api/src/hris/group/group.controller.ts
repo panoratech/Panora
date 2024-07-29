@@ -80,8 +80,8 @@ export class GroupController {
 
   @ApiOperation({
     operationId: 'retrieveHrisGroup',
-    summary: 'Retrieve a Group',
-    description: 'Retrieve a group from any connected Hris software',
+    summary: 'Retrieve Groups',
+    description: 'Retrieve Groups from any connected Hris software',
   })
   @ApiParam({
     name: 'id',

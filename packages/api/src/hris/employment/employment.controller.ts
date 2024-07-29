@@ -80,8 +80,8 @@ export class EmploymentController {
 
   @ApiOperation({
     operationId: 'retrieveHrisEmployment',
-    summary: 'Retrieve a Employment',
-    description: 'Retrieve a employment from any connected Hris software',
+    summary: 'Retrieve Employments',
+    description: 'Retrieve Employments from any connected Hris software',
   })
   @ApiParam({
     name: 'id',

@@ -84,9 +84,9 @@ export class JournalEntryController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingJournalEntry',
-    summary: 'Retrieve a JournalEntry',
+    summary: 'Retrieve Journal Entries',
     description:
-      'Retrieve a journalentry from any connected Accounting software',
+      'Retrieve Journal Entries from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
@@ -129,8 +129,8 @@ export class JournalEntryController {
 
   @ApiOperation({
     operationId: 'createAccountingJournalEntry',
-    summary: 'Create a JournalEntry',
-    description: 'Create a journalentry in any supported Accounting software',
+    summary: 'Create Journal Entries',
+    description: 'Create Journal Entries in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',
