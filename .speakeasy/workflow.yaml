@@ -5,6 +5,6 @@ sources:
             - location: registry.speakeasyapi.dev/panora/panora/panora-open-api-swagger
         overlays:
             - location: registry.speakeasyapi.dev/panora/panora/code-samples-typescript-my-first-target:main
-            - location: registry.speakeasyapi.dev/panora/panora/code-samples-python
+            - location: registry.speakeasyapi.dev/panora/panora/code-samples-python:main
         output: docs/openapi-with-code-samples.json
 targets: {}
