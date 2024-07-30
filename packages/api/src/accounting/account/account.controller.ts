@@ -128,7 +128,7 @@ export class AccountController {
 
   @ApiOperation({
     operationId: 'createAccountingAccount',
-    summary: 'Accounts',
+    summary: 'Create Accounts',
     description: 'Create accounts in any supported Accounting software',
   })
   @ApiHeader({

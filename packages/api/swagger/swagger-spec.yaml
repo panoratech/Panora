@@ -5535,7 +5535,7 @@ paths:
       x-speakeasy-group: accounting.accounts
     post:
       operationId: createAccountingAccount
-      summary: Accounts
+      summary: Create Accounts
       description: Create accounts in any supported Accounting software
       parameters:
         - name: x-connection-token
