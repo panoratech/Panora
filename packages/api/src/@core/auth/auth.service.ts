@@ -1,7 +1,12 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ProjectsService } from '@@core/projects/projects.service';
-import { AuthError } from '@@core/utils/errors';
-import { Injectable } from '@nestjs/common';
+import { MailerService } from '@nestjs-modules/mailer';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
@@ -10,7 +15,6 @@ import { PrismaService } from '../@core-services/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
-import { ConflictException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -19,8 +23,64 @@ export class AuthService {
     private projectService: ProjectsService,
     private jwtService: JwtService,
     private logger: LoggerService,
+    private mailerService: MailerService,
   ) {
     this.logger.setContext(AuthService.name);
+  }
+
+  async initiatePasswordRecovery(email: string) {
+    const user = await this.prisma.users.findFirst({ where: { email } }); //todo: put unique in db on email
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
+
+    await this.prisma.users.update({
+      where: { id_user: user.id_user },
+      data: { reset_token: resetToken, reset_token_expiry: resetTokenExpiry },
+    });
+
+    const resetUrl = `${process.env.WEBAPP_URL}/reset-password?token=${resetToken}`;
+
+    await this.mailerService.sendMail({
+      to: user.email,
+      subject: 'Password Reset Request',
+      template: './../mailer/templates/password-reset',
+      context: {
+        name: user.first_name,
+        resetUrl,
+      },
+    });
+
+    return { message: 'Password reset email sent' };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.prisma.users.findFirst({
+      where: {
+        reset_token: token,
+        reset_token_expiry: { gt: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.prisma.users.update({
+      where: { id_user: user.id_user },
+      data: {
+        password_hash: hashedPassword,
+        reset_token: null,
+        reset_token_expiry: null,
+      },
+    });
+
+    return { message: 'Password reset successful' };
   }
 
   async getUsers() {
@@ -68,7 +128,9 @@ export class AuthService {
       });
 
       if (foundUser) {
-        throw new ConflictException(`Email already exists. Try resetting your password.`);
+        throw new ConflictException(
+          `Email already exists. Try resetting your password.`,
+        );
       }
       return await this.createUser(user);
     } catch (error) {

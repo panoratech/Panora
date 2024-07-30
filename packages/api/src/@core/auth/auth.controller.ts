@@ -22,6 +22,8 @@ import {
 import { ApiKeyDto } from './dto/api-key.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { PasswordRecoveryDto } from './dto/password-recovery.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @ApiTags('auth')
 @ApiExcludeController()
@@ -32,6 +34,30 @@ export class AuthController {
     private logger: LoggerService,
   ) {
     this.logger.setContext(AuthController.name);
+  }
+
+  @ApiOperation({
+    operationId: 'initiatePasswordRecovery',
+    summary: 'Initiate Password Recovery',
+  })
+  @ApiBody({ type: PasswordRecoveryDto })
+  @ApiResponse({ status: 200 })
+  @Post('forgot-password')
+  async initiatePasswordRecovery(
+    @Body() passwordRecoveryDto: PasswordRecoveryDto,
+  ) {
+    return this.authService.initiatePasswordRecovery(passwordRecoveryDto.email);
+  }
+
+  @ApiOperation({ operationId: 'resetPassword', summary: 'Reset Password' })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({ status: 200 })
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto.newPassword,
+    );
   }
 
   @ApiOperation({ operationId: 'signUp', summary: 'Register' })

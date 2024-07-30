@@ -12,12 +12,14 @@ import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import useProfileStore from "@/state/profileStore";
 import useUser from "@/hooks/get/useUser";
+import { Button } from "@/components/ui/button";
 
 export default function Page() {
     const [userInitialized,setUserInitialized] = useState(true)
     const {mutate} = useUser()
     const router = useRouter()
     const {profile} = useProfileStore();
+    const [activeTab, setActiveTab] = useState('login');
 
     useEffect(() => {
         if(profile)
@@ -70,6 +72,16 @@ export default function Page() {
                             <CreateUserForm/>
                         </TabsContent>
                     </Tabs>
+                    {activeTab === 'login' && (
+                        <Button variant="link" onClick={() => setActiveTab('forgot-password')}>
+                            Forgot Password?
+                        </Button>
+                    )}
+                    {activeTab === 'forgot-password' && (
+                        <Button variant="link" onClick={() => setActiveTab('login')}>
+                            Back to Login
+                        </Button>
+                    )}
                 </div>       
                 <div className='hidden lg:block relative flex-1'>
                     <img className='absolute inset-0 h-full w-full object-cover border-l' src="/bgbg.jpeg" alt='Login Page Image' />

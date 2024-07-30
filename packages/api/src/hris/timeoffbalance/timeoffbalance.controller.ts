@@ -28,7 +28,10 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('hris/timeoffbalances')

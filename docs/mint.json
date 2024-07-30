@@ -857,6 +857,7 @@
         {
             "group": "Recipes",
             "pages": [
+                "recipes/frontend-sdk",
                 "recipes/embed-catalog",
                 "recipes/import-existing-users",
                 "recipes/catch-connection-token",
@@ -903,12 +904,29 @@
             ]
         },
         {
-            "group": "Open-Source",
-            "pages": [
-                "open-source/self-hosting/guide",
-                "open-source/contributors/setup"
+            "group":"Open-Source",
+            "pages":[
+               {
+                  "group":"Selfhost",
+                  "icon":"house-laptop",
+                  "pages":[
+                     "open-source/selfhost/self-host-guide",
+                     "open-source/selfhost/envVariables",
+                     "open-source/selfhost/ngrok"
+                  ]
+               },
+               {
+                  "group":"Build a connector",
+                  "icon":"star",
+                  "pages":[
+                     "open-source/contributors/setup",
+                     "open-source/contributors/metadata",
+                     "open-source/contributors/build",
+                     "open-source/contributors/test"
+                  ]
+               }
             ]
-        },
+         },
         {
             "group": "Support",
             "pages": [

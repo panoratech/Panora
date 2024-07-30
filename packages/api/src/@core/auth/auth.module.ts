@@ -8,6 +8,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ApiKeyStrategy } from './strategies/auth-header-api-key.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { MailModule } from '@@core/mailer/module';
 
 @Module({
   controllers: [AuthController],
@@ -22,6 +23,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   ],
   imports: [
     PassportModule,
+    MailModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
     }),
