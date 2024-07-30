@@ -32,7 +32,7 @@ import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/op
 
 @ApiBearerAuth('bearer')
 @ApiTags('ats/offices')
-@Controller('ats/ offices')
+@Controller('ats/offices')
 export class OfficeController {
   constructor(
     private readonly officeService: OfficeService,
@@ -44,7 +44,7 @@ export class OfficeController {
 
   @ApiOperation({
     operationId: 'listAtsOffice',
-    summary: 'List  Offices',
+    summary: 'List Offices',
   })
   @ApiHeader({
     name: 'x-connection-token',
