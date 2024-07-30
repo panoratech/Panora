@@ -4993,10 +4993,10 @@ paths:
       tags: *ref_96
       security: *ref_97
       x-speakeasy-group: ats.offers
-  /ats/ offices:
+  /ats/offices:
     get:
       operationId: listAtsOffice
-      summary: List  Offices
+      summary: List Offices
       parameters:
         - name: x-connection-token
           required: true
@@ -5040,8 +5040,8 @@ paths:
         - ats/offices
       security: &ref_99
         - bearer: []
-      x-speakeasy-group: ats. offices
-  /ats/ offices/{id}:
+      x-speakeasy-group: ats.offices
+  /ats/offices/{id}:
     get:
       operationId: retrieveAtsOffice
       summary: Retrieve Offices
@@ -5074,7 +5074,7 @@ paths:
                 $ref: '#/components/schemas/UnifiedAtsOfficeOutput'
       tags: *ref_98
       security: *ref_99
-      x-speakeasy-group: ats. offices
+      x-speakeasy-group: ats.offices
   /ats/rejectreasons:
     get:
       operationId: listAtsRejectReasons
