@@ -9,10 +9,10 @@ export class ResetPasswordDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  newPassword: string;
+  new_password: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  resetToken: string;
+  reset_token: string;
 }

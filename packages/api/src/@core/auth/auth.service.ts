@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    const { email, newPassword, resetToken } = resetPasswordDto;
+    const { email, new_password, reset_token } = resetPasswordDto;
 
     // verify there is a user with corresponding email and non-expired reset token
     const checkResetRequestIsValid = await this.prisma.users.findFirst({
@@ -44,14 +44,14 @@ export class AuthService {
     }
 
     // Verify the reset token 
-    const isValidToken = await this.verifyResetToken(checkResetRequestIsValid.reset_token, resetToken);
+    const isValidToken = await this.verifyResetToken(checkResetRequestIsValid.reset_token, reset_token);
 
     if (!isValidToken) {
       throw new BadRequestException('Invalid reset token');
     }
 
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(new_password, 10);
 
     // Update the user's password in the database
     const updatedPassword =await this.prisma.users.update({
