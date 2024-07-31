@@ -161,6 +161,10 @@ services:
       HELPSCOUT_TICKETING_CLOUD_CLIENT_SECRET: ${HELPSCOUT_TICKETING_CLOUD_CLIENT_SECRET}
       IRONCLAD_TICKETING_CLOUD_CLIENT_ID: ${IRONCLAD_TICKETING_CLOUD_CLIENT_ID}
       IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET: ${IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
 
     restart: unless-stopped
     ports:
@@ -195,47 +199,47 @@ services:
       retries: 5
       start_period: 10s
     
-  webapp-nextjs:
-    build:
-      dockerfile: ./apps/webapp/Dockerfile.dev
-      context: ./
-      args:
-        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
-    environment:
-      NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
-      NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
-      NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
-      NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
-      NEXT_PUBLIC_REDIRECT_WEBHOOK_INGRESS: ${REDIRECT_TUNNEL_INGRESS} 
-    restart: unless-stopped
-    ports:
-      - 80:8090
-    depends_on:
-      api:
-        condition: service_healthy
-    volumes:
-      - .:/app
-    networks:
-      - backend
-      - frontend
+  # webapp-nextjs:
+  #   build:
+  #     dockerfile: ./apps/webapp/Dockerfile.dev
+  #     context: ./
+  #     args:
+  #       VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+  #   environment:
+  #     NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
+  #     NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+  #     NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
+  #     NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
+  #     NEXT_PUBLIC_REDIRECT_WEBHOOK_INGRESS: ${REDIRECT_TUNNEL_INGRESS} 
+  #   restart: unless-stopped
+  #   ports:
+  #     - 80:8090
+  #   depends_on:
+  #     api:
+  #       condition: service_healthy
+  #   volumes:
+  #     - .:/app
+  #   networks:
+  #     - backend
+  #     - frontend
 
-  magic-link-frontend:
-    build:
-      dockerfile: ./apps/magic-link/Dockerfile.dev
-      context: ./
-      args:
-        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
-    restart: always
-    ports:
-      - 81:5173
-    depends_on:
-      api:
-        condition: service_healthy
-    networks:
-      - backend
-      - frontend
-    volumes:
-      - .:/app
+  # magic-link-frontend:
+  #   build:
+  #     dockerfile: ./apps/magic-link/Dockerfile.dev
+  #     context: ./
+  #     args:
+  #       VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+  #   restart: always
+  #   ports:
+  #     - 81:5173
+  #   depends_on:
+  #     api:
+  #       condition: service_healthy
+  #   networks:
+  #     - backend
+  #     - frontend
+  #   volumes:
+  #     - .:/app
 
   # pgadmin:
   #   image: dpage/pgadmin4
@@ -271,14 +275,14 @@ services:
   #       condition: service_healthy
   #   network_mode: "host"
 
-  docs:
-    build:
-      dockerfile: ./Dockerfile.dev
-      context: ./docs/
-    ports:
-      - 911:3000
-    volumes:
-      - ./docs/:/app
+  # docs:
+  #   build:
+  #     dockerfile: ./Dockerfile.dev
+  #     context: ./docs/
+  #   ports:
+  #     - 911:3000
+  #   volumes:
+  #     - ./docs/:/app
 
 volumes:
   local_pgdata:
