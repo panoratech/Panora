@@ -2,8 +2,8 @@ speakeasyVersion: 1.349.0
 sources:
     merge-code-samples-into-spec:
         sourceNamespace: merge-code-samples-into-spec
-        sourceRevisionDigest: sha256:8385b61177540439086d40228379266fd5178694f77c430f94c91a3dc9c995bb
-        sourceBlobDigest: sha256:80f387657011fb9c77183cf6849e4a23a91d31fb6a869bdd3a4cebbd5ea3f606
+        sourceRevisionDigest: sha256:ba1fa9c75078c41d431b892c156d6fabff5696f290f1c77c5d20843aa51cefac
+        sourceBlobDigest: sha256:ea6c1565a6e304e50e3558c811aea707185b61dcdd0891c0a49b8817f9eea55c
         tags:
             - latest
             - main
@@ -20,7 +20,7 @@ workflow:
                 - location: registry.speakeasyapi.dev/panora/panora/code-samples-python:main
                 - location: registry.speakeasyapi.dev/panora/panora/go-sdk:main
                 - location: registry.speakeasyapi.dev/panora/panora/code-samples-ruby:main
-            output: openapi-with-code-samples.yaml
+            output: packages/api/swagger/openapi-with-code-samples.yaml
             registry:
                 location: registry.speakeasyapi.dev/panora/panora/merge-code-samples-into-spec
     targets: {}
