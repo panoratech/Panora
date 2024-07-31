@@ -45,6 +45,8 @@ export class AuthController {
     return this.authService.register(user);
   }
 
+  @ApiOperation({ operationId: 'requestPasswordReset', summary: 'Request Password Reset' })
+  @ApiBody({ type: RequestPasswordResetDto })
   @Post('request-password-reset')
   async requestPasswordReset(@Body() requestPasswordResetDto: RequestPasswordResetDto) {
     return this.authService.requestPasswordReset(requestPasswordResetDto);
