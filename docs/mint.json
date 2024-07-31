@@ -862,7 +862,7 @@
       ]
     }
   ],
-  "openapi": "docs/openapi-with-code-samples.json",
+  "openapi": "https://raw.githubusercontent.com/panoratech/Panora/main/packages/api/swagger/openapi-with-code-samples.yaml",
   "primaryTab": {
     "name": "Home"
   },
