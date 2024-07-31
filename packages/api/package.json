@@ -58,6 +58,7 @@
     "js-yaml": "^4.1.0",
     "jwt-decode": "^4.0.0",
     "nestjs-pino": "^3.5.0",
+    "nodemailer": "^6.9.14",
     "openai": "^4.38.5",
     "passport": "^0.6.0",
     "passport-headerapikey": "^1.2.2",

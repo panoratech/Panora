@@ -22,6 +22,9 @@ import {
 import { ApiKeyDto } from './dto/api-key.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
+
 
 @ApiTags('auth')
 @ApiExcludeController()
@@ -42,6 +45,11 @@ export class AuthController {
     return this.authService.register(user);
   }
 
+  @Post('request-password-reset')
+  async requestPasswordReset(@Body() requestPasswordResetDto: RequestPasswordResetDto) {
+    return this.authService.requestPasswordReset(requestPasswordResetDto);
+  }
+
   @ApiOperation({ operationId: 'signIn', summary: 'Log In' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 201 })
@@ -56,6 +64,14 @@ export class AuthController {
   @Get('users')
   async users() {
     return this.authService.getUsers();
+  }
+
+  @ApiOperation({ operationId: 'resetPassword', summary: 'Reset Password' })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({ status: 200, description: 'Password reset successfully' })
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(resetPasswordDto);
   }
 
   @ApiResponse({ status: 201 })
