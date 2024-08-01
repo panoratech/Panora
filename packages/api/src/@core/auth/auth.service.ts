@@ -383,14 +383,14 @@ export class AuthService {
 
 
 
-  async getProjectIdForApiKey(apiKey: string) {
+  async getProjectIdForApiKey(hashed_apiKey: string) {
     try {
-      const hashed_key = crypto.createHash('sha256').update(apiKey).digest('hex');
       const saved_api_key = await this.prisma.api_keys.findUnique({
         where: {
-          api_key_hash: hashed_key,
+          api_key_hash: hashed_apiKey,
         },
       });
+
       return saved_api_key.id_project;
     } catch (error) {
       throw error;
@@ -403,9 +403,9 @@ export class AuthService {
       // TO DO : add Expiration in part 3
 
       // Decode the JWT to verify if it's valid and get the payload
-      const decoded = this.jwtService.verify(apiKey, {
-        secret: process.env.JWT_SECRET,
-      });
+      // const decoded = this.jwtService.verify(apiKey, {
+      //   secret: process.env.JWT_SECRET,
+      // });
 
 
       // pseudo-code:
