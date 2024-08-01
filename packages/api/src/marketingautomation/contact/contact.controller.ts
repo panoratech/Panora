@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { ContactService } from './services/contact.service';
@@ -34,7 +34,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('marketingautomation/contacts')
 @Controller('marketingautomation/contacts')
 export class ContactController {

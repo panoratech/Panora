@@ -15,7 +15,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 import { DriveService } from './services/drive.service';
 import { UnifiedFilestorageDriveOutput } from './types/model.unified';
@@ -27,7 +27,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('filestorage/drives')
 @Controller('filestorage/drives')
 export class DriveController {

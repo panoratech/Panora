@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import {
@@ -30,7 +30,7 @@ import { EeocsService } from './services/eeocs.service';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('ats/eeocs')
 @Controller('ats/eeocs')
 export class EeocsController {

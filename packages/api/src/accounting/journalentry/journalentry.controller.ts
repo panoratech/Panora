@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { JournalEntryService } from './services/journalentry.service';
@@ -34,7 +34,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('accounting/journalentries')
 @Controller('accounting/journalentries')
 export class JournalEntryController {
