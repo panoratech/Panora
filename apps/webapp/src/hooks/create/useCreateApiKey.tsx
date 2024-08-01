@@ -11,7 +11,7 @@ export interface IApiKeyDto {
 // Adjusted useCreateApiKey hook to include a promise-returning function
 const useCreateApiKey = () => {
     const addApiKey = async (data: IApiKeyDto) => {
-        const response = await fetch(`${config.API_URL}/auth/generate-apikey`, {
+        const response = await fetch(`${config.API_URL}/auth/api_keys`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
