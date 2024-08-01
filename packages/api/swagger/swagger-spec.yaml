@@ -33,7 +33,7 @@ paths:
       tags: &ref_0
         - webhooks
     post:
-      operationId: createWebhook
+      operationId: createWebhookPublic
       summary: Add webhook metadata
       parameters: []
       requestBody:
@@ -61,6 +61,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -79,6 +81,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -1811,7 +1815,7 @@ paths:
       x-speakeasy-group: field_mappings.define
   /field_mappings:
     post:
-      operationId: createCustomField
+      operationId: defineCustomField
       summary: Create Custom Field
       parameters: []
       requestBody:

@@ -855,9 +855,9 @@
                   "group":"Selfhost",
                   "icon":"house-laptop",
                   "pages":[
-                     "open-source/selfhost/self-host-guide",
-                     "open-source/selfhost/envVariables",
-                     "open-source/selfhost/ngrok"
+                     "open-source/self_hosting/self-host-guide",
+                     "open-source/self_hosting/envVariables",
+                     "open-source/self_hosting/ngrok"
                   ]
                },
                {

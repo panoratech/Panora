@@ -125,7 +125,7 @@ export class WebhookController {
   }
 
   @ApiOperation({
-    operationId: 'createWebhook',
+    operationId: 'createWebhookPublic',
     summary: 'Add webhook metadata',
   })
   @ApiBody({ type: WebhookDto })
@@ -138,7 +138,7 @@ export class WebhookController {
   }
 
   @ApiOperation({
-    operationId: 'createWebhook',
+    operationId: 'createWebhookInternal',
     summary: 'Add webhook metadata',
   })
   @ApiBody({ type: WebhookDto })
