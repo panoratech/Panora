@@ -104,7 +104,7 @@ export class AuthController {
   @ApiBody({ type: ApiKeyDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
-  @Post()
+  @Post('api_keys')
   async generateApiKey(@Body() data: ApiKeyDto): Promise<{ api_key: string }> {
     return this.authService.generateApiKeyForUser(
       data.userId,
