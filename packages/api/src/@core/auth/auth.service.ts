@@ -324,30 +324,36 @@ export class AuthService {
     keyName: string,
   ): Promise<{ api_key: string }> {
     try {
+
+      // Check project & User exist
       const foundProject = await this.prisma.projects.findUnique({
         where: { id_project: projectId },
       });
       if (!foundProject) {
-        throw new ReferenceError('project undefined');
+        throw new ReferenceError('Project not found');
       }
       const foundUser = await this.prisma.users.findUnique({
         where: { id_user: userId },
       });
       if (!foundUser) {
-        throw new ReferenceError('user undefined');
+        throw new ReferenceError('User Not Found');
       }
 
       /*if (foundProject.id_organization !== foundUser.id_organization) {
         throw new ReferenceError('User is not inside the project');
       }*/
       // Generate a new API key (use a secure method for generation)
-      const { access_token } = await this.generateApiKey(projectId, userId);
+      //const { access_token } = await this.generateApiKey(projectId, userId);
       // Store the API key in the database associated with the user
-      //const hashed_token = this.hashApiKey(access_token);
+      //const hashed_token = this.hashApiKey(access_token);"
+
+      const base_key = `sk_${process.env.ENV}_${uuidv4()}`; 
+      const hashed_key = crypto.createHash('sha256').update(base_key).digest('hex');
+
       const new_api_key = await this.prisma.api_keys.create({
         data: {
           id_api_key: uuidv4(),
-          api_key_hash: access_token,
+          api_key_hash: hashed_key,
           name: keyName,
           id_project: projectId as string,
           id_user: userId as string,
@@ -357,7 +363,7 @@ export class AuthService {
         throw new ReferenceError('api key undefined');
       }
 
-      return { api_key: access_token, ...new_api_key };
+      return { api_key: base_key, ...new_api_key };
     } catch (error) {
       throw error;
     }
@@ -379,18 +385,12 @@ export class AuthService {
 
   async getProjectIdForApiKey(apiKey: string) {
     try {
-      // Decode the JWT to verify if it's valid and get the payload
-      const decoded = this.jwtService.verify(apiKey, {
-        secret: process.env.JWT_SECRET,
-      });
-
-      //const hashed_api_key = this.hashApiKey(apiKey);
+      const hashed_key = crypto.createHash('sha256').update(apiKey).digest('hex');
       const saved_api_key = await this.prisma.api_keys.findUnique({
         where: {
-          api_key_hash: apiKey,
+          api_key_hash: hashed_key,
         },
       });
-
       return saved_api_key.id_project;
     } catch (error) {
       throw error;
@@ -399,33 +399,43 @@ export class AuthService {
 
   async validateApiKey(apiKey: string): Promise<boolean> {
     try {
+
+      // TO DO : add Expiration in part 3
+
       // Decode the JWT to verify if it's valid and get the payload
       const decoded = this.jwtService.verify(apiKey, {
         secret: process.env.JWT_SECRET,
       });
 
-      //const hashed_api_key = this.hashApiKey(apiKey);
+
+      // pseudo-code:
+      // 1 - SHA256 the API key from the header
+      const hashed_key = crypto.createHash('sha256').update(apiKey).digest('hex');
+
+
+      // 2- check against DB
+      // if not found, return false
       const saved_api_key = await this.prisma.api_keys.findUnique({
         where: {
-          api_key_hash: apiKey,
+          api_key_hash: hashed_key,
         },
       });
 
       if (!saved_api_key) {
-        throw new ReferenceError('Api Key undefined');
+        throw new ReferenceError('API Key not found.');
       }
-      if (String(decoded.project_id) !== String(saved_api_key.id_project)) {
-        throw new ReferenceError(
-          'Failed to validate API key: projectId mismatch.',
-        );
-      }
+      // if (String(decoded.project_id) !== String(saved_api_key.id_project)) {
+      //   throw new ReferenceError(
+      //     'Failed to validate API key: projectId mismatch.',
+      //   );
+      // }
 
-      // Validate that the JWT payload matches the provided userId and projectId
-      if (String(decoded.sub) !== String(saved_api_key.id_user)) {
-        throw new ReferenceError(
-          'Failed to validate API key: userId mismatch.',
-        );
-      }
+      // // Validate that the JWT payload matches the provided userId and projectId
+      // if (String(decoded.sub) !== String(saved_api_key.id_user)) {
+      //   throw new ReferenceError(
+      //     'Failed to validate API key: userId mismatch.',
+      //   );
+      // }
       return true;
     } catch (error) {
       throw error;
