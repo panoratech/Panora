@@ -1722,10 +1722,10 @@ paths:
       tags: *ref_32
       security: *ref_33
       x-speakeasy-group: ticketing.teams
-  /linked-users:
+  /linked_users:
     post:
       operationId: createLinkedUser
-      summary: Add Linked User
+      summary: Create Linked Users
       parameters: []
       requestBody:
         required: true
@@ -1738,17 +1738,15 @@ paths:
           description: ''
       tags: &ref_34
         - linkedUsers
-      x-speakeasy-group: linkedUsers
     get:
       operationId: listLinkedUsers
-      summary: Retrieve Linked Users
+      summary: List Linked Users
       parameters: []
       responses:
         '200':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
-  /linked-users/batch:
+  /linked_users/batch:
     post:
       operationId: importBatch
       summary: Add Batch Linked Users
@@ -1763,11 +1761,11 @@ paths:
         '201':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
-  /linked-users/single:
+      x-speakeasy-group: linked_users.batch
+  /linked_users/single:
     get:
       operationId: retrieveLinkedUser
-      summary: Retrieve a Linked User
+      summary: Retrieve Linked Users
       parameters:
         - name: id
           required: true
@@ -1778,8 +1776,8 @@ paths:
         '200':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
-  /linked-users/fromRemoteId:
+      x-speakeasy-group: linked_users.single
+  /linked_users/fromRemoteId:
     get:
       operationId: remoteId
       summary: Retrieve a Linked User From A Remote Id
@@ -1793,10 +1791,10 @@ paths:
         '200':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
+      x-speakeasy-group: linked_users.fromremoteid
   /field_mappings/define:
     post:
-      operationId: define
+      operationId: definitions
       summary: Define target Field
       parameters: []
       requestBody:
