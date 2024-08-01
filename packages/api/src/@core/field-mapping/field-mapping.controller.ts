@@ -91,7 +91,7 @@ export class FieldMappingController {
   }
 
   @ApiOperation({
-    operationId: 'createCustomField',
+    operationId: 'defineCustomField',
     summary: 'Create Custom Field',
   })
   @ApiBody({ type: CustomFieldCreateDto })
