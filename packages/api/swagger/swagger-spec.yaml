@@ -11,7 +11,7 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/String'
   /health:
     get:
       operationId: health
@@ -23,7 +23,7 @@ paths:
           content:
             application/json:
               schema:
-                type: number
+                $ref: '#/components/schemas/Number'
   /webhook:
     get:
       operationId: listWebhooks
@@ -113,12 +113,18 @@ paths:
             schema:
               $ref: '#/components/schemas/SignatureVerificationDto'
       responses:
-        '201':
+        '200':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventPayload'
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: true
+                    description: Dynamic event payload
+        '201':
+          description: ''
       tags: *ref_0
       x-speakeasy-group: webhook
   /ticketing/tickets:
@@ -510,10 +516,12 @@ paths:
       summary: Resync common objects across a vertical
       parameters: []
       responses:
-        '200':
-          description: ''
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResyncStatusDto'
       tags: *ref_9
       x-speakeasy-group: sync
   /crm/companies:
@@ -1752,6 +1760,10 @@ paths:
       responses:
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedUserResponse'
       tags: &ref_34
         - linkedUsers
       x-speakeasy-group: linkedUsers
@@ -1762,6 +1774,12 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_34
       x-speakeasy-group: linkedUsers
   /linked-users/batch:
@@ -1778,6 +1796,12 @@ paths:
       responses:
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_34
       x-speakeasy-group: linkedUsers
   /linked-users/single:
@@ -1793,6 +1817,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_34
       x-speakeasy-group: linkedUsers
   /linked-users/fromRemoteId:
@@ -1808,6 +1836,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_34
       x-speakeasy-group: linkedUsers
   /field-mappings/define:
@@ -1824,6 +1856,10 @@ paths:
       responses:
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomFieldResponse'
       tags: &ref_35
         - fieldMappings
       x-speakeasy-group: fieldMappings
@@ -1841,6 +1877,10 @@ paths:
       responses:
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomFieldResponse'
       tags: *ref_35
       x-speakeasy-group: fieldMappings
   /field-mappings/map:
@@ -1857,6 +1897,10 @@ paths:
       responses:
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomFieldResponse'
       tags: *ref_35
       x-speakeasy-group: fieldMappings
   /passthrough:
@@ -1886,12 +1930,6 @@ paths:
             schema:
               $ref: '#/components/schemas/PassThroughRequestDto'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PassThroughResponse'
         '201':
           description: ''
           content:
@@ -8030,11 +8068,18 @@ components:
       type: http
       scheme: bearer
   schemas:
+    String:
+      type: object
+      properties: {}
+    Number:
+      type: object
+      properties: {}
     WebhookResponse:
       type: object
       properties:
         id_webhook_endpoint:
           type: string
+          nullable: true
           description: The unique UUID of the webhook.
         endpoint_description:
           type: string
@@ -8042,24 +8087,30 @@ components:
           description: The description of the webhook.
         url:
           type: string
+          nullable: true
           description: The endpoint url of the webhook.
         secret:
           type: string
+          nullable: true
           description: The secret of the webhook.
         active:
           type: boolean
+          nullable: true
           description: The status of the webhook.
         created_at:
           format: date-time
           type: string
+          nullable: true
           description: The created date  of the webhook.
         scope:
+          nullable: true
           description: The events that the webhook listen to.
           type: array
           items:
             type: string
         id_project:
           type: string
+          nullable: true
           description: The project id tied to the webhook.
         last_update:
           format: date-time
@@ -8081,11 +8132,14 @@ components:
       properties:
         url:
           type: string
+          nullable: true
           description: The endpoint url of the webhook.
         description:
           type: string
+          nullable: true
           description: The description of the webhook.
         scope:
+          nullable: true
           description: The events that the webhook listen to.
           type: array
           items:
@@ -8093,20 +8147,21 @@ components:
       required:
         - url
         - scope
-    EventPayload:
-      type: object
-      properties: {}
     SignatureVerificationDto:
       type: object
       properties:
         payload:
-          type: object 
+          type: object
+          additionalProperties: true
+          nullable: true
           description: The payload event of the webhook.
         signature:
           type: string
+          nullable: true
           description: The signature of the webhook.
         secret:
           type: string
+          nullable: true
           description: The secret of the webhook.
       required:
         - payload
@@ -8254,6 +8309,7 @@ components:
           description: >-
             The custom field mappings of the ticket between the remote 3rd party
             & Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -8265,6 +8321,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the ticket in the context of the 3rd Party
         created_at:
           format: date-time
@@ -8361,6 +8418,7 @@ components:
           description: >-
             The custom field mappings of the ticket between the remote 3rd party
             & Panora
+          additionalProperties: true
       required:
         - name
         - description
@@ -8391,6 +8449,7 @@ components:
           description: >-
             The custom field mappings of the user between the remote 3rd party &
             Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -8402,6 +8461,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the user in the context of the 3rd Party
         created_at:
           format: date-time
@@ -8436,6 +8496,7 @@ components:
           description: >-
             The custom field mappings of the account between the remote 3rd
             party & Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -8447,6 +8508,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the account in the context of the 3rd Party
         created_at:
           format: date-time
@@ -8485,6 +8547,7 @@ components:
           description: >-
             The custom field mappings of the contact between the remote 3rd
             party & Panora
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the contact
@@ -8495,6 +8558,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the contact in the context of the 3rd Party
         created_at:
           format: date-time
@@ -8509,19 +8573,43 @@ components:
       required:
         - name
         - email_address
+    ResyncStatusDto:
+      type: object
+      properties:
+        timestamp:
+          format: date-time
+          type: string
+          nullable: true
+        vertical:
+          type: string
+          nullable: true
+        provider:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+      required:
+        - timestamp
+        - vertical
+        - provider
+        - status
     Email:
       type: object
       properties:
         email_address:
           type: string
+          nullable: true
           description: The email address
         email_address_type:
           type: string
+          nullable: true
           description: >-
             The email address type. Authorized values are either PERSONAL or
             WORK.
         owner_type:
           type: string
+          nullable: true
           description: The owner type of an email
       required:
         - email_address
@@ -8531,27 +8619,35 @@ components:
       properties:
         street_1:
           type: string
+          nullable: true
           description: The street
         street_2:
           type: string
+          nullable: true
           description: 'More information about the street '
         city:
           type: string
+          nullable: true
           description: The city
         state:
           type: string
+          nullable: true
           description: The state
         postal_code:
           type: string
+          nullable: true
           description: The postal code
         country:
           type: string
+          nullable: true
           description: The country
         address_type:
           type: string
+          nullable: true
           description: The address type. Authorized values are either PERSONAL or WORK.
         owner_type:
           type: string
+          nullable: true
           description: The owner type of the address
       required:
         - street_1
@@ -8567,14 +8663,17 @@ components:
       properties:
         phone_number:
           type: string
+          nullable: true
           description: >-
             The phone number starting with a plus (+) followed by the country
             code (e.g +336676778890 for France)
         phone_type:
           type: string
+          nullable: true
           description: The phone type. Authorized values are either MOBILE or WORK
         owner_type:
           type: string
+          nullable: true
           description: The owner type of a phone number
       required:
         - phone_number
@@ -8624,6 +8723,7 @@ components:
             The custom field mappings of the company between the remote 3rd
             party & Panora
           nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the company
@@ -8636,6 +8736,7 @@ components:
           type: object
           description: The remote data of the company in the context of the Crm 3rd Party
           nullable: true
+          additionalProperties: true
         created_at:
           type: object
           description: The created date of the object
@@ -8691,6 +8792,7 @@ components:
             The custom field mappings of the company between the remote 3rd
             party & Panora
           nullable: true
+          additionalProperties: true
       required:
         - name
     UnifiedCrmContactOutput:
@@ -8732,6 +8834,7 @@ components:
           description: >-
             The custom field mappings of the contact between the remote 3rd
             party & Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -8743,9 +8846,11 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the contact in the context of the Crm 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
           nullable: true
           description: The created date of the object
         modified_at:
@@ -8795,6 +8900,7 @@ components:
           description: >-
             The custom field mappings of the contact between the remote 3rd
             party & Panora
+          additionalProperties: true
       required:
         - first_name
         - last_name
@@ -8831,6 +8937,7 @@ components:
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -8842,9 +8949,11 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the deal in the context of the Crm 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
           nullable: true
           description: The created date of the object
         modified_at:
@@ -8889,6 +8998,7 @@ components:
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
+          additionalProperties: true
       required:
         - name
         - description
@@ -8946,6 +9056,7 @@ components:
           description: >-
             The custom field mappings of the engagement between the remote 3rd
             party & Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -8956,12 +9067,14 @@ components:
           description: The id of the engagement in the context of the Crm 3rd Party
         remote_data:
           type: object
+          additionalProperties: true
           nullable: true
           description: >-
             The remote data of the engagement in the context of the Crm 3rd
             Party
         created_at:
-          type: object
+          format: date-time
+          type: string
           nullable: true
           description: The created date of the object
         modified_at:
@@ -9024,6 +9137,7 @@ components:
           description: >-
             The custom field mappings of the engagement between the remote 3rd
             party & Panora
+          additionalProperties: true
       required:
         - type
     UnifiedCrmNoteOutput:
@@ -9055,6 +9169,7 @@ components:
           description: >-
             The custom field mappings of the note between the remote 3rd party &
             Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -9066,9 +9181,11 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the note in the context of the Crm 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
           nullable: true
           description: The created date of the object
         modified_at:
@@ -9107,6 +9224,7 @@ components:
           description: >-
             The custom field mappings of the note between the remote 3rd party &
             Panora
+          additionalProperties: true
       required:
         - content
     UnifiedCrmStageOutput:
@@ -9122,6 +9240,7 @@ components:
             The custom field mappings of the stage between the remote 3rd party
             & Panora
           nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the stage
@@ -9134,6 +9253,7 @@ components:
           type: object
           description: The remote data of the stage in the context of the Crm 3rd Party
           nullable: true
+          additionalProperties: true
         created_at:
           type: object
           description: The created date of the object
@@ -9187,6 +9307,7 @@ components:
             The custom field mappings of the task between the remote 3rd party &
             Panora
           nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the task
@@ -9199,6 +9320,7 @@ components:
           type: object
           description: The remote data of the task in the context of the Crm 3rd Party
           nullable: true
+          additionalProperties: true
         created_at:
           type: object
           description: The created date of the object
@@ -9254,6 +9376,7 @@ components:
             The custom field mappings of the task between the remote 3rd party &
             Panora
           nullable: true
+          additionalProperties: true
       required:
         - subject
         - content
@@ -9275,6 +9398,7 @@ components:
             The custom field mappings of the user between the remote 3rd party &
             Panora
           nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the user
@@ -9287,12 +9411,15 @@ components:
           type: object
           description: The remote data of the user in the context of the Crm 3rd Party
           nullable: true
+          additionalProperties: true
         created_at:
-          type: object
+          format: date-time
+          type: string
           description: The created date of the object
           nullable: true
         modified_at:
-          type: object
+          format: date-time
+          type: string
           description: The modified date of the object
           nullable: true
       required:
@@ -9326,6 +9453,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the collection in the context of the 3rd Party
         created_at:
           format: date-time
@@ -9393,6 +9521,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the comment in the context of the 3rd Party
         created_at:
           format: date-time
@@ -9419,6 +9548,7 @@ components:
           description: >-
             The custom field mappings of the tag between the remote 3rd party &
             Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -9430,6 +9560,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the tag in the context of the 3rd Party
         created_at:
           format: date-time
@@ -9460,6 +9591,7 @@ components:
           description: >-
             The custom field mappings of the team between the remote 3rd party &
             Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -9471,6 +9603,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the team in the context of the 3rd Party
         created_at:
           format: date-time
@@ -9484,13 +9617,35 @@ components:
           description: The modified date of the object
       required:
         - name
+    LinkedUserResponse:
+      type: object
+      properties:
+        id_linked_user:
+          type: string
+          nullable: true
+        linked_user_origin_id:
+          type: string
+          nullable: true
+        alias:
+          type: string
+          nullable: true
+        id_project:
+          type: string
+          nullable: true
+      required:
+        - id_linked_user
+        - linked_user_origin_id
+        - alias
+        - id_project
     CreateLinkedUserDto:
       type: object
       properties:
         linked_user_origin_id:
           type: string
+          nullable: true
         alias:
           type: string
+          nullable: true
       required:
         - linked_user_origin_id
         - alias
@@ -9498,25 +9653,107 @@ components:
       type: object
       properties:
         linked_user_origin_ids:
+          nullable: true
           type: array
           items:
             type: string
         alias:
           type: string
+          nullable: true
       required:
         - linked_user_origin_ids
         - alias
+    CustomFieldResponse:
+      type: object
+      properties:
+        id_attribute:
+          type: string
+          nullable: true
+          description: Attribute Id
+        status:
+          type: string
+          nullable: true
+          description: Attribute Status
+        ressource_owner_type:
+          type: string
+          nullable: true
+          description: Attribute Ressource Owner Type
+        slug:
+          type: string
+          nullable: true
+          description: Attribute Slug
+        description:
+          type: string
+          nullable: true
+          description: Attribute Description
+        data_type:
+          type: string
+          nullable: true
+          description: Attribute Data Type
+        remote_id:
+          type: string
+          nullable: true
+          description: Attribute Remote Id
+        source:
+          type: string
+          nullable: true
+          description: Attribute Source
+        id_entity:
+          type: string
+          nullable: true
+          description: Attribute Id Entity
+        id_project:
+          type: string
+          nullable: true
+          description: Attribute Id Project
+        scope:
+          type: string
+          nullable: true
+          description: Attribute Scope
+        id_consumer:
+          type: string
+          nullable: true
+          description: Attribute Id Consumer
+        created_at:
+          format: date-time
+          type: string
+          nullable: true
+          description: Attribute Created Date
+        modified_at:
+          format: date-time
+          type: string
+          nullable: true
+          description: Attribute Modified Date
+      required:
+        - id_attribute
+        - status
+        - ressource_owner_type
+        - slug
+        - description
+        - data_type
+        - remote_id
+        - source
+        - id_entity
+        - id_project
+        - scope
+        - id_consumer
+        - created_at
+        - modified_at
     DefineTargetFieldDto:
       type: object
       properties:
         object_type_owner:
           type: string
+          nullable: true
         name:
           type: string
+          nullable: true
         description:
           type: string
+          nullable: true
         data_type:
           type: string
+          nullable: true
       required:
         - object_type_owner
         - name
@@ -9527,18 +9764,25 @@ components:
       properties:
         object_type_owner:
           type: string
+          nullable: true
         name:
           type: string
+          nullable: true
         description:
           type: string
+          nullable: true
         data_type:
           type: string
+          nullable: true
         source_custom_field_id:
           type: string
+          nullable: true
         source_provider:
           type: string
+          nullable: true
         linked_user_id:
           type: string
+          nullable: true
       required:
         - object_type_owner
         - name
@@ -9552,17 +9796,41 @@ components:
       properties:
         attributeId:
           type: string
+          nullable: true
+          description: Attribute Id
         source_custom_field_id:
           type: string
+          nullable: true
+          description: Attribute Id
         source_provider:
           type: string
+          nullable: true
+          description: Attribute Id
         linked_user_id:
           type: string
+          nullable: true
+          description: Attribute Id
       required:
         - attributeId
         - source_custom_field_id
         - source_provider
         - linked_user_id
+    PassThroughResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          nullable: true
+        status:
+          type: number
+          nullable: true
+        data:
+          type: object
+          nullable: true
+      required:
+        - url
+        - status
+        - data
     PassThroughRequestDto:
       type: object
       properties:
@@ -9576,26 +9844,23 @@ components:
           type: string
         path:
           type: string
+          nullable: true
         data:
-          type: object
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: array
+              items:
+                type: object
+                additionalProperties: true
+          nullable: true
         headers:
           type: object
+          additionalProperties: true
+          nullable: true
       required:
         - method
         - path
-    PassThroughResponse:
-      type: object
-      properties:
-        url:
-          type: string
-        status:
-          type: number
-        data:
-          type: object
-      required:
-        - url
-        - status
-        - data
     UnifiedHrisBankinfoOutput:
       type: object
       properties: {}
@@ -9697,67 +9962,91 @@ components:
       properties:
         activity_type:
           type: string
+          nullable: true
           description: The type of activity
         subject:
           type: string
+          nullable: true
           description: The subject of the activity
         body:
           type: string
+          nullable: true
           description: The body of the activity
         visibility:
           type: string
+          nullable: true
           description: The visibility of the activity
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the activity
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the activity
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the activity in the context of the 3rd Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the activity in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
     UnifiedAtsActivityInput:
       type: object
       properties:
         activity_type:
           type: string
+          nullable: true
           description: The type of activity
         subject:
           type: string
+          nullable: true
           description: The subject of the activity
         body:
           type: string
+          nullable: true
           description: The body of the activity
         visibility:
           type: string
+          nullable: true
           description: The visibility of the activity
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the activity
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -9765,92 +10054,130 @@ components:
       type: object
       properties:
         applied_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The application date
         rejected_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The rejection date
         offers:
+          nullable: true
           description: The offers UUIDs for the application
           type: array
           items:
             type: string
         source:
           type: string
+          nullable: true
           description: The source of the application
         credited_to:
           type: string
+          nullable: true
           description: The UUID of the person credited for the application
         current_stage:
           type: string
+          nullable: true
           description: The UUID of the current stage of the application
         reject_reason:
           type: string
+          nullable: true
           description: The rejection reason for the application
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         job_id:
           type: string
           description: The UUID of the job
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the application
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the application in the context of the 3rd Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the application in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
+        remote_created_at:
+          format: date-time
+          type: string
+          nullable: true
+          description: The remote created date of the object
+        remote_modified_at:
+          format: date-time
+          type: string
+          nullable: true
+          description: The remote modified date of the object
     UnifiedAtsApplicationInput:
       type: object
       properties:
         applied_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The application date
         rejected_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The rejection date
         offers:
+          nullable: true
           description: The offers UUIDs for the application
           type: array
           items:
             type: string
         source:
           type: string
+          nullable: true
           description: The source of the application
         credited_to:
           type: string
+          nullable: true
           description: The UUID of the person credited for the application
         current_stage:
           type: string
+          nullable: true
           description: The UUID of the current stage of the application
         reject_reason:
           type: string
+          nullable: true
           description: The rejection reason for the application
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         job_id:
           type: string
           description: The UUID of the job
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -9859,127 +10186,176 @@ components:
       properties:
         file_url:
           type: string
+          nullable: true
           description: The URL of the file
         file_name:
           type: string
+          nullable: true
           description: The name of the file
         attachment_type:
           type: string
+          nullable: true
           description: The type of the file
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the attachment
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the attachment
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the attachment
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the attachment
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the attachment in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
     UnifiedAtsAttachmentInput:
       type: object
       properties:
         file_url:
           type: string
+          nullable: true
           description: The URL of the file
         file_name:
           type: string
+          nullable: true
           description: The name of the file
         attachment_type:
           type: string
+          nullable: true
           description: The type of the file
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the attachment
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the attachment
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
     Url:
       type: object
-      properties: {}
+      properties:
+        url:
+          type: string
+          nullable: true
+          description: The url.
+        url_type:
+          type: string
+          nullable: true
+          description: The url type. It takes [WEBSITE | BLOG | LINKEDIN | GITHUB | OTHER]
+      required:
+        - url
+        - url_type
     UnifiedAtsCandidateOutput:
       type: object
       properties:
         first_name:
           type: string
+          nullable: true
           description: The first name of the candidate
         last_name:
           type: string
+          nullable: true
           description: The last name of the candidate
         company:
           type: string
+          nullable: true
           description: The company of the candidate
         title:
           type: string
+          nullable: true
           description: The title of the candidate
         locations:
           type: string
+          nullable: true
           description: The locations of the candidate
         is_private:
           type: boolean
+          nullable: true
           description: Whether the candidate is private
         email_reachable:
           type: boolean
+          nullable: true
           description: Whether the candidate is reachable by email
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the candidate
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the candidate
         last_interaction_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The last interaction date with the candidate
         attachments:
+          nullable: true
           description: The attachments UUIDs of the candidate
           type: array
           items:
             type: string
         applications:
+          nullable: true
           description: The applications UUIDs of the candidate
           type: array
           items:
             type: string
         tags:
+          nullable: true
           description: The tags of the candidate
           type: array
           items:
             type: string
         urls:
+          nullable: true
           description: >-
             The urls of the candidate, possible values for Url type are WEBSITE,
             BLOG, LINKEDIN, GITHUB, or OTHER
@@ -9987,87 +10363,113 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
+          nullable: true
           description: The phone numbers of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
+          nullable: true
           description: The email addresses of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         remote_id:
           type: string
+          nullable: true
           description: The id of the candidate in the context of the 3rd Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the candidate in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
     UnifiedAtsCandidateInput:
       type: object
       properties:
         first_name:
           type: string
+          nullable: true
           description: The first name of the candidate
         last_name:
           type: string
+          nullable: true
           description: The last name of the candidate
         company:
           type: string
+          nullable: true
           description: The company of the candidate
         title:
           type: string
+          nullable: true
           description: The title of the candidate
         locations:
           type: string
+          nullable: true
           description: The locations of the candidate
         is_private:
           type: boolean
+          nullable: true
           description: Whether the candidate is private
         email_reachable:
           type: boolean
+          nullable: true
           description: Whether the candidate is reachable by email
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the candidate
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the candidate
         last_interaction_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The last interaction date with the candidate
         attachments:
+          nullable: true
           description: The attachments UUIDs of the candidate
           type: array
           items:
             type: string
         applications:
+          nullable: true
           description: The applications UUIDs of the candidate
           type: array
           items:
             type: string
         tags:
+          nullable: true
           description: The tags of the candidate
           type: array
           items:
             type: string
         urls:
+          nullable: true
           description: >-
             The urls of the candidate, possible values for Url type are WEBSITE,
             BLOG, LINKEDIN, GITHUB, or OTHER
@@ -10075,17 +10477,21 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
+          nullable: true
           description: The phone numbers of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
+          nullable: true
           description: The email addresses of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -10094,127 +10500,170 @@ components:
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the department
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the department
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the department in the context of the 3rd Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the department in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
     UnifiedAtsInterviewOutput:
       type: object
       properties:
         status:
           type: string
+          nullable: true
           description: The status of the interview
         application_id:
           type: string
+          nullable: true
           description: The UUID of the application
         job_interview_stage_id:
           type: string
+          nullable: true
           description: The UUID of the job interview stage
         organized_by:
           type: string
+          nullable: true
           description: The UUID of the organizer
         interviewers:
+          nullable: true
           description: The UUIDs of the interviewers
           type: array
           items:
             type: string
         location:
           type: string
+          nullable: true
           description: The location of the interview
         start_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The start date and time of the interview
         end_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The end date and time of the interview
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the interview
         remote_updated_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the interview
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the interview
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the interview in the context of the 3rd Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the interview in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
     UnifiedAtsInterviewInput:
       type: object
       properties:
         status:
           type: string
+          nullable: true
           description: The status of the interview
         application_id:
           type: string
+          nullable: true
           description: The UUID of the application
         job_interview_stage_id:
           type: string
+          nullable: true
           description: The UUID of the job interview stage
         organized_by:
           type: string
+          nullable: true
           description: The UUID of the organizer
         interviewers:
+          nullable: true
           description: The UUIDs of the interviewers
           type: array
           items:
             type: string
         location:
           type: string
+          nullable: true
           description: The location of the interview
         start_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The start date and time of the interview
         end_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The end date and time of the interview
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the interview
         remote_updated_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the interview
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -10223,36 +10672,49 @@ components:
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the job interview stage
         stage_order:
           type: number
+          nullable: true
           description: The order of the stage
         job_id:
           type: string
+          nullable: true
           description: The UUID of the job
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the job interview stage
         remote_id:
           type: string
+          nullable: true
           description: >-
             The remote ID of the job interview stage in the context of the 3rd
             Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: >-
             The remote data of the job interview stage in the context of the 3rd
             Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
     UnifiedAtsJobOutput:
       type: object
@@ -10317,6 +10779,7 @@ components:
           description: The remote modification date of the job
         field_mappings:
           type: object
+          additionalProperties: true
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -10332,6 +10795,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the job in the context of the 3rd Party
         created_at:
           format: date-time
@@ -10351,23 +10815,23 @@ components:
           description: The UUID of the creator
           nullable: true
         remote_created_at:
-          type: string
           format: date-time
+          type: string
           description: The remote creation date of the offer
           nullable: true
         closed_at:
-          type: string
           format: date-time
+          type: string
           description: The closing date of the offer
           nullable: true
         sent_at:
-          type: string
           format: date-time
+          type: string
           description: The sending date of the offer
           nullable: true
         start_date:
-          type: string
           format: date-time
+          type: string
           description: The start date of the offer
           nullable: true
         status:
@@ -10384,6 +10848,7 @@ components:
             The custom field mappings of the object between the remote 3rd party
             & Panora
           nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the offer
@@ -10396,6 +10861,7 @@ components:
           type: object
           description: The remote data of the offer in the context of the 3rd Party
           nullable: true
+          additionalProperties: true
         created_at:
           type: object
           description: The created date of the object
@@ -10409,12 +10875,16 @@ components:
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the office
         location:
           type: string
+          nullable: true
           description: The location of the office
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -10423,64 +10893,87 @@ components:
           description: The UUID of the office
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the office in the context of the 3rd Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the office in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
     UnifiedAtsRejectreasonOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the reject reason
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the reject reason
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the reject reason in the context of the 3rd Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the reject reason in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
     UnifiedAtsScorecardOutput:
       type: object
       properties:
         overall_recommendation:
           type: string
+          nullable: true
           description: The overall recommendation
         application_id:
           type: string
+          nullable: true
           description: The UUID of the application
         interview_id:
           type: string
+          nullable: true
           description: The UUID of the interview
         remote_created_at:
           type: string
-          format: date-time
+          nullable: true
           description: The remote creation date of the scorecard
         submitted_at:
           type: string
-          format: date-time
+          nullable: true
           description: The submission date of the scorecard
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -10489,46 +10982,63 @@ components:
           description: The UUID of the scorecard
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the scorecard in the context of the 3rd Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the scorecard in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
     UnifiedAtsTagOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the tag
         id_ats_candidate:
           type: string
+          nullable: true
           description: The UUID of the candidate
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the tag
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the tag in the context of the 3rd Party
         remote_data:
           type: object
+          nullable: true
+          additionalProperties: true
           description: The remote data of the tag in the context of the 3rd Party
         created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The creation date of the tag
         modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The modification date of the tag
     UnifiedAtsUserOutput:
       type: object
@@ -10554,13 +11064,13 @@ components:
           description: The access role of the user
           nullable: true
         remote_created_at:
-          type: string
           format: date-time
+          type: string
           description: The remote creation date of the user
           nullable: true
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
           description: The remote modification date of the user
           nullable: true
         field_mappings:
@@ -10569,6 +11079,7 @@ components:
             The custom field mappings of the object between the remote 3rd party
             & Panora
           nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the user
@@ -10581,12 +11092,15 @@ components:
           type: object
           description: The remote data of the user in the context of the 3rd Party
           nullable: true
+          additionalProperties: true
         created_at:
-          type: object
+          format: date-time
+          type: string
           description: The created date of the object
           nullable: true
         modified_at:
-          type: object
+          format: date-time
+          type: string
           description: The modified date of the object
           nullable: true
     UnifiedAtsEeocsOutput:
@@ -10619,6 +11133,7 @@ components:
           description: The disability status of the candidate
         field_mappings:
           type: object
+          additionalProperties: true
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -10634,6 +11149,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the EEOC in the context of the 3rd Party
         created_at:
           format: date-time
@@ -10746,6 +11262,7 @@ components:
           description: The url of the drive
         field_mappings:
           type: object
+          additionalProperties: true
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -10761,6 +11278,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the drive in the context of the 3rd Party
         created_at:
           format: date-time
@@ -10813,6 +11331,7 @@ components:
             The custom field mappings of the object between the remote 3rd party
             & Panora
           nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the file
@@ -10825,12 +11344,15 @@ components:
           type: object
           description: The remote data of the file in the context of the 3rd Party
           nullable: true
+          additionalProperties: true
         created_at:
-          type: object
+          format: date-time
+          type: string
           description: The created date of the object
           nullable: true
         modified_at:
-          type: object
+          format: date-time
+          type: string
           description: The modified date of the object
           nullable: true
       required:
@@ -10878,6 +11400,7 @@ components:
             The custom field mappings of the object between the remote 3rd party
             & Panora
           nullable: true
+          additionalProperties: true
       required:
         - name
         - file_url
@@ -10891,47 +11414,64 @@ components:
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the folder
         size:
           type: string
+          nullable: true
           description: The size of the folder
         folder_url:
           type: string
+          nullable: true
           description: The url of the folder
         description:
           type: string
           description: The description of the folder
         drive_id:
           type: string
+          nullable: true
           description: The UUID of the drive tied to the folder
         parent_folder_id:
           type: string
+          nullable: true
           description: The UUID of the parent folder
         shared_link:
           type: string
+          nullable: true
           description: The UUID of the shared link tied to the folder
         permission:
           type: string
+          nullable: true
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the folder
         remote_id:
           type: string
+          nullable: true
           description: The id of the folder in the context of the 3rd Party
         remote_data:
           type: object
+          additionalProperties: true
+          nullable: true
           description: The remote data of the folder in the context of the 3rd Party
         created_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The created date of the object
         modified_at:
-          type: object
+          format: date-time
+          type: string
+          nullable: true
           description: The modified date of the object
       required:
         - name
@@ -10947,30 +11487,39 @@ components:
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the folder
         size:
           type: string
+          nullable: true
           description: The size of the folder
         folder_url:
           type: string
+          nullable: true
           description: The url of the folder
         description:
           type: string
           description: The description of the folder
         drive_id:
           type: string
+          nullable: true
           description: The UUID of the drive tied to the folder
         parent_folder_id:
           type: string
+          nullable: true
           description: The UUID of the parent folder
         shared_link:
           type: string
+          nullable: true
           description: The UUID of the shared link tied to the folder
         permission:
           type: string
+          nullable: true
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
+          additionalProperties: true
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -11003,6 +11552,7 @@ components:
             party platform.
         field_mappings:
           type: object
+          additionalProperties: true
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -11018,6 +11568,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the group in the context of the 3rd Party
         created_at:
           format: date-time
@@ -11054,6 +11605,7 @@ components:
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -11065,6 +11617,7 @@ components:
         remote_data:
           type: object
           nullable: true
+          additionalProperties: true
           description: The remote data of the user in the context of the 3rd Party
         created_at:
           format: date-time
@@ -11109,6 +11662,7 @@ components:
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora
+          additionalProperties: true
         id:
           type: string
           nullable: true
@@ -11119,6 +11673,7 @@ components:
           description: The id of the attachment in the context of the 3rd Party
         remote_data:
           type: object
+          additionalProperties: true
           nullable: true
           description: The remote data of the attachment in the context of the 3rd Party
         created_at:
@@ -11164,6 +11719,7 @@ components:
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora
+          additionalProperties: true
       required:
         - file_name
         - file_url

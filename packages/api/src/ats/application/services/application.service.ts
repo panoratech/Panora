@@ -324,70 +324,72 @@ export class ApplicationService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedApplications: UnifiedAtsApplicationOutput[] = await Promise.all(
-        applications.map(async (application) => {
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: { ressource_owner_id: application.id_ats_application },
-            },
-            include: { attribute: true },
-          });
-
-          const fieldMappingsMap = new Map();
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
-
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
-
-          const resOffers = await this.prisma.ats_offers.findMany({
-            where: {
-              id_ats_application: application.id_ats_application,
-            },
-          });
-          let offers;
-          if (resOffers && resOffers.length > 0) {
-            offers = resOffers.map((off) => {
-              return off.id_ats_offer;
+      const unifiedApplications: UnifiedAtsApplicationOutput[] =
+        await Promise.all(
+          applications.map(async (application) => {
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: { ressource_owner_id: application.id_ats_application },
+              },
+              include: { attribute: true },
             });
-          }
 
-          return {
-            id: application.id_ats_application,
-            applied_at: String(application.applied_at) || null,
-            rejected_at: String(application.rejected_at) || null,
-            offers: offers || null,
-            source: application.source || null,
-            credited_to: application.credited_to || null,
-            current_stage: application.current_stage || null,
-            reject_reason: application.reject_reason || null,
-            candidate_id: application.id_ats_candidate || null,
-            job_id: application.id_ats_job || null,
-            field_mappings: field_mappings,
-            remote_id: application.remote_id || null,
-            created_at: application.created_at || null,
-            modified_at: application.modified_at || null,
-            remote_created_at: null,
-            remote_modified_at: null,
-          };
-        }),
-      );
+            const fieldMappingsMap = new Map();
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
+
+            const field_mappings = Array.from(
+              fieldMappingsMap,
+              ([key, value]) => ({ [key]: value }),
+            );
+
+            const resOffers = await this.prisma.ats_offers.findMany({
+              where: {
+                id_ats_application: application.id_ats_application,
+              },
+            });
+            let offers;
+            if (resOffers && resOffers.length > 0) {
+              offers = resOffers.map((off) => {
+                return off.id_ats_offer;
+              });
+            }
+
+            return {
+              id: application.id_ats_application,
+              applied_at: String(application.applied_at) || null,
+              rejected_at: String(application.rejected_at) || null,
+              offers: offers || null,
+              source: application.source || null,
+              credited_to: application.credited_to || null,
+              current_stage: application.current_stage || null,
+              reject_reason: application.reject_reason || null,
+              candidate_id: application.id_ats_candidate || null,
+              job_id: application.id_ats_job || null,
+              field_mappings: field_mappings,
+              remote_id: application.remote_id || null,
+              created_at: application.created_at || null,
+              modified_at: application.modified_at || null,
+              remote_created_at: null,
+              remote_modified_at: null,
+            };
+          }),
+        );
 
       let res: UnifiedAtsApplicationOutput[] = unifiedApplications;
 
       if (remote_data) {
-        const remote_array_data: UnifiedAtsApplicationOutput[] = await Promise.all(
-          res.map(async (application) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: { ressource_owner_id: application.id },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...application, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedAtsApplicationOutput[] =
+          await Promise.all(
+            res.map(async (application) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: { ressource_owner_id: application.id },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...application, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }

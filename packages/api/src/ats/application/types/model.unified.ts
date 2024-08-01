@@ -141,4 +141,20 @@ export class UnifiedAtsApplicationOutput extends UnifiedAtsApplicationInput {
   })
   @IsOptional()
   modified_at?: Date;
+
+  @ApiPropertyOptional({
+    type: Date,
+    nullable: true,
+    description: 'The remote created date of the object',
+  })
+  @IsOptional()
+  remote_created_at?: string;
+
+  @ApiPropertyOptional({
+    type: Date,
+    nullable: true,
+    description: 'The remote modified date of the object',
+  })
+  @IsOptional()
+  remote_modified_at?: string;
 }
