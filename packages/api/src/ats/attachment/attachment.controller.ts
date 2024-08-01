@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import {
@@ -34,7 +34,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('ats/attachments')
 @Controller('ats/attachments')
 export class AttachmentController {

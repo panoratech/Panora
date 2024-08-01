@@ -16,7 +16,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
+  //ApiKeyAuth,
   ApiBody,
   ApiHeader,
   ApiOperation,
@@ -35,7 +35,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('crm/companies')
 @Controller('crm/companies')
 export class CompanyController {

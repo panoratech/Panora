@@ -15,7 +15,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { TeamService } from './services/team.service';
@@ -25,7 +25,7 @@ import { UnifiedTicketingTeamOutput } from './types/model.unified';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('ticketing/teams')
 @Controller('ticketing/teams')
 export class TeamController {
