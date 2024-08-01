@@ -32,6 +32,7 @@ paths:
                   $ref: '#/components/schemas/WebhookResponse'
       tags: &ref_0
         - webhooks
+      x-speakeasy-group: webhook
     post:
       operationId: createWebhookPublic
       summary: Add webhook metadata
@@ -50,6 +51,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
+      x-speakeasy-group: webhook
   /webhooks/{id}:
     delete:
       operationId: delete
@@ -70,7 +72,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhooks.{id}
+      x-speakeasy-group: webhook
     put:
       operationId: updateStatus
       summary: Update webhook status
@@ -90,7 +92,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhooks.{id}
+      x-speakeasy-group: webhook
   /webhooks/verifyEvent:
     post:
       operationId: verifyEvent
@@ -110,7 +112,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/EventPayload'
       tags: *ref_0
-      x-speakeasy-group: webhooks.verifyevent
+      x-speakeasy-group: webhook
   /ticketing/tickets:
     get:
       operationId: listTicketingTicket
@@ -1742,6 +1744,7 @@ paths:
           description: ''
       tags: &ref_34
         - linkedUsers
+      x-speakeasy-group: linkedUsers
     get:
       operationId: listLinkedUsers
       summary: List Linked Users
@@ -1750,6 +1753,7 @@ paths:
         '200':
           description: ''
       tags: *ref_34
+      x-speakeasy-group: linkedUsers
   /linked_users/batch:
     post:
       operationId: importBatch
@@ -1765,7 +1769,7 @@ paths:
         '201':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linked_users.batch
+      x-speakeasy-group: linkedUsers
   /linked_users/single:
     get:
       operationId: retrieveLinkedUser
@@ -1780,7 +1784,7 @@ paths:
         '200':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linked_users.single
+      x-speakeasy-group: linkedUsers
   /linked_users/fromRemoteId:
     get:
       operationId: remoteId
@@ -1795,7 +1799,7 @@ paths:
         '200':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linked_users.fromremoteid
+      x-speakeasy-group: linkedUsers
   /field_mappings/define:
     post:
       operationId: definitions
@@ -1812,7 +1816,7 @@ paths:
           description: ''
       tags: &ref_35
         - fieldMappings
-      x-speakeasy-group: field_mappings.define
+      x-speakeasy-group: fieldMappings
   /field_mappings:
     post:
       operationId: defineCustomField
@@ -1828,6 +1832,7 @@ paths:
         '201':
           description: ''
       tags: *ref_35
+      x-speakeasy-group: fieldMappings
   /field_mappings/map:
     post:
       operationId: map
@@ -1843,7 +1848,7 @@ paths:
         '201':
           description: ''
       tags: *ref_35
-      x-speakeasy-group: field_mappings.map
+      x-speakeasy-group: fieldMappings
   /passthrough:
     post:
       operationId: request
@@ -8001,13 +8006,12 @@ servers:
     description: Production server
   - url: https://api-sandbox.panora.dev
     description: Sandbox server
-  - url: https://api-dev.panora.dev
-    description: Development server
 components:
   securitySchemes:
-    bearer:
-      type: http
-      scheme: bearer
+    apiKey:
+      type: apiKey
+      name: x-api-key
+      in: header
   schemas:
     WebhookResponse:
       type: object
