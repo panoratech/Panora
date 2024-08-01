@@ -24,7 +24,7 @@ import {
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
 @ApiTags('fieldMappings')
-@Controller('field-mappings')
+@Controller('field_mappings')
 export class FieldMappingController {
   constructor(
     private readonly fieldMappingService: FieldMappingService,
@@ -51,7 +51,7 @@ export class FieldMappingController {
   })
   @ApiResponse({ status: 200 })
   @ApiExcludeEndpoint()
-  @Get('attribute')
+  @Get('attributes')
   @UseGuards(JwtAuthGuard)
   getAttributes(@Request() req: any) {
     const { id_project } = req.user;
@@ -64,14 +64,14 @@ export class FieldMappingController {
   })
   @ApiResponse({ status: 200 })
   @ApiExcludeEndpoint()
-  @Get('value')
+  @Get('values')
   @UseGuards(JwtAuthGuard)
   getValues() {
     return this.fieldMappingService.getValues();
   }
 
   @ApiOperation({
-    operationId: 'define',
+    operationId: 'definitions',
     summary: 'Define target Field',
   })
   @ApiBody({ type: DefineTargetFieldDto })
@@ -91,7 +91,7 @@ export class FieldMappingController {
   }
 
   @ApiOperation({
-    operationId: 'create',
+    operationId: 'createCustomField',
     summary: 'Create Custom Field',
   })
   @ApiBody({ type: CustomFieldCreateDto })

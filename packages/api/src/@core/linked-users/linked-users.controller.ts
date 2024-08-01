@@ -25,7 +25,7 @@ import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('linkedUsers')
-@Controller('linked-users')
+@Controller('linked_users')
 export class LinkedUsersController {
   constructor(
     private readonly linkedUsersService: LinkedUsersService,
@@ -34,7 +34,7 @@ export class LinkedUsersController {
     this.logger.setContext(LinkedUsersController.name);
   }
 
-  @ApiOperation({ operationId: 'createLinkedUser', summary: 'Add Linked User' })
+  @ApiOperation({ operationId: 'createLinkedUser', summary: 'Create Linked Users' })
   @ApiBody({ type: CreateLinkedUserDto })
   @ApiResponse({ status: 201 })
   @UseGuards(ApiKeyAuthGuard)
@@ -68,7 +68,7 @@ export class LinkedUsersController {
 
   @ApiOperation({
     operationId: 'listLinkedUsers',
-    summary: 'Retrieve Linked Users',
+    summary: 'List Linked Users',
   })
   @ApiResponse({ status: 200 })
   @UseGuards(ApiKeyAuthGuard)
@@ -80,7 +80,7 @@ export class LinkedUsersController {
 
   @ApiOperation({
     operationId: 'retrieveLinkedUser',
-    summary: 'Retrieve a Linked User',
+    summary: 'Retrieve Linked Users',
   })
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiResponse({ status: 200 })
