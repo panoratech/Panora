@@ -11,9 +11,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-@ApiTags('magic-links')
+@ApiTags('magic_links')
 @ApiExcludeController()
-@Controller('magic-links')
+@Controller('magic_links')
 export class MagicLinkController {
   constructor(
     private readonly magicLinkService: MagicLinkService,
@@ -24,7 +24,7 @@ export class MagicLinkController {
 
   @ApiOperation({
     operationId: 'createMagicLink',
-    summary: 'Create a Magic Link',
+    summary: 'Create Magic Links',
   })
   @ApiBody({ type: CreateMagicLinkDto })
   @ApiResponse({ status: 201 })
@@ -36,7 +36,7 @@ export class MagicLinkController {
 
   @ApiOperation({
     operationId: 'getMagicLinks',
-    summary: 'Retrieve Magic Links',
+    summary: 'List Magic Links',
   })
   @ApiResponse({ status: 200 })
   @Get()
@@ -46,7 +46,7 @@ export class MagicLinkController {
 
   @ApiOperation({
     operationId: 'getMagicLink',
-    summary: 'Retrieve a Magic Link',
+    summary: 'Retrieve Magic Links',
   })
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiResponse({ status: 200 })

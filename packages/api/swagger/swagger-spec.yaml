@@ -16,10 +16,10 @@ paths:
       responses:
         '200':
           description: ''
-  /webhook:
+  /webhooks:
     get:
       operationId: listWebhooks
-      summary: 'List webhooks '
+      summary: List webhooks
       parameters: []
       responses:
         '200':
@@ -31,8 +31,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/WebhookResponse'
       tags: &ref_0
-        - webhook
-      x-speakeasy-group: webhook
+        - webhooks
     post:
       operationId: createWebhook
       summary: Add webhook metadata
@@ -51,8 +50,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhook
-  /webhook/{id}:
+  /webhooks/{id}:
     delete:
       operationId: delete
       summary: Delete Webhook
@@ -70,7 +68,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhook
+      x-speakeasy-group: webhooks.{id}
     put:
       operationId: updateStatus
       summary: Update webhook status
@@ -88,8 +86,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhook
-  /webhook/verifyEvent:
+      x-speakeasy-group: webhooks.{id}
+  /webhooks/verifyEvent:
     post:
       operationId: verifyEvent
       summary: Verify payload signature of the webhook
@@ -108,7 +106,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/EventPayload'
       tags: *ref_0
-      x-speakeasy-group: webhook
+      x-speakeasy-group: webhooks.verifyevent
   /ticketing/tickets:
     get:
       operationId: listTicketingTicket
@@ -1724,10 +1722,10 @@ paths:
       tags: *ref_32
       security: *ref_33
       x-speakeasy-group: ticketing.teams
-  /linked-users:
+  /linked_users:
     post:
       operationId: createLinkedUser
-      summary: Add Linked User
+      summary: Create Linked Users
       parameters: []
       requestBody:
         required: true
@@ -1740,17 +1738,15 @@ paths:
           description: ''
       tags: &ref_34
         - linkedUsers
-      x-speakeasy-group: linkedUsers
     get:
       operationId: listLinkedUsers
-      summary: Retrieve Linked Users
+      summary: List Linked Users
       parameters: []
       responses:
         '200':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
-  /linked-users/batch:
+  /linked_users/batch:
     post:
       operationId: importBatch
       summary: Add Batch Linked Users
@@ -1765,11 +1761,11 @@ paths:
         '201':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
-  /linked-users/single:
+      x-speakeasy-group: linked_users.batch
+  /linked_users/single:
     get:
       operationId: retrieveLinkedUser
-      summary: Retrieve a Linked User
+      summary: Retrieve Linked Users
       parameters:
         - name: id
           required: true
@@ -1780,8 +1776,8 @@ paths:
         '200':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
-  /linked-users/fromRemoteId:
+      x-speakeasy-group: linked_users.single
+  /linked_users/fromRemoteId:
     get:
       operationId: remoteId
       summary: Retrieve a Linked User From A Remote Id
@@ -1795,10 +1791,10 @@ paths:
         '200':
           description: ''
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
-  /field-mappings/define:
+      x-speakeasy-group: linked_users.fromremoteid
+  /field_mappings/define:
     post:
-      operationId: define
+      operationId: definitions
       summary: Define target Field
       parameters: []
       requestBody:
@@ -1812,10 +1808,10 @@ paths:
           description: ''
       tags: &ref_35
         - fieldMappings
-      x-speakeasy-group: fieldMappings
-  /field-mappings:
+      x-speakeasy-group: field_mappings.define
+  /field_mappings:
     post:
-      operationId: create
+      operationId: createCustomField
       summary: Create Custom Field
       parameters: []
       requestBody:
@@ -1828,8 +1824,7 @@ paths:
         '201':
           description: ''
       tags: *ref_35
-      x-speakeasy-group: fieldMappings
-  /field-mappings/map:
+  /field_mappings/map:
     post:
       operationId: map
       summary: Map Custom Field
@@ -1844,7 +1839,7 @@ paths:
         '201':
           description: ''
       tags: *ref_35
-      x-speakeasy-group: fieldMappings
+      x-speakeasy-group: field_mappings.map
   /passthrough:
     post:
       operationId: request

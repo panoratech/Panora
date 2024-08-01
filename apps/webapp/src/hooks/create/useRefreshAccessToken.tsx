@@ -8,7 +8,7 @@ interface IRefreshOutputDto {
 
 const useRefreshAccessToken = () => {
     const refreshAccessToken = async (projectId: string) => {
-        const response = await fetch(`${config.API_URL}/auth/refresh-token`, {
+        const response = await fetch(`${config.API_URL}/auth/refresh_tokens`, {
             method: 'POST',
             body: JSON.stringify({
                 projectId: projectId

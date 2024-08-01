@@ -47,7 +47,7 @@ export class AuthController {
 
   @ApiOperation({ operationId: 'requestPasswordReset', summary: 'Request Password Reset' })
   @ApiBody({ type: RequestPasswordResetDto })
-  @Post('request-password-reset')
+  @Post('password_reset_request')
   async requestPasswordReset(@Body() requestPasswordResetDto: RequestPasswordResetDto) {
     return this.authService.requestPasswordReset(requestPasswordResetDto);
   }
@@ -71,7 +71,7 @@ export class AuthController {
   @ApiOperation({ operationId: 'resetPassword', summary: 'Reset Password' })
   @ApiBody({ type: ResetPasswordDto })
   @ApiResponse({ status: 200, description: 'Password reset successfully' })
-  @Post('reset-password')
+  @Post('reset_password')
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto);
   }
@@ -86,7 +86,7 @@ export class AuthController {
   @ApiOperation({ operationId: 'getApiKeys', summary: 'Retrieve API Keys' })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
-  @Get('api-keys')
+  @Get('api_keys')
   async getApiKeys(@Request() req: any) {
     const { id_project } = req.user;
     return this.authService.getApiKeys(id_project);
@@ -94,7 +94,7 @@ export class AuthController {
 
   @ApiOperation({ operationId: 'deleteApiKey', summary: 'Delete API Keys' })
   @ApiResponse({ status: 201 })
-  @Delete('api-keys/:id')
+  @Delete('api_keys/:id')
   @UseGuards(JwtAuthGuard)
   async deleteApiKey(@Param('id') apiKeyId: string) {
     return await this.authService.deleteApiKey(apiKeyId);
@@ -104,7 +104,7 @@ export class AuthController {
   @ApiBody({ type: ApiKeyDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
-  @Post('generate-apikey')
+  @Post()
   async generateApiKey(@Body() data: ApiKeyDto): Promise<{ api_key: string }> {
     return this.authService.generateApiKeyForUser(
       data.userId,
@@ -120,7 +120,7 @@ export class AuthController {
   @ApiBody({ type: RefreshDto })
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
-  @Post('refresh-token')
+  @Post('refresh_token')
   refreshAccessToken(@Request() req: any, @Body() body: RefreshDto) {
     const { projectId } = body;
     const { id_user, email, first_name, last_name } = req.user;

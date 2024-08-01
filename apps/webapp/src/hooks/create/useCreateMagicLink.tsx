@@ -11,7 +11,7 @@ interface ILinkDto {
 
 const useCreateMagicLink = () => {
     const add = async (data: ILinkDto) => {
-        const response = await fetch(`${config.API_URL}/magic-links`, {
+        const response = await fetch(`${config.API_URL}/magic_links`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
