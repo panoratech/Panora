@@ -23,9 +23,9 @@ import { UpdateCSDto } from './dto/update-cs.dto';
 import { ConnectionStrategyCredentials } from './dto/get-connection-cs-credentials.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
-@ApiTags('connections-strategies')
+@ApiTags('connection_strategies')
 @ApiExcludeController()
-@Controller('connections-strategies')
+@Controller('connection_strategies')
 export class ConnectionsStrategiesController {
   constructor(
     private logger: LoggerService,

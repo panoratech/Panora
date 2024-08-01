@@ -165,6 +165,11 @@ services:
       HELPSCOUT_TICKETING_CLOUD_CLIENT_SECRET: ${HELPSCOUT_TICKETING_CLOUD_CLIENT_SECRET}
       IRONCLAD_TICKETING_CLOUD_CLIENT_ID: ${IRONCLAD_TICKETING_CLOUD_CLIENT_ID}
       IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET: ${IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET}
+      EMAIL_SENDING_ADDRESS: ${EMAIL_SENDING_ADDRESS}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
 
     restart: unless-stopped
     ports:
@@ -275,14 +280,14 @@ services:
   #       condition: service_healthy
   #   network_mode: "host"
 
-  docs:
-    build:
-      dockerfile: ./Dockerfile.dev
-      context: ./docs/
-    ports:
-      - 911:3000
-    volumes:
-      - ./docs/:/app
+  # docs:
+  #   build:
+  #     dockerfile: ./Dockerfile.dev
+  #     context: ./docs/
+  #   ports:
+  #     - 911:3000
+  #   volumes:
+  #     - ./docs/:/app
 
 volumes:
   local_pgdata:

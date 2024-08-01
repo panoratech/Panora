@@ -15,9 +15,9 @@ export class ServiceRegistry {
 
   getService(integrationId: string): IEngagementService {
     const service = this.serviceMap.get(integrationId);
-    if (!service) {
-      throw new Error();
-    }
+    // if (!service) {
+    //   throw new Error();
+    // }
     return service;
   }
 }

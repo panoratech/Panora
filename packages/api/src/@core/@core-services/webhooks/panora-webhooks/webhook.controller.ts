@@ -29,8 +29,8 @@ import {
   WebhookResponse,
 } from './dto/webhook.dto';
 import { WebhookService } from './webhook.service';
-@ApiTags('webhook')
-@Controller('webhook')
+@ApiTags('webhooks')
+@Controller('webhooks')
 export class WebhookController {
   constructor(
     private webhookService: WebhookService,
@@ -41,7 +41,7 @@ export class WebhookController {
 
   @ApiOperation({
     operationId: 'listWebhooks',
-    summary: 'List webhooks ',
+    summary: 'List webhooks',
   })
   @ApiGetArrayCustomResponse(WebhookResponse)
   @UseGuards(ApiKeyAuthGuard)
@@ -125,7 +125,7 @@ export class WebhookController {
   }
 
   @ApiOperation({
-    operationId: 'createWebhook',
+    operationId: 'createWebhookPublic',
     summary: 'Add webhook metadata',
   })
   @ApiBody({ type: WebhookDto })
@@ -138,7 +138,7 @@ export class WebhookController {
   }
 
   @ApiOperation({
-    operationId: 'createWebhook',
+    operationId: 'createWebhookInternal',
     summary: 'Add webhook metadata',
   })
   @ApiBody({ type: WebhookDto })

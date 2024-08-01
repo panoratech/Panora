@@ -32,7 +32,7 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiTags('linkedUsers')
-@Controller('linked-users')
+@Controller('linked_users')
 export class LinkedUsersController {
   constructor(
     private readonly linkedUsersService: LinkedUsersService,
@@ -41,7 +41,7 @@ export class LinkedUsersController {
     this.logger.setContext(LinkedUsersController.name);
   }
 
-  @ApiOperation({ operationId: 'createLinkedUser', summary: 'Add Linked User' })
+  @ApiOperation({ operationId: 'createLinkedUser', summary: 'Create Linked Users' })
   @ApiBody({ type: CreateLinkedUserDto })
   @ApiPostCustomResponse(LinkedUserResponse)
   @UseGuards(ApiKeyAuthGuard)
@@ -75,7 +75,7 @@ export class LinkedUsersController {
 
   @ApiOperation({
     operationId: 'listLinkedUsers',
-    summary: 'Retrieve Linked Users',
+    summary: 'List Linked Users',
   })
   @ApiGetArrayCustomResponse(LinkedUserResponse)
   @UseGuards(ApiKeyAuthGuard)
@@ -87,7 +87,7 @@ export class LinkedUsersController {
 
   @ApiOperation({
     operationId: 'retrieveLinkedUser',
-    summary: 'Retrieve a Linked User',
+    summary: 'Retrieve Linked Users',
   })
   @ApiQuery({ name: 'id', required: true, type: String })
   @ApiGetCustomResponse(LinkedUserResponse)

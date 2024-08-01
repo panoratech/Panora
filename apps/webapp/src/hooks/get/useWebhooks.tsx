@@ -8,7 +8,7 @@ const useWebhooks = () => {
     queryKey: ['webhooks'], 
     queryFn: async (): Promise<Webhook[]> => {
       console.log("Webhook mutation called")
-      const response = await fetch(`${config.API_URL}/webhook/internal`,
+      const response = await fetch(`${config.API_URL}/webhooks/internal`,
       {
         method: 'GET',
         headers: {

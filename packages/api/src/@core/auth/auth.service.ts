@@ -2,17 +2,20 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ProjectsService } from '@@core/projects/projects.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
+import * as nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../@core-services/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
+import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
 
 @Injectable()
@@ -27,12 +30,109 @@ export class AuthService {
     this.logger.setContext(AuthService.name);
   }
 
-  async initiatePasswordRecovery(email: string) {
-    return { message: 'Password reset email sent' };
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const { email, new_password, reset_token } = resetPasswordDto;
+
+    // verify there is a user with corresponding email and non-expired reset token
+    const checkResetRequestIsValid = await this.prisma.users.findFirst({
+      where: {
+        email: email,
+        reset_token_expires_at: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!checkResetRequestIsValid) {
+      throw new BadRequestException('Invalid email or expired request');
+    }
+
+    // Verify the reset token
+    const isValidToken = await this.verifyResetToken(
+      checkResetRequestIsValid.reset_token,
+      reset_token,
+    );
+
+    if (!isValidToken) {
+      throw new BadRequestException('Invalid reset token');
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(new_password, 10);
+
+    // Update the user's password in the database
+    const updatedPassword = await this.prisma.users.update({
+      where: { email },
+      data: { password_hash: hashedPassword },
+    });
+    console.log(updatedPassword);
+    return { message: 'Password reset successfully' };
   }
 
-  async resetPassword(token: string, newPassword: string) {
-    return { message: 'Password reset successful' };
+  private async verifyResetToken(
+    database_token: string,
+    request_token: string,
+  ): Promise<boolean> {
+    const isValidToken = await bcrypt.compare(request_token, database_token);
+    return isValidToken;
+  }
+
+  async requestPasswordReset(requestPasswordResetDto: RequestPasswordResetDto) {
+    const { email } = requestPasswordResetDto;
+
+    if (!email) {
+      throw new BadRequestException('Incorrect API request');
+    }
+
+    const user = await this.prisma.users.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Email not found');
+    }
+
+    const resetToken = uuidv4();
+    const hashedResetToken = await bcrypt.hash(resetToken, 10);
+    const resetTokenExpiresAt = new Date(Date.now() + 3600 * 1000); // 1 hour from now
+
+    await this.prisma.users.update({
+      where: { email },
+      data: {
+        reset_token: hashedResetToken,
+        reset_token_expires_at: resetTokenExpiresAt,
+      },
+    });
+
+    // Send email with resetToken (implementation depends on your email service)
+    await this.sendResetEmail(email, resetToken);
+    return { message: 'Password reset link sent' };
+  }
+
+  private async sendResetEmail(email: string, resetToken: string) {
+    const resetLink = `${process.env.PANORA_BASE_API_URL}/reset-password?token=${resetToken}&email=${email}`;
+
+    // Create a transporter object using the default SMTP transport
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      //secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+
+    // Send mail with defined transport object
+    const info = await transporter.sendMail({
+      from: `${process.env.EMAIL_SENDING_ADDRESS}`,
+      to: email,
+      subject: 'Panora | Password Reset Request',
+      text: `You requested a password reset. Click the following link within one hour from now to reset your password: ${resetLink}`,
+      html: `<p>You requested a password reset. Click the link to reset your password:</p><a href="${resetLink}">${resetLink}</a> <p>The link will expire after one hour</p>`,
+    });
+
+    this.logger.log(`Send reset email to ${email} with token ${resetToken}`);
   }
 
   async getUsers() {

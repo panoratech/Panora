@@ -56,7 +56,7 @@ The following example creates a custom field mapping in two steps (**define and 
 
 ```shell Create custom field
 curl --request POST \
-         --url https://api.panora.dev/field-mappings \
+         --url https://api.panora.dev/field_mappings \
          --header 'Authorization: Bearer <MY_API_KEY>' \
          --header 'Content-Type: application/json' \
          --data '{
@@ -76,7 +76,7 @@ The following example creates a custom field mapping in two steps (**define and 
         <CodeGroup>
         ```shell Define custom field
         curl --request POST \
-             --url https://api.panora.dev/field-mappings/define \
+             --url https://api.panora.dev/field_mappings/definitions \
              --header 'Authorization: Bearer <MY_API_KEY>' \
              --header 'Content-Type: application/json' \
              --data '{
@@ -89,7 +89,7 @@ The following example creates a custom field mapping in two steps (**define and 
 
         ```shell Map custom field
         curl --request POST \
-             --url https://api.panora.dev/field-mappings/map \
+             --url https://api.panora.dev/field_mappings/mappings \
              --header 'Authorization: Bearer <MY_API_KEY>' \
              --header 'Content-Type: application/json' \
              --data '{
