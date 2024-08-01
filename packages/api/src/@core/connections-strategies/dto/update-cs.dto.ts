@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCSDto {
-  @ApiProperty()
+  @ApiProperty({ type: String, nullable: true })
   id_cs: string;
-  @ApiProperty()
+  @ApiProperty({ type: Boolean, nullable: true })
   status: boolean;
-  @ApiProperty()
+  @ApiProperty({ type: [String], nullable: true })
   attributes: string[];
-  @ApiProperty()
+  @ApiProperty({ type: [String], nullable: true })
   values: string[];
 }

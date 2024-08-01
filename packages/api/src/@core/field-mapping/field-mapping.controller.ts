@@ -11,6 +11,7 @@ import { LoggerService } from '../@core-services/logger/logger.service';
 import { FieldMappingService } from './field-mapping.service';
 import {
   CustomFieldCreateDto,
+  CustomFieldResponse,
   DefineTargetFieldDto,
   MapFieldToProviderDto,
 } from './dto/create-custom-field.dto';
@@ -22,6 +23,7 @@ import {
   ApiExcludeEndpoint,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiTags('fieldMappings')
 @Controller('field-mappings')
@@ -75,7 +77,7 @@ export class FieldMappingController {
     summary: 'Define target Field',
   })
   @ApiBody({ type: DefineTargetFieldDto })
-  @ApiResponse({ status: 201 })
+  @ApiPostCustomResponse(CustomFieldResponse)
   //define target field on our unified model
   @Post('define')
   @UseGuards(JwtAuthGuard)
@@ -95,7 +97,7 @@ export class FieldMappingController {
     summary: 'Create Custom Field',
   })
   @ApiBody({ type: CustomFieldCreateDto })
-  @ApiResponse({ status: 201 })
+  @ApiPostCustomResponse(CustomFieldResponse)
   @Post()
   @UseGuards(JwtAuthGuard)
   createCustomField(@Request() req: any, @Body() data: CustomFieldCreateDto) {
@@ -105,7 +107,7 @@ export class FieldMappingController {
 
   @ApiOperation({ operationId: 'map', summary: 'Map Custom Field' })
   @ApiBody({ type: MapFieldToProviderDto })
-  @ApiResponse({ status: 201 })
+  @ApiPostCustomResponse(CustomFieldResponse)
   @UseGuards(JwtAuthGuard)
   @Post('map')
   mapFieldToProvider(@Body() mapFieldToProviderDto: MapFieldToProviderDto) {

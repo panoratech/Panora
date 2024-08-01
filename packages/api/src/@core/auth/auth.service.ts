@@ -2,7 +2,6 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ProjectsService } from '@@core/projects/projects.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -29,57 +28,10 @@ export class AuthService {
   }
 
   async initiatePasswordRecovery(email: string) {
-    const user = await this.prisma.users.findFirst({ where: { email } }); //todo: put unique in db on email
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
-
-    await this.prisma.users.update({
-      where: { id_user: user.id_user },
-      data: { reset_token: resetToken, reset_token_expiry: resetTokenExpiry },
-    });
-
-    const resetUrl = `${process.env.WEBAPP_URL}/reset-password?token=${resetToken}`;
-
-    await this.mailerService.sendMail({
-      to: user.email,
-      subject: 'Password Reset Request',
-      template: './../mailer/templates/password-reset',
-      context: {
-        name: user.first_name,
-        resetUrl,
-      },
-    });
-
     return { message: 'Password reset email sent' };
   }
 
   async resetPassword(token: string, newPassword: string) {
-    const user = await this.prisma.users.findFirst({
-      where: {
-        reset_token: token,
-        reset_token_expiry: { gt: new Date() },
-      },
-    });
-
-    if (!user) {
-      throw new BadRequestException('Invalid or expired reset token');
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    await this.prisma.users.update({
-      where: { id_user: user.id_user },
-      data: {
-        password_hash: hashedPassword,
-        reset_token: null,
-        reset_token_expiry: null,
-      },
-    });
-
     return { message: 'Password reset successful' };
   }
 
@@ -111,11 +63,16 @@ export class AuthService {
 
   async getApiKeys(project_id: string) {
     try {
-      return await this.prisma.api_keys.findMany({
+      const keys = await this.prisma.api_keys.findMany({
         where: {
           id_project: project_id,
         },
       });
+      const res = keys.map((key) => {
+        const { api_key_hash, ...rest } = key;
+        return rest;
+      });
+      return res;
     } catch (error) {
       throw error;
     }

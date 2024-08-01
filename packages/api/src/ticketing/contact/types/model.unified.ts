@@ -4,6 +4,7 @@ import { IsOptional, IsString, IsUUID } from 'class-validator';
 export class UnifiedTicketingContactInput {
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The name of the contact',
   })
   @IsString()
@@ -11,6 +12,7 @@ export class UnifiedTicketingContactInput {
 
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The email address of the contact',
   })
   @IsString()
@@ -18,6 +20,7 @@ export class UnifiedTicketingContactInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The phone number of the contact',
   })
   @IsString()
@@ -26,6 +29,7 @@ export class UnifiedTicketingContactInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The details of the contact',
   })
   @IsOptional()
@@ -33,9 +37,11 @@ export class UnifiedTicketingContactInput {
   details?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
     description:
       'The custom field mappings of the contact between the remote 3rd party & Panora',
+    additionalProperties: true,
   })
   @IsOptional()
   field_mappings?: Record<string, any>;
@@ -49,6 +55,7 @@ export class UnifiedTicketingContactOutput extends UnifiedTicketingContactInput 
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The id of the contact in the context of the 3rd Party',
   })
   @IsOptional()
@@ -56,7 +63,9 @@ export class UnifiedTicketingContactOutput extends UnifiedTicketingContactInput 
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the contact in the context of the 3rd Party',
   })
@@ -64,16 +73,18 @@ export class UnifiedTicketingContactOutput extends UnifiedTicketingContactInput 
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

@@ -5,12 +5,17 @@ import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 export type CommentCreatorType = 'USER' | 'CONTACT';
 
 export class UnifiedTicketingCommentInput {
-  @ApiProperty({ type: String, description: 'The body of the comment' })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'The body of the comment',
+  })
   @IsString()
   body: string;
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The html body of the comment',
   })
   @IsString()
@@ -19,6 +24,7 @@ export class UnifiedTicketingCommentInput {
 
   @ApiPropertyOptional({
     type: Boolean,
+    nullable: true,
     description: 'The public status of the comment',
   })
   @IsOptional()
@@ -27,6 +33,7 @@ export class UnifiedTicketingCommentInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description:
       'The creator type of the comment. Authorized values are either USER or CONTACT',
   })
@@ -38,6 +45,7 @@ export class UnifiedTicketingCommentInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the ticket the comment is tied to',
   })
   @IsUUID()
@@ -46,6 +54,7 @@ export class UnifiedTicketingCommentInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description:
       'The UUID of the contact which the comment belongs to (if no user_id specified)',
   })
@@ -55,6 +64,7 @@ export class UnifiedTicketingCommentInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description:
       'The UUID of the user which the comment belongs to (if no contact_id specified)',
   })
@@ -64,6 +74,7 @@ export class UnifiedTicketingCommentInput {
 
   @ApiPropertyOptional({
     type: [String],
+    nullable: true,
     description: 'The attachements UUIDs tied to the comment',
   })
   @IsOptional()
@@ -71,13 +82,18 @@ export class UnifiedTicketingCommentInput {
 }
 
 export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the comment' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'The UUID of the comment',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The id of the comment in the context of the 3rd Party',
   })
   @IsString()
@@ -85,7 +101,9 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the comment in the context of the 3rd Party',
   })
@@ -93,16 +111,18 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

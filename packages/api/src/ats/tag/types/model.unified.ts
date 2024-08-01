@@ -2,13 +2,18 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
 
 export class UnifiedAtsTagInput {
-  @ApiPropertyOptional({ type: String, description: 'The name of the tag' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'The name of the tag',
+  })
   @IsString()
   @IsOptional()
   name?: string;
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the candidate',
   })
   @IsUUID()
@@ -16,7 +21,9 @@ export class UnifiedAtsTagInput {
   id_ats_candidate?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -25,13 +32,18 @@ export class UnifiedAtsTagInput {
 }
 
 export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the tag' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'The UUID of the tag',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The remote ID of the tag in the context of the 3rd Party',
   })
   @IsString()
@@ -39,15 +51,17 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    additionalProperties: true,
     description: 'The remote data of the tag in the context of the 3rd Party',
   })
   @IsOptional()
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
-    format: 'date-time',
+    type: Date,
+    nullable: true,
     description: 'The creation date of the tag',
   })
   @IsDateString()
@@ -55,8 +69,8 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   created_at?: string;
 
   @ApiPropertyOptional({
-    type: String,
-    format: 'date-time',
+    type: Date,
+    nullable: true,
     description: 'The modification date of the tag',
   })
   @IsDateString()

@@ -44,6 +44,34 @@ export const ApiPostCustomResponse = <DataDto extends Type<unknown>>(
     }),
   );
 
+export const ApiPostGenericJson = (description: string) => {
+  return applyDecorators(
+    ApiOkResponse({
+      schema: {
+        properties: {
+          data: {
+            type: 'object',
+            additionalProperties: true,
+            description: description,
+          },
+        },
+      },
+    }),
+  );
+};
+export const ApiPostArrayCustomResponse = <DataDto extends Type<unknown>>(
+  dataDto: DataDto,
+) =>
+  applyDecorators(
+    ApiExtraModels(dataDto),
+    ApiCreatedResponse({
+      schema: {
+        type: 'array',
+        items: { $ref: getSchemaPath(dataDto) },
+      },
+    }),
+  );
+
 export class PaginatedDto<TData> {
   @ApiProperty()
   prev_cursor: string;
