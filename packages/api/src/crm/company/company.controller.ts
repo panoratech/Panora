@@ -49,7 +49,7 @@ export class CompanyController {
 
   @ApiOperation({
     operationId: 'listCrmCompany',
-    summary: 'List  Companies',
+    summary: 'List Companies',
   })
   @ApiHeader({
     name: 'x-connection-token',

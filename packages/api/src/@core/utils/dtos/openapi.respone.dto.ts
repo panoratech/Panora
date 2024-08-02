@@ -73,11 +73,11 @@ export const ApiPostArrayCustomResponse = <DataDto extends Type<unknown>>(
   );
 
 export class PaginatedDto<TData> {
-  @ApiProperty()
-  prev_cursor: string;
+  @ApiProperty({ type: 'string', nullable: true })
+  prev_cursor: string | null;
 
-  @ApiProperty()
-  next_cursor: string;
+  @ApiProperty({ type: 'string', nullable: true })
+  next_cursor: string | null;
 
   @ApiProperty({ type: 'array', items: { type: 'object' } })
   data: TData[];

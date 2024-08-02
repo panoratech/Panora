@@ -7,14 +7,11 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: Returns a greeting message
           content:
-            application/json:
+            text/plain:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                type: string
   /health:
     get:
       operationId: health
@@ -22,14 +19,12 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: API is healthy
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  code:
-                    type: number
+                type: number
+                example: 200
   /webhooks:
     get:
       operationId: listWebhooks
@@ -520,7 +515,7 @@ paths:
   /crm/companies:
     get:
       operationId: listCrmCompany
-      summary: List  Companies
+      summary: List Companies
       parameters:
         - name: x-connection-token
           required: true
@@ -7896,8 +7891,10 @@ components:
       properties:
         prev_cursor:
           type: string
+          nullable: true
         next_cursor:
           type: string
+          nullable: true
         data:
           type: array
           items:
