@@ -1,6 +1,6 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { ApiGetCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
@@ -14,14 +14,22 @@ export class AppController {
   }
 
   @ApiOperation({ operationId: 'hello' })
-  @ApiGetCustomResponse(String)
+  @ApiOkResponse({
+    schema: {
+      type: 'string',
+    },
+  })
   @Get()
   hello(): string {
     return this.appService.getHello();
   }
 
   @ApiOperation({ operationId: 'health' })
-  @ApiGetCustomResponse(Number)
+  @ApiOkResponse({
+    schema: {
+      type: 'number',
+    },
+  })
   @Get('health')
   health(): number {
     return 200;

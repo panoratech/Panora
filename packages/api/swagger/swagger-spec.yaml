@@ -11,7 +11,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/String'
+                type: string
   /health:
     get:
       operationId: health
@@ -23,7 +23,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Number'
+                type: number
   /webhooks:
     get:
       operationId: listWebhooks
@@ -40,6 +40,7 @@ paths:
                   $ref: '#/components/schemas/WebhookResponse'
       tags: &ref_0
         - webhooks
+      x-speakeasy-group: webhooks
     post:
       operationId: createWebhookPublic
       summary: Add webhook metadata
@@ -58,6 +59,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
+      x-speakeasy-group: webhooks
   /webhooks/{id}:
     delete:
       operationId: delete
@@ -78,7 +80,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhooks.{id}
+      x-speakeasy-group: webhooks
     put:
       operationId: updateStatus
       summary: Update webhook status
@@ -98,7 +100,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhooks.{id}
+      x-speakeasy-group: webhooks
   /webhooks/verifyEvent:
     post:
       operationId: verifyEvent
@@ -124,7 +126,7 @@ paths:
         '201':
           description: ''
       tags: *ref_0
-      x-speakeasy-group: webhooks.verifyevent
+      x-speakeasy-group: webhooks
   /ticketing/tickets:
     get:
       operationId: listTicketingTicket
@@ -7790,12 +7792,6 @@ components:
       type: http
       scheme: bearer
   schemas:
-    String:
-      type: object
-      properties: {}
-    Number:
-      type: object
-      properties: {}
     WebhookResponse:
       type: object
       properties:
