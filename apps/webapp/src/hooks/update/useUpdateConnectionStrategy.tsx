@@ -15,7 +15,7 @@ interface IUpdateConnectionStrategyDto {
 const useUpdateConnectionStrategy = () => {    
     const update = async (connectionStrategyData: IUpdateConnectionStrategyDto) => {
         if(connectionStrategyData.updateToggle) {
-            const response = await fetch(`${config.API_URL}/connections-strategies/toggle`, {
+            const response = await fetch(`${config.API_URL}/connections_strategies/toggle`, {
                 method: 'POST',
                 body: JSON.stringify({id_cs:connectionStrategyData.id_cs}),
                 headers: {
@@ -30,7 +30,7 @@ const useUpdateConnectionStrategy = () => {
             }
             return response.json();
         } else {
-            const response = await fetch(`${config.API_URL}/connections-strategies/update`, {
+            const response = await fetch(`${config.API_URL}/connections_strategies/update`, {
                 method: 'POST',
                 body: JSON.stringify({
                     id_cs:connectionStrategyData.id_cs,

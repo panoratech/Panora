@@ -10,7 +10,7 @@ interface IGetCSCredentialsData {
 
 const useConnectionStrategyAuthCredentials = () => {    
     const getCSCredentials = async (data : IGetCSCredentialsData): Promise<string[]> => {
-        const response = await fetch(`${config.API_URL}/connections-strategies/credentials`,{
+        const response = await fetch(`${config.API_URL}/connections_strategies/credentials`,{
           method: 'POST',
           body: JSON.stringify(data),
           headers: {
