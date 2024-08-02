@@ -11,7 +11,10 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: object
+                properties:
+                  message:
+                    type: string
   /health:
     get:
       operationId: health
@@ -23,7 +26,10 @@ paths:
           content:
             application/json:
               schema:
-                type: number
+                type: object
+                properties:
+                  code:
+                    type: number
   /webhooks:
     get:
       operationId: listWebhooks
@@ -11442,6 +11448,8 @@ components:
         - file_name
         - file_url
         - uploader
+security:
+  - bearer: []
 x-speakeasy-name-override:
   - operationId: ^retrieve.*
     methodNameOverride: retrieve

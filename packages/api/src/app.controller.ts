@@ -1,8 +1,7 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { Controller, Get } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { AppService } from './app.service';
-import { ApiGetCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @Controller()
 export class AppController {
@@ -16,22 +15,28 @@ export class AppController {
   @ApiOperation({ operationId: 'hello' })
   @ApiOkResponse({
     schema: {
-      type: 'string',
+      type: 'object',
+      properties: {
+        message: { type: 'string' },
+      },
     },
   })
   @Get()
-  hello(): string {
-    return this.appService.getHello();
+  hello() {
+    return { message: this.appService.getHello() };
   }
 
   @ApiOperation({ operationId: 'health' })
   @ApiOkResponse({
     schema: {
-      type: 'number',
+      type: 'object',
+      properties: {
+        code: { type: 'number' },
+      },
     },
   })
   @Get('health')
-  health(): number {
-    return 200;
+  health() {
+    return { code: 200 };
   }
 }

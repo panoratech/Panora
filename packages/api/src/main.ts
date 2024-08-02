@@ -49,6 +49,8 @@ async function bootstrap() {
     })
     .build();
   const document = SwaggerModule.createDocument(app, config);
+
+  document.security = [{ bearer: [] }];
   // Dynamically add extended specs
   const extendedSpecs = {
     'x-speakeasy-name-override': [

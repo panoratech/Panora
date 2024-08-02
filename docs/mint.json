@@ -804,6 +804,7 @@
     {
       "group": "Recipes",
       "pages": [
+        "recipes/frontend-sdk",
         "recipes/embed-catalog",
         "recipes/import-existing-users",
         "recipes/catch-connection-token",
