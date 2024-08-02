@@ -42,6 +42,10 @@ services:
       REDIS_PASS: ${REDIS_PASS}
       REDIS_USER: ${REDIS_USER}
       REDIS_PORT: ${REDIS_PORT}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      WEBAPP_URL: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
       #REDIS_TLS: 1 # set this variable to 1 when Redis is AWS hosted 
       REDIS_DB: ${REDIS_DB}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}

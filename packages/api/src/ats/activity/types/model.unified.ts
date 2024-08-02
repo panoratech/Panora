@@ -11,13 +11,18 @@ export type ActivityType = 'NOTE' | 'EMAIL' | 'OTHER';
 export type ActivityVisibility = 'ADMIN_ONLY' | 'PUBLIC' | 'PRIVATE';
 
 export class UnifiedAtsActivityInput {
-  @ApiPropertyOptional({ type: String, description: 'The type of activity' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'The type of activity',
+  })
   @IsIn(['NOTE', 'EMAIL', 'OTHER'])
   @IsOptional()
   activity_type?: ActivityType | string;
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The subject of the activity',
   })
   @IsString()
@@ -26,6 +31,7 @@ export class UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The body of the activity',
   })
   @IsString()
@@ -34,6 +40,7 @@ export class UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The visibility of the activity',
   })
   @IsIn(['ADMIN_ONLY', 'PUBLIC', 'PRIVATE'])
@@ -42,6 +49,7 @@ export class UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the candidate',
   })
   @IsUUID()
@@ -49,8 +57,8 @@ export class UnifiedAtsActivityInput {
   candidate_id?: string;
 
   @ApiPropertyOptional({
-    type: String,
-    format: 'date-time',
+    type: Date,
+    nullable: true,
     description: 'The remote creation date of the activity',
   })
   @IsDateString()
@@ -58,7 +66,9 @@ export class UnifiedAtsActivityInput {
   remote_created_at?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -69,6 +79,7 @@ export class UnifiedAtsActivityInput {
 export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the activity',
   })
   @IsUUID()
@@ -77,6 +88,7 @@ export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description:
       'The remote ID of the activity in the context of the 3rd Party',
   })
@@ -85,7 +97,9 @@ export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the activity in the context of the 3rd Party',
   })
@@ -93,16 +107,18 @@ export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

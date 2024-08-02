@@ -10,6 +10,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiTags('passthrough')
 @Controller('passthrough')
@@ -29,7 +30,7 @@ export class PassthroughController {
   @ApiQuery({ name: 'linkedUserId', required: true, type: String })
   @ApiQuery({ name: 'vertical', required: true, type: String })
   @ApiBody({ type: PassThroughRequestDto })
-  @ApiResponse({ status: 200, type: PassThroughResponse })
+  @ApiPostCustomResponse(PassThroughResponse)
   @Post()
   async passthroughRequest(
     @Query('integrationId') integrationId: string,

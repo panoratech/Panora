@@ -9,7 +9,7 @@ interface IWebhookDto {
 }
 const useCreateWebhook = () => {
     const add = async (data: IWebhookDto) => {
-        const response = await fetch(`${config.API_URL}/webhook/internal`, {
+        const response = await fetch(`${config.API_URL}/webhooks/internal`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

@@ -2,19 +2,15 @@ import config from '@/lib/config';
 import { useMutation } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
-interface ILinkedUserDto {
-    linked_user_origin_ids: string[];
-    alias: string;
-    id_project: string;
-}
-const useCreateBatchLinkedUser = () => {    
-    const add = async (linkedUserData: ILinkedUserDto) => {
-        const response = await fetch(`${config.API_URL}/linked_users/internal/batch`, {
+const useInitiatePasswordRecovery = () => {
+    const call = async (data: {
+        email: string
+    }) => {
+        const response = await fetch(`${config.API_URL}/auth/forgot-password`, {
             method: 'POST',
-            body: JSON.stringify(linkedUserData),
+            body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${Cookies.get('access_token')}`,
             },
         });
         
@@ -25,10 +21,12 @@ const useCreateBatchLinkedUser = () => {
         
         return response.json();
     };
-    const createBatchLinkedUserPromise = (data: ILinkedUserDto) => {
+    const func = (data: {
+        email: string
+    }) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const result = await add(data);
+                const result = await call(data);
                 resolve(result);
                 
             } catch (error) {
@@ -38,10 +36,10 @@ const useCreateBatchLinkedUser = () => {
     };
     return {
         mutationFn: useMutation({
-            mutationFn: add,
+            mutationFn: call,
         }),
-        createBatchLinkedUserPromise
-    };
+        func
+    }
 };
 
-export default useCreateBatchLinkedUser;
+export default useInitiatePasswordRecovery;

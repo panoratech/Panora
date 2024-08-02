@@ -2,12 +2,17 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
 export class UnifiedFilestorageUserInput {
-  @ApiProperty({ type: String, description: 'The name of the user' })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'The name of the user',
+  })
   @IsString()
   name: string;
 
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The email of the user',
   })
   @IsString()
@@ -15,15 +20,18 @@ export class UnifiedFilestorageUserInput {
 
   @ApiProperty({
     type: Boolean,
+    nullable: true,
     description: 'Whether the user is the one who linked this account.',
   })
   @IsString()
   is_me: boolean;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
+    additionalProperties: true,
   })
   @IsOptional()
   field_mappings?: Record<string, any>;
@@ -32,6 +40,7 @@ export class UnifiedFilestorageUserInput {
 export class UnifiedUserOutput extends UnifiedFilestorageUserInput {
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the user',
   })
   @IsUUID()
@@ -40,6 +49,7 @@ export class UnifiedUserOutput extends UnifiedFilestorageUserInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The id of the user in the context of the 3rd Party',
   })
   @IsString()
@@ -47,23 +57,27 @@ export class UnifiedUserOutput extends UnifiedFilestorageUserInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    additionalProperties: true,
     description: 'The remote data of the user in the context of the 3rd Party',
   })
   @IsOptional()
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

@@ -1,19 +1,22 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ProjectsService } from '@@core/projects/projects.service';
-import { AuthError } from '@@core/utils/errors';
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { MailerService } from '@nestjs-modules/mailer';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
+import * as nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../@core-services/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
-import { VerifyUserDto } from './dto/verify-user.dto';
-import { ConflictException } from '@nestjs/common';
-import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
-import * as nodemailer from 'nodemailer';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifyUserDto } from './dto/verify-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +25,7 @@ export class AuthService {
     private projectService: ProjectsService,
     private jwtService: JwtService,
     private logger: LoggerService,
+    private mailerService: MailerService,
   ) {
     this.logger.setContext(AuthService.name);
   }
@@ -43,8 +47,11 @@ export class AuthService {
       throw new BadRequestException('Invalid email or expired request');
     }
 
-    // Verify the reset token 
-    const isValidToken = await this.verifyResetToken(checkResetRequestIsValid.reset_token, reset_token);
+    // Verify the reset token
+    const isValidToken = await this.verifyResetToken(
+      checkResetRequestIsValid.reset_token,
+      reset_token,
+    );
 
     if (!isValidToken) {
       throw new BadRequestException('Invalid reset token');
@@ -54,7 +61,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(new_password, 10);
 
     // Update the user's password in the database
-    const updatedPassword =await this.prisma.users.update({
+    const updatedPassword = await this.prisma.users.update({
       where: { email },
       data: { password_hash: hashedPassword },
     });
@@ -62,16 +69,18 @@ export class AuthService {
     return { message: 'Password reset successfully' };
   }
 
-  private async verifyResetToken(database_token: string, request_token: string): Promise<boolean> {
-  const isValidToken = await bcrypt.compare(request_token, database_token);
-  return isValidToken;
+  private async verifyResetToken(
+    database_token: string,
+    request_token: string,
+  ): Promise<boolean> {
+    const isValidToken = await bcrypt.compare(request_token, database_token);
+    return isValidToken;
   }
-
 
   async requestPasswordReset(requestPasswordResetDto: RequestPasswordResetDto) {
     const { email } = requestPasswordResetDto;
 
-    if (!email){
+    if (!email) {
       throw new BadRequestException('Incorrect API request');
     }
 
@@ -105,19 +114,19 @@ export class AuthService {
 
     // Create a transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST, 
-      port: Number(process.env.SMTP_PORT), 
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
       //secure: false,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
-      }
+      },
     });
 
     // Send mail with defined transport object
     const info = await transporter.sendMail({
       from: `${process.env.EMAIL_SENDING_ADDRESS}`,
-      to: email, 
+      to: email,
       subject: 'Panora | Password Reset Request',
       text: `You requested a password reset. Click the following link within one hour from now to reset your password: ${resetLink}`,
       html: `<p>You requested a password reset. Click the link to reset your password:</p><a href="${resetLink}">${resetLink}</a> <p>The link will expire after one hour</p>`,
@@ -125,8 +134,6 @@ export class AuthService {
 
     this.logger.log(`Send reset email to ${email} with token ${resetToken}`);
   }
-
-
 
   async getUsers() {
     try {
@@ -156,11 +163,16 @@ export class AuthService {
 
   async getApiKeys(project_id: string) {
     try {
-      return await this.prisma.api_keys.findMany({
+      const keys = await this.prisma.api_keys.findMany({
         where: {
           id_project: project_id,
         },
       });
+      const res = keys.map((key) => {
+        const { api_key_hash, ...rest } = key;
+        return rest;
+      });
+      return res;
     } catch (error) {
       throw error;
     }
@@ -173,7 +185,9 @@ export class AuthService {
       });
 
       if (foundUser) {
-        throw new ConflictException(`Email already exists. Try resetting your password.`);
+        throw new ConflictException(
+          `Email already exists. Try resetting your password.`,
+        );
       }
       return await this.createUser(user);
     } catch (error) {
@@ -374,8 +388,6 @@ export class AuthService {
       throw error;
     }
   }
-
-
 
   async getProjectIdForApiKey(apiKey: string) {
     try {

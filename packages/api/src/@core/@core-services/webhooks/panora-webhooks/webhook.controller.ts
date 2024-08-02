@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import {
   ApiGetArrayCustomResponse,
   ApiPostCustomResponse,
+  ApiPostGenericJson,
 } from '@@core/utils/dtos/openapi.respone.dto';
 import {
   Body,
@@ -23,7 +24,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
-  EventPayload,
   SignatureVerificationDto,
   WebhookDto,
   WebhookResponse,
@@ -156,7 +156,7 @@ export class WebhookController {
     summary: 'Verify payload signature of the webhook',
   })
   @ApiBody({ type: SignatureVerificationDto })
-  @ApiPostCustomResponse(EventPayload)
+  @ApiPostGenericJson('Dynamic event payload')
   @UseGuards(ApiKeyAuthGuard)
   @Post('verifyEvent')
   async verifyPayloadSignature(@Body() data: SignatureVerificationDto) {
