@@ -7,7 +7,7 @@ interface IDeleteConnectionStrategyDto {
 
 const useDeleteConnectionStrategy = () => {    
     const remove = async (connectionStrategyData: IDeleteConnectionStrategyDto) => {
-        const response = await fetch(`${config.API_URL}/connections_strategies/delete`, {
+        const response = await fetch(`${config.API_URL}/connection_strategies/delete`, {
             method: 'POST',
             body: JSON.stringify({id:connectionStrategyData.id_cs}),
             headers: {

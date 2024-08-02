@@ -10,7 +10,7 @@ interface IConnectionStrategyDto {
 
 const useCreateConnectionStrategy = () => {    
     const add = async (connectionStrategyData: IConnectionStrategyDto) => {
-        const response = await fetch(`${config.API_URL}/connections_strategies/create`, {
+        const response = await fetch(`${config.API_URL}/connection_strategies/create`, {
             method: 'POST',
             body: JSON.stringify(connectionStrategyData),
             headers: {
