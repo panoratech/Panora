@@ -8,7 +8,7 @@ interface IWebhookUpdateDto {
 }
 const useUpdateWebhookStatus = () => {
     const update = async (data: IWebhookUpdateDto) => {
-        const response = await fetch(`${config.API_URL}/webhook/internal/${data.id}`, {
+        const response = await fetch(`${config.API_URL}/webhooks/internal/${data.id}`, {
             method: 'PUT',
             body: JSON.stringify({active: data.active}),
             headers: {

@@ -26,7 +26,7 @@ const formSchema = z.object({
   path: ["confirmPassword"],
 });
 
-const ResetPasswordForm = ({ token }) => {
+const ResetPasswordForm = ({ token }: {token: string}) => {
   const router = useRouter();
   const { func } = useResetPassword();
   const [showPassword, setShowPassword] = useState(false);
