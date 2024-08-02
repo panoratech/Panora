@@ -2062,13 +2062,15 @@ CREATE INDEX FK_invite_link_linkedUserID ON invite_links
 CREATE TABLE events
 (
  id_event       uuid NOT NULL,
- status         text NOT NULL,
+ id_connection  uuid NOT NULL,
+ id_project     uuid NOT NULL,
  type           text NOT NULL,
+ status         text NOT NULL,
  direction      text NOT NULL,
- "timestamp"    timestamp NOT NULL DEFAULT NOW(),
  method         text NOT NULL,
  url            text NOT NULL,
  provider       text NOT NULL,
+ "timestamp"    timestamp NOT NULL DEFAULT NOW(),
  id_linked_user uuid NOT NULL,
  CONSTRAINT PK_jobs PRIMARY KEY ( id_event ),
  CONSTRAINT FK_12 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
@@ -2077,8 +2079,8 @@ CREATE INDEX FK_linkeduserID_projectID ON events
 (
  id_linked_user
 );
-COMMENT ON COLUMN events.status IS 'pending,, retry_scheduled, failed, success';
 COMMENT ON COLUMN events.type IS 'example crm_contact.created crm_contact.deleted';
+COMMENT ON COLUMN events.status IS 'pending,, retry_scheduled, failed, success';
 
 -- ************************************** crm_tasks
 CREATE TABLE crm_tasks
