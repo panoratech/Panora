@@ -31,7 +31,7 @@ export class EventsController {
 
   @ApiOperation({
     operationId: 'getPanoraCoreEvents',
-    summary: 'Retrieve Events',
+    summary: 'List Events',
   })
   @ApiResponse({ status: 200 })
   @UsePipes(

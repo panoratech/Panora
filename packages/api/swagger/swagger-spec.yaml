@@ -79,7 +79,6 @@ paths:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
       x-speakeasy-group: webhooks.{id}
-      x-speakeasy-group: webhooks.{id}
     put:
       operationId: updateStatus
       summary: Update webhook status
@@ -99,7 +98,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhooks.{id}
       x-speakeasy-group: webhooks.{id}
   /webhooks/verifyEvent:
     post:
@@ -126,7 +124,6 @@ paths:
         '201':
           description: ''
       tags: *ref_0
-      x-speakeasy-group: webhooks.verifyevent
       x-speakeasy-group: webhooks.verifyevent
   /ticketing/tickets:
     get:
@@ -510,7 +507,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResyncStatusDto'
-      tags: *ref_9
+      tags: *ref_5
       x-speakeasy-group: sync
   /crm/companies:
     get:
@@ -1709,7 +1706,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
-      tags: &ref_34
+      tags: &ref_18
         - linkedUsers
     get:
       operationId: listLinkedUsers
@@ -1724,7 +1721,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LinkedUserResponse'
-      tags: *ref_34
+      tags: *ref_18
   /linked_users/batch:
     post:
       operationId: importBatch
@@ -1745,7 +1742,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LinkedUserResponse'
-      tags: *ref_34
+      tags: *ref_18
       x-speakeasy-group: linked_users.batch
   /linked_users/single:
     get:
@@ -1764,7 +1761,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
-      tags: *ref_34
+      tags: *ref_18
       x-speakeasy-group: linked_users.single
   /linked_users/fromRemoteId:
     get:
@@ -1783,7 +1780,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
-      tags: *ref_34
+      tags: *ref_18
       x-speakeasy-group: linked_users.fromremoteid
   /field_mappings/define:
     post:
@@ -1803,9 +1800,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
-      tags: &ref_35
+      tags: &ref_19
         - fieldMappings
-      x-speakeasy-group: field_mappings.define
       x-speakeasy-group: field_mappings.define
   /field_mappings:
     post:
@@ -1825,7 +1821,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
-      tags: *ref_35
+      tags: *ref_19
   /field_mappings/map:
     post:
       operationId: map
@@ -1844,7 +1840,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
-      tags: *ref_35
+      tags: *ref_19
       x-speakeasy-group: field_mappings.map
   /passthrough:
     post:
@@ -7788,13 +7784,8 @@ servers:
     description: Sandbox server
   - url: https://api-dev.panora.dev
     description: Development server
-  - url: https://api-dev.panora.dev
-    description: Development server
 components:
   securitySchemes:
-    bearer:
-      type: http
-      scheme: bearer
     bearer:
       type: http
       scheme: bearer
@@ -7814,7 +7805,6 @@ components:
           description: The unique UUID of the webhook.
         endpoint_description:
           type: string
-          nullable: true
           nullable: true
           description: The description of the webhook.
         url:
@@ -7847,7 +7837,6 @@ components:
         last_update:
           format: date-time
           type: string
-          nullable: true
           nullable: true
           description: The last update date of the webhook.
       required:

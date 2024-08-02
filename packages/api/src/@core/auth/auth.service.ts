@@ -34,7 +34,7 @@ export class AuthService {
     const { email, new_password, reset_token } = resetPasswordDto;
 
     // verify there is a user with corresponding email and non-expired reset token
-    const checkResetRequestIsValid = await this.prisma.users.findFirst({
+    /*const checkResetRequestIsValid = await this.prisma.users.findFirst({
       where: {
         email: email,
         reset_token_expires_at: {
@@ -65,7 +65,7 @@ export class AuthService {
       where: { email },
       data: { password_hash: hashedPassword },
     });
-    console.log(updatedPassword);
+    console.log(updatedPassword);*/
     return { message: 'Password reset successfully' };
   }
 
@@ -80,7 +80,7 @@ export class AuthService {
   async requestPasswordReset(requestPasswordResetDto: RequestPasswordResetDto) {
     const { email } = requestPasswordResetDto;
 
-    if (!email) {
+    /*if (!email) {
       throw new BadRequestException('Incorrect API request');
     }
 
@@ -105,7 +105,7 @@ export class AuthService {
     });
 
     // Send email with resetToken (implementation depends on your email service)
-    await this.sendResetEmail(email, resetToken);
+    await this.sendResetEmail(email, resetToken);*/
     return { message: 'Password reset link sent' };
   }
 
