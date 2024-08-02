@@ -11,8 +11,9 @@
   },
   "anchors": [],
   "api": {
-    "auth": {
-      "method": "bearer"
+     "auth": {
+        "method": "key",
+        "name": "x-api-key"
     },
     "baseUrl": "https://api.panora.dev"
   },
