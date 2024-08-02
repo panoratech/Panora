@@ -40,7 +40,6 @@ paths:
                   $ref: '#/components/schemas/WebhookResponse'
       tags: &ref_0
         - webhooks
-      x-speakeasy-group: webhook
     post:
       operationId: createWebhookPublic
       summary: Add webhook metadata
@@ -59,7 +58,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhook
   /webhooks/{id}:
     delete:
       operationId: delete
@@ -100,7 +98,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhook
+      x-speakeasy-group: webhooks.{id}
   /webhooks/verifyEvent:
     post:
       operationId: verifyEvent
@@ -1766,7 +1764,6 @@ paths:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: &ref_34
         - linkedUsers
-      x-speakeasy-group: linkedUsers
     get:
       operationId: listLinkedUsers
       summary: List Linked Users
@@ -1781,7 +1778,6 @@ paths:
                 items:
                   $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
   /linked_users/batch:
     post:
       operationId: importBatch
@@ -1803,7 +1799,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
+      x-speakeasy-group: linked_users.batch
   /linked_users/single:
     get:
       operationId: retrieveLinkedUser
@@ -1822,7 +1818,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
+      x-speakeasy-group: linked_users.single
   /linked_users/fromRemoteId:
     get:
       operationId: remoteId
@@ -1841,7 +1837,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_34
-      x-speakeasy-group: linkedUsers
+      x-speakeasy-group: linked_users.fromremoteid
   /field_mappings/define:
     post:
       operationId: definitions
@@ -1862,7 +1858,7 @@ paths:
                 $ref: '#/components/schemas/CustomFieldResponse'
       tags: &ref_35
         - fieldMappings
-      x-speakeasy-group: fieldMappings
+      x-speakeasy-group: field_mappings.define
   /field_mappings:
     post:
       operationId: defineCustomField
@@ -1882,7 +1878,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
       tags: *ref_35
-      x-speakeasy-group: fieldMappings
   /field_mappings/map:
     post:
       operationId: map
@@ -1902,7 +1897,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
       tags: *ref_35
-      x-speakeasy-group: fieldMappings
+      x-speakeasy-group: field_mappings.map
   /passthrough:
     post:
       operationId: request
@@ -8060,12 +8055,13 @@ servers:
     description: Production server
   - url: https://api-sandbox.panora.dev
     description: Sandbox server
+  - url: https://api-dev.panora.dev
+    description: Development server
 components:
   securitySchemes:
-    apiKey:
-      type: apiKey
-      name: x-api-key
-      in: header
+    bearer:
+      type: http
+      scheme: bearer
   schemas:
     String:
       type: object

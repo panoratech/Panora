@@ -1,18 +1,13 @@
 import '@@core/@core-services/sentry/instrument';
-import * as Sentry from '@sentry/node';
-import {
-  BaseExceptionFilter,
-  HttpAdapterHost,
-  NestFactory,
-} from '@nestjs/core';
-import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
-import * as fs from 'fs';
-import * as cookieParser from 'cookie-parser';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
+import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
+import * as fs from 'fs';
 import * as yaml from 'js-yaml';
+import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
+import { AppModule } from './app.module';
 
 function addSpeakeasyGroup(document: any) {
   for (const path in document.paths) {
