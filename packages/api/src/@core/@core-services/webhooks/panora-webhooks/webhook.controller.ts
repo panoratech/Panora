@@ -161,7 +161,7 @@ export class WebhookController {
   @Post('verifyEvent')
   async verifyPayloadSignature(@Body() data: SignatureVerificationDto) {
     const { payload, signature, secret } = data;
-    return this.webhookService.verifyPayloadSignature(
+    return await this.webhookService.verifyPayloadSignature(
       payload,
       signature,
       secret,
