@@ -740,9 +740,9 @@
         {
           "group": "Linked Users",
           "pages": [
-            "api-reference/linked-users/add-linked-user",
-            "api-reference/linked-users/retrieve-linked-users",
-            "api-reference/linked-users/retrieve-a-linked-user"
+            "api-reference/linked_users/create",
+            "api-reference/linked_users/list",
+            "api-reference/linked_users/retrieve"
           ]
         },
         {
@@ -762,12 +762,12 @@
         {
           "group": "Field Mappings",
           "pages": [
-            "api-reference/field-mapping/retrieve-field-mapping-entities",
-            "api-reference/field-mapping/retrieve-field-mappings",
-            "api-reference/field-mapping/retrieve-field-mappings-values",
-            "api-reference/field-mapping/define-target-field",
-            "api-reference/field-mapping/map-custom-field",
-            "api-reference/field-mapping/retrieve-custom-properties"
+            "api-reference/field_mappings/retrieve-field-mapping-entities",
+            "api-reference/field_mappings/retrieve-field-mappings",
+            "api-reference/field_mappings/retrieve-field-mappings-values",
+            "api-reference/field_mappings/mapping/define-target-field",
+            "api-reference/field_mappings/map-custom-field",
+            "api-reference/field_mappings/retrieve-custom-properties"
           ]
         },
         {
