@@ -81,7 +81,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
-  const DATA = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
+  const DATA = await fetch(`${apiUrl}/connection_strategies/getCredentials?projectId=${projectId}&type=${type}`);
   const data = await DATA.json() as OAuth2AuthData; 
 
   // console.log("Fetched Data ", JSON.stringify(data))

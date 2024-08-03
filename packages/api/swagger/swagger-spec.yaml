@@ -7,9 +7,9 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: Returns a greeting message
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
   /health:
@@ -19,11 +19,12 @@ paths:
       parameters: []
       responses:
         '200':
-          description: ''
+          description: API is healthy
           content:
             application/json:
               schema:
                 type: number
+                example: 200
   /webhooks:
     get:
       operationId: listWebhooks
@@ -40,6 +41,7 @@ paths:
                   $ref: '#/components/schemas/WebhookResponse'
       tags: &ref_0
         - webhooks
+      x-speakeasy-group: webhooks
     post:
       operationId: createWebhookPublic
       summary: Add webhook metadata
@@ -58,6 +60,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
+      x-speakeasy-group: webhooks
   /webhooks/{id}:
     delete:
       operationId: delete
@@ -78,7 +81,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhooks.{id}
+      x-speakeasy-group: webhooks
     put:
       operationId: updateStatus
       summary: Update webhook status
@@ -98,7 +101,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/WebhookResponse'
       tags: *ref_0
-      x-speakeasy-group: webhooks.{id}
+      x-speakeasy-group: webhooks
   /webhooks/verifyEvent:
     post:
       operationId: verifyEvent
@@ -111,14 +114,20 @@ paths:
             schema:
               $ref: '#/components/schemas/SignatureVerificationDto'
       responses:
-        '201':
+        '200':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventPayload'
+                properties:
+                  data:
+                    type: object
+                    additionalProperties: true
+                    description: Dynamic event payload
+        '201':
+          description: ''
       tags: *ref_0
-      x-speakeasy-group: webhooks.verifyevent
+      x-speakeasy-group: webhooks
   /ticketing/tickets:
     get:
       operationId: listTicketingTicket
@@ -164,8 +173,6 @@ paths:
                           $ref: '#/components/schemas/UnifiedTicketingTicketOutput'
       tags: &ref_1
         - ticketing/tickets
-      security: &ref_2
-        - bearer: []
       x-speakeasy-group: ticketing.tickets
     post:
       operationId: createTicketingTicket
@@ -198,7 +205,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingTicketOutput'
       tags: *ref_1
-      security: *ref_2
       x-speakeasy-group: ticketing.tickets
   /ticketing/tickets/{id}:
     get:
@@ -232,7 +238,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingTicketOutput'
       tags: *ref_1
-      security: *ref_2
       x-speakeasy-group: ticketing.tickets
   /ticketing/users:
     get:
@@ -277,10 +282,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedTicketingUserOutput'
-      tags: &ref_3
+      tags: &ref_2
         - ticketing/users
-      security: &ref_4
-        - bearer: []
       x-speakeasy-group: ticketing.users
   /ticketing/users/{id}:
     get:
@@ -313,8 +316,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingUserOutput'
-      tags: *ref_3
-      security: *ref_4
+      tags: *ref_2
       x-speakeasy-group: ticketing.users
   /ticketing/accounts:
     get:
@@ -359,10 +361,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedTicketingAccountOutput'
-      tags: &ref_5
+      tags: &ref_3
         - ticketing/accounts
-      security: &ref_6
-        - bearer: []
       x-speakeasy-group: ticketing.accounts
   /ticketing/accounts/{id}:
     get:
@@ -395,8 +395,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingAccountOutput'
-      tags: *ref_5
-      security: *ref_6
+      tags: *ref_3
       x-speakeasy-group: ticketing.accounts
   /ticketing/contacts:
     get:
@@ -441,10 +440,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedTicketingContactOutput'
-      tags: &ref_7
+      tags: &ref_4
         - ticketing/contacts
-      security: &ref_8
-        - bearer: []
       x-speakeasy-group: ticketing.contacts
   /ticketing/contacts/{id}:
     get:
@@ -483,8 +480,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedTicketingContactOutput'
-      tags: *ref_7
-      security: *ref_8
+      tags: *ref_4
       x-speakeasy-group: ticketing.contacts
   /sync/status/{vertical}:
     get:
@@ -499,7 +495,7 @@ paths:
       responses:
         '200':
           description: ''
-      tags: &ref_9
+      tags: &ref_5
         - sync
       x-speakeasy-group: sync
   /sync/resync:
@@ -508,16 +504,18 @@ paths:
       summary: Resync common objects across a vertical
       parameters: []
       responses:
-        '200':
-          description: ''
         '201':
           description: ''
-      tags: *ref_9
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResyncStatusDto'
+      tags: *ref_5
       x-speakeasy-group: sync
   /crm/companies:
     get:
       operationId: listCrmCompany
-      summary: List  Companies
+      summary: List Companies
       parameters:
         - name: x-connection-token
           required: true
@@ -557,10 +555,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedCrmCompanyOutput'
-      tags: &ref_10
+      tags: &ref_6
         - crm/companies
-      security: &ref_11
-        - bearer: []
       x-speakeasy-group: crm.companies
     post:
       operationId: createCrmCompany
@@ -592,8 +588,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmCompanyOutput'
-      tags: *ref_10
-      security: *ref_11
+      tags: *ref_6
       x-speakeasy-group: crm.companies
   /crm/companies/{id}:
     get:
@@ -626,8 +621,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmCompanyOutput'
-      tags: *ref_10
-      security: *ref_11
+      tags: *ref_6
       x-speakeasy-group: crm.companies
   /crm/contacts:
     get:
@@ -672,10 +666,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedCrmContactOutput'
-      tags: &ref_12
+      tags: &ref_7
         - crm/contacts
-      security: &ref_13
-        - bearer: []
       x-speakeasy-group: crm.contacts
     post:
       operationId: createCrmContact
@@ -707,8 +699,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmContactOutput'
-      tags: *ref_12
-      security: *ref_13
+      tags: *ref_7
       x-speakeasy-group: crm.contacts
   /crm/contacts/{id}:
     get:
@@ -741,8 +732,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmContactOutput'
-      tags: *ref_12
-      security: *ref_13
+      tags: *ref_7
       x-speakeasy-group: crm.contacts
   /crm/deals:
     get:
@@ -787,10 +777,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedCrmDealOutput'
-      tags: &ref_14
+      tags: &ref_8
         - crm/deals
-      security: &ref_15
-        - bearer: []
       x-speakeasy-group: crm.deals
     post:
       operationId: createCrmDeal
@@ -822,8 +810,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmDealOutput'
-      tags: *ref_14
-      security: *ref_15
+      tags: *ref_8
       x-speakeasy-group: crm.deals
   /crm/deals/{id}:
     get:
@@ -856,8 +843,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmDealOutput'
-      tags: *ref_14
-      security: *ref_15
+      tags: *ref_8
       x-speakeasy-group: crm.deals
   /crm/engagements:
     get:
@@ -902,10 +888,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedCrmEngagementOutput'
-      tags: &ref_16
+      tags: &ref_9
         - crm/engagements
-      security: &ref_17
-        - bearer: []
       x-speakeasy-group: crm.engagements
     post:
       operationId: createCrmEngagement
@@ -937,8 +921,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmEngagementOutput'
-      tags: *ref_16
-      security: *ref_17
+      tags: *ref_9
       x-speakeasy-group: crm.engagements
   /crm/engagements/{id}:
     get:
@@ -971,8 +954,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmEngagementOutput'
-      tags: *ref_16
-      security: *ref_17
+      tags: *ref_9
       x-speakeasy-group: crm.engagements
   /crm/notes:
     get:
@@ -1017,10 +999,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedCrmNoteOutput'
-      tags: &ref_18
+      tags: &ref_10
         - crm/notes
-      security: &ref_19
-        - bearer: []
       x-speakeasy-group: crm.notes
     post:
       operationId: createCrmNote
@@ -1052,8 +1032,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmNoteOutput'
-      tags: *ref_18
-      security: *ref_19
+      tags: *ref_10
       x-speakeasy-group: crm.notes
   /crm/notes/{id}:
     get:
@@ -1086,8 +1065,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmNoteOutput'
-      tags: *ref_18
-      security: *ref_19
+      tags: *ref_10
       x-speakeasy-group: crm.notes
   /crm/stages:
     get:
@@ -1132,10 +1110,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedCrmStageOutput'
-      tags: &ref_20
+      tags: &ref_11
         - crm/stages
-      security: &ref_21
-        - bearer: []
       x-speakeasy-group: crm.stages
   /crm/stages/{id}:
     get:
@@ -1168,8 +1144,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmStageOutput'
-      tags: *ref_20
-      security: *ref_21
+      tags: *ref_11
       x-speakeasy-group: crm.stages
   /crm/tasks:
     get:
@@ -1214,10 +1189,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedCrmTaskOutput'
-      tags: &ref_22
+      tags: &ref_12
         - crm/tasks
-      security: &ref_23
-        - bearer: []
       x-speakeasy-group: crm.tasks
     post:
       operationId: createCrmTask
@@ -1249,8 +1222,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmTaskOutput'
-      tags: *ref_22
-      security: *ref_23
+      tags: *ref_12
       x-speakeasy-group: crm.tasks
   /crm/tasks/{id}:
     get:
@@ -1283,8 +1255,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmTaskOutput'
-      tags: *ref_22
-      security: *ref_23
+      tags: *ref_12
       x-speakeasy-group: crm.tasks
   /crm/users:
     get:
@@ -1329,10 +1300,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedCrmUserOutput'
-      tags: &ref_24
+      tags: &ref_13
         - crm/users
-      security: &ref_25
-        - bearer: []
       x-speakeasy-group: crm.users
   /crm/users/{id}:
     get:
@@ -1365,8 +1334,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCrmUserOutput'
-      tags: *ref_24
-      security: *ref_25
+      tags: *ref_13
       x-speakeasy-group: crm.users
   /ticketing/collections:
     get:
@@ -1412,10 +1380,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedTicketingCollectionOutput
-      tags: &ref_26
+      tags: &ref_14
         - ticketing/collections
-      security: &ref_27
-        - bearer: []
       x-speakeasy-group: ticketing.collections
   /ticketing/collections/{id}:
     get:
@@ -1448,8 +1414,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingCollectionOutput'
-      tags: *ref_26
-      security: *ref_27
+      tags: *ref_14
       x-speakeasy-group: ticketing.collections
   /ticketing/comments:
     get:
@@ -1494,10 +1459,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedTicketingCommentOutput'
-      tags: &ref_28
+      tags: &ref_15
         - ticketing/comments
-      security: &ref_29
-        - bearer: []
       x-speakeasy-group: ticketing.comments
     post:
       operationId: createTicketingComment
@@ -1529,8 +1492,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingCommentOutput'
-      tags: *ref_28
-      security: *ref_29
+      tags: *ref_15
       x-speakeasy-group: ticketing.comments
   /ticketing/comments/{id}:
     get:
@@ -1569,8 +1531,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedTicketingCommentOutput'
-      tags: *ref_28
-      security: *ref_29
+      tags: *ref_15
       x-speakeasy-group: ticketing.comments
   /ticketing/tags:
     get:
@@ -1615,10 +1576,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedTicketingTagOutput'
-      tags: &ref_30
+      tags: &ref_16
         - ticketing/tags
-      security: &ref_31
-        - bearer: []
       x-speakeasy-group: ticketing.tags
   /ticketing/tags/{id}:
     get:
@@ -1651,8 +1610,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingTagOutput'
-      tags: *ref_30
-      security: *ref_31
+      tags: *ref_16
       x-speakeasy-group: ticketing.tags
   /ticketing/teams:
     get:
@@ -1697,10 +1655,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedTicketingTeamOutput'
-      tags: &ref_32
+      tags: &ref_17
         - ticketing/teams
-      security: &ref_33
-        - bearer: []
       x-speakeasy-group: ticketing.teams
   /ticketing/teams/{id}:
     get:
@@ -1733,8 +1689,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingTeamOutput'
-      tags: *ref_32
-      security: *ref_33
+      tags: *ref_17
       x-speakeasy-group: ticketing.teams
   /linked_users:
     post:
@@ -1750,7 +1705,11 @@ paths:
       responses:
         '201':
           description: ''
-      tags: &ref_34
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedUserResponse'
+      tags: &ref_18
         - linkedUsers
     get:
       operationId: listLinkedUsers
@@ -1759,7 +1718,13 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_34
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkedUserResponse'
+      tags: *ref_18
   /linked_users/batch:
     post:
       operationId: importBatch
@@ -1774,7 +1739,13 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_34
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LinkedUserResponse'
+      tags: *ref_18
       x-speakeasy-group: linked_users.batch
   /linked_users/single:
     get:
@@ -1789,7 +1760,11 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_34
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedUserResponse'
+      tags: *ref_18
       x-speakeasy-group: linked_users.single
   /linked_users/fromRemoteId:
     get:
@@ -1804,7 +1779,11 @@ paths:
       responses:
         '200':
           description: ''
-      tags: *ref_34
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedUserResponse'
+      tags: *ref_18
       x-speakeasy-group: linked_users.fromremoteid
   /field_mappings/define:
     post:
@@ -1820,7 +1799,11 @@ paths:
       responses:
         '201':
           description: ''
-      tags: &ref_35
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomFieldResponse'
+      tags: &ref_19
         - fieldMappings
       x-speakeasy-group: field_mappings.define
   /field_mappings:
@@ -1837,7 +1820,11 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_35
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomFieldResponse'
+      tags: *ref_19
   /field_mappings/map:
     post:
       operationId: map
@@ -1852,7 +1839,11 @@ paths:
       responses:
         '201':
           description: ''
-      tags: *ref_35
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomFieldResponse'
+      tags: *ref_19
       x-speakeasy-group: field_mappings.map
   /passthrough:
     post:
@@ -1881,12 +1872,6 @@ paths:
             schema:
               $ref: '#/components/schemas/PassThroughRequestDto'
       responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PassThroughResponse'
         '201':
           description: ''
           content:
@@ -1938,10 +1923,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisBankinfoOutput'
-      tags: &ref_36
+      tags: &ref_20
         - hris/bankinfos
-      security: &ref_37
-        - bearer: []
       x-speakeasy-group: hris.bankinfos
   /hris/bankinfos/{id}:
     get:
@@ -1974,8 +1957,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisBankinfoOutput'
-      tags: *ref_36
-      security: *ref_37
+      tags: *ref_20
       x-speakeasy-group: hris.bankinfos
   /hris/benefits:
     get:
@@ -2020,10 +2002,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisBenefitOutput'
-      tags: &ref_38
+      tags: &ref_21
         - hris/benefits
-      security: &ref_39
-        - bearer: []
       x-speakeasy-group: hris.benefits
   /hris/benefits/{id}:
     get:
@@ -2056,8 +2036,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisBenefitOutput'
-      tags: *ref_38
-      security: *ref_39
+      tags: *ref_21
       x-speakeasy-group: hris.benefits
   /hris/companies:
     get:
@@ -2104,8 +2083,6 @@ paths:
                           $ref: '#/components/schemas/UnifiedHrisCompanyOutput'
       tags:
         - hris/companies
-      security:
-        - bearer: []
       x-speakeasy-group: hris.companies
   /hris/dependents:
     get:
@@ -2150,10 +2127,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisDependentOutput'
-      tags: &ref_40
+      tags: &ref_22
         - hris/dependents
-      security: &ref_41
-        - bearer: []
       x-speakeasy-group: hris.dependents
   /hris/dependents/{id}:
     get:
@@ -2186,8 +2161,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisDependentOutput'
-      tags: *ref_40
-      security: *ref_41
+      tags: *ref_22
       x-speakeasy-group: hris.dependents
   /hris/employeepayrollruns:
     get:
@@ -2233,10 +2207,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedHrisEmployeepayrollrunOutput
-      tags: &ref_42
+      tags: &ref_23
         - hris/employeepayrollruns
-      security: &ref_43
-        - bearer: []
       x-speakeasy-group: hris.employeepayrollruns
   /hris/employeepayrollruns/{id}:
     get:
@@ -2269,8 +2241,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmployeepayrollrunOutput'
-      tags: *ref_42
-      security: *ref_43
+      tags: *ref_23
       x-speakeasy-group: hris.employeepayrollruns
   /hris/employees:
     get:
@@ -2315,10 +2286,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
-      tags: &ref_44
+      tags: &ref_24
         - hris/employees
-      security: &ref_45
-        - bearer: []
       x-speakeasy-group: hris.employees
     post:
       operationId: createHrisEmployee
@@ -2350,8 +2319,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
-      tags: *ref_44
-      security: *ref_45
+      tags: *ref_24
       x-speakeasy-group: hris.employees
   /hris/employees/{id}:
     get:
@@ -2384,8 +2352,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
-      tags: *ref_44
-      security: *ref_45
+      tags: *ref_24
       x-speakeasy-group: hris.employees
   /hris/employerbenefits:
     get:
@@ -2431,10 +2398,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedHrisEmployerbenefitOutput
-      tags: &ref_46
+      tags: &ref_25
         - hris/employerbenefits
-      security: &ref_47
-        - bearer: []
       x-speakeasy-group: hris.employerbenefits
   /hris/employerbenefits/{id}:
     get:
@@ -2467,8 +2432,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmployerbenefitOutput'
-      tags: *ref_46
-      security: *ref_47
+      tags: *ref_25
       x-speakeasy-group: hris.employerbenefits
   /hris/employments:
     get:
@@ -2513,10 +2477,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisEmploymentOutput'
-      tags: &ref_48
+      tags: &ref_26
         - hris/employments
-      security: &ref_49
-        - bearer: []
       x-speakeasy-group: hris.employments
   /hris/employments/{id}:
     get:
@@ -2549,8 +2511,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmploymentOutput'
-      tags: *ref_48
-      security: *ref_49
+      tags: *ref_26
       x-speakeasy-group: hris.employments
   /hris/groups:
     get:
@@ -2595,10 +2556,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisGroupOutput'
-      tags: &ref_50
+      tags: &ref_27
         - hris/groups
-      security: &ref_51
-        - bearer: []
       x-speakeasy-group: hris.groups
   /hris/groups/{id}:
     get:
@@ -2631,8 +2590,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisGroupOutput'
-      tags: *ref_50
-      security: *ref_51
+      tags: *ref_27
       x-speakeasy-group: hris.groups
   /hris/locations:
     get:
@@ -2677,10 +2635,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisLocationOutput'
-      tags: &ref_52
+      tags: &ref_28
         - hris/locations
-      security: &ref_53
-        - bearer: []
       x-speakeasy-group: hris.locations
   /hris/locations/{id}:
     get:
@@ -2713,8 +2669,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisLocationOutput'
-      tags: *ref_52
-      security: *ref_53
+      tags: *ref_28
       x-speakeasy-group: hris.locations
   /hris/paygroups:
     get:
@@ -2759,10 +2714,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisPaygroupOutput'
-      tags: &ref_54
+      tags: &ref_29
         - hris/paygroups
-      security: &ref_55
-        - bearer: []
       x-speakeasy-group: hris.paygroups
   /hris/paygroups/{id}:
     get:
@@ -2795,8 +2748,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisPaygroupOutput'
-      tags: *ref_54
-      security: *ref_55
+      tags: *ref_29
       x-speakeasy-group: hris.paygroups
   /hris/payrollruns:
     get:
@@ -2843,8 +2795,6 @@ paths:
                           $ref: '#/components/schemas/UnifiedHrisPayrollrunOutput'
       tags:
         - hris/payrollruns
-      security:
-        - bearer: []
       x-speakeasy-group: hris.payrollruns
   /hris/timeoffs:
     get:
@@ -2889,10 +2839,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
-      tags: &ref_56
+      tags: &ref_30
         - hris/timeoffs
-      security: &ref_57
-        - bearer: []
       x-speakeasy-group: hris.timeoffs
     post:
       operationId: createHrisTimeoff
@@ -2924,8 +2872,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
-      tags: *ref_56
-      security: *ref_57
+      tags: *ref_30
       x-speakeasy-group: hris.timeoffs
   /hris/timeoffs/{id}:
     get:
@@ -2958,8 +2905,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
-      tags: *ref_56
-      security: *ref_57
+      tags: *ref_30
       x-speakeasy-group: hris.timeoffs
   /hris/timeoffbalances:
     get:
@@ -3004,10 +2950,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisTimeoffbalanceOutput'
-      tags: &ref_58
+      tags: &ref_31
         - hris/timeoffbalances
-      security: &ref_59
-        - bearer: []
       x-speakeasy-group: hris.timeoffbalances
   /hris/timeoffbalances/{id}:
     get:
@@ -3040,8 +2984,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisTimeoffbalanceOutput'
-      tags: *ref_58
-      security: *ref_59
+      tags: *ref_31
       x-speakeasy-group: hris.timeoffbalances
   /marketingautomation/actions:
     get:
@@ -3087,10 +3030,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationActionOutput
-      tags: &ref_60
+      tags: &ref_32
         - marketingautomation/actions
-      security: &ref_61
-        - bearer: []
       x-speakeasy-group: marketingautomation.actions
     post:
       operationId: createMarketingautomationAction
@@ -3124,8 +3065,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationActionOutput'
-      tags: *ref_60
-      security: *ref_61
+      tags: *ref_32
       x-speakeasy-group: marketingautomation.actions
   /marketingautomation/actions/{id}:
     get:
@@ -3160,8 +3100,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationActionOutput'
-      tags: *ref_60
-      security: *ref_61
+      tags: *ref_32
       x-speakeasy-group: marketingautomation.actions
   /marketingautomation/automations:
     get:
@@ -3207,10 +3146,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationAutomationOutput
-      tags: &ref_62
+      tags: &ref_33
         - marketingautomation/automations
-      security: &ref_63
-        - bearer: []
       x-speakeasy-group: marketingautomation.automations
     post:
       operationId: createMarketingautomationAutomation
@@ -3245,8 +3182,7 @@ paths:
               schema:
                 $ref: >-
                   #/components/schemas/UnifiedMarketingautomationAutomationOutput
-      tags: *ref_62
-      security: *ref_63
+      tags: *ref_33
       x-speakeasy-group: marketingautomation.automations
   /marketingautomation/automations/{id}:
     get:
@@ -3282,8 +3218,7 @@ paths:
               schema:
                 $ref: >-
                   #/components/schemas/UnifiedMarketingautomationAutomationOutput
-      tags: *ref_62
-      security: *ref_63
+      tags: *ref_33
       x-speakeasy-group: marketingautomation.automations
   /marketingautomation/campaigns:
     get:
@@ -3328,10 +3263,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: &ref_64
+      tags: &ref_34
         - marketingautomation/campaigns
-      security: &ref_65
-        - bearer: []
       x-speakeasy-group: marketingautomation.campaigns
     post:
       operationId: createMarketingautomationCampaign
@@ -3365,8 +3298,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: *ref_64
-      security: *ref_65
+      tags: *ref_34
       x-speakeasy-group: marketingautomation.campaigns
   /marketingautomation/campaigns/{id}:
     get:
@@ -3401,8 +3333,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedCampaignOutput'
-      tags: *ref_64
-      security: *ref_65
+      tags: *ref_34
       x-speakeasy-group: marketingautomation.campaigns
   /marketingautomation/contacts:
     get:
@@ -3448,10 +3379,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationContactOutput
-      tags: &ref_66
+      tags: &ref_35
         - marketingautomation/contacts
-      security: &ref_67
-        - bearer: []
       x-speakeasy-group: marketingautomation.contacts
     post:
       operationId: createMarketingAutomationContact
@@ -3485,8 +3414,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationContactOutput'
-      tags: *ref_66
-      security: *ref_67
+      tags: *ref_35
       x-speakeasy-group: marketingautomation.contacts
   /marketingautomation/contacts/{id}:
     get:
@@ -3521,8 +3449,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationContactOutput'
-      tags: *ref_66
-      security: *ref_67
+      tags: *ref_35
       x-speakeasy-group: marketingautomation.contacts
   /marketingautomation/emails:
     get:
@@ -3568,10 +3495,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationEmailOutput
-      tags: &ref_68
+      tags: &ref_36
         - marketingautomation/emails
-      security: &ref_69
-        - bearer: []
       x-speakeasy-group: marketingautomation.emails
   /marketingautomation/emails/{id}:
     get:
@@ -3606,8 +3531,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationEmailOutput'
-      tags: *ref_68
-      security: *ref_69
+      tags: *ref_36
       x-speakeasy-group: marketingautomation.emails
   /marketingautomation/events:
     get:
@@ -3653,10 +3577,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationEventOutput
-      tags: &ref_70
+      tags: &ref_37
         - marketingautomation/events
-      security: &ref_71
-        - bearer: []
       x-speakeasy-group: marketingautomation.events
   /marketingautomation/events/{id}:
     get:
@@ -3691,8 +3613,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationEventOutput'
-      tags: *ref_70
-      security: *ref_71
+      tags: *ref_37
       x-speakeasy-group: marketingautomation.events
   /marketingautomation/lists:
     get:
@@ -3738,10 +3659,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationListOutput
-      tags: &ref_72
+      tags: &ref_38
         - marketingautomation/lists
-      security: &ref_73
-        - bearer: []
       x-speakeasy-group: marketingautomation.lists
     post:
       operationId: createMarketingautomationList
@@ -3775,8 +3694,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationListOutput'
-      tags: *ref_72
-      security: *ref_73
+      tags: *ref_38
       x-speakeasy-group: marketingautomation.lists
   /marketingautomation/lists/{id}:
     get:
@@ -3811,8 +3729,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationListOutput'
-      tags: *ref_72
-      security: *ref_73
+      tags: *ref_38
       x-speakeasy-group: marketingautomation.lists
   /marketingautomation/messages:
     get:
@@ -3858,10 +3775,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationMessageOutput
-      tags: &ref_74
+      tags: &ref_39
         - marketingautomation/messages
-      security: &ref_75
-        - bearer: []
       x-speakeasy-group: marketingautomation.messages
   /marketingautomation/messages/{id}:
     get:
@@ -3896,8 +3811,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationMessageOutput'
-      tags: *ref_74
-      security: *ref_75
+      tags: *ref_39
       x-speakeasy-group: marketingautomation.messages
   /marketingautomation/templates:
     get:
@@ -3943,10 +3857,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationTemplateOutput
-      tags: &ref_76
+      tags: &ref_40
         - marketingautomation/templates
-      security: &ref_77
-        - bearer: []
       x-speakeasy-group: marketingautomation.templates
     post:
       operationId: createMarketingautomationTemplate
@@ -3980,8 +3892,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationTemplateOutput'
-      tags: *ref_76
-      security: *ref_77
+      tags: *ref_40
       x-speakeasy-group: marketingautomation.templates
   /marketingautomation/templates/{id}:
     get:
@@ -4016,8 +3927,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationTemplateOutput'
-      tags: *ref_76
-      security: *ref_77
+      tags: *ref_40
       x-speakeasy-group: marketingautomation.templates
   /marketingautomation/users:
     get:
@@ -4063,10 +3973,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationUserOutput
-      tags: &ref_78
+      tags: &ref_41
         - marketingautomation/users
-      security: &ref_79
-        - bearer: []
       x-speakeasy-group: marketingautomation.users
   /marketingautomation/users/{id}:
     get:
@@ -4101,8 +4009,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationUserOutput'
-      tags: *ref_78
-      security: *ref_79
+      tags: *ref_41
       x-speakeasy-group: marketingautomation.users
   /ats/activities:
     get:
@@ -4147,10 +4054,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsActivityOutput'
-      tags: &ref_80
+      tags: &ref_42
         - ats/activities
-      security: &ref_81
-        - bearer: []
       x-speakeasy-group: ats.activities
     post:
       operationId: createAtsActivity
@@ -4182,8 +4087,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsActivityOutput'
-      tags: *ref_80
-      security: *ref_81
+      tags: *ref_42
       x-speakeasy-group: ats.activities
   /ats/activities/{id}:
     get:
@@ -4216,8 +4120,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsActivityOutput'
-      tags: *ref_80
-      security: *ref_81
+      tags: *ref_42
       x-speakeasy-group: ats.activities
   /ats/applications:
     get:
@@ -4262,10 +4165,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
-      tags: &ref_82
+      tags: &ref_43
         - ats/applications
-      security: &ref_83
-        - bearer: []
       x-speakeasy-group: ats.applications
     post:
       operationId: createAtsApplication
@@ -4297,8 +4198,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
-      tags: *ref_82
-      security: *ref_83
+      tags: *ref_43
       x-speakeasy-group: ats.applications
   /ats/applications/{id}:
     get:
@@ -4331,8 +4231,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
-      tags: *ref_82
-      security: *ref_83
+      tags: *ref_43
       x-speakeasy-group: ats.applications
   /ats/attachments:
     get:
@@ -4377,10 +4276,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
-      tags: &ref_84
+      tags: &ref_44
         - ats/attachments
-      security: &ref_85
-        - bearer: []
       x-speakeasy-group: ats.attachments
     post:
       operationId: createAtsAttachment
@@ -4412,8 +4309,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
-      tags: *ref_84
-      security: *ref_85
+      tags: *ref_44
       x-speakeasy-group: ats.attachments
   /ats/attachments/{id}:
     get:
@@ -4446,8 +4342,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
-      tags: *ref_84
-      security: *ref_85
+      tags: *ref_44
       x-speakeasy-group: ats.attachments
   /ats/candidates:
     get:
@@ -4492,10 +4387,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
-      tags: &ref_86
+      tags: &ref_45
         - ats/candidates
-      security: &ref_87
-        - bearer: []
       x-speakeasy-group: ats.candidates
     post:
       operationId: createAtsCandidate
@@ -4527,8 +4420,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
-      tags: *ref_86
-      security: *ref_87
+      tags: *ref_45
       x-speakeasy-group: ats.candidates
   /ats/candidates/{id}:
     get:
@@ -4561,8 +4453,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
-      tags: *ref_86
-      security: *ref_87
+      tags: *ref_45
       x-speakeasy-group: ats.candidates
   /ats/departments:
     get:
@@ -4607,10 +4498,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsDepartmentOutput'
-      tags: &ref_88
+      tags: &ref_46
         - ats/departments
-      security: &ref_89
-        - bearer: []
       x-speakeasy-group: ats.departments
   /ats/departments/{id}:
     get:
@@ -4643,8 +4532,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsDepartmentOutput'
-      tags: *ref_88
-      security: *ref_89
+      tags: *ref_46
       x-speakeasy-group: ats.departments
   /ats/interviews:
     get:
@@ -4689,10 +4577,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
-      tags: &ref_90
+      tags: &ref_47
         - ats/interviews
-      security: &ref_91
-        - bearer: []
       x-speakeasy-group: ats.interviews
     post:
       operationId: createAtsInterview
@@ -4724,8 +4610,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
-      tags: *ref_90
-      security: *ref_91
+      tags: *ref_47
       x-speakeasy-group: ats.interviews
   /ats/interviews/{id}:
     get:
@@ -4758,8 +4643,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
-      tags: *ref_90
-      security: *ref_91
+      tags: *ref_47
       x-speakeasy-group: ats.interviews
   /ats/jobinterviewstages:
     get:
@@ -4805,10 +4689,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAtsJobinterviewstageOutput
-      tags: &ref_92
+      tags: &ref_48
         - ats/jobinterviewstages
-      security: &ref_93
-        - bearer: []
       x-speakeasy-group: ats.jobinterviewstages
   /ats/jobinterviewstages/{id}:
     get:
@@ -4841,8 +4723,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsJobinterviewstageOutput'
-      tags: *ref_92
-      security: *ref_93
+      tags: *ref_48
       x-speakeasy-group: ats.jobinterviewstages
   /ats/jobs:
     get:
@@ -4887,10 +4768,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsJobOutput'
-      tags: &ref_94
+      tags: &ref_49
         - ats/jobs
-      security: &ref_95
-        - bearer: []
       x-speakeasy-group: ats.jobs
   /ats/jobs/{id}:
     get:
@@ -4923,8 +4802,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsJobOutput'
-      tags: *ref_94
-      security: *ref_95
+      tags: *ref_49
       x-speakeasy-group: ats.jobs
   /ats/offers:
     get:
@@ -4969,10 +4847,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsOfferOutput'
-      tags: &ref_96
+      tags: &ref_50
         - ats/offers
-      security: &ref_97
-        - bearer: []
       x-speakeasy-group: ats.offers
   /ats/offers/{id}:
     get:
@@ -5005,8 +4881,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsOfferOutput'
-      tags: *ref_96
-      security: *ref_97
+      tags: *ref_50
       x-speakeasy-group: ats.offers
   /ats/offices:
     get:
@@ -5051,10 +4926,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsOfficeOutput'
-      tags: &ref_98
+      tags: &ref_51
         - ats/offices
-      security: &ref_99
-        - bearer: []
       x-speakeasy-group: ats.offices
   /ats/offices/{id}:
     get:
@@ -5087,8 +4960,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsOfficeOutput'
-      tags: *ref_98
-      security: *ref_99
+      tags: *ref_51
       x-speakeasy-group: ats.offices
   /ats/rejectreasons:
     get:
@@ -5133,10 +5005,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsRejectreasonOutput'
-      tags: &ref_100
+      tags: &ref_52
         - ats/rejectreasons
-      security: &ref_101
-        - bearer: []
       x-speakeasy-group: ats.rejectreasons
   /ats/rejectreasons/{id}:
     get:
@@ -5169,8 +5039,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsRejectreasonOutput'
-      tags: *ref_100
-      security: *ref_101
+      tags: *ref_52
       x-speakeasy-group: ats.rejectreasons
   /ats/scorecards:
     get:
@@ -5215,10 +5084,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsScorecardOutput'
-      tags: &ref_102
+      tags: &ref_53
         - ats/scorecards
-      security: &ref_103
-        - bearer: []
       x-speakeasy-group: ats.scorecards
   /ats/scorecards/{id}:
     get:
@@ -5251,8 +5118,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsScorecardOutput'
-      tags: *ref_102
-      security: *ref_103
+      tags: *ref_53
       x-speakeasy-group: ats.scorecards
   /ats/tags:
     get:
@@ -5297,10 +5163,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsTagOutput'
-      tags: &ref_104
+      tags: &ref_54
         - ats/tags
-      security: &ref_105
-        - bearer: []
       x-speakeasy-group: ats.tags
   /ats/tags/{id}:
     get:
@@ -5333,8 +5197,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsTagOutput'
-      tags: *ref_104
-      security: *ref_105
+      tags: *ref_54
       x-speakeasy-group: ats.tags
   /ats/users:
     get:
@@ -5379,10 +5242,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsUserOutput'
-      tags: &ref_106
+      tags: &ref_55
         - ats/users
-      security: &ref_107
-        - bearer: []
       x-speakeasy-group: ats.users
   /ats/users/{id}:
     get:
@@ -5415,8 +5276,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsUserOutput'
-      tags: *ref_106
-      security: *ref_107
+      tags: *ref_55
       x-speakeasy-group: ats.users
   /ats/eeocs:
     get:
@@ -5461,10 +5321,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsEeocsOutput'
-      tags: &ref_108
+      tags: &ref_56
         - ats/eeocs
-      security: &ref_109
-        - bearer: []
       x-speakeasy-group: ats.eeocs
   /ats/eeocs/{id}:
     get:
@@ -5497,8 +5355,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsEeocsOutput'
-      tags: *ref_108
-      security: *ref_109
+      tags: *ref_56
       x-speakeasy-group: ats.eeocs
   /accounting/accounts:
     get:
@@ -5543,10 +5400,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
-      tags: &ref_110
+      tags: &ref_57
         - accounting/accounts
-      security: &ref_111
-        - bearer: []
       x-speakeasy-group: accounting.accounts
     post:
       operationId: createAccountingAccount
@@ -5578,8 +5433,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
-      tags: *ref_110
-      security: *ref_111
+      tags: *ref_57
       x-speakeasy-group: accounting.accounts
   /accounting/accounts/{id}:
     get:
@@ -5612,8 +5466,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
-      tags: *ref_110
-      security: *ref_111
+      tags: *ref_57
       x-speakeasy-group: accounting.accounts
   /accounting/addresses:
     get:
@@ -5658,10 +5511,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingAddressOutput'
-      tags: &ref_112
+      tags: &ref_58
         - accounting/addresses
-      security: &ref_113
-        - bearer: []
       x-speakeasy-group: accounting.addresses
   /accounting/addresses/{id}:
     get:
@@ -5694,8 +5545,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAddressOutput'
-      tags: *ref_112
-      security: *ref_113
+      tags: *ref_58
       x-speakeasy-group: accounting.addresses
   /accounting/attachments:
     get:
@@ -5741,10 +5591,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingAttachmentOutput
-      tags: &ref_114
+      tags: &ref_59
         - accounting/attachments
-      security: &ref_115
-        - bearer: []
       x-speakeasy-group: accounting.attachments
     post:
       operationId: createAccountingAttachment
@@ -5776,8 +5624,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAttachmentOutput'
-      tags: *ref_114
-      security: *ref_115
+      tags: *ref_59
       x-speakeasy-group: accounting.attachments
   /accounting/attachments/{id}:
     get:
@@ -5810,8 +5657,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAttachmentOutput'
-      tags: *ref_114
-      security: *ref_115
+      tags: *ref_59
       x-speakeasy-group: accounting.attachments
   /accounting/balancesheets:
     get:
@@ -5857,10 +5703,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingBalancesheetOutput
-      tags: &ref_116
+      tags: &ref_60
         - accounting/balancesheets
-      security: &ref_117
-        - bearer: []
       x-speakeasy-group: accounting.balancesheets
   /accounting/balancesheets/{id}:
     get:
@@ -5893,8 +5737,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingBalancesheetOutput'
-      tags: *ref_116
-      security: *ref_117
+      tags: *ref_60
       x-speakeasy-group: accounting.balancesheets
   /accounting/cashflowstatements:
     get:
@@ -5940,10 +5783,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingCashflowstatementOutput
-      tags: &ref_118
+      tags: &ref_61
         - accounting/cashflowstatements
-      security: &ref_119
-        - bearer: []
       x-speakeasy-group: accounting.cashflowstatements
   /accounting/cashflowstatements/{id}:
     get:
@@ -5976,8 +5817,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingCashflowstatementOutput'
-      tags: *ref_118
-      security: *ref_119
+      tags: *ref_61
       x-speakeasy-group: accounting.cashflowstatements
   /accounting/companyinfos:
     get:
@@ -6023,10 +5863,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingCompanyinfoOutput
-      tags: &ref_120
+      tags: &ref_62
         - accounting/companyinfos
-      security: &ref_121
-        - bearer: []
       x-speakeasy-group: accounting.companyinfos
   /accounting/companyinfos/{id}:
     get:
@@ -6059,8 +5897,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingCompanyinfoOutput'
-      tags: *ref_120
-      security: *ref_121
+      tags: *ref_62
       x-speakeasy-group: accounting.companyinfos
   /accounting/contacts:
     get:
@@ -6105,10 +5942,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingContactOutput'
-      tags: &ref_122
+      tags: &ref_63
         - accounting/contacts
-      security: &ref_123
-        - bearer: []
       x-speakeasy-group: accounting.contacts
     post:
       operationId: createAccountingContact
@@ -6140,8 +5975,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingContactOutput'
-      tags: *ref_122
-      security: *ref_123
+      tags: *ref_63
       x-speakeasy-group: accounting.contacts
   /accounting/contacts/{id}:
     get:
@@ -6174,8 +6008,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingContactOutput'
-      tags: *ref_122
-      security: *ref_123
+      tags: *ref_63
       x-speakeasy-group: accounting.contacts
   /accounting/creditnotes:
     get:
@@ -6221,10 +6054,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingCreditnoteOutput
-      tags: &ref_124
+      tags: &ref_64
         - accounting/creditnotes
-      security: &ref_125
-        - bearer: []
       x-speakeasy-group: accounting.creditnotes
   /accounting/creditnotes/{id}:
     get:
@@ -6257,8 +6088,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingCreditnoteOutput'
-      tags: *ref_124
-      security: *ref_125
+      tags: *ref_64
       x-speakeasy-group: accounting.creditnotes
   /accounting/expenses:
     get:
@@ -6303,10 +6133,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
-      tags: &ref_126
+      tags: &ref_65
         - accounting/expenses
-      security: &ref_127
-        - bearer: []
       x-speakeasy-group: accounting.expenses
     post:
       operationId: createAccountingExpense
@@ -6338,8 +6166,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
-      tags: *ref_126
-      security: *ref_127
+      tags: *ref_65
       x-speakeasy-group: accounting.expenses
   /accounting/expenses/{id}:
     get:
@@ -6372,8 +6199,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
-      tags: *ref_126
-      security: *ref_127
+      tags: *ref_65
       x-speakeasy-group: accounting.expenses
   /accounting/incomestatements:
     get:
@@ -6419,10 +6245,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingIncomestatementOutput
-      tags: &ref_128
+      tags: &ref_66
         - accounting/incomestatements
-      security: &ref_129
-        - bearer: []
       x-speakeasy-group: accounting.incomestatements
   /accounting/incomestatements/{id}:
     get:
@@ -6455,8 +6279,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingIncomestatementOutput'
-      tags: *ref_128
-      security: *ref_129
+      tags: *ref_66
       x-speakeasy-group: accounting.incomestatements
   /accounting/invoices:
     get:
@@ -6501,10 +6324,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
-      tags: &ref_130
+      tags: &ref_67
         - accounting/invoices
-      security: &ref_131
-        - bearer: []
       x-speakeasy-group: accounting.invoices
     post:
       operationId: createAccountingInvoice
@@ -6536,8 +6357,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
-      tags: *ref_130
-      security: *ref_131
+      tags: *ref_67
       x-speakeasy-group: accounting.invoices
   /accounting/invoices/{id}:
     get:
@@ -6570,8 +6390,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
-      tags: *ref_130
-      security: *ref_131
+      tags: *ref_67
       x-speakeasy-group: accounting.invoices
   /accounting/items:
     get:
@@ -6616,10 +6435,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingItemOutput'
-      tags: &ref_132
+      tags: &ref_68
         - accounting/items
-      security: &ref_133
-        - bearer: []
       x-speakeasy-group: accounting.items
   /accounting/items/{id}:
     get:
@@ -6652,8 +6469,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingItemOutput'
-      tags: *ref_132
-      security: *ref_133
+      tags: *ref_68
       x-speakeasy-group: accounting.items
   /accounting/journalentries:
     get:
@@ -6699,10 +6515,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingJournalentryOutput
-      tags: &ref_134
+      tags: &ref_69
         - accounting/journalentries
-      security: &ref_135
-        - bearer: []
       x-speakeasy-group: accounting.journalentries
     post:
       operationId: createAccountingJournalEntry
@@ -6734,8 +6548,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingJournalentryOutput'
-      tags: *ref_134
-      security: *ref_135
+      tags: *ref_69
       x-speakeasy-group: accounting.journalentries
   /accounting/journalentries/{id}:
     get:
@@ -6768,8 +6581,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingJournalentryOutput'
-      tags: *ref_134
-      security: *ref_135
+      tags: *ref_69
       x-speakeasy-group: accounting.journalentries
   /accounting/payments:
     get:
@@ -6814,10 +6626,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
-      tags: &ref_136
+      tags: &ref_70
         - accounting/payments
-      security: &ref_137
-        - bearer: []
       x-speakeasy-group: accounting.payments
     post:
       operationId: createAccountingPayment
@@ -6849,8 +6659,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
-      tags: *ref_136
-      security: *ref_137
+      tags: *ref_70
       x-speakeasy-group: accounting.payments
   /accounting/payments/{id}:
     get:
@@ -6883,8 +6692,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
-      tags: *ref_136
-      security: *ref_137
+      tags: *ref_70
       x-speakeasy-group: accounting.payments
   /accounting/phonenumbers:
     get:
@@ -6930,10 +6738,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingPhonenumberOutput
-      tags: &ref_138
+      tags: &ref_71
         - accounting/phonenumbers
-      security: &ref_139
-        - bearer: []
       x-speakeasy-group: accounting.phonenumbers
   /accounting/phonenumbers/{id}:
     get:
@@ -6966,8 +6772,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPhonenumberOutput'
-      tags: *ref_138
-      security: *ref_139
+      tags: *ref_71
       x-speakeasy-group: accounting.phonenumbers
   /accounting/purchaseorders:
     get:
@@ -7013,10 +6818,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingPurchaseorderOutput
-      tags: &ref_140
+      tags: &ref_72
         - accounting/purchaseorders
-      security: &ref_141
-        - bearer: []
       x-speakeasy-group: accounting.purchaseorders
     post:
       operationId: createAccountingPurchaseOrder
@@ -7048,8 +6851,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPurchaseorderOutput'
-      tags: *ref_140
-      security: *ref_141
+      tags: *ref_72
       x-speakeasy-group: accounting.purchaseorders
   /accounting/purchaseorders/{id}:
     get:
@@ -7082,8 +6884,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPurchaseorderOutput'
-      tags: *ref_140
-      security: *ref_141
+      tags: *ref_72
       x-speakeasy-group: accounting.purchaseorders
   /accounting/taxrates:
     get:
@@ -7128,10 +6929,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingTaxrateOutput'
-      tags: &ref_142
+      tags: &ref_73
         - accounting/taxrates
-      security: &ref_143
-        - bearer: []
       x-speakeasy-group: accounting.taxrates
   /accounting/taxrates/{id}:
     get:
@@ -7164,8 +6963,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingTaxrateOutput'
-      tags: *ref_142
-      security: *ref_143
+      tags: *ref_73
       x-speakeasy-group: accounting.taxrates
   /accounting/trackingcategories:
     get:
@@ -7211,10 +7009,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingTrackingcategoryOutput
-      tags: &ref_144
+      tags: &ref_74
         - accounting/trackingcategories
-      security: &ref_145
-        - bearer: []
       x-speakeasy-group: accounting.trackingcategories
   /accounting/trackingcategories/{id}:
     get:
@@ -7247,8 +7043,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingTrackingcategoryOutput'
-      tags: *ref_144
-      security: *ref_145
+      tags: *ref_74
       x-speakeasy-group: accounting.trackingcategories
   /accounting/transactions:
     get:
@@ -7294,10 +7089,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingTransactionOutput
-      tags: &ref_146
+      tags: &ref_75
         - accounting/transactions
-      security: &ref_147
-        - bearer: []
       x-speakeasy-group: accounting.transactions
   /accounting/transactions/{id}:
     get:
@@ -7330,8 +7123,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingTransactionOutput'
-      tags: *ref_146
-      security: *ref_147
+      tags: *ref_75
       x-speakeasy-group: accounting.transactions
   /accounting/vendorcredits:
     get:
@@ -7377,10 +7169,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingVendorcreditOutput
-      tags: &ref_148
+      tags: &ref_76
         - accounting/vendorcredits
-      security: &ref_149
-        - bearer: []
       x-speakeasy-group: accounting.vendorcredits
   /accounting/vendorcredits/{id}:
     get:
@@ -7413,8 +7203,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingVendorcreditOutput'
-      tags: *ref_148
-      security: *ref_149
+      tags: *ref_76
       x-speakeasy-group: accounting.vendorcredits
   /filestorage/drives:
     get:
@@ -7459,10 +7248,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageDriveOutput'
-      tags: &ref_150
+      tags: &ref_77
         - filestorage/drives
-      security: &ref_151
-        - bearer: []
       x-speakeasy-group: filestorage.drives
   /filestorage/drives/{id}:
     get:
@@ -7495,8 +7282,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageDriveOutput'
-      tags: *ref_150
-      security: *ref_151
+      tags: *ref_77
       x-speakeasy-group: filestorage.drives
   /filestorage/files:
     get:
@@ -7541,10 +7327,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
-      tags: &ref_152
+      tags: &ref_78
         - filestorage/files
-      security: &ref_153
-        - bearer: []
       x-speakeasy-group: filestorage.files
     post:
       operationId: createFilestorageFile
@@ -7575,8 +7359,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
-      tags: *ref_152
-      security: *ref_153
+      tags: *ref_78
       x-speakeasy-group: filestorage.files
   /filestorage/files/{id}:
     get:
@@ -7609,8 +7392,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
-      tags: *ref_152
-      security: *ref_153
+      tags: *ref_78
       x-speakeasy-group: filestorage.files
   /filestorage/folders:
     get:
@@ -7655,10 +7437,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
-      tags: &ref_154
+      tags: &ref_79
         - filestorage/folders
-      security: &ref_155
-        - bearer: []
       x-speakeasy-group: filestorage.folders
     post:
       operationId: createFilestorageFolder
@@ -7689,8 +7469,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
-      tags: *ref_154
-      security: *ref_155
+      tags: *ref_79
       x-speakeasy-group: filestorage.folders
   /filestorage/folders/{id}:
     get:
@@ -7723,8 +7502,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
-      tags: *ref_154
-      security: *ref_155
+      tags: *ref_79
       x-speakeasy-group: filestorage.folders
   /filestorage/groups:
     get:
@@ -7769,10 +7547,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageGroupOutput'
-      tags: &ref_156
+      tags: &ref_80
         - filestorage/groups
-      security: &ref_157
-        - bearer: []
       x-speakeasy-group: filestorage.groups
   /filestorage/groups/{id}:
     get:
@@ -7805,8 +7581,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageGroupOutput'
-      tags: *ref_156
-      security: *ref_157
+      tags: *ref_80
       x-speakeasy-group: filestorage.groups
   /filestorage/users:
     get:
@@ -7851,10 +7626,8 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: &ref_158
+      tags: &ref_81
         - filestorage/users
-      security: &ref_159
-        - bearer: []
       x-speakeasy-group: filestorage.users
   /filestorage/users/{id}:
     get:
@@ -7887,8 +7660,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedUserOutput'
-      tags: *ref_158
-      security: *ref_159
+      tags: *ref_81
       x-speakeasy-group: filestorage.users
   /ticketing/attachments:
     get:
@@ -7934,10 +7706,8 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedTicketingAttachmentOutput
-      tags: &ref_160
+      tags: &ref_82
         - ticketing/attachments
-      security: &ref_161
-        - bearer: []
       x-speakeasy-group: ticketing.attachments
     post:
       operationId: createTicketingAttachment
@@ -7969,8 +7739,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
-      tags: *ref_160
-      security: *ref_161
+      tags: *ref_82
       x-speakeasy-group: ticketing.attachments
   /ticketing/attachments/{id}:
     get:
@@ -8003,8 +7772,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
-      tags: *ref_160
-      security: *ref_161
+      tags: *ref_82
       x-speakeasy-group: ticketing.attachments
 info:
   title: Panora API
@@ -8031,6 +7799,7 @@ components:
       properties:
         id_webhook_endpoint:
           type: string
+          nullable: true
           description: The unique UUID of the webhook.
         endpoint_description:
           type: string
@@ -8038,24 +7807,30 @@ components:
           description: The description of the webhook.
         url:
           type: string
+          nullable: true
           description: The endpoint url of the webhook.
         secret:
           type: string
+          nullable: true
           description: The secret of the webhook.
         active:
           type: boolean
+          nullable: true
           description: The status of the webhook.
         created_at:
           format: date-time
           type: string
+          nullable: true
           description: The created date  of the webhook.
         scope:
+          nullable: true
           description: The events that the webhook listen to.
           type: array
           items:
             type: string
         id_project:
           type: string
+          nullable: true
           description: The project id tied to the webhook.
         last_update:
           format: date-time
@@ -8077,11 +7852,14 @@ components:
       properties:
         url:
           type: string
+          nullable: true
           description: The endpoint url of the webhook.
         description:
           type: string
+          nullable: true
           description: The description of the webhook.
         scope:
+          nullable: true
           description: The events that the webhook listen to.
           type: array
           items:
@@ -8089,20 +7867,21 @@ components:
       required:
         - url
         - scope
-    EventPayload:
-      type: object
-      properties: {}
     SignatureVerificationDto:
       type: object
       properties:
         payload:
           type: object
+          additionalProperties: true
+          nullable: true
           description: The payload event of the webhook.
         signature:
           type: string
+          nullable: true
           description: The signature of the webhook.
         secret:
           type: string
+          nullable: true
           description: The secret of the webhook.
       required:
         - payload
@@ -8113,8 +7892,10 @@ components:
       properties:
         prev_cursor:
           type: string
+          nullable: true
         next_cursor:
           type: string
+          nullable: true
         data:
           type: array
           items:
@@ -8128,32 +7909,40 @@ components:
       properties:
         body:
           type: string
+          nullable: true
           description: The body of the comment
         html_body:
           type: string
+          nullable: true
           description: The html body of the comment
         is_private:
           type: boolean
+          nullable: true
           description: The public status of the comment
         creator_type:
           type: string
+          nullable: true
           description: >-
             The creator type of the comment. Authorized values are either USER
             or CONTACT
         ticket_id:
           type: string
+          nullable: true
           description: The UUID of the ticket the comment is tied to
         contact_id:
           type: string
+          nullable: true
           description: >-
             The UUID of the contact which the comment belongs to (if no user_id
             specified)
         user_id:
           type: string
+          nullable: true
           description: >-
             The UUID of the user which the comment belongs to (if no contact_id
             specified)
         attachments:
+          nullable: true
           description: The attachements UUIDs tied to the comment
           type: array
           items:
@@ -8165,29 +7954,37 @@ components:
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the ticket
         status:
           type: string
+          nullable: true
           description: The status of the ticket. Authorized values are OPEN or CLOSED.
         description:
           type: string
+          nullable: true
           description: The description of the ticket
         due_date:
           format: date-time
           type: string
+          nullable: true
           description: The date the ticket is due
         type:
           type: string
+          nullable: true
           description: >-
             The type of the ticket. Authorized values are PROBLEM, QUESTION, or
             TASK
         parent_ticket:
           type: string
+          nullable: true
           description: The UUID of the parent ticket
         collections:
           type: string
+          nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
+          nullable: true
           description: The tags names of the ticket
           type: array
           items:
@@ -8195,85 +7992,108 @@ components:
         completed_at:
           format: date-time
           type: string
+          nullable: true
           description: The date the ticket has been completed
         priority:
           type: string
+          nullable: true
           description: >-
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
+          nullable: true
           description: The users UUIDs the ticket is assigned to
           type: array
           items:
             type: string
         comment:
+          nullable: true
           description: The comment of the ticket
           allOf:
             - $ref: '#/components/schemas/UnifiedTicketingCommentInput'
         account_id:
           type: string
+          nullable: true
           description: The UUID of the account which the ticket belongs to
         contact_id:
           type: string
+          nullable: true
           description: The UUID of the contact which the ticket belongs to
         attachments:
-          description: The attachements UUIDs tied to the ticket
+          nullable: true
+          description: The attachments UUIDs tied to the ticket
           type: array
           items:
             type: string
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the ticket between the remote 3rd party
+            & Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the ticket
         remote_id:
           type: string
+          nullable: true
           description: The id of the ticket in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the ticket in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
         - description
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedTicketingTicketInput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the ticket
         status:
           type: string
+          nullable: true
           description: The status of the ticket. Authorized values are OPEN or CLOSED.
         description:
           type: string
+          nullable: true
           description: The description of the ticket
         due_date:
           format: date-time
           type: string
+          nullable: true
           description: The date the ticket is due
         type:
           type: string
+          nullable: true
           description: >-
             The type of the ticket. Authorized values are PROBLEM, QUESTION, or
             TASK
         parent_ticket:
           type: string
+          nullable: true
           description: The UUID of the parent ticket
         collections:
           type: string
+          nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
+          nullable: true
           description: The tags names of the ticket
           type: array
           items:
@@ -8281,169 +8101,237 @@ components:
         completed_at:
           format: date-time
           type: string
+          nullable: true
           description: The date the ticket has been completed
         priority:
           type: string
+          nullable: true
           description: >-
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
+          nullable: true
           description: The users UUIDs the ticket is assigned to
           type: array
           items:
             type: string
         comment:
+          nullable: true
           description: The comment of the ticket
           allOf:
             - $ref: '#/components/schemas/UnifiedTicketingCommentInput'
         account_id:
           type: string
+          nullable: true
           description: The UUID of the account which the ticket belongs to
         contact_id:
           type: string
+          nullable: true
           description: The UUID of the contact which the ticket belongs to
         attachments:
-          description: The attachements UUIDs tied to the ticket
+          nullable: true
+          description: The attachments UUIDs tied to the ticket
           type: array
           items:
             type: string
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the ticket between the remote 3rd party
+            & Panora
+          additionalProperties: true
       required:
         - name
         - description
-        - field_mappings
     UnifiedTicketingUserOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the user
         email_address:
           type: string
+          nullable: true
           description: The email address of the user
         teams:
+          nullable: true
           description: The teams whose the user is part of
           type: array
           items:
             type: string
         account_id:
           type: string
+          nullable: true
           description: The account or organization the user is part of
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the user between the remote 3rd party &
+            Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the user
         remote_id:
           type: string
+          nullable: true
           description: The id of the user in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the user in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
         - email_address
         - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedTicketingAccountOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the account
         domains:
+          nullable: true
           description: The domains of the account
           type: array
           items:
             type: string
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the account between the remote 3rd
+            party & Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the account
         remote_id:
           type: string
+          nullable: true
           description: The id of the account in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the account in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedTicketingContactOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the contact
         email_address:
           type: string
+          nullable: true
           description: The email address of the contact
         phone_number:
           type: string
+          nullable: true
           description: The phone number of the contact
         details:
           type: string
+          nullable: true
           description: The details of the contact
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the contact between the remote 3rd
+            party & Panora
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the contact
         remote_id:
           type: string
+          nullable: true
           description: The id of the contact in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the contact in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
         - email_address
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+    ResyncStatusDto:
+      type: object
+      properties:
+        timestamp:
+          format: date-time
+          type: string
+          nullable: true
+        vertical:
+          type: string
+          nullable: true
+        provider:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+      required:
+        - timestamp
+        - vertical
+        - provider
+        - status
     Email:
       type: object
       properties:
         email_address:
           type: string
+          nullable: true
           description: The email address
         email_address_type:
           type: string
+          nullable: true
           description: >-
             The email address type. Authorized values are either PERSONAL or
             WORK.
         owner_type:
           type: string
+          nullable: true
           description: The owner type of an email
       required:
         - email_address
@@ -8453,27 +8341,35 @@ components:
       properties:
         street_1:
           type: string
+          nullable: true
           description: The street
         street_2:
           type: string
+          nullable: true
           description: 'More information about the street '
         city:
           type: string
+          nullable: true
           description: The city
         state:
           type: string
+          nullable: true
           description: The state
         postal_code:
           type: string
+          nullable: true
           description: The postal code
         country:
           type: string
+          nullable: true
           description: The country
         address_type:
           type: string
+          nullable: true
           description: The address type. Authorized values are either PERSONAL or WORK.
         owner_type:
           type: string
+          nullable: true
           description: The owner type of the address
       required:
         - street_1
@@ -8489,14 +8385,17 @@ components:
       properties:
         phone_number:
           type: string
+          nullable: true
           description: >-
             The phone number starting with a plus (+) followed by the country
             code (e.g +336676778890 for France)
         phone_type:
           type: string
+          nullable: true
           description: The phone type. Authorized values are either MOBILE or WORK
         owner_type:
           type: string
+          nullable: true
           description: The owner type of a phone number
       required:
         - phone_number
@@ -8507,743 +8406,968 @@ components:
         name:
           type: string
           description: The name of the company
+          nullable: true
         industry:
           type: string
           description: >-
             The industry of the company. Authorized values can be found in the
             Industry enum.
+          nullable: true
         number_of_employees:
           type: number
           description: The number of employees of the company
+          nullable: true
         user_id:
           type: string
           description: The UUID of the user who owns the company
+          nullable: true
         email_addresses:
           description: The email addresses of the company
+          nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
+          nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
+          nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the company between the remote 3rd
+            party & Panora
+          nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the company
+          nullable: true
         remote_id:
           type: string
           description: The id of the company in the context of the Crm 3rd Party
+          nullable: true
         remote_data:
           type: object
-          properties: {}
+          description: The remote data of the company in the context of the Crm 3rd Party
+          nullable: true
+          additionalProperties: true
         created_at:
           type: object
-          properties: {}
+          description: The created date of the object
+          nullable: true
         modified_at:
           type: object
-          properties: {}
+          description: The modified date of the object
+          nullable: true
       required:
         - name
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedCrmCompanyInput:
       type: object
       properties:
         name:
           type: string
           description: The name of the company
+          nullable: true
         industry:
           type: string
           description: >-
             The industry of the company. Authorized values can be found in the
             Industry enum.
+          nullable: true
         number_of_employees:
           type: number
           description: The number of employees of the company
+          nullable: true
         user_id:
           type: string
           description: The UUID of the user who owns the company
+          nullable: true
         email_addresses:
           description: The email addresses of the company
+          nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
+          nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
+          nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the company between the remote 3rd
+            party & Panora
+          nullable: true
+          additionalProperties: true
       required:
         - name
-        - field_mappings
     UnifiedCrmContactOutput:
       type: object
       properties:
         first_name:
           type: string
+          nullable: true
           description: The first name of the contact
         last_name:
           type: string
+          nullable: true
           description: The last name of the contact
         email_addresses:
+          nullable: true
           description: The email addresses of the contact
           type: array
           items:
             $ref: '#/components/schemas/Email'
         phone_numbers:
+          nullable: true
           description: The phone numbers of the contact
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         addresses:
+          nullable: true
           description: The addresses of the contact
           type: array
           items:
             $ref: '#/components/schemas/Address'
         user_id:
           type: string
+          nullable: true
           description: The UUID of the user who owns the contact
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the contact between the remote 3rd
+            party & Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the contact
         remote_id:
           type: string
+          nullable: true
           description: The id of the contact in the context of the Crm 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the contact in the context of the Crm 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - first_name
         - last_name
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedCrmContactInput:
       type: object
       properties:
         first_name:
           type: string
+          nullable: true
           description: The first name of the contact
         last_name:
           type: string
+          nullable: true
           description: The last name of the contact
         email_addresses:
+          nullable: true
           description: The email addresses of the contact
           type: array
           items:
             $ref: '#/components/schemas/Email'
         phone_numbers:
+          nullable: true
           description: The phone numbers of the contact
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         addresses:
+          nullable: true
           description: The addresses of the contact
           type: array
           items:
             $ref: '#/components/schemas/Address'
         user_id:
           type: string
+          nullable: true
           description: The UUID of the user who owns the contact
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the contact between the remote 3rd
+            party & Panora
+          additionalProperties: true
       required:
         - first_name
         - last_name
-        - field_mappings
     UnifiedCrmDealOutput:
       type: object
       properties:
         name:
           type: string
           description: The name of the deal
+          nullable: true
         description:
           type: string
           description: The description of the deal
+          nullable: true
         amount:
           type: number
           description: The amount of the deal
+          nullable: true
         user_id:
           type: string
+          nullable: true
           description: The UUID of the user who is on the deal
         stage_id:
           type: string
+          nullable: true
           description: The UUID of the stage of the deal
         company_id:
           type: string
+          nullable: true
           description: The UUID of the company tied to the deal
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the company between the remote 3rd
+            party & Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the deal
         remote_id:
           type: string
+          nullable: true
           description: The id of the deal in the context of the Crm 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the deal in the context of the Crm 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
         - description
         - amount
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedCrmDealInput:
       type: object
       properties:
         name:
           type: string
           description: The name of the deal
+          nullable: true
         description:
           type: string
           description: The description of the deal
+          nullable: true
         amount:
           type: number
           description: The amount of the deal
+          nullable: true
         user_id:
           type: string
+          nullable: true
           description: The UUID of the user who is on the deal
         stage_id:
           type: string
+          nullable: true
           description: The UUID of the stage of the deal
         company_id:
           type: string
+          nullable: true
           description: The UUID of the company tied to the deal
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the company between the remote 3rd
+            party & Panora
+          additionalProperties: true
       required:
         - name
         - description
         - amount
-        - field_mappings
     UnifiedCrmEngagementOutput:
       type: object
       properties:
         content:
           type: string
+          nullable: true
           description: The content of the engagement
         direction:
           type: string
+          nullable: true
           description: >-
             The direction of the engagement. Authorized values are INBOUND or
             OUTBOUND
         subject:
           type: string
+          nullable: true
           description: The subject of the engagement
         start_at:
           format: date-time
           type: string
+          nullable: true
           description: The start time of the engagement
         end_time:
           format: date-time
           type: string
+          nullable: true
           description: The end time of the engagement
         type:
           type: string
+          nullable: true
           description: >-
             The type of the engagement. Authorized values are EMAIL, CALL or
             MEETING
         user_id:
           type: string
+          nullable: true
           description: The UUID of the user tied to the engagement
         company_id:
           type: string
+          nullable: true
           description: The UUID of the company tied to the engagement
         contacts:
+          nullable: true
           description: The UUIDs of contacts tied to the engagement object
           type: array
           items:
             type: string
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the engagement between the remote 3rd
+            party & Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the engagement
         remote_id:
           type: string
+          nullable: true
           description: The id of the engagement in the context of the Crm 3rd Party
         remote_data:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The remote data of the engagement in the context of the Crm 3rd
+            Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - type
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedCrmEngagementInput:
       type: object
       properties:
         content:
           type: string
+          nullable: true
           description: The content of the engagement
         direction:
           type: string
+          nullable: true
           description: >-
             The direction of the engagement. Authorized values are INBOUND or
             OUTBOUND
         subject:
           type: string
+          nullable: true
           description: The subject of the engagement
         start_at:
           format: date-time
           type: string
+          nullable: true
           description: The start time of the engagement
         end_time:
           format: date-time
           type: string
+          nullable: true
           description: The end time of the engagement
         type:
           type: string
+          nullable: true
           description: >-
             The type of the engagement. Authorized values are EMAIL, CALL or
             MEETING
         user_id:
           type: string
+          nullable: true
           description: The UUID of the user tied to the engagement
         company_id:
           type: string
+          nullable: true
           description: The UUID of the company tied to the engagement
         contacts:
+          nullable: true
           description: The UUIDs of contacts tied to the engagement object
           type: array
           items:
             type: string
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the engagement between the remote 3rd
+            party & Panora
+          additionalProperties: true
       required:
         - type
-        - field_mappings
     UnifiedCrmNoteOutput:
       type: object
       properties:
         content:
           type: string
           description: The content of the note
+          nullable: true
         user_id:
           type: string
+          nullable: true
           description: The UUID of the user tied the note
         company_id:
           type: string
+          nullable: true
           description: The UUID of the company tied to the note
         contact_id:
           type: string
+          nullable: true
           description: The UUID fo the contact tied to the note
         deal_id:
           type: string
+          nullable: true
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the note between the remote 3rd party &
+            Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the note
         remote_id:
           type: string
+          nullable: true
           description: The id of the note in the context of the Crm 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the note in the context of the Crm 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - content
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedCrmNoteInput:
       type: object
       properties:
         content:
           type: string
           description: The content of the note
+          nullable: true
         user_id:
           type: string
+          nullable: true
           description: The UUID of the user tied the note
         company_id:
           type: string
+          nullable: true
           description: The UUID of the company tied to the note
         contact_id:
           type: string
+          nullable: true
           description: The UUID fo the contact tied to the note
         deal_id:
           type: string
+          nullable: true
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the note between the remote 3rd party &
+            Panora
+          additionalProperties: true
       required:
         - content
-        - field_mappings
     UnifiedCrmStageOutput:
       type: object
       properties:
         stage_name:
           type: string
           description: The name of the stage
+          nullable: true
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the stage between the remote 3rd party
+            & Panora
+          nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the stage
+          nullable: true
         remote_id:
           type: string
           description: The id of the stage in the context of the Crm 3rd Party
+          nullable: true
         remote_data:
           type: object
-          properties: {}
+          description: The remote data of the stage in the context of the Crm 3rd Party
+          nullable: true
+          additionalProperties: true
         created_at:
           type: object
-          properties: {}
+          description: The created date of the object
+          nullable: true
         modified_at:
           type: object
-          properties: {}
+          description: The modified date of the object
+          nullable: true
       required:
         - stage_name
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedCrmTaskOutput:
       type: object
       properties:
         subject:
           type: string
           description: The subject of the task
+          nullable: true
         content:
           type: string
           description: The content of the task
+          nullable: true
         status:
           type: string
           description: The status of the task. Authorized values are PENDING, COMPLETED.
+          nullable: true
         due_date:
           format: date-time
           type: string
           description: The due date of the task
+          nullable: true
         finished_date:
           format: date-time
           type: string
           description: The finished date of the task
+          nullable: true
         user_id:
           type: string
           description: The UUID of the user tied to the task
+          nullable: true
         company_id:
           type: string
-          description: The UUID fo the company tied to the task
+          description: The UUID of the company tied to the task
+          nullable: true
         deal_id:
           type: string
           description: The UUID of the deal tied to the task
+          nullable: true
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the task between the remote 3rd party &
+            Panora
+          nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the task
+          nullable: true
         remote_id:
           type: string
           description: The id of the task in the context of the Crm 3rd Party
+          nullable: true
         remote_data:
           type: object
-          properties: {}
+          description: The remote data of the task in the context of the Crm 3rd Party
+          nullable: true
+          additionalProperties: true
         created_at:
           type: object
-          properties: {}
+          description: The created date of the object
+          nullable: true
         modified_at:
           type: object
-          properties: {}
+          description: The modified date of the object
+          nullable: true
       required:
         - subject
         - content
         - status
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedCrmTaskInput:
       type: object
       properties:
         subject:
           type: string
           description: The subject of the task
+          nullable: true
         content:
           type: string
           description: The content of the task
+          nullable: true
         status:
           type: string
           description: The status of the task. Authorized values are PENDING, COMPLETED.
+          nullable: true
         due_date:
           format: date-time
           type: string
           description: The due date of the task
+          nullable: true
         finished_date:
           format: date-time
           type: string
           description: The finished date of the task
+          nullable: true
         user_id:
           type: string
           description: The UUID of the user tied to the task
+          nullable: true
         company_id:
           type: string
-          description: The UUID fo the company tied to the task
+          description: The UUID of the company tied to the task
+          nullable: true
         deal_id:
           type: string
           description: The UUID of the deal tied to the task
+          nullable: true
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the task between the remote 3rd party &
+            Panora
+          nullable: true
+          additionalProperties: true
       required:
         - subject
         - content
         - status
-        - field_mappings
     UnifiedCrmUserOutput:
       type: object
       properties:
         name:
           type: string
           description: The name of the user
+          nullable: true
         email:
           type: string
           description: The email of the user
+          nullable: true
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the user between the remote 3rd party &
+            Panora
+          nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the user
+          nullable: true
         remote_id:
           type: string
           description: The id of the user in the context of the Crm 3rd Party
+          nullable: true
         remote_data:
           type: object
-          properties: {}
+          description: The remote data of the user in the context of the Crm 3rd Party
+          nullable: true
+          additionalProperties: true
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          description: The created date of the object
+          nullable: true
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          description: The modified date of the object
+          nullable: true
       required:
         - name
         - email
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedTicketingCollectionOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the collection
         description:
           type: string
+          nullable: true
           description: The description of the collection
         collection_type:
           type: string
+          nullable: true
           description: >-
             The type of the collection. Authorized values are either PROJECT or
             LIST 
         id:
           type: string
+          nullable: true
           description: The UUID of the collection
         remote_id:
           type: string
+          nullable: true
           description: The id of the collection in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the collection in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedTicketingCommentOutput:
       type: object
       properties:
         body:
           type: string
+          nullable: true
           description: The body of the comment
         html_body:
           type: string
+          nullable: true
           description: The html body of the comment
         is_private:
           type: boolean
+          nullable: true
           description: The public status of the comment
         creator_type:
           type: string
+          nullable: true
           description: >-
             The creator type of the comment. Authorized values are either USER
             or CONTACT
         ticket_id:
           type: string
+          nullable: true
           description: The UUID of the ticket the comment is tied to
         contact_id:
           type: string
+          nullable: true
           description: >-
             The UUID of the contact which the comment belongs to (if no user_id
             specified)
         user_id:
           type: string
+          nullable: true
           description: >-
             The UUID of the user which the comment belongs to (if no contact_id
             specified)
         attachments:
+          nullable: true
           description: The attachements UUIDs tied to the comment
           type: array
           items:
             type: string
         id:
           type: string
+          nullable: true
           description: The UUID of the comment
         remote_id:
           type: string
+          nullable: true
           description: The id of the comment in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the comment in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - body
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedTicketingTagOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the tag
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the tag between the remote 3rd party &
+            Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the tag
         remote_id:
           type: string
+          nullable: true
           description: The id of the tag in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the tag in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedTicketingTeamOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the team
         description:
           type: string
+          nullable: true
           description: The description of the team
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the team between the remote 3rd party &
+            Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the team
         remote_id:
           type: string
+          nullable: true
           description: The id of the team in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the team in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+    LinkedUserResponse:
+      type: object
+      properties:
+        id_linked_user:
+          type: string
+          nullable: true
+        linked_user_origin_id:
+          type: string
+          nullable: true
+        alias:
+          type: string
+          nullable: true
+        id_project:
+          type: string
+          nullable: true
+      required:
+        - id_linked_user
+        - linked_user_origin_id
+        - alias
+        - id_project
     CreateLinkedUserDto:
       type: object
       properties:
         linked_user_origin_id:
           type: string
+          nullable: true
         alias:
           type: string
+          nullable: true
       required:
         - linked_user_origin_id
         - alias
@@ -9251,25 +9375,107 @@ components:
       type: object
       properties:
         linked_user_origin_ids:
+          nullable: true
           type: array
           items:
             type: string
         alias:
           type: string
+          nullable: true
       required:
         - linked_user_origin_ids
         - alias
+    CustomFieldResponse:
+      type: object
+      properties:
+        id_attribute:
+          type: string
+          nullable: true
+          description: Attribute Id
+        status:
+          type: string
+          nullable: true
+          description: Attribute Status
+        ressource_owner_type:
+          type: string
+          nullable: true
+          description: Attribute Ressource Owner Type
+        slug:
+          type: string
+          nullable: true
+          description: Attribute Slug
+        description:
+          type: string
+          nullable: true
+          description: Attribute Description
+        data_type:
+          type: string
+          nullable: true
+          description: Attribute Data Type
+        remote_id:
+          type: string
+          nullable: true
+          description: Attribute Remote Id
+        source:
+          type: string
+          nullable: true
+          description: Attribute Source
+        id_entity:
+          type: string
+          nullable: true
+          description: Attribute Id Entity
+        id_project:
+          type: string
+          nullable: true
+          description: Attribute Id Project
+        scope:
+          type: string
+          nullable: true
+          description: Attribute Scope
+        id_consumer:
+          type: string
+          nullable: true
+          description: Attribute Id Consumer
+        created_at:
+          format: date-time
+          type: string
+          nullable: true
+          description: Attribute Created Date
+        modified_at:
+          format: date-time
+          type: string
+          nullable: true
+          description: Attribute Modified Date
+      required:
+        - id_attribute
+        - status
+        - ressource_owner_type
+        - slug
+        - description
+        - data_type
+        - remote_id
+        - source
+        - id_entity
+        - id_project
+        - scope
+        - id_consumer
+        - created_at
+        - modified_at
     DefineTargetFieldDto:
       type: object
       properties:
         object_type_owner:
           type: string
+          nullable: true
         name:
           type: string
+          nullable: true
         description:
           type: string
+          nullable: true
         data_type:
           type: string
+          nullable: true
       required:
         - object_type_owner
         - name
@@ -9280,18 +9486,25 @@ components:
       properties:
         object_type_owner:
           type: string
+          nullable: true
         name:
           type: string
+          nullable: true
         description:
           type: string
+          nullable: true
         data_type:
           type: string
+          nullable: true
         source_custom_field_id:
           type: string
+          nullable: true
         source_provider:
           type: string
+          nullable: true
         linked_user_id:
           type: string
+          nullable: true
       required:
         - object_type_owner
         - name
@@ -9305,17 +9518,41 @@ components:
       properties:
         attributeId:
           type: string
+          nullable: true
+          description: Attribute Id
         source_custom_field_id:
           type: string
+          nullable: true
+          description: Attribute Id
         source_provider:
           type: string
+          nullable: true
+          description: Attribute Id
         linked_user_id:
           type: string
+          nullable: true
+          description: Attribute Id
       required:
         - attributeId
         - source_custom_field_id
         - source_provider
         - linked_user_id
+    PassThroughResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          nullable: true
+        status:
+          type: number
+          nullable: true
+        data:
+          type: object
+          nullable: true
+      required:
+        - url
+        - status
+        - data
     PassThroughRequestDto:
       type: object
       properties:
@@ -9329,26 +9566,23 @@ components:
           type: string
         path:
           type: string
+          nullable: true
         data:
-          type: object
+          oneOf:
+            - type: object
+              additionalProperties: true
+            - type: array
+              items:
+                type: object
+                additionalProperties: true
+          nullable: true
         headers:
           type: object
+          additionalProperties: true
+          nullable: true
       required:
         - method
         - path
-    PassThroughResponse:
-      type: object
-      properties:
-        url:
-          type: string
-        status:
-          type: number
-        data:
-          type: object
-      required:
-        - url
-        - status
-        - data
     UnifiedHrisBankinfoOutput:
       type: object
       properties: {}
@@ -9450,298 +9684,400 @@ components:
       properties:
         activity_type:
           type: string
+          nullable: true
           description: The type of activity
         subject:
           type: string
+          nullable: true
           description: The subject of the activity
         body:
           type: string
+          nullable: true
           description: The body of the activity
         visibility:
           type: string
+          nullable: true
           description: The visibility of the activity
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the activity
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the activity in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the activity in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsActivityInput:
       type: object
       properties:
         activity_type:
           type: string
+          nullable: true
           description: The type of activity
         subject:
           type: string
+          nullable: true
           description: The subject of the activity
         body:
           type: string
+          nullable: true
           description: The body of the activity
         visibility:
           type: string
+          nullable: true
           description: The visibility of the activity
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          properties: {}
-      required:
-        - field_mappings
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAtsApplicationOutput:
       type: object
       properties:
         applied_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The application date
         rejected_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The rejection date
         offers:
+          nullable: true
           description: The offers UUIDs for the application
           type: array
           items:
             type: string
         source:
           type: string
+          nullable: true
           description: The source of the application
         credited_to:
           type: string
+          nullable: true
           description: The UUID of the person credited for the application
         current_stage:
           type: string
+          nullable: true
           description: The UUID of the current stage of the application
         reject_reason:
           type: string
+          nullable: true
           description: The rejection reason for the application
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         job_id:
           type: string
           description: The UUID of the job
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the application
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the application in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the application in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
+        remote_created_at:
+          format: date-time
+          type: string
+          nullable: true
+          description: The remote created date of the object
+        remote_modified_at:
+          format: date-time
+          type: string
+          nullable: true
+          description: The remote modified date of the object
     UnifiedAtsApplicationInput:
       type: object
       properties:
         applied_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The application date
         rejected_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The rejection date
         offers:
+          nullable: true
           description: The offers UUIDs for the application
           type: array
           items:
             type: string
         source:
           type: string
+          nullable: true
           description: The source of the application
         credited_to:
           type: string
+          nullable: true
           description: The UUID of the person credited for the application
         current_stage:
           type: string
+          nullable: true
           description: The UUID of the current stage of the application
         reject_reason:
           type: string
+          nullable: true
           description: The rejection reason for the application
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         job_id:
           type: string
           description: The UUID of the job
         field_mappings:
           type: object
-          properties: {}
-      required:
-        - field_mappings
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAtsAttachmentOutput:
       type: object
       properties:
         file_url:
           type: string
+          nullable: true
           description: The URL of the file
         file_name:
           type: string
+          nullable: true
           description: The name of the file
         attachment_type:
           type: string
+          nullable: true
           description: The type of the file
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the attachment
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the attachment
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the attachment
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the attachment
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the attachment in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsAttachmentInput:
       type: object
       properties:
         file_url:
           type: string
+          nullable: true
           description: The URL of the file
         file_name:
           type: string
+          nullable: true
           description: The name of the file
         attachment_type:
           type: string
+          nullable: true
           description: The type of the file
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the attachment
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the attachment
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         field_mappings:
           type: object
-          properties: {}
-      required:
-        - field_mappings
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     Url:
       type: object
-      properties: {}
+      properties:
+        url:
+          type: string
+          nullable: true
+          description: The url.
+        url_type:
+          type: string
+          nullable: true
+          description: The url type. It takes [WEBSITE | BLOG | LINKEDIN | GITHUB | OTHER]
+      required:
+        - url
+        - url_type
     UnifiedAtsCandidateOutput:
       type: object
       properties:
         first_name:
           type: string
+          nullable: true
           description: The first name of the candidate
         last_name:
           type: string
+          nullable: true
           description: The last name of the candidate
         company:
           type: string
+          nullable: true
           description: The company of the candidate
         title:
           type: string
+          nullable: true
           description: The title of the candidate
         locations:
           type: string
+          nullable: true
           description: The locations of the candidate
         is_private:
           type: boolean
+          nullable: true
           description: Whether the candidate is private
         email_reachable:
           type: boolean
+          nullable: true
           description: Whether the candidate is reachable by email
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the candidate
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the candidate
         last_interaction_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The last interaction date with the candidate
         attachments:
+          nullable: true
           description: The attachments UUIDs of the candidate
           type: array
           items:
             type: string
         applications:
+          nullable: true
           description: The applications UUIDs of the candidate
           type: array
           items:
             type: string
         tags:
+          nullable: true
           description: The tags of the candidate
           type: array
           items:
             type: string
         urls:
+          nullable: true
           description: >-
             The urls of the candidate, possible values for Url type are WEBSITE,
             BLOG, LINKEDIN, GITHUB, or OTHER
@@ -9749,90 +10085,113 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
+          nullable: true
           description: The phone numbers of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
+          nullable: true
           description: The email addresses of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         remote_id:
           type: string
+          nullable: true
           description: The id of the candidate in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the candidate in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsCandidateInput:
       type: object
       properties:
         first_name:
           type: string
+          nullable: true
           description: The first name of the candidate
         last_name:
           type: string
+          nullable: true
           description: The last name of the candidate
         company:
           type: string
+          nullable: true
           description: The company of the candidate
         title:
           type: string
+          nullable: true
           description: The title of the candidate
         locations:
           type: string
+          nullable: true
           description: The locations of the candidate
         is_private:
           type: boolean
+          nullable: true
           description: Whether the candidate is private
         email_reachable:
           type: boolean
+          nullable: true
           description: Whether the candidate is reachable by email
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the candidate
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the candidate
         last_interaction_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The last interaction date with the candidate
         attachments:
+          nullable: true
           description: The attachments UUIDs of the candidate
           type: array
           items:
             type: string
         applications:
+          nullable: true
           description: The applications UUIDs of the candidate
           type: array
           items:
             type: string
         tags:
+          nullable: true
           description: The tags of the candidate
           type: array
           items:
             type: string
         urls:
+          nullable: true
           description: >-
             The urls of the candidate, possible values for Url type are WEBSITE,
             BLOG, LINKEDIN, GITHUB, or OTHER
@@ -9840,229 +10199,292 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
+          nullable: true
           description: The phone numbers of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
+          nullable: true
           description: The email addresses of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          properties: {}
-      required:
-        - field_mappings
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAtsDepartmentOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the department
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the department
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the department in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the department in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsInterviewOutput:
       type: object
       properties:
         status:
           type: string
+          nullable: true
           description: The status of the interview
         application_id:
           type: string
+          nullable: true
           description: The UUID of the application
         job_interview_stage_id:
           type: string
+          nullable: true
           description: The UUID of the job interview stage
         organized_by:
           type: string
+          nullable: true
           description: The UUID of the organizer
         interviewers:
+          nullable: true
           description: The UUIDs of the interviewers
           type: array
           items:
             type: string
         location:
           type: string
+          nullable: true
           description: The location of the interview
         start_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The start date and time of the interview
         end_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The end date and time of the interview
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the interview
         remote_updated_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the interview
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the interview in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the interview in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsInterviewInput:
       type: object
       properties:
         status:
           type: string
+          nullable: true
           description: The status of the interview
         application_id:
           type: string
+          nullable: true
           description: The UUID of the application
         job_interview_stage_id:
           type: string
+          nullable: true
           description: The UUID of the job interview stage
         organized_by:
           type: string
+          nullable: true
           description: The UUID of the organizer
         interviewers:
+          nullable: true
           description: The UUIDs of the interviewers
           type: array
           items:
             type: string
         location:
           type: string
+          nullable: true
           description: The location of the interview
         start_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The start date and time of the interview
         end_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The end date and time of the interview
         remote_created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote creation date of the interview
         remote_updated_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          properties: {}
-      required:
-        - field_mappings
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAtsJobinterviewstageOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the job interview stage
         stage_order:
           type: number
+          nullable: true
           description: The order of the stage
         job_id:
           type: string
+          nullable: true
           description: The UUID of the job
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the job interview stage
         remote_id:
           type: string
+          nullable: true
           description: >-
             The remote ID of the job interview stage in the context of the 3rd
             Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: >-
+            The remote data of the job interview stage in the context of the 3rd
+            Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsJobOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the job
         description:
           type: string
+          nullable: true
           description: The description of the job
         code:
           type: string
+          nullable: true
           description: The code of the job
         status:
           type: string
+          nullable: true
           description: The status of the job
         type:
           type: string
+          nullable: true
           description: The type of the job
         confidential:
           type: boolean
+          nullable: true
           description: Whether the job is confidential
         departments:
+          nullable: true
           description: The departments UUIDs associated with the job
           type: array
           items:
             type: string
         offices:
+          nullable: true
           description: The offices UUIDs associated with the job
           type: array
           items:
             type: string
         managers:
+          nullable: true
           description: The managers UUIDs associated with the job
           type: array
           items:
             type: string
         recruiters:
+          nullable: true
           description: The recruiters UUIDs associated with the job
           type: array
           items:
@@ -10070,315 +10492,397 @@ components:
         remote_created_at:
           type: string
           format: date-time
+          nullable: true
           description: The remote creation date of the job
         remote_updated_at:
           type: string
           format: date-time
+          nullable: true
           description: The remote modification date of the job
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the job
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the job in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the job in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsOfferOutput:
       type: object
       properties:
         created_by:
           type: string
           description: The UUID of the creator
+          nullable: true
         remote_created_at:
-          type: string
           format: date-time
+          type: string
           description: The remote creation date of the offer
+          nullable: true
         closed_at:
-          type: string
           format: date-time
+          type: string
           description: The closing date of the offer
+          nullable: true
         sent_at:
-          type: string
           format: date-time
+          type: string
           description: The sending date of the offer
+          nullable: true
         start_date:
-          type: string
           format: date-time
+          type: string
           description: The start date of the offer
+          nullable: true
         status:
           type: string
           description: The status of the offer
+          nullable: true
         application_id:
           type: string
           description: The UUID of the application
+          nullable: true
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+          nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the offer
+          nullable: true
         remote_id:
           type: string
           description: The remote ID of the offer in the context of the 3rd Party
+          nullable: true
         remote_data:
           type: object
-          properties: {}
+          description: The remote data of the offer in the context of the 3rd Party
+          nullable: true
+          additionalProperties: true
         created_at:
           type: object
-          properties: {}
+          description: The created date of the object
+          nullable: true
         modified_at:
           type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          description: The modified date of the object
+          nullable: true
     UnifiedAtsOfficeOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the office
         location:
           type: string
+          nullable: true
           description: The location of the office
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
           description: The UUID of the office
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the office in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the office in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsRejectreasonOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the reject reason
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the reject reason
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the reject reason in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the reject reason in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsScorecardOutput:
       type: object
       properties:
         overall_recommendation:
           type: string
+          nullable: true
           description: The overall recommendation
         application_id:
           type: string
+          nullable: true
           description: The UUID of the application
         interview_id:
           type: string
+          nullable: true
           description: The UUID of the interview
         remote_created_at:
           type: string
-          format: date-time
+          nullable: true
           description: The remote creation date of the scorecard
         submitted_at:
           type: string
-          format: date-time
+          nullable: true
           description: The submission date of the scorecard
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
           description: The UUID of the scorecard
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the scorecard in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the scorecard in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAtsTagOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the tag
         id_ats_candidate:
           type: string
+          nullable: true
           description: The UUID of the candidate
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the tag
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the tag in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the tag in the context of the 3rd Party
         created_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The creation date of the tag
         modified_at:
-          type: string
           format: date-time
+          type: string
+          nullable: true
           description: The modification date of the tag
-      required:
-        - field_mappings
-        - remote_data
     UnifiedAtsUserOutput:
       type: object
       properties:
         first_name:
           type: string
           description: The first name of the user
+          nullable: true
         last_name:
           type: string
           description: The last name of the user
+          nullable: true
         email:
           type: string
           description: The email of the user
+          nullable: true
         disabled:
           type: boolean
           description: Whether the user is disabled
+          nullable: true
         access_role:
           type: string
           description: The access role of the user
+          nullable: true
         remote_created_at:
-          type: string
           format: date-time
+          type: string
           description: The remote creation date of the user
+          nullable: true
         remote_modified_at:
-          type: string
           format: date-time
+          type: string
           description: The remote modification date of the user
+          nullable: true
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+          nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the user
+          nullable: true
         remote_id:
           type: string
           description: The remote ID of the user in the context of the 3rd Party
+          nullable: true
         remote_data:
           type: object
-          properties: {}
+          description: The remote data of the user in the context of the 3rd Party
+          nullable: true
+          additionalProperties: true
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          description: The created date of the object
+          nullable: true
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          description: The modified date of the object
+          nullable: true
     UnifiedAtsEeocsOutput:
       type: object
       properties:
         candidate_id:
           type: string
+          nullable: true
           description: The UUID of the candidate
         submitted_at:
           type: string
           format: date-time
+          nullable: true
           description: The submission date of the EEOC
         race:
           type: string
+          nullable: true
           description: The race of the candidate
         gender:
           type: string
+          nullable: true
           description: The gender of the candidate
         veteran_status:
           type: string
+          nullable: true
           description: The veteran status of the candidate
         disability_status:
           type: string
+          nullable: true
           description: The disability status of the candidate
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the EEOC
         remote_id:
           type: string
+          nullable: true
           description: The remote ID of the EEOC in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the EEOC in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
-      required:
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
     UnifiedAccountingAccountOutput:
       type: object
       properties: {}
@@ -10468,81 +10972,111 @@ components:
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the drive
         remote_created_at:
           type: string
+          nullable: true
           description: When the third party s drive was created.
         drive_url:
           type: string
+          nullable: true
           description: The url of the drive
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the drive
         remote_id:
           type: string
+          nullable: true
           description: The id of the drive in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the drive in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
         - remote_created_at
         - drive_url
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedFilestorageFileOutput:
       type: object
       properties:
         name:
           type: string
           description: The name of the file
+          nullable: true
         file_url:
           type: string
           description: The url of the file
+          nullable: true
         mime_type:
           type: string
           description: The mime type of the file
+          nullable: true
         size:
           type: string
           description: The size of the file
+          nullable: true
         folder_id:
           type: string
           description: The UUID of the folder tied to the file
+          nullable: true
         permission:
           type: string
           description: The UUID of the permission tied to the file
+          nullable: true
         shared_link:
           type: string
           description: The UUID of the shared link tied to the file
+          nullable: true
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+          nullable: true
+          additionalProperties: true
         id:
           type: string
           description: The UUID of the file
+          nullable: true
         remote_id:
           type: string
           description: The id of the file in the context of the 3rd Party
+          nullable: true
         remote_data:
           type: object
-          properties: {}
+          description: The remote data of the file in the context of the 3rd Party
+          nullable: true
+          additionalProperties: true
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          description: The created date of the object
+          nullable: true
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          description: The modified date of the object
+          nullable: true
       required:
         - name
         - file_url
@@ -10551,37 +11085,44 @@ components:
         - folder_id
         - permission
         - shared_link
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedFilestorageFileInput:
       type: object
       properties:
         name:
           type: string
           description: The name of the file
+          nullable: true
         file_url:
           type: string
           description: The url of the file
+          nullable: true
         mime_type:
           type: string
           description: The mime type of the file
+          nullable: true
         size:
           type: string
           description: The size of the file
+          nullable: true
         folder_id:
           type: string
           description: The UUID of the folder tied to the file
+          nullable: true
         permission:
           type: string
           description: The UUID of the permission tied to the file
+          nullable: true
         shared_link:
           type: string
           description: The UUID of the shared link tied to the file
+          nullable: true
         field_mappings:
           type: object
-          properties: {}
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+          nullable: true
+          additionalProperties: true
       required:
         - name
         - file_url
@@ -10590,52 +11131,70 @@ components:
         - folder_id
         - permission
         - shared_link
-        - field_mappings
     UnifiedFilestorageFolderOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the folder
         size:
           type: string
+          nullable: true
           description: The size of the folder
         folder_url:
           type: string
+          nullable: true
           description: The url of the folder
         description:
           type: string
           description: The description of the folder
         drive_id:
           type: string
+          nullable: true
           description: The UUID of the drive tied to the folder
         parent_folder_id:
           type: string
+          nullable: true
           description: The UUID of the parent folder
         shared_link:
           type: string
+          nullable: true
           description: The UUID of the shared link tied to the folder
         permission:
           type: string
+          nullable: true
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the folder
         remote_id:
           type: string
+          nullable: true
           description: The id of the folder in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: The remote data of the folder in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
         - size
@@ -10645,40 +11204,47 @@ components:
         - parent_folder_id
         - shared_link
         - permission
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedFilestorageFolderInput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the folder
         size:
           type: string
+          nullable: true
           description: The size of the folder
         folder_url:
           type: string
+          nullable: true
           description: The url of the folder
         description:
           type: string
           description: The description of the folder
         drive_id:
           type: string
+          nullable: true
           description: The UUID of the drive tied to the folder
         parent_folder_id:
           type: string
+          nullable: true
           description: The UUID of the parent folder
         shared_link:
           type: string
+          nullable: true
           description: The UUID of the shared link tied to the folder
         permission:
           type: string
+          nullable: true
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
       required:
         - name
         - size
@@ -10688,12 +11254,12 @@ components:
         - parent_folder_id
         - shared_link
         - permission
-        - field_mappings
     UnifiedFilestorageGroupOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the group
         users:
           description: Uuids of users of the group
@@ -10702,138 +11268,180 @@ components:
             type: string
         remote_was_deleted:
           type: boolean
+          nullable: true
           description: >-
             Indicates whether or not this object has been deleted in the third
             party platform.
         field_mappings:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
         id:
           type: string
+          nullable: true
           description: The UUID of the group
         remote_id:
           type: string
+          nullable: true
           description: The id of the group in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the group in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
         - users
         - remote_was_deleted
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedUserOutput:
       type: object
       properties:
         name:
           type: string
+          nullable: true
           description: The name of the user
         email:
           type: string
+          nullable: true
           description: The email of the user
         is_me:
           type: boolean
+          nullable: true
           description: Whether the user is the one who linked this account.
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the user
         remote_id:
           type: string
+          nullable: true
           description: The id of the user in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          nullable: true
+          additionalProperties: true
+          description: The remote data of the user in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - name
         - email
         - is_me
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedTicketingAttachmentOutput:
       type: object
       properties:
         file_name:
           type: string
+          nullable: true
           description: The file name of the attachment
         file_url:
           type: string
+          nullable: true
           description: The file url of the attachment
         uploader:
           type: string
+          nullable: true
           description: The uploader's UUID of the attachment
         ticket_id:
           type: string
+          nullable: true
           description: The UUID of the ticket the attachment is tied to
         comment_id:
           type: string
+          nullable: true
           description: The UUID of the comment the attachment is tied to
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the attachment between the remote 3rd
+            party & Panora
+          additionalProperties: true
         id:
           type: string
+          nullable: true
           description: The UUID of the attachment
         remote_id:
           type: string
+          nullable: true
           description: The id of the attachment in the context of the 3rd Party
         remote_data:
           type: object
-          properties: {}
+          additionalProperties: true
+          nullable: true
+          description: The remote data of the attachment in the context of the 3rd Party
         created_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The created date of the object
         modified_at:
-          type: object
-          properties: {}
+          format: date-time
+          type: string
+          nullable: true
+          description: The modified date of the object
       required:
         - file_name
         - file_url
         - uploader
-        - field_mappings
-        - remote_data
-        - created_at
-        - modified_at
     UnifiedTicketingAttachmentInput:
       type: object
       properties:
         file_name:
           type: string
+          nullable: true
           description: The file name of the attachment
         file_url:
           type: string
+          nullable: true
           description: The file url of the attachment
         uploader:
           type: string
+          nullable: true
           description: The uploader's UUID of the attachment
         ticket_id:
           type: string
+          nullable: true
           description: The UUID of the ticket the attachment is tied to
         comment_id:
           type: string
+          nullable: true
           description: The UUID of the comment the attachment is tied to
         field_mappings:
           type: object
-          properties: {}
+          nullable: true
+          description: >-
+            The custom field mappings of the attachment between the remote 3rd
+            party & Panora
+          additionalProperties: true
       required:
         - file_name
         - file_url

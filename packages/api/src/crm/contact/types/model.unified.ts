@@ -4,16 +4,25 @@ import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UnifiedCrmContactInput {
-  @ApiProperty({ type: String, description: 'The first name of the contact' })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'The first name of the contact',
+  })
   @IsString()
   first_name: string;
 
-  @ApiProperty({ type: String, description: 'The last name of the contact' })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'The last name of the contact',
+  })
   @IsString()
   last_name: string;
 
   @ApiPropertyOptional({
     type: [Email],
+    nullable: true,
     description: 'The email addresses of the contact',
   })
   @IsOptional()
@@ -22,6 +31,7 @@ export class UnifiedCrmContactInput {
 
   @ApiPropertyOptional({
     type: [Phone],
+    nullable: true,
     description: 'The phone numbers of the contact',
   })
   @IsOptional()
@@ -30,6 +40,7 @@ export class UnifiedCrmContactInput {
 
   @ApiPropertyOptional({
     type: [Address],
+    nullable: true,
     description: 'The addresses of the contact',
   })
   @IsOptional()
@@ -38,6 +49,7 @@ export class UnifiedCrmContactInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the user who owns the contact',
   })
   @IsUUID()
@@ -45,22 +57,29 @@ export class UnifiedCrmContactInput {
   user_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
     description:
       'The custom field mappings of the contact between the remote 3rd party & Panora',
+    additionalProperties: true,
   })
   @IsOptional()
   field_mappings?: Record<string, any>;
 }
 
 export class UnifiedCrmContactOutput extends UnifiedCrmContactInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the contact' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'The UUID of the contact',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The id of the contact in the context of the Crm 3rd Party',
   })
   @IsString()
@@ -68,7 +87,9 @@ export class UnifiedCrmContactOutput extends UnifiedCrmContactInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the contact in the context of the Crm 3rd Party',
   })
@@ -76,16 +97,18 @@ export class UnifiedCrmContactOutput extends UnifiedCrmContactInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

@@ -3,6 +3,7 @@ import { IsUUID, IsOptional, IsString } from 'class-validator';
 export class UnifiedFilestorageSharedlinkInput {
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The url of the shared link',
   })
   @IsString()
@@ -10,6 +11,7 @@ export class UnifiedFilestorageSharedlinkInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The download url of the shared link',
   })
   @IsString()
@@ -17,6 +19,7 @@ export class UnifiedFilestorageSharedlinkInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the folder tied to the shared link',
   })
   @IsString()
@@ -24,6 +27,7 @@ export class UnifiedFilestorageSharedlinkInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the file tied to the shared link',
   })
   @IsString()
@@ -31,6 +35,7 @@ export class UnifiedFilestorageSharedlinkInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The scope of the shared link',
   })
   @IsString()
@@ -38,6 +43,7 @@ export class UnifiedFilestorageSharedlinkInput {
 
   @ApiPropertyOptional({
     type: Boolean,
+    nullable: true,
     description: 'If the shared link is protected by a password or not',
   })
   @IsString()
@@ -45,13 +51,16 @@ export class UnifiedFilestorageSharedlinkInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The password of the shared link',
   })
   @IsString()
   password?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -62,6 +71,7 @@ export class UnifiedFilestorageSharedlinkInput {
 export class UnifiedFilestorageSharedlinkOutput extends UnifiedFilestorageSharedlinkInput {
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the shared link',
   })
   @IsUUID()
@@ -70,6 +80,7 @@ export class UnifiedFilestorageSharedlinkOutput extends UnifiedFilestorageShared
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The id of the shared link in the context of the 3rd Party',
   })
   @IsString()
@@ -77,7 +88,9 @@ export class UnifiedFilestorageSharedlinkOutput extends UnifiedFilestorageShared
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the shared link in the context of the 3rd Party',
   })
@@ -85,16 +98,18 @@ export class UnifiedFilestorageSharedlinkOutput extends UnifiedFilestorageShared
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

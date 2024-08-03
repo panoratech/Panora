@@ -14,7 +14,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
+  //ApiKeyAuth,
   ApiHeader,
   ApiOperation,
   ApiParam,
@@ -25,7 +25,7 @@ import { ContactService } from './services/contact.service';
 import { UnifiedTicketingContactOutput } from './types/model.unified';
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('ticketing/contacts')
 @Controller('ticketing/contacts')
 export class ContactController {

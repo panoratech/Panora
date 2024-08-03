@@ -9,7 +9,11 @@ import {
 } from 'class-validator';
 
 export class UnifiedCrmCompanyInput {
-  @ApiProperty({ type: String, description: 'The name of the company' })
+  @ApiProperty({
+    type: String,
+    description: 'The name of the company',
+    nullable: true,
+  })
   @IsString()
   name: string;
 
@@ -17,6 +21,7 @@ export class UnifiedCrmCompanyInput {
     type: String,
     description:
       'The industry of the company. Authorized values can be found in the Industry enum.',
+    nullable: true,
   })
   @IsEnum(Industry)
   @IsOptional()
@@ -25,6 +30,7 @@ export class UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     type: Number,
     description: 'The number of employees of the company',
+    nullable: true,
   })
   @IsNumber()
   @IsOptional()
@@ -33,6 +39,7 @@ export class UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the user who owns the company',
+    nullable: true,
   })
   @IsOptional()
   @IsUUID()
@@ -41,6 +48,7 @@ export class UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     description: 'The email addresses of the company',
     type: [Email],
+    nullable: true,
   })
   @IsOptional()
   email_addresses?: Email[];
@@ -48,6 +56,7 @@ export class UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     description: 'The addresses of the company',
     type: [Address],
+    nullable: true,
   })
   @IsOptional()
   addresses?: Address[];
@@ -55,21 +64,28 @@ export class UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     description: 'The phone numbers of the company',
     type: [Phone],
+    nullable: true,
   })
   @IsOptional()
   phone_numbers?: Phone[];
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
     description:
       'The custom field mappings of the company between the remote 3rd party & Panora',
+    nullable: true,
+    additionalProperties: true,
   })
   @IsOptional()
   field_mappings?: Record<string, any>;
 }
 
 export class UnifiedCrmCompanyOutput extends UnifiedCrmCompanyInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the company' })
+  @ApiPropertyOptional({
+    type: String,
+    description: 'The UUID of the company',
+    nullable: true,
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
@@ -77,30 +93,35 @@ export class UnifiedCrmCompanyOutput extends UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The id of the company in the context of the Crm 3rd Party',
+    nullable: true,
   })
   @IsString()
   @IsOptional()
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
     description:
       'The remote data of the company in the context of the Crm 3rd Party',
+    nullable: true,
+    additionalProperties: true,
   })
   @IsOptional()
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
     description: 'The created date of the object',
+    nullable: true,
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
     description: 'The modified date of the object',
+    nullable: true,
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

@@ -15,7 +15,7 @@ import {
   ApiTags,
   ApiHeader,
   ApiQuery,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { UserService } from './services/user.service';
@@ -28,7 +28,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('filestorage/users')
 @Controller('filestorage/users')
 export class UserController {

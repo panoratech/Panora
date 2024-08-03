@@ -9,7 +9,7 @@ interface IUpdateProjectConnectorsDto {
 
 const useUpdateProjectConnectors = () => {    
     const update = async (data: IUpdateProjectConnectorsDto) => {
-        const response = await fetch(`${config.API_URL}/project-connectors`, {
+        const response = await fetch(`${config.API_URL}/project_connectors`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

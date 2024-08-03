@@ -13,24 +13,36 @@ export type AttachmentType =
   | 'OFFER_LETTER'
   | 'OTHER';
 export class UnifiedAtsAttachmentInput {
-  @ApiPropertyOptional({ type: String, description: 'The URL of the file' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'The URL of the file',
+  })
   @IsString()
   @IsOptional()
   file_url?: string;
 
-  @ApiPropertyOptional({ type: String, description: 'The name of the file' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'The name of the file',
+  })
   @IsString()
   @IsOptional()
   file_name?: string;
 
-  @ApiPropertyOptional({ type: String, description: 'The type of the file' })
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    description: 'The type of the file',
+  })
   @IsIn(['RESUME', 'COVER_LETTER', 'OFFER_LETTER', 'OTHER'])
   @IsOptional()
   attachment_type?: AttachmentType | string;
 
   @ApiPropertyOptional({
-    type: String,
-    format: 'date-time',
+    type: Date,
+    nullable: true,
     description: 'The remote creation date of the attachment',
   })
   @IsDateString()
@@ -38,8 +50,8 @@ export class UnifiedAtsAttachmentInput {
   remote_created_at?: string;
 
   @ApiPropertyOptional({
-    type: String,
-    format: 'date-time',
+    type: Date,
+    nullable: true,
     description: 'The remote modification date of the attachment',
   })
   @IsDateString()
@@ -48,6 +60,7 @@ export class UnifiedAtsAttachmentInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the candidate',
   })
   @IsUUID()
@@ -55,7 +68,9 @@ export class UnifiedAtsAttachmentInput {
   candidate_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -66,6 +81,7 @@ export class UnifiedAtsAttachmentInput {
 export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the attachment',
   })
   @IsUUID()
@@ -74,6 +90,7 @@ export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The remote ID of the attachment',
   })
   @IsString()
@@ -81,7 +98,9 @@ export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the attachment in the context of the 3rd Party',
   })
@@ -89,16 +108,18 @@ export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

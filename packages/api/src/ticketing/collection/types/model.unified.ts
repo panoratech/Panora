@@ -6,6 +6,7 @@ export type CollectionType = 'PROJECT' | 'LIST';
 export class UnifiedTicketingCollectionInput {
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The name of the collection',
   })
   @IsString()
@@ -13,6 +14,7 @@ export class UnifiedTicketingCollectionInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The description of the collection',
   })
   @IsString()
@@ -21,6 +23,7 @@ export class UnifiedTicketingCollectionInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description:
       'The type of the collection. Authorized values are either PROJECT or LIST ',
   })
@@ -34,6 +37,7 @@ export class UnifiedTicketingCollectionInput {
 export class UnifiedTicketingCollectionOutput extends UnifiedTicketingCollectionInput {
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the collection',
   })
   @IsUUID()
@@ -42,6 +46,7 @@ export class UnifiedTicketingCollectionOutput extends UnifiedTicketingCollection
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The id of the collection in the context of the 3rd Party',
   })
   @IsString()
@@ -49,7 +54,9 @@ export class UnifiedTicketingCollectionOutput extends UnifiedTicketingCollection
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the collection in the context of the 3rd Party',
   })
@@ -57,16 +64,18 @@ export class UnifiedTicketingCollectionOutput extends UnifiedTicketingCollection
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

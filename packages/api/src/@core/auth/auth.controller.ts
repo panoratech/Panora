@@ -25,7 +25,6 @@ import { RefreshDto } from './dto/refresh.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 
-
 @ApiTags('auth')
 @ApiExcludeController()
 @Controller('auth')
@@ -45,10 +44,15 @@ export class AuthController {
     return this.authService.register(user);
   }
 
-  @ApiOperation({ operationId: 'requestPasswordReset', summary: 'Request Password Reset' })
+  @ApiOperation({
+    operationId: 'requestPasswordReset',
+    summary: 'Request Password Reset',
+  })
   @ApiBody({ type: RequestPasswordResetDto })
   @Post('password_reset_request')
-  async requestPasswordReset(@Body() requestPasswordResetDto: RequestPasswordResetDto) {
+  async requestPasswordReset(
+    @Body() requestPasswordResetDto: RequestPasswordResetDto,
+  ) {
     return this.authService.requestPasswordReset(requestPasswordResetDto);
   }
 

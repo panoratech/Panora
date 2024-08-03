@@ -11,7 +11,7 @@ interface IMapTargetFieldDto {
 
 const useMapField = () => {
     const map = async (data: IMapTargetFieldDto) => {
-        const response = await fetch(`${config.API_URL}/field-mappings/map`, {
+        const response = await fetch(`${config.API_URL}/field_mappings/map`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

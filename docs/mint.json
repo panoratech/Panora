@@ -11,8 +11,9 @@
   },
   "anchors": [],
   "api": {
-    "auth": {
-      "method": "bearer"
+     "auth": {
+        "method": "key",
+        "name": "x-api-key"
     },
     "baseUrl": "https://api.panora.dev"
   },
@@ -803,6 +804,7 @@
     {
       "group": "Recipes",
       "pages": [
+        "recipes/frontend-sdk",
         "recipes/embed-catalog",
         "recipes/import-existing-users",
         "recipes/catch-connection-token",
