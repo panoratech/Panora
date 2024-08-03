@@ -730,11 +730,11 @@
           ]
         },
         {
-          "group": "Webhook",
+          "group": "Webhooks",
           "pages": [
-            "api-reference/webhook/retrieve-webhooks-metadata",
-            "api-reference/webhook/add-webhook-metadata",
-            "api-reference/webhook/update-webhook-status"
+            "api-reference/webhooks/retrieve-webhooks-metadata",
+            "api-reference/webhooks/add-webhooks-metadata",
+            "api-reference/webhooks/update-webhooks-status"
           ]
         },
         {
