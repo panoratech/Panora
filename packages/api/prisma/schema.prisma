@@ -1682,8 +1682,10 @@ model ecom_orders {
   remote_id          String?
   id_ecom_customer   String?            @db.Uuid
   id_connection      String             @db.Uuid
-  modifed_at         DateTime           @db.Timestamptz(6)
+  modified_at        DateTime           @db.Timestamptz(6)
   created_at         DateTime           @db.Timestamptz(6)
+  remote_deleted     Boolean
+  ecom_addresses     ecom_addresses[]
   ecom_fulfilments   ecom_fulfilments[]
   ecom_customers     ecom_customers?    @relation(fields: [id_ecom_customer], references: [id_ecom_customer], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_customer_orders")
 
