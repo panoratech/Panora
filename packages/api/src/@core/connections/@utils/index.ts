@@ -16,6 +16,10 @@ export class ConnectionUtils {
     token: string,
   ): Promise<ConnectionMetadata> {
     try {
+      console.log('**********')
+      console.log(token);
+      console.log('**********')
+      
       const res = await this.prisma.connections.findFirst({
         where: {
           connection_token: token,

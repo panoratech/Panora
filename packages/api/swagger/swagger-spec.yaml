@@ -7789,9 +7789,10 @@ servers:
     description: Development server
 components:
   securitySchemes:
-    bearer:
-      type: http
-      scheme: bearer
+    api_key:
+      type: apiKey
+      in: header
+      name: x-api-key
   schemas:
     WebhookResponse:
       type: object
@@ -11445,8 +11446,9 @@ components:
         - file_name
         - file_url
         - uploader
+        - field_mappings
 security:
-  - bearer: []
+  - api_key: []
 x-speakeasy-name-override:
   - operationId: ^retrieve.*
     methodNameOverride: retrieve
