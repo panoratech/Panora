@@ -732,9 +732,9 @@
         {
           "group": "Webhooks",
           "pages": [
-            "api-reference/webhooks/retrieve-webhooks-metadata",
-            "api-reference/webhooks/add-webhooks-metadata",
-            "api-reference/webhooks/update-webhooks-status"
+            "api-reference/webhooks/list",
+            "api-reference/webhooks/create",
+            "api-reference/webhooks/update"
           ]
         },
         {
