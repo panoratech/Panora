@@ -43,8 +43,11 @@ export class AuthService {
       throw new BadRequestException('Invalid email or expired request');
     }
 
-    // Verify the reset token 
-    const isValidToken = await this.verifyResetToken(checkResetRequestIsValid.reset_token, reset_token);
+    // Verify the reset token
+    const isValidToken = await this.verifyResetToken(
+      checkResetRequestIsValid.reset_token,
+      reset_token,
+    );
 
     if (!isValidToken) {
       throw new BadRequestException('Invalid reset token');
@@ -54,7 +57,7 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(new_password, 10);
 
     // Update the user's password in the database
-    const updatedPassword =await this.prisma.users.update({
+    const updatedPassword = await this.prisma.users.update({
       where: { email },
       data: { password_hash: hashedPassword },
     });
@@ -62,16 +65,18 @@ export class AuthService {
     return { message: 'Password reset successfully' };
   }
 
-  private async verifyResetToken(database_token: string, request_token: string): Promise<boolean> {
-  const isValidToken = await bcrypt.compare(request_token, database_token);
-  return isValidToken;
+  private async verifyResetToken(
+    database_token: string,
+    request_token: string,
+  ): Promise<boolean> {
+    const isValidToken = await bcrypt.compare(request_token, database_token);
+    return isValidToken;
   }
-
 
   async requestPasswordReset(requestPasswordResetDto: RequestPasswordResetDto) {
     const { email } = requestPasswordResetDto;
 
-    if (!email){
+    if (!email) {
       throw new BadRequestException('Incorrect API request');
     }
 
@@ -105,19 +110,19 @@ export class AuthService {
 
     // Create a transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST, 
-      port: Number(process.env.SMTP_PORT), 
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
       //secure: false,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
-      }
+      },
     });
 
     // Send mail with defined transport object
     const info = await transporter.sendMail({
       from: `${process.env.EMAIL_SENDING_ADDRESS}`,
-      to: email, 
+      to: email,
       subject: 'Panora | Password Reset Request',
       text: `You requested a password reset. Click the following link within one hour from now to reset your password: ${resetLink}`,
       html: `<p>You requested a password reset. Click the link to reset your password:</p><a href="${resetLink}">${resetLink}</a> <p>The link will expire after one hour</p>`,
@@ -125,8 +130,6 @@ export class AuthService {
 
     this.logger.log(`Send reset email to ${email} with token ${resetToken}`);
   }
-
-
 
   async getUsers() {
     try {
@@ -156,10 +159,14 @@ export class AuthService {
 
   async getApiKeys(project_id: string) {
     try {
-      return await this.prisma.api_keys.findMany({
+      const res = await this.prisma.api_keys.findMany({
         where: {
           id_project: project_id,
         },
+      });
+      return res.map((key) => {
+        const { api_key_hash, ...rest } = key;
+        return rest;
       });
     } catch (error) {
       throw error;
@@ -173,7 +180,9 @@ export class AuthService {
       });
 
       if (foundUser) {
-        throw new ConflictException(`Email already exists. Try resetting your password.`);
+        throw new ConflictException(
+          `Email already exists. Try resetting your password.`,
+        );
       }
       return await this.createUser(user);
     } catch (error) {
@@ -324,7 +333,6 @@ export class AuthService {
     keyName: string,
   ): Promise<{ api_key: string }> {
     try {
-
       // Check project & User exist
       const foundProject = await this.prisma.projects.findUnique({
         where: { id_project: projectId },
@@ -347,8 +355,11 @@ export class AuthService {
       // Store the API key in the database associated with the user
       //const hashed_token = this.hashApiKey(access_token);"
 
-      const base_key = `sk_${process.env.ENV}_${uuidv4()}`; 
-      const hashed_key = crypto.createHash('sha256').update(base_key).digest('hex');
+      const base_key = `sk_${process.env.ENV}_${uuidv4()}`;
+      const hashed_key = crypto
+        .createHash('sha256')
+        .update(base_key)
+        .digest('hex');
 
       const new_api_key = await this.prisma.api_keys.create({
         data: {
@@ -362,8 +373,8 @@ export class AuthService {
       if (!new_api_key) {
         throw new ReferenceError('api key undefined');
       }
-
-      return { api_key: base_key, ...new_api_key };
+      const { api_key_hash, ...rest } = new_api_key;
+      return { api_key: base_key, ...rest };
     } catch (error) {
       throw error;
     }
@@ -381,8 +392,6 @@ export class AuthService {
     }
   }
 
-
-
   async getProjectIdForApiKey(hashed_apiKey: string) {
     try {
       const saved_api_key = await this.prisma.api_keys.findUnique({
@@ -399,7 +408,6 @@ export class AuthService {
 
   async validateApiKey(apiKey: string): Promise<boolean> {
     try {
-
       // TO DO : add Expiration in part 3
 
       // Decode the JWT to verify if it's valid and get the payload
@@ -407,11 +415,12 @@ export class AuthService {
       //   secret: process.env.JWT_SECRET,
       // });
 
-
       // pseudo-code:
       // 1 - SHA256 the API key from the header
-      const hashed_key = crypto.createHash('sha256').update(apiKey).digest('hex');
-
+      const hashed_key = crypto
+        .createHash('sha256')
+        .update(apiKey)
+        .digest('hex');
 
       // 2- check against DB
       // if not found, return false

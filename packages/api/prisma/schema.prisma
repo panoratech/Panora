@@ -1638,28 +1638,6 @@ model acc_vendor_credits {
   accounting_period    String?   @db.Uuid
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model ecom_addresses {
-  id_ecom_address  String         @id(map: "pk_ecom_customer_addresses") @db.Uuid
-  address_type     String?
-  street_1         String?
-  street_2         String?
-  city             String?
-  state            String?
-  postal_code      String?
-  country          String?
-  id_ecom_customer String         @db.Uuid
-  modified_at      DateTime       @db.Timestamptz(6)
-  created_at       DateTime       @db.Timestamptz(6)
-  remote_deleted   Boolean
-  id_ecom_order    String         @db.Uuid
-  ecom_customers   ecom_customers @relation(fields: [id_ecom_customer], references: [id_ecom_customer], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_customer_customeraddress")
-  ecom_orders      ecom_orders    @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_address")
-
-  @@index([id_ecom_customer], map: "fk_index_ecom_customer_customeraddress")
-  @@index([id_ecom_order], map: "fk_index_fk_ecom_order_address")
-}
-
 model ecom_customers {
   id_ecom_customer String           @id(map: "pk_ecom_customers") @db.Uuid
   remote_id        String?
@@ -1673,10 +1651,6 @@ model ecom_customers {
   remote_deleted   Boolean
   ecom_addresses   ecom_addresses[]
   ecom_orders      ecom_orders[]
-}
-
-model ecom_fulfilment_orders {
-  id_ecom_fulfilment_order String @id(map: "pk_ecom_fulfilment_order") @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -1695,10 +1669,6 @@ model ecom_fulfilments {
   ecom_orders        ecom_orders? @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_fulfilment")
 
   @@index([id_ecom_order], map: "fk_index_ecom_order_fulfilment")
-}
-
-model ecom_order_line_items {
-  id_ecom_order_line_item String @id(map: "pk_106") @db.Uuid
 }
 
 model ecom_orders {
@@ -1760,4 +1730,34 @@ model ecom_products {
   id_connection         String                  @db.Uuid
   remote_deleted        Boolean
   ecom_product_variants ecom_product_variants[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ecom_addresses {
+  id_ecom_address  String         @id(map: "pk_ecom_customer_addresses") @db.Uuid
+  address_type     String?
+  street_1         String?
+  street_2         String?
+  city             String?
+  state            String?
+  postal_code      String?
+  country          String?
+  id_ecom_customer String         @db.Uuid
+  modified_at      DateTime       @db.Timestamptz(6)
+  created_at       DateTime       @db.Timestamptz(6)
+  remote_deleted   Boolean
+  id_ecom_order    String         @db.Uuid
+  ecom_customers   ecom_customers @relation(fields: [id_ecom_customer], references: [id_ecom_customer], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_customer_customeraddress")
+  ecom_orders      ecom_orders    @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_address")
+
+  @@index([id_ecom_customer], map: "fk_index_ecom_customer_customeraddress")
+  @@index([id_ecom_order], map: "fk_index_fk_ecom_order_address")
+}
+
+model ecom_fulfilment_orders {
+  id_ecom_fulfilment_order String @id(map: "pk_ecom_fulfilment_order") @db.Uuid
+}
+
+model ecom_order_line_items {
+  id_ecom_order_line_item String @id(map: "pk_106") @db.Uuid
 }

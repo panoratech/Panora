@@ -48,12 +48,18 @@ async function bootstrap() {
     .addServer('https://api.panora.dev', 'Production server')
     .addServer('https://api-sandbox.panora.dev', 'Sandbox server')
     .addServer('https://api-dev.panora.dev', 'Development server')
-    .addSecurity('bearer', {
-      type: 'http',
-      scheme: 'bearer',
-    })
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'x-api-key',
+        in: 'header',
+      },
+      'api_key',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
+  document.security = [{ api_key: [] }];
+
   // Dynamically add extended specs
   const extendedSpecs = {
     'x-speakeasy-name-override': [

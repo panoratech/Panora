@@ -8,6 +8,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: string
   /health:
     get:
       operationId: health
@@ -16,6 +20,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: number
   /webhooks:
     get:
       operationId: listWebhooks
@@ -501,6 +509,8 @@ paths:
       parameters: []
       responses:
         '200':
+          description: ''
+        '201':
           description: ''
       tags: *ref_9
       x-speakeasy-group: sync
@@ -1872,6 +1882,12 @@ paths:
               $ref: '#/components/schemas/PassThroughRequestDto'
       responses:
         '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassThroughResponse'
+        '201':
           description: ''
           content:
             application/json:
@@ -8005,9 +8021,10 @@ servers:
     description: Development server
 components:
   securitySchemes:
-    bearer:
-      type: http
-      scheme: bearer
+    api_key:
+      type: apiKey
+      in: header
+      name: x-api-key
   schemas:
     WebhookResponse:
       type: object
@@ -8017,6 +8034,7 @@ components:
           description: The unique UUID of the webhook.
         endpoint_description:
           type: string
+          nullable: true
           description: The description of the webhook.
         url:
           type: string
@@ -8042,6 +8060,7 @@ components:
         last_update:
           format: date-time
           type: string
+          nullable: true
           description: The last update date of the webhook.
       required:
         - id_webhook_endpoint
@@ -8069,7 +8088,6 @@ components:
             type: string
       required:
         - url
-        - description
         - scope
     EventPayload:
       type: object
@@ -10821,6 +10839,8 @@ components:
         - file_url
         - uploader
         - field_mappings
+security:
+  - api_key: []
 x-speakeasy-name-override:
   - operationId: ^retrieve.*
     methodNameOverride: retrieve
