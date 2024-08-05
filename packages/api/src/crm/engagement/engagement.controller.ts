@@ -50,7 +50,7 @@ export class EngagementController {
 
   @ApiOperation({
     operationId: 'listCrmEngagements',
-    summary: 'List  Engagements',
+    summary: 'List Engagements',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -67,7 +67,7 @@ export class EngagementController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
@@ -75,6 +75,7 @@ export class EngagementController {
 
       return this.engagementService.getEngagements(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -96,12 +97,14 @@ export class EngagementController {
     required: true,
     type: String,
     description: 'id of the engagement you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -117,7 +120,7 @@ export class EngagementController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -125,6 +128,8 @@ export class EngagementController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
@@ -145,6 +150,7 @@ export class EngagementController {
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
   @ApiBody({ type: UnifiedCrmEngagementInput })
   @ApiPostCustomResponse(UnifiedCrmEngagementOutput)
@@ -156,13 +162,14 @@ export class EngagementController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.engagementService.addEngagement(
         unifiedEngagementData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

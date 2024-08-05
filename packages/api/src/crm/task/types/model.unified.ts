@@ -5,6 +5,7 @@ export type TaskStatus = 'PENDING' | 'COMPLETED';
 export class UnifiedCrmTaskInput {
   @ApiProperty({
     type: String,
+    example: 'Answer customers',
     description: 'The subject of the task',
     nullable: true,
   })
@@ -13,6 +14,7 @@ export class UnifiedCrmTaskInput {
 
   @ApiProperty({
     type: String,
+    example: 'Prepare email campaign',
     description: 'The content of the task',
     nullable: true,
   })
@@ -21,6 +23,8 @@ export class UnifiedCrmTaskInput {
 
   @ApiProperty({
     type: String,
+    example: 'PENDING',
+    enum: ['PENDING', 'COMPLETED'],
     description:
       'The status of the task. Authorized values are PENDING, COMPLETED.',
     nullable: true,
@@ -31,6 +35,8 @@ export class UnifiedCrmTaskInput {
   status: TaskStatus | string;
 
   @ApiPropertyOptional({
+    type: String,
+    example: '2024-10-01T12:00:00Z',
     description: 'The due date of the task',
     nullable: true,
   })
@@ -38,6 +44,8 @@ export class UnifiedCrmTaskInput {
   due_date?: Date;
 
   @ApiPropertyOptional({
+    type: String,
+    example: '2024-10-01T12:00:00Z',
     description: 'The finished date of the task',
     nullable: true,
   })
@@ -46,6 +54,7 @@ export class UnifiedCrmTaskInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the user tied to the task',
     nullable: true,
   })
@@ -55,6 +64,7 @@ export class UnifiedCrmTaskInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the company tied to the task',
     nullable: true,
   })
@@ -64,6 +74,7 @@ export class UnifiedCrmTaskInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the deal tied to the task',
     nullable: true,
   })
@@ -73,6 +84,10 @@ export class UnifiedCrmTaskInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the task between the remote 3rd party & Panora',
     nullable: true,
@@ -85,6 +100,7 @@ export class UnifiedCrmTaskInput {
 export class UnifiedCrmTaskOutput extends UnifiedCrmTaskInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the task',
     nullable: true,
   })
@@ -94,7 +110,8 @@ export class UnifiedCrmTaskOutput extends UnifiedCrmTaskInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The id of the task in the context of the Crm 3rd Party',
+    example: 'id_1',
+    description: 'The ID of the task in the context of the Crm 3rd Party',
     nullable: true,
   })
   @IsString()
@@ -103,6 +120,7 @@ export class UnifiedCrmTaskOutput extends UnifiedCrmTaskInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: { key1: 'value1', key2: 42, key3: true },
     description:
       'The remote data of the task in the context of the Crm 3rd Party',
     nullable: true,
@@ -112,7 +130,8 @@ export class UnifiedCrmTaskOutput extends UnifiedCrmTaskInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: Object,
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
     description: 'The created date of the object',
     nullable: true,
   })
@@ -120,7 +139,8 @@ export class UnifiedCrmTaskOutput extends UnifiedCrmTaskInput {
   created_at?: Date;
 
   @ApiPropertyOptional({
-    type: Object,
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
     description: 'The modified date of the object',
     nullable: true,
   })

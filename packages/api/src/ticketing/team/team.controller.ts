@@ -23,7 +23,10 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { UnifiedTicketingTeamOutput } from './types/model.unified';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 //@ApiKeyAuth()
 @ApiTags('ticketing/teams')
@@ -56,13 +59,14 @@ export class TeamController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.teamService.getTeams(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -84,6 +88,7 @@ export class TeamController {
     required: true,
     type: String,
     description: 'id of the team you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -91,6 +96,7 @@ export class TeamController {
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -106,13 +112,15 @@ export class TeamController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     return this.teamService.getTeam(
       id,
       linkedUserId,
+      connectionId,
+      projectId,
       remoteSource,
       remote_data,
     );

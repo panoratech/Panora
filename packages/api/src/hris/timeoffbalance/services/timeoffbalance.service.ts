@@ -32,6 +32,8 @@ export class TimeoffBalanceService {
     id_timeoffbalanceing_timeoffbalance: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisTimeoffbalanceOutput> {
     return;
@@ -39,6 +41,7 @@ export class TimeoffBalanceService {
 
   async getTimeoffBalances(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

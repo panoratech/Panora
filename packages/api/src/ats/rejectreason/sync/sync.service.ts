@@ -138,7 +138,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             {
               where: {
                 name: rejectReason.name,
-                id_connection: connection_id,
+                
               },
             },
           );
@@ -147,7 +147,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             {
               where: {
                 remote_id: originId,
-                id_connection: connection_id,
+                
               },
             },
           );
@@ -172,7 +172,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_reject_reason: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

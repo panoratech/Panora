@@ -41,7 +41,7 @@ export class DriveController {
 
   @ApiOperation({
     operationId: 'listFilestorageDrives',
-    summary: 'List  Drives',
+    summary: 'List Drives',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -58,7 +58,7 @@ export class DriveController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
@@ -66,6 +66,7 @@ export class DriveController {
 
       return this.driveService.getDrives(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -79,21 +80,23 @@ export class DriveController {
 
   @ApiOperation({
     operationId: 'retrieveFilestorageDrive',
-    summary: 'Retrieve Drives',
-    description: 'Retrieve Drives from any connected Filestorage software',
+    summary: 'Retrieve Drive',
+    description: 'Retrieve a Drive from any connected file storage service',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the drive you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description:
-      'Set to true to include data from the original File Storage software.',
+      'Set to true to include data from the original file storage service.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -109,7 +112,7 @@ export class DriveController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -117,6 +120,8 @@ export class DriveController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

@@ -9703,7 +9703,7 @@ paths:
                 if err != nil {
                     log.Fatal(err)
                 }
-                if res.UnifiedCampaignOutput != nil {
+                if res.UnifiedMarketingautomationCampaignOutput != nil {
                     // handle response
                 }
             }
@@ -9805,7 +9805,7 @@ paths:
                 if err != nil {
                     log.Fatal(err)
                 }
-                if res.UnifiedCampaignOutput != nil {
+                if res.UnifiedMarketingautomationCampaignOutput != nil {
                     // handle response
                 }
             }
@@ -21672,7 +21672,7 @@ paths:
                 if err != nil {
                     log.Fatal(err)
                 }
-                if res.UnifiedUserOutput != nil {
+                if res.UnifiedFilestorageUserOutput != nil {
                     // handle response
                 }
             }
@@ -23841,7 +23841,7 @@ components:
     UnifiedMarketingautomationAutomationInput:
       type: object
       properties: {}
-    UnifiedCampaignOutput:
+    UnifiedMarketingautomationCampaignOutput:
       type: object
       properties: {}
     UnifiedMarketingautomationCampaignInput:

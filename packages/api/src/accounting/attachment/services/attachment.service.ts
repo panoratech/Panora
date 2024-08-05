@@ -41,6 +41,8 @@ export class AttachmentService {
     id_attachmenting_attachment: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingAttachmentOutput> {
     return;
@@ -48,6 +50,7 @@ export class AttachmentService {
 
   async getAttachments(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

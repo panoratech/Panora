@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class WebhookDto {
   @ApiProperty({
     type: String,
+    example: 'https://acme.com/webhook_receiver',
     nullable: true,
     description: 'The endpoint url of the webhook.',
   })
@@ -10,6 +11,7 @@ export class WebhookDto {
 
   @ApiProperty({
     type: String,
+    example: 'Webhook to receive connection events',
     nullable: true,
     description: 'The description of the webhook.',
   })
@@ -17,6 +19,7 @@ export class WebhookDto {
 
   @ApiProperty({
     type: [String],
+    example: ['connection.created'],
     nullable: true,
     description: 'The events that the webhook listen to.',
   })
@@ -54,6 +57,7 @@ export class SignatureVerificationDto {
 export class WebhookResponse {
   @ApiProperty({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The unique UUID of the webhook.',
   })
@@ -61,6 +65,7 @@ export class WebhookResponse {
 
   @ApiProperty({
     type: String,
+    example: 'Webhook to receive connection events',
     nullable: true,
     description: 'The description of the webhook.',
   })
@@ -68,20 +73,18 @@ export class WebhookResponse {
 
   @ApiProperty({
     type: String,
+    example: 'https://acme.com/webhook_receiver',
     nullable: true,
     description: 'The endpoint url of the webhook.',
   })
   url: string;
 
-  @ApiProperty({
-    type: String,
-    nullable: true,
-    description: 'The secret of the webhook.',
-  })
+  @ApiProperty({ type: String, description: 'The secret of the webhook.' })
   secret: string;
 
   @ApiProperty({
     type: Boolean,
+    example: true,
     nullable: true,
     description: 'The status of the webhook.',
   })
@@ -89,14 +92,15 @@ export class WebhookResponse {
 
   @ApiProperty({
     type: Date,
+    example: '2024-10-01T12:00:00Z',
+    description: 'The created date of the webhook.',
     nullable: true,
-
-    description: 'The created date  of the webhook.',
   })
   created_at: Date;
 
   @ApiProperty({
     type: [String],
+    example: ['connection.created'],
     nullable: true,
     description: 'The events that the webhook listen to.',
   })
@@ -104,6 +108,7 @@ export class WebhookResponse {
 
   @ApiProperty({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The project id tied to the webhook.',
   })
@@ -111,6 +116,7 @@ export class WebhookResponse {
 
   @ApiProperty({
     type: Date,
+    example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last update date of the webhook.',
   })

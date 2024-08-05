@@ -8,7 +8,10 @@ import { CrmObject } from '@crm/@lib/@types';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { IDealService } from '../types';
-import { UnifiedCrmDealInput, UnifiedCrmDealOutput } from '../types/model.unified';
+import {
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
+} from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -30,6 +33,7 @@ export class DealService {
   async addDeal(
     unifiedDealData: UnifiedCrmDealInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -83,12 +87,16 @@ export class DealService {
         unique_crm_deal_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'crm.deal.push', // sync, push or pull
@@ -183,6 +191,8 @@ export class DealService {
     id_dealing_deal: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCrmDealOutput> {
     try {
@@ -250,6 +260,8 @@ export class DealService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'crm.deal.pull',
@@ -271,6 +283,7 @@ export class DealService {
 
   async getDeals(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -385,6 +398,8 @@ export class DealService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.deal.pulled',

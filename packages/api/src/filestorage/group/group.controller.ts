@@ -66,13 +66,14 @@ export class GroupController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { connectionId, linkedUserId, remoteSource } =
+      const { connectionId, projectId, linkedUserId, remoteSource } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.permissionService.getGroups(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -87,14 +88,14 @@ export class GroupController {
   @ApiOperation({
     operationId: 'retrieveFilestorageGroup',
     summary: 'Retrieve Groups',
-    description:
-      'Retrieve Groups from any connected Filestorage software',
+    description: 'Retrieve Groups from any connected Filestorage software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the permission you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -102,6 +103,7 @@ export class GroupController {
     type: Boolean,
     description:
       'Set to true to include data from the original File Storage software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -117,7 +119,7 @@ export class GroupController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -125,6 +127,8 @@ export class GroupController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

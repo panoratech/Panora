@@ -4,6 +4,7 @@ import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
 export class UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: String,
+    example: 'Important',
     nullable: true,
     description: 'The name of the tag',
   })
@@ -13,6 +14,7 @@ export class UnifiedAtsTagInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the candidate',
   })
@@ -22,6 +24,10 @@ export class UnifiedAtsTagInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -34,6 +40,7 @@ export class UnifiedAtsTagInput {
 export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the tag',
   })
@@ -43,6 +50,7 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description: 'The remote ID of the tag in the context of the 3rd Party',
   })
@@ -52,6 +60,10 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description: 'The remote data of the tag in the context of the 3rd Party',
@@ -62,6 +74,7 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'The creation date of the tag',
   })
   @IsDateString()
@@ -71,6 +84,7 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'The modification date of the tag',
   })
   @IsDateString()

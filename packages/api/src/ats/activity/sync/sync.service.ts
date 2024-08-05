@@ -167,14 +167,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
             where: {
               subject: activity.subject,
               id_ats_candidate: activity.candidate_id,
-              id_connection: connection_id,
+              
             },
           });
         } else {
           existingActivity = await this.prisma.ats_activities.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }
@@ -204,7 +204,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_activity: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

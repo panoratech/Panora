@@ -42,6 +42,8 @@ export class EmployeeService {
     id_employeeing_employee: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisEmployeeOutput> {
     return;
@@ -49,6 +51,7 @@ export class EmployeeService {
 
   async getEmployees(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

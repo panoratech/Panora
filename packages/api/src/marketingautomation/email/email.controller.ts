@@ -47,7 +47,7 @@ export class EmailController {
 
   @ApiOperation({
     operationId: 'listMarketingautomationEmails',
-    summary: 'List  Emails',
+    summary: 'List Emails',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -63,13 +63,14 @@ export class EmailController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.emailService.getEmails(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -83,15 +84,16 @@ export class EmailController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingautomationEmail',
-    summary: 'Retrieve Emails',
+    summary: 'Retrieve Email',
     description:
-      'Retrieve Emails from any connected Marketingautomation software',
+      'Retrieve an Email from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the email you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -99,6 +101,7 @@ export class EmailController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -114,7 +117,7 @@ export class EmailController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -122,6 +125,8 @@ export class EmailController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

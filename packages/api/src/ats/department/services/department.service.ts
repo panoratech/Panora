@@ -14,6 +14,8 @@ export class DepartmentService {
     id_ats_department: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsDepartmentOutput> {
     try {
@@ -77,6 +79,8 @@ export class DepartmentService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.department.pull',
@@ -97,6 +101,7 @@ export class DepartmentService {
 
   async getDepartments(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -133,9 +138,7 @@ export class DepartmentService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (departments.length === limit + 1) {
@@ -149,67 +152,71 @@ export class DepartmentService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedDepartments: UnifiedAtsDepartmentOutput[] = await Promise.all(
-        departments.map(async (department) => {
-          // Fetch field mappings for the department
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: department.id_ats_department,
+      const unifiedDepartments: UnifiedAtsDepartmentOutput[] =
+        await Promise.all(
+          departments.map(async (department) => {
+            // Fetch field mappings for the department
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: {
+                  ressource_owner_id: department.id_ats_department,
+                },
               },
-            },
-            include: {
-              attribute: true,
-            },
-          });
+              include: {
+                attribute: true,
+              },
+            });
 
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
+            // Create a map to store unique field mappings
+            const fieldMappingsMap = new Map();
 
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
 
-          // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+            // Convert the map to an array of objects
+            const field_mappings = Array.from(
+              fieldMappingsMap,
+              ([key, value]) => ({
+                [key]: value,
+              }),
+            );
 
-          // Transform to UnifiedAtsDepartmentOutput format
-          return {
-            id: department.id_ats_department,
-            name: department.name,
-            field_mappings: field_mappings,
-            remote_id: department.remote_id,
-            created_at: department.created_at,
-            modified_at: department.modified_at,
-          };
-        }),
-      );
+            // Transform to UnifiedAtsDepartmentOutput format
+            return {
+              id: department.id_ats_department,
+              name: department.name,
+              field_mappings: field_mappings,
+              remote_id: department.remote_id,
+              created_at: department.created_at,
+              modified_at: department.modified_at,
+            };
+          }),
+        );
 
       let res: UnifiedAtsDepartmentOutput[] = unifiedDepartments;
 
       if (remote_data) {
-        const remote_array_data: UnifiedAtsDepartmentOutput[] = await Promise.all(
-          res.map(async (department) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: department.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...department, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedAtsDepartmentOutput[] =
+          await Promise.all(
+            res.map(async (department) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: department.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...department, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.department.pull',

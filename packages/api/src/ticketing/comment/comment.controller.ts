@@ -50,7 +50,7 @@ export class CommentController {
 
   @ApiOperation({
     operationId: 'listTicketingComments',
-    summary: 'List  Comments',
+    summary: 'List Comments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -67,13 +67,14 @@ export class CommentController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.commentService.getComments(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -87,8 +88,8 @@ export class CommentController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingComment',
-    summary: 'Retrieve Comments',
-    description: 'Retrieve Comments from any connected Ticketing software',
+    summary: 'Retrieve Comment',
+    description: 'Retrieve a Comment from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
@@ -117,13 +118,15 @@ export class CommentController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     return this.commentService.getComment(
       id,
       linkedUserId,
+      connectionId,
+      projectId,
       remoteSource,
       remote_data,
     );
@@ -157,7 +160,7 @@ export class CommentController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
@@ -166,6 +169,7 @@ export class CommentController {
         connectionId,
         remoteSource,
         linkedUserId,
+        projectId,
         remote_data,
       );
     } catch (error) {

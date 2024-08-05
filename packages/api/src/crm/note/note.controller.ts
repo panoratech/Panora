@@ -49,7 +49,7 @@ export class NoteController {
 
   @ApiOperation({
     operationId: 'listCrmNote',
-    summary: 'List  Notes',
+    summary: 'List Notes',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -66,13 +66,14 @@ export class NoteController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.noteService.getNotes(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -94,12 +95,14 @@ export class NoteController {
     required: true,
     type: String,
     description: 'id of the note you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -115,7 +118,7 @@ export class NoteController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -123,6 +126,8 @@ export class NoteController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
@@ -143,6 +148,7 @@ export class NoteController {
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
   @ApiBody({ type: UnifiedCrmNoteInput })
   @ApiPostCustomResponse(UnifiedCrmNoteOutput)
@@ -154,13 +160,14 @@ export class NoteController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.noteService.addNote(
         unifiedNoteData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

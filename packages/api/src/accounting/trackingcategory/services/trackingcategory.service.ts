@@ -32,6 +32,8 @@ export class TrackingCategoryService {
     id_trackingcategorying_trackingcategory: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingTrackingcategoryOutput> {
     return;
@@ -39,6 +41,7 @@ export class TrackingCategoryService {
 
   async getTrackingCategorys(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

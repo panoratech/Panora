@@ -48,7 +48,7 @@ export class ActionController {
 
   @ApiOperation({
     operationId: 'listMarketingautomationAction',
-    summary: 'List  Actions',
+    summary: 'List Actions',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -64,13 +64,14 @@ export class ActionController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.actionService.getActions(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -93,6 +94,7 @@ export class ActionController {
     required: true,
     type: String,
     description: 'id of the action you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -100,6 +102,7 @@ export class ActionController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -115,7 +118,7 @@ export class ActionController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -123,6 +126,8 @@ export class ActionController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
@@ -145,6 +150,7 @@ export class ActionController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
   @ApiBody({ type: UnifiedMarketingautomationActionInput })
   @ApiPostCustomResponse(UnifiedMarketingautomationActionOutput)
@@ -156,13 +162,14 @@ export class ActionController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.actionService.addAction(
         unifiedActionData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

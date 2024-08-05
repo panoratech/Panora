@@ -8,6 +8,7 @@ export class UnifiedTicketingCommentInput {
   @ApiProperty({
     type: String,
     nullable: true,
+    example: 'Assigned to Eric !',
     description: 'The body of the comment',
   })
   @IsString()
@@ -16,6 +17,7 @@ export class UnifiedTicketingCommentInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '<p>Assigned to Eric !</p>',
     description: 'The html body of the comment',
   })
   @IsString()
@@ -25,6 +27,7 @@ export class UnifiedTicketingCommentInput {
   @ApiPropertyOptional({
     type: Boolean,
     nullable: true,
+    example: false,
     description: 'The public status of the comment',
   })
   @IsOptional()
@@ -34,6 +37,8 @@ export class UnifiedTicketingCommentInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: 'USER',
+    enum: ['USER', 'CONTACT'],
     description:
       'The creator type of the comment. Authorized values are either USER or CONTACT',
   })
@@ -46,6 +51,7 @@ export class UnifiedTicketingCommentInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the ticket the comment is tied to',
   })
   @IsUUID()
@@ -55,6 +61,7 @@ export class UnifiedTicketingCommentInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description:
       'The UUID of the contact which the comment belongs to (if no user_id specified)',
   })
@@ -65,6 +72,7 @@ export class UnifiedTicketingCommentInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description:
       'The UUID of the user which the comment belongs to (if no contact_id specified)',
   })
@@ -75,6 +83,7 @@ export class UnifiedTicketingCommentInput {
   @ApiPropertyOptional({
     type: [String],
     nullable: true,
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     description: 'The attachements UUIDs tied to the comment',
   })
   @IsOptional()
@@ -85,6 +94,7 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the comment',
   })
   @IsUUID()
@@ -94,6 +104,7 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: 'id_1',
     description: 'The id of the comment in the context of the 3rd Party',
   })
   @IsString()
@@ -103,6 +114,10 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
   @ApiPropertyOptional({
     type: Object,
     nullable: true,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     description:
       'The remote data of the comment in the context of the 3rd Party',
@@ -113,6 +128,7 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
@@ -121,6 +137,7 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()

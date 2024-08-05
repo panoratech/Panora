@@ -28,6 +28,8 @@ export class EmailService {
     id_emailing_email: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedMarketingautomationEmailOutput> {
     return;
@@ -35,6 +37,7 @@ export class EmailService {
 
   async getEmails(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

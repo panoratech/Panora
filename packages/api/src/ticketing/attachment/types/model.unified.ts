@@ -4,6 +4,7 @@ import { IsOptional, IsString, IsUUID } from 'class-validator';
 export class UnifiedTicketingAttachmentInput {
   @ApiProperty({
     type: String,
+    example: 'features_planning.pdf',
     nullable: true,
     description: 'The file name of the attachment',
   })
@@ -12,6 +13,7 @@ export class UnifiedTicketingAttachmentInput {
 
   @ApiProperty({
     type: String,
+    example: 'https://example.com/features_planning.pdf',
     nullable: true,
     description: 'The file url of the attachment',
   })
@@ -21,6 +23,7 @@ export class UnifiedTicketingAttachmentInput {
   @ApiProperty({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: "The uploader's UUID of the attachment",
   })
   @IsString()
@@ -30,6 +33,7 @@ export class UnifiedTicketingAttachmentInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the ticket the attachment is tied to',
   })
   @IsUUID()
@@ -39,6 +43,7 @@ export class UnifiedTicketingAttachmentInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the comment the attachment is tied to',
   })
   @IsUUID()
@@ -48,6 +53,10 @@ export class UnifiedTicketingAttachmentInput {
   @ApiPropertyOptional({
     type: Object,
     nullable: true,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the attachment between the remote 3rd party & Panora',
     additionalProperties: true,
@@ -59,6 +68,7 @@ export class UnifiedTicketingAttachmentInput {
 export class UnifiedTicketingAttachmentOutput extends UnifiedTicketingAttachmentInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the attachment',
   })
@@ -68,6 +78,7 @@ export class UnifiedTicketingAttachmentOutput extends UnifiedTicketingAttachment
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description: 'The id of the attachment in the context of the 3rd Party',
   })
@@ -78,6 +89,10 @@ export class UnifiedTicketingAttachmentOutput extends UnifiedTicketingAttachment
   @ApiPropertyOptional({
     type: Object,
     additionalProperties: true,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     description:
       'The remote data of the attachment in the context of the 3rd Party',
@@ -87,6 +102,7 @@ export class UnifiedTicketingAttachmentOutput extends UnifiedTicketingAttachment
 
   @ApiPropertyOptional({
     type: Date,
+    example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the object',
   })
@@ -95,6 +111,7 @@ export class UnifiedTicketingAttachmentOutput extends UnifiedTicketingAttachment
 
   @ApiPropertyOptional({
     type: Date,
+    example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The modified date of the object',
   })

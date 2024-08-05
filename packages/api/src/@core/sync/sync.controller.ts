@@ -2,6 +2,7 @@ import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiOperation,
+  ApiParam,
   ApiProperty,
   ApiResponse,
   ApiTags,
@@ -36,6 +37,21 @@ export class SyncController {
   @ApiOperation({
     operationId: 'status',
     summary: 'Retrieve sync status of a certain vertical',
+  })
+  @ApiParam({
+    name: 'vertical',
+    type: String,
+    example: 'ticketing',
+    enum: [
+      'ticketing',
+      'marketingautomation',
+      'crm',
+      'filestorage',
+      'ats',
+      'hris',
+      'accounting',
+      'ecommerce',
+    ],
   })
   @ApiResponse({ status: 200 })
   @Get('status/:vertical')

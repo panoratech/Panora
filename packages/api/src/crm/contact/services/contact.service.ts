@@ -35,6 +35,7 @@ export class ContactService {
   async addContact(
     unifiedContactData: UnifiedCrmContactInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -106,12 +107,16 @@ export class ContactService {
         unique_crm_contact_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'crm.contact.created', // sync, push or pull
@@ -344,6 +349,8 @@ export class ContactService {
     id_crm_contact: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCrmContactOutput> {
     try {
@@ -424,6 +431,8 @@ export class ContactService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'crm.contact.pull',
@@ -444,6 +453,7 @@ export class ContactService {
 
   async getContacts(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -576,6 +586,8 @@ export class ContactService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.contact.pull',

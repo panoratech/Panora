@@ -34,6 +34,7 @@ export class CompanyService {
   async addCompany(
     unifiedCompanyData: UnifiedCrmCompanyInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -86,12 +87,16 @@ export class CompanyService {
         unique_crm_company_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'crm.company.push',
@@ -337,6 +342,8 @@ export class CompanyService {
     id_company: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCrmCompanyOutput> {
     try {
@@ -420,6 +427,8 @@ export class CompanyService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'crm.company.pull',
@@ -440,6 +449,7 @@ export class CompanyService {
 
   async getCompanies(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -570,6 +580,8 @@ export class CompanyService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.company.pulled',

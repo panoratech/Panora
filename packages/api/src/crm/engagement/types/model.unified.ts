@@ -8,6 +8,7 @@ export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: 'Meeting call with CTO',
     description: 'The content of the engagement',
   })
   @IsString()
@@ -17,6 +18,8 @@ export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: 'INBOUND',
+    enum: ['INBOUND', 'OUTBOUND'],
     description:
       'The direction of the engagement. Authorized values are INBOUND or OUTBOUND',
   })
@@ -28,6 +31,7 @@ export class UnifiedCrmEngagementInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'Technical features planning',
     nullable: true,
     description: 'The subject of the engagement',
   })
@@ -38,6 +42,7 @@ export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'The start time of the engagement',
   })
   @IsOptional()
@@ -46,6 +51,7 @@ export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T22:00:00Z',
     description: 'The end time of the engagement',
   })
   @IsOptional()
@@ -54,6 +60,8 @@ export class UnifiedCrmEngagementInput {
   @ApiProperty({
     type: String,
     nullable: true,
+    example: 'MEETING',
+    enum: ['EMAIL', 'CALL', 'MEETING'],
     description:
       'The type of the engagement. Authorized values are EMAIL, CALL or MEETING',
   })
@@ -65,6 +73,7 @@ export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the user tied to the engagement',
   })
   @IsUUID()
@@ -74,6 +83,7 @@ export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the company tied to the engagement',
   })
   @IsUUID()
@@ -83,6 +93,7 @@ export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: [String],
     nullable: true,
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     description: 'The UUIDs of contacts tied to the engagement object',
   })
   @IsOptional()
@@ -91,6 +102,10 @@ export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: Object,
     nullable: true,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the engagement between the remote 3rd party & Panora',
     additionalProperties: true,
@@ -103,6 +118,7 @@ export class UnifiedCrmEngagementOutput extends UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the engagement',
   })
   @IsUUID()
@@ -112,6 +128,7 @@ export class UnifiedCrmEngagementOutput extends UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: 'id_1',
     description: 'The id of the engagement in the context of the Crm 3rd Party',
   })
   @IsString()
@@ -120,6 +137,10 @@ export class UnifiedCrmEngagementOutput extends UnifiedCrmEngagementInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -131,6 +152,7 @@ export class UnifiedCrmEngagementOutput extends UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
@@ -139,6 +161,7 @@ export class UnifiedCrmEngagementOutput extends UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()

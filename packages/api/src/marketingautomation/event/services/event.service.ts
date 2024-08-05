@@ -28,6 +28,8 @@ export class EventService {
     id_eventing_event: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedMarketingautomationEventOutput> {
     return;
@@ -35,6 +37,7 @@ export class EventService {
 
   async getEvents(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

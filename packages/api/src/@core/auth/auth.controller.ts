@@ -16,6 +16,7 @@ import {
   ApiBody,
   ApiExcludeController,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -98,6 +99,13 @@ export class AuthController {
 
   @ApiOperation({ operationId: 'deleteApiKey', summary: 'Delete API Keys' })
   @ApiResponse({ status: 201 })
+  @ApiParam({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+    description: 'Id of the api key to delete.',
+  })
   @Delete('api_keys/:id')
   @UseGuards(JwtAuthGuard)
   async deleteApiKey(@Param('id') apiKeyId: string) {

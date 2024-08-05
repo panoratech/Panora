@@ -23,6 +23,8 @@ export class BankInfoService {
     id_bankinfoing_bankinfo: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisBankinfoOutput> {
     return;
@@ -30,6 +32,7 @@ export class BankInfoService {
 
   async getBankinfos(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

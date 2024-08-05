@@ -20,6 +20,8 @@ export class EeocsService {
     id_ats_eeoc: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsEeocsOutput> {
     try {
@@ -88,6 +90,8 @@ export class EeocsService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.eeocs.pull',
@@ -108,6 +112,7 @@ export class EeocsService {
 
   async getEeocss(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -144,9 +149,7 @@ export class EeocsService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (eeocss.length === limit + 1) {
@@ -225,6 +228,8 @@ export class EeocsService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.eeocss.pull',

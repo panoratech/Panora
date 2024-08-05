@@ -60,13 +60,14 @@ export class CashflowStatementController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.cashflowstatementService.getCashflowStatements(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -86,12 +87,14 @@ export class CashflowStatementController {
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the cashflowstatement you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -111,7 +114,7 @@ export class CashflowStatementController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -119,6 +122,8 @@ export class CashflowStatementController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

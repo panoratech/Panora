@@ -11,13 +11,15 @@ datasource db {
 model users {
   id_user                 String     @id(map: "pk_users") @db.Uuid
   identification_strategy String
-  email                   String?
+  email                   String?    @unique(map: "unique_email")
   password_hash           String?
   first_name              String
   last_name               String
   id_stytch               String?    @unique(map: "force_stytch_id_unique")
   created_at              DateTime   @default(now()) @db.Timestamp(6)
   modified_at             DateTime   @default(now()) @db.Timestamp(6)
+  reset_token             String?
+  reset_token_expires_at  DateTime?  @db.Timestamptz(6)
   api_keys                api_keys[]
   projects                projects[]
 }
@@ -378,13 +380,15 @@ model entity {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model events {
   id_event                  String                      @id(map: "pk_jobs") @db.Uuid
-  status                    String
+  id_connection             String                      @db.Uuid
+  id_project                String                      @db.Uuid
   type                      String
+  status                    String
   direction                 String
-  timestamp                 DateTime                    @default(now()) @db.Timestamp(6)
   method                    String
   url                       String
   provider                  String
+  timestamp                 DateTime                    @default(now()) @db.Timestamp(6)
   id_linked_user            String                      @db.Uuid
   linked_users              linked_users                @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
   jobs_status_history       jobs_status_history[]
@@ -1661,8 +1665,9 @@ model ecom_fulfilments {
   remote_id          String?
   id_ecom_order      String?      @db.Uuid
   id_connection      String       @db.Uuid
-  modifed_at         DateTime     @db.Timestamptz(6)
+  modified_at        DateTime     @db.Timestamptz(6)
   created_at         DateTime     @db.Timestamptz(6)
+  remote_deleted     Boolean
   ecom_orders        ecom_orders? @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_fulfilment")
 
   @@index([id_ecom_order], map: "fk_index_ecom_order_fulfilment")
@@ -1704,8 +1709,9 @@ model ecom_product_variants {
   weight                  BigInt?
   inventory_quantity      BigInt?
   id_ecom_product         String?        @db.Uuid
-  modifed_at              DateTime       @db.Timestamptz(6)
+  modified_at             DateTime       @db.Timestamptz(6)
   created_at              DateTime       @db.Timestamptz(6)
+  remote_deleted          Boolean
   ecom_products           ecom_products? @relation(fields: [id_ecom_product], references: [id_ecom_product], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_products_variants")
 
   @@index([id_ecom_product], map: "fk_index_ecom_products_variants")
@@ -1721,9 +1727,10 @@ model ecom_products {
   description           String?
   vendor                String?
   tags                  String[]
-  modifed_at            DateTime                @db.Timestamptz(6)
+  modified_at           DateTime                @db.Timestamptz(6)
   created_at            DateTime                @db.Timestamptz(6)
   id_connection         String                  @db.Uuid
+  remote_deleted        Boolean
   ecom_product_variants ecom_product_variants[]
 }
 

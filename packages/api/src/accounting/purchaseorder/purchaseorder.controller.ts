@@ -64,13 +64,14 @@ export class PurchaseOrderController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.purchaseorderService.getPurchaseOrders(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -90,12 +91,14 @@ export class PurchaseOrderController {
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the purchaseorder you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -115,7 +118,7 @@ export class PurchaseOrderController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -123,6 +126,8 @@ export class PurchaseOrderController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
@@ -140,6 +145,7 @@ export class PurchaseOrderController {
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -155,7 +161,7 @@ export class PurchaseOrderController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );

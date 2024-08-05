@@ -68,13 +68,14 @@ export class TicketController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.ticketService.getTickets(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -96,6 +97,7 @@ export class TicketController {
     required: true,
     type: String,
     description: 'id of the `ticket` you want to retrive.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -103,6 +105,7 @@ export class TicketController {
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -118,13 +121,15 @@ export class TicketController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     return this.ticketService.getTicket(
       id,
       linkedUserId,
+      connectionId,
+      projectId,
       remoteSource,
       remote_data,
     );
@@ -147,6 +152,7 @@ export class TicketController {
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
+    example: false,
   })
   @ApiBody({ type: UnifiedTicketingTicketInput })
   @ApiPostCustomResponse(UnifiedTicketingTicketOutput)
@@ -158,7 +164,7 @@ export class TicketController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
@@ -167,6 +173,7 @@ export class TicketController {
         connectionId,
         remoteSource,
         linkedUserId,
+        projectId,
         remote_data,
       );
     } catch (error) {
