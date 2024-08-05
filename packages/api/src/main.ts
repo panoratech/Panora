@@ -18,9 +18,9 @@ function addSpeakeasyGroup(document: any) {
       groupName = 'webhooks';
     } else if (pathParts[0] === 'sync') {
       groupName = 'sync';
-    } else if (pathParts[0] === 'linked-users') {
+    } else if (pathParts[0] === 'linked_users') {
       groupName = 'linkedUsers';
-    } else if (pathParts[0] === 'field-mappings') {
+    } else if (pathParts[0] === 'field_mappings') {
       groupName = 'fieldMappings';
     } else if (pathParts.length >= 2) {
       groupName = `${pathParts[0].toLowerCase()}.${pathParts[1].toLowerCase()}`;

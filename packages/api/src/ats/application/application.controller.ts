@@ -27,7 +27,7 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ApplicationService } from './services/application.service';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
@@ -57,10 +57,19 @@ export class ApplicationController {
   })
   @ApiPaginatedResponse(UnifiedAtsApplicationOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @ApiQuery({
+    type: QueryDto,
+    example: {
+      remote_data: true,
+      limit: 10,
+      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
+    },
+    required: false,
+  })
   @Get()
   async getApplications(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource, connectionId, projectId } =

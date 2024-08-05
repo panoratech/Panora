@@ -22,7 +22,7 @@ import { UserService } from './services/user.service';
 import { UnifiedCrmUserOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
@@ -52,11 +52,20 @@ export class UserController {
   })
   @ApiPaginatedResponse(UnifiedCrmUserOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @ApiQuery({
+    type: QueryDto,
+    example: {
+      remote_data: true,
+      limit: 10,
+      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
+    },
+    required: false,
+  })
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getUsers(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
       const { linkedUserId, remoteSource, connectionId, projectId } =

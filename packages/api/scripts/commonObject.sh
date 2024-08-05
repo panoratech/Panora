@@ -315,7 +315,7 @@ private connectionUtils: ConnectionUtils
 @UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
-        @Query() query: FetchObjectsQueryDto,
+        @Query() query: QueryDto,
   ) {
     try{
       const { linkedUserId, remoteSource } =
