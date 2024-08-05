@@ -150,7 +150,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const existingUser = await this.prisma.fs_users.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connectionId,
+            id_connection: connection_id,
           },
         });
 
@@ -175,7 +175,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_fs_user: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connectionId,
+              id_connection: connection_id,
             },
           });
         }

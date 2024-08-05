@@ -44,7 +44,7 @@ export class UnifiedFilestorageUserInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedUserOutput extends UnifiedFilestorageUserInput {
+export class UnifiedFilestorageUserOutput extends UnifiedFilestorageUserInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,

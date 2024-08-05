@@ -41,7 +41,7 @@ export class AttachmentService {
 
       const existingAttachment = await this.prisma.tcg_attachments.findFirst({
         where: {
-          file_name: unifiedAttachmentData.name,
+          file_name: unifiedAttachmentData.file_name,
           id_connection: connection_id,
         },
       });
@@ -55,7 +55,7 @@ export class AttachmentService {
             id_tcg_attachment: existingAttachment.id_tcg_attachment,
           },
           data: {
-            file_name: unifiedAttachmentData.name,
+            file_name: unifiedAttachmentData.file_name,
             uploader: linkedUserId,
             modified_at: new Date(),
           },
@@ -66,7 +66,7 @@ export class AttachmentService {
         this.logger.log('not existing attachment ');
         const data = {
           id_tcg_attachment: uuidv4(),
-          file_name: unifiedAttachmentData.name,
+          file_name: unifiedAttachmentData.file_name,
           uploader: linkedUserId,
           created_at: new Date(),
           modified_at: new Date(),
@@ -83,6 +83,8 @@ export class AttachmentService {
         unique_ticketing_attachment_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
@@ -156,7 +158,7 @@ export class AttachmentService {
       // Transform to UnifiedTicketingAttachmentOutput format
       let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
         id: attachment.id_tcg_attachment,
-        name: attachment.file_name,
+        file_name: attachment.file_name,
         file_url: attachment.file_url,
         uploader: attachment.uploader,
         field_mappings: field_mappings,

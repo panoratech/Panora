@@ -37,6 +37,7 @@ export class EmailService {
 
   async getEmails(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

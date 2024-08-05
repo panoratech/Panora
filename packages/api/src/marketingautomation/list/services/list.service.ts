@@ -48,6 +48,7 @@ export class ListService {
 
   async getLists(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

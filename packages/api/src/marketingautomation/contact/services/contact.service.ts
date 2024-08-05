@@ -51,6 +51,7 @@ export class ContactService {
 
   async getContacts(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -109,6 +109,8 @@ export class CommentService {
         unique_ticketing_comment_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 

@@ -121,6 +121,8 @@ export class TicketService {
         unique_ticketing_ticket_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
@@ -384,7 +386,7 @@ export class TicketService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
-            id_connection: id_connection,
+            id_connection: connection_id,
             id_project: project_id,
             id_event: uuidv4(),
             status: 'success',

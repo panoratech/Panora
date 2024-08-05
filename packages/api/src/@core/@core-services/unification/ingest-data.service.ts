@@ -171,8 +171,8 @@ export class IngestDataService {
 
     const event = await this.prisma.events.create({
       data: {
-        connection_id: id_connection,
-        id_project: project_id,
+        id_connection: connectionId,
+        id_project: projectId,
         id_event: uuidv4(),
         status: 'success',
         type: `${vertical}.${commonObject}.synced`,

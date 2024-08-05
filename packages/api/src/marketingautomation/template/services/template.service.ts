@@ -51,6 +51,7 @@ export class TemplateService {
 
   async getTemplates(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

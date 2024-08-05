@@ -122,6 +122,8 @@ export class CompanyController {
         id,
         linkedUserId,
         remoteSource,
+        connectionId,
+        projectId,
         remote_data,
       );
     } catch (error) {

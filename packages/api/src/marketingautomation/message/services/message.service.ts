@@ -40,6 +40,7 @@ export class MessageService {
 
   async getMessages(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

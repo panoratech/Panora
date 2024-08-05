@@ -51,6 +51,7 @@ export class AutomationService {
 
   async getAutomations(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

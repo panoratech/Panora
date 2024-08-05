@@ -37,6 +37,7 @@ export class EventService {
 
   async getEvents(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

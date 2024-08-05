@@ -1,6 +1,16 @@
+import { StandardObject } from '@@core/utils/types';
+import { CrmObject } from '@crm/@lib/@types';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CustomFieldCreateDto {
+  @ApiProperty({
+    type: String,
+    example: 'company',
+    enum: CrmObject,
+    nullable: true,
+  })
+  object_type_owner: StandardObject;
+
   @ApiProperty({
     type: String,
     nullable: true,
@@ -51,6 +61,14 @@ export class CustomFieldCreateDto {
   linked_user_id: string;
 }
 export class DefineTargetFieldDto {
+  @ApiProperty({
+    type: String,
+    example: 'company',
+    enum: CrmObject,
+    nullable: true,
+  })
+  object_type_owner: StandardObject;
+
   @ApiProperty({
     type: String,
     nullable: true,

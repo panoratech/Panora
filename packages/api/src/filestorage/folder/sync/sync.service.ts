@@ -130,7 +130,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const existingFolder = await this.prisma.fs_folders.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connectionId,
+            id_connection: connection_id,
           },
         });
 
@@ -158,7 +158,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_fs_folder: uuidv4(),
               created_at: new Date(),
               remote_id: originId ?? null,
-              id_connection: connectionId,
+              id_connection: connection_id,
             },
           });
         }

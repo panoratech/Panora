@@ -130,7 +130,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const existingDrive = await this.prisma.fs_drives.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connectionId,
+            id_connection: connection_id,
           },
         });
 
@@ -155,7 +155,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_fs_drive: uuidv4(),
               created_at: new Date(),
               remote_id: originId ?? null,
-              id_connection: connectionId,
+              id_connection: connection_id,
             },
           });
         }

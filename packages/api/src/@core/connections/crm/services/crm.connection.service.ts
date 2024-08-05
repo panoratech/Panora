@@ -41,8 +41,8 @@ export class CrmConnectionsService implements IConnectionCategory {
       const data: Connection = await service.handleCallback(callbackOpts);
       const event = await this.prisma.events.create({
         data: {
-          connection_id: connection_id,
-          id_project: project_id, 
+          id_connection: data.id_connection,
+          id_project: data.id_project,
           id_event: uuidv4(),
           status: 'success',
           type: 'connection.created',
