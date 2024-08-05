@@ -1,3 +1,6 @@
+import { GitlabUserInput, GitlabUserOutput } from '@ticketing/user/services/gitlab/types';
+import { LinearUserInput, LinearUserOutput } from '@ticketing/user/services/linear/types';
+
 import {
   FrontAccountInput,
   FrontAccountOutput,
@@ -147,7 +150,7 @@ export type OriginalUserInput =
   | ZendeskUserInput
   | FrontUserInput
   | GorgiasUserInput
-  | JiraUserInput;
+  | JiraUserInput | GitlabUserInput | LinearUserInput;
 //| JiraServiceMgmtUserInput;
 /* account */
 export type OriginalAccountInput = ZendeskAccountInput | FrontAccountInput;
@@ -211,7 +214,7 @@ export type OriginalUserOutput =
   | ZendeskUserOutput
   | FrontUserOutput
   | GorgiasUserOutput
-  | JiraUserOutput;
+  | JiraUserOutput | GitlabUserOutput | LinearUserOutput;
 /* account */
 export type OriginalAccountOutput = ZendeskAccountOutput | FrontAccountOutput;
 /* contact */
