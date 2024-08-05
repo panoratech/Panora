@@ -27,7 +27,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('filestorage/users')
 @Controller('filestorage/users')
 export class UserController {

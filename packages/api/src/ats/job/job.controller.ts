@@ -30,7 +30,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('ats/jobs')
 @Controller('ats/jobs')
 export class JobController {

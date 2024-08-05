@@ -33,7 +33,6 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
 @ApiTags('ats/users')
 @Controller('ats/users')
 export class UserController {

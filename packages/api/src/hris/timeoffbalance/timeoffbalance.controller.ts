@@ -33,7 +33,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('hris/timeoffbalances')
 @Controller('hris/timeoffbalances')
 export class TimeoffBalanceController {

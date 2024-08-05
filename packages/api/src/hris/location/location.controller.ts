@@ -33,7 +33,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('hris/locations')
 @Controller('hris/locations')
 export class LocationController {

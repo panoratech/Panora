@@ -85,7 +85,7 @@ export class LinkedUsersController {
   @ApiGetArrayCustomResponse(LinkedUserResponse)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  fetchLinkedUsers(@Request() req: any) {
+  listLinkedUsers(@Request() req: any) {
     const { id_project } = req.user;
     return this.linkedUsersService.getLinkedUsers(id_project);
   }
@@ -100,7 +100,7 @@ export class LinkedUsersController {
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     type: String,
   })
-  @ApiResponse({ status: 200 })
+  @ApiGetCustomResponse(LinkedUserResponse)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   getLinkedUser(@Param('id') id: string) {

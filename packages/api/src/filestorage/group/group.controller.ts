@@ -35,7 +35,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('filestorage/groups')
 @Controller('filestorage/groups')
 export class GroupController {

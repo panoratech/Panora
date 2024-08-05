@@ -27,7 +27,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('filestorage/drives')
 @Controller('filestorage/drives')
 export class DriveController {

@@ -31,7 +31,7 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 import { query } from 'express';
 
-//@ApiKeyAuth()
+
 @ApiTags('hris/companies')
 @Controller('hris/companies')
 export class CompanyController {

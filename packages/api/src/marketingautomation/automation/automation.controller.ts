@@ -34,7 +34,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('marketingautomation/automations')
 @Controller('marketingautomation/automations')
 export class AutomationController {

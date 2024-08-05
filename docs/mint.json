@@ -138,6 +138,7 @@
     {
       "group": "",
       "pages": [
+        "file-storage/quickstart",
         "file-storage/overview"
       ]
     },
@@ -351,6 +352,7 @@
     {
       "group": "",
       "pages": [
+        "ats/quickstart",
         "ats/overview"
       ]
     },
@@ -760,17 +762,6 @@
           ]
         },
         {
-          "group": "Field Mappings",
-          "pages": [
-            "api-reference/field_mappings/retrieve-field-mapping-entities",
-            "api-reference/field_mappings/retrieve-field-mappings",
-            "api-reference/field_mappings/retrieve-field-mappings-values",
-            "api-reference/field_mappings/mapping/define-target-field",
-            "api-reference/field_mappings/map-custom-field",
-            "api-reference/field_mappings/retrieve-custom-properties"
-          ]
-        },
-        {
           "group": "Events",
           "pages": [
             "api-reference/events/retrieve-events"
@@ -857,7 +848,7 @@
                   "group":"Selfhost",
                   "icon":"house-laptop",
                   "pages":[
-                     "open-source/self_hosting/self-host-guide",
+                     "open-source/self_hosting/guide",
                      "open-source/self_hosting/envVariables",
                      "open-source/self_hosting/ngrok"
                   ]

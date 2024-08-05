@@ -36,7 +36,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('crm/tasks')
 @Controller('crm/tasks')
 export class TaskController {

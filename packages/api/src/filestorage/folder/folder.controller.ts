@@ -36,7 +36,7 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 import { example } from 'yargs';
 
-//@ApiKeyAuth()
+
 @ApiTags('filestorage/folders')
 @Controller('filestorage/folders')
 export class FolderController {

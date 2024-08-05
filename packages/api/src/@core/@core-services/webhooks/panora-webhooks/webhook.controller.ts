@@ -141,7 +141,7 @@ export class WebhookController {
 
   @ApiOperation({
     operationId: 'createWebhookPublic',
-    summary: 'Add webhook metadata',
+    summary: 'Create webhook',
   })
   @ApiBody({ type: WebhookDto })
   @ApiPostCustomResponse(WebhookResponse)
@@ -154,7 +154,7 @@ export class WebhookController {
 
   @ApiOperation({
     operationId: 'createWebhookInternal',
-    summary: 'Add webhook metadata',
+    summary: 'Create webhook',
   })
   @ApiBody({ type: WebhookDto })
   @ApiExcludeEndpoint()

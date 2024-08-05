@@ -12,16 +12,35 @@ import { CoreSyncService } from './sync.service';
 import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 export class ResyncStatusDto {
-  @ApiProperty({ type: Date, nullable: true })
+  @ApiProperty({ type: Date, example: '', nullable: true })
   timestamp: Date;
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({
+    type: String,
+    example: 'ticketing',
+    enum: [
+      'ticketing',
+      'ats',
+      'accounting',
+      'hris',
+      'crm',
+      'filestorage',
+      'ecommerce',
+      'marketingautomation',
+    ],
+    nullable: true,
+  })
   vertical: string;
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String, example: 'gitlab', nullable: true })
   provider: string;
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({
+    type: String,
+    example: 'success',
+    enum: ['success', 'fail'],
+    nullable: true,
+  })
   status: string;
 }
 @ApiTags('sync')

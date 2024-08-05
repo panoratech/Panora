@@ -35,7 +35,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('ticketing/collections')
 @Controller('ticketing/collections')
 export class CollectionController {
