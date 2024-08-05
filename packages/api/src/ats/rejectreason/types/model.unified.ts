@@ -4,8 +4,9 @@ import { IsUUID, IsOptional, IsString } from 'class-validator';
 export class UnifiedAtsRejectreasonInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'Candidate inexperienced',
-    example: 'Reason Name',
+    example: 'Candidate inexperienced',
+    nullable: true,
+    description: 'The name of the reject reason',
   })
   @IsString()
   @IsOptional()
@@ -17,6 +18,8 @@ export class UnifiedAtsRejectreasonInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -27,6 +30,7 @@ export class UnifiedAtsRejectreasonInput {
 export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The UUID of the reject reason',
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
@@ -36,6 +40,7 @@ export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description:
       'The remote ID of the reject reason in the context of the 3rd Party',
     example: 'id_1',
@@ -50,6 +55,8 @@ export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the reject reason in the context of the 3rd Party',
   })
@@ -57,18 +64,20 @@ export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

@@ -16,7 +16,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
+  //ApiKeyAuth,
   ApiBody,
   ApiExtraModels,
   ApiHeader,
@@ -37,7 +37,7 @@ import {
   PaginatedDto,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('crm/contacts')
 @Controller('crm/contacts')
 @ApiExtraModels(PaginatedDto, UnifiedCrmContactOutput)

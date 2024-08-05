@@ -8,6 +8,7 @@ export class UnifiedFilestoragePermissionInput {
   @ApiProperty({
     type: [String],
     example: ['can_create'], //todo
+    nullable: true,
     description: 'The roles of the permission',
   })
   @IsString()
@@ -17,6 +18,7 @@ export class UnifiedFilestoragePermissionInput {
     type: String,
     enum: ['USER', 'GROUP', 'COMPANY', 'ANYONE'],
     example: 'USER',
+    nullable: true,
     description: 'The type of the permission',
   })
   @IsIn(['USER', 'GROUP', 'COMPANY', 'ANYONE'])
@@ -26,6 +28,7 @@ export class UnifiedFilestoragePermissionInput {
   @ApiProperty({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the user tied to the permission',
   })
   @IsString()
@@ -34,6 +37,7 @@ export class UnifiedFilestoragePermissionInput {
   @ApiProperty({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the group tied to the permission',
   })
   @IsString()
@@ -45,6 +49,8 @@ export class UnifiedFilestoragePermissionInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -56,6 +62,7 @@ export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermis
   @ApiPropertyOptional({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the permission',
   })
   @IsUUID()
@@ -65,6 +72,7 @@ export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermis
   @ApiPropertyOptional({
     type: String,
     example: 'id_1',
+    nullable: true,
     description: 'The id of the permission in the context of the 3rd Party',
   })
   @IsString()
@@ -77,6 +85,8 @@ export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermis
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    additionalProperties: true,
+    nullable: true,
     description:
       'The remote data of the permission in the context of the 3rd Party',
   })
@@ -84,18 +94,20 @@ export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermis
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

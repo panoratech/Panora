@@ -20,7 +20,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 import { TicketService } from './services/ticket.service';
 import {
@@ -37,7 +37,7 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 import { UnifiedCrmContactOutput } from '@crm/contact/types/model.unified';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('ticketing/tickets')
 @Controller('ticketing/tickets')
 export class TicketController {

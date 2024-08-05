@@ -13,6 +13,7 @@ import { LoggerService } from '../@core-services/logger/logger.service';
 import {
   CreateBatchLinkedUserDto,
   CreateLinkedUserDto,
+  LinkedUserResponse,
 } from './dto/create-linked-user.dto';
 import {
   ApiBody,
@@ -25,6 +26,12 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import {
+  ApiGetArrayCustomResponse,
+  ApiGetCustomResponse,
+  ApiPostArrayCustomResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiTags('linkedUsers')
 @Controller('linked_users')
@@ -36,9 +43,12 @@ export class LinkedUsersController {
     this.logger.setContext(LinkedUsersController.name);
   }
 
-  @ApiOperation({ operationId: 'createLinkedUser', summary: 'Add Linked User' })
+  @ApiOperation({
+    operationId: 'createLinkedUser',
+    summary: 'Create Linked Users',
+  })
   @ApiBody({ type: CreateLinkedUserDto })
-  @ApiResponse({ status: 201 })
+  @ApiPostCustomResponse(LinkedUserResponse)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   addLinkedUser(
@@ -57,7 +67,7 @@ export class LinkedUsersController {
     summary: 'Add Batch Linked Users',
   })
   @ApiBody({ type: CreateBatchLinkedUserDto })
-  @ApiResponse({ status: 201 })
+  @ApiPostArrayCustomResponse(LinkedUserResponse)
   @UseGuards(ApiKeyAuthGuard)
   @Post('batch')
   addBatchLinkedUsers(
@@ -70,9 +80,9 @@ export class LinkedUsersController {
 
   @ApiOperation({
     operationId: 'listLinkedUsers',
-    summary: 'Retrieve Linked Users',
+    summary: 'List Linked Users',
   })
-  @ApiResponse({ status: 200 })
+  @ApiGetArrayCustomResponse(LinkedUserResponse)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   fetchLinkedUsers(@Request() req: any) {
@@ -82,7 +92,7 @@ export class LinkedUsersController {
 
   @ApiOperation({
     operationId: 'retrieveLinkedUser',
-    summary: 'Retrieve a Linked User',
+    summary: 'Retrieve Linked Users',
   })
   @ApiParam({
     name: 'id',
@@ -103,7 +113,7 @@ export class LinkedUsersController {
     summary: 'Retrieve a Linked User From A Remote Id',
   })
   @ApiQuery({ name: 'remoteId', example: 'id_1', required: true, type: String })
-  @ApiResponse({ status: 200 })
+  @ApiGetCustomResponse(LinkedUserResponse)
   @UseGuards(ApiKeyAuthGuard)
   @Get('fromRemoteId')
   linkedUserFromRemoteId(@Query('remoteId') id: string) {

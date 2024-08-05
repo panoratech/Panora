@@ -7,7 +7,7 @@ const useConnectionStrategies = () => {
   return useQuery({
     queryKey: ['connection-strategies'], 
     queryFn: async (): Promise<ConnectionStrategies[]> => {
-      const response = await fetch(`${config.API_URL}/connections-strategies/getConnectionStrategiesForProject`,
+      const response = await fetch(`${config.API_URL}/connection_strategies/getConnectionStrategiesForProject`,
       {
         method: 'GET',
         headers: {

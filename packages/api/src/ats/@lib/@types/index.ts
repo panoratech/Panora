@@ -146,6 +146,7 @@ export type IAtsService =
 export class Email {
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The email address',
   })
   @IsString()
@@ -154,6 +155,7 @@ export class Email {
   @ApiProperty({
     type: String,
     enum: ['PERSONAL', 'WORK'],
+    nullable: true,
     description:
       'The email address type. Authorized values are either PERSONAL or WORK.',
   })
@@ -165,6 +167,7 @@ export class Email {
 export class Phone {
   @ApiProperty({
     type: String,
+    nullable: true,
     description:
       'The phone number starting with a plus (+) followed by the country code (e.g +336676778890 for France)',
   })
@@ -174,6 +177,7 @@ export class Phone {
   @ApiProperty({
     type: String,
     enum: ['MOBILE', 'WORK'],
+    nullable: true,
     description: 'The phone type. Authorized values are either MOBILE or WORK',
   })
   @IsIn(['MOBILE', 'WORK'])
@@ -182,6 +186,20 @@ export class Phone {
 }
 
 export class Url {
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'The url.',
+  })
+  @IsString()
   url: string;
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description:
+      'The url type. It takes [WEBSITE | BLOG | LINKEDIN | GITHUB | OTHER]',
+  })
+  @IsString()
   url_type: 'WEBSITE' | 'BLOG' | 'LINKEDIN' | 'GITHUB' | 'OTHER' | string;
 }

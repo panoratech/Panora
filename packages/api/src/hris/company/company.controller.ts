@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { UnifiedHrisCompanyOutput } from './types/model.unified';
@@ -31,7 +31,7 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 import { query } from 'express';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('hris/companies')
 @Controller('hris/companies')
 export class CompanyController {

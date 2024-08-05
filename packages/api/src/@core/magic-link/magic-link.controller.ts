@@ -33,7 +33,7 @@ export class MagicLinkController {
 
   @ApiOperation({
     operationId: 'createMagicLink',
-    summary: 'Create a Magic Link',
+    summary: 'Create Magic Links',
   })
   @ApiBody({ type: CreateMagicLinkDto })
   @ApiResponse({ status: 201 })
@@ -45,7 +45,7 @@ export class MagicLinkController {
 
   @ApiOperation({
     operationId: 'getMagicLinks',
-    summary: 'Retrieve Magic Links',
+    summary: 'List Magic Links',
   })
   @ApiResponse({ status: 200 })
   @Get()
@@ -55,7 +55,7 @@ export class MagicLinkController {
 
   @ApiOperation({
     operationId: 'getMagicLink',
-    summary: 'Retrieve a Magic Link',
+    summary: 'Retrieve Magic Links',
   })
   @ApiParam({
     name: 'id',

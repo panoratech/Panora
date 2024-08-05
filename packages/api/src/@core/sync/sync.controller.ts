@@ -1,10 +1,29 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { CoreSyncService } from './sync.service';
-import { LoggerService } from '../@core-services/logger/logger.service';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiProperty,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { CoreSyncService } from './sync.service';
+import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
+export class ResyncStatusDto {
+  @ApiProperty({ type: Date, nullable: true })
+  timestamp: Date;
+
+  @ApiProperty({ type: String, nullable: true })
+  vertical: string;
+
+  @ApiProperty({ type: String, nullable: true })
+  provider: string;
+
+  @ApiProperty({ type: String, nullable: true })
+  status: string;
+}
 @ApiTags('sync')
 @Controller('sync')
 export class SyncController {
@@ -45,7 +64,7 @@ export class SyncController {
     operationId: 'resync',
     summary: 'Resync common objects across a vertical',
   })
-  @ApiResponse({ status: 200 })
+  @ApiPostCustomResponse(ResyncStatusDto)
   @UseGuards(JwtAuthGuard)
   @Post('resync')
   async resync(

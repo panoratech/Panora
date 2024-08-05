@@ -5,6 +5,7 @@ export class UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: String,
     example: 'Important',
+    nullable: true,
     description: 'The name of the tag',
   })
   @IsString()
@@ -14,6 +15,7 @@ export class UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the candidate',
   })
   @IsUUID()
@@ -26,6 +28,8 @@ export class UnifiedAtsTagInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -37,6 +41,7 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the tag',
   })
   @IsUUID()
@@ -46,6 +51,7 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: String,
     example: 'id_1',
+    nullable: true,
     description: 'The remote ID of the tag in the context of the 3rd Party',
   })
   @IsString()
@@ -58,14 +64,16 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    nullable: true,
+    additionalProperties: true,
     description: 'The remote data of the tag in the context of the 3rd Party',
   })
   @IsOptional()
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
-    format: 'date-time',
+    type: Date,
+    nullable: true,
     example: '2024-10-01T12:00:00Z',
     description: 'The creation date of the tag',
   })
@@ -74,8 +82,8 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   created_at?: string;
 
   @ApiPropertyOptional({
-    type: String,
-    format: 'date-time',
+    type: Date,
+    nullable: true,
     example: '2024-10-01T12:00:00Z',
     description: 'The modification date of the tag',
   })

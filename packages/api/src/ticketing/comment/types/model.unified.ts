@@ -7,27 +7,93 @@ export type CommentCreatorType = 'USER' | 'CONTACT';
 export class UnifiedTicketingCommentInput {
   @ApiProperty({
     type: String,
-    example: 'Assigned the issue !',
-    description: 'The content of the comment',
+    nullable: true,
+    example: 'Assigned to Eric !',
+    description: 'The body of the comment',
   })
   @IsString()
-  content: string;
+  body: string;
 
   @ApiPropertyOptional({
-    type: Object,
-    example: {
-      fav_dish: 'broccoli',
-      fav_color: 'red',
-    },
-    description: 'The custom field mappings of the comment',
+    type: String,
+    nullable: true,
+    example: '<p>Assigned to Eric !</p>',
+    description: 'The html body of the comment',
+  })
+  @IsString()
+  @IsOptional()
+  html_body?: string;
+
+  @ApiPropertyOptional({
+    type: Boolean,
+    nullable: true,
+    example: false,
+    description: 'The public status of the comment',
   })
   @IsOptional()
-  field_mappings?: Record<string, any>;
+  @IsBoolean()
+  is_private?: boolean;
+
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    example: 'USER',
+    enum: ['USER', 'CONTACT'],
+    description:
+      'The creator type of the comment. Authorized values are either USER or CONTACT',
+  })
+  @IsIn(['USER', 'CONTACT'], {
+    message: 'Type must be either USER or CONTACT',
+  })
+  @IsOptional()
+  creator_type?: CommentCreatorType | string;
+
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the ticket the comment is tied to',
+  })
+  @IsUUID()
+  @IsOptional()
+  ticket_id?: string; // UUID of Ticket object
+
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description:
+      'The UUID of the contact which the comment belongs to (if no user_id specified)',
+  })
+  @IsUUID()
+  @IsOptional()
+  contact_id?: string; // UUID of Contact object
+
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description:
+      'The UUID of the user which the comment belongs to (if no contact_id specified)',
+  })
+  @IsUUID()
+  @IsOptional()
+  user_id?: string; // UUID of User object
+
+  @ApiPropertyOptional({
+    type: [String],
+    nullable: true,
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
+    description: 'The attachements UUIDs tied to the comment',
+  })
+  @IsOptional()
+  attachments?: (string | UnifiedTicketingAttachmentOutput)[]; //UUIDs of Attachments objects
 }
 
 export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput {
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the comment',
   })
@@ -37,8 +103,9 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     example: 'id_1',
-    description: 'The remote ID of the comment in the context of the 3rd Party',
+    description: 'The id of the comment in the context of the 3rd Party',
   })
   @IsString()
   @IsOptional()
@@ -46,10 +113,12 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
 
   @ApiPropertyOptional({
     type: Object,
+    nullable: true,
     example: {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    additionalProperties: true,
     description:
       'The remote data of the comment in the context of the 3rd Party',
   })
@@ -57,18 +126,20 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     example: '2024-10-01T12:00:00Z',
-    description: 'The created date of the comment',
+    description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    nullable: true,
     example: '2024-10-01T12:00:00Z',
-    description: 'The modified date of the comment',
+    description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

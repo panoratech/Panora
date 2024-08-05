@@ -16,7 +16,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { BankInfoService } from './services/bankinfo.service';
@@ -32,7 +32,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('hris/bankinfos')
 @Controller('hris/bankinfos')
 export class BankinfoController {

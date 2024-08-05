@@ -16,7 +16,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
   ApiBody,
 } from '@nestjs/swagger';
 
@@ -34,7 +34,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('marketingautomation/templates')
 @Controller('marketingautomation/templates')
 export class TemplateController {

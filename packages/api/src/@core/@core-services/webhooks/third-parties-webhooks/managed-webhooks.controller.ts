@@ -22,9 +22,9 @@ import {
 } from './dto/managed-webhooks.dto';
 import { ManagedWebhooksService } from './managed-webhooks.service';
 
-@ApiTags('managed-webhooks')
+@ApiTags('managed_webhooks')
 @ApiExcludeController()
-@Controller('managed-webhooks')
+@Controller('managed_webhooks')
 export class ManagedWebhooksController {
   constructor(
     private managedWebhookService: ManagedWebhooksService,

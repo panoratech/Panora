@@ -18,7 +18,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { FolderService } from './services/folder.service';
@@ -36,7 +36,7 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 import { example } from 'yargs';
 
-@ApiBearerAuth('bearer')
+//@ApiKeyAuth()
 @ApiTags('filestorage/folders')
 @Controller('filestorage/folders')
 export class FolderController {

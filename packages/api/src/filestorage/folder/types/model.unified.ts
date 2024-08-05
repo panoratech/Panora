@@ -7,6 +7,7 @@ export class UnifiedFilestorageFolderInput {
   @ApiProperty({
     type: String,
     example: 'school',
+    nullable: true,
     description: 'The name of the folder',
   })
   @IsString()
@@ -15,6 +16,7 @@ export class UnifiedFilestorageFolderInput {
   @ApiProperty({
     type: String,
     example: '2048',
+    nullable: true,
     description: 'The size of the folder',
   })
   @IsString()
@@ -23,6 +25,7 @@ export class UnifiedFilestorageFolderInput {
   @ApiProperty({
     type: String,
     example: 'https://example.com/school',
+    nullable: true,
     description: 'The url of the folder',
   })
   @IsString()
@@ -39,6 +42,7 @@ export class UnifiedFilestorageFolderInput {
   @ApiProperty({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the drive tied to the folder',
   })
   @IsString()
@@ -47,6 +51,7 @@ export class UnifiedFilestorageFolderInput {
   @ApiProperty({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the parent folder',
   })
   @IsString()
@@ -55,6 +60,7 @@ export class UnifiedFilestorageFolderInput {
   @ApiProperty({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the shared link tied to the folder',
   })
   @IsString()
@@ -63,6 +69,7 @@ export class UnifiedFilestorageFolderInput {
   @ApiProperty({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the permission tied to the folder',
   })
   @IsString()
@@ -74,6 +81,8 @@ export class UnifiedFilestorageFolderInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -85,6 +94,7 @@ export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInpu
   @ApiPropertyOptional({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the folder',
   })
   @IsUUID()
@@ -95,6 +105,7 @@ export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInpu
     type: String,
     example: 'id_1',
     description: 'The remote ID of the folder in the context of the 3rd Party',
+    nullable: true,
   })
   @IsString()
   @IsOptional()
@@ -106,6 +117,8 @@ export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInpu
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    additionalProperties: true,
+    nullable: true,
     description:
       'The remote data of the folder in the context of the 3rd Party',
   })
@@ -113,18 +126,20 @@ export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInpu
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
     description: 'The created date of the folder',
+    type: Date,
+    nullable: true,
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the folder',
+    type: Date,
+    nullable: true,
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

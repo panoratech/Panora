@@ -8,6 +8,7 @@ export class UnifiedFilestorageFileInput {
     type: String,
     example: 'my_paris_photo.png',
     description: 'The name of the file',
+    nullable: true,
   })
   @IsString()
   name: string;
@@ -16,6 +17,7 @@ export class UnifiedFilestorageFileInput {
     type: String,
     example: 'https://example.com/my_paris_photo.png',
     description: 'The url of the file',
+    nullable: true,
   })
   @IsString()
   file_url: string;
@@ -24,6 +26,7 @@ export class UnifiedFilestorageFileInput {
     type: String,
     example: 'application/pdf',
     description: 'The mime type of the file',
+    nullable: true,
   })
   @IsString()
   mime_type: string;
@@ -32,6 +35,7 @@ export class UnifiedFilestorageFileInput {
     type: String,
     example: '1024',
     description: 'The size of the file',
+    nullable: true,
   })
   @IsString()
   size: string;
@@ -40,6 +44,7 @@ export class UnifiedFilestorageFileInput {
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the folder tied to the file',
+    nullable: true,
   })
   @IsString()
   folder_id: string;
@@ -48,6 +53,7 @@ export class UnifiedFilestorageFileInput {
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the permission tied to the file',
+    nullable: true,
   })
   @IsString()
   permission: string | UnifiedFilestoragePermissionOutput;
@@ -56,6 +62,7 @@ export class UnifiedFilestorageFileInput {
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the shared link tied to the file',
+    nullable: true,
   })
   @IsString()
   shared_link: string | UnifiedFilestorageSharedlinkOutput;
@@ -68,6 +75,8 @@ export class UnifiedFilestorageFileInput {
     },
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
+    nullable: true,
+    additionalProperties: true,
   })
   @IsOptional()
   field_mappings?: Record<string, any>;
@@ -78,6 +87,7 @@ export class UnifiedFilestorageFileOutput extends UnifiedFilestorageFileInput {
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the file',
+    nullable: true,
   })
   @IsUUID()
   @IsOptional()
@@ -87,6 +97,7 @@ export class UnifiedFilestorageFileOutput extends UnifiedFilestorageFileInput {
     type: String,
     example: 'id_1',
     description: 'The id of the file in the context of the 3rd Party',
+    nullable: true,
   })
   @IsString()
   @IsOptional()
@@ -99,23 +110,27 @@ export class UnifiedFilestorageFileOutput extends UnifiedFilestorageFileInput {
       fav_color: 'red',
     },
     description: 'The remote data of the file in the context of the 3rd Party',
+    nullable: true,
+    additionalProperties: true,
   })
   @IsOptional()
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
     description: 'The created date of the object',
+    nullable: true,
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
     description: 'The modified date of the object',
+    nullable: true,
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

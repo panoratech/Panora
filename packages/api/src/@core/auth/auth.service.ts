@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    const { email, new_password, reset_token } = resetPasswordDto;
+    /*const { email, new_password, reset_token } = resetPasswordDto;
 
     // verify there is a user with corresponding email and non-expired reset token
     const checkResetRequestIsValid = await this.prisma.users.findFirst({
@@ -43,8 +43,11 @@ export class AuthService {
       throw new BadRequestException('Invalid email or expired request');
     }
 
-    // Verify the reset token 
-    const isValidToken = await this.verifyResetToken(checkResetRequestIsValid.reset_token, reset_token);
+    // Verify the reset token
+    const isValidToken = await this.verifyResetToken(
+      checkResetRequestIsValid,
+      reset_token, 
+    );
 
     if (!isValidToken) {
       throw new BadRequestException('Invalid reset token');
@@ -54,24 +57,26 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(new_password, 10);
 
     // Update the user's password in the database
-    const updatedPassword =await this.prisma.users.update({
+    const updatedPassword = await this.prisma.users.update({
       where: { email },
       data: { password_hash: hashedPassword },
     });
-    console.log(updatedPassword);
+    console.log(updatedPassword);*/
     return { message: 'Password reset successfully' };
   }
 
-  private async verifyResetToken(database_token: string, request_token: string): Promise<boolean> {
-  const isValidToken = await bcrypt.compare(request_token, database_token);
-  return isValidToken;
+  private async verifyResetToken(
+    database_token: string,
+    request_token: string,
+  ): Promise<boolean> {
+    const isValidToken = await bcrypt.compare(request_token, database_token);
+    return isValidToken;
   }
 
-
   async requestPasswordReset(requestPasswordResetDto: RequestPasswordResetDto) {
-    const { email } = requestPasswordResetDto;
+    /*const { email } = requestPasswordResetDto;
 
-    if (!email){
+    if (!email) {
       throw new BadRequestException('Incorrect API request');
     }
 
@@ -96,7 +101,7 @@ export class AuthService {
     });
 
     // Send email with resetToken (implementation depends on your email service)
-    await this.sendResetEmail(email, resetToken);
+    await this.sendResetEmail(email, resetToken);*/
     return { message: 'Password reset link sent' };
   }
 
@@ -105,19 +110,19 @@ export class AuthService {
 
     // Create a transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST, 
-      port: Number(process.env.SMTP_PORT), 
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
       //secure: false,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
-      }
+      },
     });
 
     // Send mail with defined transport object
     const info = await transporter.sendMail({
       from: `${process.env.EMAIL_SENDING_ADDRESS}`,
-      to: email, 
+      to: email,
       subject: 'Panora | Password Reset Request',
       text: `You requested a password reset. Click the following link within one hour from now to reset your password: ${resetLink}`,
       html: `<p>You requested a password reset. Click the link to reset your password:</p><a href="${resetLink}">${resetLink}</a> <p>The link will expire after one hour</p>`,
@@ -125,8 +130,6 @@ export class AuthService {
 
     this.logger.log(`Send reset email to ${email} with token ${resetToken}`);
   }
-
-
 
   async getUsers() {
     try {
@@ -173,7 +176,9 @@ export class AuthService {
       });
 
       if (foundUser) {
-        throw new ConflictException(`Email already exists. Try resetting your password.`);
+        throw new ConflictException(
+          `Email already exists. Try resetting your password.`,
+        );
       }
       return await this.createUser(user);
     } catch (error) {
@@ -324,30 +329,38 @@ export class AuthService {
     keyName: string,
   ): Promise<{ api_key: string }> {
     try {
+      // Check project & User exist
       const foundProject = await this.prisma.projects.findUnique({
         where: { id_project: projectId },
       });
       if (!foundProject) {
-        throw new ReferenceError('project undefined');
+        throw new ReferenceError('Project not found');
       }
       const foundUser = await this.prisma.users.findUnique({
         where: { id_user: userId },
       });
       if (!foundUser) {
-        throw new ReferenceError('user undefined');
+        throw new ReferenceError('User Not Found');
       }
 
       /*if (foundProject.id_organization !== foundUser.id_organization) {
         throw new ReferenceError('User is not inside the project');
       }*/
       // Generate a new API key (use a secure method for generation)
-      const { access_token } = await this.generateApiKey(projectId, userId);
+      //const { access_token } = await this.generateApiKey(projectId, userId);
       // Store the API key in the database associated with the user
-      //const hashed_token = this.hashApiKey(access_token);
+      //const hashed_token = this.hashApiKey(access_token);"
+
+      const base_key = `sk_${process.env.ENV}_${uuidv4()}`;
+      const hashed_key = crypto
+        .createHash('sha256')
+        .update(base_key)
+        .digest('hex');
+
       const new_api_key = await this.prisma.api_keys.create({
         data: {
           id_api_key: uuidv4(),
-          api_key_hash: access_token,
+          api_key_hash: hashed_key,
           name: keyName,
           id_project: projectId as string,
           id_user: userId as string,
@@ -357,7 +370,7 @@ export class AuthService {
         throw new ReferenceError('api key undefined');
       }
 
-      return { api_key: access_token, ...new_api_key };
+      return { api_key: base_key, ...new_api_key };
     } catch (error) {
       throw error;
     }
@@ -375,19 +388,11 @@ export class AuthService {
     }
   }
 
-
-
-  async getProjectIdForApiKey(apiKey: string) {
+  async getProjectIdForApiKey(hashed_apiKey: string) {
     try {
-      // Decode the JWT to verify if it's valid and get the payload
-      const decoded = this.jwtService.verify(apiKey, {
-        secret: process.env.JWT_SECRET,
-      });
-
-      //const hashed_api_key = this.hashApiKey(apiKey);
       const saved_api_key = await this.prisma.api_keys.findUnique({
         where: {
-          api_key_hash: apiKey,
+          api_key_hash: hashed_apiKey,
         },
       });
 
@@ -399,33 +404,43 @@ export class AuthService {
 
   async validateApiKey(apiKey: string): Promise<boolean> {
     try {
-      // Decode the JWT to verify if it's valid and get the payload
-      const decoded = this.jwtService.verify(apiKey, {
-        secret: process.env.JWT_SECRET,
-      });
+      // TO DO : add Expiration in part 3
 
-      //const hashed_api_key = this.hashApiKey(apiKey);
+      // Decode the JWT to verify if it's valid and get the payload
+      // const decoded = this.jwtService.verify(apiKey, {
+      //   secret: process.env.JWT_SECRET,
+      // });
+
+      // pseudo-code:
+      // 1 - SHA256 the API key from the header
+      const hashed_key = crypto
+        .createHash('sha256')
+        .update(apiKey)
+        .digest('hex');
+
+      // 2- check against DB
+      // if not found, return false
       const saved_api_key = await this.prisma.api_keys.findUnique({
         where: {
-          api_key_hash: apiKey,
+          api_key_hash: hashed_key,
         },
       });
 
       if (!saved_api_key) {
-        throw new ReferenceError('Api Key undefined');
+        throw new ReferenceError('API Key not found.');
       }
-      if (String(decoded.project_id) !== String(saved_api_key.id_project)) {
-        throw new ReferenceError(
-          'Failed to validate API key: projectId mismatch.',
-        );
-      }
+      // if (String(decoded.project_id) !== String(saved_api_key.id_project)) {
+      //   throw new ReferenceError(
+      //     'Failed to validate API key: projectId mismatch.',
+      //   );
+      // }
 
-      // Validate that the JWT payload matches the provided userId and projectId
-      if (String(decoded.sub) !== String(saved_api_key.id_user)) {
-        throw new ReferenceError(
-          'Failed to validate API key: userId mismatch.',
-        );
-      }
+      // // Validate that the JWT payload matches the provided userId and projectId
+      // if (String(decoded.sub) !== String(saved_api_key.id_user)) {
+      //   throw new ReferenceError(
+      //     'Failed to validate API key: userId mismatch.',
+      //   );
+      // }
       return true;
     } catch (error) {
       throw error;

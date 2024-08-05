@@ -34,7 +34,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+//@ApiBearerAuth('bearer')
 @ApiTags('accounting/accounts')
 @Controller('accounting/accounts')
 export class AccountController {

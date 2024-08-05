@@ -6,6 +6,7 @@ export class UnifiedFilestorageGroupInput {
   @ApiProperty({
     type: String,
     example: 'My group',
+    nullable: true,
     description: 'The name of the group',
   })
   @IsString()
@@ -22,6 +23,7 @@ export class UnifiedFilestorageGroupInput {
   @ApiProperty({
     type: Boolean,
     example: false,
+    nullable: true,
     description:
       'Indicates whether or not this object has been deleted in the third party platform.',
   })
@@ -34,6 +36,8 @@ export class UnifiedFilestorageGroupInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -45,6 +49,7 @@ export class UnifiedFilestorageGroupOutput extends UnifiedFilestorageGroupInput 
   @ApiPropertyOptional({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the group',
   })
   @IsUUID()
@@ -54,6 +59,7 @@ export class UnifiedFilestorageGroupOutput extends UnifiedFilestorageGroupInput 
   @ApiPropertyOptional({
     type: String,
     example: 'id_1',
+    nullable: true,
     description: 'The id of the group in the context of the 3rd Party',
   })
   @IsString()
@@ -66,24 +72,28 @@ export class UnifiedFilestorageGroupOutput extends UnifiedFilestorageGroupInput 
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    nullable: true,
+    additionalProperties: true,
     description: 'The remote data of the group in the context of the 3rd Party',
   })
   @IsOptional()
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

@@ -29,10 +29,11 @@ import { toast } from 'sonner'
 import useProfileStore from '@/state/profileStore';
 import Cookies from 'js-cookie';
 import { useQueryClient } from '@tanstack/react-query'
+import Link from 'next/link'
 
 const formSchema = z.object({
     email: z.string().email({
-        message:"Enter valid Email"
+        message:"Enter valid Email" 
     }),
     password : z.string().min(2, {
         message: "Enter Password.",
@@ -132,6 +133,9 @@ const LoginUserForm = () => {
             </CardContent>
             <CardFooter>
                 <Button type='submit' size="sm" className='h-7 gap-1'>Login</Button>
+                <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                    Forgot Password?
+                </Link>
             </CardFooter>
         </Card>
         </form>

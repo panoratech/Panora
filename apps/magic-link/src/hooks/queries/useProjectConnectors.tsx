@@ -8,7 +8,7 @@ const useProjectConnectors = (id: string | null) => {
       if (!id) {
         throw new Error('Project ID is not available');
       }
-      const response = await fetch(`${config.API_URL}/project-connectors?projectId=${id}`);
+      const response = await fetch(`${config.API_URL}/project_connectors?projectId=${id}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

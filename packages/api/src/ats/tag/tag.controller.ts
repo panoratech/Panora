@@ -17,7 +17,6 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 import { TagService } from './services/tag.service';
@@ -30,7 +29,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+
 @ApiTags('ats/tags')
 @Controller('ats/tags')
 export class TagController {

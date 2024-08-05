@@ -4,6 +4,7 @@ import { IsOptional, IsString, IsUUID } from 'class-validator';
 export class UnifiedTicketingUserInput {
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The name of the user',
     example: 'John Doe',
   })
@@ -12,6 +13,7 @@ export class UnifiedTicketingUserInput {
 
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The email address of the user',
     example: 'john.doe@example.com',
   })
@@ -20,6 +22,7 @@ export class UnifiedTicketingUserInput {
 
   @ApiPropertyOptional({
     type: [String],
+    nullable: true,
     description: 'The teams whose the user is part of',
     example: ['team1', 'team2'],
   })
@@ -28,6 +31,7 @@ export class UnifiedTicketingUserInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The account or organization the user is part of',
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
@@ -41,8 +45,10 @@ export class UnifiedTicketingUserInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    nullable: true,
     description:
       'The custom field mappings of the user between the remote 3rd party & Panora',
+    additionalProperties: true,
   })
   @IsOptional()
   field_mappings?: Record<string, any>;
@@ -52,6 +58,7 @@ export class UnifiedTicketingUserOutput extends UnifiedTicketingUserInput {
   @ApiPropertyOptional({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the user',
   })
   @IsUUID()
@@ -61,6 +68,7 @@ export class UnifiedTicketingUserOutput extends UnifiedTicketingUserInput {
   @ApiPropertyOptional({
     type: String,
     example: 'id_1',
+    nullable: true,
     description: 'The id of the user in the context of the 3rd Party',
   })
   @IsString()
@@ -70,22 +78,26 @@ export class UnifiedTicketingUserOutput extends UnifiedTicketingUserInput {
   @ApiPropertyOptional({
     type: Object,
     example: { key1: 'value1', key2: 42, key3: true },
+    nullable: true,
+    additionalProperties: true,
     description: 'The remote data of the user in the context of the 3rd Party',
   })
   @IsOptional()
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
     type: Date,
     example: '2023-10-01T12:00:00Z',
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()

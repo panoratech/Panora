@@ -38,6 +38,7 @@ export class UnifiedAtsEeocsInput {
   @ApiPropertyOptional({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the candidate',
   })
   @IsUUID()
@@ -48,6 +49,7 @@ export class UnifiedAtsEeocsInput {
     type: String,
     example: '2024-10-01T12:00:00Z',
     format: 'date-time',
+    nullable: true,
     description: 'The submission date of the EEOC',
   })
   @IsDateString()
@@ -67,6 +69,7 @@ export class UnifiedAtsEeocsInput {
       'DECLINE_TO_SELF_IDENTIFY',
     ],
     example: 'AMERICAN_INDIAN_OR_ALASKAN_NATIVE',
+    nullable: true,
     description: 'The race of the candidate',
   })
   @IsIn([
@@ -86,6 +89,7 @@ export class UnifiedAtsEeocsInput {
     type: String,
     example: 'MALE',
     enum: ['MALE', 'FEMALE', 'NON_BINARY', 'OTHER', 'DECLINE_TO_SELF_IDENTIFY'],
+    nullable: true,
     description: 'The gender of the candidate',
   })
   @IsIn(['MALE', 'FEMALE', 'NON_BINARY', 'OTHER', 'DECLINE_TO_SELF_IDENTIFY'])
@@ -100,6 +104,7 @@ export class UnifiedAtsEeocsInput {
       'I_IDENTIFY_AS_ONE_OR_MORE_OF_THE_CLASSIFICATIONS_OF_A_PROTECTED_VETERAN',
       'I_DONT_WISH_TO_ANSWER',
     ],
+    nullable: true,
     description: 'The veteran status of the candidate',
   })
   @IsIn([
@@ -118,6 +123,7 @@ export class UnifiedAtsEeocsInput {
       'I_DONT_WISH_TO_ANSWER',
     ],
     example: 'YES_I_HAVE_A_DISABILITY_OR_PREVIOUSLY_HAD_A_DISABILITY',
+    nullable: true,
     description: 'The disability status of the candidate',
   })
   @IsIn([
@@ -134,6 +140,8 @@ export class UnifiedAtsEeocsInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -145,6 +153,7 @@ export class UnifiedAtsEeocsOutput extends UnifiedAtsEeocsInput {
   @ApiPropertyOptional({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the EEOC',
   })
   @IsUUID()
@@ -154,6 +163,7 @@ export class UnifiedAtsEeocsOutput extends UnifiedAtsEeocsInput {
   @ApiPropertyOptional({
     type: String,
     example: 'id_1',
+    nullable: true,
     description: 'The remote ID of the EEOC in the context of the 3rd Party',
   })
   @IsString()
@@ -166,24 +176,28 @@ export class UnifiedAtsEeocsOutput extends UnifiedAtsEeocsInput {
       fav_dish: 'broccoli',
       fav_color: 'red',
     },
+    nullable: true,
+    additionalProperties: true,
     description: 'The remote data of the EEOC in the context of the 3rd Party',
   })
   @IsOptional()
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
     example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }
