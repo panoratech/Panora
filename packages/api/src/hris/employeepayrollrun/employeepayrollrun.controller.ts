@@ -33,7 +33,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('hris/employeepayrollruns')
 @Controller('hris/employeepayrollruns')
 export class EmployeePayrollRunController {

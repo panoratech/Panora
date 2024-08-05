@@ -33,7 +33,6 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
 @ApiTags('ats/activities')
 @Controller('ats/activities')
 export class ActivityController {

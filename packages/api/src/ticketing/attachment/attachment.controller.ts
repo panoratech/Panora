@@ -35,7 +35,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('ticketing/attachments')
 @Controller('ticketing/attachments')
 export class AttachmentController {

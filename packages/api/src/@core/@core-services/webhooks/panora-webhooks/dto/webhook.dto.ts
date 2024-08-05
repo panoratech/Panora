@@ -79,7 +79,11 @@ export class WebhookResponse {
   })
   url: string;
 
-  @ApiProperty({ type: String, description: 'The secret of the webhook.' })
+  @ApiProperty({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The secret of the webhook.',
+  })
   secret: string;
 
   @ApiProperty({

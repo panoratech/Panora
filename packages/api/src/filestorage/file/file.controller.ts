@@ -35,7 +35,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('filestorage/files')
 @Controller('filestorage/files')
 export class FileController {

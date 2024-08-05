@@ -37,7 +37,7 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 import { UnifiedCrmContactOutput } from '@crm/contact/types/model.unified';
 
-//@ApiKeyAuth()
+
 @ApiTags('ticketing/tickets')
 @Controller('ticketing/tickets')
 export class TicketController {

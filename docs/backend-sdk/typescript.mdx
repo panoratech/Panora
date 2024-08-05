@@ -6,11 +6,11 @@ description: "Introduction to our Typescript SDK"
 ## Installing & instantiating the Typescript SDK
 <Info>
   You can find the Typescript SDK on NPM
-  [here](https://www.npmjs.com/package/@panora/sdk-typescript)
+  [here](https://www.npmjs.com/package/@panora/sdk)
 </Info>
 
 ```bash
-npm i @panora/typescript-sdk
+npm i @panora/sdk
 ```
 
 Instantiate the SDK:
@@ -18,20 +18,25 @@ Instantiate the SDK:
 <Tip>Go to your dashboard to get your [API Key](https://dashboard.panora.dev/api-keys)</Tip>
 
 ```javascript
-import { PanoraSDK } from "@panora/typescript-sdk";
+import { Panora } from "@panora/sdk";
 
-const sdk = new PanoraSDK("YOUR_API_KEY");
+const panora = new Panora({
+  apiKey: process.env.API_KEY,
+});
+
 ```
 
-### List all connections to your app
+### List all connections to your app 
 
 ```javascript
-import { PanoraSDK } from "@panora/typescript-sdk";
+import { Panora } from "@panora/typescript-sdk";
 
-const sdk = new PanoraSDK("YOUR_API_KEY");
+const panora = new Panora({
+  apiKey: process.env.API_KEY,
+});
 
 (async () => {
-  const result = await sdk.connections.getConnections();
+  const result = await panora.connections.list();
   console.log(result);
 })();
 ```

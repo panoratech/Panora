@@ -34,7 +34,6 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
 @ApiTags('ats/applications')
 @Controller('ats/applications')
 export class ApplicationController {

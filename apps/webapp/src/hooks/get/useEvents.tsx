@@ -10,7 +10,7 @@ const fetchEvents = async (params: PaginationParams): Promise<Event[]> => {
     limit: params.limit.toString(),
   });
 
-  const response = await fetch(`${config.API_URL}/events?${searchParams.toString()}`,
+  const response = await fetch(`${config.API_URL}/events/internal?${searchParams.toString()}`,
   {
     method: 'GET',
     headers: {

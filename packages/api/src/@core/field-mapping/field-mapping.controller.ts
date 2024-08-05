@@ -24,6 +24,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('fieldMappings')
 @Controller('field_mappings')
@@ -42,7 +43,7 @@ export class FieldMappingController {
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @ApiExcludeEndpoint()
-  @Get('entities')
+  @Get('internal/entities')
   getEntities() {
     return this.fieldMappingService.getEntities();
   }
@@ -53,7 +54,7 @@ export class FieldMappingController {
   })
   @ApiResponse({ status: 200 })
   @ApiExcludeEndpoint()
-  @Get('attributes')
+  @Get('internal/attributes')
   @UseGuards(JwtAuthGuard)
   getAttributes(@Request() req: any) {
     const { id_project } = req.user;
@@ -66,7 +67,7 @@ export class FieldMappingController {
   })
   @ApiResponse({ status: 200 })
   @ApiExcludeEndpoint()
-  @Get('values')
+  @Get('internal/values')
   @UseGuards(JwtAuthGuard)
   getValues() {
     return this.fieldMappingService.getValues();
@@ -77,10 +78,29 @@ export class FieldMappingController {
     summary: 'Define target Field',
   })
   @ApiBody({ type: DefineTargetFieldDto })
+  @ApiExcludeEndpoint()
   @ApiPostCustomResponse(CustomFieldResponse)
-  //define target field on our unified model
-  @Post('define')
+  @Post('internal/define')
   @UseGuards(JwtAuthGuard)
+  defineInternalTargetField(
+    @Request() req: any,
+    @Body() defineTargetFieldDto: DefineTargetFieldDto,
+  ) {
+    const { id_project } = req.user;
+    return this.fieldMappingService.defineTargetField(
+      defineTargetFieldDto,
+      id_project,
+    );
+  }
+
+  @ApiOperation({
+    operationId: 'definitions',
+    summary: 'Define target Field',
+  })
+  @ApiBody({ type: DefineTargetFieldDto })
+  @ApiPostCustomResponse(CustomFieldResponse)
+  @Post('define')
+  @UseGuards(ApiKeyAuthGuard)
   defineTargetField(
     @Request() req: any,
     @Body() defineTargetFieldDto: DefineTargetFieldDto,
@@ -96,10 +116,27 @@ export class FieldMappingController {
     operationId: 'defineCustomField',
     summary: 'Create Custom Field',
   })
+  @ApiExcludeEndpoint()
+  @ApiBody({ type: CustomFieldCreateDto })
+  @ApiPostCustomResponse(CustomFieldResponse)
+  @Post('internal')
+  @UseGuards(JwtAuthGuard)
+  createInternalCustomField(
+    @Request() req: any,
+    @Body() data: CustomFieldCreateDto,
+  ) {
+    const { id_project } = req.user;
+    return this.fieldMappingService.createCustomField(data, id_project);
+  }
+
+  @ApiOperation({
+    operationId: 'defineCustomField',
+    summary: 'Create Custom Field',
+  })
   @ApiBody({ type: CustomFieldCreateDto })
   @ApiPostCustomResponse(CustomFieldResponse)
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   createCustomField(@Request() req: any, @Body() data: CustomFieldCreateDto) {
     const { id_project } = req.user;
     return this.fieldMappingService.createCustomField(data, id_project);
@@ -109,6 +146,18 @@ export class FieldMappingController {
   @ApiBody({ type: MapFieldToProviderDto })
   @ApiPostCustomResponse(CustomFieldResponse)
   @UseGuards(JwtAuthGuard)
+  @ApiExcludeEndpoint()
+  @Post('internal/map')
+  mapInternalFieldToProvider(
+    @Body() mapFieldToProviderDto: MapFieldToProviderDto,
+  ) {
+    return this.fieldMappingService.mapFieldToProvider(mapFieldToProviderDto);
+  }
+
+  @ApiOperation({ operationId: 'map', summary: 'Map Custom Field' })
+  @ApiBody({ type: MapFieldToProviderDto })
+  @ApiPostCustomResponse(CustomFieldResponse)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('map')
   mapFieldToProvider(@Body() mapFieldToProviderDto: MapFieldToProviderDto) {
     return this.fieldMappingService.mapFieldToProvider(mapFieldToProviderDto);
@@ -121,7 +170,7 @@ export class FieldMappingController {
   @ApiResponse({ status: 200 })
   @ApiExcludeEndpoint()
   @UseGuards(JwtAuthGuard)
-  @Get('properties')
+  @Get('internal/properties')
   getCustomProperties(
     @Query('linkedUserId') linkedUserId: string,
     @Query('providerId') providerId: string,

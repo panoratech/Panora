@@ -25,6 +25,39 @@ paths:
               schema:
                 type: number
                 example: 200
+  /auth/login:
+    post:
+      operationId: signIn
+      summary: Log In
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '201':
+          description: ''
+      tags:
+        - auth
+      x-speakeasy-group: auth.login
+  /connections:
+    get:
+      operationId: getConnections
+      summary: List Connections
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Connection'
+      tags:
+        - connections
   /webhooks:
     get:
       operationId: listWebhooks
@@ -44,7 +77,7 @@ paths:
       x-speakeasy-group: webhooks
     post:
       operationId: createWebhookPublic
-      summary: Add webhook metadata
+      summary: Create webhook
       parameters: []
       requestBody:
         required: true
@@ -1784,6 +1817,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
       x-speakeasy-group: linked_users.{id}
   /linked_users/fromRemoteId:
@@ -1806,6 +1843,40 @@ paths:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
       x-speakeasy-group: linked_users.fromremoteid
+  /projects:
+    get:
+      operationId: getProjects
+      summary: Retrieve projects
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectResponse'
+      tags: &ref_19
+        - projects
+    post:
+      operationId: createProject
+      summary: Create a project
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+      tags: *ref_19
   /field_mappings/define:
     post:
       operationId: definitions
@@ -1824,7 +1895,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
-      tags: &ref_19
+      tags: &ref_20
         - fieldMappings
       x-speakeasy-group: field_mappings.define
   /field_mappings:
@@ -1845,7 +1916,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
-      tags: *ref_19
+      tags: *ref_20
   /field_mappings/map:
     post:
       operationId: map
@@ -1864,8 +1935,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
-      tags: *ref_19
+      tags: *ref_20
       x-speakeasy-group: field_mappings.map
+  /events:
+    get:
+      operationId: getPanoraCoreEvents
+      summary: List Events
+      parameters:
+        - name: page
+          required: false
+          in: query
+          schema:
+            type: number
+        - name: limit
+          required: false
+          in: query
+          schema:
+            type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventResponse'
+      tags:
+        - events
   /passthrough:
     post:
       operationId: request
@@ -1943,7 +2040,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisBankinfoOutput'
-      tags: &ref_20
+      tags: &ref_21
         - hris/bankinfos
       x-speakeasy-group: hris.bankinfos
   /hris/bankinfos/{id}:
@@ -1979,7 +2076,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisBankinfoOutput'
-      tags: *ref_20
+      tags: *ref_21
       x-speakeasy-group: hris.bankinfos
   /hris/benefits:
     get:
@@ -2023,7 +2120,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisBenefitOutput'
-      tags: &ref_21
+      tags: &ref_22
         - hris/benefits
       x-speakeasy-group: hris.benefits
   /hris/benefits/{id}:
@@ -2059,7 +2156,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisBenefitOutput'
-      tags: *ref_21
+      tags: *ref_22
       x-speakeasy-group: hris.benefits
   /hris/companies:
     get:
@@ -2103,7 +2200,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisCompanyOutput'
-      tags: &ref_22
+      tags: &ref_23
         - hris/companies
       x-speakeasy-group: hris.companies
   /hris/companies/{id}:
@@ -2139,7 +2236,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisCompanyOutput'
-      tags: *ref_22
+      tags: *ref_23
       x-speakeasy-group: hris.companies
   /hris/dependents:
     get:
@@ -2183,7 +2280,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisDependentOutput'
-      tags: &ref_23
+      tags: &ref_24
         - hris/dependents
       x-speakeasy-group: hris.dependents
   /hris/dependents/{id}:
@@ -2219,7 +2316,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisDependentOutput'
-      tags: *ref_23
+      tags: *ref_24
       x-speakeasy-group: hris.dependents
   /hris/employeepayrollruns:
     get:
@@ -2264,7 +2361,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedHrisEmployeepayrollrunOutput
-      tags: &ref_24
+      tags: &ref_25
         - hris/employeepayrollruns
       x-speakeasy-group: hris.employeepayrollruns
   /hris/employeepayrollruns/{id}:
@@ -2300,7 +2397,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmployeepayrollrunOutput'
-      tags: *ref_24
+      tags: *ref_25
       x-speakeasy-group: hris.employeepayrollruns
   /hris/employees:
     get:
@@ -2344,7 +2441,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
-      tags: &ref_25
+      tags: &ref_26
         - hris/employees
       x-speakeasy-group: hris.employees
     post:
@@ -2377,7 +2474,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
-      tags: *ref_25
+      tags: *ref_26
       x-speakeasy-group: hris.employees
   /hris/employees/{id}:
     get:
@@ -2412,7 +2509,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmployeeOutput'
-      tags: *ref_25
+      tags: *ref_26
       x-speakeasy-group: hris.employees
   /hris/employerbenefits:
     get:
@@ -2457,7 +2554,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedHrisEmployerbenefitOutput
-      tags: &ref_26
+      tags: &ref_27
         - hris/employerbenefits
       x-speakeasy-group: hris.employerbenefits
   /hris/employerbenefits/{id}:
@@ -2493,7 +2590,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmployerbenefitOutput'
-      tags: *ref_26
+      tags: *ref_27
       x-speakeasy-group: hris.employerbenefits
   /hris/employments:
     get:
@@ -2537,7 +2634,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisEmploymentOutput'
-      tags: &ref_27
+      tags: &ref_28
         - hris/employments
       x-speakeasy-group: hris.employments
   /hris/employments/{id}:
@@ -2573,7 +2670,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisEmploymentOutput'
-      tags: *ref_27
+      tags: *ref_28
       x-speakeasy-group: hris.employments
   /hris/groups:
     get:
@@ -2617,7 +2714,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisGroupOutput'
-      tags: &ref_28
+      tags: &ref_29
         - hris/groups
       x-speakeasy-group: hris.groups
   /hris/groups/{id}:
@@ -2653,7 +2750,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisGroupOutput'
-      tags: *ref_28
+      tags: *ref_29
       x-speakeasy-group: hris.groups
   /hris/locations:
     get:
@@ -2697,7 +2794,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisLocationOutput'
-      tags: &ref_29
+      tags: &ref_30
         - hris/locations
       x-speakeasy-group: hris.locations
   /hris/locations/{id}:
@@ -2733,7 +2830,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisLocationOutput'
-      tags: *ref_29
+      tags: *ref_30
       x-speakeasy-group: hris.locations
   /hris/paygroups:
     get:
@@ -2777,7 +2874,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisPaygroupOutput'
-      tags: &ref_30
+      tags: &ref_31
         - hris/paygroups
       x-speakeasy-group: hris.paygroups
   /hris/paygroups/{id}:
@@ -2813,7 +2910,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisPaygroupOutput'
-      tags: *ref_30
+      tags: *ref_31
       x-speakeasy-group: hris.paygroups
   /hris/payrollruns:
     get:
@@ -2857,7 +2954,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisPayrollrunOutput'
-      tags: &ref_31
+      tags: &ref_32
         - hris/payrollruns
       x-speakeasy-group: hris.payrollruns
   /hris/payrollruns/{id}:
@@ -2893,7 +2990,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisPayrollrunOutput'
-      tags: *ref_31
+      tags: *ref_32
       x-speakeasy-group: hris.payrollruns
   /hris/timeoffs:
     get:
@@ -2937,7 +3034,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
-      tags: &ref_32
+      tags: &ref_33
         - hris/timeoffs
       x-speakeasy-group: hris.timeoffs
     post:
@@ -2970,7 +3067,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
-      tags: *ref_32
+      tags: *ref_33
       x-speakeasy-group: hris.timeoffs
   /hris/timeoffs/{id}:
     get:
@@ -3005,7 +3102,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisTimeoffOutput'
-      tags: *ref_32
+      tags: *ref_33
       x-speakeasy-group: hris.timeoffs
   /hris/timeoffbalances:
     get:
@@ -3049,7 +3146,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedHrisTimeoffbalanceOutput'
-      tags: &ref_33
+      tags: &ref_34
         - hris/timeoffbalances
       x-speakeasy-group: hris.timeoffbalances
   /hris/timeoffbalances/{id}:
@@ -3085,7 +3182,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedHrisTimeoffbalanceOutput'
-      tags: *ref_33
+      tags: *ref_34
       x-speakeasy-group: hris.timeoffbalances
   /marketingautomation/actions:
     get:
@@ -3130,7 +3227,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationActionOutput
-      tags: &ref_34
+      tags: &ref_35
         - marketingautomation/actions
       x-speakeasy-group: marketingautomation.actions
     post:
@@ -3166,7 +3263,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationActionOutput'
-      tags: *ref_34
+      tags: *ref_35
       x-speakeasy-group: marketingautomation.actions
   /marketingautomation/actions/{id}:
     get:
@@ -3203,7 +3300,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationActionOutput'
-      tags: *ref_34
+      tags: *ref_35
       x-speakeasy-group: marketingautomation.actions
   /marketingautomation/automations:
     get:
@@ -3248,7 +3345,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationAutomationOutput
-      tags: &ref_35
+      tags: &ref_36
         - marketingautomation/automations
       x-speakeasy-group: marketingautomation.automations
     post:
@@ -3285,7 +3382,7 @@ paths:
               schema:
                 $ref: >-
                   #/components/schemas/UnifiedMarketingautomationAutomationOutput
-      tags: *ref_35
+      tags: *ref_36
       x-speakeasy-group: marketingautomation.automations
   /marketingautomation/automations/{id}:
     get:
@@ -3323,7 +3420,7 @@ paths:
               schema:
                 $ref: >-
                   #/components/schemas/UnifiedMarketingautomationAutomationOutput
-      tags: *ref_35
+      tags: *ref_36
       x-speakeasy-group: marketingautomation.automations
   /marketingautomation/campaigns:
     get:
@@ -3368,7 +3465,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationCampaignOutput
-      tags: &ref_36
+      tags: &ref_37
         - marketingautomation/campaigns
       x-speakeasy-group: marketingautomation.campaigns
     post:
@@ -3404,7 +3501,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationCampaignOutput'
-      tags: *ref_36
+      tags: *ref_37
       x-speakeasy-group: marketingautomation.campaigns
   /marketingautomation/campaigns/{id}:
     get:
@@ -3441,7 +3538,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationCampaignOutput'
-      tags: *ref_36
+      tags: *ref_37
       x-speakeasy-group: marketingautomation.campaigns
   /marketingautomation/contacts:
     get:
@@ -3486,7 +3583,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationContactOutput
-      tags: &ref_37
+      tags: &ref_38
         - marketingautomation/contacts
       x-speakeasy-group: marketingautomation.contacts
     post:
@@ -3522,7 +3619,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationContactOutput'
-      tags: *ref_37
+      tags: *ref_38
       x-speakeasy-group: marketingautomation.contacts
   /marketingautomation/contacts/{id}:
     get:
@@ -3559,7 +3656,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationContactOutput'
-      tags: *ref_37
+      tags: *ref_38
       x-speakeasy-group: marketingautomation.contacts
   /marketingautomation/emails:
     get:
@@ -3604,7 +3701,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationEmailOutput
-      tags: &ref_38
+      tags: &ref_39
         - marketingautomation/emails
       x-speakeasy-group: marketingautomation.emails
   /marketingautomation/emails/{id}:
@@ -3642,7 +3739,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationEmailOutput'
-      tags: *ref_38
+      tags: *ref_39
       x-speakeasy-group: marketingautomation.emails
   /marketingautomation/events:
     get:
@@ -3687,7 +3784,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationEventOutput
-      tags: &ref_39
+      tags: &ref_40
         - marketingautomation/events
       x-speakeasy-group: marketingautomation.events
   /marketingautomation/events/{id}:
@@ -3725,7 +3822,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationEventOutput'
-      tags: *ref_39
+      tags: *ref_40
       x-speakeasy-group: marketingautomation.events
   /marketingautomation/lists:
     get:
@@ -3770,7 +3867,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationListOutput
-      tags: &ref_40
+      tags: &ref_41
         - marketingautomation/lists
       x-speakeasy-group: marketingautomation.lists
     post:
@@ -3805,7 +3902,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationListOutput'
-      tags: *ref_40
+      tags: *ref_41
       x-speakeasy-group: marketingautomation.lists
   /marketingautomation/lists/{id}:
     get:
@@ -3842,7 +3939,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationListOutput'
-      tags: *ref_40
+      tags: *ref_41
       x-speakeasy-group: marketingautomation.lists
   /marketingautomation/messages:
     get:
@@ -3887,7 +3984,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationMessageOutput
-      tags: &ref_41
+      tags: &ref_42
         - marketingautomation/messages
       x-speakeasy-group: marketingautomation.messages
   /marketingautomation/messages/{id}:
@@ -3925,7 +4022,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationMessageOutput'
-      tags: *ref_41
+      tags: *ref_42
       x-speakeasy-group: marketingautomation.messages
   /marketingautomation/templates:
     get:
@@ -3970,7 +4067,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationTemplateOutput
-      tags: &ref_42
+      tags: &ref_43
         - marketingautomation/templates
       x-speakeasy-group: marketingautomation.templates
     post:
@@ -4005,7 +4102,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationTemplateOutput'
-      tags: *ref_42
+      tags: *ref_43
       x-speakeasy-group: marketingautomation.templates
   /marketingautomation/templates/{id}:
     get:
@@ -4042,7 +4139,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationTemplateOutput'
-      tags: *ref_42
+      tags: *ref_43
       x-speakeasy-group: marketingautomation.templates
   /marketingautomation/users:
     get:
@@ -4087,7 +4184,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedMarketingautomationUserOutput
-      tags: &ref_43
+      tags: &ref_44
         - marketingautomation/users
       x-speakeasy-group: marketingautomation.users
   /marketingautomation/users/{id}:
@@ -4125,7 +4222,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedMarketingautomationUserOutput'
-      tags: *ref_43
+      tags: *ref_44
       x-speakeasy-group: marketingautomation.users
   /ats/activities:
     get:
@@ -4169,7 +4266,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsActivityOutput'
-      tags: &ref_44
+      tags: &ref_45
         - ats/activities
       x-speakeasy-group: ats.activities
     post:
@@ -4203,7 +4300,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsActivityOutput'
-      tags: *ref_44
+      tags: *ref_45
       x-speakeasy-group: ats.activities
   /ats/activities/{id}:
     get:
@@ -4238,7 +4335,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsActivityOutput'
-      tags: *ref_44
+      tags: *ref_45
       x-speakeasy-group: ats.activities
   /ats/applications:
     get:
@@ -4282,7 +4379,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
-      tags: &ref_45
+      tags: &ref_46
         - ats/applications
       x-speakeasy-group: ats.applications
     post:
@@ -4316,7 +4413,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
-      tags: *ref_45
+      tags: *ref_46
       x-speakeasy-group: ats.applications
   /ats/applications/{id}:
     get:
@@ -4351,7 +4448,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
-      tags: *ref_45
+      tags: *ref_46
       x-speakeasy-group: ats.applications
   /ats/attachments:
     get:
@@ -4395,7 +4492,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
-      tags: &ref_46
+      tags: &ref_47
         - ats/attachments
       x-speakeasy-group: ats.attachments
     post:
@@ -4429,7 +4526,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
-      tags: *ref_46
+      tags: *ref_47
       x-speakeasy-group: ats.attachments
   /ats/attachments/{id}:
     get:
@@ -4464,7 +4561,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
-      tags: *ref_46
+      tags: *ref_47
       x-speakeasy-group: ats.attachments
   /ats/candidates:
     get:
@@ -4508,7 +4605,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
-      tags: &ref_47
+      tags: &ref_48
         - ats/candidates
       x-speakeasy-group: ats.candidates
     post:
@@ -4542,7 +4639,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
-      tags: *ref_47
+      tags: *ref_48
       x-speakeasy-group: ats.candidates
   /ats/candidates/{id}:
     get:
@@ -4577,7 +4674,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsCandidateOutput'
-      tags: *ref_47
+      tags: *ref_48
       x-speakeasy-group: ats.candidates
   /ats/departments:
     get:
@@ -4621,7 +4718,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsDepartmentOutput'
-      tags: &ref_48
+      tags: &ref_49
         - ats/departments
       x-speakeasy-group: ats.departments
   /ats/departments/{id}:
@@ -4657,7 +4754,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsDepartmentOutput'
-      tags: *ref_48
+      tags: *ref_49
       x-speakeasy-group: ats.departments
   /ats/interviews:
     get:
@@ -4701,7 +4798,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
-      tags: &ref_49
+      tags: &ref_50
         - ats/interviews
       x-speakeasy-group: ats.interviews
     post:
@@ -4735,7 +4832,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
-      tags: *ref_49
+      tags: *ref_50
       x-speakeasy-group: ats.interviews
   /ats/interviews/{id}:
     get:
@@ -4770,7 +4867,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsInterviewOutput'
-      tags: *ref_49
+      tags: *ref_50
       x-speakeasy-group: ats.interviews
   /ats/jobinterviewstages:
     get:
@@ -4815,7 +4912,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAtsJobinterviewstageOutput
-      tags: &ref_50
+      tags: &ref_51
         - ats/jobinterviewstages
       x-speakeasy-group: ats.jobinterviewstages
   /ats/jobinterviewstages/{id}:
@@ -4851,7 +4948,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsJobinterviewstageOutput'
-      tags: *ref_50
+      tags: *ref_51
       x-speakeasy-group: ats.jobinterviewstages
   /ats/jobs:
     get:
@@ -4895,7 +4992,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsJobOutput'
-      tags: &ref_51
+      tags: &ref_52
         - ats/jobs
       x-speakeasy-group: ats.jobs
   /ats/jobs/{id}:
@@ -4931,7 +5028,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsJobOutput'
-      tags: *ref_51
+      tags: *ref_52
       x-speakeasy-group: ats.jobs
   /ats/offers:
     get:
@@ -4975,7 +5072,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsOfferOutput'
-      tags: &ref_52
+      tags: &ref_53
         - ats/offers
       x-speakeasy-group: ats.offers
   /ats/offers/{id}:
@@ -5011,7 +5108,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsOfferOutput'
-      tags: *ref_52
+      tags: *ref_53
       x-speakeasy-group: ats.offers
   /ats/offices:
     get:
@@ -5055,7 +5152,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsOfficeOutput'
-      tags: &ref_53
+      tags: &ref_54
         - ats/offices
       x-speakeasy-group: ats.offices
   /ats/offices/{id}:
@@ -5091,7 +5188,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsOfficeOutput'
-      tags: *ref_53
+      tags: *ref_54
       x-speakeasy-group: ats.offices
   /ats/rejectreasons:
     get:
@@ -5135,7 +5232,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsRejectreasonOutput'
-      tags: &ref_54
+      tags: &ref_55
         - ats/rejectreasons
       x-speakeasy-group: ats.rejectreasons
   /ats/rejectreasons/{id}:
@@ -5171,7 +5268,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsRejectreasonOutput'
-      tags: *ref_54
+      tags: *ref_55
       x-speakeasy-group: ats.rejectreasons
   /ats/scorecards:
     get:
@@ -5215,7 +5312,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsScorecardOutput'
-      tags: &ref_55
+      tags: &ref_56
         - ats/scorecards
       x-speakeasy-group: ats.scorecards
   /ats/scorecards/{id}:
@@ -5251,7 +5348,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsScorecardOutput'
-      tags: *ref_55
+      tags: *ref_56
       x-speakeasy-group: ats.scorecards
   /ats/tags:
     get:
@@ -5295,7 +5392,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsTagOutput'
-      tags: &ref_56
+      tags: &ref_57
         - ats/tags
       x-speakeasy-group: ats.tags
   /ats/tags/{id}:
@@ -5331,7 +5428,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsTagOutput'
-      tags: *ref_56
+      tags: *ref_57
       x-speakeasy-group: ats.tags
   /ats/users:
     get:
@@ -5375,7 +5472,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsUserOutput'
-      tags: &ref_57
+      tags: &ref_58
         - ats/users
       x-speakeasy-group: ats.users
   /ats/users/{id}:
@@ -5411,7 +5508,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsUserOutput'
-      tags: *ref_57
+      tags: *ref_58
       x-speakeasy-group: ats.users
   /ats/eeocs:
     get:
@@ -5455,7 +5552,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAtsEeocsOutput'
-      tags: &ref_58
+      tags: &ref_59
         - ats/eeocs
       x-speakeasy-group: ats.eeocs
   /ats/eeocs/{id}:
@@ -5489,7 +5586,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAtsEeocsOutput'
-      tags: *ref_58
+      tags: *ref_59
       x-speakeasy-group: ats.eeocs
   /accounting/accounts:
     get:
@@ -5533,7 +5630,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
-      tags: &ref_59
+      tags: &ref_60
         - accounting/accounts
       x-speakeasy-group: accounting.accounts
     post:
@@ -5567,7 +5664,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
-      tags: *ref_59
+      tags: *ref_60
       x-speakeasy-group: accounting.accounts
   /accounting/accounts/{id}:
     get:
@@ -5602,7 +5699,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAccountOutput'
-      tags: *ref_59
+      tags: *ref_60
       x-speakeasy-group: accounting.accounts
   /accounting/addresses:
     get:
@@ -5646,7 +5743,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingAddressOutput'
-      tags: &ref_60
+      tags: &ref_61
         - accounting/addresses
       x-speakeasy-group: accounting.addresses
   /accounting/addresses/{id}:
@@ -5682,7 +5779,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAddressOutput'
-      tags: *ref_60
+      tags: *ref_61
       x-speakeasy-group: accounting.addresses
   /accounting/attachments:
     get:
@@ -5727,7 +5824,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingAttachmentOutput
-      tags: &ref_61
+      tags: &ref_62
         - accounting/attachments
       x-speakeasy-group: accounting.attachments
     post:
@@ -5761,7 +5858,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAttachmentOutput'
-      tags: *ref_61
+      tags: *ref_62
       x-speakeasy-group: accounting.attachments
   /accounting/attachments/{id}:
     get:
@@ -5796,7 +5893,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingAttachmentOutput'
-      tags: *ref_61
+      tags: *ref_62
       x-speakeasy-group: accounting.attachments
   /accounting/balancesheets:
     get:
@@ -5841,7 +5938,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingBalancesheetOutput
-      tags: &ref_62
+      tags: &ref_63
         - accounting/balancesheets
       x-speakeasy-group: accounting.balancesheets
   /accounting/balancesheets/{id}:
@@ -5877,7 +5974,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingBalancesheetOutput'
-      tags: *ref_62
+      tags: *ref_63
       x-speakeasy-group: accounting.balancesheets
   /accounting/cashflowstatements:
     get:
@@ -5922,7 +6019,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingCashflowstatementOutput
-      tags: &ref_63
+      tags: &ref_64
         - accounting/cashflowstatements
       x-speakeasy-group: accounting.cashflowstatements
   /accounting/cashflowstatements/{id}:
@@ -5958,7 +6055,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingCashflowstatementOutput'
-      tags: *ref_63
+      tags: *ref_64
       x-speakeasy-group: accounting.cashflowstatements
   /accounting/companyinfos:
     get:
@@ -6003,7 +6100,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingCompanyinfoOutput
-      tags: &ref_64
+      tags: &ref_65
         - accounting/companyinfos
       x-speakeasy-group: accounting.companyinfos
   /accounting/companyinfos/{id}:
@@ -6039,7 +6136,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingCompanyinfoOutput'
-      tags: *ref_64
+      tags: *ref_65
       x-speakeasy-group: accounting.companyinfos
   /accounting/contacts:
     get:
@@ -6083,7 +6180,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingContactOutput'
-      tags: &ref_65
+      tags: &ref_66
         - accounting/contacts
       x-speakeasy-group: accounting.contacts
     post:
@@ -6117,7 +6214,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingContactOutput'
-      tags: *ref_65
+      tags: *ref_66
       x-speakeasy-group: accounting.contacts
   /accounting/contacts/{id}:
     get:
@@ -6152,7 +6249,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingContactOutput'
-      tags: *ref_65
+      tags: *ref_66
       x-speakeasy-group: accounting.contacts
   /accounting/creditnotes:
     get:
@@ -6197,7 +6294,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingCreditnoteOutput
-      tags: &ref_66
+      tags: &ref_67
         - accounting/creditnotes
       x-speakeasy-group: accounting.creditnotes
   /accounting/creditnotes/{id}:
@@ -6233,7 +6330,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingCreditnoteOutput'
-      tags: *ref_66
+      tags: *ref_67
       x-speakeasy-group: accounting.creditnotes
   /accounting/expenses:
     get:
@@ -6277,7 +6374,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
-      tags: &ref_67
+      tags: &ref_68
         - accounting/expenses
       x-speakeasy-group: accounting.expenses
     post:
@@ -6311,7 +6408,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
-      tags: *ref_67
+      tags: *ref_68
       x-speakeasy-group: accounting.expenses
   /accounting/expenses/{id}:
     get:
@@ -6346,7 +6443,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingExpenseOutput'
-      tags: *ref_67
+      tags: *ref_68
       x-speakeasy-group: accounting.expenses
   /accounting/incomestatements:
     get:
@@ -6391,7 +6488,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingIncomestatementOutput
-      tags: &ref_68
+      tags: &ref_69
         - accounting/incomestatements
       x-speakeasy-group: accounting.incomestatements
   /accounting/incomestatements/{id}:
@@ -6427,7 +6524,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingIncomestatementOutput'
-      tags: *ref_68
+      tags: *ref_69
       x-speakeasy-group: accounting.incomestatements
   /accounting/invoices:
     get:
@@ -6471,7 +6568,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
-      tags: &ref_69
+      tags: &ref_70
         - accounting/invoices
       x-speakeasy-group: accounting.invoices
     post:
@@ -6505,7 +6602,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
-      tags: *ref_69
+      tags: *ref_70
       x-speakeasy-group: accounting.invoices
   /accounting/invoices/{id}:
     get:
@@ -6540,7 +6637,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingInvoiceOutput'
-      tags: *ref_69
+      tags: *ref_70
       x-speakeasy-group: accounting.invoices
   /accounting/items:
     get:
@@ -6584,7 +6681,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingItemOutput'
-      tags: &ref_70
+      tags: &ref_71
         - accounting/items
       x-speakeasy-group: accounting.items
   /accounting/items/{id}:
@@ -6620,7 +6717,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingItemOutput'
-      tags: *ref_70
+      tags: *ref_71
       x-speakeasy-group: accounting.items
   /accounting/journalentries:
     get:
@@ -6665,7 +6762,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingJournalentryOutput
-      tags: &ref_71
+      tags: &ref_72
         - accounting/journalentries
       x-speakeasy-group: accounting.journalentries
     post:
@@ -6699,7 +6796,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingJournalentryOutput'
-      tags: *ref_71
+      tags: *ref_72
       x-speakeasy-group: accounting.journalentries
   /accounting/journalentries/{id}:
     get:
@@ -6734,7 +6831,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingJournalentryOutput'
-      tags: *ref_71
+      tags: *ref_72
       x-speakeasy-group: accounting.journalentries
   /accounting/payments:
     get:
@@ -6778,7 +6875,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
-      tags: &ref_72
+      tags: &ref_73
         - accounting/payments
       x-speakeasy-group: accounting.payments
     post:
@@ -6812,7 +6909,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
-      tags: *ref_72
+      tags: *ref_73
       x-speakeasy-group: accounting.payments
   /accounting/payments/{id}:
     get:
@@ -6847,7 +6944,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPaymentOutput'
-      tags: *ref_72
+      tags: *ref_73
       x-speakeasy-group: accounting.payments
   /accounting/phonenumbers:
     get:
@@ -6892,7 +6989,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingPhonenumberOutput
-      tags: &ref_73
+      tags: &ref_74
         - accounting/phonenumbers
       x-speakeasy-group: accounting.phonenumbers
   /accounting/phonenumbers/{id}:
@@ -6928,7 +7025,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPhonenumberOutput'
-      tags: *ref_73
+      tags: *ref_74
       x-speakeasy-group: accounting.phonenumbers
   /accounting/purchaseorders:
     get:
@@ -6973,7 +7070,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingPurchaseorderOutput
-      tags: &ref_74
+      tags: &ref_75
         - accounting/purchaseorders
       x-speakeasy-group: accounting.purchaseorders
     post:
@@ -7007,7 +7104,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPurchaseorderOutput'
-      tags: *ref_74
+      tags: *ref_75
       x-speakeasy-group: accounting.purchaseorders
   /accounting/purchaseorders/{id}:
     get:
@@ -7042,7 +7139,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingPurchaseorderOutput'
-      tags: *ref_74
+      tags: *ref_75
       x-speakeasy-group: accounting.purchaseorders
   /accounting/taxrates:
     get:
@@ -7086,7 +7183,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedAccountingTaxrateOutput'
-      tags: &ref_75
+      tags: &ref_76
         - accounting/taxrates
       x-speakeasy-group: accounting.taxrates
   /accounting/taxrates/{id}:
@@ -7122,7 +7219,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingTaxrateOutput'
-      tags: *ref_75
+      tags: *ref_76
       x-speakeasy-group: accounting.taxrates
   /accounting/trackingcategories:
     get:
@@ -7167,7 +7264,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingTrackingcategoryOutput
-      tags: &ref_76
+      tags: &ref_77
         - accounting/trackingcategories
       x-speakeasy-group: accounting.trackingcategories
   /accounting/trackingcategories/{id}:
@@ -7203,7 +7300,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingTrackingcategoryOutput'
-      tags: *ref_76
+      tags: *ref_77
       x-speakeasy-group: accounting.trackingcategories
   /accounting/transactions:
     get:
@@ -7248,7 +7345,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingTransactionOutput
-      tags: &ref_77
+      tags: &ref_78
         - accounting/transactions
       x-speakeasy-group: accounting.transactions
   /accounting/transactions/{id}:
@@ -7284,7 +7381,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingTransactionOutput'
-      tags: *ref_77
+      tags: *ref_78
       x-speakeasy-group: accounting.transactions
   /accounting/vendorcredits:
     get:
@@ -7329,7 +7426,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedAccountingVendorcreditOutput
-      tags: &ref_78
+      tags: &ref_79
         - accounting/vendorcredits
       x-speakeasy-group: accounting.vendorcredits
   /accounting/vendorcredits/{id}:
@@ -7365,7 +7462,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedAccountingVendorcreditOutput'
-      tags: *ref_78
+      tags: *ref_79
       x-speakeasy-group: accounting.vendorcredits
   /filestorage/drives:
     get:
@@ -7409,7 +7506,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageDriveOutput'
-      tags: &ref_79
+      tags: &ref_80
         - filestorage/drives
       x-speakeasy-group: filestorage.drives
   /filestorage/drives/{id}:
@@ -7445,7 +7542,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageDriveOutput'
-      tags: *ref_79
+      tags: *ref_80
       x-speakeasy-group: filestorage.drives
   /filestorage/files:
     get:
@@ -7489,7 +7586,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
-      tags: &ref_80
+      tags: &ref_81
         - filestorage/files
       x-speakeasy-group: filestorage.files
     post:
@@ -7521,7 +7618,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
-      tags: *ref_80
+      tags: *ref_81
       x-speakeasy-group: filestorage.files
   /filestorage/files/{id}:
     get:
@@ -7556,7 +7653,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
-      tags: *ref_80
+      tags: *ref_81
       x-speakeasy-group: filestorage.files
   /filestorage/folders:
     get:
@@ -7600,7 +7697,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
-      tags: &ref_81
+      tags: &ref_82
         - filestorage/folders
       x-speakeasy-group: filestorage.folders
     post:
@@ -7632,7 +7729,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
-      tags: *ref_81
+      tags: *ref_82
       x-speakeasy-group: filestorage.folders
   /filestorage/folders/{id}:
     get:
@@ -7667,7 +7764,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
-      tags: *ref_81
+      tags: *ref_82
       x-speakeasy-group: filestorage.folders
   /filestorage/groups:
     get:
@@ -7711,7 +7808,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageGroupOutput'
-      tags: &ref_82
+      tags: &ref_83
         - filestorage/groups
       x-speakeasy-group: filestorage.groups
   /filestorage/groups/{id}:
@@ -7747,7 +7844,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageGroupOutput'
-      tags: *ref_82
+      tags: *ref_83
       x-speakeasy-group: filestorage.groups
   /filestorage/users:
     get:
@@ -7791,7 +7888,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
-      tags: &ref_83
+      tags: &ref_84
         - filestorage/users
       x-speakeasy-group: filestorage.users
   /filestorage/users/{id}:
@@ -7827,7 +7924,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
-      tags: *ref_83
+      tags: *ref_84
       x-speakeasy-group: filestorage.users
   /ticketing/attachments:
     get:
@@ -7872,7 +7969,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedTicketingAttachmentOutput
-      tags: &ref_84
+      tags: &ref_85
         - ticketing/attachments
       x-speakeasy-group: ticketing.attachments
     post:
@@ -7905,7 +8002,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
-      tags: *ref_84
+      tags: *ref_85
       x-speakeasy-group: ticketing.attachments
   /ticketing/attachments/{id}:
     get:
@@ -7940,7 +8037,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
-      tags: *ref_84
+      tags: *ref_85
       x-speakeasy-group: ticketing.attachments
 info:
   title: Panora API
@@ -7962,6 +8059,94 @@ components:
       in: header
       name: x-api-key
   schemas:
+    LoginDto:
+      type: object
+      properties:
+        id_user:
+          type: string
+        email:
+          type: string
+        password_hash:
+          type: string
+      required:
+        - id_user
+        - email
+        - password_hash
+    Connection:
+      type: object
+      properties:
+        id_connection:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: Unique identifier for the connection
+        status:
+          type: string
+          example: active
+          description: Status of the connection
+        provider_slug:
+          type: string
+          example: hubspot
+          description: Slug for the provider
+        vertical:
+          type: string
+          example: crm
+          description: Vertical category of the connection
+        account_url:
+          type: string
+          example: https://example.com/account
+          description: URL of the account
+        token_type:
+          type: string
+          example: oauth2
+          enum:
+            - oauth2
+            - apikey
+            - basic
+          description: Strategy type
+        access_token:
+          type: string
+          example: access_token_example
+          description: Access token for the connection
+        refresh_token:
+          type: string
+          example: refresh_token_example
+          description: Refresh token for the connection
+        expiration_timestamp:
+          format: date-time
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          description: Expiration timestamp of the access token
+        created_at:
+          format: date-time
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          description: Timestamp when the connection was created
+        connection_token:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: UUID Token for the connection
+        id_project:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174001
+          description: Project ID associated with the connection
+        id_linked_user:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174002
+          description: Linked user ID associated with the connection
+      required:
+        - id_connection
+        - status
+        - provider_slug
+        - vertical
+        - account_url
+        - token_type
+        - access_token
+        - refresh_token
+        - expiration_timestamp
+        - created_at
+        - connection_token
+        - id_project
+        - id_linked_user
     WebhookResponse:
       type: object
       properties:
@@ -7982,6 +8167,7 @@ components:
           description: The endpoint url of the webhook.
         secret:
           type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The secret of the webhook.
         active:
           type: boolean
@@ -8107,7 +8293,7 @@ components:
           type: string
           nullable: true
           example: USER
-          enum: &ref_111
+          enum: &ref_112
             - USER
             - CONTACT
           description: >-
@@ -8134,7 +8320,7 @@ components:
             specified)
         attachments:
           nullable: true
-          example: &ref_112
+          example: &ref_113
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The attachements UUIDs tied to the comment
           type: array
@@ -8153,7 +8339,7 @@ components:
         status:
           type: string
           example: OPEN
-          enum: &ref_85
+          enum: &ref_86
             - OPEN
             - CLOSED
           nullable: true
@@ -8172,7 +8358,7 @@ components:
         type:
           type: string
           example: BUG
-          enum: &ref_86
+          enum: &ref_87
             - BUG
             - SUBTASK
             - TASK
@@ -8188,12 +8374,12 @@ components:
           description: The UUID of the parent ticket
         collections:
           type: string
-          example: &ref_87
+          example: &ref_88
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
-          example: &ref_88
+          example: &ref_89
             - my_tag
             - urgent_tag
           nullable: true
@@ -8210,7 +8396,7 @@ components:
         priority:
           type: string
           example: HIGH
-          enum: &ref_89
+          enum: &ref_90
             - HIGH
             - MEDIUM
             - LOW
@@ -8219,7 +8405,7 @@ components:
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
-          example: &ref_90
+          example: &ref_91
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The users UUIDs the ticket is assigned to
@@ -8227,7 +8413,7 @@ components:
           items:
             type: string
         comment:
-          example: &ref_91
+          example: &ref_92
             content: Assigned the issue !
           nullable: true
           description: The comment of the ticket
@@ -8244,7 +8430,7 @@ components:
           nullable: true
           description: The UUID of the contact which the ticket belongs to
         attachments:
-          example: &ref_92
+          example: &ref_93
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The attachements UUIDs tied to the ticket
           nullable: true
@@ -8253,7 +8439,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: &ref_93
+          example: &ref_94
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -8306,7 +8492,7 @@ components:
         status:
           type: string
           example: OPEN
-          enum: *ref_85
+          enum: *ref_86
           nullable: true
           description: The status of the ticket. Authorized values are OPEN or CLOSED.
         description:
@@ -8323,7 +8509,7 @@ components:
         type:
           type: string
           example: BUG
-          enum: *ref_86
+          enum: *ref_87
           nullable: true
           description: >-
             The type of the ticket. Authorized values are PROBLEM, QUESTION, or
@@ -8335,11 +8521,11 @@ components:
           description: The UUID of the parent ticket
         collections:
           type: string
-          example: *ref_87
+          example: *ref_88
           nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
-          example: *ref_88
+          example: *ref_89
           nullable: true
           description: The tags names of the ticket
           type: array
@@ -8354,20 +8540,20 @@ components:
         priority:
           type: string
           example: HIGH
-          enum: *ref_89
+          enum: *ref_90
           nullable: true
           description: >-
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
-          example: *ref_90
+          example: *ref_91
           nullable: true
           description: The users UUIDs the ticket is assigned to
           type: array
           items:
             type: string
         comment:
-          example: *ref_91
+          example: *ref_92
           nullable: true
           description: The comment of the ticket
           allOf:
@@ -8383,7 +8569,7 @@ components:
           nullable: true
           description: The UUID of the contact which the ticket belongs to
         attachments:
-          example: *ref_92
+          example: *ref_93
           description: The attachements UUIDs tied to the ticket
           nullable: true
           type: array
@@ -8391,7 +8577,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: *ref_93
+          example: *ref_94
           nullable: true
           description: >-
             The custom field mappings of the ticket between the remote 3rd party
@@ -8601,15 +8787,31 @@ components:
         timestamp:
           format: date-time
           type: string
+          example: ''
           nullable: true
         vertical:
           type: string
+          example: ticketing
+          enum:
+            - ticketing
+            - ats
+            - accounting
+            - hris
+            - crm
+            - filestorage
+            - ecommerce
+            - marketingautomation
           nullable: true
         provider:
           type: string
+          example: gitlab
           nullable: true
         status:
           type: string
+          example: success
+          enum:
+            - success
+            - fail
           nullable: true
       required:
         - timestamp
@@ -8723,7 +8925,7 @@ components:
         industry:
           type: string
           example: ACCOUNTING
-          enum: &ref_94
+          enum: &ref_95
             - ACCOUNTING
             - AIRLINES_AVIATION
             - ALTERNATIVE_DISPUTE_RESOLUTION
@@ -8887,7 +9089,7 @@ components:
           nullable: true
         email_addresses:
           description: The email addresses of the company
-          example: &ref_95
+          example: &ref_96
             - email_address: acme@gmail.com
               email_address_type: WORK
           nullable: true
@@ -8896,7 +9098,7 @@ components:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
-          example: &ref_96
+          example: &ref_97
             - street_1: 5th Avenue
               city: New York
               state: NY
@@ -8908,7 +9110,7 @@ components:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
-          example: &ref_97
+          example: &ref_98
             - phone_number: '+33660606067'
               phone_type: WORK
           nullable: true
@@ -8917,7 +9119,7 @@ components:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          example: &ref_98
+          example: &ref_99
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -8966,7 +9168,7 @@ components:
         industry:
           type: string
           example: ACCOUNTING
-          enum: *ref_94
+          enum: *ref_95
           description: >-
             The industry of the company. Authorized values can be found in the
             Industry enum.
@@ -8983,28 +9185,28 @@ components:
           nullable: true
         email_addresses:
           description: The email addresses of the company
-          example: *ref_95
+          example: *ref_96
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
-          example: *ref_96
+          example: *ref_97
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
-          example: *ref_97
+          example: *ref_98
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          example: *ref_98
+          example: *ref_99
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
@@ -9028,7 +9230,7 @@ components:
         email_addresses:
           nullable: true
           description: The email addresses of the contact
-          example: &ref_99
+          example: &ref_100
             - email: john.doe@example.com
               type: WORK
           type: array
@@ -9037,7 +9239,7 @@ components:
         phone_numbers:
           nullable: true
           description: The phone numbers of the contact
-          example: &ref_100
+          example: &ref_101
             - phone: '1234567890'
               type: WORK
           type: array
@@ -9046,7 +9248,7 @@ components:
         addresses:
           nullable: true
           description: The addresses of the contact
-          example: &ref_101
+          example: &ref_102
             - street: 123 Main St
               city: Anytown
               state: CA
@@ -9063,7 +9265,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: &ref_102
+          example: &ref_103
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -9120,21 +9322,21 @@ components:
         email_addresses:
           nullable: true
           description: The email addresses of the contact
-          example: *ref_99
+          example: *ref_100
           type: array
           items:
             $ref: '#/components/schemas/Email'
         phone_numbers:
           nullable: true
           description: The phone numbers of the contact
-          example: *ref_100
+          example: *ref_101
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         addresses:
           nullable: true
           description: The addresses of the contact
-          example: *ref_101
+          example: *ref_102
           type: array
           items:
             $ref: '#/components/schemas/Address'
@@ -9145,7 +9347,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: *ref_102
+          example: *ref_103
           nullable: true
           description: >-
             The custom field mappings of the contact between the remote 3rd
@@ -9190,7 +9392,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_103
+          example: &ref_104
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -9267,7 +9469,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_103
+          example: *ref_104
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
@@ -9288,7 +9490,7 @@ components:
           type: string
           nullable: true
           example: INBOUND
-          enum: &ref_104
+          enum: &ref_105
             - INBOUND
             - OUTBOUND
           description: >-
@@ -9315,7 +9517,7 @@ components:
           type: string
           nullable: true
           example: MEETING
-          enum: &ref_105
+          enum: &ref_106
             - EMAIL
             - CALL
             - MEETING
@@ -9334,7 +9536,7 @@ components:
           description: The UUID of the company tied to the engagement
         contacts:
           nullable: true
-          example: &ref_106
+          example: &ref_107
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The UUIDs of contacts tied to the engagement object
           type: array
@@ -9343,7 +9545,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_107
+          example: &ref_108
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -9396,7 +9598,7 @@ components:
           type: string
           nullable: true
           example: INBOUND
-          enum: *ref_104
+          enum: *ref_105
           description: >-
             The direction of the engagement. Authorized values are INBOUND or
             OUTBOUND
@@ -9421,7 +9623,7 @@ components:
           type: string
           nullable: true
           example: MEETING
-          enum: *ref_105
+          enum: *ref_106
           description: >-
             The type of the engagement. Authorized values are EMAIL, CALL or
             MEETING
@@ -9437,7 +9639,7 @@ components:
           description: The UUID of the company tied to the engagement
         contacts:
           nullable: true
-          example: *ref_106
+          example: *ref_107
           description: The UUIDs of contacts tied to the engagement object
           type: array
           items:
@@ -9445,7 +9647,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_107
+          example: *ref_108
           description: >-
             The custom field mappings of the engagement between the remote 3rd
             party & Panora
@@ -9482,7 +9684,7 @@ components:
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          example: &ref_108
+          example: &ref_109
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -9552,7 +9754,7 @@ components:
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          example: *ref_108
+          example: *ref_109
           nullable: true
           description: >-
             The custom field mappings of the note between the remote 3rd party &
@@ -9624,7 +9826,7 @@ components:
         status:
           type: string
           example: PENDING
-          enum: &ref_109
+          enum: &ref_110
             - PENDING
             - COMPLETED
           description: The status of the task. Authorized values are PENDING, COMPLETED.
@@ -9656,7 +9858,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_110
+          example: &ref_111
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -9715,7 +9917,7 @@ components:
         status:
           type: string
           example: PENDING
-          enum: *ref_109
+          enum: *ref_110
           description: The status of the task. Authorized values are PENDING, COMPLETED.
           nullable: true
         due_date:
@@ -9745,7 +9947,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_110
+          example: *ref_111
           description: >-
             The custom field mappings of the task between the remote 3rd party &
             Panora
@@ -9888,7 +10090,7 @@ components:
           type: string
           nullable: true
           example: USER
-          enum: *ref_111
+          enum: *ref_112
           description: >-
             The creator type of the comment. Authorized values are either USER
             or CONTACT
@@ -9913,7 +10115,7 @@ components:
             specified)
         attachments:
           nullable: true
-          example: *ref_112
+          example: *ref_113
           description: The attachements UUIDs tied to the comment
           type: array
           items:
@@ -10113,6 +10315,63 @@ components:
       required:
         - linked_user_origin_ids
         - alias
+    ProjectResponse:
+      type: object
+      properties:
+        id_project:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: Unique identifier for the project
+        name:
+          type: string
+          example: My Project
+          description: Name of the project
+        sync_mode:
+          type: string
+          example: automatic
+          description: Synchronization mode of the project
+        pull_frequency:
+          type: number
+          example: 3600
+          description: Frequency of pulling data in seconds
+        redirect_url:
+          type: string
+          example: https://example.com/redirect
+          description: Redirect URL for the project
+        id_user:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174001
+          description: User ID associated with the project
+        id_connector_set:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174002
+          description: Connector set ID associated with the project
+      required:
+        - id_project
+        - name
+        - sync_mode
+        - pull_frequency
+        - redirect_url
+        - id_user
+        - id_connector_set
+    CreateProjectDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Project Name
+          description: The name of the project
+        id_organization:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          description: The organization ID
+        id_user:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          description: The user ID
+      required:
+        - name
+        - id_user
     CustomFieldResponse:
       type: object
       properties:
@@ -10332,6 +10591,129 @@ components:
         - source_custom_field_id
         - source_provider
         - linked_user_id
+    EventResponse:
+      type: object
+      properties:
+        id_event:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: Unique identifier for the event
+        id_connection:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174001
+          description: Connection ID associated with the event
+        id_project:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174002
+          description: Project ID associated with the event
+        type:
+          type: string
+          example: connection.created
+          enum:
+            - crm.contact.created
+            - crm.contact.pulled
+            - crm.company.created
+            - crm.company.pulled
+            - crm.deal.created
+            - crm.deal.pulled
+            - crm.engagement.created
+            - crm.engagement.pulled
+            - crm.note.created
+            - crm.note.pulled
+            - crm.stage.pulled
+            - crm.task.pulled
+            - crm.task.created
+            - crm.user.pulled
+            - ticketing.ticket.created
+            - ticketing.ticket.pulled
+            - ticketing.comment.created
+            - ticketing.comment.pulled
+            - ticketing.attachment.created
+            - ticketing.attachment.pulled
+            - ticketing.collection.pulled
+            - ticketing.account.pulled
+            - ticketing.contact.pulled
+            - ticketing.tag.pulled
+            - ticketing.team.pulled
+            - ticketing.user.pulled
+            - ats.activity.created
+            - ats.activity.pulled
+            - ats.application.created
+            - ats.application.pulled
+            - ats.attachment.created
+            - ats.attachment.pulled
+            - ats.candidate.created
+            - ats.candidate.pulled
+            - ats.department.pulled
+            - ats.eecos.pulled
+            - ats.interview.created
+            - ats.interview.pulled
+            - ats.job.pulled
+            - ats.jobinterviewstage.pulled
+            - ats.offer.created
+            - ats.office.pulled
+            - ats.rejectreason.pulled
+            - ats.scorecard.pulled
+            - ats.tag.pulled
+            - ats.user.pulled
+            - filestorage.file.pulled
+            - filestorage.folder.pulled
+            - filestorage.group.pulled
+            - filestorage.user.pulled
+            - filestorage.drive.pulled
+            - filestorage.permission.pulled
+            - filestorage.sharedlink.pulled
+            - connection.created
+          description: Scope of the event
+        status:
+          type: string
+          example: success
+          enum:
+            - success
+            - fail
+          description: Status of the event
+        direction:
+          type: string
+          example: '0'
+          description: Direction of the event
+        method:
+          type: string
+          example: POST
+          enum:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+          description: HTTP method used for the event
+        url:
+          type: string
+          example: /crm/companies
+          description: URL associated with the event
+        provider:
+          type: string
+          example: hubspot
+          description: Provider associated with the event
+        timestamp:
+          format: date-time
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          description: Timestamp of the event
+        id_linked_user:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174003
+          description: Linked user ID associated with the event
+      required:
+        - id_event
+        - id_connection
+        - id_project
+        - type
+        - status
+        - direction
+        - method
+        - url
+        - provider
+        - timestamp
+        - id_linked_user
     PassThroughResponse:
       type: object
       properties:
@@ -10481,7 +10863,7 @@ components:
       properties:
         activity_type:
           type: string
-          enum: &ref_113
+          enum: &ref_114
             - NOTE
             - EMAIL
             - OTHER
@@ -10500,7 +10882,7 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: &ref_114
+          enum: &ref_115
             - ADMIN_ONLY
             - PUBLIC
             - PRIVATE
@@ -10520,7 +10902,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: &ref_115
+          example: &ref_116
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -10563,7 +10945,7 @@ components:
       properties:
         activity_type:
           type: string
-          enum: *ref_113
+          enum: *ref_114
           example: NOTE
           nullable: true
           description: The type of activity
@@ -10579,7 +10961,7 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: *ref_114
+          enum: *ref_115
           example: PUBLIC
           nullable: true
           description: The visibility of the activity
@@ -10596,7 +10978,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: *ref_115
+          example: *ref_116
           additionalProperties: true
           nullable: true
           description: >-
@@ -10620,7 +11002,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: &ref_116
+          example: &ref_117
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
             - 12345678-1234-1234-1234-123456789012
           type: array
@@ -10657,7 +11039,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: &ref_117
+          example: &ref_118
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -10723,7 +11105,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: *ref_116
+          example: *ref_117
           type: array
           items:
             type: string
@@ -10758,7 +11140,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: *ref_117
+          example: *ref_118
           additionalProperties: true
           nullable: true
           description: >-
@@ -10780,7 +11162,7 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: &ref_118
+          enum: &ref_119
             - RESUME
             - COVER_LETTER
             - OFFER_LETTER
@@ -10806,7 +11188,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: &ref_119
+          example: &ref_120
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -10860,7 +11242,7 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: *ref_118
+          enum: *ref_119
           nullable: true
           description: The type of the file
         remote_created_at:
@@ -10882,7 +11264,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: *ref_119
+          example: *ref_120
           additionalProperties: true
           nullable: true
           description: >-
@@ -10959,7 +11341,7 @@ components:
           nullable: true
           description: The last interaction date with the candidate
         attachments:
-          example: &ref_120
+          example: &ref_121
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The attachments UUIDs of the candidate
@@ -10967,7 +11349,7 @@ components:
           items:
             type: string
         applications:
-          example: &ref_121
+          example: &ref_122
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The applications UUIDs of the candidate
@@ -10975,7 +11357,7 @@ components:
           items:
             type: string
         tags:
-          example: &ref_122
+          example: &ref_123
             - tag_1
             - tag_2
           nullable: true
@@ -10984,7 +11366,7 @@ components:
           items:
             type: string
         urls:
-          example: &ref_123
+          example: &ref_124
             - url: mywebsite.com
               url_type: WEBSITE
           nullable: true
@@ -10995,7 +11377,7 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: &ref_124
+          example: &ref_125
             - phone_number: '+33660688899'
               phone_type: WORK
           nullable: true
@@ -11004,7 +11386,7 @@ components:
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: &ref_125
+          example: &ref_126
             - email_address: joedoe@gmail.com
               email_address_type: WORK
           nullable: true
@@ -11014,7 +11396,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: &ref_126
+          example: &ref_127
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -11109,28 +11491,28 @@ components:
           nullable: true
           description: The last interaction date with the candidate
         attachments:
-          example: *ref_120
+          example: *ref_121
           nullable: true
           description: The attachments UUIDs of the candidate
           type: array
           items:
             type: string
         applications:
-          example: *ref_121
+          example: *ref_122
           nullable: true
           description: The applications UUIDs of the candidate
           type: array
           items:
             type: string
         tags:
-          example: *ref_122
+          example: *ref_123
           nullable: true
           description: The tags of the candidate
           type: array
           items:
             type: string
         urls:
-          example: *ref_123
+          example: *ref_124
           nullable: true
           description: >-
             The urls of the candidate, possible values for Url type are WEBSITE,
@@ -11139,14 +11521,14 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: *ref_124
+          example: *ref_125
           nullable: true
           description: The phone numbers of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: *ref_125
+          example: *ref_126
           nullable: true
           description: The email addresses of the candidate
           type: array
@@ -11154,7 +11536,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: *ref_126
+          example: *ref_127
           additionalProperties: true
           nullable: true
           description: >-
@@ -11214,7 +11596,7 @@ components:
       properties:
         status:
           type: string
-          enum: &ref_127
+          enum: &ref_128
             - SCHEDULED
             - AWAITING_FEEDBACK
             - COMPLETED
@@ -11237,7 +11619,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: &ref_128
+          example: &ref_129
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the interviewers
@@ -11275,7 +11657,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: &ref_129
+          example: &ref_130
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -11318,7 +11700,7 @@ components:
       properties:
         status:
           type: string
-          enum: *ref_127
+          enum: *ref_128
           example: SCHEDULED
           nullable: true
           description: The status of the interview
@@ -11338,7 +11720,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: *ref_128
+          example: *ref_129
           nullable: true
           description: The UUIDs of the interviewers
           type: array
@@ -11375,7 +11757,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: *ref_129
+          example: *ref_130
           additionalProperties: true
           nullable: true
           description: >-
@@ -12259,7 +12641,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_130
+          example: &ref_131
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -12345,7 +12727,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_130
+          example: *ref_131
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -12403,7 +12785,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: &ref_131
+          example: &ref_132
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -12494,7 +12876,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: *ref_131
+          example: *ref_132
           additionalProperties: true
           nullable: true
           description: >-
@@ -12668,7 +13050,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_132
+          example: &ref_133
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -12740,7 +13122,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_132
+          example: *ref_133
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora

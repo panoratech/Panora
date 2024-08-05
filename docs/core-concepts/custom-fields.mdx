@@ -57,7 +57,7 @@ The following example creates a custom field mapping in two steps (**define and 
 ```shell Create custom field
 curl --request POST \
          --url https://api.panora.dev/field_mappings \
-         --header 'Authorization: Bearer <MY_API_KEY>' \
+         --header 'x-api-key: <api-key>' \
          --header 'Content-Type: application/json' \
          --data '{
             "object_type_owner": "crm.contact",
@@ -77,7 +77,7 @@ The following example creates a custom field mapping in two steps (**define and 
         ```shell Define custom field
         curl --request POST \
              --url https://api.panora.dev/field_mappings/definitions \
-             --header 'Authorization: Bearer <MY_API_KEY>' \
+             --header 'x-api-key: <api-key>' \
              --header 'Content-Type: application/json' \
              --data '{
                 "object_type_owner": "crm.contact",
@@ -90,7 +90,7 @@ The following example creates a custom field mapping in two steps (**define and 
         ```shell Map custom field
         curl --request POST \
              --url https://api.panora.dev/field_mappings/mappings \
-             --header 'Authorization: Bearer <MY_API_KEY>' \
+             --header 'x-api-key: <api-key>' \
              --header 'Content-Type: application/json' \
              --data '{
                 "attributeId": "id_defined_field", # retrieve that from response of the /define request

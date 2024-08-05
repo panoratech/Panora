@@ -8,7 +8,7 @@ const useProjects = () => {
   return useQuery({
     queryKey: ['projects'], 
     queryFn: async (): Promise<Project[]> => {
-      const response = await fetch(`${config.API_URL}/projects`,
+      const response = await fetch(`${config.API_URL}/projects/internal`,
       {
         method: 'GET',
         headers: {

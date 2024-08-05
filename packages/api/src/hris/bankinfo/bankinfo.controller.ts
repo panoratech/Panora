@@ -32,7 +32,7 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('hris/bankinfos')
 @Controller('hris/bankinfos')
 export class BankinfoController {
