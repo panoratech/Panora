@@ -32,6 +32,8 @@ export class TaxRateService {
     id_taxrateing_taxrate: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingTaxrateOutput> {
     return;
@@ -39,6 +41,7 @@ export class TaxRateService {
 
   async getTaxRates(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -9693,7 +9693,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/UnifiedCampaignOutput'
+                          $ref: '#/components/schemas/UnifiedMarketingautomationCampaignOutput'
       tags: &ref_64
         - marketingautomation/campaigns
       security: &ref_65
@@ -9798,7 +9798,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedCampaignOutput'
+                $ref: '#/components/schemas/UnifiedMarketingautomationCampaignOutput'
       tags: *ref_64
       security: *ref_65
       x-speakeasy-group: marketingautomation.campaigns
@@ -9864,7 +9864,7 @@ paths:
                 if err != nil {
                     log.Fatal(err)
                 }
-                if res.UnifiedCampaignOutput != nil {
+                if res.UnifiedMarketingautomationCampaignOutput != nil {
                     // handle response
                 }
             }
@@ -9902,7 +9902,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedCampaignOutput'
+                $ref: '#/components/schemas/UnifiedMarketingautomationCampaignOutput'
       tags: *ref_64
       security: *ref_65
       x-speakeasy-group: marketingautomation.campaigns
@@ -9967,7 +9967,7 @@ paths:
                 if err != nil {
                     log.Fatal(err)
                 }
-                if res.UnifiedCampaignOutput != nil {
+                if res.UnifiedMarketingautomationCampaignOutput != nil {
                     // handle response
                 }
             }
@@ -22043,7 +22043,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/UnifiedUserOutput'
+                          $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
       tags: &ref_158
         - filestorage/users
       security: &ref_159
@@ -22148,7 +22148,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedUserOutput'
+                $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
       tags: *ref_158
       security: *ref_159
       x-speakeasy-group: filestorage.users
@@ -22213,7 +22213,7 @@ paths:
                 if err != nil {
                     log.Fatal(err)
                 }
-                if res.UnifiedUserOutput != nil {
+                if res.UnifiedFilestorageUserOutput != nil {
                     // handle response
                 }
             }
@@ -23938,7 +23938,7 @@ components:
     UnifiedMarketingautomationAutomationInput:
       type: object
       properties: {}
-    UnifiedCampaignOutput:
+    UnifiedMarketingautomationCampaignOutput:
       type: object
       properties: {}
     UnifiedMarketingautomationCampaignInput:
@@ -25256,7 +25256,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedUserOutput:
+    UnifiedFilestorageUserOutput:
       type: object
       properties:
         name:

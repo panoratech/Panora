@@ -13,6 +13,8 @@ export type InterviewStatus = 'SCHEDULED' | 'AWAITING_FEEDBACK' | 'COMPLETED';
 export class UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
+    enum: ['SCHEDULED', 'AWAITING_FEEDBACK', 'COMPLETED'],
+    example: 'SCHEDULED',
     description: 'The status of the interview',
   })
   @IsIn(['SCHEDULED', 'AWAITING_FEEDBACK', 'COMPLETED'])
@@ -21,6 +23,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the application',
   })
   @IsUUID()
@@ -29,6 +32,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the job interview stage',
   })
   @IsUUID()
@@ -37,6 +41,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the organizer',
   })
   @IsUUID()
@@ -45,6 +50,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: [String],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     description: 'The UUIDs of the interviewers',
   })
   @IsArray()
@@ -53,6 +59,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'San Francisco',
     description: 'The location of the interview',
   })
   @IsString()
@@ -62,6 +69,7 @@ export class UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The start date and time of the interview',
   })
   @IsDateString()
@@ -71,6 +79,7 @@ export class UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The end date and time of the interview',
   })
   @IsDateString()
@@ -80,6 +89,7 @@ export class UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The remote creation date of the interview',
   })
   @IsDateString()
@@ -89,6 +99,7 @@ export class UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The remote modification date of the interview',
   })
   @IsDateString()
@@ -96,7 +107,11 @@ export class UnifiedAtsInterviewInput {
   remote_updated_at?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -107,6 +122,7 @@ export class UnifiedAtsInterviewInput {
 export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the interview',
   })
   @IsUUID()
@@ -115,6 +131,7 @@ export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     description:
       'The remote ID of the interview in the context of the 3rd Party',
   })
@@ -123,7 +140,11 @@ export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The remote data of the interview in the context of the 3rd Party',
   })
@@ -132,6 +153,7 @@ export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
@@ -139,6 +161,7 @@ export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()

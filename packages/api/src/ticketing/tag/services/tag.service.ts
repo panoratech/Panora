@@ -15,6 +15,8 @@ export class TagService {
     id_ticketing_tag: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketingTagOutput> {
     try {
@@ -69,6 +71,8 @@ export class TagService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.tag.pull',
@@ -88,7 +92,8 @@ export class TagService {
   }
 
   async getTags(
-    connection_id: string,
+   connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -200,6 +205,8 @@ export class TagService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.tag.pull',

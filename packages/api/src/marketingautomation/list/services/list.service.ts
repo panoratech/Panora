@@ -27,6 +27,7 @@ export class ListService {
   async addList(
     unifiedListData: UnifiedMarketingautomationListInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -38,6 +39,8 @@ export class ListService {
     id_listing_list: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedMarketingautomationListOutput> {
     return;

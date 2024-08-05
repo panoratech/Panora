@@ -58,14 +58,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
           existingSl = await this.prisma.fs_shared_links.findFirst({
             where: {
               url: sharedLink.url,
-              id_connection: connection_id,
+              id_connection: connectionId,
             },
           });
         } else {
           existingSl = await this.prisma.fs_shared_links.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              id_connection: connectionId,
             },
           });
         }
@@ -101,7 +101,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_fs_shared_link: uuidv4(),
               created_at: new Date(),
               remote_id: originId ?? null,
-              id_connection: connection_id,
+              id_connection: connectionId,
             },
           });
         }

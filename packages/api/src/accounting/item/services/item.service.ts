@@ -29,6 +29,8 @@ export class ItemService {
     id_iteming_item: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingItemOutput> {
     return;
@@ -36,6 +38,7 @@ export class ItemService {
 
   async getItems(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

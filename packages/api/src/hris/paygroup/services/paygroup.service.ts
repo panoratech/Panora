@@ -32,6 +32,8 @@ export class PayGroupService {
     id_paygrouping_paygroup: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisPaygroupOutput> {
     return;
@@ -39,6 +41,7 @@ export class PayGroupService {
 
   async getPayGroups(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

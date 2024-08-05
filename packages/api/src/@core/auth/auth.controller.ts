@@ -16,6 +16,7 @@ import {
   ApiBody,
   ApiExcludeController,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -24,7 +25,6 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
-
 
 @ApiTags('auth')
 @ApiExcludeController()
@@ -45,10 +45,15 @@ export class AuthController {
     return this.authService.register(user);
   }
 
-  @ApiOperation({ operationId: 'requestPasswordReset', summary: 'Request Password Reset' })
+  @ApiOperation({
+    operationId: 'requestPasswordReset',
+    summary: 'Request Password Reset',
+  })
   @ApiBody({ type: RequestPasswordResetDto })
   @Post('request-password-reset')
-  async requestPasswordReset(@Body() requestPasswordResetDto: RequestPasswordResetDto) {
+  async requestPasswordReset(
+    @Body() requestPasswordResetDto: RequestPasswordResetDto,
+  ) {
     return this.authService.requestPasswordReset(requestPasswordResetDto);
   }
 
@@ -94,6 +99,13 @@ export class AuthController {
 
   @ApiOperation({ operationId: 'deleteApiKey', summary: 'Delete API Keys' })
   @ApiResponse({ status: 201 })
+  @ApiParam({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+    description: 'Id of the api key to delete.',
+  })
   @Delete('api-keys/:id')
   @UseGuards(JwtAuthGuard)
   async deleteApiKey(@Param('id') apiKeyId: string) {

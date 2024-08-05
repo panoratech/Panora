@@ -28,13 +28,16 @@ export class CompanyService {
     id_companying_company: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisCompanyOutput> {
     return;
   }
 
-  async getCompanys(
+  async getCompanies(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -28,7 +28,10 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('hris/employments')
@@ -43,8 +46,8 @@ export class EmploymentController {
   }
 
   @ApiOperation({
-    operationId: 'listHrisEmployment',
-    summary: 'List  Employments',
+    operationId: 'listHrisEmployments',
+    summary: 'List Employments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -60,13 +63,14 @@ export class EmploymentController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.employmentService.getEmployments(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -80,20 +84,22 @@ export class EmploymentController {
 
   @ApiOperation({
     operationId: 'retrieveHrisEmployment',
-    summary: 'Retrieve Employments',
-    description: 'Retrieve Employments from any connected Hris software',
+    summary: 'Retrieve Employment',
+    description: 'Retrieve an Employment from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the employment you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -109,7 +115,7 @@ export class EmploymentController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -117,6 +123,8 @@ export class EmploymentController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

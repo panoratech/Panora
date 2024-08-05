@@ -8,6 +8,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: string
   /health:
     get:
       operationId: health
@@ -16,6 +20,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: number
   /webhook:
     get:
       operationId: listWebhooks
@@ -63,6 +71,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -81,6 +91,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -499,6 +511,8 @@ paths:
       parameters: []
       responses:
         '200':
+          description: ''
+        '201':
           description: ''
       tags: *ref_9
       x-speakeasy-group: sync
@@ -1873,6 +1887,12 @@ paths:
               $ref: '#/components/schemas/PassThroughRequestDto'
       responses:
         '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassThroughResponse'
+        '201':
           description: ''
           content:
             application/json:
@@ -3312,7 +3332,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/UnifiedCampaignOutput'
+                          $ref: '#/components/schemas/UnifiedMarketingautomationCampaignOutput'
       tags: &ref_64
         - marketingautomation/campaigns
       security: &ref_65
@@ -3349,7 +3369,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedCampaignOutput'
+                $ref: '#/components/schemas/UnifiedMarketingautomationCampaignOutput'
       tags: *ref_64
       security: *ref_65
       x-speakeasy-group: marketingautomation.campaigns
@@ -3385,7 +3405,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedCampaignOutput'
+                $ref: '#/components/schemas/UnifiedMarketingautomationCampaignOutput'
       tags: *ref_64
       security: *ref_65
       x-speakeasy-group: marketingautomation.campaigns
@@ -7835,7 +7855,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: '#/components/schemas/UnifiedUserOutput'
+                          $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
       tags: &ref_158
         - filestorage/users
       security: &ref_159
@@ -7871,7 +7891,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedUserOutput'
+                $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
       tags: *ref_158
       security: *ref_159
       x-speakeasy-group: filestorage.users
@@ -8018,6 +8038,7 @@ components:
           description: The unique UUID of the webhook.
         endpoint_description:
           type: string
+          nullable: true
           description: The description of the webhook.
         url:
           type: string
@@ -8043,6 +8064,7 @@ components:
         last_update:
           format: date-time
           type: string
+          nullable: true
           description: The last update date of the webhook.
       required:
         - id_webhook_endpoint
@@ -8070,7 +8092,6 @@ components:
             type: string
       required:
         - url
-        - description
         - scope
     EventPayload:
       type: object
@@ -9392,7 +9413,7 @@ components:
     UnifiedMarketingautomationAutomationInput:
       type: object
       properties: {}
-    UnifiedCampaignOutput:
+    UnifiedMarketingautomationCampaignOutput:
       type: object
       properties: {}
     UnifiedMarketingautomationCampaignInput:
@@ -10714,7 +10735,7 @@ components:
         - remote_data
         - created_at
         - modified_at
-    UnifiedUserOutput:
+    UnifiedFilestorageUserOutput:
       type: object
       properties:
         name:

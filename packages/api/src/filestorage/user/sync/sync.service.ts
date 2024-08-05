@@ -12,7 +12,7 @@ import { fs_users as FileStorageUser } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IUserService } from '../types';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { UnifiedFilestorageUserOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -117,7 +117,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedUserOutput,
+        UnifiedFilestorageUserOutput,
         OriginalUserOutput,
         IUserService
       >(integrationId, linkedUserId, 'filestorage', 'user', service, [
@@ -136,7 +136,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    users: UnifiedUserOutput[],
+    users: UnifiedFilestorageUserOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<FileStorageUser[]> {
@@ -144,13 +144,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const users_results: FileStorageUser[] = [];
 
       const updateOrCreateUser = async (
-        user: UnifiedUserOutput,
+        user: UnifiedFilestorageUserOutput,
         originId: string,
       ) => {
         const existingUser = await this.prisma.fs_users.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connection_id,
+            id_connection: connectionId,
           },
         });
 
@@ -175,7 +175,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_fs_user: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              id_connection: connectionId,
             },
           });
         }

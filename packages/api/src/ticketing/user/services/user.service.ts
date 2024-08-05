@@ -14,6 +14,8 @@ export class UserService {
     id_ticketing_user: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketingUserOutput> {
     try {
@@ -73,6 +75,8 @@ export class UserService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.user.pull',
@@ -92,7 +96,8 @@ export class UserService {
   }
 
   async getUsers(
-    connection_id: string,
+   connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -189,23 +194,26 @@ export class UserService {
       let res: UnifiedTicketingUserOutput[] = unifiedUsers;
 
       if (remote_data) {
-        const remote_array_data: UnifiedTicketingUserOutput[] = await Promise.all(
-          res.map(async (user) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: user.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...user, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedTicketingUserOutput[] =
+          await Promise.all(
+            res.map(async (user) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: user.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...user, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.user.pull',

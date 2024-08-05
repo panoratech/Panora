@@ -30,6 +30,8 @@ export class PassthroughService {
 
       const job_resp_create = await this.prisma.events.create({
         data: {
+          connection_id: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
           type: 'pull',

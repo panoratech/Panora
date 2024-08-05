@@ -6,6 +6,7 @@ import {
   IsDateString,
   IsIn,
 } from 'class-validator';
+
 export type ScoreCardRecommendation =
   | 'DEFINITELY_NO'
   | 'NO'
@@ -16,6 +17,8 @@ export type ScoreCardRecommendation =
 export class UnifiedAtsScorecardInput {
   @ApiPropertyOptional({
     type: String,
+    enum: ['DEFINITELY_NO', 'NO', 'YES', 'STRONG_YES', 'NO_DECISION'],
+    example: 'YES',
     description: 'The overall recommendation',
   })
   @IsIn(['DEFINITELY_NO', 'NO', 'YES', 'STRONG_YES', 'NO_DECISION'])
@@ -24,6 +27,7 @@ export class UnifiedAtsScorecardInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the application',
   })
   @IsUUID()
@@ -32,6 +36,7 @@ export class UnifiedAtsScorecardInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the interview',
   })
   @IsUUID()
@@ -40,6 +45,7 @@ export class UnifiedAtsScorecardInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '2024-10-01T12:00:00Z',
     format: 'date-time',
     description: 'The remote creation date of the scorecard',
   })
@@ -49,6 +55,7 @@ export class UnifiedAtsScorecardInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '2024-10-01T12:00:00Z',
     format: 'date-time',
     description: 'The submission date of the scorecard',
   })
@@ -57,7 +64,11 @@ export class UnifiedAtsScorecardInput {
   submitted_at?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -68,6 +79,7 @@ export class UnifiedAtsScorecardInput {
 export class UnifiedAtsScorecardOutput extends UnifiedAtsScorecardInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the scorecard',
   })
   @IsUUID()
@@ -76,6 +88,7 @@ export class UnifiedAtsScorecardOutput extends UnifiedAtsScorecardInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     description:
       'The remote ID of the scorecard in the context of the 3rd Party',
   })
@@ -84,7 +97,11 @@ export class UnifiedAtsScorecardOutput extends UnifiedAtsScorecardInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The remote data of the scorecard in the context of the 3rd Party',
   })
@@ -93,6 +110,7 @@ export class UnifiedAtsScorecardOutput extends UnifiedAtsScorecardInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
@@ -100,6 +118,7 @@ export class UnifiedAtsScorecardOutput extends UnifiedAtsScorecardInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()

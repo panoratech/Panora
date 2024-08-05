@@ -6,6 +6,7 @@ export type ConnectionMetadata = {
   linkedUserId: string;
   remoteSource: string;
   connectionId: string;
+  projectId: string;
 };
 
 @Injectable()
@@ -27,6 +28,7 @@ export class ConnectionUtils {
         linkedUserId: res.id_linked_user,
         remoteSource: res.provider_slug,
         connectionId: res.id_connection,
+        projectId: res.id_project,
       };
     } catch (error) {
       throw error;

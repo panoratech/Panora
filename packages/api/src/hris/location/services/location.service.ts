@@ -32,6 +32,8 @@ export class LocationService {
     id_locationing_location: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisLocationOutput> {
     return;
@@ -39,6 +41,7 @@ export class LocationService {
 
   async getLocations(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

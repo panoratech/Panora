@@ -30,6 +30,7 @@ export class AutomationService {
   async addAutomation(
     unifiedAutomationData: UnifiedMarketingautomationAutomationInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -41,6 +42,8 @@ export class AutomationService {
     id_automationing_automation: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedMarketingautomationAutomationOutput> {
     return;

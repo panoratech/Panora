@@ -47,8 +47,8 @@ export class AutomationController {
   }
 
   @ApiOperation({
-    operationId: 'listMarketingautomationAutomation',
-    summary: 'List  Automations',
+    operationId: 'listMarketingautomationAutomations',
+    summary: 'List Automations',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -64,13 +64,14 @@ export class AutomationController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.automationService.getAutomations(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -84,15 +85,16 @@ export class AutomationController {
 
   @ApiOperation({
     operationId: 'retrieveMarketingautomationAutomation',
-    summary: 'Retrieve Automations',
+    summary: 'Retrieve Automation',
     description:
-      'Retrieve Automations from any connected Marketingautomation software',
+      'Retrieve an Automation from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the automation you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -100,6 +102,7 @@ export class AutomationController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -115,7 +118,7 @@ export class AutomationController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -123,6 +126,8 @@ export class AutomationController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
@@ -145,6 +150,7 @@ export class AutomationController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
   @ApiBody({ type: UnifiedMarketingautomationAutomationInput })
   @ApiPostCustomResponse(UnifiedMarketingautomationAutomationOutput)
@@ -156,13 +162,14 @@ export class AutomationController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.automationService.addAutomation(
         unifiedAutomationData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

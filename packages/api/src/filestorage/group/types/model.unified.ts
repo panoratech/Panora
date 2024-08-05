@@ -1,18 +1,27 @@
-import { UnifiedUserOutput } from '@filestorage/user/types/model.unified';
+import { UnifiedFilestorageUserOutput } from '@filestorage/user/types/model.unified';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
 export class UnifiedFilestorageGroupInput {
-  @ApiProperty({ type: String, description: 'The name of the group' })
+  @ApiProperty({
+    type: String,
+    example: 'My group',
+    description: 'The name of the group',
+  })
   @IsString()
   name: string;
 
-  @ApiProperty({ type: [String], description: 'Uuids of users of the group' })
+  @ApiProperty({
+    type: [String],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
+    description: 'Uuids of users of the group',
+  })
   @IsString()
-  users: (string | UnifiedUserOutput)[];
+  users: (string | UnifiedFilestorageUserOutput)[];
 
   @ApiProperty({
     type: Boolean,
+    example: false,
     description:
       'Indicates whether or not this object has been deleted in the third party platform.',
   })
@@ -20,7 +29,11 @@ export class UnifiedFilestorageGroupInput {
   remote_was_deleted: boolean;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -31,6 +44,7 @@ export class UnifiedFilestorageGroupInput {
 export class UnifiedFilestorageGroupOutput extends UnifiedFilestorageGroupInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the group',
   })
   @IsUUID()
@@ -39,6 +53,7 @@ export class UnifiedFilestorageGroupOutput extends UnifiedFilestorageGroupInput 
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     description: 'The id of the group in the context of the 3rd Party',
   })
   @IsString()
@@ -46,7 +61,11 @@ export class UnifiedFilestorageGroupOutput extends UnifiedFilestorageGroupInput 
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description: 'The remote data of the group in the context of the 3rd Party',
   })
   @IsOptional()
@@ -54,6 +73,7 @@ export class UnifiedFilestorageGroupOutput extends UnifiedFilestorageGroupInput 
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
@@ -61,6 +81,7 @@ export class UnifiedFilestorageGroupOutput extends UnifiedFilestorageGroupInput 
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()

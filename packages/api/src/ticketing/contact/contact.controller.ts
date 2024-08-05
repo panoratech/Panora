@@ -23,7 +23,10 @@ import {
 } from '@nestjs/swagger';
 import { ContactService } from './services/contact.service';
 import { UnifiedTicketingContactOutput } from './types/model.unified';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiBearerAuth('bearer')
 @ApiTags('ticketing/contacts')
@@ -39,7 +42,7 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'listTicketingContacts',
-    summary: 'List all Contacts',
+    summary: 'List Contacts',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -56,13 +59,14 @@ export class ContactController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.contactService.getContacts(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,8 +80,8 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingContact',
-    summary: 'Retrieve Contacts',
-    description: 'Retrieve Contacts from any connected Ticketing software',
+    summary: 'Retrieve Contact',
+    description: 'Retrieve a Contact from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
@@ -106,13 +110,15 @@ export class ContactController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     return this.contactService.getContact(
       id,
       linkedUserId,
+      connectionId,
+      projectId,
       remoteSource,
       remote_data,
     );

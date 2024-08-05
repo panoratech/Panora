@@ -47,8 +47,8 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'listHrisEmployee',
-    summary: 'List  Employees',
+    operationId: 'listHrisEmployees',
+    summary: 'List Employees',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -64,13 +64,14 @@ export class EmployeeController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.employeeService.getEmployees(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -84,20 +85,22 @@ export class EmployeeController {
 
   @ApiOperation({
     operationId: 'retrieveHrisEmployee',
-    summary: 'Retrieven Employees',
-    description: 'Retrieven Employees from any connected Hris software',
+    summary: 'Retrieve Employee',
+    description: 'Retrieve an Employee from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the employee you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -113,7 +116,7 @@ export class EmployeeController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -121,6 +124,8 @@ export class EmployeeController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
@@ -152,7 +157,7 @@ export class EmployeeController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );

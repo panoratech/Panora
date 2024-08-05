@@ -7,76 +7,29 @@ export type EngagementType = 'EMAIL' | 'CALL' | 'MEETING';
 export class UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
-    description: 'The content of the engagement',
+    example: 'Professional Call',
+    description: 'The title of the engagement',
   })
   @IsString()
   @IsOptional()
-  content?: string;
+  title?: string;
 
   @ApiPropertyOptional({
     type: String,
-    description:
-      'The direction of the engagement. Authorized values are INBOUND or OUTBOUND',
-  })
-  @IsIn(['INBOUND', 'OUTBOUND'], {
-    message: 'Direction must be either INBOUND or OUTBOUND',
-  })
-  @IsOptional()
-  direction?: EngagementDirection | string;
-
-  @ApiPropertyOptional({
-    type: String,
-    description: 'The subject of the engagement',
+    example: 'Call with a customer',
+    description: 'The description of the engagement',
   })
   @IsString()
   @IsOptional()
-  subject?: string;
-
-  @ApiPropertyOptional({ description: 'The start time of the engagement' })
-  @IsOptional()
-  start_at?: Date;
-
-  @ApiPropertyOptional({ description: 'The end time of the engagement' })
-  @IsOptional()
-  end_time?: Date;
-
-  @ApiProperty({
-    type: String,
-    description:
-      'The type of the engagement. Authorized values are EMAIL, CALL or MEETING',
-  })
-  @IsIn(['EMAIL', 'CALL', 'MEETING'], {
-    message: 'Type must be either EMAIL, CALL or MEETING',
-  })
-  type?: EngagementType | string;
+  description?: string;
 
   @ApiPropertyOptional({
-    type: String,
-    description: 'The UUID of the user tied to the engagement',
-  })
-  @IsUUID()
-  @IsOptional()
-  user_id?: string;
-
-  @ApiPropertyOptional({
-    type: String,
-    description: 'The UUID of the company tied to the engagement',
-  })
-  @IsUUID()
-  @IsOptional()
-  company_id?: string; // UUID of Company object
-
-  @ApiPropertyOptional({
-    type: [String],
-    description: 'The UUIDs of contacts tied to the engagement object',
-  })
-  @IsOptional()
-  contacts?: string[]; // array of UUIDs of Engagement Contacts objects
-
-  @ApiPropertyOptional({
-    type: {},
-    description:
-      'The custom field mappings of the engagement between the remote 3rd party & Panora',
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    description: 'The custom field mappings of the engagement',
   })
   @IsOptional()
   field_mappings?: Record<string, any>;
@@ -85,6 +38,7 @@ export class UnifiedCrmEngagementInput {
 export class UnifiedCrmEngagementOutput extends UnifiedCrmEngagementInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the engagement',
   })
   @IsUUID()
@@ -93,22 +47,29 @@ export class UnifiedCrmEngagementOutput extends UnifiedCrmEngagementInput {
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The id of the engagement in the context of the Crm 3rd Party',
+    example: 'id_1',
+    description:
+      'The remote ID of the engagement in the context of the 3rd Party',
   })
   @IsString()
   @IsOptional()
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
-      'The remote data of the engagement in the context of the Crm 3rd Party',
+      'The remote data of the engagement in the context of the 3rd Party',
   })
   @IsOptional()
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
@@ -116,6 +77,7 @@ export class UnifiedCrmEngagementOutput extends UnifiedCrmEngagementInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()

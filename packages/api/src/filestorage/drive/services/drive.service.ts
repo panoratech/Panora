@@ -14,6 +14,8 @@ export class DriveService {
     id_fs_drive: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedFilestorageDriveOutput> {
     try {
@@ -75,6 +77,8 @@ export class DriveService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'filestorage.drive.pull',
@@ -95,6 +99,7 @@ export class DriveService {
 
   async getDrives(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     pageSize: number,
@@ -192,22 +197,25 @@ export class DriveService {
       let res: UnifiedFilestorageDriveOutput[] = unifiedDrives;
 
       if (remote_data) {
-        const remote_array_data: UnifiedFilestorageDriveOutput[] = await Promise.all(
-          res.map(async (drive) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: drive.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...drive, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedFilestorageDriveOutput[] =
+          await Promise.all(
+            res.map(async (drive) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: drive.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...drive, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'filestorage.drive.pull',

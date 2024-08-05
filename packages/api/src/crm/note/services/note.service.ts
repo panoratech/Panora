@@ -8,7 +8,10 @@ import { CrmObject } from '@crm/@lib/@types';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { INoteService } from '../types';
-import { UnifiedCrmNoteInput, UnifiedCrmNoteOutput } from '../types/model.unified';
+import {
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
+} from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -30,6 +33,7 @@ export class NoteService {
   async addNote(
     unifiedNoteData: UnifiedCrmNoteInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -99,12 +103,16 @@ export class NoteService {
         unique_crm_note_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'crm.note.push', // sync, push or pull
@@ -218,6 +226,8 @@ export class NoteService {
     id_note: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCrmNoteOutput> {
     try {
@@ -284,6 +294,8 @@ export class NoteService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'crm.note.pull',
@@ -304,6 +316,7 @@ export class NoteService {
 
   async getNotes(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -417,6 +430,8 @@ export class NoteService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.note.pulled',

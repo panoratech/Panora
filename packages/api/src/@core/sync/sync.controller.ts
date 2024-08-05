@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { CoreSyncService } from './sync.service';
 import { LoggerService } from '../@core-services/logger/logger.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
@@ -18,6 +18,21 @@ export class SyncController {
   @ApiOperation({
     operationId: 'status',
     summary: 'Retrieve sync status of a certain vertical',
+  })
+  @ApiParam({
+    name: 'vertical',
+    type: String,
+    example: 'ticketing',
+    enum: [
+      'ticketing',
+      'marketingautomation',
+      'crm',
+      'filestorage',
+      'ats',
+      'hris',
+      'accounting',
+      'ecommerce',
+    ],
   })
   @ApiResponse({ status: 200 })
   @Get('status/:vertical')

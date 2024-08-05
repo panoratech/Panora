@@ -138,14 +138,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
           existingDepartment = await this.prisma.ats_departments.findFirst({
             where: {
               name: department.name,
-              id_connection: connection_id,
+              
             },
           });
         } else {
           existingDepartment = await this.prisma.ats_departments.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }
@@ -169,7 +169,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_department: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

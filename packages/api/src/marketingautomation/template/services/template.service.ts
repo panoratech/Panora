@@ -30,6 +30,7 @@ export class TemplateService {
   async addTemplate(
     unifiedTemplateData: UnifiedMarketingautomationTemplateInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -41,6 +42,8 @@ export class TemplateService {
     id_templateing_template: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedMarketingautomationTemplateOutput> {
     return;

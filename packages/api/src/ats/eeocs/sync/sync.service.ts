@@ -133,7 +133,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const existingEeoc = await this.prisma.ats_eeocs.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connection_id,
+            
           },
         });
 
@@ -161,7 +161,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_eeoc: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

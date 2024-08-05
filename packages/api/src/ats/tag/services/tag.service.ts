@@ -13,6 +13,8 @@ export class TagService {
     id_ats_candidate_tag: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsTagOutput> {
     try {
@@ -76,6 +78,8 @@ export class TagService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.tag.pull',
@@ -96,6 +100,7 @@ export class TagService {
 
   async getTags(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -132,9 +137,7 @@ export class TagService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (tags.length === limit + 1) {
@@ -210,6 +213,8 @@ export class TagService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.tag.pull',

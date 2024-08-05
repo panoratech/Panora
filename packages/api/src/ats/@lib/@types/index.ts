@@ -153,6 +153,7 @@ export class Email {
 
   @ApiProperty({
     type: String,
+    enum: ['PERSONAL', 'WORK'],
     description:
       'The email address type. Authorized values are either PERSONAL or WORK.',
   })
@@ -172,6 +173,7 @@ export class Phone {
 
   @ApiProperty({
     type: String,
+    enum: ['MOBILE', 'WORK'],
     description: 'The phone type. Authorized values are either MOBILE or WORK',
   })
   @IsIn(['MOBILE', 'WORK'])

@@ -31,7 +31,7 @@ import {
 import { IUserService } from '@filestorage/user/types';
 import {
   UnifiedFilestorageUserInput,
-  UnifiedUserOutput,
+  UnifiedFilestorageUserOutput,
 } from '@filestorage/user/types/model.unified';
 
 export enum FileStorageObject {
@@ -56,7 +56,7 @@ export type UnifiedFileStorage =
   | UnifiedFilestorageGroupInput
   | UnifiedFilestorageGroupOutput
   | UnifiedFilestorageUserInput
-  | UnifiedUserOutput
+  | UnifiedFilestorageUserOutput
   | UnifiedFilestorageSharedlinkInput
   | UnifiedFilestorageSharedlinkOutput;
 

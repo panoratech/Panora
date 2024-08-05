@@ -28,6 +28,8 @@ export class UserService {
     id_usering_user: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedMarketingautomationUserOutput> {
     return;

@@ -32,6 +32,8 @@ export class EmployerBenefitService {
     id_employerbenefiting_employerbenefit: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisEmployerbenefitOutput> {
     return;
@@ -39,6 +41,7 @@ export class EmployerBenefitService {
 
   async getEmployerBenefits(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -12,6 +12,7 @@ export type TicketPriority = 'HIGH' | 'MEDIUM' | 'LOW';
 export class UnifiedTicketingTicketInput {
   @ApiProperty({
     type: String,
+    example: 'Customer Service Inquiry',
     description: 'The name of the ticket',
   })
   @IsString()
@@ -19,6 +20,8 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'OPEN',
+    enum: ['OPEN', 'CLOSED'],
     description:
       'The status of the ticket. Authorized values are OPEN or CLOSED.',
   })
@@ -30,6 +33,7 @@ export class UnifiedTicketingTicketInput {
 
   @ApiProperty({
     type: String,
+    example: 'Help customer',
     description: 'The description of the ticket',
   })
   @IsString()
@@ -37,6 +41,7 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: Date,
+    example: '2024-10-01T12:00:00Z',
     description: 'The date the ticket is due',
   })
   @IsOptional()
@@ -44,6 +49,8 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'BUG',
+    enum: ['BUG', 'SUBTASK', 'TASK', 'TO-DO'],
     description:
       'The type of the ticket. Authorized values are PROBLEM, QUESTION, or TASK',
   })
@@ -55,6 +62,7 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the parent ticket',
   })
   @IsUUID()
@@ -63,6 +71,7 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     description: 'The collection UUIDs the ticket belongs to',
   })
   @IsUUID()
@@ -71,6 +80,7 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: [String],
+    example: ['my_tag', 'urgent_tag'],
     description: 'The tags names of the ticket',
   })
   @IsOptional()
@@ -78,6 +88,7 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: Date,
+    example: '2024-10-01T12:00:00Z',
     description: 'The date the ticket has been completed',
   })
   @IsOptional()
@@ -85,6 +96,8 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'HIGH',
+    enum: ['HIGH', 'MEDIUM', 'LOW'],
     description:
       'The priority of the ticket. Authorized values are HIGH, MEDIUM or LOW.',
   })
@@ -96,6 +109,7 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: [String],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     description: 'The users UUIDs the ticket is assigned to',
   })
   @IsOptional()
@@ -103,6 +117,9 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: UnifiedTicketingCommentInput,
+    example: {
+      content: 'Assigned the issue !',
+    },
     description: 'The comment of the ticket',
   })
   @IsOptional()
@@ -110,6 +127,7 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the account which the ticket belongs to',
   })
   @IsUUID()
@@ -118,6 +136,7 @@ export class UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the contact which the ticket belongs to',
   })
   @IsUUID()
@@ -127,13 +146,18 @@ export class UnifiedTicketingTicketInput {
   // optional but may exist if ticket contains attachments
   @ApiPropertyOptional({
     type: [String],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     description: 'The attachements UUIDs tied to the ticket',
   })
   @IsOptional()
   attachments?: (string | UnifiedTicketingAttachmentInput)[];
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the ticket between the remote 3rd party & Panora',
   })
@@ -141,13 +165,18 @@ export class UnifiedTicketingTicketInput {
   field_mappings?: Record<string, any>;
 }
 export class UnifiedTicketingTicketOutput extends UnifiedTicketingTicketInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the ticket' })
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the ticket',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     description: 'The id of the ticket in the context of the 3rd Party',
   })
   @IsString()
@@ -155,7 +184,8 @@ export class UnifiedTicketingTicketOutput extends UnifiedTicketingTicketInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: { key1: 'value1', key2: 42, key3: true },
     description:
       'The remote data of the ticket in the context of the 3rd Party',
   })
@@ -164,6 +194,7 @@ export class UnifiedTicketingTicketOutput extends UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
@@ -171,6 +202,7 @@ export class UnifiedTicketingTicketOutput extends UnifiedTicketingTicketInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()

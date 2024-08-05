@@ -5,6 +5,7 @@ export class UnifiedTicketingUserInput {
   @ApiProperty({
     type: String,
     description: 'The name of the user',
+    example: 'John Doe',
   })
   @IsString()
   name: string;
@@ -12,6 +13,7 @@ export class UnifiedTicketingUserInput {
   @ApiProperty({
     type: String,
     description: 'The email address of the user',
+    example: 'john.doe@example.com',
   })
   @IsString()
   email_address: string;
@@ -19,6 +21,7 @@ export class UnifiedTicketingUserInput {
   @ApiPropertyOptional({
     type: [String],
     description: 'The teams whose the user is part of',
+    example: ['team1', 'team2'],
   })
   @IsOptional()
   teams?: string[];
@@ -26,13 +29,18 @@ export class UnifiedTicketingUserInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The account or organization the user is part of',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @IsUUID()
   @IsOptional()
   account_id?: string;
 
-  @ApiProperty({
-    type: {},
+  @ApiPropertyOptional({
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the user between the remote 3rd party & Panora',
   })
@@ -41,13 +49,18 @@ export class UnifiedTicketingUserInput {
 }
 
 export class UnifiedTicketingUserOutput extends UnifiedTicketingUserInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the user' })
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the user',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     description: 'The id of the user in the context of the 3rd Party',
   })
   @IsString()
@@ -55,7 +68,8 @@ export class UnifiedTicketingUserOutput extends UnifiedTicketingUserInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: { key1: 'value1', key2: 42, key3: true },
     description: 'The remote data of the user in the context of the 3rd Party',
   })
   @IsOptional()
@@ -63,15 +77,17 @@ export class UnifiedTicketingUserOutput extends UnifiedTicketingUserInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
   created_at?: any;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Date,
+    example: '2023-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

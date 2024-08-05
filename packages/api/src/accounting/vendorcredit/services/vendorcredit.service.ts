@@ -32,6 +32,8 @@ export class VendorCreditService {
     id_vendorcrediting_vendorcredit: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingVendorcreditOutput> {
     return;
@@ -39,6 +41,7 @@ export class VendorCreditService {
 
   async getVendorCredits(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

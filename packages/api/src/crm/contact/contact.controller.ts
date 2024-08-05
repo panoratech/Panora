@@ -69,13 +69,14 @@ export class ContactController {
     @Query() query: FetchObjectsQueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return await this.contactService.getContacts(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -97,12 +98,14 @@ export class ContactController {
     required: true,
     type: String,
     description: 'id of the `contact` you want to retrive.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -118,7 +121,7 @@ export class ContactController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -126,6 +129,8 @@ export class ContactController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
@@ -146,6 +151,7 @@ export class ContactController {
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
+    example: false,
   })
   @ApiBody({ type: UnifiedCrmContactInput })
   @ApiPostCustomResponse(UnifiedCrmContactOutput)
@@ -157,14 +163,14 @@ export class ContactController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      // this.logger.log('x-connection-token is ' + connection_token);
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.contactService.addContact(
         unifiedContactData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

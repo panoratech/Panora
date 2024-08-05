@@ -18,7 +18,11 @@ export type OfferStatus =
   | 'SIGNED'
   | 'DEPRECATED';
 export class UnifiedAtsOfferInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the creator' })
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the creator',
+  })
   @IsUUID()
   @IsOptional()
   created_by?: string;
@@ -26,6 +30,7 @@ export class UnifiedAtsOfferInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The remote creation date of the offer',
   })
   @IsDateString()
@@ -35,6 +40,7 @@ export class UnifiedAtsOfferInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The closing date of the offer',
   })
   @IsDateString()
@@ -44,6 +50,7 @@ export class UnifiedAtsOfferInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The sending date of the offer',
   })
   @IsDateString()
@@ -53,13 +60,29 @@ export class UnifiedAtsOfferInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The start date of the offer',
   })
   @IsDateString()
   @IsOptional()
   start_date?: string;
 
-  @ApiPropertyOptional({ type: String, description: 'The status of the offer' })
+  @ApiPropertyOptional({
+    type: String,
+    example: 'DRAFT',
+    enum: [
+      'DRAFT',
+      'APPROVAL_SENT',
+      'APPROVED',
+      'SENT',
+      'SENT_MANUALLY',
+      'OPENED',
+      'DENIED',
+      'SIGNED',
+      'DEPRECATED',
+    ],
+    description: 'The status of the offer',
+  })
   @IsIn([
     'DRAFT',
     'APPROVAL_SENT',
@@ -76,6 +99,7 @@ export class UnifiedAtsOfferInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the application',
   })
   @IsUUID()
@@ -83,7 +107,11 @@ export class UnifiedAtsOfferInput {
   application_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -92,13 +120,18 @@ export class UnifiedAtsOfferInput {
 }
 
 export class UnifiedAtsOfferOutput extends UnifiedAtsOfferInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the offer' })
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the offer',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     description: 'The remote ID of the offer in the context of the 3rd Party',
   })
   @IsString()
@@ -106,7 +139,11 @@ export class UnifiedAtsOfferOutput extends UnifiedAtsOfferInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description: 'The remote data of the offer in the context of the 3rd Party',
   })
   @IsOptional()
@@ -114,6 +151,7 @@ export class UnifiedAtsOfferOutput extends UnifiedAtsOfferInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
@@ -121,6 +159,7 @@ export class UnifiedAtsOfferOutput extends UnifiedAtsOfferInput {
 
   @ApiPropertyOptional({
     type: {},
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()

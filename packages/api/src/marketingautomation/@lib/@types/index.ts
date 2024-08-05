@@ -11,7 +11,7 @@ import {
 import { ICampaignService } from '@marketingautomation/campaign/types';
 import {
   UnifiedMarketingautomationCampaignInput,
-  UnifiedCampaignOutput,
+  UnifiedMarketingautomationCampaignOutput,
 } from '@marketingautomation/campaign/types/model.unified';
 import { IEmailService } from '@marketingautomation/email/types';
 import {
@@ -68,7 +68,7 @@ export type UnifiedMarketingAutomation =
   | UnifiedMarketingautomationAutomationInput
   | UnifiedMarketingautomationAutomationOutput
   | UnifiedMarketingautomationCampaignInput
-  | UnifiedCampaignOutput
+  | UnifiedMarketingautomationCampaignOutput
   | UnifiedMarketingautomationContactInput
   | UnifiedMarketingautomationContactOutput
   | UnifiedMarketingautomationEmailInput

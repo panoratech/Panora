@@ -6,6 +6,7 @@ import {
   Query,
   UseGuards,
   Request,
+  Param,
 } from '@nestjs/common';
 import { LinkedUsersService } from './linked-users.service';
 import { LoggerService } from '../@core-services/logger/logger.service';
@@ -17,6 +18,7 @@ import {
   ApiBody,
   ApiExcludeEndpoint,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -25,7 +27,7 @@ import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('linkedUsers')
-@Controller('linked-users')
+@Controller('linked_users')
 export class LinkedUsersController {
   constructor(
     private readonly linkedUsersService: LinkedUsersService,
@@ -82,11 +84,16 @@ export class LinkedUsersController {
     operationId: 'retrieveLinkedUser',
     summary: 'Retrieve a Linked User',
   })
-  @ApiQuery({ name: 'id', required: true, type: String })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    type: String,
+  })
   @ApiResponse({ status: 200 })
   @UseGuards(ApiKeyAuthGuard)
-  @Get('single')
-  getLinkedUser(@Query('id') id: string) {
+  @Get(':id')
+  getLinkedUser(@Param('id') id: string) {
     // validate project_id against user
     return this.linkedUsersService.getLinkedUser(id);
   }
@@ -95,7 +102,7 @@ export class LinkedUsersController {
     operationId: 'remoteId',
     summary: 'Retrieve a Linked User From A Remote Id',
   })
-  @ApiQuery({ name: 'remoteId', required: true, type: String })
+  @ApiQuery({ name: 'remoteId', example: 'id_1', required: true, type: String })
   @ApiResponse({ status: 200 })
   @UseGuards(ApiKeyAuthGuard)
   @Get('fromRemoteId')
@@ -155,7 +162,12 @@ export class LinkedUsersController {
     operationId: 'retrieveLinkedUser',
     summary: 'Retrieve a Linked User',
   })
-  @ApiQuery({ name: 'id', required: true, type: String })
+  @ApiQuery({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+  })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @ApiExcludeEndpoint()
@@ -169,7 +181,7 @@ export class LinkedUsersController {
     operationId: 'remoteId',
     summary: 'Retrieve a Linked User From A Remote Id',
   })
-  @ApiQuery({ name: 'remoteId', required: true, type: String })
+  @ApiQuery({ name: 'remoteId', example: 'id_1', required: true, type: String })
   @ApiResponse({ status: 200 })
   @ApiExcludeEndpoint()
   @UseGuards(JwtAuthGuard)

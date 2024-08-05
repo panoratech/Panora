@@ -2,13 +2,18 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
 
 export class UnifiedAtsTagInput {
-  @ApiPropertyOptional({ type: String, description: 'The name of the tag' })
+  @ApiPropertyOptional({
+    type: String,
+    example: 'Important',
+    description: 'The name of the tag',
+  })
   @IsString()
   @IsOptional()
   name?: string;
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the candidate',
   })
   @IsUUID()
@@ -16,7 +21,11 @@ export class UnifiedAtsTagInput {
   id_ats_candidate?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -25,13 +34,18 @@ export class UnifiedAtsTagInput {
 }
 
 export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the tag' })
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the tag',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     description: 'The remote ID of the tag in the context of the 3rd Party',
   })
   @IsString()
@@ -39,7 +53,11 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description: 'The remote data of the tag in the context of the 3rd Party',
   })
   @IsOptional()
@@ -48,6 +66,7 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The creation date of the tag',
   })
   @IsDateString()
@@ -57,6 +76,7 @@ export class UnifiedAtsTagOutput extends UnifiedAtsTagInput {
   @ApiPropertyOptional({
     type: String,
     format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     description: 'The modification date of the tag',
   })
   @IsDateString()

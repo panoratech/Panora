@@ -5,87 +5,51 @@ import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 export type CommentCreatorType = 'USER' | 'CONTACT';
 
 export class UnifiedTicketingCommentInput {
-  @ApiProperty({ type: String, description: 'The body of the comment' })
-  @IsString()
-  body: string;
-
-  @ApiPropertyOptional({
+  @ApiProperty({
     type: String,
-    description: 'The html body of the comment',
+    example: 'Assigned the issue !',
+    description: 'The content of the comment',
   })
   @IsString()
-  @IsOptional()
-  html_body?: string;
+  content: string;
 
   @ApiPropertyOptional({
-    type: Boolean,
-    description: 'The public status of the comment',
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    description: 'The custom field mappings of the comment',
   })
   @IsOptional()
-  @IsBoolean()
-  is_private?: boolean;
-
-  @ApiPropertyOptional({
-    type: String,
-    description:
-      'The creator type of the comment. Authorized values are either USER or CONTACT',
-  })
-  @IsIn(['USER', 'CONTACT'], {
-    message: 'Type must be either USER or CONTACT',
-  })
-  @IsOptional()
-  creator_type?: CommentCreatorType | string;
-
-  @ApiPropertyOptional({
-    type: String,
-    description: 'The UUID of the ticket the comment is tied to',
-  })
-  @IsUUID()
-  @IsOptional()
-  ticket_id?: string; // UUID of Ticket object
-
-  @ApiPropertyOptional({
-    type: String,
-    description:
-      'The UUID of the contact which the comment belongs to (if no user_id specified)',
-  })
-  @IsUUID()
-  @IsOptional()
-  contact_id?: string; // UUID of Contact object
-
-  @ApiPropertyOptional({
-    type: String,
-    description:
-      'The UUID of the user which the comment belongs to (if no contact_id specified)',
-  })
-  @IsUUID()
-  @IsOptional()
-  user_id?: string; // UUID of User object
-
-  @ApiPropertyOptional({
-    type: [String],
-    description: 'The attachements UUIDs tied to the comment',
-  })
-  @IsOptional()
-  attachments?: (string | UnifiedTicketingAttachmentOutput)[]; //UUIDs of Attachments objects
+  field_mappings?: Record<string, any>;
 }
 
 export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the comment' })
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the comment',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The id of the comment in the context of the 3rd Party',
+    example: 'id_1',
+    description: 'The remote ID of the comment in the context of the 3rd Party',
   })
   @IsString()
   @IsOptional()
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The remote data of the comment in the context of the 3rd Party',
   })
@@ -94,14 +58,16 @@ export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput 
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The created date of the object',
+    example: '2024-10-01T12:00:00Z',
+    description: 'The created date of the comment',
   })
   @IsOptional()
   created_at?: any;
 
   @ApiPropertyOptional({
     type: {},
-    description: 'The modified date of the object',
+    example: '2024-10-01T12:00:00Z',
+    description: 'The modified date of the comment',
   })
   @IsOptional()
   modified_at?: any;
