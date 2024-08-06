@@ -207,6 +207,14 @@ paths:
       tags: &ref_1
         - ticketing/tickets
       x-speakeasy-group: ticketing.tickets
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: cursor
+            in: parameters
+            type: cursor
+        outputs:
+          nextCursor: $.next_cursor
     post:
       operationId: createTicketingTicket
       summary: Create Tickets
@@ -240,14 +248,6 @@ paths:
                 $ref: '#/components/schemas/UnifiedTicketingTicketOutput'
       tags: *ref_1
       x-speakeasy-group: ticketing.tickets
-      x-speakeasy-pagination:
-        type: cursor
-        inputs:
-          - name: cursor
-            in: parameters
-            type: cursor
-        outputs:
-          nextCursor: $.next_cursor
   /ticketing/tickets/{id}:
     get:
       operationId: retrieveTicketingTicket
