@@ -27,7 +27,6 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('filestorage/drives')
 @Controller('filestorage/drives')
 export class DriveController {
@@ -52,15 +51,6 @@ export class DriveController {
   @ApiPaginatedResponse(UnifiedFilestorageDriveOutput)
   @UseGuards(ApiKeyAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  @ApiQuery({
-    type: QueryDto,
-    example: {
-      remote_data: true,
-      limit: 10,
-      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
-    },
-    required: false,
-  })
   @Get()
   async getDrives(
     @Headers('x-connection-token') connection_token: string,

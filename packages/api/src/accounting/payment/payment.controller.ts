@@ -57,24 +57,6 @@ export class PaymentController {
   })
   @ApiPaginatedResponse(UnifiedAccountingPaymentOutput)
   @UseGuards(ApiKeyAuthGuard)
-  @ApiQuery({
-    type: QueryDto,
-    example: {
-      remote_data: true,
-      limit: 10,
-      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
-    },
-    required: false,
-  })
-  @ApiQuery({
-    type: QueryDto,
-    example: {
-      remote_data: true,
-      limit: 10,
-      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
-    },
-    required: false,
-  })
   @Get()
   async getPayments(
     @Headers('x-connection-token') connection_token: string,

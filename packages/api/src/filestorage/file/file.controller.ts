@@ -35,7 +35,6 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('filestorage/files')
 @Controller('filestorage/files')
 export class FileController {
@@ -60,15 +59,6 @@ export class FileController {
   @ApiPaginatedResponse(UnifiedFilestorageFileOutput)
   @UseGuards(ApiKeyAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  @ApiQuery({
-    type: QueryDto,
-    example: {
-      remote_data: true,
-      limit: 10,
-      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
-    },
-    required: false,
-  })
   @Get()
   async getFiles(
     @Headers('x-connection-token') connection_token: string,

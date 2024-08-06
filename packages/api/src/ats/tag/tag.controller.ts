@@ -53,15 +53,6 @@ export class TagController {
   })
   @ApiPaginatedResponse(UnifiedAtsTagOutput)
   @UseGuards(ApiKeyAuthGuard)
-  @ApiQuery({
-    type: QueryDto,
-    example: {
-      remote_data: true,
-      limit: 10,
-      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
-    },
-    required: false,
-  })
   @Get()
   async getTags(
     @Headers('x-connection-token') connection_token: string,

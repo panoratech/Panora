@@ -36,7 +36,6 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 import { example } from 'yargs';
 
-
 @ApiTags('filestorage/folders')
 @Controller('filestorage/folders')
 export class FolderController {
@@ -61,15 +60,6 @@ export class FolderController {
   @ApiPaginatedResponse(UnifiedFilestorageFolderOutput)
   @UseGuards(ApiKeyAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
-  @ApiQuery({
-    type: QueryDto,
-    example: {
-      remote_data: true,
-      limit: 10,
-      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
-    },
-    required: false,
-  })
   @Get()
   async getFolders(
     @Headers('x-connection-token') connection_token: string,

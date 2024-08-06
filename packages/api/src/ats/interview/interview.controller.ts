@@ -58,15 +58,6 @@ export class InterviewController {
   })
   @ApiPaginatedResponse(UnifiedAtsInterviewOutput)
   @UseGuards(ApiKeyAuthGuard)
-  @ApiQuery({
-    type: QueryDto,
-    example: {
-      remote_data: true,
-      limit: 10,
-      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
-    },
-    required: false,
-  })
   @Get()
   async getInterviews(
     @Headers('x-connection-token') connection_token: string,

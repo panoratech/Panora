@@ -37,7 +37,6 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 import { UnifiedCrmContactOutput } from '@crm/contact/types/model.unified';
 
-
 @ApiTags('ticketing/tickets')
 @Controller('ticketing/tickets')
 export class TicketController {
@@ -61,15 +60,6 @@ export class TicketController {
   })
   @ApiPaginatedResponse(UnifiedTicketingTicketOutput)
   @UseGuards(ApiKeyAuthGuard)
-  @ApiQuery({
-    type: QueryDto,
-    example: {
-      remote_data: true,
-      limit: 10,
-      cursor: 'b008e199-eda9-4629-bd41-a01b6195864a',
-    },
-    required: false,
-  })
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getTickets(
