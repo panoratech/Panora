@@ -5,9 +5,11 @@ import { IsBoolean, IsNumber, IsOptional, IsUUID } from 'class-validator';
 // To provide a default limit
 const DEFAULT_PAGE_SIZE = 50;
 
-export class FetchObjectsQueryDto {
+export class QueryDto {
   @ApiProperty({
+    type: Boolean,
     name: 'remote_data',
+    example: true,
     description: 'Set to true to include data from the original software.',
     required: false,
   })
@@ -19,7 +21,9 @@ export class FetchObjectsQueryDto {
   remote_data: boolean;
 
   @ApiProperty({
+    type: Number,
     name: 'limit',
+    example: 10,
     required: false,
     description: 'Set to get the number of records.',
   })
@@ -29,6 +33,8 @@ export class FetchObjectsQueryDto {
   limit: number = DEFAULT_PAGE_SIZE;
 
   @ApiProperty({
+    type: String,
+    example: '1b8b05bb-5273-4012-b520-8657b0b90874',
     name: 'cursor',
     required: false,
     description: 'Set to get the number of records after this cursor.',

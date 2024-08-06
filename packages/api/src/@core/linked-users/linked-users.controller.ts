@@ -32,7 +32,6 @@ import {
   ApiPostArrayCustomResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
-
 @ApiTags('linkedUsers')
 @Controller('linked_users')
 export class LinkedUsersController {
@@ -41,6 +40,86 @@ export class LinkedUsersController {
     private logger: LoggerService,
   ) {
     this.logger.setContext(LinkedUsersController.name);
+  }
+
+  @ApiOperation({
+    operationId: 'listLinkedUsers',
+    summary: 'Retrieve Linked Users',
+  })
+  @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard)
+  @ApiExcludeEndpoint()
+  @Get('internal')
+  fetchLinkedUsersInternal(@Request() req: any) {
+    const { id_project } = req.user;
+    return this.linkedUsersService.getLinkedUsers(id_project);
+  }
+
+  @ApiOperation({ operationId: 'createLinkedUser', summary: 'Add Linked User' })
+  @ApiBody({ type: CreateLinkedUserDto })
+  @ApiResponse({ status: 201 })
+  @ApiExcludeEndpoint()
+  @UseGuards(JwtAuthGuard)
+  @Post('internal')
+  addLinkedUserInternal(
+    @Request() req: any,
+    @Body() linkedUserCreateDto: CreateLinkedUserDto,
+  ) {
+    const { id_project } = req.user;
+    return this.linkedUsersService.addLinkedUser(
+      linkedUserCreateDto,
+      id_project,
+    );
+  }
+
+  @ApiOperation({
+    operationId: 'importBatch',
+    summary: 'Add Batch Linked Users',
+  })
+  @ApiBody({ type: CreateBatchLinkedUserDto })
+  @ApiResponse({ status: 201 })
+  @ApiExcludeEndpoint()
+  @UseGuards(JwtAuthGuard)
+  @Post('internal/batch')
+  addBatchLinkedUsersInternal(
+    @Request() req: any,
+    @Body() data: CreateBatchLinkedUserDto,
+  ) {
+    const { id_project } = req.user;
+    return this.linkedUsersService.addBatchLinkedUsers(data, id_project);
+  }
+
+  @ApiOperation({
+    operationId: 'retrieveLinkedUser',
+    summary: 'Retrieve a Linked User',
+  })
+  @ApiQuery({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+  })
+  @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard)
+  @ApiExcludeEndpoint()
+  @Get('internal/single')
+  getLinkedUserInternal(@Query('id') id: string) {
+    // validate project_id against user
+    return this.linkedUsersService.getLinkedUser(id);
+  }
+
+  @ApiOperation({
+    operationId: 'remoteId',
+    summary: 'Retrieve a Linked User From A Remote Id',
+  })
+  @ApiQuery({ name: 'remoteId', example: 'id_1', required: true, type: String })
+  @ApiResponse({ status: 200 })
+  @ApiExcludeEndpoint()
+  @UseGuards(JwtAuthGuard)
+  @Get('internal/fromRemoteId')
+  linkedUserFromRemoteIdInternal(@Query('remoteId') id: string) {
+    // validate project_id against user
+    return this.linkedUsersService.getLinkedUserV2(id);
   }
 
   @ApiOperation({
@@ -117,86 +196,6 @@ export class LinkedUsersController {
   @UseGuards(ApiKeyAuthGuard)
   @Get('fromRemoteId')
   linkedUserFromRemoteId(@Query('remoteId') id: string) {
-    // validate project_id against user
-    return this.linkedUsersService.getLinkedUserV2(id);
-  }
-
-  @ApiOperation({ operationId: 'createLinkedUser', summary: 'Add Linked User' })
-  @ApiBody({ type: CreateLinkedUserDto })
-  @ApiResponse({ status: 201 })
-  @ApiExcludeEndpoint()
-  @UseGuards(JwtAuthGuard)
-  @Post('internal')
-  addLinkedUserInternal(
-    @Request() req: any,
-    @Body() linkedUserCreateDto: CreateLinkedUserDto,
-  ) {
-    const { id_project } = req.user;
-    return this.linkedUsersService.addLinkedUser(
-      linkedUserCreateDto,
-      id_project,
-    );
-  }
-
-  @ApiOperation({
-    operationId: 'importBatch',
-    summary: 'Add Batch Linked Users',
-  })
-  @ApiBody({ type: CreateBatchLinkedUserDto })
-  @ApiResponse({ status: 201 })
-  @ApiExcludeEndpoint()
-  @UseGuards(JwtAuthGuard)
-  @Post('internal/batch')
-  addBatchLinkedUsersInternal(
-    @Request() req: any,
-    @Body() data: CreateBatchLinkedUserDto,
-  ) {
-    const { id_project } = req.user;
-    return this.linkedUsersService.addBatchLinkedUsers(data, id_project);
-  }
-
-  @ApiOperation({
-    operationId: 'listLinkedUsers',
-    summary: 'Retrieve Linked Users',
-  })
-  @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard)
-  @ApiExcludeEndpoint()
-  @Get('internal')
-  fetchLinkedUsersInternal(@Request() req: any) {
-    const { id_project } = req.user;
-    return this.linkedUsersService.getLinkedUsers(id_project);
-  }
-
-  @ApiOperation({
-    operationId: 'retrieveLinkedUser',
-    summary: 'Retrieve a Linked User',
-  })
-  @ApiQuery({
-    name: 'id',
-    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
-    required: true,
-    type: String,
-  })
-  @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard)
-  @ApiExcludeEndpoint()
-  @Get('internal/single')
-  getLinkedUserInternal(@Query('id') id: string) {
-    // validate project_id against user
-    return this.linkedUsersService.getLinkedUser(id);
-  }
-
-  @ApiOperation({
-    operationId: 'remoteId',
-    summary: 'Retrieve a Linked User From A Remote Id',
-  })
-  @ApiQuery({ name: 'remoteId', example: 'id_1', required: true, type: String })
-  @ApiResponse({ status: 200 })
-  @ApiExcludeEndpoint()
-  @UseGuards(JwtAuthGuard)
-  @Get('internal/fromRemoteId')
-  linkedUserFromRemoteIdInternal(@Query('remoteId') id: string) {
     // validate project_id against user
     return this.linkedUsersService.getLinkedUserV2(id);
   }

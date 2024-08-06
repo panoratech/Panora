@@ -173,21 +173,45 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
+          schema:
+            type: string 
       responses:
         '200':
           description: ''
@@ -204,6 +228,14 @@ paths:
       tags: &ref_1
         - ticketing/tickets
       x-speakeasy-group: ticketing.tickets
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: cursor
+            in: parameters
+            type: cursor
+        outputs:
+          nextCursor: $.next_cursor
     post:
       operationId: createTicketingTicket
       summary: Create Tickets
@@ -286,19 +318,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -366,19 +422,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -444,19 +524,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -568,19 +672,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -681,19 +809,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -794,19 +946,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -906,19 +1082,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -1019,19 +1219,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -1132,19 +1356,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -1212,19 +1460,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -1324,19 +1596,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -1404,19 +1700,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -1485,19 +1805,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -1601,19 +1945,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -1681,19 +2049,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -1767,6 +2159,7 @@ paths:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: &ref_18
         - linkedUsers
+      x-speakeasy-group: linkedUsers
     get:
       operationId: listLinkedUsers
       summary: List Linked Users
@@ -1781,6 +2174,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
+      x-speakeasy-group: linkedUsers
   /linked_users/batch:
     post:
       operationId: importBatch
@@ -1802,7 +2196,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
-      x-speakeasy-group: linked_users.batch
+      x-speakeasy-group: linkedUsers
   /linked_users/{id}:
     get:
       operationId: retrieveLinkedUser
@@ -1822,7 +2216,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
-      x-speakeasy-group: linked_users.{id}
+      x-speakeasy-group: linkedUsers
   /linked_users/fromRemoteId:
     get:
       operationId: remoteId
@@ -1842,7 +2236,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
-      x-speakeasy-group: linked_users.fromremoteid
+      x-speakeasy-group: linkedUsers
   /projects:
     get:
       operationId: getProjects
@@ -1897,7 +2291,7 @@ paths:
                 $ref: '#/components/schemas/CustomFieldResponse'
       tags: &ref_20
         - fieldMappings
-      x-speakeasy-group: field_mappings.define
+      x-speakeasy-group: fieldMappings
   /field_mappings:
     post:
       operationId: defineCustomField
@@ -1917,6 +2311,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
       tags: *ref_20
+      x-speakeasy-group: fieldMappings
   /field_mappings/map:
     post:
       operationId: map
@@ -1936,7 +2331,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
       tags: *ref_20
-      x-speakeasy-group: field_mappings.map
+      x-speakeasy-group: fieldMappings
   /events:
     get:
       operationId: getPanoraCoreEvents
@@ -2012,19 +2407,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2092,19 +2511,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2172,19 +2615,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2252,19 +2719,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2332,19 +2823,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2413,19 +2928,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2525,19 +3064,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2606,19 +3169,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2686,19 +3273,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2766,19 +3377,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2846,19 +3481,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -2926,19 +3585,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3006,19 +3689,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3118,19 +3825,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3198,19 +3929,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3316,19 +4071,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3436,19 +4215,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3554,19 +4357,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3672,19 +4499,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3755,19 +4606,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3838,19 +4713,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -3955,19 +4854,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4038,19 +4961,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4155,19 +5102,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4238,19 +5209,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4351,19 +5346,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4464,19 +5483,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4577,19 +5620,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4690,19 +5757,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4770,19 +5861,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4883,19 +5998,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -4964,19 +6103,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5044,19 +6207,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5124,19 +6311,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5204,19 +6415,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5284,19 +6519,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5364,19 +6623,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5444,19 +6727,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5524,19 +6831,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5602,19 +6933,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5715,19 +7070,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5795,19 +7174,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5909,19 +7312,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -5990,19 +7417,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6071,19 +7522,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6152,19 +7627,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6265,19 +7764,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6346,19 +7869,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6459,19 +8006,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6540,19 +8111,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6653,19 +8248,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6733,19 +8352,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6847,19 +8490,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -6960,19 +8627,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -7041,19 +8732,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -7155,19 +8870,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -7235,19 +8974,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -7316,19 +9079,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -7397,19 +9184,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -7478,19 +9289,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -7558,19 +9393,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -7669,19 +9528,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -7780,18 +9663,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -7860,18 +9746,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -7940,19 +9829,43 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+        - name: remote_data
+          example: true
+          description: Set to true to include data from the original software.
+          required: false
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          example: 10
+          required: false
+          description: Set to get the number of records.
+          in: query
+          schema:
+            type: number
+        - example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          name: cursor
+          required: false
+          description: Set to get the number of records after this cursor.
+          in: query
           schema:
             type: string
       responses:
@@ -10656,7 +12569,9 @@ components:
             - ats.scorecard.pulled
             - ats.tag.pulled
             - ats.user.pulled
+            - filestorage.file.created
             - filestorage.file.pulled
+            - filestorage.folder.created
             - filestorage.folder.pulled
             - filestorage.group.pulled
             - filestorage.user.pulled

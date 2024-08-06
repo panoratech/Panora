@@ -740,14 +740,6 @@
           ]
         },
         {
-          "group": "Linked Users",
-          "pages": [
-            "api-reference/linked_users/create",
-            "api-reference/linked_users/list",
-            "api-reference/linked_users/retrieve"
-          ]
-        },
-        {
           "group": "Organisations",
           "pages": [
             "api-reference/organisations/retrieve-organisations",
@@ -765,14 +757,6 @@
           "group": "Events",
           "pages": [
             "api-reference/events/retrieve-events"
-          ]
-        },
-        {
-          "group": "Magic Links",
-          "pages": [
-            "api-reference/magic-link/create-a-magic-link",
-            "api-reference/magic-link/retrieve-magic-links",
-            "api-reference/magic-link/retrieve-a-magic-link"
           ]
         },
         {
