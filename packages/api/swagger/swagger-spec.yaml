@@ -211,7 +211,7 @@ paths:
           description: Set to get the number of records after this cursor.
           in: query
           schema:
-            type: string
+            type: string 
       responses:
         '200':
           description: ''
@@ -228,6 +228,14 @@ paths:
       tags: &ref_1
         - ticketing/tickets
       x-speakeasy-group: ticketing.tickets
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: cursor
+            in: parameters
+            type: cursor
+        outputs:
+          nextCursor: $.next_cursor
     post:
       operationId: createTicketingTicket
       summary: Create Tickets
