@@ -96,7 +96,7 @@ export class ConnectionsController {
         // we must redirect using shop and host to get a valid session on shopify server
         service.redirectUponConnection(res, otherParams);
       } else {
-        res.redirect(`/?success=true`);
+        res.redirect(returnUrl);
       }
       if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]

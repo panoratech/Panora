@@ -156,18 +156,7 @@ const ProviderModal = () => {
   useEffect(() => {
     if (startFlow && isReady) {
       setErrorResponse({errorPresent:false,errorMessage:''})
-      
       open(onWindowClose)
-      .then(() => {
-        console.log('OAuth successful');
-        /*setLoading({
-          status: false,
-          provider: ''
-        });
-        setStartFlow(false);
-        setPreStartFlow(false);
-        setOpenSuccessDialog(true);*/
-      })
       .catch((error : Error) => {
         setLoading({
           status: false,
