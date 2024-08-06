@@ -160,13 +160,13 @@ const ProviderModal = () => {
       open(onWindowClose)
       .then(() => {
         console.log('OAuth successful');
-        setLoading({
+        /*setLoading({
           status: false,
           provider: ''
         });
         setStartFlow(false);
         setPreStartFlow(false);
-        setOpenSuccessDialog(true);
+        setOpenSuccessDialog(true);*/
       })
       .catch((error : Error) => {
         setLoading({

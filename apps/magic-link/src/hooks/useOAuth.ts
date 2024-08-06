@@ -69,9 +69,12 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId,a
     const interval = setInterval(() => {
       try {
         const redirectedURL = authWindow!.location.href;
+        console.log('url is '+redirectedURL)
         // const redirectedURL = authWindow!.location.protocol + '//' + authWindow!.location.hostname + (authWindow!.location.port ? ':' + authWindow!.location.port : '');
-        if (redirectedURL === apiUrl) {
-          onSuccess();
+        const urlParams = new URL(redirectedURL).searchParams;
+        const success = urlParams.get('success'); // Example parameter
+        if (success) {
+          onSuccess(); 
           clearExistingInterval(true);
         }
       } catch (e) {

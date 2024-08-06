@@ -1230,7 +1230,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://images.ctfassets.net/p03bi75xct27/2tVvkghDdMJxzkMca2QLnr/31b520c5e07db0103948af171fb54e99/ashby_logo_square.jpeg?q=80&fm=webp&w=2048',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ["username"]
