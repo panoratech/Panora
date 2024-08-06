@@ -1,5 +1,22 @@
 # @panora/embedded-card-react
 
+## 1.3.1
+
+### Patch Changes
+
+- ded2580: Readme patch
+
+## 1.3.0
+
+### Minor Changes
+
+- 773c515: update minor for npm packages
+
+### Patch Changes
+
+- Updated dependencies [773c515]
+  - @panora/shared@1.4.0
+
 ## 1.2.1
 
 ### Patch Changes

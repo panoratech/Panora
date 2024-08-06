@@ -5,7 +5,7 @@ import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { Injectable } from '@nestjs/common';
 import { tcg_attachments as TicketingAttachment } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedAttachmentOutput } from '../types/model.unified';
+import { UnifiedTicketingAttachmentOutput } from '../types/model.unified';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class SyncService implements IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedAttachmentOutput[],
+    data: UnifiedTicketingAttachmentOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     extra: {
@@ -38,7 +38,7 @@ export class SyncService implements IBaseSync {
       const attachments_results: TicketingAttachment[] = [];
 
       const updateOrCreateAttachment = async (
-        attachment: UnifiedAttachmentOutput,
+        attachment: UnifiedTicketingAttachmentOutput,
         originId: string,
         connection_id: string,
       ) => {

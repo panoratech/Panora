@@ -17,19 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { PaymentService } from './services/payment.service';
 import {
-  UnifiedPaymentInput,
-  UnifiedPaymentOutput,
+  UnifiedAccountingPaymentInput,
+  UnifiedAccountingPaymentOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/payment')
-@Controller('accounting/payment')
+@ApiTags('accounting/payments')
+@Controller('accounting/payments')
 export class PaymentController {
   constructor(
     private readonly paymentService: PaymentService,
@@ -40,8 +46,8 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'getPayments',
-    summary: 'List a batch of Payments',
+    operationId: 'listAccountingPayment',
+    summary: 'List  Payments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +55,22 @@ export class PaymentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedPaymentOutput)
+  @ApiPaginatedResponse(UnifiedAccountingPaymentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getPayments(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.paymentService.getPayments(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,18 +83,20 @@ export class PaymentController {
   }
 
   @ApiOperation({
-    operationId: 'getPayment',
-    summary: 'Retrieve a Payment',
-    description: 'Retrieve a payment from any connected Accounting software',
+    operationId: 'retrieveAccountingPayment',
+    summary: 'Retrieve Payments',
+    description: 'Retrieve Payments from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the payment you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -99,7 +108,7 @@ export class PaymentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedPaymentOutput)
+  @ApiGetCustomResponse(UnifiedAccountingPaymentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -107,7 +116,7 @@ export class PaymentController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -115,14 +124,16 @@ export class PaymentController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
-    operationId: 'addPayment',
-    summary: 'Create a Payment',
-    description: 'Create a payment in any supported Accounting software',
+    operationId: 'createAccountingPayment',
+    summary: 'Create Payments',
+    description: 'Create Payments in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -132,28 +143,30 @@ export class PaymentController {
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedPaymentInput })
-  @ApiCustomResponse(UnifiedPaymentOutput)
+  @ApiBody({ type: UnifiedAccountingPaymentInput })
+  @ApiPostCustomResponse(UnifiedAccountingPaymentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addPayment(
-    @Body() unifiedPaymentData: UnifiedPaymentInput,
+    @Body() unifiedPaymentData: UnifiedAccountingPaymentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.paymentService.addPayment(
         unifiedPaymentData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

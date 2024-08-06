@@ -17,19 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { BenefitService } from './services/benefit.service';
 import {
-  UnifiedBenefitInput,
-  UnifiedBenefitOutput,
+  UnifiedHrisBenefitInput,
+  UnifiedHrisBenefitOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('hris/benefit')
-@Controller('hris/benefit')
+
+@ApiTags('hris/benefits')
+@Controller('hris/benefits')
 export class BenefitController {
   constructor(
     private readonly benefitService: BenefitService,
@@ -40,8 +46,8 @@ export class BenefitController {
   }
 
   @ApiOperation({
-    operationId: 'getBenefits',
-    summary: 'List a batch of Benefits',
+    operationId: 'listHrisBenefits',
+    summary: 'List Benefits',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +55,22 @@ export class BenefitController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedBenefitOutput)
+  @ApiPaginatedResponse(UnifiedHrisBenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getBenefits(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.benefitService.getBenefits(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,21 +83,23 @@ export class BenefitController {
   }
 
   @ApiOperation({
-    operationId: 'getBenefit',
-    summary: 'Retrieve a Benefit',
-    description: 'Retrieve a benefit from any connected Hris software',
+    operationId: 'retrieveHrisBenefit',
+    summary: 'Retrieve Benefit',
+    description: 'Retrieve a Benefit from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the benefit you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -98,7 +107,7 @@ export class BenefitController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedBenefitOutput)
+  @ApiGetCustomResponse(UnifiedHrisBenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -106,7 +115,7 @@ export class BenefitController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -114,6 +123,8 @@ export class BenefitController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

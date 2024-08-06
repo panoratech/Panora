@@ -31,17 +31,23 @@ services:
       context: ./
       dockerfile: ./packages/api/Dockerfile
     environment:
+      ENV: ${ENV}
       DOPPLER_TOKEN: ${DOPPLER_TOKEN_API}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       WEBHOOK_INGRESS: ${WEBHOOK_INGRESS}
+      REDIRECT_TUNNEL_INGRESS: ${REDIRECT_TUNNEL_INGRESS}
       JWT_SECRET: ${JWT_SECRET}
       SENTRY_ENABLED: ${SENTRY_ENABLED}
       SENTRY_DSN: ${SENTRY_DSN}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_USER: ${REDIS_USER}
       REDIS_PASS: ${REDIS_PASS}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
       BACKEND_PORT: ${BACKEND_PORT}
+      WEBAPP_URL: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
       REDIS_DB: ${REDIS_DB}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}
@@ -162,6 +168,11 @@ services:
       IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET: ${IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET}
       SHOPIFY_ECOMMERCE_CLOUD_CLIENT_ID: ${SHOPIFY_ECOMMERCE_CLOUD_CLIENT_ID}
       SHOPIFY_ECOMMERCE_CLOUD_CLIENT_SECRET: ${SHOPIFY_ECOMMERCE_CLOUD_CLIENT_SECRET}
+      EMAIL_SENDING_ADDRESS: ${EMAIL_SENDING_ADDRESS}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -198,13 +209,14 @@ services:
       
   webapp-next:
     build:
-      dockerfile: ./apps/client-ts/Dockerfile
+      dockerfile: ./apps/webapp/Dockerfile
       context: ./
       args:
         NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
         NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
         NEXT_PUBLIC_FRONTEND_DOMAIN: ${NEXT_PUBLIC_FRONTEND_DOMAIN}
         NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
+        NEXT_PUBLIC_REDIRECT_WEBHOOK_INGRESS: ${REDIRECT_TUNNEL_INGRESS} 
     restart: unless-stopped
     ports:
       - 80:8090
@@ -230,6 +242,24 @@ services:
     networks:
       - backend
       - frontend
+  
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: always
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    ports:
+    - 4040:4040
+    depends_on:
+      api:
+        condition: service_healthy
+    network_mode: "host"
+    
 networks:
   frontend:
   backend:

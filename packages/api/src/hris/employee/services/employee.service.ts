@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedEmployeeInput,
-  UnifiedEmployeeOutput,
+  UnifiedHrisEmployeeInput,
+  UnifiedHrisEmployeeOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -29,12 +29,13 @@ export class EmployeeService {
   }
 
   async addEmployee(
-    unifiedEmployeeData: UnifiedEmployeeInput,
+    unifiedEmployeeData: UnifiedHrisEmployeeInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedEmployeeOutput> {
+  ): Promise<UnifiedHrisEmployeeOutput> {
     return;
   }
 
@@ -42,19 +43,22 @@ export class EmployeeService {
     id_employeeing_employee: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedEmployeeOutput> {
+  ): Promise<UnifiedHrisEmployeeOutput> {
     return;
   }
 
   async getEmployees(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedEmployeeOutput[]> {
+  ): Promise<UnifiedHrisEmployeeOutput[]> {
     return;
   }
 }

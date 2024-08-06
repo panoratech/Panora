@@ -1,7 +1,7 @@
 import { IAttachmentMapper } from '@ticketing/attachment/types';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedTicketingAttachmentInput,
+  UnifiedTicketingAttachmentOutput,
 } from '@ticketing/attachment/types/model.unified';
 import { FrontAttachmentOutput } from './types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -19,7 +19,7 @@ export class FrontAttachmentMapper implements IAttachmentMapper {
     );
   }
   async desunify(
-    source: UnifiedAttachmentInput,
+    source: UnifiedTicketingAttachmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -35,7 +35,7 @@ export class FrontAttachmentMapper implements IAttachmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAttachmentOutput | UnifiedAttachmentOutput[]> {
+  ): Promise<UnifiedTicketingAttachmentOutput | UnifiedTicketingAttachmentOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleAttachmentToUnified(
         source,
@@ -61,7 +61,7 @@ export class FrontAttachmentMapper implements IAttachmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedTicketingAttachmentOutput> {
     return {
       remote_id: attachment.id,
       remote_data: attachment,

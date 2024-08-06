@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedUserOutput, UserAccessRole } from '../types/model.unified';
+import { UnifiedAtsUserOutput, UserAccessRole } from '../types/model.unified';
 
 @Injectable()
 export class UserService {
@@ -14,8 +14,10 @@ export class UserService {
     id_ats_user: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedAtsUserOutput> {
     try {
       const user = await this.prisma.ats_users.findUnique({
         where: {
@@ -47,12 +49,10 @@ export class UserService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedUserOutput format
-      const unifiedUser: UnifiedUserOutput = {
+      // Transform to UnifiedAtsUserOutput format
+      const unifiedUser: UnifiedAtsUserOutput = {
         id: user.id_ats_user,
         first_name: user.first_name,
         last_name: user.last_name,
@@ -67,7 +67,7 @@ export class UserService {
         modified_at: user.modified_at,
       };
 
-      let res: UnifiedUserOutput = unifiedUser;
+      let res: UnifiedAtsUserOutput = unifiedUser;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -83,6 +83,8 @@ export class UserService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.user.pull',
@@ -103,13 +105,14 @@ export class UserService {
 
   async getUsers(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedUserOutput[];
+    data: UnifiedAtsUserOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -139,9 +142,7 @@ export class UserService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (users.length === limit + 1) {
@@ -154,7 +155,7 @@ export class UserService {
       if (cursor) {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
-      const unifiedUsers: UnifiedUserOutput[] = await Promise.all(
+      const unifiedUsers: UnifiedAtsUserOutput[] = await Promise.all(
         users.map(async (user) => {
           // Fetch field mappings for the user
           const values = await this.prisma.value.findMany({
@@ -176,14 +177,9 @@ export class UserService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedUserOutput format
+          // Transform to UnifiedAtsUserOutput format
           return {
             id: user.id_ats_user,
             first_name: user.first_name,
@@ -201,10 +197,10 @@ export class UserService {
         }),
       );
 
-      let res: UnifiedUserOutput[] = unifiedUsers;
+      let res: UnifiedAtsUserOutput[] = unifiedUsers;
 
       if (remote_data) {
-        const remote_array_data: UnifiedUserOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsUserOutput[] = await Promise.all(
           res.map(async (user) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -220,6 +216,8 @@ export class UserService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.user.pull',

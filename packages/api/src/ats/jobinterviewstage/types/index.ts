@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedJobInterviewStageInput,
-  UnifiedJobInterviewStageOutput,
+  UnifiedAtsJobinterviewstageInput,
+  UnifiedAtsJobinterviewstageOutput,
 } from './model.unified';
 import { OriginalJobInterviewStageOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IJobInterviewStageService extends IBaseObjectService {
 
 export interface IJobInterviewStageMapper {
   desunify(
-    source: UnifiedJobInterviewStageInput,
+    source: UnifiedAtsJobinterviewstageInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IJobInterviewStageMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedJobInterviewStageOutput | UnifiedJobInterviewStageOutput[]>;
+  ): Promise<UnifiedAtsJobinterviewstageOutput | UnifiedAtsJobinterviewstageOutput[]>;
 }

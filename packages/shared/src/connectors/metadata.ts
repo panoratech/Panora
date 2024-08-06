@@ -351,6 +351,20 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         active: false
       },
+      'wealthbox': {
+        scopes: 'login+data',
+        urls: {
+          docsUrl: 'https://dev.wealthbox.com',
+          apiUrl: 'https://smf.crm3.redtailtechnology.com/api/public/v1',
+          authBaseUrl: 'https://app.crmworkspace.com/oauth/authorize'
+        },
+        logoPath: 'https://pbs.twimg.com/profile_images/1674874004027461632/zoKBfoA0_400x400.png',
+        description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+        active: false
+      }
     },
     'ticketing': {
       'front': {
@@ -1386,7 +1400,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'greenhouse': {
         scopes: 'candidates.create candidates.view jobs.view',
         urls: {
-          docsUrl: '',
+          docsUrl: 'https://developers.greenhouse.io/harvest.html',
           apiUrl: 'https://api.greenhouse.io/v1/partner',
           authBaseUrl: 'https://api.greenhouse.io/oauth/authorize'
         },
@@ -1400,7 +1414,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'greenhouse_job_boards': {
         scopes: '',
         urls: {
-          docsUrl: '',
+          docsUrl: 'https://developers.greenhouse.io/job-board.html',
           apiUrl: ''
         },
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
@@ -2713,11 +2727,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'Files.Read.All offline_access openid User.Read',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
-          apiUrl: 'https://graph.microsoft.com',
-          authBaseUrl: (END_USER_TENANT_NAME) => `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?resource=https://${END_USER_TENANT_NAME}.sharepoint.com`
-        },
-        options: {
-          end_user_domain: true
+          apiUrl: 'https://graph.microsoft.com/v1.0',
+          authBaseUrl:`https://login.microsoftonline.com/common/oauth2/v2.0/authorize`
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',

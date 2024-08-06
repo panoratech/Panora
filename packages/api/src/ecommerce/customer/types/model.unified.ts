@@ -8,7 +8,7 @@ import {
   IsEmail,
 } from 'class-validator';
 
-export class UnifiedCustomerInput {
+export class UnifiedEcommerceCustomerInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The email of the customer',
@@ -57,7 +57,7 @@ export class UnifiedCustomerInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedCustomerOutput extends UnifiedCustomerInput {
+export class UnifiedEcommerceCustomerOutput extends UnifiedEcommerceCustomerInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the customer',

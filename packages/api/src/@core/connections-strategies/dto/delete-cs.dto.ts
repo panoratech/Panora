@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class DeleteCSDto {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id: string;
 }

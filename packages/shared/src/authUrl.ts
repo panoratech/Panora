@@ -11,44 +11,46 @@ interface AuthParams {
   returnUrl: string;
   apiUrl: string;
   vertical: string;
-  redirectUrlIngressWhenLocalDev?: string;
+  rediectUriIngress?: {
+    status: boolean;
+    value: string | null;
+  };
   additionalParams?: {
     end_user_domain: string; // needed for instance with shopify or sharepoint to construct the auth domain
   }
 }
 
 function generateCodes() {
-    const base64URLEncode = (str: Buffer): string => {
-        return str.toString('base64')
-            .replace(/\+/g, '-')
-            .replace(/\//g, '_')
-            .replace(/=/g, '');
-    }
+  const base64URLEncode = (str: Buffer): string => {
+      return str.toString('base64')
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=/g, '');
+  }
 
-    const verifier = base64URLEncode(crypto.randomBytes(32));
+  const verifier = base64URLEncode(crypto.randomBytes(32));
 
-    const sha256 = (buffer: Buffer): Buffer => {
-        return crypto.createHash('sha256').update(buffer).digest();
-    }
+  const sha256 = (buffer: Buffer): Buffer => {
+      return crypto.createHash('sha256').update(buffer).digest();
+  }
 
-    const challenge = base64URLEncode(sha256(Buffer.from(verifier)));
+  const challenge = base64URLEncode(sha256(Buffer.from(verifier)));
 
-    return {
-        codeVerifier: verifier,
-        codeChallenge: challenge
-    }
+  return {
+      codeVerifier: verifier,
+      codeChallenge: challenge
+  }
 }
 
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
-export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, additionalParams }: AuthParams) => {
-  const redirectUrlIngressWhenLocalDev = CONNECTORS_METADATA[vertical][providerName].options?.local_redirect_uri_in_https === true && 'https://prepared-wildcat-infinitely.ngrok-free.app';
-  const encodedRedirectUrl = encodeURIComponent(`${redirectUrlIngressWhenLocalDev ? redirectUrlIngressWhenLocalDev : apiUrl}/connections/oauth/callback`);
+export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, additionalParams, rediectUriIngress }: AuthParams) => {
+  const encodedRedirectUrl = encodeURIComponent(`${rediectUriIngress && rediectUriIngress.status === true ? rediectUriIngress.value : apiUrl}/connections/oauth/callback`); 
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
-  // console.log('encodedRedirect URL : ', encodedRedirectUrl);
+  // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
   // const vertical = findConnectorCategory(providerName);
-  if (vertical == null) {
+  if (vertical == null) { 
     throw new ReferenceError('vertical is null');
   }
 
@@ -102,15 +104,15 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     encodedRedirectUrl,
     state,
     apiUrl ,
-    additionalParams
+    additionalParams,
   } = input;
 
-  const type = providerToType(providerName, vertical, authStrategy);
+  const type = providerToType(providerName, vertical, authStrategy); 
   
   // 1. env if selfhost and no custom
   // 2. backend if custom credentials
   // same for authBaseUrl with subdomain
-  const DATA = await fetch(`${apiUrl}/connections-strategies/getCredentials?projectId=${projectId}&type=${type}`);
+  const DATA = await fetch(`${apiUrl}/connection_strategies/getCredentials?projectId=${projectId}&type=${type}`);
   const data = await DATA.json() as OAuth2AuthData; 
 
   // console.log("Fetched Data ", JSON.stringify(data))

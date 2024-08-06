@@ -15,60 +15,12 @@
   </br>
   
   <p>
-    <a href="https://panora.dev">Website 🌎</a> - <a href="https://docs.panora.dev">Documentation 📖</a> - <a href="https://status.panora.dev">Status 🟢</a>
+    <a href="https://panora.dev">Website 🌎</a> - <a href="https://docs.panora.dev">Documentation 📖</a> - <a href="https://discord.com/invite/PH5k7gGubt">Discord 👽</a>
   </p>
 </div>
 
-### Have you met anyone who loves developing integrations? *No.* That’s why we designed an easy developer experience that you’ll enjoy
 
-- **Simple developer experience:** easy to self-host, uses industry-standard data models, and is extensible
-- **Builder-friendly terms:** Panora is open-source, and offers generous tips for contributors
-
-### More than a devtool: Panora helps you put your product at the core of your customer's daily workflows
-
-Your customers expect all of their tools to work well together. Panora avoids your team spending hundreds of hours building and maintaining integrations instead of your core product.
-
-# ✨ Core Features  
-
-|                    |
-|---------------------------|
-| **Magic Links:** Let your users grant you access to their data. Without writing code.              |
-| **Custom Fields:** Reflect in Panora the specific data points that matter to your users            |
-| **Passthrough Requests:** Interact with other software platforms in their native format.      |
-| **Webhooks:** Listen to one webhook to receive normalized data from various software platforms                  |
-
-# ✨ Integrations Catalog
-
-Panora supports integration with the following objects across multiple platforms:
-
-### CRM
-
-|                                               | Contacts | Deals | Notes | Engagements | Tasks | Users | Companies |
-|-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|:-----:|:---------:|
-| Hubspot           |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
-| Pipedrive       |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
-| Zoho CRM          |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
-| Zendesk Sell |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
-| Attio                   |    ✔️    |       |       |             |       |       |     ✔️    |
-
-### Ticketing
-
-|             | Tickets | Comments | Users | Contacts | Accounts | Tags | Teams | Collections |
-|-------------|:----------:|:-------:|:-------:|:------------:|:-------:|:-------:|:------:|:-------------:|
-| Zendesk     | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ |  |
-| Front       | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ |  |
-| Jira        | ✔        | ✔     | ✔    |            |      | ✔    | ✔ | ✔ |
-| Gorgias     | ✔        | ✔     | ✔    | ✔          |      | ✔    | ✔ |  |
-
-### ATS (New!)
-
-|             | Activities | Applications | Candidates | Departments | Interviews | Jobs | Offers | Offices | Scorecard | Users |
-|-------------|:----------:|:------------:|:----------:|:-----------:|:----------:|:----:|:------:|:-------:|:---------:|:-----:|
-| Ashby       | ✔          | ✔            | ✔          | ✔           | ✔          | ✔    | ✔      | ✔       | ✔         | ✔     |
-
-Your favourite software is missing? [Ask the community to build a connector!](https://github.com/panoratech/Panora/issues/new)
-
-# 🕹️ Try the Open-Source version
+# 🕹️ Try
 
 - Prerequisite: You should have Git and Docker installed
 
@@ -90,7 +42,68 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
   docker compose up
  ```
 
-Visit our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product
+Panora is now running!  Follow our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product !
+
+See also [our selfhost guide here !](https://docs.panora.dev/open-source/selfhost/self-host-guide)
+
+
+# ✨ Core Features  
+
+|                    |
+|---------------------------|
+| **Magic Links:** Let your users grant you access to their data. Without writing code.              |
+| **Custom Fields:** Reflect in Panora the specific data points that matter to your users            |
+| **Passthrough Requests:** Interact with other software platforms in their native format.      |
+| **Webhooks:** Listen to one webhook to receive normalized data from various software platforms                  |
+
+# ✨ Integrations Catalog
+
+Panora supports integration with the following objects across multiple platforms:
+
+[Here is an extensive list of all integrations !](https://docs.panora.dev/integrations-catalog)
+
+### CRM Unified API
+
+|                                               | Contacts | Deals | Notes | Engagements | Tasks | Users | Companies |
+|-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|:-----:|:---------:|
+| Hubspot           |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
+| Pipedrive       |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
+| Zoho CRM          |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
+| Zendesk Sell |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
+| Attio                   |    ✔️    |       |       |             |       |       |     ✔️    |
+
+### Ticketing Unified API
+
+|    | Tickets | Comments | Users | Contacts | Accounts | Tags | Teams | Collections |
+|-------------|:----------:|:-------:|:-------:|:------------:|:-------:|:-------:|:------:|:-------------:|
+| Zendesk     | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ |  |
+| Front       | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ |  |
+| Jira        | ✔        | ✔     | ✔    |            |      | ✔    | ✔ | ✔ |
+| Gitlab     | ✔        | ✔     | ✔    |           |      |     |  |  ✔|
+ 
+### ATS Unified API (New!)
+
+|             | Activities | Applications | Candidates | Departments | Interviews | Jobs | Offers | Offices | Scorecard | Users |
+|-------------|:----------:|:------------:|:----------:|:-----------:|:----------:|:----:|:------:|:-------:|:---------:|:-----:|
+| Ashby       | ✔          | ✔            | ✔          | ✔           | ✔          | ✔    | ✔      | ✔       | ✔         | ✔     |
+
+
+### File Storage Unified API
+
+| File Storage                                           | Drives | Files | Folders | Groups | Users | Permissions | Shared Links |
+|-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|:-----:|:---------:|
+| [Google Drive]()            |       ✔️ |  ✔️   |   ✔️  |        ✔️   | ✔️    |     |           |
+| [Box]()        |        |   ✔️   |   ✔️   |      ✔️     |  ✔️    |  ✔️   |           |
+| [Dropbox]()          |       |  ✔️   |   ✔️  | ✔️          |   ✔️  |   ✔️  |           |
+| [OneDrive]() |      ✔️ | ✔️   |    ✔️|      ✔️  |   ✔️  |     |           |
+
+
+
+Your favourite software is missing? [Ask the community to build a connector!](https://github.com/panoratech/Panora/issues/new)
+
+# 👾 Join the community
+
+- [Join the Discord](https://discord.com/invite/PH5k7gGubt)
 
 # 🤔 Questions? Ask the core team
 

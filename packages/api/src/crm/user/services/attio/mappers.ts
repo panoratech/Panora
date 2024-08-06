@@ -1,7 +1,7 @@
 import { AttioUserOutput } from './types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedCrmUserInput,
+  UnifiedCrmUserOutput,
 } from '@crm/user/types/model.unified';
 import { IUserMapper } from '@crm/user/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -14,7 +14,7 @@ export class AttioUserMapper implements IUserMapper {
     this.mappersRegistry.registerService('crm', 'user', 'attio', this);
   }
   desunify(
-    source: UnifiedUserInput,
+    source: UnifiedCrmUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class AttioUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
+  ): Promise<UnifiedCrmUserOutput | UnifiedCrmUserOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleUserToUnified(
         source,
@@ -53,7 +53,7 @@ export class AttioUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedCrmUserOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedTimeoffBalanceInput,
-  UnifiedTimeoffBalanceOutput,
+  UnifiedHrisTimeoffbalanceInput,
+  UnifiedHrisTimeoffbalanceOutput,
 } from './model.unified';
 import { OriginalTimeoffBalanceOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface ITimeoffBalanceService {
 
 export interface ITimeoffBalanceMapper {
   desunify(
-    source: UnifiedTimeoffBalanceInput,
+    source: UnifiedHrisTimeoffbalanceInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface ITimeoffBalanceMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTimeoffBalanceOutput | UnifiedTimeoffBalanceOutput[]>;
+  ): Promise<UnifiedHrisTimeoffbalanceOutput | UnifiedHrisTimeoffbalanceOutput[]>;
 }

@@ -17,19 +17,26 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ExpenseService } from './services/expense.service';
 import {
-  UnifiedExpenseInput,
-  UnifiedExpenseOutput,
+  UnifiedAccountingExpenseInput,
+  UnifiedAccountingExpenseOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/expense')
-@Controller('accounting/expense')
+
+@ApiTags('accounting/expenses')
+@Controller('accounting/expenses')
 export class ExpenseController {
   constructor(
     private readonly expenseService: ExpenseService,
@@ -40,8 +47,8 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'getExpenses',
-    summary: 'List a batch of Expenses',
+    operationId: 'listAccountingExpense',
+    summary: 'List  Expenses',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +56,22 @@ export class ExpenseController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedExpenseOutput)
+  @ApiPaginatedResponse(UnifiedAccountingExpenseOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getExpenses(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.expenseService.getExpenses(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,18 +84,20 @@ export class ExpenseController {
   }
 
   @ApiOperation({
-    operationId: 'getExpense',
-    summary: 'Retrieve a Expense',
-    description: 'Retrieve a expense from any connected Accounting software',
+    operationId: 'retrieveAccountingExpense',
+    summary: 'Retrieve Expenses',
+    description: 'Retrieve Expenses from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the expense you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -99,7 +109,7 @@ export class ExpenseController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedExpenseOutput)
+  @ApiGetCustomResponse(UnifiedAccountingExpenseOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -107,7 +117,7 @@ export class ExpenseController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -115,14 +125,16 @@ export class ExpenseController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
-    operationId: 'addExpense',
-    summary: 'Create a Expense',
-    description: 'Create a expense in any supported Accounting software',
+    operationId: 'createAccountingExpense',
+    summary: 'Create Expenses',
+    description: 'Create Expenses in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -132,28 +144,30 @@ export class ExpenseController {
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedExpenseInput })
-  @ApiCustomResponse(UnifiedExpenseOutput)
+  @ApiBody({ type: UnifiedAccountingExpenseInput })
+  @ApiPostCustomResponse(UnifiedAccountingExpenseOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addExpense(
-    @Body() unifiedExpenseData: UnifiedExpenseInput,
+    @Body() unifiedExpenseData: UnifiedAccountingExpenseInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.expenseService.addExpense(
         unifiedExpenseData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -1,8 +1,8 @@
 import { ITagMapper } from '@ticketing/tag/types';
 import { ZendeskTagInput, ZendeskTagOutput } from './types';
 import {
-  UnifiedTagInput,
-  UnifiedTagOutput,
+  UnifiedTicketingTagInput,
+  UnifiedTicketingTagOutput,
 } from '@ticketing/tag/types/model.unified';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
@@ -14,7 +14,7 @@ export class ZendeskTagMapper implements ITagMapper {
     this.mappersRegistry.registerService('ticketing', 'tag', 'zendesk', this);
   }
   desunify(
-    source: UnifiedTagInput,
+    source: UnifiedTicketingTagInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class ZendeskTagMapper implements ITagMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTagOutput | UnifiedTagOutput[] {
+  ): UnifiedTicketingTagOutput | UnifiedTicketingTagOutput[] {
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((tag) =>
@@ -45,8 +45,8 @@ export class ZendeskTagMapper implements ITagMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTagOutput {
-    const unifiedTag: UnifiedTagOutput = {
+  ): UnifiedTicketingTagOutput {
+    const unifiedTag: UnifiedTicketingTagOutput = {
       remote_id: null,
       remote_data: tag,
       name: tag.name,

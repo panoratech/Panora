@@ -1,7 +1,10 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { CoreSyncService } from '@@core/sync/sync.service';
+import { ApiGetArrayCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 import { ConnectionsError } from '@@core/utils/errors';
 import {
   Body,
@@ -15,13 +18,16 @@ import {
 } from '@nestjs/common';
 import {
   ApiBody,
+  ApiExcludeController,
+  ApiExcludeEndpoint,
   ApiOperation,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
+import { CONNECTORS_METADATA } from '@panora/shared';
 import { Response } from 'express';
+import { Connection } from './@utils/types';
 
 export type StateDataType = {
   projectId: string;
@@ -41,6 +47,7 @@ export class BodyDataType {
 export class ConnectionsController {
   constructor(
     private categoryConnectionRegistry: CategoryConnectionRegistry,
+    private coreSync: CoreSyncService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
@@ -54,6 +61,7 @@ export class ConnectionsController {
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiQuery({ name: 'code', required: true, type: String })
   @ApiResponse({ status: 200 })
+  @ApiExcludeEndpoint()
   @Get('oauth/callback')
   async handleOAuthCallback(@Res() res: Response, @Query() query: any) {
     try {
@@ -92,7 +100,7 @@ export class ConnectionsController {
         res.redirect(`/`);
       }
 
-      /*if (
+      if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
       ) {
@@ -103,7 +111,7 @@ export class ConnectionsController {
           providerName,
           linkedUserId,
         );
-      }*/
+      }
     } catch (error) {
       throw error;
     }
@@ -131,9 +139,10 @@ export class ConnectionsController {
   }*/
 
   @ApiOperation({
-    operationId: 'handleBasicOrApiKeyCallback',
-    summary: 'Capture basic or api key callback',
+    operationId: 'handleApiKeyCallback',
+    summary: 'Capture api key or basic auth callback',
   })
+  @ApiExcludeEndpoint()
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiBody({ type: BodyDataType })
   @UseGuards(JwtAuthGuard)
@@ -174,8 +183,17 @@ export class ConnectionsController {
 
       await this.categoryConnectionRegistry
         .getService(vertical.toLowerCase())
-        .handleCallBack(providerName, body_, strategy_type);
-      /*if (
+        .handleCallBack(
+          providerName,
+          {
+            projectId,
+            linkedUserId,
+            apikey,
+            body_data,
+          },
+          'apikey',
+        );
+      if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
       ) {
@@ -186,20 +204,21 @@ export class ConnectionsController {
           providerName,
           linkedUserId,
         );
-      }*/
+      }
     } catch (error) {
       throw error;
     }
   }
 
   @ApiOperation({
-    operationId: 'list',
+    operationId: 'getConnections',
     summary: 'List Connections',
   })
+  @ApiExcludeEndpoint()
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
-  @Get()
-  async list(@Request() req: any) {
+  @Get('internal')
+  async list_internal(@Request() req: any) {
     try {
       const { id_project } = req.user;
       return await this.prisma.connections.findMany({
@@ -212,12 +231,19 @@ export class ConnectionsController {
     }
   }
 
-  @Get('list')
-  async list2(@Query('projectid') req: string) {
+  @ApiOperation({
+    operationId: 'getConnections',
+    summary: 'List Connections',
+  })
+  @ApiGetArrayCustomResponse(Connection)
+  @UseGuards(ApiKeyAuthGuard)
+  @Get()
+  async list(@Request() req: any) {
     try {
+      const { id_project } = req.user;
       return await this.prisma.connections.findMany({
         where: {
-          id_project: req,
+          id_project: id_project,
         },
       });
     } catch (error) {

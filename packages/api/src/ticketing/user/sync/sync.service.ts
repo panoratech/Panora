@@ -12,7 +12,7 @@ import { tcg_users as TicketingUser } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IUserService } from '../types';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { UnifiedTicketingUserOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -48,12 +48,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log(`Syncing users....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -100,10 +100,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId, wh_real_time_trigger } = param;
       const service: IUserService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ticketing, commonObject: user} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedUserOutput,
+        UnifiedTicketingUserOutput,
         OriginalUserOutput,
         IUserService
       >(
@@ -123,7 +126,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedUserOutput[],
+    data: UnifiedTicketingUserOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<TicketingUser[]> {
@@ -131,7 +134,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const users_results: TicketingUser[] = [];
 
       const updateOrCreateUser = async (
-        user: UnifiedUserOutput,
+        user: UnifiedTicketingUserOutput,
         originId: string,
         connection_id: string,
       ) => {

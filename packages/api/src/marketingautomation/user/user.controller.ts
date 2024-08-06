@@ -17,16 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { UserService } from './services/user.service';
-import { UnifiedUserInput, UnifiedUserOutput } from './types/model.unified';
+import {
+  UnifiedMarketingautomationUserInput,
+  UnifiedMarketingautomationUserOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('marketingautomation/user')
-@Controller('marketingautomation/user')
+
+@ApiTags('marketingautomation/users')
+@Controller('marketingautomation/users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
@@ -37,8 +46,8 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationUsers',
-    summary: 'List a batch of Users',
+    operationId: 'listMarketingAutomationUsers',
+    summary: 'List  Users',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,21 +55,22 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getUsers(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.userService.getUsers(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -73,10 +83,10 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationUser',
-    summary: 'Retrieve a User',
+    operationId: 'retrieveMarketingAutomationUser',
+    summary: 'Retrieve Users',
     description:
-      'Retrieve a user from any connected Marketingautomation software',
+      'Retrieve Users from any connected Marketingautomation software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -89,6 +99,7 @@ export class UserController {
     required: true,
     type: String,
     description: 'id of the user you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -96,8 +107,9 @@ export class UserController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -105,7 +117,7 @@ export class UserController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -113,6 +125,8 @@ export class UserController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

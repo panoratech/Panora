@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedCustomerOutput } from '../types/model.unified';
+import { UnifiedEcommerceCustomerOutput } from '../types/model.unified';
 
 @Injectable()
 export class CustomerService {
@@ -14,8 +14,10 @@ export class CustomerService {
     id_ecommerce_customer: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCustomerOutput> {
+  ): Promise<UnifiedEcommerceCustomerOutput> {
     try {
       const customer = await this.prisma.ecom_customers.findUnique({
         where: {
@@ -50,12 +52,10 @@ export class CustomerService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedCustomerOutput format
-      const unifiedCustomer: UnifiedCustomerOutput = {
+      // Transform to UnifiedEcommerceCustomerOutput format
+      const UnifiedEcommerceCustomer: UnifiedEcommerceCustomerOutput = {
         id: customer.id_ecom_customer,
         email: customer.email,
         first_name: customer.first_name,
@@ -64,11 +64,11 @@ export class CustomerService {
         field_mappings: field_mappings,
         remote_id: customer.remote_id,
         created_at: customer.created_at.toISOString(),
-        modified_at: customer.modifed_at.toISOString(),
+        modified_at: customer.modified_at.toISOString(),
         addresses: customer.ecom_customer_addresses,
       };
 
-      let res: UnifiedCustomerOutput = unifiedCustomer;
+      let res: UnifiedEcommerceCustomerOutput = UnifiedEcommerceCustomer;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -84,6 +84,8 @@ export class CustomerService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ecommerce.customer.pull',
@@ -104,13 +106,14 @@ export class CustomerService {
 
   async getCustomers(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedCustomerOutput[];
+    data: UnifiedEcommerceCustomerOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -159,7 +162,7 @@ export class CustomerService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedCustomers: UnifiedCustomerOutput[] = await Promise.all(
+      const UnifiedEcommerceCustomers: UnifiedEcommerceCustomerOutput[] = await Promise.all(
         customers.map(async (customer) => {
           // Fetch field mappings for the customer
           const values = await this.prisma.value.findMany({
@@ -181,14 +184,9 @@ export class CustomerService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedCustomerOutput format
+          // Transform to UnifiedEcommerceCustomerOutput format
           return {
             id: customer.id_ecom_customer,
             email: customer.email,
@@ -198,16 +196,16 @@ export class CustomerService {
             field_mappings: field_mappings,
             remote_id: customer.remote_id,
             created_at: customer.created_at.toISOString(),
-            modified_at: customer.modifed_at.toISOString(),
+            modified_at: customer.modified_at.toISOString(),
             addresses: customer.ecom_customer_addresses,
           };
         }),
       );
 
-      let res: UnifiedCustomerOutput[] = unifiedCustomers;
+      let res: UnifiedEcommerceCustomerOutput[] = UnifiedEcommerceCustomers;
 
       if (remote_data) {
-        const remote_array_data: UnifiedCustomerOutput[] = await Promise.all(
+        const remote_array_data: UnifiedEcommerceCustomerOutput[] = await Promise.all(
           res.map(async (customer) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -224,6 +222,8 @@ export class CustomerService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ecommerce.customer.pull',

@@ -17,19 +17,22 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { CompanyInfoService } from './services/companyinfo.service';
 import {
-  UnifiedCompanyInfoInput,
-  UnifiedCompanyInfoOutput,
+  UnifiedAccountingCompanyinfoInput,
+  UnifiedAccountingCompanyinfoOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/companyinfo')
-@Controller('accounting/companyinfo')
+
+@ApiTags('accounting/companyinfos')
+@Controller('accounting/companyinfos')
 export class CompanyInfoController {
   constructor(
     private readonly companyinfoService: CompanyInfoService,
@@ -40,8 +43,8 @@ export class CompanyInfoController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanyInfos',
-    summary: 'List a batch of CompanyInfos',
+    operationId: 'listAccountingCompanyInfos',
+    summary: 'List  CompanyInfos',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +52,22 @@ export class CompanyInfoController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCompanyInfoOutput)
+  @ApiPaginatedResponse(UnifiedAccountingCompanyinfoOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCompanyInfos(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.companyinfoService.getCompanyInfos(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,19 +80,21 @@ export class CompanyInfoController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanyInfo',
-    summary: 'Retrieve a CompanyInfo',
+    operationId: 'retrieveAccountingCompanyInfo',
+    summary: 'Retrieve Company Infos',
     description:
-      'Retrieve a companyinfo from any connected Accounting software',
+      'Retrieve Company Infos from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the companyinfo you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -100,7 +106,7 @@ export class CompanyInfoController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCompanyInfoOutput)
+  @ApiGetCustomResponse(UnifiedAccountingCompanyinfoOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -108,7 +114,7 @@ export class CompanyInfoController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -116,6 +122,8 @@ export class CompanyInfoController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

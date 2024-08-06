@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedMarketingautomationContactInput,
+  UnifiedMarketingautomationContactOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -28,12 +28,13 @@ export class ContactService {
   }
 
   async addContact(
-    unifiedContactData: UnifiedContactInput,
+    unifiedContactData: UnifiedMarketingautomationContactInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedMarketingautomationContactOutput> {
     return;
   }
 
@@ -41,19 +42,22 @@ export class ContactService {
     id_contacting_contact: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedMarketingautomationContactOutput> {
     return;
   }
 
   async getContacts(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedContactOutput[]> {
+  ): Promise<UnifiedMarketingautomationContactOutput[]> {
     return;
   }
 }

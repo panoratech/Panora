@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from '../services/registry.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedPayGroupOutput } from '../types/model.unified';
+import { UnifiedHrisPaygroupOutput } from '../types/model.unified';
 import { IPayGroupService } from '../types';
 import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 

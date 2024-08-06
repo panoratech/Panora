@@ -17,19 +17,22 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TrackingCategoryService } from './services/trackingcategory.service';
 import {
-  UnifiedTrackingCategoryInput,
-  UnifiedTrackingCategoryOutput,
+  UnifiedAccountingTrackingcategoryInput,
+  UnifiedAccountingTrackingcategoryOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/trackingcategory')
-@Controller('accounting/trackingcategory')
+
+@ApiTags('accounting/trackingcategories')
+@Controller('accounting/trackingcategories')
 export class TrackingCategoryController {
   constructor(
     private readonly trackingcategoryService: TrackingCategoryService,
@@ -40,8 +43,8 @@ export class TrackingCategoryController {
   }
 
   @ApiOperation({
-    operationId: 'getTrackingCategorys',
-    summary: 'List a batch of TrackingCategorys',
+    operationId: 'listAccountingTrackingCategorys',
+    summary: 'List  TrackingCategorys',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +52,22 @@ export class TrackingCategoryController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTrackingCategoryOutput)
+  @ApiPaginatedResponse(UnifiedAccountingTrackingcategoryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTrackingCategorys(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.trackingcategoryService.getTrackingCategorys(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,19 +80,21 @@ export class TrackingCategoryController {
   }
 
   @ApiOperation({
-    operationId: 'getTrackingCategory',
-    summary: 'Retrieve a TrackingCategory',
+    operationId: 'retrieveAccountingTrackingCategory',
+    summary: 'Retrieve Tracking Categories',
     description:
-      'Retrieve a trackingcategory from any connected Accounting software',
+      'Retrieve Tracking Categories from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the trackingcategory you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -100,7 +106,7 @@ export class TrackingCategoryController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTrackingCategoryOutput)
+  @ApiGetCustomResponse(UnifiedAccountingTrackingcategoryOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -108,7 +114,7 @@ export class TrackingCategoryController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -116,6 +122,8 @@ export class TrackingCategoryController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

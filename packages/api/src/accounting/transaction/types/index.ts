@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedTransactionInput,
-  UnifiedTransactionOutput,
+  UnifiedAccountingTransactionInput,
+  UnifiedAccountingTransactionOutput,
 } from './model.unified';
 import { OriginalTransactionOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface ITransactionService {
 
 export interface ITransactionMapper {
   desunify(
-    source: UnifiedTransactionInput,
+    source: UnifiedAccountingTransactionInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface ITransactionMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTransactionOutput | UnifiedTransactionOutput[]>;
+  ): Promise<UnifiedAccountingTransactionOutput | UnifiedAccountingTransactionOutput[]>;
 }

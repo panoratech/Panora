@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IOfferService } from '../types';
 import { OriginalOfferOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedOfferOutput } from '../types/model.unified';
+import { UnifiedAtsOfferOutput } from '../types/model.unified';
 import { ats_offers as AtsOffer } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -50,12 +50,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log('Syncing offers...');
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -101,10 +101,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId } = param;
       const service: IOfferService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ats, commonObject: offer} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedOfferOutput,
+        UnifiedAtsOfferOutput,
         OriginalOfferOutput,
         IOfferService
       >(integrationId, linkedUserId, 'ats', 'offer', service, []);
@@ -116,7 +119,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    offers: UnifiedOfferOutput[],
+    offers: UnifiedAtsOfferOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsOffer[]> {
@@ -124,13 +127,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const offers_results: AtsOffer[] = [];
 
       const updateOrCreateOffer = async (
-        offer: UnifiedOfferOutput,
+        offer: UnifiedAtsOfferOutput,
         originId: string,
       ) => {
         const existingOffer = await this.prisma.ats_offers.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connection_id,
+            
           },
         });
 
@@ -160,7 +163,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               created_at: new Date(),
               id_linked_user: linkedUserId,
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString, IsDateString } from 'class-validator';
 
-export class UnifiedFulfillmentOrdersInput {
+export class UnifiedEcommerceFulfillmentOrdersInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The name of the fulfillmentorders',
@@ -19,7 +19,7 @@ export class UnifiedFulfillmentOrdersInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedFulfillmentOrdersOutput extends UnifiedFulfillmentOrdersInput {
+export class UnifiedEcommerceFulfillmentOrdersOutput extends UnifiedEcommerceFulfillmentOrdersInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the fulfillmentorders',

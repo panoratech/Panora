@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedVendorCreditInput,
-  UnifiedVendorCreditOutput,
+  UnifiedAccountingVendorcreditInput,
+  UnifiedAccountingVendorcreditOutput,
 } from './model.unified';
 import { OriginalVendorCreditOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IVendorCreditService {
 
 export interface IVendorCreditMapper {
   desunify(
-    source: UnifiedVendorCreditInput,
+    source: UnifiedAccountingVendorcreditInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IVendorCreditMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedVendorCreditOutput | UnifiedVendorCreditOutput[]>;
+  ): Promise<UnifiedAccountingVendorcreditOutput | UnifiedAccountingVendorcreditOutput[]>;
 }

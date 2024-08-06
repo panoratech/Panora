@@ -1,37 +1,37 @@
 import { IDriveService } from '@filestorage/drive/types';
 import {
-  UnifiedDriveInput,
-  UnifiedDriveOutput,
+  UnifiedFilestorageDriveInput,
+  UnifiedFilestorageDriveOutput,
 } from '@filestorage/drive/types/model.unified';
 import { IFileService } from '@filestorage/file/types';
 import {
-  UnifiedFileInput,
-  UnifiedFileOutput,
+  UnifiedFilestorageFileInput,
+  UnifiedFilestorageFileOutput,
 } from '@filestorage/file/types/model.unified';
 import { IFolderService } from '@filestorage/folder/types';
 import {
-  UnifiedFolderInput,
-  UnifiedFolderOutput,
+  UnifiedFilestorageFolderInput,
+  UnifiedFilestorageFolderOutput,
 } from '@filestorage/folder/types/model.unified';
 import { IGroupService } from '@filestorage/group/types';
 import {
-  UnifiedGroupInput,
-  UnifiedGroupOutput,
+  UnifiedFilestorageGroupInput,
+  UnifiedFilestorageGroupOutput,
 } from '@filestorage/group/types/model.unified';
 import { IPermissionService } from '@filestorage/permission/types';
 import {
-  UnifiedPermissionInput,
-  UnifiedPermissionOutput,
+  UnifiedFilestoragePermissionInput,
+  UnifiedFilestoragePermissionOutput,
 } from '@filestorage/permission/types/model.unified';
 import { ISharedLinkService } from '@filestorage/sharedlink/types';
 import {
-  UnifiedSharedLinkInput,
-  UnifiedSharedLinkOutput,
+  UnifiedFilestorageSharedlinkInput,
+  UnifiedFilestorageSharedlinkOutput,
 } from '@filestorage/sharedlink/types/model.unified';
 import { IUserService } from '@filestorage/user/types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedFilestorageUserInput,
+  UnifiedFilestorageUserOutput,
 } from '@filestorage/user/types/model.unified';
 
 export enum FileStorageObject {
@@ -45,20 +45,20 @@ export enum FileStorageObject {
 }
 
 export type UnifiedFileStorage =
-  | UnifiedFileInput
-  | UnifiedFileOutput
-  | UnifiedFolderInput
-  | UnifiedFolderOutput
-  | UnifiedPermissionInput
-  | UnifiedPermissionOutput
-  | UnifiedDriveInput
-  | UnifiedDriveOutput
-  | UnifiedGroupInput
-  | UnifiedGroupOutput
-  | UnifiedUserInput
-  | UnifiedUserOutput
-  | UnifiedSharedLinkInput
-  | UnifiedSharedLinkOutput;
+  | UnifiedFilestorageFileInput
+  | UnifiedFilestorageFileOutput
+  | UnifiedFilestorageFolderInput
+  | UnifiedFilestorageFolderOutput
+  | UnifiedFilestoragePermissionInput
+  | UnifiedFilestoragePermissionOutput
+  | UnifiedFilestorageDriveInput
+  | UnifiedFilestorageDriveOutput
+  | UnifiedFilestorageGroupInput
+  | UnifiedFilestorageGroupOutput
+  | UnifiedFilestorageUserInput
+  | UnifiedFilestorageUserOutput
+  | UnifiedFilestorageSharedlinkInput
+  | UnifiedFilestorageSharedlinkOutput;
 
 export type IFileStorageService =
   | IFileService

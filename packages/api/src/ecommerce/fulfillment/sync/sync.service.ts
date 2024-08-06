@@ -15,7 +15,7 @@ import { ecom_fulfilments as EcommerceFulfillment } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFulfillmentService } from '../types';
-import { UnifiedFulfilmentOutput } from '../types/model.unified';
+import { UnifiedEcommerceFulfilmentOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -120,7 +120,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedFulfilmentOutput,
+        UnifiedEcommerceFulfilmentOutput,
         OriginalFulfillmentOutput,
         IFulfillmentService
       >(integrationId, linkedUserId, 'ecommerce', 'fulfillment', service, [
@@ -139,7 +139,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    fulfillments: UnifiedFulfilmentOutput[],
+    fulfillments: UnifiedEcommerceFulfilmentOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     order_id?: string,
@@ -148,7 +148,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const fulfillments_results: EcommerceFulfillment[] = [];
 
       const updateOrCreateFulfillment = async (
-        fulfillment: UnifiedFulfilmentOutput,
+        fulfillment: UnifiedEcommerceFulfilmentOutput,
         originId: string,
       ) => {
         let existingFulfillment;

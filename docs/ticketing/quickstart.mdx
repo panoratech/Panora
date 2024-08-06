@@ -1,0 +1,97 @@
+---
+title: "Quick Start"
+description: "Read and write data to multiple ticketing platforms using a single API"
+icon: "star"
+---
+
+## Create a ticket in a ticketing platform using Panora
+
+<Check>
+  We assume for this tutorial that you have a valid Panora API Key, and a
+  `connection_token`. Find help [here](/core-concepts/auth).
+</Check>
+
+<Steps>
+    <Info>
+        You can find the Typescript SDK [here](https://www.npmjs.com/package/@panora/sdk-typescript)
+    </Info>
+    <Step title="Setup your API Key in your code:">
+        <CodeGroup>
+            ```javascript TypeScript SDK
+            import { Panora } from '@panora/sdk';
+            const panora = new Panora({ apiKey: process.env.API_KEY });
+            ```
+
+            ```python Python SDK
+            import os
+            from panora_sdk import Panora
+            panora = Panora(
+                api_key=os.getenv("API_KEY", ""),
+            )
+            ```
+        </CodeGroup>
+    </Step>
+
+     <Step title="Create a ticket in your ticketing platform:">
+        <Info>In this example, we will create a ticket in a ticketing platform. Visit other sections of the documentation to find category-specific examples</Info>
+        <CodeGroup>
+
+            ```shell curl
+            curl --request POST \
+            --url https://api.panora.dev/ticketing/tickets \
+            --header 'x-api-key: <api-key>' \
+            --header 'Content-Type: application/json' \
+            --header 'x-connection-token: <connection_token>' \
+            --data '{
+            "subject": "Issue with login",
+            "description": "User is unable to login with correct credentials",
+            "priority": "high",
+            "status": "open",
+            "assignee": "support_agent"
+            }'
+            ```
+
+            ```javascript TypeScript
+            import { Panora } from '@panora/sdk';
+            const panora = new Panora({ apiKey: process.env.API_KEY });
+
+            (async () => {
+            const input = {
+                subject: 'Issue with login',
+                description: 'User is unable to login with correct credentials',
+                priority: 'high',
+                status: 'open',
+                assignee: 'support_agent',
+            };
+            const result = await panora.ticketing.tickets.create({
+                xConnectionToken: "YOUR_USER_CONNECTION_TOKEN",
+                unifiedTicketingTicketInput: input,
+            });
+            console.log(result); 
+            })();
+            ```
+
+            ```python Python
+            import os
+            from panora_sdk import Panora
+
+            panora = Panora(
+                api_key=os.getenv("API_KEY", ""),
+            )
+
+            body = {
+                'subject': 'Issue with login',
+                'description': 'User is unable to login with correct credentials',
+                'priority': 'high',
+                'status': 'open',
+                'assignee': 'support_agent'
+            }
+
+            res = panora.ticketing.tickets.create(x_connection_token="YOUR_USER_CONNECTION_TOKEN", unified_ticketing_ticket_input=body)
+
+            print(res)
+            ```
+        </CodeGroup>
+    </Step>
+
+</Steps>

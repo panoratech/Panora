@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
-import { UnifiedContactOutput } from '../types/model.unified';
+import { UnifiedTicketingContactOutput } from '../types/model.unified';
 
 @Injectable()
 export class ContactService {
@@ -15,8 +15,10 @@ export class ContactService {
     id_ticketing_contact: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedTicketingContactOutput> {
     try {
       const contact = await this.prisma.tcg_contacts.findUnique({
         where: {
@@ -44,12 +46,10 @@ export class ContactService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedContactOutput format
-      const unifiedContact: UnifiedContactOutput = {
+      // Transform to UnifiedTicketingContactOutput format
+      const unifiedContact: UnifiedTicketingContactOutput = {
         id: contact.id_tcg_contact,
         email_address: contact.email_address,
         name: contact.name,
@@ -72,6 +72,8 @@ export class ContactService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.contact.pull',
@@ -91,14 +93,15 @@ export class ContactService {
   }
 
   async getContacts(
-    connection_id: string,
+   connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedContactOutput[];
+    data: UnifiedTicketingContactOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -145,7 +148,7 @@ export class ContactService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedContacts: UnifiedContactOutput[] = await Promise.all(
+      const unifiedContacts: UnifiedTicketingContactOutput[] = await Promise.all(
         contacts.map(async (contact) => {
           // Fetch field mappings for the contact
           const values = await this.prisma.value.findMany({
@@ -166,12 +169,10 @@ export class ContactService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedContactOutput format
+          // Transform to UnifiedTicketingContactOutput format
           return {
             id: contact.id_tcg_contact,
             email_address: contact.email_address,
@@ -186,10 +187,10 @@ export class ContactService {
         }),
       );
 
-      let res: UnifiedContactOutput[] = unifiedContacts;
+      let res: UnifiedTicketingContactOutput[] = unifiedContacts;
 
       if (remote_data) {
-        const remote_array_data: UnifiedContactOutput[] = await Promise.all(
+        const remote_array_data: UnifiedTicketingContactOutput[] = await Promise.all(
           res.map(async (contact) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -205,6 +206,8 @@ export class ContactService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.contact.pull',

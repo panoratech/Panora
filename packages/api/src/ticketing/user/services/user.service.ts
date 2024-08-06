@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { UnifiedTicketingUserOutput } from '../types/model.unified';
 
 @Injectable()
 export class UserService {
@@ -14,8 +14,10 @@ export class UserService {
     id_ticketing_user: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedTicketingUserOutput> {
     try {
       const user = await this.prisma.tcg_users.findUnique({
         where: {
@@ -45,12 +47,10 @@ export class UserService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedUserOutput format
-      const unifiedUser: UnifiedUserOutput = {
+      // Transform to UnifiedTicketingUserOutput format
+      const unifiedUser: UnifiedTicketingUserOutput = {
         id: user.id_tcg_user,
         email_address: user.email_address,
         name: user.name,
@@ -73,6 +73,8 @@ export class UserService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.user.pull',
@@ -92,14 +94,15 @@ export class UserService {
   }
 
   async getUsers(
-    connection_id: string,
+   connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedUserOutput[];
+    data: UnifiedTicketingUserOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -146,7 +149,7 @@ export class UserService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedUsers: UnifiedUserOutput[] = await Promise.all(
+      const unifiedUsers: UnifiedTicketingUserOutput[] = await Promise.all(
         users.map(async (user) => {
           // Fetch field mappings for the user
           const values = await this.prisma.value.findMany({
@@ -167,12 +170,10 @@ export class UserService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedUserOutput format
+          // Transform to UnifiedTicketingUserOutput format
           return {
             id: user.id_tcg_user,
             email_address: user.email_address,
@@ -186,26 +187,29 @@ export class UserService {
         }),
       );
 
-      let res: UnifiedUserOutput[] = unifiedUsers;
+      let res: UnifiedTicketingUserOutput[] = unifiedUsers;
 
       if (remote_data) {
-        const remote_array_data: UnifiedUserOutput[] = await Promise.all(
-          res.map(async (user) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: user.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...user, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedTicketingUserOutput[] =
+          await Promise.all(
+            res.map(async (user) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: user.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...user, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.user.pull',

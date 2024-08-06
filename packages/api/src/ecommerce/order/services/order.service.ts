@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedOrderInput, UnifiedOrderOutput } from '../types/model.unified';
-import { EcommerceObject } from '@panora/shared';
+import { UnifiedEcommerceOrderInput, UnifiedEcommerceOrderOutput } from '../types/model.unified';
 import { OriginalOrderOutput } from '@@core/utils/types/original/original.ecommerce';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
@@ -11,6 +10,7 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { ServiceRegistry } from './registry.service';
 import { IOrderService } from '../types';
 import { ApiResponse, CurrencyCode } from '@@core/utils/types';
+import { EcommerceObject } from '@ecommerce/@lib/@types';
 
 @Injectable()
 export class OrderService {
@@ -46,19 +46,20 @@ export class OrderService {
   }
 
   async addOrder(
-    unifiedOrderData: UnifiedOrderInput,
+    UnifiedEcommerceOrderData: UnifiedEcommerceOrderInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedOrderOutput> {
+  ): Promise<UnifiedEcommerceOrderOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
-      await this.validateCustomerId(unifiedOrderData.customer_id);
+      await this.validateCustomerId(UnifiedEcommerceOrderData.customer_id);
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedOrderInput>({
-          sourceObject: unifiedOrderData,
+        await this.coreUnification.desunify<UnifiedEcommerceOrderInput>({
+          sourceObject: UnifiedEcommerceOrderData,
           targetType: EcommerceObject.order,
           providerName: integrationId,
           vertical: 'ecommerce',
@@ -81,7 +82,7 @@ export class OrderService {
         vertical: 'ecommerce',
         connectionId: connection_id,
         customFieldMappings: [],
-      })) as UnifiedOrderOutput[];
+      })) as UnifiedEcommerceOrderOutput[];
 
       const source_order = resp.data;
       const target_order = unifiedObject[0];
@@ -100,12 +101,16 @@ export class OrderService {
         unique_ecommerce_order_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'ecommerce.order.push',
@@ -132,7 +137,7 @@ export class OrderService {
   }
 
   async saveOrUpdateOrder(
-    order: UnifiedOrderOutput,
+    order: UnifiedEcommerceOrderOutput,
     connection_id: string,
   ): Promise<string> {
     const existingOrder = await this.prisma.ecom_orders.findFirst({
@@ -176,8 +181,10 @@ export class OrderService {
     id_ecom_order: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedOrderOutput> {
+  ): Promise<UnifiedEcommerceOrderOutput> {
     try {
       const order = await this.prisma.ecom_orders.findUnique({
         where: {
@@ -209,12 +216,10 @@ export class OrderService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedOrderOutput format
-      const unifiedOrder: UnifiedOrderOutput = {
+      // Transform to UnifiedEcommerceOrderOutput format
+      const UnifiedEcommerceOrder: UnifiedEcommerceOrderOutput = {
         id: order.id_ecom_order,
         order_status: order.order_status,
         order_number: order.order_number,
@@ -229,10 +234,10 @@ export class OrderService {
         field_mappings: field_mappings,
         remote_id: order.remote_id,
         created_at: order.created_at.toISOString(),
-        modified_at: order.modifed_at.toISOString(),
+        modified_at: order.modified_at.toISOString(),
       };
 
-      let res: UnifiedOrderOutput = unifiedOrder;
+      let res: UnifiedEcommerceOrderOutput = UnifiedEcommerceOrder;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -248,6 +253,8 @@ export class OrderService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ecommerce.order.pull',
@@ -268,13 +275,14 @@ export class OrderService {
 
   async getOrders(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedOrderOutput[];
+    data: UnifiedEcommerceOrderOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -320,7 +328,7 @@ export class OrderService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedOrders: UnifiedOrderOutput[] = await Promise.all(
+      const UnifiedEcommerceOrders: UnifiedEcommerceOrderOutput[] = await Promise.all(
         orders.map(async (order) => {
           // Fetch field mappings for the order
           const values = await this.prisma.value.findMany({
@@ -342,14 +350,9 @@ export class OrderService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedOrderOutput format
+          // Transform to UnifiedEcommerceOrderOutput format
           return {
             id: order.id_ecom_order,
             order_status: order.order_status,
@@ -365,15 +368,15 @@ export class OrderService {
             field_mappings: field_mappings,
             remote_id: order.remote_id,
             created_at: order.created_at.toISOString(),
-            modified_at: order.modifed_at.toISOString(),
+            modified_at: order.modified_at.toISOString(),
           };
         }),
       );
 
-      let res: UnifiedOrderOutput[] = unifiedOrders;
+      let res: UnifiedEcommerceOrderOutput[] = UnifiedEcommerceOrders;
 
       if (remote_data) {
-        const remote_array_data: UnifiedOrderOutput[] = await Promise.all(
+        const remote_array_data: UnifiedEcommerceOrderOutput[] = await Promise.all(
           res.map(async (order) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -390,6 +393,8 @@ export class OrderService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ecommerce.order.pull',

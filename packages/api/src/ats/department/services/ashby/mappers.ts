@@ -1,7 +1,7 @@
 import { AshbyDepartmentInput, AshbyDepartmentOutput } from './types';
 import {
-  UnifiedDepartmentInput,
-  UnifiedDepartmentOutput,
+  UnifiedAtsDepartmentInput,
+  UnifiedAtsDepartmentOutput,
 } from '@ats/department/types/model.unified';
 import { IDepartmentMapper } from '@ats/department/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -20,7 +20,7 @@ export class AshbyDepartmentMapper implements IDepartmentMapper {
   }
 
   async desunify(
-    source: UnifiedDepartmentInput,
+    source: UnifiedAtsDepartmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -36,7 +36,7 @@ export class AshbyDepartmentMapper implements IDepartmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDepartmentOutput | UnifiedDepartmentOutput[]> {
+  ): Promise<UnifiedAtsDepartmentOutput | UnifiedAtsDepartmentOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleDepartmentToUnified(
         source,
@@ -63,7 +63,7 @@ export class AshbyDepartmentMapper implements IDepartmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDepartmentOutput> {
+  ): Promise<UnifiedAtsDepartmentOutput> {
     return {
       remote_id: department.id,
       remote_data: department,

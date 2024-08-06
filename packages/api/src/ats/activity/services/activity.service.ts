@@ -12,8 +12,8 @@ import { IActivityService } from '../types';
 import {
   ActivityType,
   ActivityVisibility,
-  UnifiedActivityInput,
-  UnifiedActivityOutput,
+  UnifiedAtsActivityInput,
+  UnifiedAtsActivityOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -32,12 +32,13 @@ export class ActivityService {
   }
 
   async addActivity(
-    unifiedActivityData: UnifiedActivityInput,
+    unifiedActivityData: UnifiedAtsActivityInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedActivityOutput> {
+  ): Promise<UnifiedAtsActivityOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
 
@@ -49,7 +50,7 @@ export class ActivityService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedActivityInput>({
+        await this.coreUnification.desunify<UnifiedAtsActivityInput>({
           sourceObject: unifiedActivityData,
           targetType: AtsObject.activity,
           providerName: integrationId,
@@ -74,7 +75,7 @@ export class ActivityService {
         vertical: 'ats',
         connectionId: connection_id,
         customFieldMappings: customFieldMappings,
-      })) as UnifiedActivityOutput[];
+      })) as UnifiedAtsActivityOutput[];
 
       const source_activity = resp.data;
       const target_activity = unifiedObject[0];
@@ -100,12 +101,16 @@ export class ActivityService {
         unique_ats_activity_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'ats.activity.created',
@@ -138,7 +143,7 @@ export class ActivityService {
   }
 
   async saveOrUpdateActivity(
-    activity: UnifiedActivityOutput,
+    activity: UnifiedAtsActivityOutput,
     connection_id: string,
   ): Promise<string> {
     const existingActivity = await this.prisma.ats_activities.findFirst({
@@ -177,8 +182,10 @@ export class ActivityService {
     id_ats_activity: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedActivityOutput> {
+  ): Promise<UnifiedAtsActivityOutput> {
     try {
       const activity = await this.prisma.ats_activities.findUnique({
         where: { id_ats_activity: id_ats_activity },
@@ -194,11 +201,9 @@ export class ActivityService {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      const unifiedActivity: UnifiedActivityOutput = {
+      const unifiedActivity: UnifiedAtsActivityOutput = {
         id: activity.id_ats_activity,
         activity_type: activity.activity_type,
         subject: activity.subject,
@@ -212,7 +217,7 @@ export class ActivityService {
         modified_at: activity.modified_at,
       };
 
-      let res: UnifiedActivityOutput = unifiedActivity;
+      let res: UnifiedAtsActivityOutput = unifiedActivity;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: { ressource_owner_id: activity.id_ats_activity },
@@ -227,6 +232,8 @@ export class ActivityService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'ats.activity.pull',
@@ -248,13 +255,14 @@ export class ActivityService {
 
   async getActivities(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedActivityOutput[];
+    data: UnifiedAtsActivityOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -278,9 +286,7 @@ export class ActivityService {
         take: limit + 1,
         cursor: cursor ? { id_ats_activity: cursor } : undefined,
         orderBy: { created_at: 'asc' },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (activities.length === limit + 1) {
@@ -294,7 +300,7 @@ export class ActivityService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedActivities: UnifiedActivityOutput[] = await Promise.all(
+      const unifiedActivities: UnifiedAtsActivityOutput[] = await Promise.all(
         activities.map(async (activity) => {
           const values = await this.prisma.value.findMany({
             where: { entity: { ressource_owner_id: activity.id_ats_activity } },
@@ -306,10 +312,8 @@ export class ActivityService {
             fieldMappingsMap.set(value.attribute.slug, value.data);
           });
 
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           return {
             id: activity.id_ats_activity,
@@ -327,10 +331,10 @@ export class ActivityService {
         }),
       );
 
-      let res: UnifiedActivityOutput[] = unifiedActivities;
+      let res: UnifiedAtsActivityOutput[] = unifiedActivities;
 
       if (remote_data) {
-        const remote_array_data: UnifiedActivityOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsActivityOutput[] = await Promise.all(
           res.map(async (activity) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: { ressource_owner_id: activity.id },
@@ -345,6 +349,8 @@ export class ActivityService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.activity.pull',

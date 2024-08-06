@@ -1,3 +1,3 @@
-export class UnifiedPaymentInput {}
+export class UnifiedAccountingPaymentInput {}
 
-export class UnifiedPaymentOutput extends UnifiedPaymentInput {}
+export class UnifiedAccountingPaymentOutput extends UnifiedAccountingPaymentInput {}

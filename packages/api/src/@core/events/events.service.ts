@@ -1,6 +1,6 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { PaginationDto } from '@@core/utils/dtos/pagination.dto';
+import { PaginationDto } from '@@core/utils/dtos/webapp.event.pagination.dto';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

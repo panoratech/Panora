@@ -1,42 +1,42 @@
 import { ICustomerService } from '@ecommerce/customer/types';
 import {
-  UnifiedCustomerInput,
-  UnifiedCustomerOutput,
+  UnifiedEcommerceCustomerInput,
+  UnifiedEcommerceCustomerOutput,
 } from '@ecommerce/customer/types/model.unified';
 import { IFulfillmentService } from '@ecommerce/fulfillment/types';
 import {
-  UnifiedFulfilmentInput,
-  UnifiedFulfilmentOutput,
+  UnifiedEcommerceFulfilmentInput,
+  UnifiedEcommerceFulfilmentOutput,
 } from '@ecommerce/fulfillment/types/model.unified';
 import { IFulfillmentOrdersService } from '@ecommerce/fulfillmentorders/types';
 import {
-  UnifiedFulfillmentOrdersInput,
-  UnifiedFulfillmentOrdersOutput,
+  UnifiedEcommerceFulfillmentOrdersInput,
+  UnifiedEcommerceFulfillmentOrdersOutput,
 } from '@ecommerce/fulfillmentorders/types/model.unified';
 import { IOrderService } from '@ecommerce/order/types';
 import {
-  UnifiedOrderInput,
-  UnifiedOrderOutput,
+  UnifiedEcommerceOrderInput,
+  UnifiedEcommerceOrderOutput,
 } from '@ecommerce/order/types/model.unified';
 import { IProductService } from '@ecommerce/product/types';
 import {
-  UnifiedProductInput,
-  UnifiedProductOutput,
+  UnifiedEcommerceProductInput,
+  UnifiedEcommerceProductOutput,
 } from '@ecommerce/product/types/model.unified';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString } from 'class-validator';
 
 export type UnifiedEcommerce =
-  | UnifiedOrderInput
-  | UnifiedOrderOutput
-  | UnifiedCustomerInput
-  | UnifiedCustomerOutput
-  | UnifiedFulfilmentInput
-  | UnifiedFulfilmentOutput
-  | UnifiedFulfillmentOrdersInput
-  | UnifiedFulfillmentOrdersOutput
-  | UnifiedProductInput
-  | UnifiedProductOutput;
+  | UnifiedEcommerceOrderInput
+  | UnifiedEcommerceOrderOutput
+  | UnifiedEcommerceCustomerInput
+  | UnifiedEcommerceCustomerOutput
+  | UnifiedEcommerceFulfilmentInput
+  | UnifiedEcommerceFulfilmentOutput
+  | UnifiedEcommerceFulfillmentOrdersInput
+  | UnifiedEcommerceFulfillmentOrdersOutput
+  | UnifiedEcommerceProductInput
+  | UnifiedEcommerceProductOutput;
 
 export type IEcommerceService =
   | IProductService
@@ -44,6 +44,14 @@ export type IEcommerceService =
   | IFulfillmentService
   | IFulfillmentOrdersService
   | ICustomerService;
+
+export enum EcommerceObject {
+  fulfillment = 'fulfillment',
+  customer = 'customer',
+  order = 'order',
+  fulfillmentorder = 'fulfillmentorder',
+  product = 'product',
+}
 
 export class Address {
   @ApiProperty({

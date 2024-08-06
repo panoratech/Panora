@@ -1,6 +1,6 @@
 import {
-  UnifiedOrderInput,
-  UnifiedOrderOutput,
+  UnifiedEcommerceOrderInput,
+  UnifiedEcommerceOrderOutput,
 } from '@ecommerce/order/types/model.unified';
 import { IOrderMapper } from '@ecommerce/order/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -21,7 +21,7 @@ export class ShopifyOrderMapper implements IOrderMapper {
     this.mappersRegistry.registerService('ecommerce', 'order', 'shopify', this);
   }
   async desunify(
-    source: UnifiedOrderInput,
+    source: UnifiedEcommerceOrderInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -59,7 +59,7 @@ export class ShopifyOrderMapper implements IOrderMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOrderOutput | UnifiedOrderOutput[]> {
+  ): Promise<UnifiedEcommerceOrderOutput | UnifiedEcommerceOrderOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleOrderToUnified(
         source,
@@ -82,7 +82,7 @@ export class ShopifyOrderMapper implements IOrderMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOrderOutput> {
+  ): Promise<UnifiedEcommerceOrderOutput> {
     const opts: any = {};
     if (order.customer && order.customer.id) {
       const customer_id = await this.utils.getCustomerIdFromRemote(

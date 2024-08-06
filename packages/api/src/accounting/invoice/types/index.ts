@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedInvoiceInput, UnifiedInvoiceOutput } from './model.unified';
+import { UnifiedAccountingInvoiceInput, UnifiedAccountingInvoiceOutput } from './model.unified';
 import { OriginalInvoiceOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IInvoiceService {
 
 export interface IInvoiceMapper {
   desunify(
-    source: UnifiedInvoiceInput,
+    source: UnifiedAccountingInvoiceInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IInvoiceMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedInvoiceOutput | UnifiedInvoiceOutput[]>;
+  ): Promise<UnifiedAccountingInvoiceOutput | UnifiedAccountingInvoiceOutput[]>;
 }

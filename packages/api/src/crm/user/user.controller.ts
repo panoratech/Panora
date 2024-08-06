@@ -15,16 +15,20 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { UserService } from './services/user.service';
-import { UnifiedUserOutput } from './types/model.unified';
+import { UnifiedCrmUserOutput } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+
 @ApiTags('crm/users')
 @Controller('crm/users')
 export class UserController {
@@ -37,8 +41,8 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmUsers',
-    summary: 'List a batch of Users',
+    operationId: 'listCrmUsers',
+    summary: 'List  Users',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,22 +50,23 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiPaginatedResponse(UnifiedCrmUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getUsers(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.userService.getUsers(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -74,19 +79,21 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmUser',
-    summary: 'Retrieve a User',
-    description: 'Retrieve a user from any connected Crm software',
+    operationId: 'retrieveCrmUser',
+    summary: 'Retrieve Users',
+    description: 'Retrieve Users from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
     required: true,
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
     type: String,
     description: 'id of the user you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
+    example: true,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
@@ -96,7 +103,7 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedUserOutput)
+  @ApiGetCustomResponse(UnifiedCrmUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -104,7 +111,7 @@ export class UserController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -112,6 +119,8 @@ export class UserController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

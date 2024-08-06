@@ -1,22 +1,37 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import {
+  ApiGetArrayCustomResponse,
+  ApiPostCustomResponse,
+  ApiPostGenericJson,
+} from '@@core/utils/dtos/openapi.respone.dto';
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Put,
-  Param,
-  UseGuards,
   Request,
-  Delete,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ApiBody, ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiTags,
+  ApiParam,
+} from '@nestjs/swagger';
+import {
+  SignatureVerificationDto,
+  WebhookDto,
+  WebhookResponse,
+} from './dto/webhook.dto';
 import { WebhookService } from './webhook.service';
-import { SignatureVerificationDto, WebhookDto } from './dto/webhook.dto';
-import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-
-@ApiTags('webhook')
-@Controller('webhook')
+@ApiTags('webhooks')
+@Controller('webhooks')
 export class WebhookController {
   constructor(
     private webhookService: WebhookService,
@@ -26,23 +41,81 @@ export class WebhookController {
   }
 
   @ApiOperation({
-    operationId: 'getWebhooksMetadata',
-    summary: 'Retrieve webhooks metadata ',
+    operationId: 'listWebhooks',
+    summary: 'List webhooks',
   })
-  @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard)
+  @ApiGetArrayCustomResponse(WebhookResponse)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
-  getWebhooks(@Request() req: any) {
-    const { id_project } = req.user;
-    return this.webhookService.getWebhookEndpoints(id_project);
+  listWebhooks(@Request() req: any) {
+    const projectId = req.user.id_project;
+    return this.webhookService.getWebhookEndpoints(projectId);
+  }
+
+  @ApiOperation({
+    operationId: 'listWebhooks',
+    summary: 'List webhooks ',
+  })
+  @ApiGetArrayCustomResponse(WebhookResponse)
+  @UseGuards(JwtAuthGuard)
+  @Get('internal')
+  @ApiExcludeEndpoint()
+  listInternalWebhooks(@Request() req: any) {
+    const projectId = req.user.id_project;
+    return this.webhookService.getWebhookEndpoints(projectId);
+  }
+
+  @ApiOperation({ operationId: 'delete', summary: 'Delete Webhook' })
+  @ApiPostCustomResponse(WebhookResponse)
+  @ApiParam({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+    description: 'id of the webhook to delete.',
+  })
+  @Delete(':id')
+  @UseGuards(ApiKeyAuthGuard)
+  async deleteWebhook(@Request() req: any, @Param('id') whId: string) {
+    const projectId = req.user.id_project;
+    return await this.webhookService.deleteWebhook(whId, projectId);
   }
 
   @ApiOperation({ operationId: 'deleteWebhook', summary: 'Delete Webhook' })
-  @ApiResponse({ status: 201 })
-  @Delete(':id')
+  @ApiPostCustomResponse(WebhookResponse)
+  @Delete('internal/:id')
+  @ApiExcludeEndpoint()
   @UseGuards(JwtAuthGuard)
-  async deleteWebhook(@Param('id') whId: string) {
-    return await this.webhookService.deleteWebhook(whId);
+  async deleteInternalWebhook(@Request() req: any, @Param('id') whId: string) {
+    const projectId = req.user.id_project;
+    return await this.webhookService.deleteWebhook(whId, projectId);
+  }
+
+  @ApiOperation({
+    operationId: 'updateStatus',
+    summary: 'Update webhook status',
+  })
+  @UseGuards(ApiKeyAuthGuard)
+  @ApiPostCustomResponse(WebhookResponse)
+  @ApiParam({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+    description: 'id of the webhook to update.',
+  })
+  @Put(':id')
+  async updateWebhookStatus(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Body('active') active: boolean,
+  ) {
+    const projectId = req.user.id_project;
+    return this.webhookService.updateStatusWebhookEndpoint(
+      id,
+      active,
+      projectId,
+    );
   }
 
   @ApiOperation({
@@ -50,37 +123,60 @@ export class WebhookController {
     summary: 'Update webhook status',
   })
   @UseGuards(JwtAuthGuard)
-  @Put(':id')
-  async updateWebhookStatus(
+  @ApiExcludeEndpoint()
+  @ApiPostCustomResponse(WebhookResponse)
+  @Put('internal/:id')
+  async updateInternalWebhookStatus(
+    @Request() req: any,
     @Param('id') id: string,
     @Body('active') active: boolean,
   ) {
-    return this.webhookService.updateStatusWebhookEndpoint(id, active);
+    const projectId = req.user.id_project;
+    return this.webhookService.updateStatusWebhookEndpoint(
+      id,
+      active,
+      projectId,
+    );
   }
 
   @ApiOperation({
-    operationId: 'createWebhookMetadata',
-    summary: 'Add webhook metadata',
+    operationId: 'createWebhookPublic',
+    summary: 'Create webhook',
   })
   @ApiBody({ type: WebhookDto })
-  @ApiResponse({ status: 201 })
-  @UseGuards(JwtAuthGuard)
+  @ApiPostCustomResponse(WebhookResponse)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
-  async addWebhook(@Body() data: WebhookDto) {
-    return this.webhookService.createWebhookEndpoint(data);
+  async addWebhook(@Request() req: any, @Body() data: WebhookDto) {
+    const projectId = req.user.id_project;
+    return this.webhookService.createWebhookEndpoint(data, projectId);
+  }
+
+  @ApiOperation({
+    operationId: 'createWebhookInternal',
+    summary: 'Create webhook',
+  })
+  @ApiBody({ type: WebhookDto })
+  @ApiExcludeEndpoint()
+  @ApiPostCustomResponse(WebhookResponse)
+  @UseGuards(JwtAuthGuard)
+  @Post('internal')
+  async addInternalWebhook(@Request() req: any, @Body() data: WebhookDto) {
+    const projectId = req.user.id_project;
+    return this.webhookService.createWebhookEndpoint(data, projectId);
   }
 
   @ApiOperation({
     operationId: 'verifyEvent',
-    summary: 'Verify payload sgnature of the webhook',
+    summary: 'Verify payload signature of the webhook',
   })
   @ApiBody({ type: SignatureVerificationDto })
-  @ApiResponse({ status: 201 })
-  @UseGuards(JwtAuthGuard)
+  @ApiPostGenericJson('Dynamic event payload')
+  @UseGuards(ApiKeyAuthGuard)
   @Post('verifyEvent')
   async verifyPayloadSignature(@Body() data: SignatureVerificationDto) {
     const { payload, signature, secret } = data;
-    return this.webhookService.verifyPayloadSignature(
+    return await this.webhookService.verifyPayloadSignature(
       payload,
       signature,
       secret,

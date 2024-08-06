@@ -1,3 +1,3 @@
-export class UnifiedPurchaseOrderInput {}
+export class UnifiedAccountingPurchaseorderInput {}
 
-export class UnifiedPurchaseOrderOutput extends UnifiedPurchaseOrderInput {}
+export class UnifiedAccountingPurchaseorderOutput extends UnifiedAccountingPurchaseorderInput {}

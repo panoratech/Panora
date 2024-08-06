@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedDriveInput, UnifiedDriveOutput } from './model.unified';
+import { UnifiedFilestorageDriveInput, UnifiedFilestorageDriveOutput } from './model.unified';
 import { OriginalDriveOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface IDriveService extends IBaseObjectService {
 
 export interface IDriveMapper {
   desunify(
-    source: UnifiedDriveInput,
+    source: UnifiedFilestorageDriveInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface IDriveMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDriveOutput | UnifiedDriveOutput[]>;
+  ): Promise<UnifiedFilestorageDriveOutput | UnifiedFilestorageDriveOutput[]>;
 }

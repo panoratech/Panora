@@ -1,7 +1,7 @@
 import { PipedriveTaskInput, PipedriveTaskOutput } from './types';
 import {
-  UnifiedTaskInput,
-  UnifiedTaskOutput,
+  UnifiedCrmTaskInput,
+  UnifiedCrmTaskOutput,
 } from '@crm/task/types/model.unified';
 import { ITaskMapper } from '@crm/task/types';
 import { Utils } from '@crm/@lib/@utils';
@@ -15,7 +15,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
   }
 
   async desunify(
-    source: UnifiedTaskInput,
+    source: UnifiedCrmTaskInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -75,7 +75,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
+  ): Promise<UnifiedCrmTaskOutput | UnifiedCrmTaskOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleTaskToUnified(
         source,
@@ -98,7 +98,7 @@ export class PipedriveTaskMapper implements ITaskMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTaskOutput> {
+  ): Promise<UnifiedCrmTaskOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

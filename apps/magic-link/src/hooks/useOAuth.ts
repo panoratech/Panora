@@ -9,17 +9,20 @@ type UseOAuthProps = {
   returnUrl: string;              // Return URL after OAuth flow
   projectId: string;              // Project ID
   linkedUserId: string;           // Linked User ID
-  optionalApiUrl?: string;        // URL of the User's Server
+  redirectIngressUri: {
+    status: boolean;
+    value: string | null;
+  }     // URL of the User's Server
   onSuccess: () => void;
   additionalParams?: {
     end_user_domain: string;
   }
 };
 
-const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, additionalParams, onSuccess }: UseOAuthProps) => {
+const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, redirectIngressUri, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
   const intervalRef = useRef<number | ReturnType<typeof setInterval> | null>(null);
-  const authWindowRef = useRef<Window | null>(null);
+  const authWindowRef = useRef<Window | null>(null); 
 
   useEffect(() => {
     // Perform any setup logic here
@@ -44,12 +47,12 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
     }
   };
 
+
   const openModal = async (onWindowClose: () => void) => {
     const apiUrl = config.API_URL!;
     const authUrl = await constructAuthUrl({
-      projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, additionalParams
+      projectId, linkedUserId, providerName, returnUrl, apiUrl , vertical, rediectUriIngress: redirectIngressUri 
     });
-    console.log('auth url is '+ authUrl)
 
     if (!authUrl) {
       throw new Error("Auth Url is Invalid " + authUrl);
@@ -59,7 +62,7 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
     const left = (window.innerWidth - width) / 2;
     const top = (window.innerHeight - height) / 2;
     const authWindow = window.open(authUrl as string, '_blank', `width=${width},height=${height},top=${top},left=${left}`); 
-    authWindowRef.current = authWindow;
+    authWindowRef.current = authWindow; 
 
     clearExistingInterval(false);
 

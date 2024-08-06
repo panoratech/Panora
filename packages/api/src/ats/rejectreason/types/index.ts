@@ -3,8 +3,8 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 import { OriginalRejectReasonOutput } from '@@core/utils/types/original/original.ats';
 import {
-  UnifiedRejectReasonInput,
-  UnifiedRejectReasonOutput,
+  UnifiedAtsRejectreasonInput,
+  UnifiedAtsRejectreasonOutput,
 } from './model.unified';
 
 export interface IRejectReasonService extends IBaseObjectService {
@@ -13,7 +13,7 @@ export interface IRejectReasonService extends IBaseObjectService {
 
 export interface IRejectReasonMapper {
   desunify(
-    source: UnifiedRejectReasonInput,
+    source: UnifiedAtsRejectreasonInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -27,5 +27,5 @@ export interface IRejectReasonMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedRejectReasonOutput | UnifiedRejectReasonOutput[]>;
+  ): Promise<UnifiedAtsRejectreasonOutput | UnifiedAtsRejectreasonOutput[]>;
 }

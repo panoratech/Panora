@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedIncomeStatementInput,
-  UnifiedIncomeStatementOutput,
+  UnifiedAccountingIncomestatementInput,
+  UnifiedAccountingIncomestatementOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -32,19 +32,22 @@ export class IncomeStatementService {
     id_incomestatementing_incomestatement: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedIncomeStatementOutput> {
+  ): Promise<UnifiedAccountingIncomestatementOutput> {
     return;
   }
 
   async getIncomeStatements(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedIncomeStatementOutput[]> {
+  ): Promise<UnifiedAccountingIncomestatementOutput[]> {
     return;
   }
 }

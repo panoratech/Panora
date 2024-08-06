@@ -46,6 +46,7 @@ export class ConnectionsStrategiesService {
           status: true,
         },
       });
+      this.logger.log(JSON.stringify(res));
       if (!res) return false;
       return res.status;
     } catch (error) {
@@ -91,6 +92,7 @@ export class ConnectionsStrategiesService {
         const attribute_slug = attributes[i];
         const value = values[i];
         //create all attributes (for oauth =>  client_id, client_secret)
+        //console.log(`Attribute : ${attribute_slug}, value: ${value}`);
         const attribute_ = await this.prisma.cs_attributes.create({
           data: {
             id_cs_attribute: uuidv4(),

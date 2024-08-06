@@ -17,16 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EmailService } from './services/email.service';
-import { UnifiedEmailInput, UnifiedEmailOutput } from './types/model.unified';
+import {
+  UnifiedMarketingautomationEmailInput,
+  UnifiedMarketingautomationEmailOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('marketingautomation/email')
-@Controller('marketingautomation/email')
+
+@ApiTags('marketingautomation/emails')
+@Controller('marketingautomation/emails')
 export class EmailController {
   constructor(
     private readonly emailService: EmailService,
@@ -37,8 +46,8 @@ export class EmailController {
   }
 
   @ApiOperation({
-    operationId: 'getEmails',
-    summary: 'List a batch of Emails',
+    operationId: 'listMarketingautomationEmails',
+    summary: 'List Emails',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,21 +55,22 @@ export class EmailController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmailOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationEmailOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEmails(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.emailService.getEmails(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -73,16 +83,17 @@ export class EmailController {
   }
 
   @ApiOperation({
-    operationId: 'getEmail',
-    summary: 'Retrieve a Email',
+    operationId: 'retrieveMarketingautomationEmail',
+    summary: 'Retrieve Email',
     description:
-      'Retrieve a email from any connected Marketingautomation software',
+      'Retrieve an Email from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the email you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -90,6 +101,7 @@ export class EmailController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -97,7 +109,7 @@ export class EmailController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmailOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationEmailOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -105,7 +117,7 @@ export class EmailController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -113,6 +125,8 @@ export class EmailController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

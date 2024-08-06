@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedApplicationInput,
-  UnifiedApplicationOutput,
+  UnifiedAtsApplicationInput,
+  UnifiedAtsApplicationOutput,
 } from './model.unified';
 import { OriginalApplicationOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
@@ -18,7 +18,7 @@ export interface IApplicationService extends IBaseObjectService {
 
 export interface IApplicationMapper {
   desunify(
-    source: UnifiedApplicationInput,
+    source: UnifiedAtsApplicationInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -32,5 +32,5 @@ export interface IApplicationMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedApplicationOutput | UnifiedApplicationOutput[]>;
+  ): Promise<UnifiedAtsApplicationOutput | UnifiedAtsApplicationOutput[]>;
 }

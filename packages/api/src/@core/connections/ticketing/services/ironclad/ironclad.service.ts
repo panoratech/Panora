@@ -102,7 +102,7 @@ export class IroncladConnectionService extends AbstractBaseConnectionService {
 
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
+          ? this.env.getTunnelIngress()
           : this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
 

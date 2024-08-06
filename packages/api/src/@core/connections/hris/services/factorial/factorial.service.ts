@@ -103,7 +103,7 @@ export class FactorialConnectionService extends AbstractBaseConnectionService {
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
+          ? this.env.getTunnelIngress()
           : this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
 
@@ -194,7 +194,7 @@ export class FactorialConnectionService extends AbstractBaseConnectionService {
       const { connectionId, refreshToken, projectId } = opts;
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
+          ? this.env.getTunnelIngress()
           : this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(

@@ -17,19 +17,22 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TransactionService } from './services/transaction.service';
 import {
-  UnifiedTransactionInput,
-  UnifiedTransactionOutput,
+  UnifiedAccountingTransactionInput,
+  UnifiedAccountingTransactionOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/transaction')
-@Controller('accounting/transaction')
+
+@ApiTags('accounting/transactions')
+@Controller('accounting/transactions')
 export class TransactionController {
   constructor(
     private readonly transactionService: TransactionService,
@@ -40,8 +43,8 @@ export class TransactionController {
   }
 
   @ApiOperation({
-    operationId: 'getTransactions',
-    summary: 'List a batch of Transactions',
+    operationId: 'listAccountingTransaction',
+    summary: 'List  Transactions',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +52,22 @@ export class TransactionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTransactionOutput)
+  @ApiPaginatedResponse(UnifiedAccountingTransactionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTransactions(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.transactionService.getTransactions(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,19 +80,21 @@ export class TransactionController {
   }
 
   @ApiOperation({
-    operationId: 'getTransaction',
-    summary: 'Retrieve a Transaction',
+    operationId: 'retrieveAccountingTransaction',
+    summary: 'Retrieve Transactions',
     description:
-      'Retrieve a transaction from any connected Accounting software',
+      'Retrieve Transactions from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the transaction you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -100,7 +106,7 @@ export class TransactionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTransactionOutput)
+  @ApiGetCustomResponse(UnifiedAccountingTransactionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -108,7 +114,7 @@ export class TransactionController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -116,6 +122,8 @@ export class TransactionController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

@@ -1,3 +1,3 @@
-export class UnifiedBankInfoInput {}
+export class UnifiedHrisBankinfoInput {}
 
-export class UnifiedBankInfoOutput extends UnifiedBankInfoInput {}
+export class UnifiedHrisBankinfoOutput extends UnifiedHrisBankinfoInput {}

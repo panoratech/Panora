@@ -1,17 +1,19 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiCustomResponse } from '@@core/utils/types';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
+  Body,
   Controller,
   Get,
   Headers,
   Param,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBody,
   ApiHeader,
   ApiOperation,
   ApiParam,
@@ -19,7 +21,19 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ProductService } from './services/product.service';
-import { UnifiedProductOutput } from './types/model.unified';
+import {
+  UnifiedEcommerceProductInput,
+  UnifiedEcommerceProductOutput,
+} from './types/model.unified';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  UnifiedFilestorageFileInput,
+  UnifiedFilestorageFileOutput,
+} from '@filestorage/file/types/model.unified';
 
 @ApiTags('ecommerce/product')
 @Controller('ecommerce/product')
@@ -42,21 +56,22 @@ export class ProductController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedProductOutput)
+  @ApiPaginatedResponse(UnifiedEcommerceProductOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getProducts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.productService.getProducts(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -91,7 +106,7 @@ export class ProductController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedProductOutput)
+  @ApiGetCustomResponse(UnifiedEcommerceProductOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -99,7 +114,7 @@ export class ProductController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -107,7 +122,55 @@ export class ProductController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
+  }
+
+  @ApiOperation({
+    operationId: 'createEcommerceProduct',
+    summary: 'Create Products',
+    description: 'Create Products in any supported Ecommerce software',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    example: false,
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original Accounting software.',
+  })
+  @ApiBody({ type: UnifiedEcommerceProductInput })
+  @ApiPostCustomResponse(UnifiedEcommerceProductOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @Post()
+  async addProduct(
+    @Body() unifiedProductData: UnifiedEcommerceProductInput,
+    @Headers('x-connection-token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource, connectionId, projectId } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.productService.addProduct(
+        unifiedProductData,
+        connectionId,
+        projectId,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

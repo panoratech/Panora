@@ -1,7 +1,7 @@
 import { IUserMapper } from '@ticketing/user/types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedTicketingUserInput,
+  UnifiedTicketingUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { GitlabUserInput, GitlabUserOutput } from './types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -14,7 +14,7 @@ export class GitlabUserMapper implements IUserMapper {
     this.mappersRegistry.registerService('ticketing', 'user', 'gitlab', this);
   }
   desunify(
-    source: UnifiedUserInput,
+    source: UnifiedTicketingUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class GitlabUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
+  ): Promise<UnifiedTicketingUserOutput | UnifiedTicketingUserOutput[]> {
     const sourcesArray = Array.isArray(source) ? source : [source];
     return sourcesArray.map((user) =>
       this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
@@ -44,7 +44,7 @@ export class GitlabUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput {
+  ): UnifiedTicketingUserOutput {
     // Initialize field_mappings array from customFields, if provided
     const field_mappings = customFieldMappings
       ? customFieldMappings
@@ -55,7 +55,7 @@ export class GitlabUserMapper implements IUserMapper {
           .filter((mapping) => mapping.value !== undefined)
       : [];
 
-    const unifiedUser: UnifiedUserOutput = {
+    const unifiedUser: UnifiedTicketingUserOutput = {
       remote_id: String(user.id),
       remote_data: user,
       name: user.name,

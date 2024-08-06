@@ -1,8 +1,8 @@
 import { ICollectionMapper } from '@ticketing/collection/types';
 import { JiraCollectionInput, JiraCollectionOutput } from './types';
 import {
-  UnifiedCollectionInput,
-  UnifiedCollectionOutput,
+  UnifiedTicketingCollectionInput,
+  UnifiedTicketingCollectionOutput,
 } from '@ticketing/collection/types/model.unified';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
@@ -19,7 +19,7 @@ export class JiraCollectionMapper implements ICollectionMapper {
     );
   }
   desunify(
-    source: UnifiedCollectionInput,
+    source: UnifiedTicketingCollectionInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -35,7 +35,7 @@ export class JiraCollectionMapper implements ICollectionMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCollectionOutput | UnifiedCollectionOutput[] {
+  ): UnifiedTicketingCollectionOutput | UnifiedTicketingCollectionOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
@@ -55,8 +55,8 @@ export class JiraCollectionMapper implements ICollectionMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCollectionOutput {
-    const unifiedCollection: UnifiedCollectionOutput = {
+  ): UnifiedTicketingCollectionOutput {
+    const unifiedCollection: UnifiedTicketingCollectionOutput = {
       remote_id: collection.id,
       remote_data: collection,
       name: collection.key,

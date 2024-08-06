@@ -4,6 +4,9 @@
 # THIS SCRIPT GENERATES THE BOILERPLATE FOR NEW COMMON OBJECTS
 # Usage: ./commonObject.sh "account,other_object" "accounting"
 
+# Warning: if the objectCap does not end with the letter 's'
+[[ ! $ObjectCap =~ s$ ]] && echo "Warning: ObjectCap does not end with the letter 's' - this object maybe doesn't comply with RESTful naming conventions"
+
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <object_types_comma_separated> <vertical_object>"
     exit 1
@@ -279,7 +282,7 @@ import {
   ApiTags,
   ApiHeader,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ${ObjectCap}Service } from './services/${objectType}.service';
 import { Unified${ObjectCap}Input, Unified${ObjectCap}Output  } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
@@ -308,14 +311,14 @@ private connectionUtils: ConnectionUtils
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
+  @ApiPaginatedResponse(Unified${ObjectCap}Output)
 @UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
-        @Query() query: FetchObjectsQueryDto,
+        @Query() query: QueryDto,
   ) {
     try{
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
@@ -333,8 +336,8 @@ private connectionUtils: ConnectionUtils
 
   @ApiOperation({
     operationId: 'get${ObjectCap}',
-    summary: 'Retrieve a ${ObjectCap}',
-    description: 'Retrieve a ${objectType} from any connected ${VerticalCap} software',
+    summary: 'Retrieve ${ObjectCap}',
+    description: 'Retrieve ${objectType} from any connected ${VerticalCap} software',
   })
   @ApiParam({
     name: 'id',
@@ -349,7 +352,7 @@ private connectionUtils: ConnectionUtils
     description:
       'Set to true to include data from the original ${VerticalCap} software.',
   })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
+  @ApiPaginatedResponse(Unified${ObjectCap}Output)
 @UseGuards(ApiKeyAuthGuard)  @Get(':id')
   retrieve(
     @Param('id') id: string,
@@ -360,8 +363,8 @@ private connectionUtils: ConnectionUtils
 
   @ApiOperation({
     operationId: 'add${ObjectCap}',
-    summary: 'Create a ${ObjectCap}',
-    description: 'Create a ${objectType} in any supported ${VerticalCap} software',
+    summary: 'Create ${ObjectCap}',
+    description: 'Create ${objectType} in any supported ${VerticalCap} software',
   })
    @ApiHeader({
     name: 'x-connection-token',
@@ -377,7 +380,7 @@ private connectionUtils: ConnectionUtils
       'Set to true to include data from the original ${VerticalCap} software.',
   })
   @ApiBody({ type: Unified${ObjectCap}Input })
-  @ApiCustomResponse(Unified${ObjectCap}Output)
+  @ApiGetCustomResponse(Unified${ObjectCap}Output)
 @UseGuards(ApiKeyAuthGuard)  @Post()
   async create(
     @Body() unified${ObjectCap}Data: Unified${ObjectCap}Input,
@@ -385,7 +388,7 @@ private connectionUtils: ConnectionUtils
     @Query('remote_data') remote_data?: boolean,
   ) {
     try{
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );

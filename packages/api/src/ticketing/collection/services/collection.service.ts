@@ -6,7 +6,7 @@ import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
   CollectionType,
-  UnifiedCollectionOutput,
+  UnifiedTicketingCollectionOutput,
 } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
@@ -26,8 +26,10 @@ export class CollectionService {
     id_ticketing_collection: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCollectionOutput> {
+  ): Promise<UnifiedTicketingCollectionOutput> {
     try {
       const collection = await this.prisma.tcg_collections.findUnique({
         where: {
@@ -35,8 +37,8 @@ export class CollectionService {
         },
       });
 
-      // Transform to UnifiedCollectionOutput format
-      const unifiedCollection: UnifiedCollectionOutput = {
+      // Transform to UnifiedTicketingCollectionOutput format
+      const unifiedCollection: UnifiedTicketingCollectionOutput = {
         id: collection.id_tcg_collection,
         name: collection.name,
         description: collection.description,
@@ -58,6 +60,8 @@ export class CollectionService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.collection.pull',
@@ -78,13 +82,14 @@ export class CollectionService {
 
   async getCollections(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedCollectionOutput[];
+    data: UnifiedTicketingCollectionOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -130,39 +135,43 @@ export class CollectionService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedCollections: UnifiedCollectionOutput[] = await Promise.all(
-        collections.map(async (collection) => {
-          return {
-            id: collection.id_tcg_collection,
-            name: collection.name,
-            description: collection.description,
-            collection_type: collection.collection_type,
-            remote_id: collection.remote_id,
-            created_at: collection.created_at,
-            modified_at: collection.modified_at,
-          };
-        }),
-      );
-
-      let res: UnifiedCollectionOutput[] = unifiedCollections;
-
-      if (remote_data) {
-        const remote_array_data: UnifiedCollectionOutput[] = await Promise.all(
-          res.map(async (collection) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: collection.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...collection, remote_data };
+      const unifiedCollections: UnifiedTicketingCollectionOutput[] =
+        await Promise.all(
+          collections.map(async (collection) => {
+            return {
+              id: collection.id_tcg_collection,
+              name: collection.name,
+              description: collection.description,
+              collection_type: collection.collection_type,
+              remote_id: collection.remote_id,
+              created_at: collection.created_at,
+              modified_at: collection.modified_at,
+            };
           }),
         );
+
+      let res: UnifiedTicketingCollectionOutput[] = unifiedCollections;
+
+      if (remote_data) {
+        const remote_array_data: UnifiedTicketingCollectionOutput[] =
+          await Promise.all(
+            res.map(async (collection) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: collection.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...collection, remote_data };
+            }),
+          );
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.collection.pulled',

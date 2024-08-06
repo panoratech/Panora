@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedPurchaseOrderInput,
-  UnifiedPurchaseOrderOutput,
+  UnifiedAccountingPurchaseorderInput,
+  UnifiedAccountingPurchaseorderOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -29,12 +29,13 @@ export class PurchaseOrderService {
   }
 
   async addPurchaseOrder(
-    unifiedPurchaseOrderData: UnifiedPurchaseOrderInput,
+    unifiedPurchaseOrderData: UnifiedAccountingPurchaseorderInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedPurchaseOrderOutput> {
+  ): Promise<UnifiedAccountingPurchaseorderOutput> {
     return;
   }
 
@@ -42,19 +43,22 @@ export class PurchaseOrderService {
     id_purchaseordering_purchaseorder: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedPurchaseOrderOutput> {
+  ): Promise<UnifiedAccountingPurchaseorderOutput> {
     return;
   }
 
   async getPurchaseOrders(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedPurchaseOrderOutput[]> {
+  ): Promise<UnifiedAccountingPurchaseorderOutput[]> {
     return;
   }
 }

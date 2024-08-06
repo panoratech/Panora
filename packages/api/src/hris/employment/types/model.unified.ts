@@ -1,3 +1,3 @@
-export class UnifiedEmploymentInput {}
+export class UnifiedHrisEmploymentInput {}
 
-export class UnifiedEmploymentOutput extends UnifiedEmploymentInput {}
+export class UnifiedHrisEmploymentOutput extends UnifiedHrisEmploymentInput {}

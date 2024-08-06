@@ -1,7 +1,7 @@
 import { IUserMapper } from '@ticketing/user/types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedTicketingUserInput,
+  UnifiedTicketingUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { FrontUserInput, FrontUserOutput } from './types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -14,7 +14,7 @@ export class FrontUserMapper implements IUserMapper {
     this.mappersRegistry.registerService('ticketing', 'user', 'front', this);
   }
   desunify(
-    source: UnifiedUserInput,
+    source: UnifiedTicketingUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class FrontUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
+  ): Promise<UnifiedTicketingUserOutput | UnifiedTicketingUserOutput[]> {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
@@ -48,7 +48,7 @@ export class FrontUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedTicketingUserOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -56,7 +56,7 @@ export class FrontUserMapper implements IUserMapper {
       }
     }
 
-    const unifiedUser: UnifiedUserOutput = {
+    const unifiedUser: UnifiedTicketingUserOutput = {
       remote_id: String(user.id),
       remote_data: user,
       name: `${user.last_name} ${user.last_name}`,

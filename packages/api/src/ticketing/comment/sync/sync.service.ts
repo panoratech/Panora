@@ -9,11 +9,11 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { TICKETING_PROVIDERS } from '@panora/shared';
 import { tcg_comments as TicketingComment } from '@prisma/client';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import { UnifiedTicketingAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ICommentService } from '../types';
-import { UnifiedCommentOutput } from '../types/model.unified';
+import { UnifiedTicketingCommentOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -49,12 +49,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log(`Syncing comments....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -84,7 +84,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
                     const tickets = await this.prisma.tcg_tickets.findMany({
                       where: {
-                        id_connection: connection.id_connection,
+                        id_connection: connection?.id_connection,
                       },
                     });
                     for (const ticket of tickets) {
@@ -116,10 +116,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId, id_ticket } = data;
       const service: ICommentService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ticketing, commonObject: comment} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedCommentOutput,
+        UnifiedTicketingCommentOutput,
         OriginalCommentOutput,
         ICommentService
       >(integrationId, linkedUserId, 'ticketing', 'comment', service, [
@@ -138,7 +141,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    comments: UnifiedCommentOutput[],
+    comments: UnifiedTicketingCommentOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     id_ticket?: string,
@@ -147,7 +150,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const comments_results: TicketingComment[] = [];
 
       const updateOrCreateComment = async (
-        comment: UnifiedCommentOutput,
+        comment: UnifiedTicketingCommentOutput,
         originId: string,
         connection_id: string,
         id_ticket?: string,
@@ -163,8 +166,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
           comment.creator_type === 'CONTACT' && comment.contact_id
             ? { id_tcg_contact: comment.contact_id }
             : comment.creator_type === 'USER' && comment.user_id
-            ? { id_tcg_user: comment.user_id }
-            : {};
+              ? { id_tcg_user: comment.user_id }
+              : {};
 
         const baseData: any = {
           id_tcg_ticket: id_ticket ?? null,
@@ -221,7 +224,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             linkedUserId,
             comment.attachments,
             originSource,
-            comment.attachments.map((att: UnifiedAttachmentOutput) => {
+            comment.attachments.map((att: UnifiedTicketingAttachmentOutput) => {
               return att.remote_data;
             }),
             {

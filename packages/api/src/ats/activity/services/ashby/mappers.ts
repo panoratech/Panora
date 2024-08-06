@@ -1,7 +1,7 @@
 import { AshbyActivityInput, AshbyActivityOutput } from './types';
 import {
-  UnifiedActivityInput,
-  UnifiedActivityOutput,
+  UnifiedAtsActivityInput,
+  UnifiedAtsActivityOutput,
 } from '@ats/activity/types/model.unified';
 import { IActivityMapper } from '@ats/activity/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -20,7 +20,7 @@ export class AshbyActivityMapper implements IActivityMapper {
   }
 
   async desunify(
-    source: UnifiedActivityInput,
+    source: UnifiedAtsActivityInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -36,7 +36,7 @@ export class AshbyActivityMapper implements IActivityMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedActivityOutput | UnifiedActivityOutput[]> {
+  ): Promise<UnifiedAtsActivityOutput | UnifiedAtsActivityOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleActivityToUnified(
         source,
@@ -63,7 +63,7 @@ export class AshbyActivityMapper implements IActivityMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedActivityOutput> {
+  ): Promise<UnifiedAtsActivityOutput> {
     return {
       remote_id: activity.id,
       remote_data: activity,

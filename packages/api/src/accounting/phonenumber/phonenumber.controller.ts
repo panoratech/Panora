@@ -17,19 +17,22 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { PhoneNumberService } from './services/phonenumber.service';
 import {
-  UnifiedPhoneNumberInput,
-  UnifiedPhoneNumberOutput,
+  UnifiedAccountingPhonenumberInput,
+  UnifiedAccountingPhonenumberOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/phonenumber')
-@Controller('accounting/phonenumber')
+
+@ApiTags('accounting/phonenumbers')
+@Controller('accounting/phonenumbers')
 export class PhoneNumberController {
   constructor(
     private readonly phonenumberService: PhoneNumberService,
@@ -40,8 +43,8 @@ export class PhoneNumberController {
   }
 
   @ApiOperation({
-    operationId: 'getPhoneNumbers',
-    summary: 'List a batch of PhoneNumbers',
+    operationId: 'listAccountingPhonenumber',
+    summary: 'List  PhoneNumbers',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +52,22 @@ export class PhoneNumberController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedPhoneNumberOutput)
+  @ApiPaginatedResponse(UnifiedAccountingPhonenumberOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getPhoneNumbers(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.phonenumberService.getPhoneNumbers(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,19 +80,21 @@ export class PhoneNumberController {
   }
 
   @ApiOperation({
-    operationId: 'getPhoneNumber',
-    summary: 'Retrieve a PhoneNumber',
+    operationId: 'retrieveAccountingPhonenumber',
+    summary: 'Retrieve Phone Numbers',
     description:
-      'Retrieve a phonenumber from any connected Accounting software',
+      'Retrieve Phone Numbers from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the phonenumber you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -100,7 +106,7 @@ export class PhoneNumberController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedPhoneNumberOutput)
+  @ApiGetCustomResponse(UnifiedAccountingPhonenumberOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -108,7 +114,7 @@ export class PhoneNumberController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -116,6 +122,8 @@ export class PhoneNumberController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

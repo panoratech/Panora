@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedAutomationInput,
-  UnifiedAutomationOutput,
+  UnifiedMarketingautomationAutomationInput,
+  UnifiedMarketingautomationAutomationOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -28,12 +28,13 @@ export class AutomationService {
   }
 
   async addAutomation(
-    unifiedAutomationData: UnifiedAutomationInput,
+    unifiedAutomationData: UnifiedMarketingautomationAutomationInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAutomationOutput> {
+  ): Promise<UnifiedMarketingautomationAutomationOutput> {
     return;
   }
 
@@ -41,19 +42,22 @@ export class AutomationService {
     id_automationing_automation: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAutomationOutput> {
+  ): Promise<UnifiedMarketingautomationAutomationOutput> {
     return;
   }
 
   async getAutomations(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedAutomationOutput[]> {
+  ): Promise<UnifiedMarketingautomationAutomationOutput[]> {
     return;
   }
 }

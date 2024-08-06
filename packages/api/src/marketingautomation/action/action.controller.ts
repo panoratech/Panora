@@ -17,16 +17,26 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ActionService } from './services/action.service';
-import { UnifiedActionInput, UnifiedActionOutput } from './types/model.unified';
+import {
+  UnifiedMarketingautomationActionInput,
+  UnifiedMarketingautomationActionOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('marketingautomation/action')
-@Controller('marketingautomation/action')
+
+@ApiTags('marketingautomation/actions')
+@Controller('marketingautomation/actions')
 export class ActionController {
   constructor(
     private readonly actionService: ActionService,
@@ -37,8 +47,8 @@ export class ActionController {
   }
 
   @ApiOperation({
-    operationId: 'getActions',
-    summary: 'List a batch of Actions',
+    operationId: 'listMarketingautomationAction',
+    summary: 'List Actions',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,21 +56,22 @@ export class ActionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedActionOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationActionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getActions(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.actionService.getActions(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -73,16 +84,17 @@ export class ActionController {
   }
 
   @ApiOperation({
-    operationId: 'getAction',
-    summary: 'Retrieve a Action',
+    operationId: 'retrieveMarketingautomationAction',
+    summary: 'Retrieve Actions',
     description:
-      'Retrieve a action from any connected Marketingautomation software',
+      'Retrieve Actions from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the action you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -90,6 +102,7 @@ export class ActionController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -97,7 +110,7 @@ export class ActionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedActionOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationActionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -105,7 +118,7 @@ export class ActionController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -113,13 +126,15 @@ export class ActionController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
-    operationId: 'addAction',
-    summary: 'Create a Action',
+    operationId: 'createMarketingautomationAction',
+    summary: 'Create Action',
     description:
       'Create a action in any supported Marketingautomation software',
   })
@@ -135,24 +150,26 @@ export class ActionController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
-  @ApiBody({ type: UnifiedActionInput })
-  @ApiCustomResponse(UnifiedActionOutput)
+  @ApiBody({ type: UnifiedMarketingautomationActionInput })
+  @ApiPostCustomResponse(UnifiedMarketingautomationActionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addAction(
-    @Body() unifiedActionData: UnifiedActionInput,
+    @Body() unifiedActionData: UnifiedMarketingautomationActionInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.actionService.addAction(
         unifiedActionData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

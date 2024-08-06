@@ -1,7 +1,7 @@
 import { ShopifyProductInput, ShopifyProductOutput } from './types';
 import {
-  UnifiedProductInput,
-  UnifiedProductOutput,
+  UnifiedEcommerceProductInput,
+  UnifiedEcommerceProductOutput,
 } from '@ecommerce/product/types/model.unified';
 import { IProductMapper } from '@ecommerce/product/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -20,7 +20,7 @@ export class ShopifyProductMapper implements IProductMapper {
   }
 
   async desunify(
-    source: UnifiedProductInput,
+    source: UnifiedEcommerceProductInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -51,7 +51,7 @@ export class ShopifyProductMapper implements IProductMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedProductOutput | UnifiedProductOutput[]> {
+  ): Promise<UnifiedEcommerceProductOutput | UnifiedEcommerceProductOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleProductToUnified(
         source,
@@ -78,7 +78,7 @@ export class ShopifyProductMapper implements IProductMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedProductOutput> {
+  ): Promise<UnifiedEcommerceProductOutput> {
     return {
       remote_id: product.id?.toString(),
       remote_data: product,

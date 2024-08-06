@@ -36,7 +36,7 @@ export class PassthroughController {
   }
 
   @ApiOperation({
-    operationId: 'passthroughRequest',
+    operationId: 'request',
     summary: 'Make a passthrough request',
   })
   @ApiBody({ type: PassThroughRequestDto })

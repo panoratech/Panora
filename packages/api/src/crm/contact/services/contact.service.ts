@@ -7,8 +7,8 @@ import { OriginalContactOutput } from '@@core/utils/types/original/original.crm'
 import { CrmObject } from '@crm/@lib/@types';
 import { Utils } from '@crm/@lib/@utils';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedCrmContactInput,
+  UnifiedCrmContactOutput,
 } from '@crm/contact/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -33,12 +33,13 @@ export class ContactService {
   }
 
   async addContact(
-    unifiedContactData: UnifiedContactInput,
+    unifiedContactData: UnifiedCrmContactInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedCrmContactOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
 
@@ -50,7 +51,7 @@ export class ContactService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedContactInput>({
+        await this.coreUnification.desunify<UnifiedCrmContactInput>({
           sourceObject: unifiedContactData,
           targetType: CrmObject.contact,
           providerName: integrationId,
@@ -80,7 +81,7 @@ export class ContactService {
         vertical: 'crm',
         connectionId: connection_id,
         customFieldMappings: customFieldMappings,
-      })) as UnifiedContactOutput[];
+      })) as UnifiedCrmContactOutput[];
 
       const source_contact = resp.data;
       const target_contact = unifiedObject[0];
@@ -106,12 +107,16 @@ export class ContactService {
         unique_crm_contact_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'crm.contact.created', // sync, push or pull
@@ -145,7 +150,7 @@ export class ContactService {
   }
 
   async saveOrUpdateContact(
-    contact: UnifiedContactOutput,
+    contact: UnifiedCrmContactOutput,
     connection_id: string,
   ): Promise<string> {
     const existingContact = await this.prisma.crm_contacts.findFirst({
@@ -344,8 +349,10 @@ export class ContactService {
     id_crm_contact: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedCrmContactOutput> {
     try {
       const contact = await this.prisma.crm_contacts.findUnique({
         where: {
@@ -378,12 +385,10 @@ export class ContactService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedContactInput format
-      const unifiedContact: UnifiedContactOutput = {
+      // Transform to UnifiedCrmContactInput format
+      const unifiedContact: UnifiedCrmContactOutput = {
         id: contact.id_crm_contact,
         first_name: contact.first_name,
         last_name: contact.last_name,
@@ -405,7 +410,7 @@ export class ContactService {
         modified_at: contact.modified_at,
       };
 
-      let res: UnifiedContactOutput = unifiedContact;
+      let res: UnifiedCrmContactOutput = unifiedContact;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -424,6 +429,8 @@ export class ContactService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'crm.contact.pull',
@@ -444,13 +451,14 @@ export class ContactService {
 
   async getContacts(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedContactOutput[];
+    data: UnifiedCrmContactOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -503,7 +511,7 @@ export class ContactService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedContacts: UnifiedContactOutput[] = await Promise.all(
+      const unifiedContacts: UnifiedCrmContactOutput[] = await Promise.all(
         contacts.map(async (contact) => {
           // Fetch field mappings for the contact
           const values = await this.prisma.value.findMany({
@@ -524,12 +532,10 @@ export class ContactService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedContactInput format
+          // Transform to UnifiedCrmContactInput format
           return {
             id: contact.id_crm_contact,
             first_name: contact.first_name,
@@ -554,10 +560,10 @@ export class ContactService {
         }),
       );
 
-      let res: UnifiedContactOutput[] = unifiedContacts;
+      let res: UnifiedCrmContactOutput[] = unifiedContacts;
 
       if (remote_data) {
-        const remote_array_data: UnifiedContactOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmContactOutput[] = await Promise.all(
           res.map(async (contact) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -576,6 +582,8 @@ export class ContactService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.contact.pull',

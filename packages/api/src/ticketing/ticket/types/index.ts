@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTicketInput, UnifiedTicketOutput } from './model.unified';
+import {
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
+} from './model.unified';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -14,7 +17,7 @@ export interface ITicketService extends IBaseObjectService {
 }
 export interface ITicketMapper {
   desunify(
-    source: UnifiedTicketInput,
+    source: UnifiedTicketingTicketInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,7 +32,7 @@ export interface ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]>;
+  ): Promise<UnifiedTicketingTicketOutput | UnifiedTicketingTicketOutput[]>;
 }
 
 export type Comment = {

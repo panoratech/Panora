@@ -19,19 +19,23 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { CollectionService } from './services/collection.service';
 import {
-  UnifiedCollectionInput,
-  UnifiedCollectionOutput,
+  UnifiedTicketingCollectionInput,
+  UnifiedTicketingCollectionOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+
 @ApiTags('ticketing/collections')
 @Controller('ticketing/collections')
 export class CollectionController {
@@ -44,8 +48,8 @@ export class CollectionController {
   }
 
   @ApiOperation({
-    operationId: 'getCollections',
-    summary: 'List a batch of Collections',
+    operationId: 'listTicketingCollections',
+    summary: 'List Collections',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -53,22 +57,23 @@ export class CollectionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCollectionOutput)
+  @ApiPaginatedResponse(UnifiedTicketingCollectionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getCollections(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.collectionService.getCollections(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -81,15 +86,16 @@ export class CollectionController {
   }
 
   @ApiOperation({
-    operationId: 'getCollection',
-    summary: 'Retrieve a Collection',
-    description: 'Retrieve a collection from any connected Ticketing software',
+    operationId: 'retrieveCollection',
+    summary: 'Retrieve Collections',
+    description: 'Retrieve Collections from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the collection you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -97,6 +103,7 @@ export class CollectionController {
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -104,7 +111,7 @@ export class CollectionController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCollectionOutput)
+  @ApiGetCustomResponse(UnifiedTicketingCollectionOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -112,13 +119,15 @@ export class CollectionController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     return this.collectionService.getCollection(
       id,
       linkedUserId,
+      connectionId,
+      projectId,
       remoteSource,
       remote_data,
     );

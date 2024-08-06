@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedDriveOutput } from '../types/model.unified';
+import { UnifiedFilestorageDriveOutput } from '../types/model.unified';
 
 @Injectable()
 export class DriveService {
@@ -14,8 +14,10 @@ export class DriveService {
     id_fs_drive: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedDriveOutput> {
+  ): Promise<UnifiedFilestorageDriveOutput> {
     try {
       const drive = await this.prisma.fs_drives.findUnique({
         where: {
@@ -43,12 +45,10 @@ export class DriveService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedContactInput format
-      const unifiedDrive: UnifiedDriveOutput = {
+      const unifiedDrive: UnifiedFilestorageDriveOutput = {
         id: drive.id_fs_drive,
         remote_created_at: String(drive.remote_created_at),
         name: drive.name,
@@ -59,7 +59,7 @@ export class DriveService {
         modified_at: drive.modified_at,
       };
 
-      let res: UnifiedDriveOutput = unifiedDrive;
+      let res: UnifiedFilestorageDriveOutput = unifiedDrive;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -75,6 +75,8 @@ export class DriveService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'filestorage.drive.pull',
@@ -95,13 +97,14 @@ export class DriveService {
 
   async getDrives(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     pageSize: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedDriveOutput[];
+    data: UnifiedFilestorageDriveOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -147,7 +150,7 @@ export class DriveService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedDrives: UnifiedDriveOutput[] = await Promise.all(
+      const unifiedDrives: UnifiedFilestorageDriveOutput[] = await Promise.all(
         drives.map(async (drive) => {
           // Fetch field mappings for the drive
           const values = await this.prisma.value.findMany({
@@ -168,14 +171,9 @@ export class DriveService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedDriveInput format
+          // Transform to UnifiedFilestorageDriveInput format
           return {
             id: drive.id_fs_drive,
             drive_url: drive.drive_url,
@@ -189,25 +187,28 @@ export class DriveService {
         }),
       );
 
-      let res: UnifiedDriveOutput[] = unifiedDrives;
+      let res: UnifiedFilestorageDriveOutput[] = unifiedDrives;
 
       if (remote_data) {
-        const remote_array_data: UnifiedDriveOutput[] = await Promise.all(
-          res.map(async (drive) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: drive.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...drive, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedFilestorageDriveOutput[] =
+          await Promise.all(
+            res.map(async (drive) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: drive.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...drive, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'filestorage.drive.pull',

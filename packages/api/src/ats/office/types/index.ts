@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedOfficeInput, UnifiedOfficeOutput } from './model.unified';
+import { UnifiedAtsOfficeInput, UnifiedAtsOfficeOutput } from './model.unified';
 import { OriginalOfficeOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -15,7 +15,7 @@ export interface IOfficeService extends IBaseObjectService {
 
 export interface IOfficeMapper {
   desunify(
-    source: UnifiedOfficeInput,
+    source: UnifiedAtsOfficeInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,5 +29,5 @@ export interface IOfficeMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOfficeOutput | UnifiedOfficeOutput[]>;
+  ): Promise<UnifiedAtsOfficeOutput | UnifiedAtsOfficeOutput[]>;
 }

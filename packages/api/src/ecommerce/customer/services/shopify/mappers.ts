@@ -1,7 +1,7 @@
 import { ShopifyCustomerInput, ShopifyCustomerOutput } from './types';
 import {
-  UnifiedCustomerInput,
-  UnifiedCustomerOutput,
+  UnifiedEcommerceCustomerInput,
+  UnifiedEcommerceCustomerOutput,
 } from '@ecommerce/customer/types/model.unified';
 import { ICustomerMapper } from '@ecommerce/customer/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -25,7 +25,7 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
   }
 
   async desunify(
-    source: UnifiedCustomerInput,
+    source: UnifiedEcommerceCustomerInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -41,7 +41,7 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCustomerOutput | UnifiedCustomerOutput[]> {
+  ): Promise<UnifiedEcommerceCustomerOutput | UnifiedEcommerceCustomerOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleCustomerToUnified(
         source,
@@ -68,7 +68,7 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCustomerOutput> {
+  ): Promise<UnifiedEcommerceCustomerOutput> {
     return {
       remote_id: customer.id?.toString(),
       remote_data: customer,

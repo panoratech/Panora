@@ -51,8 +51,11 @@ CREATE TABLE users
  id_stytch               text NULL,
  created_at              timestamp NOT NULL DEFAULT NOW(),
  modified_at             timestamp NOT NULL DEFAULT NOW(),
+ reset_token             text NULL,
+ reset_token_expires_at  timestamp with time zone NULL,
  CONSTRAINT PK_users PRIMARY KEY ( id_user ),
- CONSTRAINT force_stytch_id_unique UNIQUE ( id_stytch )
+ CONSTRAINT force_stytch_id_unique UNIQUE ( id_stytch ),
+ CONSTRAINT unique_email UNIQUE ( email )
 );
 COMMENT ON COLUMN users.identification_strategy IS 'can be:
 PANORA_SELF_HOSTED
@@ -262,10 +265,25 @@ CREATE TABLE ecom_products
  description     text NULL,
  vendor          text NULL,
  tags            text[] NULL,
- modified_at      timestamp with time zone NOT NULL,
+ modified_at     timestamp with time zone NOT NULL,
  created_at      timestamp with time zone NOT NULL,
  id_connection   uuid NOT NULL,
+ remote_deleted  boolean NOT NULL,
  CONSTRAINT PK_ecom_products PRIMARY KEY ( id_ecom_product )
+);
+
+-- ************************************** ecom_order_line_items
+CREATE TABLE ecom_order_line_items
+(
+ id_ecom_order_line_item uuid NOT NULL,
+ CONSTRAINT PK_106 PRIMARY KEY ( id_ecom_order_line_item )
+);
+
+-- ************************************** ecom_fulfilment_orders
+CREATE TABLE ecom_fulfilment_orders
+(
+ id_ecom_fulfilment_order uuid NOT NULL,
+ CONSTRAINT PK_ecom_fulfilment_order PRIMARY KEY ( id_ecom_fulfilment_order )
 );
 
 -- ************************************** ecom_customers
@@ -277,9 +295,10 @@ CREATE TABLE ecom_customers
  first_name       text NULL,
  last_name        text NULL,
  phone_number     text NULL,
- modified_at       timestamp with time zone NOT NULL,
+ modified_at      timestamp with time zone NOT NULL,
  created_at       timestamp with time zone NOT NULL,
  id_connection    uuid NOT NULL,
+ remote_deleted   boolean NOT NULL,
  CONSTRAINT PK_ecom_customers PRIMARY KEY ( id_ecom_customer )
 );
 
@@ -856,8 +875,9 @@ CREATE TABLE ecom_product_variants
  weight                  bigint NULL,
  inventory_quantity      bigint NULL,
  id_ecom_product         uuid NULL,
- modified_at              timestamp with time zone NOT NULL,
+ modified_at             timestamp with time zone NOT NULL,
  created_at              timestamp with time zone NOT NULL,
+ remote_deleted          boolean NOT NULL,
  CONSTRAINT PK_ecom_product_variants PRIMARY KEY ( id_ecom_product_variant ),
  CONSTRAINT FK_ecom_products_variants FOREIGN KEY ( id_ecom_product ) REFERENCES ecom_products ( id_ecom_product )
 );
@@ -883,8 +903,9 @@ CREATE TABLE ecom_orders
  remote_id          text NULL,
  id_ecom_customer   uuid NULL,
  id_connection      uuid NOT NULL,
- modified_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  created_at         timestamp with time zone NOT NULL,
+ remote_deleted     boolean NOT NULL,
  CONSTRAINT PK_ecom_orders PRIMARY KEY ( id_ecom_order ),
  CONSTRAINT FK_ecom_customer_orders FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer )
 );
@@ -892,31 +913,6 @@ CREATE INDEX FK_index_ecom_customer_orders ON ecom_orders
 (
  id_ecom_customer
 );
-
--- ************************************** ecom_customer_addresses
-CREATE TABLE ecom_customer_addresses
-(
- id_ecom_customer_address uuid NOT NULL,
- address_type             text NULL,
- line_1                   text NULL,
- line_2                   text NULL,
- street_1                 text NULL,
- street_2                 text NULL,
- city                     text NULL,
- "state"                  text NULL,
- postal_code              text NULL,
- country                  text NULL,
- id_ecom_customer         uuid NOT NULL,
- modified_at              timestamp with time zone NOT NULL,
- created_at               timestamp with time zone NOT NULL,
- CONSTRAINT PK_ecom_customer_addresses PRIMARY KEY ( id_ecom_customer_address ),
- CONSTRAINT FK_ecom_customer_customeraddress FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer )
-);
-CREATE INDEX FK_index_ecom_customer_customeraddress ON ecom_customer_addresses
-(
- id_ecom_customer
-);
-COMMENT ON COLUMN ecom_customer_addresses.address_type IS 'billing, shipping, other';
 
 -- ************************************** crm_contacts
 CREATE TABLE crm_contacts
@@ -1507,8 +1503,9 @@ CREATE TABLE ecom_fulfilments
  remote_id          text NULL,
  id_ecom_order      uuid NULL,
  id_connection      uuid NOT NULL,
- modified_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  created_at         timestamp with time zone NOT NULL,
+ remote_deleted     boolean NOT NULL,
  CONSTRAINT PK_ecom_fulfilments PRIMARY KEY ( id_ecom_fulfilment ),
  CONSTRAINT FK_ecom_order_fulfilment FOREIGN KEY ( id_ecom_order ) REFERENCES ecom_orders ( id_ecom_order )
 );
@@ -1517,6 +1514,36 @@ CREATE INDEX FK_index_ecom_order_fulfilment ON ecom_fulfilments
  id_ecom_order
 );
 COMMENT ON COLUMN ecom_fulfilments.items IS 'array of ecom_products info';
+
+-- ************************************** ecom_addresses
+CREATE TABLE ecom_addresses
+(
+ id_ecom_address  uuid NOT NULL,
+ address_type     text NULL,
+ street_1         text NULL,
+ street_2         text NULL,
+ city             text NULL,
+ "state"          text NULL,
+ postal_code      text NULL,
+ country          text NULL,
+ id_ecom_customer uuid NOT NULL,
+ modified_at      timestamp with time zone NOT NULL,
+ created_at       timestamp with time zone NOT NULL,
+ remote_deleted   boolean NOT NULL,
+ id_ecom_order    uuid NOT NULL,
+ CONSTRAINT PK_ecom_customer_addresses PRIMARY KEY ( id_ecom_address ),
+ CONSTRAINT FK_ecom_customer_customeraddress FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer ),
+ CONSTRAINT FK_ecom_order_address FOREIGN KEY ( id_ecom_order ) REFERENCES ecom_orders ( id_ecom_order )
+);
+CREATE INDEX FK_index_ecom_customer_customeraddress ON ecom_addresses
+(
+ id_ecom_customer
+);
+CREATE INDEX FK_index_FK_ecom_order_address ON ecom_addresses
+(
+ id_ecom_order
+);
+COMMENT ON COLUMN ecom_addresses.address_type IS 'billing, shipping, other';
 
 -- ************************************** crm_phone_numbers
 CREATE TABLE crm_phone_numbers
@@ -2035,13 +2062,15 @@ CREATE INDEX FK_invite_link_linkedUserID ON invite_links
 CREATE TABLE events
 (
  id_event       uuid NOT NULL,
- status         text NOT NULL,
+ id_connection  uuid NOT NULL,
+ id_project     uuid NOT NULL,
  type           text NOT NULL,
+ status         text NOT NULL,
  direction      text NOT NULL,
- "timestamp"    timestamp NOT NULL DEFAULT NOW(),
  method         text NOT NULL,
  url            text NOT NULL,
  provider       text NOT NULL,
+ "timestamp"    timestamp NOT NULL DEFAULT NOW(),
  id_linked_user uuid NOT NULL,
  CONSTRAINT PK_jobs PRIMARY KEY ( id_event ),
  CONSTRAINT FK_12 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
@@ -2050,8 +2079,8 @@ CREATE INDEX FK_linkeduserID_projectID ON events
 (
  id_linked_user
 );
-COMMENT ON COLUMN events.status IS 'pending,, retry_scheduled, failed, success';
 COMMENT ON COLUMN events.type IS 'example crm_contact.created crm_contact.deleted';
+COMMENT ON COLUMN events.status IS 'pending,, retry_scheduled, failed, success';
 
 -- ************************************** crm_tasks
 CREATE TABLE crm_tasks

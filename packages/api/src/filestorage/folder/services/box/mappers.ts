@@ -4,10 +4,10 @@ import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.f
 import { Utils } from '@filestorage/@lib/@utils';
 import { IFolderMapper } from '@filestorage/folder/types';
 import {
-  UnifiedFolderInput,
-  UnifiedFolderOutput,
+  UnifiedFilestorageFolderInput,
+  UnifiedFilestorageFolderOutput,
 } from '@filestorage/folder/types/model.unified';
-import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
+import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { BoxFolderInput, BoxFolderOutput } from './types';
 import { FileStorageObject } from '@filestorage/@lib/@types';
@@ -23,7 +23,7 @@ export class BoxFolderMapper implements IFolderMapper {
   }
 
   async desunify(
-    source: UnifiedFolderInput,
+    source: UnifiedFilestorageFolderInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -56,7 +56,7 @@ export class BoxFolderMapper implements IFolderMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedFolderOutput | UnifiedFolderOutput[]> {
+  ): Promise<UnifiedFilestorageFolderOutput | UnifiedFilestorageFolderOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleFolderToUnified(
         source,
@@ -83,7 +83,7 @@ export class BoxFolderMapper implements IFolderMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedFolderOutput> {
+  ): Promise<UnifiedFilestorageFolderOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -102,7 +102,7 @@ export class BoxFolderMapper implements IFolderMapper {
         vertical: 'filestorage',
         connectionId: connectionId,
         customFieldMappings: [],
-      })) as UnifiedSharedLinkOutput[];
+      })) as UnifiedFilestorageSharedlinkOutput[];
       opts = {
         shared_link: sharedLinks[0],
       };

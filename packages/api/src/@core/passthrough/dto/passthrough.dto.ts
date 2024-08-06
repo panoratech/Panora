@@ -18,16 +18,22 @@ export class PassThroughRequestDto {
   @ApiProperty({ name: 'method', enum: Action })
   method: Action;
 
-  @ApiProperty()
+  @ApiProperty({ type: String, nullable: true })
   path: string;
 
   @ApiProperty()
   data?: JsonData | MultipartData[];
 
-  @ApiProperty()
+  @ApiProperty({
+    oneOf: [
+      { type: 'object', additionalProperties: true },
+      { type: 'array', items: { type: 'object', additionalProperties: true } },
+    ],
+    nullable: true,
+  })
   request_format?: 'JSON' | 'MULTIPART';
 
-  @ApiProperty()
+  @ApiProperty({ type: Object, additionalProperties: true, nullable: true })
   overrideBaseUrl?: string;
 
   headers?: Record<string, any>;

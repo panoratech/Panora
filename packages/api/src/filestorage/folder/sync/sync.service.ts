@@ -14,9 +14,9 @@ import { fs_folders as FileStorageFolder } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFolderService } from '../types';
-import { UnifiedFolderOutput } from '../types/model.unified';
-import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
-import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
+import { UnifiedFilestorageFolderOutput } from '../types/model.unified';
+import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/types/model.unified';
+import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -104,7 +104,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedFolderOutput,
+        UnifiedFilestorageFolderOutput,
         OriginalFolderOutput,
         IFolderService
       >(integrationId, linkedUserId, 'filestorage', 'folder', service, []);
@@ -116,7 +116,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    folders: UnifiedFolderOutput[],
+    folders: UnifiedFilestorageFolderOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<FileStorageFolder[]> {
@@ -124,7 +124,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const folders_results: FileStorageFolder[] = [];
 
       const updateOrCreateFolder = async (
-        folder: UnifiedFolderOutput,
+        folder: UnifiedFilestorageFolderOutput,
         originId: string,
       ) => {
         const existingFolder = await this.prisma.fs_folders.findFirst({
@@ -195,7 +195,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 [folder.shared_link],
                 originSource,
                 [folder.shared_link].map(
-                  (att: UnifiedSharedLinkOutput) => att.remote_data,
+                  (att: UnifiedFilestorageSharedlinkOutput) => att.remote_data,
                 ),
                 {
                   extra: {
@@ -220,7 +220,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 [folder.permission],
                 originSource,
                 [folder.permission].map(
-                  (att: UnifiedPermissionOutput) => att.remote_data,
+                  (att: UnifiedFilestoragePermissionOutput) => att.remote_data,
                 ),
                 { object_name: 'folder', value: folder_id },
               );

@@ -17,19 +17,26 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { ContactService } from './services/contact.service';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedAccountingContactInput,
+  UnifiedAccountingContactOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/contact')
-@Controller('accounting/contact')
+
+@ApiTags('accounting/contacts')
+@Controller('accounting/contacts')
 export class ContactController {
   constructor(
     private readonly contactService: ContactService,
@@ -40,8 +47,8 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingContacts',
-    summary: 'List a batch of Contacts',
+    operationId: 'listAccountingContacts',
+    summary: 'List  Contacts',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +56,22 @@ export class ContactController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiPaginatedResponse(UnifiedAccountingContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getContacts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.contactService.getContacts(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,18 +84,20 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingContact',
-    summary: 'Retrieve a Contact',
-    description: 'Retrieve a contact from any connected Accounting software',
+    operationId: 'retrieveAccountingContact',
+    summary: 'Retrieve Contacts',
+    description: 'Retrieve Contacts from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the contact you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -99,7 +109,7 @@ export class ContactController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiGetCustomResponse(UnifiedAccountingContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -107,7 +117,7 @@ export class ContactController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -115,14 +125,16 @@ export class ContactController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
-    operationId: 'addAccountingContact',
-    summary: 'Create a Contact',
-    description: 'Create a contact in any supported Accounting software',
+    operationId: 'createAccountingContact',
+    summary: 'Create Contacts',
+    description: 'Create contacts in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -132,28 +144,30 @@ export class ContactController {
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedContactInput })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiBody({ type: UnifiedAccountingContactInput })
+  @ApiPostCustomResponse(UnifiedAccountingContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addContact(
-    @Body() unifiedContactData: UnifiedContactInput,
+    @Body() unifiedContactData: UnifiedAccountingContactInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.contactService.addContact(
         unifiedContactData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

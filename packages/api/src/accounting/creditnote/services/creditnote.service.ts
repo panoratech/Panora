@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedCreditNoteInput,
-  UnifiedCreditNoteOutput,
+  UnifiedAccountingCreditnoteInput,
+  UnifiedAccountingCreditnoteOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -32,19 +32,22 @@ export class CreditNoteService {
     id_creditnoteing_creditnote: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCreditNoteOutput> {
+  ): Promise<UnifiedAccountingCreditnoteOutput> {
     return;
   }
 
   async getCreditNotes(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedCreditNoteOutput[]> {
+  ): Promise<UnifiedAccountingCreditnoteOutput[]> {
     return;
   }
 }

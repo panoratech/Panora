@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedEmployeePayrollRunInput,
-  UnifiedEmployeePayrollRunOutput,
+  UnifiedHrisEmployeepayrollrunInput,
+  UnifiedHrisEmployeepayrollrunOutput,
 } from './model.unified';
 import { OriginalEmployeePayrollRunOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IEmployeePayrollRunService {
 
 export interface IEmployeePayrollRunMapper {
   desunify(
-    source: UnifiedEmployeePayrollRunInput,
+    source: UnifiedHrisEmployeepayrollrunInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -37,6 +37,6 @@ export interface IEmployeePayrollRunMapper {
       remote_id: string;
     }[],
   ): Promise<
-    UnifiedEmployeePayrollRunOutput | UnifiedEmployeePayrollRunOutput[]
+    UnifiedHrisEmployeepayrollrunOutput | UnifiedHrisEmployeepayrollrunOutput[]
   >;
 }

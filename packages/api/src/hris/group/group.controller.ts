@@ -17,16 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { GroupService } from './services/group.service';
-import { UnifiedGroupInput, UnifiedGroupOutput } from './types/model.unified';
+import {
+  UnifiedHrisGroupInput,
+  UnifiedHrisGroupOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('hris/group')
-@Controller('hris/group')
+
+@ApiTags('hris/groups')
+@Controller('hris/groups')
 export class GroupController {
   constructor(
     private readonly groupService: GroupService,
@@ -37,8 +46,8 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getGroups',
-    summary: 'List a batch of Groups',
+    operationId: 'listHrisGroups',
+    summary: 'List Groups',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,21 +55,22 @@ export class GroupController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedGroupOutput)
+  @ApiPaginatedResponse(UnifiedHrisGroupOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getGroups(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.groupService.getGroups(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -73,21 +83,23 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getGroup',
-    summary: 'Retrieve a Group',
-    description: 'Retrieve a group from any connected Hris software',
+    operationId: 'retrieveHrisGroup',
+    summary: 'Retrieve Group',
+    description: 'Retrieve a Group from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the group you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -95,7 +107,7 @@ export class GroupController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedGroupOutput)
+  @ApiGetCustomResponse(UnifiedHrisGroupOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -103,7 +115,7 @@ export class GroupController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -111,6 +123,8 @@ export class GroupController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

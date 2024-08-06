@@ -1,7 +1,7 @@
 import { AshbyRejectReasonInput, AshbyRejectReasonOutput } from './types';
 import {
-  UnifiedRejectReasonInput,
-  UnifiedRejectReasonOutput,
+  UnifiedAtsRejectreasonInput,
+  UnifiedAtsRejectreasonOutput,
 } from '@ats/rejectreason/types/model.unified';
 import { IRejectReasonMapper } from '@ats/rejectreason/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -20,7 +20,7 @@ export class AshbyRejectReasonMapper implements IRejectReasonMapper {
   }
 
   async desunify(
-    source: UnifiedRejectReasonInput,
+    source: UnifiedAtsRejectreasonInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -36,7 +36,7 @@ export class AshbyRejectReasonMapper implements IRejectReasonMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedRejectReasonOutput | UnifiedRejectReasonOutput[]> {
+  ): Promise<UnifiedAtsRejectreasonOutput | UnifiedAtsRejectreasonOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleRejectReasonToUnified(
         source,
@@ -63,7 +63,7 @@ export class AshbyRejectReasonMapper implements IRejectReasonMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedRejectReasonOutput> {
+  ): Promise<UnifiedAtsRejectreasonOutput> {
     return {
       remote_id: rejectreason.id,
       remote_data: rejectreason,

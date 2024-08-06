@@ -7,7 +7,7 @@ import {
   EeocsGender,
   EeocsRace,
   EeocsVeteranStatus,
-  UnifiedEeocsOutput,
+  UnifiedAtsEeocsOutput,
 } from '../types/model.unified';
 
 @Injectable()
@@ -20,8 +20,10 @@ export class EeocsService {
     id_ats_eeoc: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedEeocsOutput> {
+  ): Promise<UnifiedAtsEeocsOutput> {
     try {
       const eeocs = await this.prisma.ats_eeocs.findUnique({
         where: {
@@ -53,12 +55,10 @@ export class EeocsService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedEeocsOutput format
-      const unifiedEeocs: UnifiedEeocsOutput = {
+      // Transform to UnifiedAtsEeocsOutput format
+      const unifiedEeocs: UnifiedAtsEeocsOutput = {
         id: eeocs.id_ats_eeoc,
         candidate_id: eeocs.id_ats_candidate,
         submitted_at: String(eeocs.submitted_at),
@@ -72,7 +72,7 @@ export class EeocsService {
         modified_at: eeocs.modified_at,
       };
 
-      let res: UnifiedEeocsOutput = unifiedEeocs;
+      let res: UnifiedAtsEeocsOutput = unifiedEeocs;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -88,6 +88,8 @@ export class EeocsService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.eeocs.pull',
@@ -108,13 +110,14 @@ export class EeocsService {
 
   async getEeocss(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedEeocsOutput[];
+    data: UnifiedAtsEeocsOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -144,9 +147,7 @@ export class EeocsService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (eeocss.length === limit + 1) {
@@ -160,7 +161,7 @@ export class EeocsService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedEeocss: UnifiedEeocsOutput[] = await Promise.all(
+      const unifiedEeocss: UnifiedAtsEeocsOutput[] = await Promise.all(
         eeocss.map(async (eeocs) => {
           // Fetch field mappings for the EEOC
           const values = await this.prisma.value.findMany({
@@ -182,14 +183,9 @@ export class EeocsService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedEeocsOutput format
+          // Transform to UnifiedAtsEeocsOutput format
           return {
             id: eeocs.id_ats_eeoc,
             candidate_id: eeocs.id_ats_candidate,
@@ -206,10 +202,10 @@ export class EeocsService {
         }),
       );
 
-      let res: UnifiedEeocsOutput[] = unifiedEeocss;
+      let res: UnifiedAtsEeocsOutput[] = unifiedEeocss;
 
       if (remote_data) {
-        const remote_array_data: UnifiedEeocsOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsEeocsOutput[] = await Promise.all(
           res.map(async (eeocs) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -225,6 +221,8 @@ export class EeocsService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.eeocss.pull',

@@ -19,16 +19,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TaskService } from './services/task.service';
-import { UnifiedTaskInput, UnifiedTaskOutput } from './types/model.unified';
+import {
+  UnifiedCrmTaskInput,
+  UnifiedCrmTaskOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+
 @ApiTags('crm/tasks')
 @Controller('crm/tasks')
 export class TaskController {
@@ -41,8 +49,8 @@ export class TaskController {
   }
 
   @ApiOperation({
-    operationId: 'getTasks',
-    summary: 'List a batch of Tasks',
+    operationId: 'listCrmTask',
+    summary: 'List Tasks',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -50,16 +58,16 @@ export class TaskController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTaskOutput)
+  @ApiPaginatedResponse(UnifiedCrmTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getTasks(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
@@ -67,6 +75,7 @@ export class TaskController {
 
       return this.taskService.getTasks(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -79,21 +88,23 @@ export class TaskController {
   }
 
   @ApiOperation({
-    operationId: 'getTask',
-    summary: 'Retrieve a Task',
-    description: 'Retrieve a task from any connected Crm software',
+    operationId: 'retrieveCrmTask',
+    summary: 'Retrieve Tasks',
+    description: 'Retrieve Tasks from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the task you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -101,7 +112,7 @@ export class TaskController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTaskOutput)
+  @ApiGetCustomResponse(UnifiedCrmTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -109,7 +120,7 @@ export class TaskController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -117,14 +128,16 @@ export class TaskController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
-    operationId: 'addTask',
-    summary: 'Create a Task',
-    description: 'Create a task in any supported Crm software',
+    operationId: 'createCrmTask',
+    summary: 'Create Tasks',
+    description: 'Create Tasks in any supported Crm software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -138,23 +151,24 @@ export class TaskController {
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
   })
-  @ApiBody({ type: UnifiedTaskInput })
-  @ApiCustomResponse(UnifiedTaskOutput)
+  @ApiBody({ type: UnifiedCrmTaskInput })
+  @ApiPostCustomResponse(UnifiedCrmTaskOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addTask(
-    @Body() unifiedTaskData: UnifiedTaskInput,
+    @Body() unifiedTaskData: UnifiedCrmTaskInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.taskService.addTask(
         unifiedTaskData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

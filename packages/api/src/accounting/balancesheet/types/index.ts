@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedBalanceSheetInput,
-  UnifiedBalanceSheetOutput,
+  UnifiedAccountingBalancesheetInput,
+  UnifiedAccountingBalancesheetOutput,
 } from './model.unified';
 import { OriginalBalanceSheetOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IBalanceSheetService {
 
 export interface IBalanceSheetMapper {
   desunify(
-    source: UnifiedBalanceSheetInput,
+    source: UnifiedAccountingBalancesheetInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IBalanceSheetMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedBalanceSheetOutput | UnifiedBalanceSheetOutput[]>;
+  ): Promise<UnifiedAccountingBalancesheetOutput | UnifiedAccountingBalancesheetOutput[]>;
 }

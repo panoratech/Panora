@@ -1,8 +1,7 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiCustomResponse } from '@@core/utils/types';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   Controller,
   Get,
@@ -19,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FulfillmentOrdersService } from './services/fulfillmentorders.service';
-import { UnifiedFulfillmentOrdersOutput } from './types/model.unified';
+import { UnifiedEcommerceFulfillmentOrdersOutput } from './types/model.unified';
 
 @ApiTags('ats/fulfillmentorders')
 @Controller('ats/fulfillmentorders')
@@ -42,21 +41,22 @@ export class FulfillmentOrdersController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedFulfillmentOrdersOutput)
+  @ApiCustomResponse(UnifiedEcommerceFulfillmentOrdersOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getFulfillmentOrderss(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.fulfillmentordersService.getFulfillmentOrderss(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -93,7 +93,7 @@ export class FulfillmentOrdersController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedFulfillmentOrdersOutput)
+  @ApiCustomResponse(UnifiedEcommerceFulfillmentOrdersOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -101,7 +101,7 @@ export class FulfillmentOrdersController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -109,6 +109,8 @@ export class FulfillmentOrdersController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }*/

@@ -16,7 +16,7 @@ import { ats_reject_reasons as AtsRejectReason } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IRejectReasonService } from '../types';
-import { UnifiedRejectReasonOutput } from '../types/model.unified';
+import { UnifiedAtsRejectreasonOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -52,12 +52,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log('Syncing reject reasons...');
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -103,10 +103,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId } = param;
       const service: IRejectReasonService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ats, commonObject: rejectreason} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedRejectReasonOutput,
+        UnifiedAtsRejectreasonOutput,
         OriginalRejectReasonOutput,
         IRejectReasonService
       >(integrationId, linkedUserId, 'ats', 'rejectreason', service, []);
@@ -118,7 +121,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    rejectReasons: UnifiedRejectReasonOutput[],
+    rejectReasons: UnifiedAtsRejectreasonOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsRejectReason[]> {
@@ -126,7 +129,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const rejectReasons_results: AtsRejectReason[] = [];
 
       const updateOrCreateRejectReason = async (
-        rejectReason: UnifiedRejectReasonOutput,
+        rejectReason: UnifiedAtsRejectreasonOutput,
         originId: string,
       ) => {
         let existingRejectReason;
@@ -135,7 +138,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             {
               where: {
                 name: rejectReason.name,
-                id_connection: connection_id,
+                
               },
             },
           );
@@ -144,7 +147,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
             {
               where: {
                 remote_id: originId,
-                id_connection: connection_id,
+                
               },
             },
           );
@@ -169,7 +172,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_reject_reason: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

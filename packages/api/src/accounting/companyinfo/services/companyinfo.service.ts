@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedCompanyInfoInput,
-  UnifiedCompanyInfoOutput,
+  UnifiedAccountingCompanyinfoInput,
+  UnifiedAccountingCompanyinfoOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -32,19 +32,22 @@ export class CompanyInfoService {
     id_companyinfoing_companyinfo: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCompanyInfoOutput> {
+  ): Promise<UnifiedAccountingCompanyinfoOutput> {
     return;
   }
 
   async getCompanyInfos(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedCompanyInfoOutput[]> {
+  ): Promise<UnifiedAccountingCompanyinfoOutput[]> {
     return;
   }
 }

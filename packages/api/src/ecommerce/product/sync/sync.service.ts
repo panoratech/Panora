@@ -14,7 +14,7 @@ import { ECOMMERCE_PROVIDERS } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IProductService } from '../types';
-import { UnifiedProductOutput } from '../types/model.unified';
+import { UnifiedEcommerceProductOutput } from '../types/model.unified';
 import { ecom_products as EcommerceProduct } from '@prisma/client';
 import { Utils } from '@ecommerce/@lib/@utils';
 
@@ -107,7 +107,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedProductOutput,
+        UnifiedEcommerceProductOutput,
         OriginalProductOutput,
         IProductService
       >(integrationId, linkedUserId, 'ecommerce', 'product', service, []);
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    products: UnifiedProductOutput[],
+    products: UnifiedEcommerceProductOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<EcommerceProduct[]> {
@@ -127,7 +127,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const products_results: EcommerceProduct[] = [];
 
       const updateOrCreateProduct = async (
-        product: UnifiedProductOutput,
+        product: UnifiedEcommerceProductOutput,
         originId: string,
       ) => {
         let existingProduct;

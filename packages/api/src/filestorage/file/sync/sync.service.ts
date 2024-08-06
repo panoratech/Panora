@@ -16,9 +16,9 @@ import { fs_files as FileStorageFile } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFileService } from '../types';
-import { UnifiedFileOutput } from '../types/model.unified';
-import { UnifiedSharedLinkOutput } from '@filestorage/sharedlink/types/model.unified';
-import { UnifiedPermissionOutput } from '@filestorage/permission/types/model.unified';
+import { UnifiedFilestorageFileOutput } from '../types/model.unified';
+import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/types/model.unified';
+import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -128,7 +128,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedFileOutput,
+        UnifiedFilestorageFileOutput,
         OriginalFileOutput,
         IFileService
       >(integrationId, linkedUserId, 'filestorage', 'file', service, [
@@ -147,7 +147,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    files: UnifiedFileOutput[],
+    files: UnifiedFilestorageFileOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     id_folder?: string,
@@ -156,7 +156,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const files_results: FileStorageFile[] = [];
 
       const updateOrCreateFile = async (
-        file: UnifiedFileOutput,
+        file: UnifiedFilestorageFileOutput,
         originId: string,
         id_folder?: string,
       ) => {
@@ -227,7 +227,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 [file.shared_link],
                 originSource,
                 [file.shared_link].map(
-                  (att: UnifiedSharedLinkOutput) => att.remote_data,
+                  (att: UnifiedFilestorageSharedlinkOutput) => att.remote_data,
                 ),
                 {
                   extra: {
@@ -252,7 +252,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 [file.permission],
                 originSource,
                 [file.permission].map(
-                  (att: UnifiedPermissionOutput) => att.remote_data,
+                  (att: UnifiedFilestoragePermissionOutput) => att.remote_data,
                 ),
                 { object_name: 'file', value: file_id },
               );

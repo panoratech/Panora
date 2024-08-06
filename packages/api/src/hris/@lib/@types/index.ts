@@ -1,71 +1,71 @@
 import { ICompanyService } from '@crm/company/types';
-import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
-} from '@crm/company/types/model.unified';
 import { IBankInfoService } from '@hris/bankinfo/types';
 import {
-  UnifiedBankInfoInput,
-  UnifiedBankInfoOutput,
+  UnifiedHrisBankinfoInput,
+  UnifiedHrisBankinfoOutput,
 } from '@hris/bankinfo/types/model.unified';
 import { IBenefitService } from '@hris/benefit/types';
 import {
-  UnifiedBenefitInput,
-  UnifiedBenefitOutput,
+  UnifiedHrisBenefitInput,
+  UnifiedHrisBenefitOutput,
 } from '@hris/benefit/types/model.unified';
+import {
+  UnifiedHrisCompanyInput,
+  UnifiedHrisCompanyOutput,
+} from '@hris/company/types/model.unified';
 import { IDependentService } from '@hris/dependent/types';
 import {
-  UnifiedDependentInput,
-  UnifiedDependentOutput,
+  UnifiedHrisDependentInput,
+  UnifiedHrisDependentOutput,
 } from '@hris/dependent/types/model.unified';
 import { IEmployeeService } from '@hris/employee/types';
 import {
-  UnifiedEmployeeInput,
-  UnifiedEmployeeOutput,
+  UnifiedHrisEmployeeInput,
+  UnifiedHrisEmployeeOutput,
 } from '@hris/employee/types/model.unified';
 import { IEmployeePayrollRunService } from '@hris/employeepayrollrun/types';
 import {
-  UnifiedEmployeePayrollRunInput,
-  UnifiedEmployeePayrollRunOutput,
+  UnifiedHrisEmployeepayrollrunInput,
+  UnifiedHrisEmployeepayrollrunOutput,
 } from '@hris/employeepayrollrun/types/model.unified';
 import { IEmployerBenefitService } from '@hris/employerbenefit/types';
 import {
-  UnifiedEmployerBenefitInput,
-  UnifiedEmployerBenefitOutput,
+  UnifiedHrisEmployerbenefitInput,
+  UnifiedHrisEmployerbenefitOutput,
 } from '@hris/employerbenefit/types/model.unified';
 import { IEmploymentService } from '@hris/employment/types';
 import {
-  UnifiedEmploymentInput,
-  UnifiedEmploymentOutput,
+  UnifiedHrisEmploymentInput,
+  UnifiedHrisEmploymentOutput,
 } from '@hris/employment/types/model.unified';
 import {
-  UnifiedGroupInput,
-  UnifiedGroupOutput,
+  UnifiedHrisGroupInput,
+  UnifiedHrisGroupOutput,
 } from '@hris/group/types/model.unified';
 import { ILocationService } from '@hris/location/types';
 import {
-  UnifiedLocationInput,
-  UnifiedLocationOutput,
+  UnifiedHrisLocationInput,
+  UnifiedHrisLocationOutput,
 } from '@hris/location/types/model.unified';
 import { IPayGroupService } from '@hris/paygroup/types';
 import {
-  UnifiedPayGroupInput,
-  UnifiedPayGroupOutput,
+  UnifiedHrisPaygroupInput,
+  UnifiedHrisPaygroupOutput,
 } from '@hris/paygroup/types/model.unified';
 import { IPayrollRunService } from '@hris/payrollrun/types';
 import {
-  UnifiedPayrollRunInput,
-  UnifiedPayrollRunOutput,
+  UnifiedHrisPayrollrunInput,
+  UnifiedHrisPayrollrunOutput,
 } from '@hris/payrollrun/types/model.unified';
 import { ITimeoffService } from '@hris/timeoff/types';
 import {
-  UnifiedTimeoffInput,
-  UnifiedTimeoffOutput,
+  UnifiedHrisTimeoffInput,
+  UnifiedHrisTimeoffOutput,
 } from '@hris/timeoff/types/model.unified';
 import { ITimeoffBalanceService } from '@hris/timeoffbalance/types';
 import {
-  UnifiedTimeoffBalanceInput,
-  UnifiedTimeoffBalanceOutput,
+  UnifiedHrisTimeoffbalanceInput,
+  UnifiedHrisTimeoffbalanceOutput,
 } from '@hris/timeoffbalance/types/model.unified';
 
 export enum HrisObject {
@@ -86,51 +86,34 @@ export enum HrisObject {
 }
 
 export type UnifiedHris =
-  | UnifiedBankInfoInput
-  | UnifiedBankInfoOutput
-  | UnifiedBenefitInput
-  | UnifiedBenefitOutput
-  | UnifiedCompanyInput
-  | UnifiedCompanyOutput
-  | UnifiedEmployeePayrollRunInput
-  | UnifiedEmployeePayrollRunOutput
-  | UnifiedEmployeeInput
-  | UnifiedEmployeeOutput
-  | UnifiedDependentInput
-  | UnifiedDependentOutput
-  | UnifiedTimeoffInput
-  | UnifiedTimeoffOutput
-  | UnifiedTimeoffBalanceInput
-  | UnifiedTimeoffBalanceOutput
-  | UnifiedPayrollRunInput
-  | UnifiedPayrollRunOutput
-  | UnifiedEmployerBenefitInput
-  | UnifiedEmployerBenefitOutput
-  | UnifiedEmploymentInput
-  | UnifiedEmploymentOutput
-  | UnifiedGroupInput
-  | UnifiedGroupOutput
-  | UnifiedLocationInput
-  | UnifiedLocationOutput
-  | UnifiedPayGroupInput
-  | UnifiedPayGroupOutput;
-
-/*export const unificationMapping = {
-  [HrisObject.bankinfo]: bankinfoUnificationMapping,
-  [HrisObject.benefit]: benefitUnificationMapping,
-  [HrisObject.company]: companyUnificationMapping,
-  [HrisObject.dependent]: dependentUnificationMapping,
-  [HrisObject.employee]: employeeUnificationMapping,
-  [HrisObject.employeepayrollrun]: employeepayrollrunUnificationMapping,
-  [HrisObject.employerbenefit]: employerbenefitUnificationMapping,
-  [HrisObject.employment]: employmentUnificationMapping,
-  [HrisObject.group]: groupUnificationMapping,
-  [HrisObject.location]: locationUnificationMapping,
-  [HrisObject.paygroup]: paygroupUnificationMapping,
-  [HrisObject.payrollrun]: payrollrunUnificationMapping,
-  [HrisObject.timeoff]: timeoffUnificationMapping,
-  [HrisObject.timeoffbalance]: timeoffbalanceUnificationMapping,
-};*/
+  | UnifiedHrisBankinfoInput
+  | UnifiedHrisBankinfoOutput
+  | UnifiedHrisBenefitInput
+  | UnifiedHrisBenefitOutput
+  | UnifiedHrisCompanyInput
+  | UnifiedHrisCompanyOutput
+  | UnifiedHrisEmployeepayrollrunInput
+  | UnifiedHrisEmployeepayrollrunOutput
+  | UnifiedHrisEmployeeInput
+  | UnifiedHrisEmployeeOutput
+  | UnifiedHrisDependentInput
+  | UnifiedHrisDependentOutput
+  | UnifiedHrisTimeoffInput
+  | UnifiedHrisTimeoffOutput
+  | UnifiedHrisTimeoffbalanceInput
+  | UnifiedHrisTimeoffbalanceOutput
+  | UnifiedHrisPayrollrunInput
+  | UnifiedHrisPayrollrunOutput
+  | UnifiedHrisEmployerbenefitInput
+  | UnifiedHrisEmployerbenefitOutput
+  | UnifiedHrisEmploymentInput
+  | UnifiedHrisEmploymentOutput
+  | UnifiedHrisGroupInput
+  | UnifiedHrisGroupOutput
+  | UnifiedHrisLocationInput
+  | UnifiedHrisLocationOutput
+  | UnifiedHrisPaygroupInput
+  | UnifiedHrisPaygroupOutput;
 
 export type IHrisService =
   | IBankInfoService

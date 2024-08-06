@@ -17,19 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { DepartmentService } from './services/department.service';
 import {
-  UnifiedDepartmentInput,
-  UnifiedDepartmentOutput,
+  UnifiedAtsDepartmentInput,
+  UnifiedAtsDepartmentOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('ats/department')
-@Controller('ats/department')
+
+@ApiTags('ats/departments')
+@Controller('ats/departments')
 export class DepartmentController {
   constructor(
     private readonly departmentService: DepartmentService,
@@ -40,8 +46,8 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'getDepartments',
-    summary: 'List a batch of Departments',
+    operationId: 'listAtsDepartments',
+    summary: 'List  Departments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +55,22 @@ export class DepartmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDepartmentOutput)
+  @ApiPaginatedResponse(UnifiedAtsDepartmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getDepartments(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.departmentService.getDepartments(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,21 +83,23 @@ export class DepartmentController {
   }
 
   @ApiOperation({
-    operationId: 'getDepartment',
-    summary: 'Retrieve a Department',
-    description: 'Retrieve a department from any connected Ats software',
+    operationId: 'retrieveAtsDepartment',
+    summary: 'Retrieve Departments',
+    description: 'Retrieve Departments from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the department you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -98,7 +107,7 @@ export class DepartmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedDepartmentOutput)
+  @ApiGetCustomResponse(UnifiedAtsDepartmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -106,7 +115,7 @@ export class DepartmentController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -114,6 +123,8 @@ export class DepartmentController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

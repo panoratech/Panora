@@ -12,8 +12,8 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { ITicketService } from '../types';
 import {
-  UnifiedTicketInput,
-  UnifiedTicketOutput,
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 
@@ -33,12 +33,13 @@ export class TicketService {
   }
 
   async addTicket(
-    unifiedTicketData: UnifiedTicketInput,
+    unifiedTicketData: UnifiedTicketingTicketInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTicketOutput> {
+  ): Promise<UnifiedTicketingTicketOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateAccountId(unifiedTicketData.account_id);
@@ -61,7 +62,7 @@ export class TicketService {
         );
       //desunify the data according to the target obj wanted
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedTicketInput>({
+        await this.coreUnification.desunify<UnifiedTicketingTicketInput>({
           sourceObject: unifiedTicketData,
           targetType: TicketingObject.ticket,
           providerName: integrationId,
@@ -93,7 +94,7 @@ export class TicketService {
         vertical: 'ticketing',
         connectionId: connection_id,
         customFieldMappings: customFieldMappings,
-      })) as UnifiedTicketOutput[];
+      })) as UnifiedTicketingTicketOutput[];
 
       // add the ticket inside our db
       const source_ticket = resp.data;
@@ -120,12 +121,16 @@ export class TicketService {
         unique_ticketing_ticket_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'ticketing.ticket.push', //sync, push or pull
@@ -234,7 +239,7 @@ export class TicketService {
   }
 
   async saveOrUpdateTicket(
-    ticket: UnifiedTicketOutput,
+    ticket: UnifiedTicketingTicketOutput,
     connection_id: string,
   ): Promise<string> {
     const existingTicket = await this.prisma.tcg_tickets.findFirst({
@@ -277,8 +282,10 @@ export class TicketService {
     id_ticketing_ticket: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTicketOutput> {
+  ): Promise<UnifiedTicketingTicketOutput> {
     try {
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
@@ -306,9 +313,7 @@ export class TicketService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       let tagsArray;
       if (ticket.tags) {
@@ -347,8 +352,8 @@ export class TicketService {
         },
       });
 
-      // Transform to UnifiedTicketOutput format
-      const unifiedTicket: UnifiedTicketOutput = {
+      // Transform to UnifiedTicketingTicketOutput format
+      const unifiedTicket: UnifiedTicketingTicketOutput = {
         id: ticket.id_tcg_ticket,
         name: ticket.name || null,
         status: ticket.status || null,
@@ -379,6 +384,8 @@ export class TicketService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connection_id,
+            id_project: project_id,
             id_event: uuidv4(),
             status: 'success',
             type: 'ticketing.ticket.pull',
@@ -399,13 +406,14 @@ export class TicketService {
 
   async getTickets(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedTicketOutput[];
+    data: UnifiedTicketingTicketOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -457,7 +465,7 @@ export class TicketService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedTickets: UnifiedTicketOutput[] = await Promise.all(
+      const unifiedTickets: UnifiedTicketingTicketOutput[] = await Promise.all(
         tickets.map(async (ticket) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -478,10 +486,8 @@ export class TicketService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           let tagsArray;
           if (ticket.tags) {
@@ -519,8 +525,8 @@ export class TicketService {
               id_tcg_ticket: ticket.id_tcg_ticket,
             },
           });
-          // Transform to UnifiedTicketOutput format
-          const unifiedTicket: UnifiedTicketOutput = {
+          // Transform to UnifiedTicketingTicketOutput format
+          const unifiedTicket: UnifiedTicketingTicketOutput = {
             id: ticket.id_tcg_ticket,
             name: ticket.name || null,
             status: ticket.status || null,
@@ -543,28 +549,31 @@ export class TicketService {
         }),
       );
 
-      let res: UnifiedTicketOutput[] = unifiedTickets;
+      let res: UnifiedTicketingTicketOutput[] = unifiedTickets;
       if (remote_data) {
-        const remote_array_data: UnifiedTicketOutput[] = await Promise.all(
-          res.map(async (ticket) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: ticket.id,
-              },
-            });
-            //TODO:
-            let remote_data: any;
-            if (resp && resp.data) {
-              remote_data = JSON.parse(resp.data);
-            }
-            return { ...ticket, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedTicketingTicketOutput[] =
+          await Promise.all(
+            res.map(async (ticket) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: ticket.id,
+                },
+              });
+              //TODO:
+              let remote_data: any;
+              if (resp && resp.data) {
+                remote_data = JSON.parse(resp.data);
+              }
+              return { ...ticket, remote_data };
+            }),
+          );
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.ticket.pulled',

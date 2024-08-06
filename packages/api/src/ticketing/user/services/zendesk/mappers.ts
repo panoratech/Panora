@@ -1,8 +1,8 @@
 import { IUserMapper } from '@ticketing/user/types';
 import { ZendeskUserInput, ZendeskUserOutput } from './types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedTicketingUserInput,
+  UnifiedTicketingUserOutput,
 } from '@ticketing/user/types/model.unified';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
@@ -14,7 +14,7 @@ export class ZendeskUserMapper implements IUserMapper {
     this.mappersRegistry.registerService('ticketing', 'user', 'zendesk', this);
   }
   desunify(
-    source: UnifiedUserInput,
+    source: UnifiedTicketingUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class ZendeskUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
+  ): Promise<UnifiedTicketingUserOutput | UnifiedTicketingUserOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleUserToUnified(
         source,
@@ -52,14 +52,14 @@ export class ZendeskUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedTicketingUserOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
         field_mappings[mapping.slug] = user.user_fields[mapping.remote_id];
       }
     }
-    const unifiedUser: UnifiedUserOutput = {
+    const unifiedUser: UnifiedTicketingUserOutput = {
       remote_id: String(user.id),
       remote_data: user,
       name: user.name,

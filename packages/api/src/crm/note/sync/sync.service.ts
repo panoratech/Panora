@@ -8,7 +8,7 @@ import { FieldMappingService } from '@@core/field-mapping/field-mapping.service'
 import { ServiceRegistry } from '../services/registry.service';
 import { CrmObject } from '@crm/@lib/@types';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedNoteOutput } from '../types/model.unified';
+import { UnifiedCrmNoteOutput } from '../types/model.unified';
 import { INoteService } from '../types';
 import { crm_notes as CrmNote } from '@prisma/client';
 import { OriginalNoteOutput } from '@@core/utils/types/original/original.crm';
@@ -53,12 +53,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log(`Syncing notes....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -107,10 +107,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId } = param;
       const service: INoteService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:crm, commonObject: note} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedNoteOutput,
+        UnifiedCrmNoteOutput,
         OriginalNoteOutput,
         INoteService
       >(integrationId, linkedUserId, 'crm', 'note', service, []);
@@ -122,7 +125,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    data: UnifiedNoteOutput[],
+    data: UnifiedCrmNoteOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<CrmNote[]> {
@@ -130,7 +133,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const notes_results: CrmNote[] = [];
 
       const updateOrCreateNote = async (
-        note: UnifiedNoteOutput,
+        note: UnifiedCrmNoteOutput,
         originId: string,
       ) => {
         const existingNote = await this.prisma.crm_notes.findFirst({

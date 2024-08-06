@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedCollectionInput,
-  UnifiedCollectionOutput,
+  UnifiedTicketingCollectionInput,
+  UnifiedTicketingCollectionOutput,
 } from './model.unified';
 import {
   OriginalCollectionOutput,
@@ -16,7 +16,7 @@ export interface ICollectionService extends IBaseObjectService {
 
 export interface ICollectionMapper {
   desunify(
-    source: UnifiedCollectionInput,
+    source: UnifiedTicketingCollectionInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,5 +30,5 @@ export interface ICollectionMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCollectionOutput | UnifiedCollectionOutput[];
+  ): UnifiedTicketingCollectionOutput | UnifiedTicketingCollectionOutput[];
 }

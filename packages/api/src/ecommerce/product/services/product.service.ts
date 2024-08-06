@@ -3,19 +3,19 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  UnifiedProductInput,
-  UnifiedProductOutput,
+  UnifiedEcommerceProductInput,
+  UnifiedEcommerceProductOutput,
 } from '../types/model.unified';
 import { ecom_products as EcommerceProduct } from '@prisma/client';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ServiceRegistry } from './registry.service';
-import { EcommerceObject } from '@panora/shared';
 import { IProductService } from '../types';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalProductOutput } from '@@core/utils/types/original/original.ecommerce';
 import { Utils } from '@ecommerce/@lib/@utils';
+import { EcommerceObject } from '@ecommerce/@lib/@types';
 
 @Injectable()
 export class ProductService {
@@ -40,18 +40,19 @@ export class ProductService {
   }
 
   async addProduct(
-    unifiedProductData: UnifiedProductInput,
+    UnifiedEcommerceProductData: UnifiedEcommerceProductInput,
     connection_id: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedProductOutput> {
+  ): Promise<UnifiedEcommerceProductOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedProductInput>({
-          sourceObject: unifiedProductData,
+        await this.coreUnification.desunify<UnifiedEcommerceProductInput>({
+          sourceObject: UnifiedEcommerceProductData,
           targetType: EcommerceObject.product,
           providerName: integrationId,
           vertical: 'ecommerce',
@@ -74,7 +75,7 @@ export class ProductService {
         vertical: 'ecommerce',
         connectionId: connection_id,
         customFieldMappings: [],
-      })) as UnifiedProductOutput[];
+      })) as UnifiedEcommerceProductOutput[];
 
       const source_product = resp.data;
       const target_product = unifiedObject[0];
@@ -93,12 +94,16 @@ export class ProductService {
         unique_ecommerce_product_id,
         linkedUserId,
         integrationId,
+        connection_id,
+        projectId,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: projectId,
           id_event: uuidv4(),
           status: status_resp,
           type: 'ecommerce.product.push',
@@ -125,7 +130,7 @@ export class ProductService {
   }
 
   async saveOrUpdateProduct(
-    product: UnifiedProductOutput,
+    product: UnifiedEcommerceProductOutput,
     connection_id: string,
   ): Promise<string> {
     const existingProduct = await this.prisma.ecom_products.findFirst({
@@ -208,8 +213,10 @@ export class ProductService {
     id_ecommerce_product: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedProductOutput> {
+  ): Promise<UnifiedEcommerceProductOutput> {
     try {
       const product = await this.prisma.ecom_products.findUnique({
         where: {
@@ -244,12 +251,10 @@ export class ProductService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedProductOutput format
-      const unifiedProduct: UnifiedProductOutput = {
+      // Transform to UnifiedEcommerceProductOutput format
+      const UnifiedEcommerceProduct: UnifiedEcommerceProductOutput = {
         id: product.id_ecom_product,
         product_url: product.product_url,
         product_type: product.product_type,
@@ -269,10 +274,10 @@ export class ProductService {
         field_mappings: field_mappings,
         remote_id: product.remote_id,
         created_at: product.created_at.toISOString(),
-        modified_at: product.modifed_at.toISOString(),
+        modified_at: product.modified_at.toISOString(),
       };
 
-      let res: UnifiedProductOutput = unifiedProduct;
+      let res: UnifiedEcommerceProductOutput = UnifiedEcommerceProduct;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -288,6 +293,8 @@ export class ProductService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ecommerce.product.pull',
@@ -308,13 +315,14 @@ export class ProductService {
 
   async getProducts(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedProductOutput[];
+    data: UnifiedEcommerceProductOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -363,7 +371,7 @@ export class ProductService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedProducts: UnifiedProductOutput[] = await Promise.all(
+      const UnifiedEcommerceProducts: UnifiedEcommerceProductOutput[] = await Promise.all(
         products.map(async (product) => {
           // Fetch field mappings for the product
           const values = await this.prisma.value.findMany({
@@ -385,14 +393,9 @@ export class ProductService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedProductOutput format
+          // Transform to UnifiedEcommerceProductOutput format
           return {
             id: product.id_ecom_product,
             product_url: product.product_url,
@@ -413,15 +416,15 @@ export class ProductService {
             field_mappings: field_mappings,
             remote_id: product.remote_id,
             created_at: product.created_at.toISOString(),
-            modified_at: product.modifed_at.toISOString(),
+            modified_at: product.modified_at.toISOString(),
           };
         }),
       );
 
-      let res: UnifiedProductOutput[] = unifiedProducts;
+      let res: UnifiedEcommerceProductOutput[] = UnifiedEcommerceProducts;
 
       if (remote_data) {
-        const remote_array_data: UnifiedProductOutput[] = await Promise.all(
+        const remote_array_data: UnifiedEcommerceProductOutput[] = await Promise.all(
           res.map(async (product) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -438,6 +441,8 @@ export class ProductService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ecommerce.product.pull',

@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IScoreCardService } from '../types';
 import { OriginalScoreCardOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedScoreCardOutput } from '../types/model.unified';
+import { UnifiedAtsScorecardOutput } from '../types/model.unified';
 import { ats_scorecards as AtsScoreCard } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -53,12 +53,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log('Syncing score cards...');
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -104,10 +104,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId } = param;
       const service: IScoreCardService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ats, commonObject: scorecard} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedScoreCardOutput,
+        UnifiedAtsScorecardOutput,
         OriginalScoreCardOutput,
         IScoreCardService
       >(integrationId, linkedUserId, 'ats', 'scorecard', service, []);
@@ -119,7 +122,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    scoreCards: UnifiedScoreCardOutput[],
+    scoreCards: UnifiedAtsScorecardOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsScoreCard[]> {
@@ -127,7 +130,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const scoreCards_results: AtsScoreCard[] = [];
 
       const updateOrCreateScoreCard = async (
-        scoreCard: UnifiedScoreCardOutput,
+        scoreCard: UnifiedAtsScorecardOutput,
         originId: string,
       ) => {
         let existingScoreCard;
@@ -136,14 +139,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
             where: {
               overall_recommendation: scoreCard.overall_recommendation,
               id_ats_application: scoreCard.application_id,
-              id_connection: connection_id,
+              
             },
           });
         } else {
           existingScoreCard = await this.prisma.ats_scorecards.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }
@@ -171,7 +174,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_scorecard: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

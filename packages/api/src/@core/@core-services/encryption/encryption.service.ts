@@ -9,11 +9,12 @@ export class EncryptionService {
   private iv = crypto.randomBytes(16);
 
   constructor(private env: EnvironmentService, private logger: LoggerService) {
-    this.secretKey = this.env.getCryptoKey();
+    this.secretKey = process.env.ENCRYPT_CRYPTO_SECRET_KEY;
   }
 
   encrypt(data: string): string {
     try {
+      if (!data) throw new Error('Cant encrypt empty string');
       const cipher = crypto.createCipheriv(
         'aes-256-cbc',
         Buffer.from(this.secretKey, 'utf-8'),

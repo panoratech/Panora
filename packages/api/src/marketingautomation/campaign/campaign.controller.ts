@@ -17,19 +17,26 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { CampaignService } from './services/campaign.service';
 import {
-  UnifiedCampaignInput,
-  UnifiedCampaignOutput,
+  UnifiedMarketingautomationCampaignInput,
+  UnifiedMarketingautomationCampaignOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('marketingautomation/campaign')
-@Controller('marketingautomation/campaign')
+
+@ApiTags('marketingautomation/campaigns')
+@Controller('marketingautomation/campaigns')
 export class CampaignController {
   constructor(
     private readonly campaignService: CampaignService,
@@ -40,8 +47,8 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'getCampaigns',
-    summary: 'List a batch of Campaigns',
+    operationId: 'listMarketingautomationCampaigns',
+    summary: 'List Campaigns',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +56,22 @@ export class CampaignController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCampaignOutput)
+  @ApiPaginatedResponse(UnifiedMarketingautomationCampaignOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCampaigns(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.campaignService.getCampaigns(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,16 +84,17 @@ export class CampaignController {
   }
 
   @ApiOperation({
-    operationId: 'getCampaign',
-    summary: 'Retrieve a Campaign',
+    operationId: 'retrieveMarketingautomationCampaign',
+    summary: 'Retrieve Campaign',
     description:
-      'Retrieve a campaign from any connected Marketingautomation software',
+      'Retrieve a Campaign from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the campaign you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -93,6 +102,7 @@ export class CampaignController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -100,7 +110,7 @@ export class CampaignController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCampaignOutput)
+  @ApiGetCustomResponse(UnifiedMarketingautomationCampaignOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -108,7 +118,7 @@ export class CampaignController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -116,13 +126,15 @@ export class CampaignController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
-    operationId: 'addCampaign',
-    summary: 'Create a Campaign',
+    operationId: 'createMarketingautomationCampaign',
+    summary: 'Create Campaign',
     description:
       'Create a campaign in any supported Marketingautomation software',
   })
@@ -138,24 +150,26 @@ export class CampaignController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
-  @ApiBody({ type: UnifiedCampaignInput })
-  @ApiCustomResponse(UnifiedCampaignOutput)
+  @ApiBody({ type: UnifiedMarketingautomationCampaignInput })
+  @ApiPostCustomResponse(UnifiedMarketingautomationCampaignOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addCampaign(
-    @Body() unifiedCampaignData: UnifiedCampaignInput,
+    @Body() unifiedCampaignData: UnifiedMarketingautomationCampaignInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.campaignService.addCampaign(
         unifiedCampaignData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

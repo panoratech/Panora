@@ -15,7 +15,7 @@ import { ecom_orders as EcommerceOrder } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IOrderService } from '../types';
-import { UnifiedOrderOutput } from '../types/model.unified';
+import { UnifiedEcommerceOrderOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -105,7 +105,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedOrderOutput,
+        UnifiedEcommerceOrderOutput,
         OriginalOrderOutput,
         IOrderService
       >(integrationId, linkedUserId, 'ecommerce', 'order', service, []);
@@ -117,7 +117,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    orders: UnifiedOrderOutput[],
+    orders: UnifiedEcommerceOrderOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<EcommerceOrder[]> {
@@ -125,7 +125,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const orders_results: EcommerceOrder[] = [];
 
       const updateOrCreateOrder = async (
-        order: UnifiedOrderOutput,
+        order: UnifiedEcommerceOrderOutput,
         originId: string,
       ) => {
         let existingOrder;

@@ -1,53 +1,53 @@
 import { IActionService } from '@marketingautomation/action/types';
 import {
-  UnifiedActionInput,
-  UnifiedActionOutput,
+  UnifiedMarketingautomationActionInput,
+  UnifiedMarketingautomationActionOutput,
 } from '@marketingautomation/action/types/model.unified';
 import { IAutomationService } from '@marketingautomation/automation/types';
 import {
-  UnifiedAutomationInput,
-  UnifiedAutomationOutput,
+  UnifiedMarketingautomationAutomationInput,
+  UnifiedMarketingautomationAutomationOutput,
 } from '@marketingautomation/automation/types/model.unified';
 import { ICampaignService } from '@marketingautomation/campaign/types';
 import {
-  UnifiedCampaignInput,
-  UnifiedCampaignOutput,
+  UnifiedMarketingautomationCampaignInput,
+  UnifiedMarketingautomationCampaignOutput,
 } from '@marketingautomation/campaign/types/model.unified';
 import { IEmailService } from '@marketingautomation/email/types';
 import {
-  UnifiedEmailInput,
-  UnifiedEmailOutput,
+  UnifiedMarketingautomationEmailInput,
+  UnifiedMarketingautomationEmailOutput,
 } from '@marketingautomation/email/types/model.unified';
 import { IEventService } from '@marketingautomation/event/types';
 import {
-  UnifiedEventInput,
-  UnifiedEventOutput,
+  UnifiedMarketingautomationEventInput,
+  UnifiedMarketingautomationEventOutput,
 } from '@marketingautomation/event/types/model.unified';
 import { IListService } from '@marketingautomation/list/types';
 import {
-  UnifiedListInput,
-  UnifiedListOutput,
+  UnifiedMarketingautomationListInput,
+  UnifiedMarketingautomationListOutput,
 } from '@marketingautomation/list/types/model.unified';
 import { IMessageService } from '@marketingautomation/message/types';
 import {
-  UnifiedMessageInput,
-  UnifiedMessageOutput,
+  UnifiedMarketingautomationMessageInput,
+  UnifiedMarketingautomationMessageOutput,
 } from '@marketingautomation/message/types/model.unified';
 import { ITemplateService } from '@marketingautomation/template/types';
 import {
-  UnifiedTemplateInput,
-  UnifiedTemplateOutput,
+  UnifiedMarketingautomationTemplateInput,
+  UnifiedMarketingautomationTemplateOutput,
 } from '@marketingautomation/template/types/model.unified';
 import { IContactService } from '@ticketing/contact/types';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
-} from '@ticketing/contact/types/model.unified';
+  UnifiedMarketingautomationContactInput,
+  UnifiedMarketingautomationContactOutput,
+} from '@marketingautomation/contact/types/model.unified';
 import { IUserService } from '@ticketing/user/types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
-} from '@ticketing/user/types/model.unified';
+  UnifiedMarketingautomationUserInput,
+  UnifiedMarketingautomationUserOutput,
+} from '@marketingautomation/user/types/model.unified';
 
 export enum MarketingAutomationObject {
   action = 'action',
@@ -63,26 +63,26 @@ export enum MarketingAutomationObject {
 }
 
 export type UnifiedMarketingAutomation =
-  | UnifiedActionInput
-  | UnifiedActionOutput
-  | UnifiedAutomationInput
-  | UnifiedAutomationOutput
-  | UnifiedCampaignInput
-  | UnifiedCampaignOutput
-  | UnifiedContactInput
-  | UnifiedContactOutput
-  | UnifiedEmailInput
-  | UnifiedEmailOutput
-  | UnifiedEventInput
-  | UnifiedEventOutput
-  | UnifiedListInput
-  | UnifiedListOutput
-  | UnifiedMessageInput
-  | UnifiedMessageOutput
-  | UnifiedTemplateInput
-  | UnifiedTemplateOutput
-  | UnifiedUserInput
-  | UnifiedUserOutput;
+  | UnifiedMarketingautomationActionInput
+  | UnifiedMarketingautomationActionOutput
+  | UnifiedMarketingautomationAutomationInput
+  | UnifiedMarketingautomationAutomationOutput
+  | UnifiedMarketingautomationCampaignInput
+  | UnifiedMarketingautomationCampaignOutput
+  | UnifiedMarketingautomationContactInput
+  | UnifiedMarketingautomationContactOutput
+  | UnifiedMarketingautomationEmailInput
+  | UnifiedMarketingautomationEmailOutput
+  | UnifiedMarketingautomationEventInput
+  | UnifiedMarketingautomationEventOutput
+  | UnifiedMarketingautomationListInput
+  | UnifiedMarketingautomationListOutput
+  | UnifiedMarketingautomationMessageInput
+  | UnifiedMarketingautomationMessageOutput
+  | UnifiedMarketingautomationTemplateInput
+  | UnifiedMarketingautomationTemplateOutput
+  | UnifiedMarketingautomationUserInput
+  | UnifiedMarketingautomationUserOutput;
 
 /*export const unificationMapping = {
   [MarketingAutomationObject.action]: actionUnificationMapping,

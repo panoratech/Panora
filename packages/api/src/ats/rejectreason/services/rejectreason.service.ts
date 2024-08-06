@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedRejectReasonOutput } from '../types/model.unified';
+import { UnifiedAtsRejectreasonOutput } from '../types/model.unified';
 
 @Injectable()
 export class RejectReasonService {
@@ -14,8 +14,10 @@ export class RejectReasonService {
     id_ats_reject_reason: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedRejectReasonOutput> {
+  ): Promise<UnifiedAtsRejectreasonOutput> {
     try {
       const rejectReason = await this.prisma.ats_reject_reasons.findUnique({
         where: {
@@ -49,12 +51,10 @@ export class RejectReasonService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedRejectReasonOutput format
-      const unifiedRejectReason: UnifiedRejectReasonOutput = {
+      // Transform to UnifiedAtsRejectreasonOutput format
+      const unifiedRejectReason: UnifiedAtsRejectreasonOutput = {
         id: rejectReason.id_ats_reject_reason,
         name: rejectReason.name,
         field_mappings: field_mappings,
@@ -63,7 +63,7 @@ export class RejectReasonService {
         modified_at: rejectReason.modified_at,
       };
 
-      let res: UnifiedRejectReasonOutput = unifiedRejectReason;
+      let res: UnifiedAtsRejectreasonOutput = unifiedRejectReason;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -79,6 +79,8 @@ export class RejectReasonService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.rejectreason.pull',
@@ -99,13 +101,14 @@ export class RejectReasonService {
 
   async getRejectReasons(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedRejectReasonOutput[];
+    data: UnifiedAtsRejectreasonOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -135,9 +138,7 @@ export class RejectReasonService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (rejectReasons.length === limit + 1) {
@@ -150,7 +151,7 @@ export class RejectReasonService {
       if (cursor) {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
-      const unifiedRejectReasons: UnifiedRejectReasonOutput[] =
+      const unifiedRejectReasons: UnifiedAtsRejectreasonOutput[] =
         await Promise.all(
           rejectReasons.map(async (rejectReason) => {
             // Fetch field mappings for the reject reason
@@ -180,7 +181,7 @@ export class RejectReasonService {
               }),
             );
 
-            // Transform to UnifiedRejectReasonOutput format
+            // Transform to UnifiedAtsRejectreasonOutput format
             return {
               id: rejectReason.id_ats_reject_reason,
               name: rejectReason.name,
@@ -192,10 +193,10 @@ export class RejectReasonService {
           }),
         );
 
-      let res: UnifiedRejectReasonOutput[] = unifiedRejectReasons;
+      let res: UnifiedAtsRejectreasonOutput[] = unifiedRejectReasons;
 
       if (remote_data) {
-        const remote_array_data: UnifiedRejectReasonOutput[] =
+        const remote_array_data: UnifiedAtsRejectreasonOutput[] =
           await Promise.all(
             res.map(async (rejectReason) => {
               const resp = await this.prisma.remote_data.findFirst({
@@ -212,6 +213,8 @@ export class RejectReasonService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.rejectreason.pull',

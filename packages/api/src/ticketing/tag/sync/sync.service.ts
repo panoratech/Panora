@@ -16,7 +16,7 @@ import { tcg_tags as TicketingTag } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ITagService } from '../types';
-import { UnifiedTagOutput } from '../types/model.unified';
+import { UnifiedTicketingTagOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -55,12 +55,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log(`Syncing tags....`);
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -90,7 +90,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     //call the sync comments for every ticket of the linkedUser (a comment is tied to a ticket)
                     const tickets = await this.prisma.tcg_tickets.findMany({
                       where: {
-                        id_connection: connection.id_connection,
+                        id_connection: connection?.id_connection,
                       },
                     });
                     for (const ticket of tickets) {
@@ -122,10 +122,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId, id_ticket } = data;
       const service: ITagService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ticketing, commonObject: tag} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedTagOutput,
+        UnifiedTicketingTagOutput,
         OriginalTagOutput,
         ITagService
       >(integrationId, linkedUserId, 'ticketing', 'tag', service, [
@@ -150,7 +153,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    tags: UnifiedTagOutput[],
+    tags: UnifiedTicketingTagOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     id_ticket: string,
@@ -159,7 +162,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const tags_results: TicketingTag[] = [];
 
       const updateOrCreateTag = async (
-        tag: UnifiedTagOutput,
+        tag: UnifiedTicketingTagOutput,
         originId: string,
         connection_id: string,
         id_ticket: string,

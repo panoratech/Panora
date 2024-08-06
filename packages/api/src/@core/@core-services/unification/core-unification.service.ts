@@ -5,12 +5,13 @@ import { FileStorageObject } from '@filestorage/@lib/@types';
 import { HrisObject } from '@hris/@lib/@types';
 import { MarketingAutomationObject } from '@marketingautomation/@lib/@types';
 import { Injectable } from '@nestjs/common';
-import { ConnectorCategory, EcommerceObject } from '@panora/shared';
+import { ConnectorCategory } from '@panora/shared';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { TargetObject, Unified, UnifyReturnType } from '../../utils/types';
 import { DesunifyReturnType } from '../../utils/types/desunify.input';
 import { UnifySourceType } from '../../utils/types/unify.output';
 import { UnificationRegistry } from '../registries/unification.registry';
+import { EcommerceObject } from '@ecommerce/@lib/@types';
 
 @Injectable()
 export class CoreUnification {

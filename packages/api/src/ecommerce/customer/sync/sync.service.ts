@@ -13,7 +13,7 @@ import { Cron } from '@nestjs/schedule';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ICustomerService } from '../types';
-import { UnifiedCustomerOutput } from '../types/model.unified';
+import { UnifiedEcommerceCustomerOutput } from '../types/model.unified';
 import { ECOMMERCE_PROVIDERS } from '@panora/shared';
 import { ecom_customers as EcommerceCustomer } from '@prisma/client';
 import { Utils } from '@ecommerce/@lib/@utils';
@@ -107,7 +107,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedCustomerOutput,
+        UnifiedEcommerceCustomerOutput,
         OriginalCustomerOutput,
         ICustomerService
       >(integrationId, linkedUserId, 'ecommerce', 'customer', service, []);
@@ -119,7 +119,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    customers: UnifiedCustomerOutput[],
+    customers: UnifiedEcommerceCustomerOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<EcommerceCustomer[]> {
@@ -127,7 +127,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const customers_results: EcommerceCustomer[] = [];
 
       const updateOrCreateCustomer = async (
-        customer: UnifiedCustomerOutput,
+        customer: UnifiedEcommerceCustomerOutput,
         originId: string,
       ) => {
         let existingCustomer;

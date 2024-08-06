@@ -1,7 +1,7 @@
 import { CloseStageOutput, CloseStageInput } from './types';
 import {
-  UnifiedStageInput,
-  UnifiedStageOutput,
+  UnifiedCrmStageInput,
+  UnifiedCrmStageOutput,
 } from '@crm/stage/types/model.unified';
 import { IStageMapper } from '@crm/stage/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -14,7 +14,7 @@ export class CloseStageMapper implements IStageMapper {
     this.mappersRegistry.registerService('crm', 'stage', 'close', this);
   }
   desunify(
-    source: UnifiedStageInput,
+    source: UnifiedCrmStageInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class CloseStageMapper implements IStageMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedStageOutput | UnifiedStageOutput[] {
+  ): UnifiedCrmStageOutput | UnifiedCrmStageOutput[] {
     if (!Array.isArray(source)) {
       return this.mapSingleStageToUnified(
         source,
@@ -51,7 +51,7 @@ export class CloseStageMapper implements IStageMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedStageOutput {
+  ): UnifiedCrmStageOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

@@ -14,7 +14,7 @@ import { ATS_PROVIDERS, ECOMMERCE_PROVIDERS } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFulfillmentOrdersService } from '../types';
-import { UnifiedFulfillmentOrdersOutput } from '../types/model.unified';
+import { UnifiedEcommerceFulfillmentOrdersOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -126,7 +126,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       if (!service) return;
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedFulfillmentOrdersOutput,
+        UnifiedEcommerceFulfillmentOrdersOutput,
         OriginalFulfillmentOrdersOutput,
         IFulfillmentOrdersService
       >(
@@ -145,7 +145,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    fulfillmentorderss: UnifiedFulfillmentOrdersOutput[],
+    fulfillmentorderss: UnifiedEcommerceFulfillmentOrdersOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<EcommerceFulfillmentOrders[]> {
@@ -153,7 +153,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const fulfillmentorderss_results: EcommerceFulfillmentOrders[] = [];
 
       const updateOrCreateFulfillmentOrders = async (
-        fulfillmentorders: UnifiedFulfillmentOrdersOutput,
+        fulfillmentorders: UnifiedEcommerceFulfillmentOrdersOutput,
         originId: string,
       ) => {
         let existingFulfillmentOrders;

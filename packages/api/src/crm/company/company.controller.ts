@@ -1,8 +1,8 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiCustomResponse } from '@@core/utils/types';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+
 import {
   Body,
   Controller,
@@ -16,7 +16,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
+  //ApiKeyAuth,
   ApiBody,
   ApiHeader,
   ApiOperation,
@@ -26,11 +26,15 @@ import {
 } from '@nestjs/swagger';
 import { CompanyService } from './services/company.service';
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from './types/model.unified';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
 @ApiTags('crm/companies')
 @Controller('crm/companies')
 export class CompanyController {
@@ -43,8 +47,8 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanies',
-    summary: 'List a batch of Companies',
+    operationId: 'listCrmCompany',
+    summary: 'List Companies',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -52,22 +56,23 @@ export class CompanyController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCompanyOutput)
+  @ApiPaginatedResponse(UnifiedCrmCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getCompanies(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.companyService.getCompanies(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -80,21 +85,23 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmCompany',
-    summary: 'Retrieve a Company',
-    description: 'Retrieve a company from any connected Crm software',
+    operationId: 'retrieveCrmCompany',
+    summary: 'Retrieve Companies',
+    description: 'Retrieve Companies from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the company you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -102,7 +109,7 @@ export class CompanyController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCompanyOutput)
+  @ApiGetCustomResponse(UnifiedCrmCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -110,7 +117,7 @@ export class CompanyController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -118,14 +125,16 @@ export class CompanyController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
-    operationId: 'addCrmCompany',
-    summary: 'Create a Company',
-    description: 'Create a company in any supported Crm software',
+    operationId: 'createCrmCompany',
+    summary: 'Create Companies',
+    description: 'Create Companies in any supported CRM software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -137,25 +146,27 @@ export class CompanyController {
     name: 'remote_data',
     required: false,
     type: Boolean,
-    description: 'Set to true to include data from the original Crm software.',
+    description: 'Set to true to include data from the original CRM software.',
+    example: false,
   })
-  @ApiBody({ type: UnifiedCompanyInput })
-  @ApiCustomResponse(UnifiedCompanyOutput)
+  @ApiBody({ type: UnifiedCrmCompanyInput })
+  @ApiPostCustomResponse(UnifiedCrmCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addCompany(
-    @Body() unifiedCompanyData: UnifiedCompanyInput,
+    @Body() unifiedCompanyData: UnifiedCrmCompanyInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.companyService.addCompany(
         unifiedCompanyData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -9,8 +9,8 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { ICommentService } from '../types';
 import {
-  UnifiedCommentInput,
-  UnifiedCommentOutput,
+  UnifiedTicketingCommentInput,
+  UnifiedTicketingCommentOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
@@ -31,12 +31,13 @@ export class CommentService {
   }
 
   async addComment(
-    unifiedCommentData: UnifiedCommentInput,
+    unifiedCommentData: UnifiedTicketingCommentInput,
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCommentOutput> {
+  ): Promise<UnifiedTicketingCommentOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateTicketId(unifiedCommentData.ticket_id);
@@ -51,7 +52,7 @@ export class CommentService {
 
       // Desunify the data according to the target object wanted
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedCommentInput>({
+        await this.coreUnification.desunify<UnifiedTicketingCommentInput>({
           sourceObject: unifiedCommentData,
           targetType: TicketingObject.comment,
           providerName: integrationId,
@@ -82,7 +83,7 @@ export class CommentService {
         vertical: 'ticketing',
         connectionId: connection_id,
         customFieldMappings: [],
-      })) as UnifiedCommentOutput[];
+      })) as UnifiedTicketingCommentOutput[];
 
       // Add the comment inside our db
       const source_comment = resp.data;
@@ -108,12 +109,16 @@ export class CommentService {
         unique_ticketing_comment_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'ticketing.comment.push', // sync, push or pull
@@ -220,8 +225,8 @@ export class CommentService {
   }
 
   async saveOrUpdateComment(
-    comment: UnifiedCommentOutput,
-    unifiedCommentData: UnifiedCommentInput,
+    comment: UnifiedTicketingCommentOutput,
+    unifiedCommentData: UnifiedTicketingCommentInput,
     connection_id: string,
   ): Promise<string> {
     const existingComment = await this.prisma.tcg_comments.findFirst({
@@ -256,8 +261,8 @@ export class CommentService {
   }
 
   getCommentCreatorOptions(
-    comment: UnifiedCommentOutput,
-    unifiedCommentData: UnifiedCommentInput,
+    comment: UnifiedTicketingCommentOutput,
+    unifiedCommentData: UnifiedTicketingCommentInput,
   ) {
     return comment.creator_type === 'CONTACT'
       ? { id_tcg_contact: unifiedCommentData.contact_id }
@@ -280,9 +285,11 @@ export class CommentService {
   async getComment(
     id_commenting_comment: string,
     linkedUserId: string,
+    connection_id: string,
     integrationId: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCommentOutput> {
+  ): Promise<UnifiedTicketingCommentOutput> {
     try {
       const comment = await this.prisma.tcg_comments.findUnique({
         where: {
@@ -312,9 +319,7 @@ export class CommentService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));*/
+      const field_mappings = Object.fromEntries(fieldMappingsMap);*/
 
       // Fetch attachment IDs associated with the ticket
       const attachments = await this.prisma.tcg_attachments.findMany({
@@ -323,8 +328,8 @@ export class CommentService {
         },
       });
 
-      // Transform to UnifiedCommentOutput format
-      const unifiedComment: UnifiedCommentOutput = {
+      // Transform to UnifiedTicketingCommentOutput format
+      const unifiedComment: UnifiedTicketingCommentOutput = {
         id: comment.id_tcg_comment,
         body: comment.body,
         html_body: comment.html_body,
@@ -351,6 +356,8 @@ export class CommentService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connection_id,
+            id_project: project_id,
             id_event: uuidv4(),
             status: 'success',
             type: 'ticketing.comment.pull',
@@ -371,13 +378,14 @@ export class CommentService {
 
   async getComments(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedCommentOutput[];
+    data: UnifiedTicketingCommentOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -423,11 +431,12 @@ export class CommentService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedComments: UnifiedCommentOutput[] = await Promise.all(
-        comments.map(async (comment) => {
-          //WE SHOULDNT HAVE FIELD MAPPINGS FOR COMMENT
-          // Fetch field mappings for the ticket
-          /*const values = await this.prisma.value.findMany({
+      const unifiedComments: UnifiedTicketingCommentOutput[] =
+        await Promise.all(
+          comments.map(async (comment) => {
+            //WE SHOULDNT HAVE FIELD MAPPINGS FOR COMMENT
+            // Fetch field mappings for the ticket
+            /*const values = await this.prisma.value.findMany({
             where: {
               entity: {
                 ressource_owner_id: comment.id_tcg_ticket,
@@ -445,52 +454,53 @@ export class CommentService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );*/
-          const attachments = await this.prisma.tcg_attachments.findMany({
-            where: {
-              id_tcg_ticket: comment.id_tcg_ticket,
-            },
-          });
-          // Transform to UnifiedCommentOutput format
-          return {
-            id: comment.id_tcg_comment,
-            body: comment.body,
-            html_body: comment.html_body,
-            is_private: comment.is_private,
-            creator_type: comment.creator_type,
-            ticket_id: comment.id_tcg_ticket,
-            contact_id: comment.id_tcg_contact, // uuid of Contact object
-            user_id: comment.id_tcg_user, // uuid of User object
-            attachments: attachments || null,
-            remote_id: comment.remote_id,
-            created_at: comment.created_at,
-            modified_at: comment.modified_at,
-          };
-        }),
-      );
-
-      let res: UnifiedCommentOutput[] = unifiedComments;
-
-      if (remote_data) {
-        const remote_array_data: UnifiedCommentOutput[] = await Promise.all(
-          res.map(async (comment) => {
-            const resp = await this.prisma.remote_data.findFirst({
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);*/
+            const attachments = await this.prisma.tcg_attachments.findMany({
               where: {
-                ressource_owner_id: comment.id,
+                id_tcg_ticket: comment.id_tcg_ticket,
               },
             });
-            const remote_data = JSON.parse(resp.data);
-            return { ...comment, remote_data };
+            // Transform to UnifiedTicketingCommentOutput format
+            return {
+              id: comment.id_tcg_comment,
+              body: comment.body,
+              html_body: comment.html_body,
+              is_private: comment.is_private,
+              creator_type: comment.creator_type,
+              ticket_id: comment.id_tcg_ticket,
+              contact_id: comment.id_tcg_contact, // uuid of Contact object
+              user_id: comment.id_tcg_user, // uuid of User object
+              attachments: attachments || null,
+              remote_id: comment.remote_id,
+              created_at: comment.created_at,
+              modified_at: comment.modified_at,
+            };
           }),
         );
+
+      let res: UnifiedTicketingCommentOutput[] = unifiedComments;
+
+      if (remote_data) {
+        const remote_array_data: UnifiedTicketingCommentOutput[] =
+          await Promise.all(
+            res.map(async (comment) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: comment.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...comment, remote_data };
+            }),
+          );
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.comment.pulled',

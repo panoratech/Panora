@@ -1,17 +1,19 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiCustomResponse } from '@@core/utils/types';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
+  Body,
   Controller,
   Get,
   Headers,
   Param,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBody,
   ApiHeader,
   ApiOperation,
   ApiParam,
@@ -19,7 +21,15 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { OrderService } from './services/order.service';
-import { UnifiedOrderOutput } from './types/model.unified';
+import {
+  UnifiedEcommerceOrderInput,
+  UnifiedEcommerceOrderOutput,
+} from './types/model.unified';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiTags('ecommerce/order')
 @Controller('ecommerce/order')
@@ -42,21 +52,22 @@ export class OrderController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedOrderOutput)
+  @ApiPaginatedResponse(UnifiedEcommerceOrderOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getOrders(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.orderService.getOrders(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -91,7 +102,7 @@ export class OrderController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedOrderOutput)
+  @ApiGetCustomResponse(UnifiedEcommerceOrderOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -99,7 +110,7 @@ export class OrderController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -107,7 +118,55 @@ export class OrderController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
+  }
+
+  @ApiOperation({
+    operationId: 'createEcommerceOrder',
+    summary: 'Create Orders',
+    description: 'Create Orders in any supported Ecommerce software',
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    example: false,
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original Accounting software.',
+  })
+  @ApiBody({ type: UnifiedEcommerceOrderInput })
+  @ApiPostCustomResponse(UnifiedEcommerceOrderOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @Post()
+  async addOrder(
+    @Body() unifiedOrderData: UnifiedEcommerceOrderInput,
+    @Headers('x-connection-token') connection_token: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    try {
+      const { linkedUserId, remoteSource, connectionId, projectId } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.orderService.addOrder(
+        unifiedOrderData,
+        connectionId,
+        projectId,
+        remoteSource,
+        linkedUserId,
+        remote_data,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

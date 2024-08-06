@@ -12,7 +12,7 @@ import { BoxFolderInput, BoxFolderOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { BoxFileOutput } from '@filestorage/file/services/box/types';
-import { UnifiedFileOutput } from '@filestorage/file/types/model.unified';
+import { UnifiedFilestorageFileOutput } from '@filestorage/file/types/model.unified';
 
 @Injectable()
 export class BoxService implements IFolderService {
@@ -89,7 +89,7 @@ export class BoxService implements IFolderService {
       );
       const folders = resp.data.entries.filter((elem) => elem.type == 'folder');
       const files = resp.data.entries.filter((elem) => elem.type == 'file');
-      await this.ingestService.ingestData<UnifiedFileOutput, BoxFileOutput>(
+      await this.ingestService.ingestData<UnifiedFilestorageFileOutput, BoxFileOutput>(
         files,
         'box',
         connection.id_connection,

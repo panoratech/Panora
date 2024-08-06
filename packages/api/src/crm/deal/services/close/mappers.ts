@@ -1,7 +1,7 @@
 import { CloseDealInput, CloseDealOutput } from './types';
 import {
-  UnifiedDealInput,
-  UnifiedDealOutput,
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/@lib/@utils';
@@ -15,7 +15,7 @@ export class CloseDealMapper implements IDealMapper {
   }
 
   async desunify(
-    source: UnifiedDealInput,
+    source: UnifiedCrmDealInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -67,7 +67,7 @@ export class CloseDealMapper implements IDealMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
+  ): Promise<UnifiedCrmDealOutput | UnifiedCrmDealOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleDealToUnified(
         source,
@@ -90,7 +90,7 @@ export class CloseDealMapper implements IDealMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

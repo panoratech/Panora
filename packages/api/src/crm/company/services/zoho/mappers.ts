@@ -1,6 +1,6 @@
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ZohoCompanyInput, ZohoCompanyOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
@@ -15,7 +15,7 @@ export class ZohoCompanyMapper implements ICompanyMapper {
     this.mappersRegistry.registerService('crm', 'company', 'zoho', this);
   }
   async desunify(
-    source: UnifiedCompanyInput,
+    source: UnifiedCrmCompanyInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -68,7 +68,7 @@ export class ZohoCompanyMapper implements ICompanyMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
+  ): Promise<UnifiedCrmCompanyOutput | UnifiedCrmCompanyOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleCompanyToUnified(
         source,
@@ -95,7 +95,7 @@ export class ZohoCompanyMapper implements ICompanyMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

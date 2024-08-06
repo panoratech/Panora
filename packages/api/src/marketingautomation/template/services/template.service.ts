@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedTemplateInput,
-  UnifiedTemplateOutput,
+  UnifiedMarketingautomationTemplateInput,
+  UnifiedMarketingautomationTemplateOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -28,12 +28,13 @@ export class TemplateService {
   }
 
   async addTemplate(
-    unifiedTemplateData: UnifiedTemplateInput,
+    unifiedTemplateData: UnifiedMarketingautomationTemplateInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTemplateOutput> {
+  ): Promise<UnifiedMarketingautomationTemplateOutput> {
     return;
   }
 
@@ -41,19 +42,22 @@ export class TemplateService {
     id_templateing_template: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTemplateOutput> {
+  ): Promise<UnifiedMarketingautomationTemplateOutput> {
     return;
   }
 
   async getTemplates(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedTemplateOutput[]> {
+  ): Promise<UnifiedMarketingautomationTemplateOutput[]> {
     return;
   }
 }

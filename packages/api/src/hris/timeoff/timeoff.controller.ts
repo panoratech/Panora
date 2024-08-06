@@ -17,19 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TimeoffService } from './services/timeoff.service';
 import {
-  UnifiedTimeoffInput,
-  UnifiedTimeoffOutput,
+  UnifiedHrisTimeoffInput,
+  UnifiedHrisTimeoffOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('hris/timeoff')
-@Controller('hris/timeoff')
+@ApiTags('hris/timeoffs')
+@Controller('hris/timeoffs')
 export class TimeoffController {
   constructor(
     private readonly timeoffService: TimeoffService,
@@ -40,8 +46,8 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoffs',
-    summary: 'List a batch of Timeoffs',
+    operationId: 'listHrisTimeoffs',
+    summary: 'List Time Offs',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +55,22 @@ export class TimeoffController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTimeoffOutput)
+  @ApiPaginatedResponse(UnifiedHrisTimeoffOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTimeoffs(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.timeoffService.getTimeoffs(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,21 +83,23 @@ export class TimeoffController {
   }
 
   @ApiOperation({
-    operationId: 'getTimeoff',
-    summary: 'Retrieve a Timeoff',
-    description: 'Retrieve a timeoff from any connected Hris software',
+    operationId: 'retrieveHrisTimeoff',
+    summary: 'Retrieve Time Off',
+    description: 'Retrieve a Time Off from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
-    description: 'id of the timeoff you want to retrieve.',
+    description: 'id of the time off you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -98,7 +107,7 @@ export class TimeoffController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTimeoffOutput)
+  @ApiGetCustomResponse(UnifiedHrisTimeoffOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -106,7 +115,7 @@ export class TimeoffController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -114,14 +123,16 @@ export class TimeoffController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
-    operationId: 'addTimeoff',
-    summary: 'Create a Timeoff',
-    description: 'Create a timeoff in any supported Hris software',
+    operationId: 'createHrisTimeoff',
+    summary: 'Create Timeoffs',
+    description: 'Create Timeoffs in any supported Hris software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -135,23 +146,24 @@ export class TimeoffController {
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
   })
-  @ApiBody({ type: UnifiedTimeoffInput })
-  @ApiCustomResponse(UnifiedTimeoffOutput)
+  @ApiBody({ type: UnifiedHrisTimeoffInput })
+  @ApiPostCustomResponse(UnifiedHrisTimeoffOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addTimeoff(
-    @Body() unifiedTimeoffData: UnifiedTimeoffInput,
+    @Body() unifiedTimeoffData: UnifiedHrisTimeoffInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.timeoffService.addTimeoff(
         unifiedTimeoffData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

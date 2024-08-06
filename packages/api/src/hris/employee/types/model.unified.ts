@@ -1,3 +1,3 @@
-export class UnifiedEmployeeInput {}
+export class UnifiedHrisEmployeeInput {}
 
-export class UnifiedEmployeeOutput extends UnifiedEmployeeInput {}
+export class UnifiedHrisEmployeeOutput extends UnifiedHrisEmployeeInput {}

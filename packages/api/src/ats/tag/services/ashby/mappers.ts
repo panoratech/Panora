@@ -1,7 +1,7 @@
 import { AshbyTagInput, AshbyTagOutput } from './types';
 import {
-  UnifiedTagInput,
-  UnifiedTagOutput,
+  UnifiedAtsTagInput,
+  UnifiedAtsTagOutput,
 } from '@ats/tag/types/model.unified';
 import { ITagMapper } from '@ats/tag/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -13,7 +13,7 @@ import {
   OriginalTagOutput,
 } from '@@core/utils/types/original/original.ats';
 import { AtsObject } from '@ats/@lib/@types';
-import { UnifiedAttachmentOutput } from '@ats/attachment/types/model.unified';
+import { UnifiedAtsAttachmentOutput } from '@ats/attachment/types/model.unified';
 
 @Injectable()
 export class AshbyTagMapper implements ITagMapper {
@@ -26,7 +26,7 @@ export class AshbyTagMapper implements ITagMapper {
   }
 
   async desunify(
-    source: UnifiedTagInput,
+    source: UnifiedAtsTagInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -42,7 +42,7 @@ export class AshbyTagMapper implements ITagMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTagOutput | UnifiedTagOutput[]> {
+  ): Promise<UnifiedAtsTagOutput | UnifiedAtsTagOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleTagToUnified(
         source,
@@ -65,7 +65,7 @@ export class AshbyTagMapper implements ITagMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTagOutput> {
+  ): Promise<UnifiedAtsTagOutput> {
     return {
       remote_id: tag.id,
       remote_data: tag,

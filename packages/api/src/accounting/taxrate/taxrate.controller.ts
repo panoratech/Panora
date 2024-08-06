@@ -17,19 +17,22 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TaxRateService } from './services/taxrate.service';
 import {
-  UnifiedTaxRateInput,
-  UnifiedTaxRateOutput,
+  UnifiedAccountingTaxrateInput,
+  UnifiedAccountingTaxrateOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/taxrate')
-@Controller('accounting/taxrate')
+
+@ApiTags('accounting/taxrates')
+@Controller('accounting/taxrates')
 export class TaxRateController {
   constructor(
     private readonly taxrateService: TaxRateService,
@@ -40,8 +43,8 @@ export class TaxRateController {
   }
 
   @ApiOperation({
-    operationId: 'getTaxRates',
-    summary: 'List a batch of TaxRates',
+    operationId: 'listAccountingTaxRate',
+    summary: 'List  TaxRates',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +52,22 @@ export class TaxRateController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTaxRateOutput)
+  @ApiPaginatedResponse(UnifiedAccountingTaxrateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTaxRates(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.taxrateService.getTaxRates(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,18 +80,20 @@ export class TaxRateController {
   }
 
   @ApiOperation({
-    operationId: 'getTaxRate',
-    summary: 'Retrieve a TaxRate',
-    description: 'Retrieve a taxrate from any connected Accounting software',
+    operationId: 'retrieveAccountingTaxRate',
+    summary: 'Retrieve Tax Rates',
+    description: 'Retrieve Tax Rates from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the taxrate you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -99,7 +105,7 @@ export class TaxRateController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTaxRateOutput)
+  @ApiGetCustomResponse(UnifiedAccountingTaxrateOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -107,7 +113,7 @@ export class TaxRateController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -115,6 +121,8 @@ export class TaxRateController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

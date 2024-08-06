@@ -17,13 +17,22 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { UnifiedEeocsInput, UnifiedEeocsOutput } from './types/model.unified';
+
+import {
+  UnifiedAtsEeocsInput,
+  UnifiedAtsEeocsOutput,
+} from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { EeocsService } from './services/eeocs.service';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+
 
 @ApiTags('ats/eeocs')
 @Controller('ats/eeocs')
@@ -37,8 +46,8 @@ export class EeocsController {
   }
 
   @ApiOperation({
-    operationId: 'getEeocss',
-    summary: 'List a batch of Eeocss',
+    operationId: 'listAtsEeocs', // Updated operationId
+    summary: 'List  Eeocss',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,21 +55,22 @@ export class EeocsController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEeocsOutput)
+  @ApiPaginatedResponse(UnifiedAtsEeocsOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEeocss(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.eeocsService.getEeocss(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -73,8 +83,8 @@ export class EeocsController {
   }
 
   @ApiOperation({
-    operationId: 'getEeocs',
-    summary: 'Retrieve a Eeocs',
+    operationId: 'retrieveAtsEeocs', // Updated operationId
+    summary: 'Retrieve Eeocs',
     description: 'Retrieve a eeocs from any connected Ats software',
   })
   @ApiParam({
@@ -95,7 +105,7 @@ export class EeocsController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEeocsOutput)
+  @ApiGetCustomResponse(UnifiedAtsEeocsOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -103,7 +113,7 @@ export class EeocsController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -111,6 +121,8 @@ export class EeocsController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

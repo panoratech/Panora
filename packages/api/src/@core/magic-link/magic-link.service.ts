@@ -46,6 +46,7 @@ export class MagicLinkService {
       const checkDup = await this.prisma.linked_users.findFirst({
         where: {
           linked_user_origin_id: data.linked_user_origin_id,
+          id_project: data.id_project,
         },
       });
       let linked_user_id: string;
@@ -62,6 +63,7 @@ export class MagicLinkService {
         });
         linked_user_id = res.id_linked_user;
       }
+      //todo : handle status of links
       const res = await this.prisma.invite_links.create({
         data: {
           id_invite_link: uuidv4(),

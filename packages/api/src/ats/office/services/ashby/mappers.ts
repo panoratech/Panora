@@ -1,7 +1,7 @@
 import { AshbyOfficeInput, AshbyOfficeOutput } from './types';
 import {
-  UnifiedOfficeInput,
-  UnifiedOfficeOutput,
+  UnifiedAtsOfficeInput,
+  UnifiedAtsOfficeOutput,
 } from '@ats/office/types/model.unified';
 import { IOfficeMapper } from '@ats/office/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -20,7 +20,7 @@ export class AshbyOfficeMapper implements IOfficeMapper {
   }
 
   async desunify(
-    source: UnifiedOfficeInput,
+    source: UnifiedAtsOfficeInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -36,7 +36,7 @@ export class AshbyOfficeMapper implements IOfficeMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOfficeOutput | UnifiedOfficeOutput[]> {
+  ): Promise<UnifiedAtsOfficeOutput | UnifiedAtsOfficeOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleOfficeToUnified(
         source,
@@ -63,7 +63,7 @@ export class AshbyOfficeMapper implements IOfficeMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOfficeOutput> {
+  ): Promise<UnifiedAtsOfficeOutput> {
     return {
       remote_id: office.id,
       remote_data: office,

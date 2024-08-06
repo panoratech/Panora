@@ -17,19 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EmploymentService } from './services/employment.service';
 import {
-  UnifiedEmploymentInput,
-  UnifiedEmploymentOutput,
+  UnifiedHrisEmploymentInput,
+  UnifiedHrisEmploymentOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('hris/employment')
-@Controller('hris/employment')
+@ApiTags('hris/employments')
+@Controller('hris/employments')
 export class EmploymentController {
   constructor(
     private readonly employmentService: EmploymentService,
@@ -40,8 +45,8 @@ export class EmploymentController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployments',
-    summary: 'List a batch of Employments',
+    operationId: 'listHrisEmployments',
+    summary: 'List Employments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +54,22 @@ export class EmploymentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmploymentOutput)
+  @ApiPaginatedResponse(UnifiedHrisEmploymentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEmployments(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.employmentService.getEmployments(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,21 +82,23 @@ export class EmploymentController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployment',
-    summary: 'Retrieve a Employment',
-    description: 'Retrieve a employment from any connected Hris software',
+    operationId: 'retrieveHrisEmployment',
+    summary: 'Retrieve Employment',
+    description: 'Retrieve an Employment from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the employment you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -98,7 +106,7 @@ export class EmploymentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEmploymentOutput)
+  @ApiGetCustomResponse(UnifiedHrisEmploymentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -106,7 +114,7 @@ export class EmploymentController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -114,6 +122,8 @@ export class EmploymentController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

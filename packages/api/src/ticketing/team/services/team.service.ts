@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
-import { UnifiedTeamOutput } from '../types/model.unified';
+import { UnifiedTicketingTeamOutput } from '../types/model.unified';
 
 @Injectable()
 export class TeamService {
@@ -15,8 +15,10 @@ export class TeamService {
     id_ticketing_team: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedTeamOutput> {
+  ): Promise<UnifiedTicketingTeamOutput> {
     try {
       const team = await this.prisma.tcg_teams.findUnique({
         where: {
@@ -44,12 +46,10 @@ export class TeamService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedTeamOutput format
-      const unifiedTeam: UnifiedTeamOutput = {
+      // Transform to UnifiedTicketingTeamOutput format
+      const unifiedTeam: UnifiedTicketingTeamOutput = {
         id: team.id_tcg_team,
         name: team.name,
         description: team.description,
@@ -70,6 +70,8 @@ export class TeamService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.team.pull',
@@ -88,14 +90,15 @@ export class TeamService {
   }
 
   async getTeams(
-    connection_id: string,
+   connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedTeamOutput[];
+    data: UnifiedTicketingTeamOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -143,7 +146,7 @@ export class TeamService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedTeams: UnifiedTeamOutput[] = await Promise.all(
+      const unifiedTeams: UnifiedTicketingTeamOutput[] = await Promise.all(
         teams.map(async (team) => {
           // Fetch field mappings for the team
           const values = await this.prisma.value.findMany({
@@ -164,12 +167,10 @@ export class TeamService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedTeamOutput format
+          // Transform to UnifiedTicketingTeamOutput format
           return {
             id: team.id_tcg_team,
             name: team.name,
@@ -182,10 +183,10 @@ export class TeamService {
         }),
       );
 
-      let res: UnifiedTeamOutput[] = unifiedTeams;
+      let res: UnifiedTicketingTeamOutput[] = unifiedTeams;
 
       if (remote_data) {
-        const remote_array_data: UnifiedTeamOutput[] = await Promise.all(
+        const remote_array_data: UnifiedTicketingTeamOutput[] = await Promise.all(
           res.map(async (team) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -201,6 +202,8 @@ export class TeamService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.team.pull',

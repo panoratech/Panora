@@ -1,7 +1,7 @@
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { UnifiedTagOutput } from '@ats/tag/types/model.unified';
+import { UnifiedTicketingTagOutput } from '@ticketing/tag/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
@@ -11,8 +11,8 @@ import {
   TicketPriority,
   TicketStatus,
   TicketType,
-  UnifiedTicketInput,
-  UnifiedTicketOutput,
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { CustomField, ZendeskTicketInput, ZendeskTicketOutput } from './types';
 
@@ -102,7 +102,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
   }
 
   async desunify(
-    source: UnifiedTicketInput,
+    source: UnifiedTicketingTicketInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -167,7 +167,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
+  ): Promise<UnifiedTicketingTicketOutput | UnifiedTicketingTicketOutput[]> {
     if (!Array.isArray(source)) {
       return this.mapSingleTicketToUnified(
         source,
@@ -193,7 +193,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<Promise<UnifiedTicketOutput>> {
+  ): Promise<Promise<UnifiedTicketingTicketOutput>> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -234,7 +234,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
 
     if (ticket.tags) {
       const tags = await this.ingestService.ingestData<
-        UnifiedTagOutput,
+        UnifiedTicketingTagOutput,
         ZendeskTagOutput
       >(
         ticket.tags.map(
@@ -252,7 +252,7 @@ export class ZendeskTicketMapper implements ITicketMapper {
       opts.tags = tags.map((tag) => tag.id_tcg_tag);
     }
 
-    const unifiedTicket: UnifiedTicketOutput = {
+    const unifiedTicket: UnifiedTicketingTicketOutput = {
       remote_id: String(ticket.id),
       name: ticket.subject,
       description: ticket.description,

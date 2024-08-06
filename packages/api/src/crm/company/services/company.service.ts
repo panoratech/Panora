@@ -10,8 +10,8 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { ICompanyService } from '../types';
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
@@ -32,18 +32,19 @@ export class CompanyService {
   }
 
   async addCompany(
-    unifiedCompanyData: UnifiedCompanyInput,
+    unifiedCompanyData: UnifiedCrmCompanyInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateUserId(unifiedCompanyData.user_id);
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedCompanyInput>({
+        await this.coreUnification.desunify<UnifiedCrmCompanyInput>({
           sourceObject: unifiedCompanyData,
           targetType: CrmObject.company,
           providerName: integrationId,
@@ -67,7 +68,7 @@ export class CompanyService {
         vertical: 'crm',
         connectionId: connection_id,
         customFieldMappings: [],
-      })) as UnifiedCompanyOutput[];
+      })) as UnifiedCrmCompanyOutput[];
 
       const source_company = resp.data;
       const target_company = unifiedObject[0];
@@ -86,12 +87,16 @@ export class CompanyService {
         unique_crm_company_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'crm.company.push',
@@ -136,7 +141,7 @@ export class CompanyService {
   }
 
   async saveOrUpdateCompany(
-    company: UnifiedCompanyOutput,
+    company: UnifiedCrmCompanyOutput,
     connection_id: string,
   ): Promise<string> {
     const existingCompany = await this.prisma.crm_companies.findFirst({
@@ -337,8 +342,10 @@ export class CompanyService {
     id_company: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     try {
       const company = await this.prisma.crm_companies.findUnique({
         where: {
@@ -371,11 +378,9 @@ export class CompanyService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
-      // Transform to UnifiedCompanyOutput format
-      const unifiedCompany: UnifiedCompanyOutput = {
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
+      // Transform to UnifiedCrmCompanyOutput format
+      const unifiedCompany: UnifiedCrmCompanyOutput = {
         id: company.id_crm_company,
         name: company.name,
         industry: company.industry,
@@ -398,7 +403,7 @@ export class CompanyService {
         modified_at: company.modified_at,
       };
 
-      let res: UnifiedCompanyOutput = {
+      let res: UnifiedCrmCompanyOutput = {
         ...unifiedCompany,
       };
 
@@ -420,6 +425,8 @@ export class CompanyService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'crm.company.pull',
@@ -440,13 +447,14 @@ export class CompanyService {
 
   async getCompanies(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedCompanyOutput[];
+    data: UnifiedCrmCompanyOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -497,7 +505,7 @@ export class CompanyService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedCompanies: UnifiedCompanyOutput[] = await Promise.all(
+      const unifiedCompanies: UnifiedCrmCompanyOutput[] = await Promise.all(
         companies.map(async (company) => {
           const values = await this.prisma.value.findMany({
             where: {
@@ -517,12 +525,10 @@ export class CompanyService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedCompanyOutput format
+          // Transform to UnifiedCrmCompanyOutput format
           return {
             id: company.id_crm_company,
             name: company.name,
@@ -548,10 +554,10 @@ export class CompanyService {
         }),
       );
 
-      let res: UnifiedCompanyOutput[] = unifiedCompanies;
+      let res: UnifiedCrmCompanyOutput[] = unifiedCompanies;
 
       if (remote_data) {
-        const remote_array_data: UnifiedCompanyOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmCompanyOutput[] = await Promise.all(
           res.map(async (company) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -570,6 +576,8 @@ export class CompanyService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.company.pulled',

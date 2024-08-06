@@ -9,7 +9,7 @@ import {
   IsObject,
 } from 'class-validator';
 
-export class UnifiedOrderInput {
+export class UnifiedEcommerceOrderInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The status of the order',
@@ -107,7 +107,7 @@ export class UnifiedOrderInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedOrderOutput extends UnifiedOrderInput {
+export class UnifiedEcommerceOrderOutput extends UnifiedEcommerceOrderInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the order',

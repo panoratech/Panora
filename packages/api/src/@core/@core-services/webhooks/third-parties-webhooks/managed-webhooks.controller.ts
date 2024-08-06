@@ -9,15 +9,22 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExcludeController,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   ManagedWebhooksDto,
   RemoteThirdPartyCreationDto,
 } from './dto/managed-webhooks.dto';
 import { ManagedWebhooksService } from './managed-webhooks.service';
 
-@ApiTags('managed-webhooks')
-@Controller('managed-webhooks')
+@ApiTags('managed_webhooks')
+@ApiExcludeController()
+@Controller('managed_webhooks')
 export class ManagedWebhooksController {
   constructor(
     private managedWebhookService: ManagedWebhooksService,

@@ -1,3 +1,3 @@
-export class UnifiedCampaignInput {}
+export class UnifiedMarketingautomationCampaignInput {}
 
-export class UnifiedCampaignOutput extends UnifiedCampaignInput {}
+export class UnifiedMarketingautomationCampaignOutput extends UnifiedMarketingautomationCampaignInput {}

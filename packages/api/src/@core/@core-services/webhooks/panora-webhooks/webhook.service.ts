@@ -5,7 +5,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { WebhooksError } from '@@core/utils/errors';
 import { WebhookDto } from './dto/webhook.dto';
 import axios from 'axios';
-import crypto from 'crypto';
+import { createHmac } from 'crypto';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 
 @Injectable()
@@ -20,8 +20,8 @@ export class WebhookService {
 
   generateSignature(payload: any, secret: string): string {
     try {
-      return crypto
-        .createHmac('sha256', secret)
+      this.logger.log('PAYLOAD IS ' + JSON.stringify(payload));
+      return createHmac('sha256', secret)
         .update(JSON.stringify(payload))
         .digest('hex');
     } catch (error) {
@@ -41,10 +41,17 @@ export class WebhookService {
     }
   }
 
-  async updateStatusWebhookEndpoint(id: string, active: boolean) {
+  async updateStatusWebhookEndpoint(
+    id: string,
+    active: boolean,
+    projectId: string,
+  ) {
     try {
       return await this.prisma.webhook_endpoints.update({
-        where: { id_webhook_endpoint: id },
+        where: {
+          id_webhook_endpoint: id,
+          id_project: projectId,
+        },
         data: { active: active },
       });
     } catch (error) {
@@ -52,7 +59,7 @@ export class WebhookService {
     }
   }
 
-  async createWebhookEndpoint(data: WebhookDto) {
+  async createWebhookEndpoint(data: WebhookDto, projectId: string) {
     try {
       return await this.prisma.webhook_endpoints.create({
         data: {
@@ -62,7 +69,7 @@ export class WebhookService {
           secret: uuidv4(),
           active: true,
           created_at: new Date(),
-          id_project: data.id_project,
+          id_project: projectId,
           scope: data.scope,
         },
       });
@@ -71,11 +78,12 @@ export class WebhookService {
     }
   }
 
-  async deleteWebhook(whId: string) {
+  async deleteWebhook(whId: string, projectId: string) {
     try {
       return await this.prisma.webhook_endpoints.delete({
         where: {
           id_webhook_endpoint: whId,
+          id_project: projectId,
         },
       });
     } catch (error) {
@@ -287,14 +295,20 @@ export class WebhookService {
     secret: string,
   ) {
     try {
-      const expected = this.generateSignature(payload, secret);
+      this.logger.log(
+        '(verify) PAYLOAD IS ' +
+          JSON.stringify(payload) +
+          ' data from payload is ' +
+          JSON.stringify(payload.data),
+      );
+      const expected = this.generateSignature(payload.data, secret);
       if (expected !== signature) {
         throw new WebhooksError({
           name: 'INVALID_SIGNATURE_ERROR',
-          message: `Signature mismatch for the payload received with signature=${signature}`,
+          message: `Signature mismatch for the payload received with expected=${expected} and signature=${signature}`,
         });
       }
-      return 200;
+      return payload;
     } catch (error) {
       throw error;
     }

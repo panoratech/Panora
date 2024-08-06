@@ -1,8 +1,7 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiCustomResponse } from '@@core/utils/types';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   Controller,
   Get,
@@ -19,7 +18,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CustomerService } from './services/customer.service';
-import { UnifiedCustomerOutput } from './types/model.unified';
+import { UnifiedEcommerceCustomerOutput } from './types/model.unified';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiTags('ecommerce/customer')
 @Controller('ecommerce/customer')
@@ -42,21 +45,22 @@ export class CustomerController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCustomerOutput)
+  @ApiPaginatedResponse(UnifiedEcommerceCustomerOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCustomers(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.customerService.getCustomers(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -91,7 +95,7 @@ export class CustomerController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedCustomerOutput)
+  @ApiGetCustomResponse(UnifiedEcommerceCustomerOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -99,7 +103,7 @@ export class CustomerController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -107,6 +111,8 @@ export class CustomerController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

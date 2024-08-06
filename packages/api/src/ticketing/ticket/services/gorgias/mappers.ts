@@ -1,15 +1,15 @@
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
-import { UnifiedTagOutput } from '@ticketing/tag/types/model.unified';
+import { UnifiedTicketingTagOutput } from '@ticketing/tag/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ITicketMapper } from '@ticketing/ticket/types';
 import {
   TicketStatus,
-  UnifiedTicketInput,
-  UnifiedTicketOutput,
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
 } from '@ticketing/ticket/types/model.unified';
 import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
 import { GorgiasTagOutput } from '@ticketing/tag/services/gorgias/types';
@@ -39,7 +39,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
   }
 
   async desunify(
-    source: UnifiedTicketInput,
+    source: UnifiedTicketingTicketInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -111,7 +111,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
+  ): Promise<UnifiedTicketingTicketOutput | UnifiedTicketingTicketOutput[]> {
     const sourcesArray = Array.isArray(source) ? source : [source];
     return Promise.all(
       sourcesArray.map(async (ticket) =>
@@ -131,7 +131,7 @@ export class GorgiasTicketMapper implements ITicketMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTicketOutput> {
+  ): Promise<UnifiedTicketingTicketOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -164,14 +164,14 @@ export class GorgiasTicketMapper implements ITicketMapper {
         vertical: 'ticketing',
         connectionId: connectionId,
         customFieldMappings: [],
-      })) as UnifiedTagOutput[];
+      })) as UnifiedTicketingTagOutput[];
       opts = {
         ...opts,
         tags: tags,
       };
     }
 
-    const unifiedTicket: UnifiedTicketOutput = {
+    const unifiedTicket: UnifiedTicketingTicketOutput = {
       remote_id: String(ticket.id),
       remote_data: ticket,
       name: ticket.subject,

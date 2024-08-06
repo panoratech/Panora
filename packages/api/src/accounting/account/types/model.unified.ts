@@ -1,3 +1,3 @@
-export class UnifiedAccountInput {}
+export class UnifiedAccountingAccountInput {}
 
-export class UnifiedAccountOutput extends UnifiedAccountInput {}
+export class UnifiedAccountingAccountOutput extends UnifiedAccountingAccountInput {}

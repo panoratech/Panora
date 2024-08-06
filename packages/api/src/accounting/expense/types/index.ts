@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedExpenseInput, UnifiedExpenseOutput } from './model.unified';
+import { UnifiedAccountingExpenseInput, UnifiedAccountingExpenseOutput } from './model.unified';
 import { OriginalExpenseOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IExpenseService {
 
 export interface IExpenseMapper {
   desunify(
-    source: UnifiedExpenseInput,
+    source: UnifiedAccountingExpenseInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IExpenseMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedExpenseOutput | UnifiedExpenseOutput[]>;
+  ): Promise<UnifiedAccountingExpenseOutput | UnifiedAccountingExpenseOutput[]>;
 }

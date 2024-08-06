@@ -2,9 +2,16 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { OrganisationsService } from './organisations.service';
 import { LoggerService } from '../@core-services/logger/logger.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExcludeController,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('organisations')
+@ApiExcludeController()
 @Controller('organisations')
 export class OrganisationsController {
   constructor(
@@ -20,7 +27,7 @@ export class OrganisationsController {
   })
   @Get()
   getOragnisations() {
-    return; //this.organizationsService.getOrganisations();
+    return; 
   }
 
   @ApiOperation({
@@ -29,8 +36,8 @@ export class OrganisationsController {
   })
   @ApiBody({ type: CreateOrganizationDto })
   @ApiResponse({ status: 201 })
-  @Post('create')
+  @Post()
   createOrg(@Body() orgCreateDto: CreateOrganizationDto) {
-    return; //this.organizationsService.createOrganization(orgCreateDto);
+    return; 
   }
 }

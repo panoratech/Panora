@@ -11,7 +11,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { fs_permissions as FileStoragePermission } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
-import { UnifiedPermissionOutput } from '../types/model.unified';
+import { UnifiedFilestoragePermissionOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -39,7 +39,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    permissions: UnifiedPermissionOutput[],
+    permissions: UnifiedFilestoragePermissionOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
     extra?: {
@@ -51,7 +51,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const permissions_results: FileStoragePermission[] = [];
 
       const updateOrCreatePermission = async (
-        permission: UnifiedPermissionOutput,
+        permission: UnifiedFilestoragePermissionOutput,
         originId: string,
         extra: { object_name: 'file' | 'folder'; value: string },
       ) => {

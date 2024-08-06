@@ -1,7 +1,7 @@
 import { BoxUserInput, BoxUserOutput } from './types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedFilestorageUserInput,
+  UnifiedFilestorageUserOutput,
 } from '@filestorage/user/types/model.unified';
 import { IUserMapper } from '@filestorage/user/types';
 import { Utils } from '@filestorage/@lib/@utils';
@@ -15,7 +15,7 @@ export class BoxUserMapper implements IUserMapper {
   }
 
   async desunify(
-    source: UnifiedUserInput,
+    source: UnifiedFilestorageUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,7 +31,7 @@ export class BoxUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]> {
+  ): Promise<UnifiedFilestorageUserOutput | UnifiedFilestorageUserOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleUserToUnified(
         source,
@@ -54,7 +54,7 @@ export class BoxUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedFilestorageUserOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {

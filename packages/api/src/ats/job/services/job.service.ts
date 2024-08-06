@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { JobStatus, JobType, UnifiedJobOutput } from '../types/model.unified';
+import {
+  JobStatus,
+  JobType,
+  UnifiedAtsJobOutput,
+} from '../types/model.unified';
 
 @Injectable()
 export class JobService {
@@ -14,8 +18,10 @@ export class JobService {
     id_ats_job: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedJobOutput> {
+  ): Promise<UnifiedAtsJobOutput> {
     try {
       const job = await this.prisma.ats_jobs.findUnique({
         where: {
@@ -47,12 +53,10 @@ export class JobService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedJobOutput format
-      const unifiedJob: UnifiedJobOutput = {
+      // Transform to UnifiedAtsJobOutput format
+      const unifiedJob: UnifiedAtsJobOutput = {
         id: job.id_ats_job,
         name: job.name,
         description: job.description,
@@ -72,7 +76,7 @@ export class JobService {
         modified_at: job.modified_at,
       };
 
-      let res: UnifiedJobOutput = unifiedJob;
+      let res: UnifiedAtsJobOutput = unifiedJob;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
@@ -88,6 +92,8 @@ export class JobService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.job.pull',
@@ -108,13 +114,14 @@ export class JobService {
 
   async getJobs(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedJobOutput[];
+    data: UnifiedAtsJobOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -144,9 +151,7 @@ export class JobService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (jobs.length === limit + 1) {
@@ -160,7 +165,7 @@ export class JobService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedJobs: UnifiedJobOutput[] = await Promise.all(
+      const unifiedJobs: UnifiedAtsJobOutput[] = await Promise.all(
         jobs.map(async (job) => {
           // Fetch field mappings for the job
           const values = await this.prisma.value.findMany({
@@ -182,14 +187,9 @@ export class JobService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedJobOutput format
+          // Transform to UnifiedAtsJobOutput format
           return {
             id: job.id_ats_job,
             name: job.name,
@@ -212,10 +212,10 @@ export class JobService {
         }),
       );
 
-      let res: UnifiedJobOutput[] = unifiedJobs;
+      let res: UnifiedAtsJobOutput[] = unifiedJobs;
 
       if (remote_data) {
-        const remote_array_data: UnifiedJobOutput[] = await Promise.all(
+        const remote_array_data: UnifiedAtsJobOutput[] = await Promise.all(
           res.map(async (job) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -231,6 +231,8 @@ export class JobService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.job.pull',

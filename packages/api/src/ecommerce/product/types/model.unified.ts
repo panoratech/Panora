@@ -8,7 +8,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class UnifiedProductInput {
+export class UnifiedEcommerceProductInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The URL of the product',
@@ -90,7 +90,7 @@ export class UnifiedProductInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedProductOutput extends UnifiedProductInput {
+export class UnifiedEcommerceProductOutput extends UnifiedEcommerceProductInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the product',

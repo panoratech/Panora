@@ -10,7 +10,7 @@ import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.reg
 import { ApiResponse } from '@@core/utils/types';
 import { IEeocsService } from '../types';
 import { OriginalEeocsOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedEeocsOutput } from '../types/model.unified';
+import { UnifiedAtsEeocsOutput } from '../types/model.unified';
 import { ats_eeocs as AtsEeocs } from '@prisma/client';
 import { ATS_PROVIDERS } from '@panora/shared';
 import { AtsObject } from '@ats/@lib/@types';
@@ -50,12 +50,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log('Syncing EEOCs...');
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -101,10 +101,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId } = param;
       const service: IEeocsService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ats, commonObject: eeocs} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedEeocsOutput,
+        UnifiedAtsEeocsOutput,
         OriginalEeocsOutput,
         IEeocsService
       >(integrationId, linkedUserId, 'ats', 'eeocs', service, []);
@@ -116,7 +119,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    eeocs: UnifiedEeocsOutput[],
+    eeocs: UnifiedAtsEeocsOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsEeocs[]> {
@@ -124,13 +127,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const eeocs_results: AtsEeocs[] = [];
 
       const updateOrCreateEeoc = async (
-        eeoc: UnifiedEeocsOutput,
+        eeoc: UnifiedAtsEeocsOutput,
         originId: string,
       ) => {
         const existingEeoc = await this.prisma.ats_eeocs.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connection_id,
+            
           },
         });
 
@@ -158,7 +161,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_eeoc: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

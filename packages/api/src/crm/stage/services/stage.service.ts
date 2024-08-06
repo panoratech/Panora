@@ -2,7 +2,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedStageOutput } from '../types/model.unified';
+import { UnifiedCrmStageOutput } from '../types/model.unified';
 
 @Injectable()
 export class StageService {
@@ -14,8 +14,10 @@ export class StageService {
     id_stage: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedStageOutput> {
+  ): Promise<UnifiedCrmStageOutput> {
     try {
       const stage = await this.prisma.crm_deals_stages.findUnique({
         where: {
@@ -42,12 +44,10 @@ export class StageService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedStageOutput format
-      const unifiedStage: UnifiedStageOutput = {
+      // Transform to UnifiedCrmStageOutput format
+      const unifiedStage: UnifiedCrmStageOutput = {
         id: stage.id_crm_deals_stage,
         stage_name: stage.stage_name,
         field_mappings: field_mappings,
@@ -56,7 +56,7 @@ export class StageService {
         modified_at: stage.modified_at,
       };
 
-      let res: UnifiedStageOutput = {
+      let res: UnifiedCrmStageOutput = {
         ...unifiedStage,
       };
 
@@ -75,6 +75,8 @@ export class StageService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.stage.pull',
@@ -95,13 +97,14 @@ export class StageService {
 
   async getStages(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedStageOutput[];
+    data: UnifiedCrmStageOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -147,7 +150,7 @@ export class StageService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedStages: UnifiedStageOutput[] = await Promise.all(
+      const unifiedStages: UnifiedCrmStageOutput[] = await Promise.all(
         stages.map(async (stage) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -168,12 +171,10 @@ export class StageService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedStageOutput format
+          // Transform to UnifiedCrmStageOutput format
           return {
             id: stage.id_crm_deals_stage,
             stage_name: stage.stage_name,
@@ -185,10 +186,10 @@ export class StageService {
         }),
       );
 
-      let res: UnifiedStageOutput[] = unifiedStages;
+      let res: UnifiedCrmStageOutput[] = unifiedStages;
 
       if (remote_data) {
-        const remote_array_data: UnifiedStageOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmStageOutput[] = await Promise.all(
           res.map(async (stage) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -204,6 +205,8 @@ export class StageService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.stage.pulled',

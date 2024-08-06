@@ -17,19 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { AddressService } from './services/address.service';
 import {
-  UnifiedAddressInput,
-  UnifiedAddressOutput,
+  UnifiedAccountingAddressInput,
+  UnifiedAccountingAddressOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/address')
-@Controller('accounting/address')
+
+@ApiTags('accounting/addresses')
+@Controller('accounting/addresses')
 export class AddressController {
   constructor(
     private readonly addressService: AddressService,
@@ -40,8 +46,8 @@ export class AddressController {
   }
 
   @ApiOperation({
-    operationId: 'getAddresss',
-    summary: 'List a batch of Addresss',
+    operationId: 'listAccountingAddress',
+    summary: 'List  Addresss',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -49,21 +55,22 @@ export class AddressController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAddressOutput)
+  @ApiPaginatedResponse(UnifiedAccountingAddressOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getAddresss(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.addressService.getAddresss(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,18 +83,20 @@ export class AddressController {
   }
 
   @ApiOperation({
-    operationId: 'getAddress',
-    summary: 'Retrieve a Address',
-    description: 'Retrieve a address from any connected Accounting software',
+    operationId: 'retrieveAccountingAddress',
+    summary: 'Retrieve Addresses',
+    description: 'Retrieve Addresses from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the address you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -99,7 +108,7 @@ export class AddressController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAddressOutput)
+  @ApiGetCustomResponse(UnifiedAccountingAddressOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -107,7 +116,7 @@ export class AddressController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -115,6 +124,8 @@ export class AddressController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

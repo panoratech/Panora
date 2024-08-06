@@ -1,77 +1,77 @@
 import { IActivityService } from '@ats/activity/types';
 import {
-  UnifiedActivityInput,
-  UnifiedActivityOutput,
+  UnifiedAtsActivityInput,
+  UnifiedAtsActivityOutput,
 } from '@ats/activity/types/model.unified';
 import { IApplicationService } from '@ats/application/types';
 import {
-  UnifiedApplicationInput,
-  UnifiedApplicationOutput,
+  UnifiedAtsApplicationInput,
+  UnifiedAtsApplicationOutput,
 } from '@ats/application/types/model.unified';
 import { IAttachmentService } from '@ats/attachment/types';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAtsAttachmentInput,
+  UnifiedAtsAttachmentOutput,
 } from '@ats/attachment/types/model.unified';
 import { ICandidateService } from '@ats/candidate/types';
 import {
-  UnifiedCandidateInput,
-  UnifiedCandidateOutput,
+  UnifiedAtsCandidateInput,
+  UnifiedAtsCandidateOutput,
 } from '@ats/candidate/types/model.unified';
 import { IDepartmentService } from '@ats/department/types';
 import {
-  UnifiedDepartmentInput,
-  UnifiedDepartmentOutput,
+  UnifiedAtsDepartmentInput,
+  UnifiedAtsDepartmentOutput,
 } from '@ats/department/types/model.unified';
 import { IEeocsService } from '@ats/eeocs/types';
 import {
-  UnifiedEeocsInput,
-  UnifiedEeocsOutput,
+  UnifiedAtsEeocsInput,
+  UnifiedAtsEeocsOutput,
 } from '@ats/eeocs/types/model.unified';
 import { IInterviewService } from '@ats/interview/types';
 import {
-  UnifiedInterviewInput,
-  UnifiedInterviewOutput,
+  UnifiedAtsInterviewInput,
+  UnifiedAtsInterviewOutput,
 } from '@ats/interview/types/model.unified';
 import { IJobService } from '@ats/job/types';
 import {
-  UnifiedJobInput,
-  UnifiedJobOutput,
+  UnifiedAtsJobInput,
+  UnifiedAtsJobOutput,
 } from '@ats/job/types/model.unified';
 import { IJobInterviewStageService } from '@ats/jobinterviewstage/types';
 import {
-  UnifiedJobInterviewStageInput,
-  UnifiedJobInterviewStageOutput,
+  UnifiedAtsJobinterviewstageInput,
+  UnifiedAtsJobinterviewstageOutput,
 } from '@ats/jobinterviewstage/types/model.unified';
 import { IOfferService } from '@ats/offer/types';
 import {
-  UnifiedOfferInput,
-  UnifiedOfferOutput,
+  UnifiedAtsOfferInput,
+  UnifiedAtsOfferOutput,
 } from '@ats/offer/types/model.unified';
 import { IOfficeService } from '@ats/office/types';
 import {
-  UnifiedOfficeInput,
-  UnifiedOfficeOutput,
+  UnifiedAtsOfficeInput,
+  UnifiedAtsOfficeOutput,
 } from '@ats/office/types/model.unified';
 import { IRejectReasonService } from '@ats/rejectreason/types';
 import {
-  UnifiedRejectReasonInput,
-  UnifiedRejectReasonOutput,
+  UnifiedAtsRejectreasonInput,
+  UnifiedAtsRejectreasonOutput,
 } from '@ats/rejectreason/types/model.unified';
 import { IScoreCardService } from '@ats/scorecard/types';
 import {
-  UnifiedScoreCardInput,
-  UnifiedScoreCardOutput,
+  UnifiedAtsScorecardInput,
+  UnifiedAtsScorecardOutput,
 } from '@ats/scorecard/types/model.unified';
 import { ITagService } from '@ats/tag/types';
 import {
-  UnifiedTagInput,
-  UnifiedTagOutput,
+  UnifiedAtsTagInput,
+  UnifiedAtsTagOutput,
 } from '@ats/tag/types/model.unified';
 import { IUserService } from '@ats/user/types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedAtsUserInput,
+  UnifiedAtsUserOutput,
 } from '@ats/user/types/model.unified';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsString } from 'class-validator';
@@ -95,36 +95,36 @@ export enum AtsObject {
 }
 
 export type UnifiedAts =
-  | UnifiedActivityInput
-  | UnifiedActivityOutput
-  | UnifiedApplicationInput
-  | UnifiedApplicationOutput
-  | UnifiedAttachmentInput
-  | UnifiedAttachmentOutput
-  | UnifiedCandidateInput
-  | UnifiedCandidateOutput
-  | UnifiedDepartmentInput
-  | UnifiedDepartmentOutput
-  | UnifiedInterviewInput
-  | UnifiedInterviewOutput
-  | UnifiedJobInterviewStageInput
-  | UnifiedJobInterviewStageOutput
-  | UnifiedJobInput
-  | UnifiedJobOutput
-  | UnifiedOfferInput
-  | UnifiedOfferOutput
-  | UnifiedOfficeInput
-  | UnifiedOfficeOutput
-  | UnifiedRejectReasonInput
-  | UnifiedRejectReasonOutput
-  | UnifiedScoreCardInput
-  | UnifiedScoreCardOutput
-  | UnifiedTagInput
-  | UnifiedTagOutput
-  | UnifiedUserInput
-  | UnifiedUserOutput
-  | UnifiedEeocsInput
-  | UnifiedEeocsOutput;
+  | UnifiedAtsActivityInput
+  | UnifiedAtsActivityOutput
+  | UnifiedAtsApplicationInput
+  | UnifiedAtsApplicationOutput
+  | UnifiedAtsAttachmentInput
+  | UnifiedAtsAttachmentOutput
+  | UnifiedAtsCandidateInput
+  | UnifiedAtsCandidateOutput
+  | UnifiedAtsDepartmentInput
+  | UnifiedAtsDepartmentOutput
+  | UnifiedAtsInterviewInput
+  | UnifiedAtsInterviewOutput
+  | UnifiedAtsJobinterviewstageInput
+  | UnifiedAtsJobinterviewstageOutput
+  | UnifiedAtsJobInput
+  | UnifiedAtsJobOutput
+  | UnifiedAtsOfferInput
+  | UnifiedAtsOfferOutput
+  | UnifiedAtsOfficeInput
+  | UnifiedAtsOfficeOutput
+  | UnifiedAtsRejectreasonInput
+  | UnifiedAtsRejectreasonOutput
+  | UnifiedAtsScorecardInput
+  | UnifiedAtsScorecardOutput
+  | UnifiedAtsTagInput
+  | UnifiedAtsTagOutput
+  | UnifiedAtsUserInput
+  | UnifiedAtsUserOutput
+  | UnifiedAtsEeocsInput
+  | UnifiedAtsEeocsOutput;
 
 export type IAtsService =
   | IActivityService
@@ -146,6 +146,7 @@ export type IAtsService =
 export class Email {
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The email address',
   })
   @IsString()
@@ -153,6 +154,8 @@ export class Email {
 
   @ApiProperty({
     type: String,
+    enum: ['PERSONAL', 'WORK'],
+    nullable: true,
     description:
       'The email address type. Authorized values are either PERSONAL or WORK.',
   })
@@ -164,6 +167,7 @@ export class Email {
 export class Phone {
   @ApiProperty({
     type: String,
+    nullable: true,
     description:
       'The phone number starting with a plus (+) followed by the country code (e.g +336676778890 for France)',
   })
@@ -172,6 +176,8 @@ export class Phone {
 
   @ApiProperty({
     type: String,
+    enum: ['MOBILE', 'WORK'],
+    nullable: true,
     description: 'The phone type. Authorized values are either MOBILE or WORK',
   })
   @IsIn(['MOBILE', 'WORK'])
@@ -180,6 +186,20 @@ export class Phone {
 }
 
 export class Url {
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'The url.',
+  })
+  @IsString()
   url: string;
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description:
+      'The url type. It takes [WEBSITE | BLOG | LINKEDIN | GITHUB | OTHER]',
+  })
+  @IsString()
   url_type: 'WEBSITE' | 'BLOG' | 'LINKEDIN' | 'GITHUB' | 'OTHER' | string;
 }

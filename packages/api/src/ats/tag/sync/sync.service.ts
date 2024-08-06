@@ -16,7 +16,7 @@ import { ats_candidate_tags as AtsTag } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { ITagService } from '../types';
-import { UnifiedTagOutput } from '../types/model.unified';
+import { UnifiedAtsTagOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -49,12 +49,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log('Syncing tags...');
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -100,10 +100,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId } = param;
       const service: ITagService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ats, commonObject: tag} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedTagOutput,
+        UnifiedAtsTagOutput,
         OriginalTagOutput,
         ITagService
       >(integrationId, linkedUserId, 'ats', 'tag', service, []);
@@ -115,7 +118,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    tags: UnifiedTagOutput[],
+    tags: UnifiedAtsTagOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsTag[]> {
@@ -123,7 +126,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const tags_results: AtsTag[] = [];
 
       const updateOrCreateTag = async (
-        tag: UnifiedTagOutput,
+        tag: UnifiedAtsTagOutput,
         originId: string,
       ) => {
         let existingTag;
@@ -131,14 +134,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
           existingTag = await this.prisma.ats_candidate_tags.findFirst({
             where: {
               name: tag.name,
-              id_connection: connection_id,
+              
             },
           });
         } else {
           existingTag = await this.prisma.ats_candidate_tags.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }
@@ -162,7 +165,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_candidate_tag: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

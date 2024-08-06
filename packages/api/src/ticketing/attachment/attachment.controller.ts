@@ -18,19 +18,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { AttachmentService } from './services/attachment.service';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedTicketingAttachmentInput,
+  UnifiedTicketingAttachmentOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+
 @ApiTags('ticketing/attachments')
 @Controller('ticketing/attachments')
 export class AttachmentController {
@@ -43,8 +48,8 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAttachments',
-    summary: 'List a batch of Attachments',
+    operationId: 'listTicketingAttachments',
+    summary: 'List  Attachments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -52,16 +57,16 @@ export class AttachmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @ApiPaginatedResponse(UnifiedTicketingAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getAttachments(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
@@ -69,6 +74,7 @@ export class AttachmentController {
 
       return this.attachmentService.getAttachments(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -81,15 +87,16 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAttachment',
-    summary: 'Retrieve a Attachment',
-    description: 'Retrieve a attachment from any connected Ticketing software',
+    operationId: 'retrieveTicketingAttachment',
+    summary: 'Retrieve Attachments',
+    description: 'Retrieve Attachments from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the attachment you want to retrive.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -97,6 +104,7 @@ export class AttachmentController {
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -104,7 +112,7 @@ export class AttachmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @ApiGetCustomResponse(UnifiedTicketingAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(
@@ -112,56 +120,24 @@ export class AttachmentController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     return this.attachmentService.getAttachment(
       id,
       linkedUserId,
+      connectionId,
+      projectId,
       remoteSource,
       remote_data,
     );
   }
 
   @ApiOperation({
-    operationId: 'downloadAttachment',
-    summary: 'Download a Attachment',
-    description: 'Download a attachment from any connected Ticketing software',
-  })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    type: String,
-    description: 'id of the attachment you want to retrive.',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Ticketing software.',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Get(':id/download')
-  downloadAttachment(
-    @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    return this.attachmentService.downloadAttachment(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addTicketingAttachment',
-    summary: 'Create a Attachment',
-    description: 'Create a attachment in any supported Ticketing software',
+    operationId: 'createTicketingAttachment',
+    summary: 'Create Attachments',
+    description: 'Create Attachments in any supported Ticketing software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -176,25 +152,26 @@ export class AttachmentController {
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  @ApiBody({ type: UnifiedAttachmentInput })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
+  @ApiBody({ type: UnifiedTicketingAttachmentInput })
+  @ApiPostCustomResponse(UnifiedTicketingAttachmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addAttachment(
-    @Body() unfiedAttachmentData: UnifiedAttachmentInput,
+    @Body() unifiedAttachmentData: UnifiedTicketingAttachmentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.attachmentService.addAttachment(
-        unfiedAttachmentData,
+        unifiedAttachmentData,
         connectionId,
         remoteSource,
         linkedUserId,
+        projectId,
         remote_data,
       );
     } catch (error) {

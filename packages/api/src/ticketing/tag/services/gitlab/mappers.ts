@@ -1,8 +1,8 @@
 import { ITagMapper } from '@ticketing/tag/types';
 import { GitlabTagInput, GitlabTagOutput } from './types';
 import {
-  UnifiedTagInput,
-  UnifiedTagOutput,
+  UnifiedTicketingTagInput,
+  UnifiedTicketingTagOutput,
 } from '@ticketing/tag/types/model.unified';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
@@ -14,7 +14,7 @@ export class GitlabTagMapper implements ITagMapper {
     this.mappersRegistry.registerService('ticketing', 'tag', 'gitlab', this);
   }
   desunify(
-    source: UnifiedTagInput,
+    source: UnifiedTicketingTagInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,7 +30,7 @@ export class GitlabTagMapper implements ITagMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTagOutput | UnifiedTagOutput[] {
+  ): UnifiedTicketingTagOutput | UnifiedTicketingTagOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
@@ -46,8 +46,8 @@ export class GitlabTagMapper implements ITagMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTagOutput {
-    const unifiedTag: UnifiedTagOutput = {
+  ): UnifiedTicketingTagOutput {
+    const unifiedTag: UnifiedTicketingTagOutput = {
       remote_id: tag.id ? String(tag.id) : null,
       remote_data: tag,
       name: tag.name,

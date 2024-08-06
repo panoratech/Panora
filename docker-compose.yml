@@ -26,9 +26,11 @@ services:
   api:
     image: panora.docker.scarf.sh/panoradotdev/backend-api:selfhosted
     environment:
+      ENV: ${ENV}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       WEBHOOK_INGRESS: ${WEBHOOK_INGRESS}
+      REDIRECT_TUNNEL_INGRESS: ${REDIRECT_TUNNEL_INGRESS}
       JWT_SECRET: ${JWT_SECRET}
       SENTRY_ENABLED: ${SENTRY_ENABLED}
       SENTRY_DSN: ${SENTRY_DSN}
@@ -36,7 +38,11 @@ services:
       REDIS_USER: ${REDIS_USER}
       REDIS_PASS: ${REDIS_PASS}
       REDIS_PORT: ${REDIS_PORT}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
       REDIS_DB: ${REDIS_DB}
+      WEBAPP_URL: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
       HUBSPOT_CRM_CLOUD_CLIENT_ID: ${HUBSPOT_CRM_CLOUD_CLIENT_ID}
       HUBSPOT_CRM_CLOUD_CLIENT_SECRET: ${HUBSPOT_CRM_CLOUD_CLIENT_SECRET}
@@ -156,7 +162,11 @@ services:
       IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET: ${IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET}
       SHOPIFY_ECOMMERCE_CLOUD_CLIENT_ID: ${SHOPIFY_ECOMMERCE_CLOUD_CLIENT_ID}
       SHOPIFY_ECOMMERCE_CLOUD_CLIENT_SECRET: ${SHOPIFY_ECOMMERCE_CLOUD_CLIENT_SECRET}
-      
+      EMAIL_SENDING_ADDRESS: ${EMAIL_SENDING_ADDRESS}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -165,12 +175,12 @@ services:
         condition: service_healthy
     networks:
       - backend
-    # healthcheck:
-    #   test: ["CMD-SHELL", "curl", "-f", "http://localhost:3000/health"]
-    #   start_period: 60s
-    #   interval: 10s
-    #   timeout: 1s
-    #   retries: 50
+    healthcheck:
+      test: ["CMD-SHELL", "curl", "-f", "http://localhost:3000/health"]
+      start_period: 60s
+      interval: 10s
+      timeout: 1s
+      retries: 50
 
   redis:
     image: valkey/valkey:7.2-alpine

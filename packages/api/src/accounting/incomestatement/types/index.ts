@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedIncomeStatementInput,
-  UnifiedIncomeStatementOutput,
+  UnifiedAccountingIncomestatementInput,
+  UnifiedAccountingIncomestatementOutput,
 } from './model.unified';
 import { OriginalIncomeStatementOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
@@ -20,7 +20,7 @@ export interface IIncomeStatementService {
 
 export interface IIncomeStatementMapper {
   desunify(
-    source: UnifiedIncomeStatementInput,
+    source: UnifiedAccountingIncomestatementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -34,5 +34,5 @@ export interface IIncomeStatementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedIncomeStatementOutput | UnifiedIncomeStatementOutput[]>;
+  ): Promise<UnifiedAccountingIncomestatementOutput | UnifiedAccountingIncomestatementOutput[]>;
 }

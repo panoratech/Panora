@@ -14,22 +14,22 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { ICandidateService } from '../types';
 import {
-  UnifiedCandidateInput,
-  UnifiedCandidateOutput,
+  UnifiedAtsCandidateInput,
+  UnifiedAtsCandidateOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import {
-  UnifiedApplicationInput,
-  UnifiedApplicationOutput,
+  UnifiedAtsApplicationInput,
+  UnifiedAtsApplicationOutput,
 } from '@ats/application/types/model.unified';
 import { ServiceRegistry as ApplicationServiceRegistry } from '@ats/application/services/registry.service';
 import { ServiceRegistry as AttachmentServiceRegistry } from '@ats/attachment/services/registry.service';
 import { IApplicationService } from '@ats/application/types';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAtsAttachmentInput,
+  UnifiedAtsAttachmentOutput,
 } from '@ats/attachment/types/model.unified';
 import { IAttachmentService } from '@ats/attachment/types';
 
@@ -51,12 +51,13 @@ export class CandidateService {
   }
 
   async addCandidate(
-    unifiedCandidateData: UnifiedCandidateInput,
+    unifiedCandidateData: UnifiedAtsCandidateInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCandidateOutput> {
+  ): Promise<UnifiedAtsCandidateOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
 
@@ -68,7 +69,7 @@ export class CandidateService {
         );
 
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedCandidateInput>({
+        await this.coreUnification.desunify<UnifiedAtsCandidateInput>({
           sourceObject: unifiedCandidateData,
           targetType: AtsObject.candidate,
           providerName: integrationId,
@@ -93,7 +94,7 @@ export class CandidateService {
         vertical: 'ats',
         connectionId: connection_id,
         customFieldMappings: customFieldMappings,
-      })) as UnifiedCandidateOutput[];
+      })) as UnifiedAtsCandidateOutput[];
 
       const source_candidate = resp.data;
       const target_candidate = unifiedObject[0];
@@ -139,12 +140,16 @@ export class CandidateService {
         unique_ats_candidate_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'ats.candidate.created',
@@ -204,7 +209,7 @@ export class CandidateService {
             attachments.map(async (unified_attachmt) => {
               unified_attachmt.candidate_id = candidate_id; // we insert the candidate_id on the fly as it may be mandatory for some providers when creating an application
               const desunifiedObject =
-                await this.coreUnification.desunify<UnifiedAttachmentInput>({
+                await this.coreUnification.desunify<UnifiedAtsAttachmentInput>({
                   sourceObject: unified_attachmt,
                   targetType: AtsObject.attachment,
                   providerName: integrationId,
@@ -234,7 +239,7 @@ export class CandidateService {
                 vertical: 'ats',
                 connectionId: connection_id,
                 customFieldMappings: [],
-              })) as UnifiedAttachmentOutput[];
+              })) as UnifiedAtsAttachmentOutput[];
 
               await this.saveOrUpdateAttachment(
                 unifiedObject[0],
@@ -251,7 +256,7 @@ export class CandidateService {
   }
 
   async saveOrUpdateAttachment(
-    att: UnifiedAttachmentOutput,
+    att: UnifiedAtsAttachmentOutput,
     connection_id: string,
   ): Promise<string> {
     try {
@@ -308,7 +313,7 @@ export class CandidateService {
   }
 
   async saveOrUpdateApplication(
-    application: UnifiedApplicationOutput,
+    application: UnifiedAtsApplicationOutput,
     connection_id: string,
   ): Promise<string> {
     try {
@@ -382,7 +387,7 @@ export class CandidateService {
         } else {
           application.candidate_id = candidate_id; // we insert the candidate_id on the fly as it may be mandatory for some providers when creating an application
           const desunifiedObject =
-            await this.coreUnification.desunify<UnifiedApplicationInput>({
+            await this.coreUnification.desunify<UnifiedAtsApplicationInput>({
               sourceObject: application,
               targetType: AtsObject.application,
               providerName: integrationId,
@@ -406,7 +411,7 @@ export class CandidateService {
             vertical: 'ats',
             connectionId: connection_id,
             customFieldMappings: [],
-          })) as UnifiedApplicationOutput[];
+          })) as UnifiedAtsApplicationOutput[];
 
           await this.saveOrUpdateApplication(unifiedObject[0], connection_id);
         }
@@ -417,7 +422,7 @@ export class CandidateService {
   }
 
   async saveOrUpdateCandidate(
-    candidate: UnifiedCandidateOutput,
+    candidate: UnifiedAtsCandidateOutput,
     connection_id: string,
   ): Promise<string> {
     try {
@@ -465,8 +470,10 @@ export class CandidateService {
     id_ats_candidate: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCandidateOutput> {
+  ): Promise<UnifiedAtsCandidateOutput> {
     try {
       const candidate = await this.prisma.ats_candidates.findUnique({
         where: { id_ats_candidate: id_ats_candidate },
@@ -504,11 +511,9 @@ export class CandidateService {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      const unifiedCandidate: UnifiedCandidateOutput = {
+      const unifiedCandidate: UnifiedAtsCandidateOutput = {
         id: candidate.id_ats_candidate,
         remote_id: candidate.remote_id,
         created_at: candidate.created_at,
@@ -545,7 +550,7 @@ export class CandidateService {
         field_mappings: field_mappings,
       };
 
-      let res: UnifiedCandidateOutput = unifiedCandidate;
+      let res: UnifiedAtsCandidateOutput = unifiedCandidate;
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
           where: { ressource_owner_id: candidate.id_ats_candidate },
@@ -560,6 +565,8 @@ export class CandidateService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'ats.candidate.pull',
@@ -580,13 +587,14 @@ export class CandidateService {
 
   async getCandidates(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedCandidateOutput[];
+    data: UnifiedAtsCandidateOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -610,9 +618,7 @@ export class CandidateService {
         take: limit + 1,
         cursor: cursor ? { id_ats_candidate: cursor } : undefined,
         orderBy: { created_at: 'asc' },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (candidates.length === limit + 1) {
@@ -626,7 +632,7 @@ export class CandidateService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedCandidates: UnifiedCandidateOutput[] = await Promise.all(
+      const unifiedCandidates: UnifiedAtsCandidateOutput[] = await Promise.all(
         candidates.map(async (candidate) => {
           const attachments =
             await this.prisma.ats_candidate_attachments.findMany({
@@ -662,10 +668,8 @@ export class CandidateService {
             fieldMappingsMap.set(value.attribute.slug, value.data);
           });
 
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           return {
             id: candidate.id_ats_candidate,
@@ -706,24 +710,27 @@ export class CandidateService {
         }),
       );
 
-      let res: UnifiedCandidateOutput[] = unifiedCandidates;
+      let res: UnifiedAtsCandidateOutput[] = unifiedCandidates;
 
       if (remote_data) {
-        const remote_array_data: UnifiedCandidateOutput[] = await Promise.all(
-          res.map(async (candidate) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: { ressource_owner_id: candidate.id },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...candidate, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedAtsCandidateOutput[] =
+          await Promise.all(
+            res.map(async (candidate) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: { ressource_owner_id: candidate.id },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...candidate, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.candidate.pull',

@@ -6,8 +6,8 @@ import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedCashflowStatementInput,
-  UnifiedCashflowStatementOutput,
+  UnifiedAccountingCashflowstatementInput,
+  UnifiedAccountingCashflowstatementOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -32,19 +32,22 @@ export class CashflowStatementService {
     id_cashflowstatementing_cashflowstatement: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedCashflowStatementOutput> {
+  ): Promise<UnifiedAccountingCashflowstatementOutput> {
     return;
   }
 
   async getCashflowStatements(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
     remote_data?: boolean,
     cursor?: string,
-  ): Promise<UnifiedCashflowStatementOutput[]> {
+  ): Promise<UnifiedAccountingCashflowstatementOutput[]> {
     return;
   }
 }

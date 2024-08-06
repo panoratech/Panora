@@ -1,3 +1,3 @@
-export class UnifiedContactInput {}
+export class UnifiedAccountingContactInput {}
 
-export class UnifiedContactOutput extends UnifiedContactInput {}
+export class UnifiedAccountingContactOutput extends UnifiedAccountingContactInput {}

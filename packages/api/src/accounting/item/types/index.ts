@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedItemInput, UnifiedItemOutput } from './model.unified';
+import { UnifiedAccountingItemInput, UnifiedAccountingItemOutput } from './model.unified';
 import { OriginalItemOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IItemService {
 
 export interface IItemMapper {
   desunify(
-    source: UnifiedItemInput,
+    source: UnifiedAccountingItemInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -31,5 +31,5 @@ export interface IItemMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedItemOutput | UnifiedItemOutput[]>;
+  ): Promise<UnifiedAccountingItemOutput | UnifiedAccountingItemOutput[]>;
 }

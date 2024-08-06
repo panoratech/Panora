@@ -16,7 +16,7 @@ import { ats_interviews as AtsInterview } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IInterviewService } from '../types';
-import { UnifiedInterviewOutput } from '../types/model.unified';
+import { UnifiedAtsInterviewOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -52,12 +52,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log('Syncing interviews...');
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -103,10 +103,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId } = param;
       const service: IInterviewService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ats, commonObject: interview} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
-        UnifiedInterviewOutput,
+        UnifiedAtsInterviewOutput,
         OriginalInterviewOutput,
         IInterviewService
       >(integrationId, linkedUserId, 'ats', 'interview', service, []);
@@ -118,7 +121,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   async saveToDb(
     connection_id: string,
     linkedUserId: string,
-    interviews: UnifiedInterviewOutput[],
+    interviews: UnifiedAtsInterviewOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
   ): Promise<AtsInterview[]> {
@@ -126,13 +129,13 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const interviews_results: AtsInterview[] = [];
 
       const updateOrCreateInterview = async (
-        interview: UnifiedInterviewOutput,
+        interview: UnifiedAtsInterviewOutput,
         originId: string,
       ) => {
         const existingInterview = await this.prisma.ats_interviews.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connection_id,
+            
           },
         });
 
@@ -164,7 +167,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_interview: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

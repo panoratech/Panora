@@ -3,8 +3,8 @@ import {
   ShopifyFulfillmentOrdersOutput,
 } from './types';
 import {
-  UnifiedFulfillmentOrdersInput,
-  UnifiedFulfillmentOrdersOutput,
+  UnifiedEcommerceFulfillmentOrdersInput,
+  UnifiedEcommerceFulfillmentOrdersOutput,
 } from '@ecommerce/fulfillmentorders/types/model.unified';
 import { IFulfillmentOrdersMapper } from '@ecommerce/fulfillmentorders/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -30,7 +30,7 @@ export class ShopifyFulfillmentOrdersMapper
   }
 
   async desunify(
-    source: UnifiedFulfillmentOrdersInput,
+    source: UnifiedEcommerceFulfillmentOrdersInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -47,7 +47,7 @@ export class ShopifyFulfillmentOrdersMapper
       remote_id: string;
     }[],
   ): Promise<
-    UnifiedFulfillmentOrdersOutput | UnifiedFulfillmentOrdersOutput[]
+    UnifiedEcommerceFulfillmentOrdersOutput | UnifiedEcommerceFulfillmentOrdersOutput[]
   > {
     if (!Array.isArray(source)) {
       return await this.mapSingleFulfillmentOrdersToUnified(
@@ -75,7 +75,7 @@ export class ShopifyFulfillmentOrdersMapper
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedFulfillmentOrdersOutput> {
+  ): Promise<UnifiedEcommerceFulfillmentOrdersOutput> {
     return {
       remote_id: fulfillmentorders.id,
       remote_data: fulfillmentorders,
