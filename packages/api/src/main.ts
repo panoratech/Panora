@@ -29,6 +29,26 @@ function addSpeakeasyGroup(document: any) {
     if (groupName) {
       for (const method in document.paths[path]) {
         document.paths[path][method]['x-speakeasy-group'] = groupName;
+        if (
+          groupName !== 'webhooks' &&
+          groupName !== 'linkedUsers' &&
+          method === 'get' &&
+          document.paths[path][method]['operationId'].startsWith('list')
+        ) {
+          document.paths[path][method]['x-speakeasy-pagination'] = {
+            type: 'cursor',
+            inputs: [
+              {
+                name: 'cursor',
+                in: 'parameters',
+                type: 'cursor',
+              },
+            ],
+            outputs: {
+              nextCursor: '$.next_cursor',
+            },
+          };
+        }
       }
     }
   }

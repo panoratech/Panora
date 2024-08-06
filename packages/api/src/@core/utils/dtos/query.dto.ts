@@ -3,7 +3,7 @@ import { Transform } from 'class-transformer';
 import { IsBoolean, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 // To provide a default limit
-const DEFAULT_PAGE_SIZE = 50;
+const DEFAULT_PAGE_SIZE = 30;
 
 export class QueryDto {
   @ApiProperty({
