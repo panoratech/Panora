@@ -133,14 +133,6 @@ export class AuthService {
     this.logger.log(`Send reset email to ${email} with token ${resetToken}`);
   }
 
-  async getUsers() {
-    try {
-      return await this.prisma.users.findMany();
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async verifyUser(verifyUser: VerifyUserDto) {
     try {
       const user = await this.prisma.users.findUnique({

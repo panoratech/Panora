@@ -2061,6 +2061,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProjectResponse'
       tags: *ref_19
+  /field_mappings/values:
+    get:
+      operationId: getFieldMappingValues
+      summary: Retrieve field mappings values
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags: &ref_20
+        - fieldMappings
+      x-speakeasy-group: fieldMappings
+  /field_mappings/entities:
+    get:
+      operationId: getFieldMappingsEntities
+      summary: Retrieve field mapping entities
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags: *ref_20
+      x-speakeasy-group: fieldMappings
+  /field_mappings/attributes:
+    get:
+      operationId: getFieldMappings
+      summary: Retrieve field mappings
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags: *ref_20
+      x-speakeasy-group: fieldMappings
   /field_mappings/define:
     post:
       operationId: definitions
@@ -2079,8 +2110,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
-      tags: &ref_20
-        - fieldMappings
+      tags: *ref_20
       x-speakeasy-group: fieldMappings
   /field_mappings:
     post:

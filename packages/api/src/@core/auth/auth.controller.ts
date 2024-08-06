@@ -25,6 +25,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
+import { ApiKeyAuthGuard } from './guards/api-key.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -64,15 +65,6 @@ export class AuthController {
   @Post('login')
   async login(@Body() user: LoginDto) {
     return this.authService.login(user);
-  }
-
-  // todo: admin only
-  @ApiOperation({ operationId: 'getPanoraCoreUsers', summary: 'Get users' })
-  @ApiResponse({ status: 200 })
-  @ApiExcludeEndpoint()
-  @Get('users')
-  async users() {
-    return this.authService.getUsers();
   }
 
   @ApiOperation({ operationId: 'resetPassword', summary: 'Reset Password' })
