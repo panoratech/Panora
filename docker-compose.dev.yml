@@ -31,6 +31,7 @@ services:
       context: ./
       dockerfile: ./packages/api/Dockerfile.dev
     environment:
+      ENV: ${ENV}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       WEBHOOK_INGRESS: ${WEBHOOK_INGRESS}
@@ -42,6 +43,10 @@ services:
       REDIS_PASS: ${REDIS_PASS}
       REDIS_USER: ${REDIS_USER}
       REDIS_PORT: ${REDIS_PORT}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      WEBAPP_URL: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
       #REDIS_TLS: 1 # set this variable to 1 when Redis is AWS hosted 
       REDIS_DB: ${REDIS_DB}
       ENCRYPT_CRYPTO_SECRET_KEY: ${ENCRYPT_CRYPTO_SECRET_KEY}
@@ -161,6 +166,11 @@ services:
       HELPSCOUT_TICKETING_CLOUD_CLIENT_SECRET: ${HELPSCOUT_TICKETING_CLOUD_CLIENT_SECRET}
       IRONCLAD_TICKETING_CLOUD_CLIENT_ID: ${IRONCLAD_TICKETING_CLOUD_CLIENT_ID}
       IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET: ${IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET}
+      EMAIL_SENDING_ADDRESS: ${EMAIL_SENDING_ADDRESS}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
 
     restart: unless-stopped
     ports:
@@ -237,22 +247,22 @@ services:
     volumes:
       - .:/app
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin4_container
-    restart: always
-    ports:
-      - "8888:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
-      PGADMIN_DEFAULT_PASSWORD: strong-password
-    networks:
-     - backend
-    depends_on:
-      postgres:
-        condition: service_healthy
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin4_container
+  #   restart: always
+  #   ports:
+  #     - "8888:80"
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+  #     PGADMIN_DEFAULT_PASSWORD: strong-password
+  #   networks:
+  #    - backend
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
 
   ngrok:
     image: ngrok/ngrok:latest

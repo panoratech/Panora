@@ -31,6 +31,8 @@ export class AddressService {
     id_addressing_address: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingAddressOutput> {
     return;
@@ -38,6 +40,7 @@ export class AddressService {
 
   async getAddresss(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

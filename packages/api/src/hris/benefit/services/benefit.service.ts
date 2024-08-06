@@ -32,6 +32,8 @@ export class BenefitService {
     id_benefiting_benefit: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisBenefitOutput> {
     return;
@@ -39,6 +41,7 @@ export class BenefitService {
 
   async getBenefits(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

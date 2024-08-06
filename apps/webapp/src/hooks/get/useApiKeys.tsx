@@ -7,7 +7,7 @@ const useApiKeys = () => {
   return useQuery({
     queryKey: ['api-keys'], 
     queryFn: async (): Promise<ApiKey[]> => {
-      const response = await fetch(`${config.API_URL}/auth/api-keys`,
+      const response = await fetch(`${config.API_URL}/auth/api_keys`,
       {
         method: 'GET',
         headers: {

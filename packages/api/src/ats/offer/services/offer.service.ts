@@ -14,6 +14,8 @@ export class OfferService {
     id_ats_offer: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsOfferOutput> {
     try {
@@ -83,6 +85,8 @@ export class OfferService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.offer.pull',
@@ -103,6 +107,7 @@ export class OfferService {
 
   async getOffers(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -139,9 +144,7 @@ export class OfferService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (offers.length === limit + 1) {
@@ -220,6 +223,8 @@ export class OfferService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.offer.pull',

@@ -1,0 +1,45 @@
+---
+title: "1. Setup"
+description: "We welcome all contributions to Panora; from small UI enhancements to brand new integrations. We love seeing community members level up and give people power-ups!"
+icon: "star"
+---
+
+## Introduction
+
+### Setup your environnement
+
+We made a docker file that builds Panora from sources, specifically to help you locally test your contributions. Here's how to use it.
+
+<Info>Execute these from your Panora's repo root folder</Info>
+
+<Steps>
+  <Step title="Copy env variables">
+  <Note>Check environment variables reference [here](/open-source/self_hosting/envVariables) !</Note>
+    ```bash 
+    cp .env.example .env 
+    ```
+  </Step>
+  <Step title="Remove previously installed dependencies">
+    ```bash 
+    rm -rf node_modules .pnpm-store ./packages/api/dist ./packages/api/node_modules ./apps/webapp/node_modules ./apps/frontend_snippet/node_modules 
+    ```
+    <Info>For Mac users only: ```echo -e "node-linker=hoisted\n package-import-method=clone-or-copy" > .npmrc```</Info>
+  </Step>
+  <Step title="(Optional) Enable Grok">
+    If you have to create an oAuth app for a provider and needs an **https** redirect uri you must enable Grok service and use your secure domain from them (it proxies requests to `localhost:3000`).
+    Check this [quick guide](/open-source/self_hosting/ngrok) to set it up !
+  </Step>
+  <Step title="Start the Dockerfile">
+    ```bash 
+    docker compose -f docker-compose.dev.yml up
+    ``` 
+  </Step>
+</Steps>
+  That's all ! You can find the backend and other services running at their usual location. Editing code locally will **immediately** reflect.
+
+
+
+
+
+
+

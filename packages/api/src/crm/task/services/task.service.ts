@@ -34,6 +34,7 @@ export class TaskService {
   async addTask(
     unifiedTaskData: UnifiedCrmTaskInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -95,12 +96,16 @@ export class TaskService {
         unique_crm_task_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'crm.task.push', // sync, push or pull
@@ -204,6 +209,8 @@ export class TaskService {
     id_task: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCrmTaskOutput> {
     try {
@@ -272,6 +279,8 @@ export class TaskService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'crm.task.pull',
@@ -293,6 +302,7 @@ export class TaskService {
 
   async getTasks(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -366,10 +376,8 @@ export class TaskService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedCrmTaskOutput format
           return {
@@ -408,6 +416,8 @@ export class TaskService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.task.pulled',

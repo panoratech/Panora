@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PassThroughResponse {
-  @ApiProperty()
+  @ApiProperty({ type: String, nullable: true })
   url: string;
-  @ApiProperty()
+  @ApiProperty({ type: Number, nullable: true })
   status: number;
-  @ApiProperty()
+  @ApiProperty({ type: Object, nullable: true })
   data: any;
   // Define the properties here
 }

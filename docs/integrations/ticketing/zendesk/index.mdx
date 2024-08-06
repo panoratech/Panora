@@ -1,0 +1,25 @@
+---
+title: "Zendesk"
+description: ""
+---
+
+# Common Objects
+
+ 
+| Unified Model | Supported                           | Provider Endpoints                           |
+| -------- | ------------------------------------- | ------------------------------------- |
+| Account      | Yes ✅ | [/organizations , /organizations/:remote_account_id.json]  |
+| Attachment      | No 🚫  | Coming Soon  |
+| Collection   | No 🚫 | | 
+| Comment   | Yes ✅| [/tickets/:remote_ticket_id.json , /tickets/:remote_ticket_id/comments.json]  | 
+| Contact   | Yes ✅ | [/users.json , /users/:remote_contact_id.json]  |
+| Tag   | Yes ✅|  /tickets/:remote_ticket_id/tags |
+| Team   | Yes ✅| /groups.json | 
+| Ticket   | Yes ✅ | [/tickets.json , /tickets/:remote_ticket_id.json]  | 
+| User   | Yes ✅| [/users.json , /users/remote_user_id.json] |
+
+ 
+| Features | Supported                           |
+| -------- | ------------------------------------- |
+| Scopes     |read write|
+| Realtime webhook     | No 🚫|

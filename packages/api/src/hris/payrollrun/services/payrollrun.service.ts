@@ -32,6 +32,8 @@ export class PayrollRunService {
     id_payrollruning_payrollrun: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisPayrollrunOutput> {
     return;
@@ -39,6 +41,7 @@ export class PayrollRunService {
 
   async getPayrollRuns(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

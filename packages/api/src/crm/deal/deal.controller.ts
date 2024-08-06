@@ -19,7 +19,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { DealService } from './services/deal.service';
@@ -29,14 +29,14 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+
 @ApiTags('crm/deals')
 @Controller('crm/deals')
 export class DealController {
@@ -50,7 +50,7 @@ export class DealController {
 
   @ApiOperation({
     operationId: 'listCrmDeals',
-    summary: 'List  Deals',
+    summary: 'List Deals',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -64,16 +64,17 @@ export class DealController {
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getDeals(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return await this.dealService.getDeals(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -87,20 +88,22 @@ export class DealController {
 
   @ApiOperation({
     operationId: 'retrieveCrmDeal',
-    summary: 'Retrieve a Deal',
-    description: 'Retrieve a deal from any connected Crm software',
+    summary: 'Retrieve Deals',
+    description: 'Retrieve Deals from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the deal you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -116,7 +119,7 @@ export class DealController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -124,14 +127,16 @@ export class DealController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
     operationId: 'createCrmDeal',
-    summary: 'Create a Deal',
-    description: 'Create a deal in any supported Crm software',
+    summary: 'Create Deals',
+    description: 'Create Deals in any supported Crm software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -155,13 +160,14 @@ export class DealController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return await this.dealService.addDeal(
         unifiedDealData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

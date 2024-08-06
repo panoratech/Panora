@@ -42,6 +42,8 @@ export class PurchaseOrderService {
     id_purchaseordering_purchaseorder: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingPurchaseorderOutput> {
     return;
@@ -49,6 +51,7 @@ export class PurchaseOrderService {
 
   async getPurchaseOrders(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

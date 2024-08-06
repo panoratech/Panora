@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import {
   ApiGetArrayCustomResponse,
   ApiPostCustomResponse,
+  ApiPostGenericJson,
 } from '@@core/utils/dtos/openapi.respone.dto';
 import {
   Body,
@@ -21,16 +22,16 @@ import {
   ApiExcludeEndpoint,
   ApiOperation,
   ApiTags,
+  ApiParam,
 } from '@nestjs/swagger';
 import {
-  EventPayload,
   SignatureVerificationDto,
   WebhookDto,
   WebhookResponse,
 } from './dto/webhook.dto';
 import { WebhookService } from './webhook.service';
-@ApiTags('webhook')
-@Controller('webhook')
+@ApiTags('webhooks')
+@Controller('webhooks')
 export class WebhookController {
   constructor(
     private webhookService: WebhookService,
@@ -41,7 +42,7 @@ export class WebhookController {
 
   @ApiOperation({
     operationId: 'listWebhooks',
-    summary: 'List webhooks ',
+    summary: 'List webhooks',
   })
   @ApiGetArrayCustomResponse(WebhookResponse)
   @UseGuards(ApiKeyAuthGuard)
@@ -66,6 +67,13 @@ export class WebhookController {
 
   @ApiOperation({ operationId: 'delete', summary: 'Delete Webhook' })
   @ApiPostCustomResponse(WebhookResponse)
+  @ApiParam({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+    description: 'id of the webhook to delete.',
+  })
   @Delete(':id')
   @UseGuards(ApiKeyAuthGuard)
   async deleteWebhook(@Request() req: any, @Param('id') whId: string) {
@@ -89,6 +97,13 @@ export class WebhookController {
   })
   @UseGuards(ApiKeyAuthGuard)
   @ApiPostCustomResponse(WebhookResponse)
+  @ApiParam({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+    description: 'id of the webhook to update.',
+  })
   @Put(':id')
   async updateWebhookStatus(
     @Request() req: any,
@@ -125,8 +140,8 @@ export class WebhookController {
   }
 
   @ApiOperation({
-    operationId: 'createWebhook',
-    summary: 'Add webhook metadata',
+    operationId: 'createWebhookPublic',
+    summary: 'Create webhook',
   })
   @ApiBody({ type: WebhookDto })
   @ApiPostCustomResponse(WebhookResponse)
@@ -138,8 +153,8 @@ export class WebhookController {
   }
 
   @ApiOperation({
-    operationId: 'createWebhook',
-    summary: 'Add webhook metadata',
+    operationId: 'createWebhookInternal',
+    summary: 'Create webhook',
   })
   @ApiBody({ type: WebhookDto })
   @ApiExcludeEndpoint()
@@ -156,12 +171,12 @@ export class WebhookController {
     summary: 'Verify payload signature of the webhook',
   })
   @ApiBody({ type: SignatureVerificationDto })
-  @ApiPostCustomResponse(EventPayload)
+  @ApiPostGenericJson('Dynamic event payload')
   @UseGuards(ApiKeyAuthGuard)
   @Post('verifyEvent')
   async verifyPayloadSignature(@Body() data: SignatureVerificationDto) {
     const { payload, signature, secret } = data;
-    return this.webhookService.verifyPayloadSignature(
+    return await this.webhookService.verifyPayloadSignature(
       payload,
       signature,
       secret,

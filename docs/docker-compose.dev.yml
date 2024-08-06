@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 911:3000
+    volumes:
+      - .:/app
+volumes:
+  docs-node-modules:

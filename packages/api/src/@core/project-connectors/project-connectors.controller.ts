@@ -19,9 +19,9 @@ import {
 import { ProjectConnectorsService } from './project-connectors.service';
 import { ProjectConnectorsDto } from './dto/project-connectors.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-@ApiTags('project-connectors')
+@ApiTags('project_connectors')
 @ApiExcludeController()
-@Controller('project-connectors')
+@Controller('project_connectors')
 export class ProjectConnectorsController {
   constructor(
     private readonly projectConnectorsService: ProjectConnectorsService,

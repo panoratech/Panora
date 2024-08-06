@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { EmployeeService } from './services/employee.service';
@@ -27,16 +27,16 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
-@ApiTags('hris/employee')
-@Controller('hris/employee')
+
+@ApiTags('hris/employees')
+@Controller('hris/employees')
 export class EmployeeController {
   constructor(
     private readonly employeeService: EmployeeService,
@@ -47,8 +47,8 @@ export class EmployeeController {
   }
 
   @ApiOperation({
-    operationId: 'listHrisEmployee',
-    summary: 'List  Employees',
+    operationId: 'listHrisEmployees',
+    summary: 'List Employees',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -61,16 +61,17 @@ export class EmployeeController {
   @Get()
   async getEmployees(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.employeeService.getEmployees(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -84,20 +85,22 @@ export class EmployeeController {
 
   @ApiOperation({
     operationId: 'retrieveHrisEmployee',
-    summary: 'Retrieve an Employee',
-    description: 'Retrieve an employee from any connected Hris software',
+    summary: 'Retrieve Employee',
+    description: 'Retrieve an Employee from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the employee you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -113,7 +116,7 @@ export class EmployeeController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -121,14 +124,16 @@ export class EmployeeController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
     operationId: 'createHrisEmployee',
-    summary: 'Create an Employee',
-    description: 'Create an employee in any supported Hris software',
+    summary: 'Create Employees',
+    description: 'Create Employees in any supported Hris software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -152,7 +157,7 @@ export class EmployeeController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );

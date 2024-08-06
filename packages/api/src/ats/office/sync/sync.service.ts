@@ -50,12 +50,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log('Syncing offices...');
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -101,7 +101,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId } = param;
       const service: IOfficeService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ats, commonObject: office} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
         UnifiedAtsOfficeOutput,
@@ -132,14 +135,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
           existingOffice = await this.prisma.ats_offices.findFirst({
             where: {
               name: office.name,
-              id_connection: connection_id,
+              
             },
           });
         } else {
           existingOffice = await this.prisma.ats_offices.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }
@@ -164,7 +167,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_office: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

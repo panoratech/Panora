@@ -1,0 +1,27 @@
+---
+title: "Custom Credentials"
+description: "By default, all connectors use Panora's managed developer applications. You have the option to use your own custom apps."
+icon: "gear-code"
+---
+
+## How it Works
+By default, when an end user authenticates any Third Party that uses OAuth via Panora they see a prompt saying "Panora is requesting access to..."
+
+With Custom OAuth, you can supply your own Client Id and Client Secret and Panora will use those credentials to make the appropriate requests on your behalf. The result of this is that when an end user authenticates, they see "Your [App Name] is requesting access...".
+
+## How to add custom credentials for a connector
+
+<Note>
+  Before getting started, make sure you've created a custom oAuth application
+  inside your sofwtare's developer account.{" "}
+</Note>
+
+Visit the _Manage Connectors_ [section](https://dashboard.panora.dev/configuration), choose the connector you wish to add credentials for and add your own credentials.
+
+<Frame type="glass">
+  <video
+    controls
+    className="w-full aspect-video"
+    src="/images/customcreds.mp4"
+  />
+</Frame>

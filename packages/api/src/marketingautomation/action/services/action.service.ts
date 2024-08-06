@@ -30,6 +30,7 @@ export class ActionService {
   async addAction(
     unifiedActionData: UnifiedMarketingautomationActionInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -41,6 +42,8 @@ export class ActionService {
     id_actioning_action: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedMarketingautomationActionOutput> {
     return;
@@ -48,6 +51,7 @@ export class ActionService {
 
   async getActions(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

@@ -9,7 +9,7 @@ interface ILinkedUserDto {
 }
 const useCreateBatchLinkedUser = () => {    
     const add = async (linkedUserData: ILinkedUserDto) => {
-        const response = await fetch(`${config.API_URL}/linked-users/internal/batch`, {
+        const response = await fetch(`${config.API_URL}/linked_users/internal/batch`, {
             method: 'POST',
             body: JSON.stringify(linkedUserData),
             headers: {

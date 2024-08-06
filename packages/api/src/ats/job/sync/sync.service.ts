@@ -50,12 +50,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log('Syncing jobs...');
       const users = user_id
         ? [
-            await this.prisma.users.findUnique({
-              where: {
-                id_user: user_id,
-              },
-            }),
-          ]
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -101,7 +101,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const { integrationId, linkedUserId } = param;
       const service: IJobService =
         this.serviceRegistry.getService(integrationId);
-      if (!service) return;
+      if (!service) {
+        this.logger.log(`No service found in {vertical:ats, commonObject: job} for integration ID: ${integrationId}`);
+        return;
+      }
 
       await this.ingestService.syncForLinkedUser<
         UnifiedAtsJobOutput,
@@ -130,7 +133,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const existingJob = await this.prisma.ats_jobs.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connection_id,
+            
           },
         });
 
@@ -164,7 +167,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_job: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

@@ -5,7 +5,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { WebhooksError } from '@@core/utils/errors';
 import { WebhookDto } from './dto/webhook.dto';
 import axios from 'axios';
-import crypto from 'crypto';
+import { createHmac } from 'crypto';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 
 @Injectable()
@@ -20,8 +20,8 @@ export class WebhookService {
 
   generateSignature(payload: any, secret: string): string {
     try {
-      return crypto
-        .createHmac('sha256', secret)
+      this.logger.log('PAYLOAD IS ' + JSON.stringify(payload));
+      return createHmac('sha256', secret)
         .update(JSON.stringify(payload))
         .digest('hex');
     } catch (error) {
@@ -295,11 +295,17 @@ export class WebhookService {
     secret: string,
   ) {
     try {
-      const expected = this.generateSignature(payload, secret);
+      this.logger.log(
+        '(verify) PAYLOAD IS ' +
+          JSON.stringify(payload) +
+          ' data from payload is ' +
+          JSON.stringify(payload.data),
+      );
+      const expected = this.generateSignature(payload.data, secret);
       if (expected !== signature) {
         throw new WebhooksError({
           name: 'INVALID_SIGNATURE_ERROR',
-          message: `Signature mismatch for the payload received with signature=${signature}`,
+          message: `Signature mismatch for the payload received with expected=${expected} and signature=${signature}`,
         });
       }
       return payload;

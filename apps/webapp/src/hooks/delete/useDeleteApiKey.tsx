@@ -8,7 +8,7 @@ interface IApiKeyDto {
 
 const useDeleteApiKey = () => {
     const remove = async (apiKeyData: IApiKeyDto) => {
-        const response = await fetch(`${config.API_URL}/auth/api-keys/${apiKeyData.id_api_key}`, {
+        const response = await fetch(`${config.API_URL}/auth/api_keys/${apiKeyData.id_api_key}`, {
             method: 'DELETE',
             headers: {
             'Content-Type': 'application/json',

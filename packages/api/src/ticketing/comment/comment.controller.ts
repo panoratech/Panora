@@ -1,7 +1,7 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 
 import {
   Body,
@@ -17,7 +17,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
+  //ApiKeyAuth,
   ApiBody,
   ApiHeader,
   ApiOperation,
@@ -36,7 +36,7 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+
 @ApiTags('ticketing/comments')
 @Controller('ticketing/comments')
 export class CommentController {
@@ -50,7 +50,7 @@ export class CommentController {
 
   @ApiOperation({
     operationId: 'listTicketingComments',
-    summary: 'List  Comments',
+    summary: 'List Comments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -64,16 +64,17 @@ export class CommentController {
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getComments(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.commentService.getComments(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -87,8 +88,8 @@ export class CommentController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingComment',
-    summary: 'Retrieve a Comment',
-    description: 'Retrieve a comment from any connected Ticketing software',
+    summary: 'Retrieve Comment',
+    description: 'Retrieve a Comment from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
@@ -117,13 +118,15 @@ export class CommentController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     return this.commentService.getComment(
       id,
       linkedUserId,
+      connectionId,
+      projectId,
       remoteSource,
       remote_data,
     );
@@ -131,8 +134,8 @@ export class CommentController {
 
   @ApiOperation({
     operationId: 'createTicketingComment',
-    summary: 'Create a Comment',
-    description: 'Create a comment in any supported Ticketing software',
+    summary: 'Create Comments',
+    description: 'Create Comments in any supported Ticketing software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -157,7 +160,7 @@ export class CommentController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
@@ -166,6 +169,7 @@ export class CommentController {
         connectionId,
         remoteSource,
         linkedUserId,
+        projectId,
         remote_data,
       );
     } catch (error) {

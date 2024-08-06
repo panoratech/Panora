@@ -1,0 +1,69 @@
+---
+title: 'The Deal Object'
+description: 'Introduction to our CRM `deal` Unified Model'
+
+---
+## The Unified `deal` Object
+The `deal` object is used to represent an existing deal in a CRM system.
+
+### Properties
+
+<RequestExample>
+
+```json JSON
+{
+    "id_contact": "f4e1ff72-e727-409a-8935-a63a63d4891e",
+    "first_name":  "John",
+    "last_name":  "Doe",
+    "email_addresses": [{
+        "email_address" : "johndoe@work.com",
+         "email_address" : "johdndoe@personal.com"
+    }]
+    "custom_fields": [{
+        "hair_color" : "black"
+        }
+    ],
+    "remote_data": {
+        "source": "hubspot",
+        "data": {
+            "XXX": "XXX"
+        }
+    }
+}
+```
+
+</RequestExample>
+
+<ResponseField name="contact" type="Contact Object">
+  <Expandable title="properties" defaultOpen="true">
+    <ResponseField name="id_contact" type="uuid">
+      Panora Defined UUID for this contact
+    </ResponseField>
+
+    <ResponseField name="first_name" type="string" required>
+      The full name of the `contact`
+    </ResponseField>
+
+    <ResponseField name="last_name" type="string" required>
+      The last name of this `contact`
+    </ResponseField>
+
+    <ResponseField name="custom_fields" type="array">
+      Array containing all the non-standard data points for this `contact`. Requires mapping.
+    </ResponseField>
+
+    <ResponseField name="remote_data" type="json">
+      Original data, as provided by the source CRM`
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+## Supported Features for each CRM Contact Object:
+| Panora        | Unified Write | Passthrough Requests | Remote Data | Managed Webhooks | Webhooks Unified |
+| ------------- | ------------- | -------------------- | ----------- | ----------------- | ---------------- |
+| Hubspot       | ✔️             | ✔️                  | ✔️          | ❌               | ❌                |
+| Zoho          | ✔️             | ✔️                  | ✔️          | ❌               | ❌                |
+| Zendesk       | ✔️             | ✔️                  | ✔️          | ❌               | ❌                |
+| Pipedrive     | ✔️             | ✔️                  | ✔️          | ❌               | ❌                |
+| Freshsales    | ✔️             | ✔️                  | ✔️          | ❌               | ❌                |

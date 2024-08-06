@@ -15,6 +15,8 @@ export class TagService {
     id_ticketing_tag: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketingTagOutput> {
     try {
@@ -69,6 +71,8 @@ export class TagService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.tag.pull',
@@ -89,6 +93,7 @@ export class TagService {
 
   async getTags(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -164,10 +169,8 @@ export class TagService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedTicketingTagOutput format
           return {
@@ -184,22 +187,25 @@ export class TagService {
       let res: UnifiedTicketingTagOutput[] = unifiedTags;
 
       if (remote_data) {
-        const remote_array_data: UnifiedTicketingTagOutput[] = await Promise.all(
-          res.map(async (tag) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: tag.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...tag, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedTicketingTagOutput[] =
+          await Promise.all(
+            res.map(async (tag) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: tag.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...tag, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.tag.pull',

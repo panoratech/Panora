@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { ContactService } from './services/contact.service';
@@ -27,16 +27,16 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
-@ApiTags('accounting/contact')
-@Controller('accounting/contact')
+
+@ApiTags('accounting/contacts')
+@Controller('accounting/contacts')
 export class ContactController {
   constructor(
     private readonly contactService: ContactService,
@@ -61,16 +61,17 @@ export class ContactController {
   @Get()
   async getContacts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.contactService.getContacts(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -84,17 +85,19 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingContact',
-    summary: 'Retrieve a Contact',
-    description: 'Retrieve a contact from any connected Accounting software',
+    summary: 'Retrieve Contacts',
+    description: 'Retrieve Contacts from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the contact you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -114,7 +117,7 @@ export class ContactController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -122,14 +125,16 @@ export class ContactController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
     operationId: 'createAccountingContact',
-    summary: 'Create a Contact',
-    description: 'Create a contact in any supported Accounting software',
+    summary: 'Create Contacts',
+    description: 'Create contacts in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -139,6 +144,7 @@ export class ContactController {
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -154,7 +160,7 @@ export class ContactController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );

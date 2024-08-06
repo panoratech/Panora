@@ -15,17 +15,19 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { TagService } from './services/tag.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { UnifiedTicketingTagOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
 @ApiTags('ticketing/tags')
 @Controller('ticketing/tags')
 export class TagController {
@@ -39,7 +41,7 @@ export class TagController {
 
   @ApiOperation({
     operationId: 'listTicketingTags',
-    summary: 'List  Tags',
+    summary: 'List Tags',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -53,16 +55,17 @@ export class TagController {
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getTags(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.tagService.getTags(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,14 +79,15 @@ export class TagController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingTag',
-    summary: 'Retrieve a Tag',
-    description: 'Retrieve a tag from any connected Ticketing software',
+    summary: 'Retrieve Tag',
+    description: 'Retrieve a Tag from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the tag you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -91,6 +95,7 @@ export class TagController {
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -106,10 +111,17 @@ export class TagController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
-    return this.tagService.getTag(id, linkedUserId, remoteSource, remote_data);
+    return this.tagService.getTag(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

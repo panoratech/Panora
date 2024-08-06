@@ -1,0 +1,78 @@
+---
+title: "Embedded Catalog"
+description: "Use Embedded Panora Catalog to invite your users to grant you access to their data without a dedicated website. Create a full connection flow in just a few clicks. No code required."
+icon: "wand-magic-sparkles"
+---
+
+<img
+  className="block"
+  src="/images/generate-magic-link.gif"
+  alt="Hero Light"
+/>
+
+## Import our pre-built React Component
+
+<Info>
+  You can find the component on NPM
+  [here](https://www.npmjs.com/package/@panora/embedded-card-react)
+</Info>
+
+<Steps>
+    <Step title="Install the package in your code:">
+        <CodeGroup>
+            ```javascript React
+            npm i @panora/embedded-card-react
+            ```
+            ```javascript Vue
+            ```
+
+            ```javascript Angular
+            ```
+        </CodeGroup>
+    </Step>
+
+    <Step title="Import the component and the styles in your integrations page:">
+        <CodeGroup>
+            ```javascript React
+            import "@panora/embedded-card-react/dist/index.css";
+            import PanoraProviderCard from "@panora/embedded-card-react";
+            ```
+            ```javascript Vue
+            ```
+
+            ```javascript Angular
+            ```
+        </CodeGroup>
+    </Step>
+
+    <Step title="Use the catalog in your integrations page:">
+        <CodeGroup>
+            ```javascript React
+            <PanoraProviderCard
+                name={"hubspot"} # name of the provider
+                vertical={"crm"} # vertical where provider belongs to
+                projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"} # the project id tied to your organization
+                returnUrl={"https://acme.inc"} # the url you want to redirect users to after the connection flow is successful
+                linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}  # the linked id of the user if already created in Panora system or user's info in your system
+            />
+            ```
+            ```javascript Vue
+            ```
+
+            ```javascript Angular
+            ```
+        </CodeGroup>
+    </Step>
+
+<Step>
+  You'll be asked for two informations: an email and an `Origin User
+  Identifier`. The `Origin User Identifier` is the id of the user you're
+  inviting, as represented in your systems.
+</Step>
+
+<Step>Click Generate. You can now share the link!</Step>
+
+</Steps>
+
+The connection will show as `status` until the user connects to a platform.
+We recommend listening to webhooks to get notified once a user connects.

@@ -7,7 +7,7 @@ const useLinkedUsers = () => {
   return useQuery({
     queryKey: ['linked-users'], 
     queryFn: async (): Promise<LinkedUser[]> => {
-      const response = await fetch(`${config.API_URL}/linked-users/internal`,
+      const response = await fetch(`${config.API_URL}/linked_users/internal`,
       {
         method: 'GET',
         headers: {

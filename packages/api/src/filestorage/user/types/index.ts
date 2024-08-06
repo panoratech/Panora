@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedFilestorageUserInput, UnifiedUserOutput } from './model.unified';
+import { UnifiedFilestorageUserInput, UnifiedFilestorageUserOutput } from './model.unified';
 import { OriginalUserOutput } from '@@core/utils/types/original/original.file-storage';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
@@ -29,5 +29,5 @@ export interface IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedUserOutput | UnifiedUserOutput[]>;
+  ): Promise<UnifiedFilestorageUserOutput | UnifiedFilestorageUserOutput[]>;
 }

@@ -11,7 +11,7 @@ interface IDefineTargetFieldDto{
 
 const useDefineField = () => {
     const define = async (data: IDefineTargetFieldDto) => {
-        const response = await fetch(`${config.API_URL}/field-mappings/define`, {
+        const response = await fetch(`${config.API_URL}/field_mappings/internal/define`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

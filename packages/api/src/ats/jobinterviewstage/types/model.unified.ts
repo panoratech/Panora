@@ -10,24 +10,42 @@ import {
 export class UnifiedAtsJobinterviewstageInput {
   @ApiPropertyOptional({
     type: String,
+    example: 'Second Call',
+    nullable: true,
     description: 'The name of the job interview stage',
   })
   @IsString()
   @IsOptional()
   name?: string;
 
-  @ApiPropertyOptional({ type: Number, description: 'The order of the stage' })
+  @ApiPropertyOptional({
+    type: Number,
+    example: 1,
+    nullable: true,
+    description: 'The order of the stage',
+  })
   @IsInt()
   @IsOptional()
   stage_order?: number;
 
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the job' })
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
+    description: 'The UUID of the job',
+  })
   @IsUUID()
   @IsOptional()
   job_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    additionalProperties: true,
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -38,6 +56,8 @@ export class UnifiedAtsJobinterviewstageInput {
 export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewstageInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the job interview stage',
   })
   @IsUUID()
@@ -46,6 +66,8 @@ export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewsta
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
+    nullable: true,
     description:
       'The remote ID of the job interview stage in the context of the 3rd Party',
   })
@@ -54,7 +76,13 @@ export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewsta
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the job interview stage in the context of the 3rd Party',
   })
@@ -62,16 +90,20 @@ export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewsta
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

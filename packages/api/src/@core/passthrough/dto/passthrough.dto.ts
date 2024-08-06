@@ -11,10 +11,16 @@ enum Action {
 export class PassThroughRequestDto {
   @ApiProperty({ name: 'method', enum: Action })
   method: Action;
-  @ApiProperty()
+  @ApiProperty({ type: String, nullable: true })
   path: string;
-  @ApiProperty()
+  @ApiProperty({
+    oneOf: [
+      { type: 'object', additionalProperties: true },
+      { type: 'array', items: { type: 'object', additionalProperties: true } },
+    ],
+    nullable: true,
+  })
   data?: Record<string, any> | Record<string, any>[];
-  @ApiProperty()
+  @ApiProperty({ type: Object, additionalProperties: true, nullable: true })
   headers?: Record<string, string>;
 }

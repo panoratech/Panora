@@ -27,16 +27,16 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { AccountService } from './services/account.service';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
-@ApiTags('accounting/account')
-@Controller('accounting/account')
+//@ApiBearerAuth('bearer')
+@ApiTags('accounting/accounts')
+@Controller('accounting/accounts')
 export class AccountController {
   constructor(
     private readonly accountService: AccountService,
@@ -61,16 +61,17 @@ export class AccountController {
   @Get()
   async getAccounts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.accountService.getAccounts(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -84,17 +85,19 @@ export class AccountController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingAccount',
-    summary: 'Retrieve a Account',
-    description: 'Retrieve a account from any connected Accounting software',
+    summary: 'Retrieve Accounts',
+    description: 'Retrieve Accounts from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the account you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -114,7 +117,7 @@ export class AccountController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -122,14 +125,16 @@ export class AccountController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
     operationId: 'createAccountingAccount',
-    summary: 'Create a Account',
-    description: 'Create a account in any supported Accounting software',
+    summary: 'Create Accounts',
+    description: 'Create accounts in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -140,6 +145,7 @@ export class AccountController {
   @ApiQuery({
     name: 'remote_data',
     required: false,
+    example: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Accounting software.',
@@ -154,7 +160,7 @@ export class AccountController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );

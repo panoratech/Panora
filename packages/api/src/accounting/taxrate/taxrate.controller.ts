@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { TaxRateService } from './services/taxrate.service';
@@ -27,12 +27,12 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
-@ApiTags('accounting/taxrate')
-@Controller('accounting/taxrate')
+
+@ApiTags('accounting/taxrates')
+@Controller('accounting/taxrates')
 export class TaxRateController {
   constructor(
     private readonly taxrateService: TaxRateService,
@@ -57,16 +57,17 @@ export class TaxRateController {
   @Get()
   async getTaxRates(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.taxrateService.getTaxRates(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -80,17 +81,19 @@ export class TaxRateController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingTaxRate',
-    summary: 'Retrieve a TaxRate',
-    description: 'Retrieve a taxrate from any connected Accounting software',
+    summary: 'Retrieve Tax Rates',
+    description: 'Retrieve Tax Rates from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the taxrate you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -110,7 +113,7 @@ export class TaxRateController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -118,6 +121,8 @@ export class TaxRateController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

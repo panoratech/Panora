@@ -14,6 +14,8 @@ export class StageService {
     id_stage: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCrmStageOutput> {
     try {
@@ -75,6 +77,8 @@ export class StageService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.stage.pull',
@@ -95,6 +99,7 @@ export class StageService {
 
   async getStages(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -168,10 +173,8 @@ export class StageService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedCrmStageOutput format
           return {
@@ -204,6 +207,8 @@ export class StageService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.stage.pulled',

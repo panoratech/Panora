@@ -1,7 +1,7 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 
 import {
   Controller,
@@ -14,7 +14,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
+  //ApiKeyAuth,
   ApiHeader,
   ApiOperation,
   ApiParam,
@@ -23,9 +23,12 @@ import {
 } from '@nestjs/swagger';
 import { ContactService } from './services/contact.service';
 import { UnifiedTicketingContactOutput } from './types/model.unified';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
+
 @ApiTags('ticketing/contacts')
 @Controller('ticketing/contacts')
 export class ContactController {
@@ -39,7 +42,7 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'listTicketingContacts',
-    summary: 'List all Contacts',
+    summary: 'List Contacts',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -53,16 +56,17 @@ export class ContactController {
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getContacts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.contactService.getContacts(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -76,8 +80,8 @@ export class ContactController {
 
   @ApiOperation({
     operationId: 'retrieveTicketingContact',
-    summary: 'Retrieve a Contact',
-    description: 'Retrieve a contact from any connected Ticketing software',
+    summary: 'Retrieve Contact',
+    description: 'Retrieve a Contact from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
@@ -106,13 +110,15 @@ export class ContactController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
     return this.contactService.getContact(
       id,
       linkedUserId,
+      connectionId,
+      projectId,
       remoteSource,
       remote_data,
     );

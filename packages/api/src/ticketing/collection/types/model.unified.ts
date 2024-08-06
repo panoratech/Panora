@@ -6,6 +6,8 @@ export type CollectionType = 'PROJECT' | 'LIST';
 export class UnifiedTicketingCollectionInput {
   @ApiProperty({
     type: String,
+    example: 'My Personal Collection',
+    nullable: true,
     description: 'The name of the collection',
   })
   @IsString()
@@ -13,6 +15,8 @@ export class UnifiedTicketingCollectionInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'Collect issues',
+    nullable: true,
     description: 'The description of the collection',
   })
   @IsString()
@@ -21,6 +25,9 @@ export class UnifiedTicketingCollectionInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'PROJECT',
+    enum: ['PROJECT', 'LIST'],
+    nullable: true,
     description:
       'The type of the collection. Authorized values are either PROJECT or LIST ',
   })
@@ -34,6 +41,8 @@ export class UnifiedTicketingCollectionInput {
 export class UnifiedTicketingCollectionOutput extends UnifiedTicketingCollectionInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the collection',
   })
   @IsUUID()
@@ -42,6 +51,8 @@ export class UnifiedTicketingCollectionOutput extends UnifiedTicketingCollection
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
+    nullable: true,
     description: 'The id of the collection in the context of the 3rd Party',
   })
   @IsString()
@@ -49,7 +60,13 @@ export class UnifiedTicketingCollectionOutput extends UnifiedTicketingCollection
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    nullable: true,
+    additionalProperties: true,
     description:
       'The remote data of the collection in the context of the 3rd Party',
   })
@@ -57,16 +74,20 @@ export class UnifiedTicketingCollectionOutput extends UnifiedTicketingCollection
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: {},
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsOptional()
-  created_at?: any;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: {},
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsOptional()
-  modified_at?: any;
+  modified_at?: Date;
 }

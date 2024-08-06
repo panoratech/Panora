@@ -1,0 +1,67 @@
+---
+title: "The Event Object"
+description: "Panora can send notifcations to your backend when the state of an object has changed. We use the concept of `events` to represent state changes in any object."
+---
+
+`Events` are our way of letting you know when something interesting happens in your projects. When an interesting event occurs, we create a new Event object. For example, when a contact is created in a crm, we create a `crm.contact.created` event, and when a contact is updated, we create an `crm.contact.updated` event. Certain API requests might create multiple events. For example, after we pull data from a CRM plaftorm you may receive both a `crm.contact.pulled` event and some `crm.contact.created` events.
+
+Events occur when the state of another API resource changes. The event’s data field embeds the resource’s state at the time of the change. For example, a `crm.contact.updated` event contains a `CRM Contact`, as the state of the contact is after the update.
+
+When creating webhook endpoints to retrieve events from Panora, you have the flexibilty to only retrieve some events, for each endpoint. We also have a separate webhooks system for sending the Event objects directly to an endpoint on your server. You can manage webhooks in your account settings. Learn how to listen for events so that your integration can automatically trigger reactions.
+
+## The _event_ Object
+
+The `event` object is used to represent an existing change to an object.
+The typical implementation consists in listening for events and triggering worklows in your backend based on the content of the field **type** and data of the webhook.
+
+### Properties
+
+<RequestExample>
+```json The Event Object
+{
+    "id_event": "f4e1ff72-e727-409a-8935-a63a63d4891e",
+    "type": "crm.contact.created",
+    "data": { 
+        "id_contact": "f4e1ff72-e727-409a-8935-a63a63d4891e",
+        "first_name": "John",
+        "last_name": "Doe",
+        "email_addresses": [{
+                "email_address": "johndoe@work.com",
+                "email_address_type": "work"
+            },{
+                "email_address": "johndoe@personal.com",
+                "email_address_type": "phone"
+            }
+        ],
+        "phone_numbers": [{
+                "phone_number": "01982833",
+                "phone_type": "primary"
+            }
+        ],
+        "field_mappings": [{
+                "hair_color": "black"
+            }
+        ],
+        "remote_data": {
+        }
+    }
+}
+```
+</RequestExample>
+<ResponseField name="event" type="Event Object">
+  <Expandable title="properties" defaultOpen="true">
+
+    <ResponseField name="id_event" type="uuid">
+      Panora Defined UUID for this event
+    </ResponseField>
+
+    <ResponseField name="type" type="string">
+      The type of this event. Find list of existing events in the dedicated below.
+    </ResponseField>
+
+    <ResponseField name="data" type="json">
+      Expect a unified object in this field. A **crm.contact.created** event would for example contain a [`CRM Contact`](/crm/contacts/overview) object.
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>

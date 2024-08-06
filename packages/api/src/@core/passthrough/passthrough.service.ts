@@ -26,10 +26,12 @@ export class PassthroughService {
   ): Promise<PassThroughResponse> {
     try {
       //TODO;
-      const { method, path, data, headers } = requestParams;
+      /*const { method, path, data, headers } = requestParams;
 
       const job_resp_create = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
           type: 'pull',
@@ -64,7 +66,7 @@ export class PassthroughService {
           Authorization: `Bearer ${this.cryptoService.decrypt(
             connection.access_token,
           )}`,
-        },*/,
+        },
       });
 
       const status_resp =
@@ -91,7 +93,8 @@ export class PassthroughService {
         url: URL,
         status: response.status,
         data: response.data,
-      };
+      };*/
+      return;
     } catch (error) {
       throw error;
     }

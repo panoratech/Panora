@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { InvoiceService } from './services/invoice.service';
@@ -27,16 +27,16 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
-@ApiTags('accounting/invoice')
-@Controller('accounting/invoice')
+
+@ApiTags('accounting/invoices')
+@Controller('accounting/invoices')
 export class InvoiceController {
   constructor(
     private readonly invoiceService: InvoiceService,
@@ -61,16 +61,17 @@ export class InvoiceController {
   @Get()
   async getInvoices(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.invoiceService.getInvoices(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -84,17 +85,19 @@ export class InvoiceController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingInvoice',
-    summary: 'Retrieve a Invoice',
-    description: 'Retrieve a invoice from any connected Accounting software',
+    summary: 'Retrieve Invoices',
+    description: 'Retrieve Invoices from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the invoice you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -114,7 +117,7 @@ export class InvoiceController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -122,14 +125,16 @@ export class InvoiceController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
     operationId: 'createAccountingInvoice',
-    summary: 'Create a Invoice',
-    description: 'Create a invoice in any supported Accounting software',
+    summary: 'Create Invoices',
+    description: 'Create invoices in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -139,6 +144,7 @@ export class InvoiceController {
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -154,7 +160,7 @@ export class InvoiceController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );

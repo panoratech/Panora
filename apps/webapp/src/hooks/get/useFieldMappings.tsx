@@ -7,7 +7,7 @@ const useFieldMappings = () => {
   return useQuery({
     queryKey: ['mappings'], 
     queryFn: async (): Promise<Attribute[]> => {
-      const response = await fetch(`${config.API_URL}/field-mappings/attribute`,
+      const response = await fetch(`${config.API_URL}/field_mappings/internal/attributes`,
       {
         method: 'GET',
         headers: {

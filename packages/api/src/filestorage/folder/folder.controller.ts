@@ -18,7 +18,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { FolderService } from './services/folder.service';
@@ -28,7 +28,7 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
@@ -36,7 +36,6 @@ import {
 } from '@@core/utils/dtos/openapi.respone.dto';
 import { example } from 'yargs';
 
-@ApiBearerAuth('bearer')
 @ApiTags('filestorage/folders')
 @Controller('filestorage/folders')
 export class FolderController {
@@ -64,16 +63,17 @@ export class FolderController {
   @Get()
   async getFolders(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.folderService.getFolders(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -87,14 +87,15 @@ export class FolderController {
 
   @ApiOperation({
     operationId: 'retrieveFilestorageFolder',
-    summary: 'Retrieve a Folder',
-    description: 'Retrieve a folder from any connected Filestorage software',
+    summary: 'Retrieve Folders',
+    description: 'Retrieve Folders from any connected Filestorage software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the folder you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -102,6 +103,7 @@ export class FolderController {
     type: Boolean,
     description:
       'Set to true to include data from the original File Storage software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -117,7 +119,7 @@ export class FolderController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -125,14 +127,16 @@ export class FolderController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
     operationId: 'createFilestorageFolder',
-    summary: 'Create a Folder',
-    description: 'Create a folder in any supported Filestorage software',
+    summary: 'Create Folders',
+    description: 'Create Folders in any supported Filestorage software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -150,13 +154,14 @@ export class FolderController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.folderService.addFolder(
         unifiedFolderData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

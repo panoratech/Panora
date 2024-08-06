@@ -1,0 +1,130 @@
+---
+title: "Quick Start"
+description: "Read and write data to multiple CRM platforms using a single API"
+icon: "star"
+---
+
+## Create a contact in a crm using Panora
+
+<Check>
+  We assume for this tutorial that you have a valid Panora API Key, and a
+  `connection_token`. Find help [here](/core-concepts/auth).
+</Check>
+
+<Steps>
+    <Info>
+        You can find the Typescript SDK [here](https://www.npmjs.com/package/@panora/sdk-typescript)
+    </Info>
+    <Step title="Setup your API Key in your code:">
+        <CodeGroup>
+            ```javascript TypeScript SDK
+            import { Panora } from '@panora/sdk';
+            const panora = new Panora({ apiKey: process.env.API_KEY });
+            ```
+
+            ```python Python SDK
+            import os
+            from panora_sdk import Panora
+            panora = Panora(
+                api_key=os.getenv("API_KEY", ""),
+            )
+            ```
+        </CodeGroup>
+    </Step>
+
+     <Step title="Create a contact in your CRM:">
+        <Info>In this example, we will create a contact in a CRM. Visit other sections of the documentation to find category-specific examples</Info>
+        <CodeGroup>
+
+            ```shell curl
+            curl --request POST \
+            --url https://api.panora.dev/crm/contacts \
+            --header 'x-api-key: <api-key> ' \
+            --header 'Content-Type: application/json' \
+            --header 'x-connection-token: <connection_token>' \
+            --data '{
+            "first_name": "Mark",
+            "last_name": "Zuckerbeg",
+            "email_addresses": [
+                {
+                "email_address": "mark@zuckerberg.com",
+                "email_address_type": "personal",
+                "owner_type": "contact"
+                }
+            ],
+            "phone_numbers": [
+                {
+                "phone_number": "+33694837462",
+                "phone_type": "personal",
+                "owner_type": "contact"
+                }
+            ],
+            "field_mappings": {}
+            }'
+            ```
+
+            ```javascript TypeScript
+            import { Panora } from "@panora/sdk";
+
+            const panora = new Panora({
+                apiKey: process.env.API_KEY,
+            });
+
+            const input = {
+                first_name: 'tom',
+                last_name: 'jedusor',
+                email_addresses: [
+                {
+                    'email_address': 'tom@jedusor.com',
+                    'email_address_type': 'PERSONAL'
+                }
+                ],
+                phone_numbers: [
+                {
+                    'phone_number': '+33650438278',
+                    'phone_type': 'MOBILE'
+                }
+                ],
+            };
+
+            const result = await panora.crm.contacts.create({
+                xConnectionToken: "YOUR_USER_CONNECTION_TOKEN",
+                unifiedCrmContactInput: input,
+            });
+
+            console.log(result);
+            ```
+
+            ```python Python
+            import os
+            from panora_sdk import Panora
+
+            panora = Panora(
+                api_key=os.getenv("API_KEY", ""),
+            )
+
+            body = {
+                'first_name': 'tom',
+                'last_name': 'jedusor',
+                'email_addresses': [
+                {
+                    'email_address': 'tom@jedusor.com',
+                    'email_address_type': 'PERSONAL'
+                }
+                ],
+                'phone_numbers': [
+                {
+                    'phone_number': '+33650438278',
+                    'phone_type': 'MOBILE'
+                }
+                ]
+            }
+
+            res = panora.crm.contacts.create(x_connection_token="YOUR_USER_CONNECTION_TOKEN", unified_crm_contact_input=body)
+
+            print(res)
+            ```
+        </CodeGroup>
+    </Step>
+
+</Steps>

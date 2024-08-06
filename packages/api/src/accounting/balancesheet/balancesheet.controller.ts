@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { BalanceSheetService } from './services/balancesheet.service';
@@ -27,12 +27,12 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
-@ApiTags('accounting/balancesheet')
-@Controller('accounting/balancesheet')
+
+@ApiTags('accounting/balancesheets')
+@Controller('accounting/balancesheets')
 export class BalanceSheetController {
   constructor(
     private readonly balancesheetService: BalanceSheetService,
@@ -57,16 +57,17 @@ export class BalanceSheetController {
   @Get()
   async getBalanceSheets(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.balancesheetService.getBalanceSheets(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -80,18 +81,20 @@ export class BalanceSheetController {
 
   @ApiOperation({
     operationId: 'retrieveAccountingBalanceSheet',
-    summary: 'Retrieve a BalanceSheet',
+    summary: 'Retrieve BalanceSheets',
     description:
-      'Retrieve a balancesheet from any connected Accounting software',
+      'Retrieve BalanceSheets from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the balancesheet you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
@@ -111,7 +114,7 @@ export class BalanceSheetController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -119,6 +122,8 @@ export class BalanceSheetController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

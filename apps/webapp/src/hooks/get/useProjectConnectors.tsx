@@ -10,7 +10,7 @@ const useProjectConnectors = (id: string) => {
   return useQuery({
     queryKey: ['project-connectors'], 
     queryFn: async (): Promise<ProjectConnector> => {
-      const response = await fetch(`${config.API_URL}/project-connectors?projectId=${id}`,
+      const response = await fetch(`${config.API_URL}/project_connectors?projectId=${id}`,
       {
         method: 'GET',
         headers: {

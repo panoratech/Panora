@@ -4,6 +4,9 @@
 # THIS SCRIPT GENERATES THE BOILERPLATE FOR NEW COMMON OBJECTS
 # Usage: ./commonObject.sh "account,other_object" "accounting"
 
+# Warning: if the objectCap does not end with the letter 's'
+[[ ! $ObjectCap =~ s$ ]] && echo "Warning: ObjectCap does not end with the letter 's' - this object maybe doesn't comply with RESTful naming conventions"
+
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <object_types_comma_separated> <vertical_object>"
     exit 1
@@ -312,7 +315,7 @@ private connectionUtils: ConnectionUtils
 @UseGuards(ApiKeyAuthGuard)  @Get()
   async list(
     @Headers('x-connection-token') connection_token: string,
-        @Query() query: FetchObjectsQueryDto,
+        @Query() query: QueryDto,
   ) {
     try{
       const { linkedUserId, remoteSource } =
@@ -333,8 +336,8 @@ private connectionUtils: ConnectionUtils
 
   @ApiOperation({
     operationId: 'get${ObjectCap}',
-    summary: 'Retrieve a ${ObjectCap}',
-    description: 'Retrieve a ${objectType} from any connected ${VerticalCap} software',
+    summary: 'Retrieve ${ObjectCap}',
+    description: 'Retrieve ${objectType} from any connected ${VerticalCap} software',
   })
   @ApiParam({
     name: 'id',
@@ -360,8 +363,8 @@ private connectionUtils: ConnectionUtils
 
   @ApiOperation({
     operationId: 'add${ObjectCap}',
-    summary: 'Create a ${ObjectCap}',
-    description: 'Create a ${objectType} in any supported ${VerticalCap} software',
+    summary: 'Create ${ObjectCap}',
+    description: 'Create ${objectType} in any supported ${VerticalCap} software',
   })
    @ApiHeader({
     name: 'x-connection-token',

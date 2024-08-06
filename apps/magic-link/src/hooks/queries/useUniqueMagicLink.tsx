@@ -11,7 +11,7 @@ const useUniqueMagicLink = (id: string | null) => {
       if (!id) {
         throw new Error('Magic Link ID is not available');
       }
-      const response = await fetch(`${config.API_URL}/magic-links/single?id=${id.trim()}`);
+      const response = await fetch(`${config.API_URL}/magic_links/${id.trim()}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

@@ -17,7 +17,7 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
 import { InterviewService } from './services/interview.service';
@@ -27,16 +27,16 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('bearer')
-@ApiTags('ats/interview')
-@Controller('ats/interview')
+
+@ApiTags('ats/interviews')
+@Controller('ats/interviews')
 export class InterviewController {
   constructor(
     private readonly interviewService: InterviewService,
@@ -61,16 +61,17 @@ export class InterviewController {
   @Get()
   async getInterviews(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.interviewService.getInterviews(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -84,20 +85,22 @@ export class InterviewController {
 
   @ApiOperation({
     operationId: 'retrieveAtsInterview', // Updated operationId
-    summary: 'Retrieve a Interview',
-    description: 'Retrieve a interview from any connected Ats software',
+    summary: 'Retrieve Interviews',
+    description: 'Retrieve Interviews from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the interview you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -113,7 +116,7 @@ export class InterviewController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -121,14 +124,16 @@ export class InterviewController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
 
   @ApiOperation({
     operationId: 'createAtsInterview', // Updated operationId
-    summary: 'Create a Interview',
-    description: 'Create a interview in any supported Ats software',
+    summary: 'Create Interviews',
+    description: 'Create Interviews in any supported Ats software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -141,6 +146,7 @@ export class InterviewController {
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
+    example: false,
   })
   @ApiBody({ type: UnifiedAtsInterviewInput })
   @ApiPostCustomResponse(UnifiedAtsInterviewOutput)
@@ -152,13 +158,14 @@ export class InterviewController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.interviewService.addInterview(
         unifiedInterviewData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -14,6 +14,8 @@ export class JobInterviewStageService {
     id_ats_job_interview_stage: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsJobinterviewstageOutput> {
     try {
@@ -81,6 +83,8 @@ export class JobInterviewStageService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.jobinterviewstage.pull',
@@ -101,6 +105,7 @@ export class JobInterviewStageService {
 
   async getJobInterviewStages(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -138,9 +143,7 @@ export class JobInterviewStageService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (stages.length === limit + 1) {
@@ -154,48 +157,49 @@ export class JobInterviewStageService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedStages: UnifiedAtsJobinterviewstageOutput[] = await Promise.all(
-        stages.map(async (stage) => {
-          // Fetch field mappings for the job interview stage
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: stage.id_ats_job_interview_stage,
+      const unifiedStages: UnifiedAtsJobinterviewstageOutput[] =
+        await Promise.all(
+          stages.map(async (stage) => {
+            // Fetch field mappings for the job interview stage
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: {
+                  ressource_owner_id: stage.id_ats_job_interview_stage,
+                },
               },
-            },
-            include: {
-              attribute: true,
-            },
-          });
+              include: {
+                attribute: true,
+              },
+            });
 
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
+            // Create a map to store unique field mappings
+            const fieldMappingsMap = new Map();
 
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
 
-          // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+            // Convert the map to an array of objects
+            const field_mappings = Array.from(
+              fieldMappingsMap,
+              ([key, value]) => ({
+                [key]: value,
+              }),
+            );
 
-          // Transform to UnifiedAtsJobinterviewstageOutput format
-          return {
-            id: stage.id_ats_job_interview_stage,
-            name: stage.name,
-            stage_order: stage.stage_order,
-            job_id: stage.id_ats_job,
-            field_mappings: field_mappings,
-            remote_id: stage.remote_id,
-            created_at: stage.created_at,
-            modified_at: stage.modified_at,
-          };
-        }),
-      );
+            // Transform to UnifiedAtsJobinterviewstageOutput format
+            return {
+              id: stage.id_ats_job_interview_stage,
+              name: stage.name,
+              stage_order: stage.stage_order,
+              job_id: stage.id_ats_job,
+              field_mappings: field_mappings,
+              remote_id: stage.remote_id,
+              created_at: stage.created_at,
+              modified_at: stage.modified_at,
+            };
+          }),
+        );
 
       let res: UnifiedAtsJobinterviewstageOutput[] = unifiedStages;
 
@@ -217,6 +221,8 @@ export class JobInterviewStageService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.jobinterviewstage.pull',

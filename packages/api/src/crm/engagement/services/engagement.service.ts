@@ -33,6 +33,7 @@ export class EngagementService {
   async addEngagement(
     unifiedEngagementData: UnifiedCrmEngagementInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -106,12 +107,16 @@ export class EngagementService {
         unique_crm_engagement_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'crm.engagement.push', // sync, push or pull
@@ -227,6 +232,8 @@ export class EngagementService {
     id_engagement: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedCrmEngagementOutput> {
     try {
@@ -297,6 +304,8 @@ export class EngagementService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'crm.engagement.pull',
@@ -317,6 +326,7 @@ export class EngagementService {
 
   async getEngagements(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -369,71 +379,75 @@ export class EngagementService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedEngagements: UnifiedCrmEngagementOutput[] = await Promise.all(
-        engagements.map(async (engagement) => {
-          // Fetch field mappings for the ticket
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: engagement.id_crm_engagement,
+      const unifiedEngagements: UnifiedCrmEngagementOutput[] =
+        await Promise.all(
+          engagements.map(async (engagement) => {
+            // Fetch field mappings for the ticket
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: {
+                  ressource_owner_id: engagement.id_crm_engagement,
+                },
               },
-            },
-            include: {
-              attribute: true,
-            },
-          });
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
+              include: {
+                attribute: true,
+              },
+            });
+            // Create a map to store unique field mappings
+            const fieldMappingsMap = new Map();
 
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
 
-          // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+            // Convert the map to an array of objects
+            const field_mappings = Array.from(
+              fieldMappingsMap,
+              ([key, value]) => ({ [key]: value }),
+            );
 
-          // Transform to UnifiedCrmEngagementOutput format
-          return {
-            id: engagement.id_crm_engagement,
-            content: engagement.content,
-            direction: engagement.direction,
-            subject: engagement.subject,
-            start_at: engagement.start_at,
-            end_time: engagement.end_time,
-            type: engagement.type,
-            company_id: engagement.id_crm_company,
-            user_id: engagement.id_crm_user,
-            field_mappings: field_mappings,
-            remote_id: engagement.remote_id,
-            created_at: engagement.created_at,
-            modified_at: engagement.modified_at,
-            contacts: engagement.contacts,
-          };
-        }),
-      );
+            // Transform to UnifiedCrmEngagementOutput format
+            return {
+              id: engagement.id_crm_engagement,
+              content: engagement.content,
+              direction: engagement.direction,
+              subject: engagement.subject,
+              start_at: engagement.start_at,
+              end_time: engagement.end_time,
+              type: engagement.type,
+              company_id: engagement.id_crm_company,
+              user_id: engagement.id_crm_user,
+              field_mappings: field_mappings,
+              remote_id: engagement.remote_id,
+              created_at: engagement.created_at,
+              modified_at: engagement.modified_at,
+              contacts: engagement.contacts,
+            };
+          }),
+        );
 
       let res: UnifiedCrmEngagementOutput[] = unifiedEngagements;
 
       if (remote_data) {
-        const remote_array_data: UnifiedCrmEngagementOutput[] = await Promise.all(
-          res.map(async (engagement) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: engagement.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...engagement, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedCrmEngagementOutput[] =
+          await Promise.all(
+            res.map(async (engagement) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: engagement.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...engagement, remote_data };
+            }),
+          );
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.engagement.pulled',

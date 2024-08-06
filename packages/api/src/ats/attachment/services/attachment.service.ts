@@ -36,6 +36,7 @@ export class AttachmentService {
   async addAttachment(
     unifiedAttachmentData: UnifiedAtsAttachmentInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -117,12 +118,16 @@ export class AttachmentService {
         unique_ats_attachment_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'ats.attachment.created',
@@ -201,6 +206,8 @@ export class AttachmentService {
     id_ats_attachment: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsAttachmentOutput> {
     try {
@@ -257,6 +264,8 @@ export class AttachmentService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'ats.attachment.pull',
@@ -278,6 +287,7 @@ export class AttachmentService {
 
   async getAttachments(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -309,9 +319,7 @@ export class AttachmentService {
         take: limit + 1,
         cursor: cursor ? { id_ats_candidate_attachment: cursor } : undefined,
         orderBy: { created_at: 'asc' },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (attachments.length === limit + 1) {
@@ -325,61 +333,65 @@ export class AttachmentService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedAttachments: UnifiedAtsAttachmentOutput[] = await Promise.all(
-        attachments.map(async (attachment) => {
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: attachment.id_ats_candidate_attachment,
+      const unifiedAttachments: UnifiedAtsAttachmentOutput[] =
+        await Promise.all(
+          attachments.map(async (attachment) => {
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: {
+                  ressource_owner_id: attachment.id_ats_candidate_attachment,
+                },
               },
-            },
-            include: { attribute: true },
-          });
+              include: { attribute: true },
+            });
 
-          const fieldMappingsMap = new Map();
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
+            const fieldMappingsMap = new Map();
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
 
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+            const field_mappings = Array.from(
+              fieldMappingsMap,
+              ([key, value]) => ({ [key]: value }),
+            );
 
-          return {
-            id: attachment.id_ats_candidate_attachment,
-            file_url: attachment.file_url,
-            file_name: attachment.file_name,
-            attachment_type: attachment.file_type,
-            remote_created_at: String(attachment.remote_created_at),
-            remote_modified_at: String(attachment.remote_modified_at),
-            candidate_id: attachment.id_ats_candidate,
-            field_mappings: field_mappings,
-            remote_id: attachment.remote_id,
-            created_at: attachment.created_at,
-            modified_at: attachment.modified_at,
-          };
-        }),
-      );
+            return {
+              id: attachment.id_ats_candidate_attachment,
+              file_url: attachment.file_url,
+              file_name: attachment.file_name,
+              attachment_type: attachment.file_type,
+              remote_created_at: String(attachment.remote_created_at),
+              remote_modified_at: String(attachment.remote_modified_at),
+              candidate_id: attachment.id_ats_candidate,
+              field_mappings: field_mappings,
+              remote_id: attachment.remote_id,
+              created_at: attachment.created_at,
+              modified_at: attachment.modified_at,
+            };
+          }),
+        );
 
       let res: UnifiedAtsAttachmentOutput[] = unifiedAttachments;
 
       if (remote_data) {
-        const remote_array_data: UnifiedAtsAttachmentOutput[] = await Promise.all(
-          res.map(async (attachment) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: { ressource_owner_id: attachment.id },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...attachment, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedAtsAttachmentOutput[] =
+          await Promise.all(
+            res.map(async (attachment) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: { ressource_owner_id: attachment.id },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...attachment, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.attachment.pull',
