@@ -26,7 +26,7 @@ const formSchema = z.object({
   path: ["confirmPassword"],
 });
 
-const ResetPasswordForm = ({ token }: {token: string}) => {
+const ResetPasswordForm = ({ token, email }: {token: string; email: string}) => {
   const router = useRouter();
   const { func } = useResetPassword();
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +43,7 @@ const ResetPasswordForm = ({ token }: {token: string}) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       toast.promise( 
-        func({ token, newPassword: values.newPassword }),
+        func({ email, reset_token: token, new_password: values.newPassword }),
         {
           loading: 'Resetting password...',
           success: 'Password reset successful. Please log in with your new password.',

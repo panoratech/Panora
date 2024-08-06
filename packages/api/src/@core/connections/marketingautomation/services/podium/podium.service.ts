@@ -155,7 +155,7 @@ export class PodiumConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'podium',
             vertical: 'marketingautomation',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['marketingautomation']['pdoum']
               .urls.apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

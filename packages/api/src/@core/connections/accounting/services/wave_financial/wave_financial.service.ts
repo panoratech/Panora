@@ -161,7 +161,7 @@ export class WaveFinancialConnectionService extends AbstractBaseConnectionServic
             connection_token: connection_token,
             provider_slug: 'wave_financial',
             vertical: 'accounting',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['accounting']['wave_financial']
               .urls.apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

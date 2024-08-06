@@ -24,7 +24,7 @@ export class CustomerService {
           id_ecom_customer: id_ecommerce_customer,
         },
         include: {
-          ecom_customer_addresses: true,
+          ecom_addresses: true,
         },
       });
 
@@ -65,7 +65,7 @@ export class CustomerService {
         remote_id: customer.remote_id,
         created_at: customer.created_at.toISOString(),
         modified_at: customer.modified_at.toISOString(),
-        addresses: customer.ecom_customer_addresses,
+        addresses: customer.ecom_addresses,
       };
 
       let res: UnifiedEcommerceCustomerOutput = UnifiedEcommerceCustomer;
@@ -147,7 +147,7 @@ export class CustomerService {
           id_connection: connection_id,
         },
         include: {
-          ecom_customer_addresses: true,
+          ecom_addresses: true,
         },
       });
 
@@ -197,7 +197,7 @@ export class CustomerService {
             remote_id: customer.remote_id,
             created_at: customer.created_at.toISOString(),
             modified_at: customer.modified_at.toISOString(),
-            addresses: customer.ecom_customer_addresses,
+            addresses: customer.ecom_addresses,
           };
         }),
       );

@@ -188,7 +188,7 @@ export class JiraConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'jira',
             vertical: 'ticketing',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: BASE_API_URL,
             access_token: access_token,
             refresh_token: refresh_token,

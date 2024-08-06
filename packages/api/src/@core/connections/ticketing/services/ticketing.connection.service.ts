@@ -44,7 +44,7 @@ export class TicketingConnectionsService implements IConnectionCategory {
   async handleCallBack(
     providerName: string,
     callbackOpts: CallbackParams,
-    type_strategy: 'oauth' | 'apikey' | 'basic',
+    type_strategy: 'oauth2' | 'apikey' | 'basic',
   ) {
     try {
       const serviceName = providerName.toLowerCase();

@@ -162,7 +162,7 @@ export class WrikeConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'wrike',
             vertical: 'ticketing',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             account_url: BASE_API_URL,

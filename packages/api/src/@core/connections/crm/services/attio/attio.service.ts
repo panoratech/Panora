@@ -152,7 +152,7 @@ export class AttioConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'attio',
             vertical: 'crm',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['crm']['attio'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

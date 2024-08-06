@@ -135,7 +135,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           properties: ["password"]
         }
       },
-      'capsule': {
+      'capsule': { 
         urls: {
           docsUrl: 'https://developer.capsulecrm.com/',
           authBaseUrl: 'https://api.capsulecrm.com/oauth/authorise',
@@ -433,6 +433,9 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           docsUrl: 'https://developer.atlassian.com/cloud/jira/platform/rest/v3',
           apiUrl: (cloudId) => `https://api.atlassian.com/ex/jira/${cloudId}/rest/api`, 
           authBaseUrl: 'https://auth.atlassian.com/authorize', 
+        },
+        options: {
+          local_redirect_uri_in_https: true
         },
         logoPath: 'https://logowik.com/content/uploads/images/jira3124.jpg',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
@@ -1227,7 +1230,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://images.ctfassets.net/p03bi75xct27/2tVvkghDdMJxzkMca2QLnr/31b520c5e07db0103948af171fb54e99/ashby_logo_square.jpeg?q=80&fm=webp&w=2048',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ["username"]
@@ -2733,6 +2736,9 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        options: {
+          local_redirect_uri_in_https: true
+        },
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2793,7 +2799,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://cdn.eastsideco.com/media/v3/services/ecommerce-services/shopify-logo.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },

@@ -161,7 +161,7 @@ export class GorgiasConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'gorgias',
             vertical: 'ticketing',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),

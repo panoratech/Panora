@@ -155,7 +155,7 @@ export class HubspotConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'hubspot',
             vertical: 'crm',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['crm']['hubspot'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
@@ -189,25 +189,15 @@ export class HubspotConnectionService extends AbstractBaseConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
-      /*const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-        //redirect_uri: REDIRECT_URI,
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });*/
-
       const params = {
         grant_type: 'refresh_token',
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
-        //redirect_uri: REDIRECT_URI,
         refresh_token: this.cryptoService.decrypt(refreshToken),
       };
 

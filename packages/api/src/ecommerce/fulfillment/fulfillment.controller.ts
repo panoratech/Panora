@@ -18,14 +18,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FulfillmentService } from './services/fulfillment.service';
-import { UnifiedEcommerceFulfilmentOutput } from './types/model.unified';
+import { UnifiedEcommerceFulfillmentOutput } from './types/model.unified';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('ecommerce/fulfillment')
-@Controller('ecommerce/fulfillment')
+@ApiTags('ecommerce/fulfillments')
+@Controller('ecommerce/fulfillments')
 export class FulfillmentController {
   constructor(
     private readonly fulfillmentService: FulfillmentService,
@@ -36,7 +36,7 @@ export class FulfillmentController {
   }
 
   @ApiOperation({
-    operationId: 'getFulfillments',
+    operationId: 'listEcommerceFulfillments',
     summary: 'List a batch of Fulfillments',
   })
   @ApiHeader({
@@ -45,7 +45,7 @@ export class FulfillmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiPaginatedResponse(UnifiedEcommerceFulfilmentOutput)
+  @ApiPaginatedResponse(UnifiedEcommerceFulfillmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getFulfillments(
@@ -73,7 +73,7 @@ export class FulfillmentController {
   }
 
   @ApiOperation({
-    operationId: 'getFulfillment',
+    operationId: 'retrieveEcommerceFulfillment',
     summary: 'Retrieve a Fulfillment',
     description: 'Retrieve a fulfillment from any connected Ats software',
   })
@@ -95,7 +95,7 @@ export class FulfillmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiGetCustomResponse(UnifiedEcommerceFulfilmentOutput)
+  @ApiGetCustomResponse(UnifiedEcommerceFulfillmentOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

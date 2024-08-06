@@ -4,8 +4,8 @@ import {
   ShopifyLineItem,
 } from './types';
 import {
-  UnifiedEcommerceFulfilmentInput,
-  UnifiedEcommerceFulfilmentOutput,
+  UnifiedEcommerceFulfillmentInput,
+  UnifiedEcommerceFulfillmentOutput,
 } from '@ecommerce/fulfillment/types/model.unified';
 import { IFulfillmentMapper } from '@ecommerce/fulfillment/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
@@ -29,7 +29,7 @@ export class ShopifyFulfillmentMapper implements IFulfillmentMapper {
   }
 
   async desunify(
-    source: UnifiedEcommerceFulfilmentInput,
+    source: UnifiedEcommerceFulfillmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -45,7 +45,7 @@ export class ShopifyFulfillmentMapper implements IFulfillmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEcommerceFulfilmentOutput | UnifiedEcommerceFulfilmentOutput[]> {
+  ): Promise<UnifiedEcommerceFulfillmentOutput | UnifiedEcommerceFulfillmentOutput[]> {
     if (!Array.isArray(source)) {
       return await this.mapSingleFulfillmentToUnified(
         source,
@@ -118,7 +118,7 @@ export class ShopifyFulfillmentMapper implements IFulfillmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEcommerceFulfilmentOutput> {
+  ): Promise<UnifiedEcommerceFulfillmentOutput> {
     const opts: any = {};
     if (fulfillment.order_id) {
       const order_id = await this.utils.getOrderIdFromRemote(

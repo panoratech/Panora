@@ -2171,12 +2171,6 @@ paths:
             application/json:
               schema:
                 type: object
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
       tags: &ref_21
         - passthrough
   /passthrough/{retryId}:
@@ -8838,9 +8832,9 @@ paths:
                 $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
       tags: *ref_85
       x-speakeasy-group: filestorage.users
-  /ecommerce/product:
+  /ecommerce/products:
     get:
-      operationId: getProducts
+      operationId: listEcommerceProducts
       summary: List a batch of Products
       parameters:
         - name: x-connection-token
@@ -8884,8 +8878,16 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedEcommerceProductOutput'
       tags: &ref_86
-        - ecommerce/product
-      x-speakeasy-group: ecommerce.product
+        - ecommerce/products
+      x-speakeasy-group: ecommerce.products
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: cursor
+            in: parameters
+            type: cursor
+        outputs:
+          nextCursor: $.next_cursor
     post:
       operationId: createEcommerceProduct
       summary: Create Products
@@ -8918,10 +8920,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceProductOutput'
       tags: *ref_86
-      x-speakeasy-group: ecommerce.product
-  /ecommerce/product/{id}:
+      x-speakeasy-group: ecommerce.products
+  /ecommerce/products/{id}:
     get:
-      operationId: getProduct
+      operationId: retrieveEcommerceProduct
       summary: Retrieve a Product
       description: Retrieve a product from any connected Ats software
       parameters:
@@ -8951,10 +8953,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceProductOutput'
       tags: *ref_86
-      x-speakeasy-group: ecommerce.product
-  /ecommerce/order:
+      x-speakeasy-group: ecommerce.products
+  /ecommerce/orders:
     get:
-      operationId: getOrders
+      operationId: listEcommerceOrders
       summary: List a batch of Orders
       parameters:
         - name: x-connection-token
@@ -8998,11 +9000,52 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedEcommerceOrderOutput'
       tags: &ref_87
-        - ecommerce/order
-      x-speakeasy-group: ecommerce.order
-  /ecommerce/order/{id}:
+        - ecommerce/orders
+      x-speakeasy-group: ecommerce.orders
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: cursor
+            in: parameters
+            type: cursor
+        outputs:
+          nextCursor: $.next_cursor
+    post:
+      operationId: createEcommerceOrder
+      summary: Create Orders
+      description: Create Orders in any supported Ecommerce software
+      parameters:
+        - name: x-connection-token
+          required: true
+          in: header
+          description: The connection token
+          schema:
+            type: string
+        - name: remote_data
+          required: false
+          in: query
+          example: false
+          description: Set to true to include data from the original Accounting software.
+          schema:
+            type: boolean
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnifiedEcommerceOrderInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnifiedEcommerceOrderOutput'
+      tags: *ref_87
+      x-speakeasy-group: ecommerce.orders
+  /ecommerce/orders/{id}:
     get:
-      operationId: getOrder
+      operationId: retrieveEcommerceOrder
       summary: Retrieve a Order
       description: Retrieve a order from any connected Ats software
       parameters:
@@ -9032,10 +9075,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceOrderOutput'
       tags: *ref_87
-      x-speakeasy-group: ecommerce.order
-  /ecommerce/customer:
+      x-speakeasy-group: ecommerce.orders
+  /ecommerce/customers:
     get:
-      operationId: getCustomers
+      operationId: listEcommerceCustomers
       summary: List a batch of Customers
       parameters:
         - name: x-connection-token
@@ -9079,11 +9122,19 @@ paths:
                         items:
                           $ref: '#/components/schemas/UnifiedEcommerceCustomerOutput'
       tags: &ref_88
-        - ecommerce/customer
-      x-speakeasy-group: ecommerce.customer
-  /ecommerce/customer/{id}:
+        - ecommerce/customers
+      x-speakeasy-group: ecommerce.customers
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: cursor
+            in: parameters
+            type: cursor
+        outputs:
+          nextCursor: $.next_cursor
+  /ecommerce/customers/{id}:
     get:
-      operationId: getCustomer
+      operationId: retrieveEcommerceCustomer
       summary: Retrieve a Customer
       description: Retrieve a customer from any connected Ats software
       parameters:
@@ -9113,10 +9164,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceCustomerOutput'
       tags: *ref_88
-      x-speakeasy-group: ecommerce.customer
-  /ecommerce/fulfillment:
+      x-speakeasy-group: ecommerce.customers
+  /ecommerce/fulfillments:
     get:
-      operationId: getFulfillments
+      operationId: listEcommerceFulfillments
       summary: List a batch of Fulfillments
       parameters:
         - name: x-connection-token
@@ -9159,13 +9210,21 @@ paths:
                         type: array
                         items:
                           $ref: >-
-                            #/components/schemas/UnifiedEcommerceFulfilmentOutput
+                            #/components/schemas/UnifiedEcommerceFulfillmentOutput
       tags: &ref_89
-        - ecommerce/fulfillment
-      x-speakeasy-group: ecommerce.fulfillment
-  /ecommerce/fulfillment/{id}:
+        - ecommerce/fulfillments
+      x-speakeasy-group: ecommerce.fulfillments
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: cursor
+            in: parameters
+            type: cursor
+        outputs:
+          nextCursor: $.next_cursor
+  /ecommerce/fulfillments/{id}:
     get:
-      operationId: getFulfillment
+      operationId: retrieveEcommerceFulfillment
       summary: Retrieve a Fulfillment
       description: Retrieve a fulfillment from any connected Ats software
       parameters:
@@ -9193,9 +9252,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnifiedEcommerceFulfilmentOutput'
+                $ref: '#/components/schemas/UnifiedEcommerceFulfillmentOutput'
       tags: *ref_89
-      x-speakeasy-group: ecommerce.fulfillment
+      x-speakeasy-group: ecommerce.fulfillments
   /ticketing/attachments:
     get:
       operationId: listTicketingAttachments
@@ -14448,6 +14507,49 @@ components:
         modified_at:
           type: string
           description: The modified date of the object
+    UnifiedEcommerceOrderInput:
+      type: object
+      properties:
+        order_status:
+          type: string
+          description: The status of the order
+        order_number:
+          type: string
+          description: The number of the order
+        payment_status:
+          type: string
+          description: The payment status of the order
+        currency:
+          type: string
+          description: >-
+            The currency of the order. Authorized value must be of type
+            CurrencyCode (ISO 4217)
+        total_price:
+          type: number
+          description: The total price of the order
+        total_discount:
+          type: number
+          description: The total discount on the order
+        total_shipping:
+          type: number
+          description: The total shipping cost of the order
+        total_tax:
+          type: number
+          description: The total tax on the order
+        fulfillment_status:
+          type: string
+          description: The fulfillment status of the order
+        customer_id:
+          type: string
+          description: The UUID of the customer associated with the order
+        items:
+          type: object
+          description: The items in the order
+        field_mappings:
+          type: object
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedEcommerceCustomerOutput:
       type: object
       properties:
@@ -14488,7 +14590,7 @@ components:
         modified_at:
           type: string
           description: The modified date of the object
-    UnifiedEcommerceFulfilmentOutput:
+    UnifiedEcommerceFulfillmentOutput:
       type: object
       properties:
         carrier:

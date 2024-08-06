@@ -157,7 +157,7 @@ export class GitlabConnectionService extends AbstractBaseConnectionService {
             vertical: 'ticketing',
             account_url: CONNECTORS_METADATA['ticketing']['gitlab'].urls
               .apiUrl as string,
-            token_type: 'oauth',
+            token_type: 'oauth2',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

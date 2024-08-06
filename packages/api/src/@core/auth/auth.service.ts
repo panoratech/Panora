@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
-    /*const { email, new_password, reset_token } = resetPasswordDto;
+    const { email, new_password, reset_token } = resetPasswordDto;
 
     // verify there is a user with corresponding email and non-expired reset token
     const checkResetRequestIsValid = await this.prisma.users.findFirst({
@@ -45,14 +45,13 @@ export class AuthService {
 
     // Verify the reset token
     const isValidToken = await this.verifyResetToken(
-      checkResetRequestIsValid,
-      reset_token, 
+      checkResetRequestIsValid.reset_token,
+      reset_token,
     );
 
     if (!isValidToken) {
       throw new BadRequestException('Invalid reset token');
     }
-
     // Hash the new password
     const hashedPassword = await bcrypt.hash(new_password, 10);
 
@@ -61,7 +60,7 @@ export class AuthService {
       where: { email },
       data: { password_hash: hashedPassword },
     });
-    console.log(updatedPassword);*/
+    console.log(updatedPassword);
     return { message: 'Password reset successfully' };
   }
 
@@ -69,12 +68,15 @@ export class AuthService {
     database_token: string,
     request_token: string,
   ): Promise<boolean> {
+    console.log('a is ' + request_token);
+    console.log('b is ' + database_token);
+
     const isValidToken = await bcrypt.compare(request_token, database_token);
     return isValidToken;
   }
 
   async requestPasswordReset(requestPasswordResetDto: RequestPasswordResetDto) {
-    /*const { email } = requestPasswordResetDto;
+    const { email } = requestPasswordResetDto;
 
     if (!email) {
       throw new BadRequestException('Incorrect API request');
@@ -101,12 +103,12 @@ export class AuthService {
     });
 
     // Send email with resetToken (implementation depends on your email service)
-    await this.sendResetEmail(email, resetToken);*/
+    await this.sendResetEmail(email, resetToken);
     return { message: 'Password reset link sent' };
   }
 
   private async sendResetEmail(email: string, resetToken: string) {
-    const resetLink = `${process.env.PANORA_BASE_API_URL}/reset-password?token=${resetToken}&email=${email}`;
+    const resetLink = `${process.env.WEBAPP_URL}/b2c/login/reset-password?token=${resetToken}&email=${email}`;
 
     // Create a transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({

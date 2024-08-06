@@ -160,7 +160,7 @@ export class GetresponseConnectionService extends AbstractBaseConnectionService 
             connection_token: connection_token,
             provider_slug: 'getresponse',
             vertical: 'marketingautomation',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['marketingautomation'][
               'getresponse'
             ].urls.apiUrl as string,

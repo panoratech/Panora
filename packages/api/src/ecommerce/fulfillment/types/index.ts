@@ -1,7 +1,7 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedEcommerceFulfilmentInput,
-  UnifiedEcommerceFulfilmentOutput,
+  UnifiedEcommerceFulfillmentInput,
+  UnifiedEcommerceFulfillmentOutput,
 } from './model.unified';
 import { OriginalFulfillmentOutput } from '@@core/utils/types/original/original.ecommerce';
 import { ApiResponse } from '@@core/utils/types';
@@ -13,7 +13,7 @@ export interface IFulfillmentService extends IBaseObjectService {
 
 export interface IFulfillmentMapper {
   desunify(
-    source: UnifiedEcommerceFulfilmentInput,
+    source: UnifiedEcommerceFulfillmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -28,6 +28,6 @@ export interface IFulfillmentMapper {
       remote_id: string;
     }[],
   ): Promise<
-    UnifiedEcommerceFulfilmentOutput | UnifiedEcommerceFulfilmentOutput[]
+    UnifiedEcommerceFulfillmentOutput | UnifiedEcommerceFulfillmentOutput[]
   >;
 }

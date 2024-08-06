@@ -161,7 +161,7 @@ export class RipplingConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'rippling',
             vertical: 'hris',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['hris']['rippling'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

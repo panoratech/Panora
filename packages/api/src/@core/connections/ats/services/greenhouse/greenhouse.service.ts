@@ -99,11 +99,7 @@ export class GreenhouseConnectionService extends AbstractBaseConnectionService {
         },
       });
 
-      const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getTunnelIngress()
-          : this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -157,7 +153,7 @@ export class GreenhouseConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'greenhouse',
             vertical: 'ats',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['ats']['greenhouse'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

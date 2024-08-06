@@ -207,7 +207,7 @@ export class ZohoConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'zoho',
             vertical: 'crm',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: data.refresh_token
               ? this.cryptoService.encrypt(data.refresh_token)

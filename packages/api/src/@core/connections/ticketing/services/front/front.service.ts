@@ -157,7 +157,7 @@ export class FrontConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'front',
             vertical: 'ticketing',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['ticketing']['front'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

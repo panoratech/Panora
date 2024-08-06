@@ -106,9 +106,7 @@ export class BamboohrConnectionService extends AbstractBaseConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getTunnelIngress()
-          : this.env.getPanoraBaseUrl()
+        this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
@@ -184,7 +182,7 @@ export class BamboohrConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'bamboohr',
             vertical: 'hris',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: `https://api.bamboohr.com/api/gateway.php/{company}`,
             access_token: this.cryptoService.encrypt(data_.key),
             status: 'valid',

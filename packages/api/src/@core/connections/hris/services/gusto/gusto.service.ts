@@ -153,7 +153,7 @@ export class GustoConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'gusto',
             vertical: 'hris',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['hris']['gusto'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
@@ -186,9 +186,7 @@ export class GustoConnectionService extends AbstractBaseConnectionService {
     try {
       const { connectionId, refreshToken, projectId } = opts;
       const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getTunnelIngress()
-          : this.env.getPanoraBaseUrl()
+        this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(

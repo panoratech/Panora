@@ -158,7 +158,7 @@ export class FreshbooksConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'freshbooks',
             vertical: 'accounting',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['accounting']['freshbooks'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

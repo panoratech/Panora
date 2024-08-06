@@ -155,7 +155,7 @@ export class DropboxConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'dropbox',
             vertical: 'filestorage',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['filestorage']['dropbox'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
@@ -187,11 +187,7 @@ export class DropboxConnectionService extends AbstractBaseConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getTunnelIngress()
-          : this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,

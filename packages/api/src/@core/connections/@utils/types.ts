@@ -7,7 +7,7 @@ import { PassthroughResponse } from '@@core/passthrough/types';
 import { ApiProperty } from '@nestjs/swagger';
 import { connections as Connection2 } from '@prisma/client';
 
-type OAuthCallbackParams = {
+export type OAuthCallbackParams = {
   projectId: string;
   linkedUserId: string;
   code: string;
@@ -56,7 +56,7 @@ export interface IConnectionCategory {
   handleCallBack(
     providerName: string,
     callbackOpts: CallbackParams,
-    type_strategy: 'oauth' | 'apikey' | 'basic',
+    type_strategy: 'oauth2' | 'apikey' | 'basic',
   ): Promise<void>;
 
   handleTokensRefresh(

@@ -11,7 +11,7 @@ interface AuthParams {
   returnUrl: string;
   apiUrl: string;
   vertical: string;
-  rediectUriIngress?: {
+  redirectUriIngress?: {
     status: boolean;
     value: string | null;
   };
@@ -44,19 +44,23 @@ function generateCodes() {
 
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
-export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, additionalParams, rediectUriIngress }: AuthParams) => {
-  const encodedRedirectUrl = encodeURIComponent(`${rediectUriIngress && rediectUriIngress.status === true ? rediectUriIngress.value : apiUrl}/connections/oauth/callback`); 
+export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, additionalParams, redirectUriIngress }: AuthParams) => {
+  const config = CONNECTORS_METADATA[vertical.toLowerCase()][providerName];
+  if (!config) {
+    throw new Error(`Unsupported provider: ${providerName}`);
+  }
+  let baseRedirectURL = apiUrl;
+  // We check if https is needed in local if yes we take the ingress setup in .env   and passed through redirectUriIngress
+  if(config.options && config.options.local_redirect_uri_in_https == true && redirectUriIngress && redirectUriIngress.status === true){
+    baseRedirectURL = redirectUriIngress.value;
+  }
+  const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`); 
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
   // const vertical = findConnectorCategory(providerName);
   if (vertical == null) { 
     throw new ReferenceError('vertical is null');
-  }
-
-  const config = CONNECTORS_METADATA[vertical.toLowerCase()][providerName];
-  if (!config) {
-    throw new Error(`Unsupported provider: ${providerName}`);
   }
   const authStrategy = config.authStrategy!.strategy;
 

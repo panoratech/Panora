@@ -20,27 +20,25 @@ const useCreateApiKeyConnection = () => {
     const createApiKeyConnection = async (apiKeyConnectionData : IGConnectionDto) => {
         const response = await fetch(
             `${config.API_URL}/connections/basicorapikey/callback?state=${encodeURIComponent(JSON.stringify(apiKeyConnectionData.query))}`, {
-            method: 'POST',
+            method: 'POST', 
             body: JSON.stringify(apiKeyConnectionData.data),
-            headers: {
-            'Content-Type': 'application/json',
+            headers: { 
+              'Content-Type': 'application/json',
             },
         });
          
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Unknown error occurred");
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Unknown error occurred");
         }
         
-        return response.json();
+        return response;
     };
         
     return useMutation({
             mutationFn: createApiKeyConnection,
-
             onSuccess: () => {
             }
-            
     });      
 };
 

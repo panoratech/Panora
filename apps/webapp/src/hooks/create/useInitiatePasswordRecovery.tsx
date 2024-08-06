@@ -6,11 +6,11 @@ const useInitiatePasswordRecovery = () => {
     const call = async (data: {
         email: string
     }) => {
-        const response = await fetch(`${config.API_URL}/auth/forgot-password`, {
+        const response = await fetch(`${config.API_URL}/auth/password_reset_request`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json', 
             },
         });
         

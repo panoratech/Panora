@@ -31,8 +31,8 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('ecommerce/order')
-@Controller('ecommerce/order')
+@ApiTags('ecommerce/orders')
+@Controller('ecommerce/orders')
 export class OrderController {
   constructor(
     private readonly orderService: OrderService,
@@ -43,7 +43,7 @@ export class OrderController {
   }
 
   @ApiOperation({
-    operationId: 'getOrders',
+    operationId: 'listEcommerceOrders',
     summary: 'List a batch of Orders',
   })
   @ApiHeader({
@@ -80,7 +80,7 @@ export class OrderController {
   }
 
   @ApiOperation({
-    operationId: 'getOrder',
+    operationId: 'retrieveEcommerceOrder',
     summary: 'Retrieve a Order',
     description: 'Retrieve a order from any connected Ats software',
   })

@@ -149,7 +149,7 @@ export class BoxConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'box',
             vertical: 'filestorage',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['filestorage']['box'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

@@ -24,8 +24,8 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('ecommerce/customer')
-@Controller('ecommerce/customer')
+@ApiTags('ecommerce/customers')
+@Controller('ecommerce/customers')
 export class CustomerController {
   constructor(
     private readonly customerService: CustomerService,
@@ -36,7 +36,7 @@ export class CustomerController {
   }
 
   @ApiOperation({
-    operationId: 'getCustomers',
+    operationId: 'listEcommerceCustomers',
     summary: 'List a batch of Customers',
   })
   @ApiHeader({
@@ -73,7 +73,7 @@ export class CustomerController {
   }
 
   @ApiOperation({
-    operationId: 'getCustomer',
+    operationId: 'retrieveEcommerceCustomer',
     summary: 'Retrieve a Customer',
     description: 'Retrieve a customer from any connected Ats software',
   })

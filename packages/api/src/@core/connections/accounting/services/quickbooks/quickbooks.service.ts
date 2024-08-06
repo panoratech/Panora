@@ -156,7 +156,7 @@ export class QuickbooksConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'quickbooks',
             vertical: 'accounting',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['accounting']['quickbooks'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

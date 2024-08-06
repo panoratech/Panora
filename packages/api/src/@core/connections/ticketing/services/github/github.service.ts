@@ -146,7 +146,7 @@ export class GithubConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'github',
             vertical: 'ticketing',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             access_token: this.cryptoService.encrypt(
               data.match(/access_token=([^&]*)/)[1],
             ),

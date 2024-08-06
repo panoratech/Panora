@@ -1,6 +1,11 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   Body,
@@ -25,18 +30,9 @@ import {
   UnifiedEcommerceProductInput,
   UnifiedEcommerceProductOutput,
 } from './types/model.unified';
-import {
-  ApiGetCustomResponse,
-  ApiPaginatedResponse,
-  ApiPostCustomResponse,
-} from '@@core/utils/dtos/openapi.respone.dto';
-import {
-  UnifiedFilestorageFileInput,
-  UnifiedFilestorageFileOutput,
-} from '@filestorage/file/types/model.unified';
 
-@ApiTags('ecommerce/product')
-@Controller('ecommerce/product')
+@ApiTags('ecommerce/products')
+@Controller('ecommerce/products')
 export class ProductController {
   constructor(
     private readonly productService: ProductService,
@@ -47,7 +43,7 @@ export class ProductController {
   }
 
   @ApiOperation({
-    operationId: 'getProducts',
+    operationId: 'listEcommerceProducts',
     summary: 'List a batch of Products',
   })
   @ApiHeader({
@@ -84,7 +80,7 @@ export class ProductController {
   }
 
   @ApiOperation({
-    operationId: 'getProduct',
+    operationId: 'retrieveEcommerceProduct',
     summary: 'Retrieve a Product',
     description: 'Retrieve a product from any connected Ats software',
   })

@@ -8,7 +8,7 @@ import {
   IsObject,
 } from 'class-validator';
 
-export class UnifiedEcommerceFulfilmentInput {
+export class UnifiedEcommerceFulfillmentInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The carrier of the fulfilment',
@@ -60,7 +60,7 @@ export class UnifiedEcommerceFulfilmentInput {
   field_mappings?: Record<string, any>;
 }
 
-export class UnifiedEcommerceFulfilmentOutput extends UnifiedEcommerceFulfilmentInput {
+export class UnifiedEcommerceFulfillmentOutput extends UnifiedEcommerceFulfillmentInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the fulfilment',

@@ -153,7 +153,7 @@ export class CapsuleConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'capsule',
             vertical: 'crm',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['crm']['capsule'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

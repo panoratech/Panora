@@ -153,7 +153,7 @@ export class ZendeskConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'zendesk',
             vertical: 'crm',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['crm']['zendesk'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

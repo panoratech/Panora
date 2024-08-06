@@ -25,7 +25,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CONNECTORS_METADATA } from '@panora/shared';
+import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { Response } from 'express';
 import { Connection } from './@utils/types';
 
@@ -90,16 +90,14 @@ export class ConnectionsController {
       await service.handleCallBack(
         providerName,
         { linkedUserId, projectId, code, otherParams },
-        'oauth',
+        'oauth2',
       );
-
       if (providerName == 'shopify') {
         // we must redirect using shop and host to get a valid session on shopify server
         service.redirectUponConnection(res, otherParams);
       } else {
         res.redirect(`/`);
       }
-
       if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
@@ -145,10 +143,13 @@ export class ConnectionsController {
   @ApiExcludeEndpoint()
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiBody({ type: BodyDataType })
-  @UseGuards(JwtAuthGuard)
   @ApiResponse({ status: 201 })
   @Post('basicorapikey/callback')
-  async handleApiKeyCallback(@Query() query: any, @Body() body: BodyDataType) {
+  async handleApiKeyCallback(
+    @Res() res: Response,
+    @Query() query: any,
+    @Body() body: BodyDataType,
+  ) {
     try {
       const { state } = query;
       if (!state) {
@@ -159,10 +160,10 @@ export class ConnectionsController {
       }
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
       const { projectId, vertical, linkedUserId, providerName } = stateData;
-      const { apikey, ...body_data } = body;
 
+      const { apikey, ...body_data } = body;
       const strategy =
-        CONNECTORS_METADATA[providerName.toLowerCase()][vertical.toLowerCase()]
+        CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .authStrategy.strategy;
 
       const body_ =
@@ -181,19 +182,11 @@ export class ConnectionsController {
       const strategy_type =
         strategy == AuthStrategy.api_key ? 'apikey' : 'basic';
 
-      await this.categoryConnectionRegistry
-        .getService(vertical.toLowerCase())
-        .handleCallBack(
-          providerName,
-          {
-            projectId,
-            linkedUserId,
-            apikey,
-            body_data,
-          },
-          'apikey',
-        );
-      if (
+      const service = this.categoryConnectionRegistry.getService(
+        vertical.toLowerCase(),
+      );
+      await service.handleCallBack(providerName, body_, strategy_type);
+      /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
       ) {
@@ -204,7 +197,8 @@ export class ConnectionsController {
           providerName,
           linkedUserId,
         );
-      }
+      }*/
+      res.redirect(`/`);
     } catch (error) {
       throw error;
     }

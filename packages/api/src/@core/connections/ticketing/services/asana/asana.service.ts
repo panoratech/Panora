@@ -101,9 +101,7 @@ export class AsanaConnectionService extends AbstractBaseConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getTunnelIngress()
-          : this.env.getPanoraBaseUrl()
+        this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
@@ -157,7 +155,7 @@ export class AsanaConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'asana',
             vertical: 'ticketing',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['ticketing']['asana'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

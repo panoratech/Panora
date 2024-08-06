@@ -20,8 +20,8 @@ import {
 import { FulfillmentOrdersService } from './services/fulfillmentorders.service';
 import { UnifiedEcommerceFulfillmentOrdersOutput } from './types/model.unified';
 
-@ApiTags('ats/fulfillmentorders')
-@Controller('ats/fulfillmentorders')
+@ApiTags('ecommerce/fulfillmentorders')
+@Controller('ecommerce/fulfillmentorders')
 export class FulfillmentOrdersController {
   constructor(
     private readonly fulfillmentordersService: FulfillmentOrdersService,
@@ -32,7 +32,7 @@ export class FulfillmentOrdersController {
   }
 
   /*@ApiOperation({
-    operationId: 'getFulfillmentOrderss',
+    operationId: 'listEcommerceFulfillmentOrderss',
     summary: 'List a batch of FulfillmentOrderss',
   })
   @ApiHeader({
@@ -69,7 +69,7 @@ export class FulfillmentOrdersController {
   }
 
   @ApiOperation({
-    operationId: 'getFulfillmentOrders',
+    operationId: 'retrieveEcommerceFulfillmentOrders',
     summary: 'Retrieve a FulfillmentOrders',
     description:
       'Retrieve a fulfillmentorders from any connected Ecommerce software',

@@ -99,9 +99,7 @@ export class LeverConnectionService extends AbstractBaseConnectionService {
       });
 
       const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getTunnelIngress()
-          : this.env.getPanoraBaseUrl()
+        this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
@@ -154,7 +152,7 @@ export class LeverConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'lever',
             vertical: 'ats',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['ats']['lever'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

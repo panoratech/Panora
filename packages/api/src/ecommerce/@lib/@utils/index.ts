@@ -57,7 +57,7 @@ export class Utils {
         ...addy,
         created_at: new Date(),
         modified_at: new Date(),
-        id_ecom_customer_address: uuidv4(),
+        id_ecom_address: uuidv4(),
         address_type: addy.address_type === '' ? 'primary' : addy.address_type,
       }));
       return normalizedAddresses;

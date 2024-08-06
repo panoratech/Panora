@@ -27,13 +27,6 @@ import {
 } from "@/components/ui/dialog"
 import useCreateApiKeyConnection from '@/hooks/queries/useCreateApiKeyConnection';
 
-
-// const formSchema = z.object({
-//   apiKey: z.string().min(2, {
-//     message: "Api Key must be at least 2 characters.",
-//   })
-// });
-
 interface IApiKeyFormData {
   apikey: string;
   [key : string]: string
@@ -60,7 +53,7 @@ const ProviderModal = () => {
   const [errorResponse,setErrorResponse] = useState<{
     errorPresent: boolean; errorMessage : string
   }>({errorPresent:false,errorMessage:''})
-  
+  const [endUserDomain, setEndUserDomain] = useState<string>('');
   const [loading, setLoading] = useState<{
     status: boolean; provider: string
   }>({status: false, provider: ''});
@@ -80,15 +73,8 @@ const ProviderModal = () => {
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
   const {data: connectorsForProject} = useProjectConnectors(isProjectIdReady ? projectId : null);
 
-  // const form = useForm<z.infer<typeof formSchema>>({
-  //   resolver: zodResolver(formSchema),
-
-  //   defaultValues: {
-  //     apiKey: "",
-  //   },
-  // })
-
   const {register,formState: {errors},handleSubmit,reset} = useForm<IApiKeyFormData>();
+  const {register: register2, formState: {errors: errors2}, handleSubmit: handleSubmit2, reset: reset2} = useForm<IBasicAuthFormData>();
 
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
@@ -142,8 +128,8 @@ const ProviderModal = () => {
     returnUrl: window.location.href,
     projectId: projectId,
     linkedUserId: magicLink?.id_linked_user as string,
-    redirectIngressUri,
-    onSuccess: () => {
+    redirectIngressUri, 
+    onSuccess: () => { 
       console.log('OAuth successful');
       setOpenSuccessDialog(true);
     },
@@ -172,6 +158,16 @@ const ProviderModal = () => {
       setErrorResponse({errorPresent:false,errorMessage:''})
       
       open(onWindowClose)
+      .then(() => {
+        console.log('OAuth successful');
+        setLoading({
+          status: false,
+          provider: ''
+        });
+        setStartFlow(false);
+        setPreStartFlow(false);
+        setOpenSuccessDialog(true);
+      })
       .catch((error : Error) => {
         setLoading({
           status: false,
@@ -423,7 +419,7 @@ const ProviderModal = () => {
         <form onSubmit={handleSubmit(onApiKeySubmit)}>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-              <Label className={errors.apikey ? 'text-destructive' : ''}>Enter your API key for {selectedProvider?.provider}</Label>
+              <Label className={errors.apikey ? 'text-destructive' : ''}>Enter your API key for {selectedProvider?.provider.substring(0,1).toUpperCase()}{selectedProvider?.provider.substring(1)}</Label>
               <Input 
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
                       placeholder="Your api key"
@@ -437,24 +433,22 @@ const ProviderModal = () => {
                       })}
               />
               <div>{errors.apikey && (<p className='text-sm font-medium text-destructive'>{errors.apikey.message}</p>)}</div>
-              
-
             {/* </div> */}
             {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
             (
               <>
               <Label className={errors[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {selectedProvider?.provider}</Label>
               <Input
-                    type='text'
-                    placeholder={`Your ${fieldName}`}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                    {...register(fieldName,{
-                      required: `${fieldName} must be at least 2 characters`,
-                      minLength:{
-                        value:2,
-                        message: `${fieldName} must be at least 2 characters`,
-                      }
-                    })}
+                  type='text'
+                  placeholder={`Your ${fieldName}`}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
+                  {...register(fieldName,{
+                    required: `${fieldName} must be at least 2 characters`,
+                    minLength:{
+                      value:2,
+                      message: `${fieldName} must be at least 2 characters`,
+                    }
+                  })}
               />
               {errors[fieldName] && (<p className='text-sm font-medium text-destructive'>{errors[fieldName]?.message}</p>)}
               </>
@@ -485,7 +479,7 @@ const ProviderModal = () => {
             {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
             (
               <>
-              <Label className={errors2[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {selectedProvider?.provider}</Label>
+              <Label className={errors2[fieldName] ? 'text-destructive' : ''}>Enter your API Key for {selectedProvider?.provider.substring(0,1).toUpperCase()}{selectedProvider?.provider.substring(1)}</Label>
               <Input
                     type='text'
                     placeholder={`Your ${fieldName}`}
@@ -523,7 +517,7 @@ const ProviderModal = () => {
           <form onSubmit={(e) => { e.preventDefault(); onDomainSubmit(); }}>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label className={errors.end_user_domain ? 'text-destructive' : ''}>Enter your domain for {`${selectedProvider?.provider.substring(0,1)}${selectedProvider?.provider.substring(1)}`}</Label>
+                <Label className={errors.end_user_domain ? 'text-destructive' : ''}>Enter your domain for {`${selectedProvider?.provider.substring(0,1).toUpperCase()}${selectedProvider?.provider.substring(1)}`}</Label>
                 <Input
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   placeholder="Your domain"
@@ -541,8 +535,6 @@ const ProviderModal = () => {
           </form>
         </DialogContent>
     </Dialog>
-
-
 
     {/* OAuth Successful Modal */}
     <Modal open={openSuccessDialog} setOpen={CloseSuccessDialog} >

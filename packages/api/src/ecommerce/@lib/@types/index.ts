@@ -5,8 +5,8 @@ import {
 } from '@ecommerce/customer/types/model.unified';
 import { IFulfillmentService } from '@ecommerce/fulfillment/types';
 import {
-  UnifiedEcommerceFulfilmentInput,
-  UnifiedEcommerceFulfilmentOutput,
+  UnifiedEcommerceFulfillmentInput,
+  UnifiedEcommerceFulfillmentOutput,
 } from '@ecommerce/fulfillment/types/model.unified';
 import { IFulfillmentOrdersService } from '@ecommerce/fulfillmentorders/types';
 import {
@@ -31,8 +31,8 @@ export type UnifiedEcommerce =
   | UnifiedEcommerceOrderOutput
   | UnifiedEcommerceCustomerInput
   | UnifiedEcommerceCustomerOutput
-  | UnifiedEcommerceFulfilmentInput
-  | UnifiedEcommerceFulfilmentOutput
+  | UnifiedEcommerceFulfillmentInput
+  | UnifiedEcommerceFulfillmentOutput
   | UnifiedEcommerceFulfillmentOrdersInput
   | UnifiedEcommerceFulfillmentOrdersOutput
   | UnifiedEcommerceProductInput
