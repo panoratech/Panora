@@ -37,7 +37,6 @@ import {
   PaginatedDto,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('crm/contacts')
 @Controller('crm/contacts')
 @ApiExtraModels(PaginatedDto, UnifiedCrmContactOutput)

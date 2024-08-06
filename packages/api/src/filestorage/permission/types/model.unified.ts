@@ -7,7 +7,8 @@ export type PermissionRole = 'READ' | 'WRITE' | 'OWNER';
 export class UnifiedFilestoragePermissionInput {
   @ApiProperty({
     type: [String],
-    example: ['can_create'], //todo
+    example: ['READ'],
+    enum: ['READ', 'WRITE', 'OWNER'],
     nullable: true,
     description: 'The roles of the permission',
   })

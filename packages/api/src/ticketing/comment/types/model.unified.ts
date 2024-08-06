@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { UnifiedTicketingAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
@@ -81,7 +85,13 @@ export class UnifiedTicketingCommentInput {
   user_id?: string; // UUID of User object
 
   @ApiPropertyOptional({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedTicketingAttachmentOutput) },
+      ],
+    },
     nullable: true,
     example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     description: 'The attachements UUIDs tied to the comment',

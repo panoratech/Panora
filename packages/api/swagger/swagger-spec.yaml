@@ -207,14 +207,6 @@ paths:
       tags: &ref_1
         - ticketing/tickets
       x-speakeasy-group: ticketing.tickets
-      x-speakeasy-pagination:
-        type: cursor
-        inputs:
-          - name: cursor
-            in: parameters
-            type: cursor
-        outputs:
-          nextCursor: $.next_cursor
     post:
       operationId: createTicketingTicket
       summary: Create Tickets
@@ -8547,7 +8539,7 @@ components:
           type: string
           nullable: true
           example: USER
-          enum: &ref_112
+          enum: &ref_115
             - USER
             - CONTACT
           description: >-
@@ -8573,13 +8565,15 @@ components:
             The UUID of the user which the comment belongs to (if no contact_id
             specified)
         attachments:
+          type: array
+          items: &ref_116
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
           nullable: true
-          example: &ref_113
+          example: &ref_117
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The attachements UUIDs tied to the comment
-          type: array
-          items:
-            type: string
       required:
         - body
     UnifiedTicketingTicketOutput:
@@ -8627,20 +8621,26 @@ components:
           nullable: true
           description: The UUID of the parent ticket
         collections:
-          type: string
-          example: &ref_88
+          type: array
+          items: &ref_88
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/UnifiedTicketingCollectionOutput'
+          example: &ref_89
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
-          example: &ref_89
+          type: array
+          items: &ref_90
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/UnifiedTicketingTagOutput'
+          example: &ref_91
             - my_tag
             - urgent_tag
           nullable: true
           description: The tags names of the ticket
-          type: array
-          items:
-            type: string
         completed_at:
           format: date-time
           type: string
@@ -8650,7 +8650,7 @@ components:
         priority:
           type: string
           example: HIGH
-          enum: &ref_90
+          enum: &ref_92
             - HIGH
             - MEDIUM
             - LOW
@@ -8659,7 +8659,7 @@ components:
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
-          example: &ref_91
+          example: &ref_93
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The users UUIDs the ticket is assigned to
@@ -8667,7 +8667,7 @@ components:
           items:
             type: string
         comment:
-          example: &ref_92
+          example: &ref_94
             content: Assigned the issue !
           nullable: true
           description: The comment of the ticket
@@ -8684,16 +8684,18 @@ components:
           nullable: true
           description: The UUID of the contact which the ticket belongs to
         attachments:
-          example: &ref_93
+          type: array
+          items: &ref_95
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/UnifiedTicketingAttachmentInput'
+          example: &ref_96
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The attachements UUIDs tied to the ticket
           nullable: true
-          type: array
-          items:
-            type: string
         field_mappings:
           type: object
-          example: &ref_94
+          example: &ref_97
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -8774,17 +8776,17 @@ components:
           nullable: true
           description: The UUID of the parent ticket
         collections:
-          type: string
-          example: *ref_88
+          type: array
+          items: *ref_88
+          example: *ref_89
           nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
-          example: *ref_89
+          type: array
+          items: *ref_90
+          example: *ref_91
           nullable: true
           description: The tags names of the ticket
-          type: array
-          items:
-            type: string
         completed_at:
           format: date-time
           type: string
@@ -8794,20 +8796,20 @@ components:
         priority:
           type: string
           example: HIGH
-          enum: *ref_90
+          enum: *ref_92
           nullable: true
           description: >-
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
-          example: *ref_91
+          example: *ref_93
           nullable: true
           description: The users UUIDs the ticket is assigned to
           type: array
           items:
             type: string
         comment:
-          example: *ref_92
+          example: *ref_94
           nullable: true
           description: The comment of the ticket
           allOf:
@@ -8823,15 +8825,14 @@ components:
           nullable: true
           description: The UUID of the contact which the ticket belongs to
         attachments:
-          example: *ref_93
+          type: array
+          items: *ref_95
+          example: *ref_96
           description: The attachements UUIDs tied to the ticket
           nullable: true
-          type: array
-          items:
-            type: string
         field_mappings:
           type: object
-          example: *ref_94
+          example: *ref_97
           nullable: true
           description: >-
             The custom field mappings of the ticket between the remote 3rd party
@@ -9179,7 +9180,7 @@ components:
         industry:
           type: string
           example: ACCOUNTING
-          enum: &ref_95
+          enum: &ref_98
             - ACCOUNTING
             - AIRLINES_AVIATION
             - ALTERNATIVE_DISPUTE_RESOLUTION
@@ -9343,7 +9344,7 @@ components:
           nullable: true
         email_addresses:
           description: The email addresses of the company
-          example: &ref_96
+          example: &ref_99
             - email_address: acme@gmail.com
               email_address_type: WORK
           nullable: true
@@ -9352,7 +9353,7 @@ components:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
-          example: &ref_97
+          example: &ref_100
             - street_1: 5th Avenue
               city: New York
               state: NY
@@ -9364,7 +9365,7 @@ components:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
-          example: &ref_98
+          example: &ref_101
             - phone_number: '+33660606067'
               phone_type: WORK
           nullable: true
@@ -9373,7 +9374,7 @@ components:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          example: &ref_99
+          example: &ref_102
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -9422,7 +9423,7 @@ components:
         industry:
           type: string
           example: ACCOUNTING
-          enum: *ref_95
+          enum: *ref_98
           description: >-
             The industry of the company. Authorized values can be found in the
             Industry enum.
@@ -9439,28 +9440,28 @@ components:
           nullable: true
         email_addresses:
           description: The email addresses of the company
-          example: *ref_96
+          example: *ref_99
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
-          example: *ref_97
+          example: *ref_100
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
-          example: *ref_98
+          example: *ref_101
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          example: *ref_99
+          example: *ref_102
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
@@ -9484,7 +9485,7 @@ components:
         email_addresses:
           nullable: true
           description: The email addresses of the contact
-          example: &ref_100
+          example: &ref_103
             - email: john.doe@example.com
               type: WORK
           type: array
@@ -9493,7 +9494,7 @@ components:
         phone_numbers:
           nullable: true
           description: The phone numbers of the contact
-          example: &ref_101
+          example: &ref_104
             - phone: '1234567890'
               type: WORK
           type: array
@@ -9502,7 +9503,7 @@ components:
         addresses:
           nullable: true
           description: The addresses of the contact
-          example: &ref_102
+          example: &ref_105
             - street: 123 Main St
               city: Anytown
               state: CA
@@ -9519,7 +9520,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: &ref_103
+          example: &ref_106
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -9576,21 +9577,21 @@ components:
         email_addresses:
           nullable: true
           description: The email addresses of the contact
-          example: *ref_100
+          example: *ref_103
           type: array
           items:
             $ref: '#/components/schemas/Email'
         phone_numbers:
           nullable: true
           description: The phone numbers of the contact
-          example: *ref_101
+          example: *ref_104
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         addresses:
           nullable: true
           description: The addresses of the contact
-          example: *ref_102
+          example: *ref_105
           type: array
           items:
             $ref: '#/components/schemas/Address'
@@ -9601,7 +9602,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: *ref_103
+          example: *ref_106
           nullable: true
           description: >-
             The custom field mappings of the contact between the remote 3rd
@@ -9646,7 +9647,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_104
+          example: &ref_107
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -9723,7 +9724,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_104
+          example: *ref_107
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
@@ -9744,7 +9745,7 @@ components:
           type: string
           nullable: true
           example: INBOUND
-          enum: &ref_105
+          enum: &ref_108
             - INBOUND
             - OUTBOUND
           description: >-
@@ -9771,7 +9772,7 @@ components:
           type: string
           nullable: true
           example: MEETING
-          enum: &ref_106
+          enum: &ref_109
             - EMAIL
             - CALL
             - MEETING
@@ -9790,7 +9791,7 @@ components:
           description: The UUID of the company tied to the engagement
         contacts:
           nullable: true
-          example: &ref_107
+          example: &ref_110
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The UUIDs of contacts tied to the engagement object
           type: array
@@ -9799,7 +9800,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_108
+          example: &ref_111
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -9852,7 +9853,7 @@ components:
           type: string
           nullable: true
           example: INBOUND
-          enum: *ref_105
+          enum: *ref_108
           description: >-
             The direction of the engagement. Authorized values are INBOUND or
             OUTBOUND
@@ -9877,7 +9878,7 @@ components:
           type: string
           nullable: true
           example: MEETING
-          enum: *ref_106
+          enum: *ref_109
           description: >-
             The type of the engagement. Authorized values are EMAIL, CALL or
             MEETING
@@ -9893,7 +9894,7 @@ components:
           description: The UUID of the company tied to the engagement
         contacts:
           nullable: true
-          example: *ref_107
+          example: *ref_110
           description: The UUIDs of contacts tied to the engagement object
           type: array
           items:
@@ -9901,7 +9902,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_108
+          example: *ref_111
           description: >-
             The custom field mappings of the engagement between the remote 3rd
             party & Panora
@@ -9938,7 +9939,7 @@ components:
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          example: &ref_109
+          example: &ref_112
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -10008,7 +10009,7 @@ components:
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          example: *ref_109
+          example: *ref_112
           nullable: true
           description: >-
             The custom field mappings of the note between the remote 3rd party &
@@ -10080,7 +10081,7 @@ components:
         status:
           type: string
           example: PENDING
-          enum: &ref_110
+          enum: &ref_113
             - PENDING
             - COMPLETED
           description: The status of the task. Authorized values are PENDING, COMPLETED.
@@ -10112,7 +10113,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_111
+          example: &ref_114
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -10171,7 +10172,7 @@ components:
         status:
           type: string
           example: PENDING
-          enum: *ref_110
+          enum: *ref_113
           description: The status of the task. Authorized values are PENDING, COMPLETED.
           nullable: true
         due_date:
@@ -10201,7 +10202,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_111
+          example: *ref_114
           description: >-
             The custom field mappings of the task between the remote 3rd party &
             Panora
@@ -10344,7 +10345,7 @@ components:
           type: string
           nullable: true
           example: USER
-          enum: *ref_112
+          enum: *ref_115
           description: >-
             The creator type of the comment. Authorized values are either USER
             or CONTACT
@@ -10368,12 +10369,11 @@ components:
             The UUID of the user which the comment belongs to (if no contact_id
             specified)
         attachments:
-          nullable: true
-          example: *ref_113
-          description: The attachements UUIDs tied to the comment
           type: array
-          items:
-            type: string
+          items: *ref_116
+          nullable: true
+          example: *ref_117
+          description: The attachements UUIDs tied to the comment
         id:
           type: string
           nullable: true
@@ -11119,7 +11119,7 @@ components:
       properties:
         activity_type:
           type: string
-          enum: &ref_114
+          enum: &ref_118
             - NOTE
             - EMAIL
             - OTHER
@@ -11138,7 +11138,7 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: &ref_115
+          enum: &ref_119
             - ADMIN_ONLY
             - PUBLIC
             - PRIVATE
@@ -11158,7 +11158,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: &ref_116
+          example: &ref_120
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -11201,7 +11201,7 @@ components:
       properties:
         activity_type:
           type: string
-          enum: *ref_114
+          enum: *ref_118
           example: NOTE
           nullable: true
           description: The type of activity
@@ -11217,7 +11217,7 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: *ref_115
+          enum: *ref_119
           example: PUBLIC
           nullable: true
           description: The visibility of the activity
@@ -11234,7 +11234,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: *ref_116
+          example: *ref_120
           additionalProperties: true
           nullable: true
           description: >-
@@ -11258,7 +11258,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: &ref_117
+          example: &ref_121
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
             - 12345678-1234-1234-1234-123456789012
           type: array
@@ -11295,7 +11295,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: &ref_118
+          example: &ref_122
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -11361,7 +11361,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: *ref_117
+          example: *ref_121
           type: array
           items:
             type: string
@@ -11396,7 +11396,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: *ref_118
+          example: *ref_122
           additionalProperties: true
           nullable: true
           description: >-
@@ -11418,7 +11418,7 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: &ref_119
+          enum: &ref_123
             - RESUME
             - COVER_LETTER
             - OFFER_LETTER
@@ -11444,7 +11444,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: &ref_120
+          example: &ref_124
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -11498,7 +11498,7 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: *ref_119
+          enum: *ref_123
           nullable: true
           description: The type of the file
         remote_created_at:
@@ -11520,7 +11520,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: *ref_120
+          example: *ref_124
           additionalProperties: true
           nullable: true
           description: >-
@@ -11597,32 +11597,38 @@ components:
           nullable: true
           description: The last interaction date with the candidate
         attachments:
-          example: &ref_121
+          type: array
+          items: &ref_125
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
+          example: &ref_126
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The attachments UUIDs of the candidate
-          type: array
-          items:
-            type: string
         applications:
-          example: &ref_122
+          type: array
+          items: &ref_127
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
+          example: &ref_128
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The applications UUIDs of the candidate
-          type: array
-          items:
-            type: string
         tags:
-          example: &ref_123
+          type: array
+          items: &ref_129
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/UnifiedAtsTagOutput'
+          example: &ref_130
             - tag_1
             - tag_2
           nullable: true
           description: The tags of the candidate
-          type: array
-          items:
-            type: string
         urls:
-          example: &ref_124
+          example: &ref_131
             - url: mywebsite.com
               url_type: WEBSITE
           nullable: true
@@ -11633,7 +11639,7 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: &ref_125
+          example: &ref_132
             - phone_number: '+33660688899'
               phone_type: WORK
           nullable: true
@@ -11642,7 +11648,7 @@ components:
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: &ref_126
+          example: &ref_133
             - email_address: joedoe@gmail.com
               email_address_type: WORK
           nullable: true
@@ -11652,7 +11658,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: &ref_127
+          example: &ref_134
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -11747,28 +11753,25 @@ components:
           nullable: true
           description: The last interaction date with the candidate
         attachments:
-          example: *ref_121
+          type: array
+          items: *ref_125
+          example: *ref_126
           nullable: true
           description: The attachments UUIDs of the candidate
-          type: array
-          items:
-            type: string
         applications:
-          example: *ref_122
+          type: array
+          items: *ref_127
+          example: *ref_128
           nullable: true
           description: The applications UUIDs of the candidate
-          type: array
-          items:
-            type: string
         tags:
-          example: *ref_123
+          type: array
+          items: *ref_129
+          example: *ref_130
           nullable: true
           description: The tags of the candidate
-          type: array
-          items:
-            type: string
         urls:
-          example: *ref_124
+          example: *ref_131
           nullable: true
           description: >-
             The urls of the candidate, possible values for Url type are WEBSITE,
@@ -11777,14 +11780,14 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: *ref_125
+          example: *ref_132
           nullable: true
           description: The phone numbers of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: *ref_126
+          example: *ref_133
           nullable: true
           description: The email addresses of the candidate
           type: array
@@ -11792,7 +11795,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: *ref_127
+          example: *ref_134
           additionalProperties: true
           nullable: true
           description: >-
@@ -11852,7 +11855,7 @@ components:
       properties:
         status:
           type: string
-          enum: &ref_128
+          enum: &ref_135
             - SCHEDULED
             - AWAITING_FEEDBACK
             - COMPLETED
@@ -11875,7 +11878,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: &ref_129
+          example: &ref_136
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the interviewers
@@ -11913,7 +11916,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: &ref_130
+          example: &ref_137
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -11956,7 +11959,7 @@ components:
       properties:
         status:
           type: string
-          enum: *ref_128
+          enum: *ref_135
           example: SCHEDULED
           nullable: true
           description: The status of the interview
@@ -11976,7 +11979,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: *ref_129
+          example: *ref_136
           nullable: true
           description: The UUIDs of the interviewers
           type: array
@@ -12013,7 +12016,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: *ref_130
+          example: *ref_137
           additionalProperties: true
           nullable: true
           description: >-
@@ -12897,7 +12900,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_131
+          example: &ref_138
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -12983,7 +12986,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_131
+          example: *ref_138
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -13041,7 +13044,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: &ref_132
+          example: &ref_139
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -13132,7 +13135,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: *ref_132
+          example: *ref_139
           additionalProperties: true
           nullable: true
           description: >-
@@ -13156,12 +13159,14 @@ components:
           nullable: true
           description: The name of the group
         users:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
           example:
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: Uuids of users of the group
-          type: array
-          items:
-            type: string
         remote_was_deleted:
           type: boolean
           example: false
@@ -13306,7 +13311,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_133
+          example: &ref_140
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -13378,7 +13383,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_133
+          example: *ref_140
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora

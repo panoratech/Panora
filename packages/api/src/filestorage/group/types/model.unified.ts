@@ -1,5 +1,9 @@
 import { UnifiedFilestorageUserOutput } from '@filestorage/user/types/model.unified';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
 
 export class UnifiedFilestorageGroupInput {
@@ -13,7 +17,13 @@ export class UnifiedFilestorageGroupInput {
   name: string;
 
   @ApiProperty({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedFilestorageUserOutput) },
+      ],
+    },
     example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     description: 'Uuids of users of the group',
   })

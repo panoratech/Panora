@@ -390,10 +390,8 @@ export class NoteService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedCrmNoteOutput format
           return {

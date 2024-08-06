@@ -670,10 +670,8 @@ export class CandidateService {
             fieldMappingsMap.set(value.attribute.slug, value.data);
           });
 
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           return {
             id: candidate.id_ats_candidate,

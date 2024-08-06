@@ -2,7 +2,11 @@ import { Email, Phone, Url } from '@ats/@lib/@types';
 import { UnifiedAtsApplicationOutput } from '@ats/application/types/model.unified';
 import { UnifiedAtsAttachmentOutput } from '@ats/attachment/types/model.unified';
 import { UnifiedAtsTagOutput } from '@ats/tag/types/model.unified';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import {
   IsUUID,
   IsOptional,
@@ -116,7 +120,13 @@ export class UnifiedAtsCandidateInput {
   last_interaction_at?: string;
 
   @ApiPropertyOptional({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedAtsAttachmentOutput) },
+      ],
+    },
     example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     nullable: true,
     description: 'The attachments UUIDs of the candidate',
@@ -126,7 +136,13 @@ export class UnifiedAtsCandidateInput {
   attachments?: (string | UnifiedAtsAttachmentOutput)[];
 
   @ApiPropertyOptional({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedAtsApplicationOutput) },
+      ],
+    },
     example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     nullable: true,
     description: 'The applications UUIDs of the candidate',
@@ -136,7 +152,10 @@ export class UnifiedAtsCandidateInput {
   applications?: (string | UnifiedAtsApplicationOutput)[];
 
   @ApiPropertyOptional({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [{ type: 'string' }, { $ref: getSchemaPath(UnifiedAtsTagOutput) }],
+    },
     example: ['tag_1', 'tag_2'],
     nullable: true,
     description: 'The tags of the candidate',

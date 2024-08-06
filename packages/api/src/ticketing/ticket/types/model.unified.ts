@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { UnifiedTicketingAttachmentInput } from '@ticketing/attachment/types/model.unified';
 import { UnifiedTicketingCollectionOutput } from '@ticketing/collection/types/model.unified';
 import { UnifiedTicketingCommentInput } from '@ticketing/comment/types/model.unified';
@@ -76,7 +80,13 @@ export class UnifiedTicketingTicketInput {
   parent_ticket?: string;
 
   @ApiPropertyOptional({
-    type: String,
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedTicketingCollectionOutput) },
+      ],
+    },
     example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     nullable: true,
     description: 'The collection UUIDs the ticket belongs to',
@@ -86,7 +96,13 @@ export class UnifiedTicketingTicketInput {
   collections?: (string | UnifiedTicketingCollectionOutput)[];
 
   @ApiPropertyOptional({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedTicketingTagOutput) },
+      ],
+    },
     example: ['my_tag', 'urgent_tag'],
     nullable: true,
     description: 'The tags names of the ticket',
@@ -158,7 +174,13 @@ export class UnifiedTicketingTicketInput {
   contact_id?: string;
 
   @ApiPropertyOptional({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedTicketingAttachmentInput) },
+      ],
+    },
     example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     description: 'The attachements UUIDs tied to the ticket',
     nullable: true,
