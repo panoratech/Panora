@@ -757,18 +757,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -788,6 +791,14 @@ paths:
       tags: &ref_1
         - ticketing/tickets
       x-speakeasy-group: ticketing.tickets
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: cursor
+            in: parameters
+            type: cursor
+        outputs:
+          nextCursor: $.next_cursor
       x-codeSamples:
         - lang: typescript
           label: listTicketingTicket
@@ -801,10 +812,14 @@ paths:
             async function run() {
               const result = await panora.ticketing.tickets.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
-              // Handle the result
-              console.log(result)
+              for await (const page of result) {
+                // handle page
+              }
             }
 
             run();
@@ -1195,18 +1210,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -1239,6 +1257,9 @@ paths:
             async function run() {
               const result = await panora.ticketing.users.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -1407,18 +1428,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -1451,6 +1475,9 @@ paths:
             async function run() {
               const result = await panora.ticketing.accounts.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -1614,18 +1641,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -1658,6 +1688,9 @@ paths:
             async function run() {
               const result = await panora.ticketing.contacts.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -1975,18 +2008,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -2019,6 +2055,9 @@ paths:
             async function run() {
               const result = await panora.crm.companies.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -2391,18 +2430,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -2435,6 +2477,9 @@ paths:
             async function run() {
               const result = await panora.crm.contacts.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -2804,18 +2849,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -2848,6 +2896,9 @@ paths:
             async function run() {
               const result = await panora.crm.deals.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -3148,18 +3199,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -3192,6 +3246,9 @@ paths:
             async function run() {
               const result = await panora.crm.engagements.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -3515,18 +3572,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -3559,6 +3619,9 @@ paths:
             async function run() {
               const result = await panora.crm.notes.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -3860,18 +3923,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -3904,6 +3970,9 @@ paths:
             async function run() {
               const result = await panora.crm.stages.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -4072,18 +4141,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -4116,6 +4188,9 @@ paths:
             async function run() {
               const result = await panora.crm.tasks.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -4424,18 +4499,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -4468,6 +4546,9 @@ paths:
             async function run() {
               const result = await panora.crm.users.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -4636,18 +4717,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -4681,6 +4765,9 @@ paths:
             async function run() {
               const result = await panora.ticketing.collections.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -4849,18 +4936,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -4893,6 +4983,9 @@ paths:
             async function run() {
               const result = await panora.ticketing.comments.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -5196,18 +5289,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -5240,6 +5336,9 @@ paths:
             async function run() {
               const result = await panora.ticketing.tags.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -5408,18 +5507,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -5452,6 +5554,9 @@ paths:
             async function run() {
               const result = await panora.ticketing.teams.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -5626,6 +5731,7 @@ paths:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: &ref_18
         - linkedUsers
+      x-speakeasy-group: linkedUsers
       x-codeSamples:
         - lang: typescript
           label: createLinkedUser
@@ -5711,6 +5817,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
+      x-speakeasy-group: linkedUsers
       x-codeSamples:
         - lang: typescript
           label: listLinkedUsers
@@ -5793,7 +5900,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
-      x-speakeasy-group: linked_users.batch
+      x-speakeasy-group: linkedUsers
       x-codeSamples:
         - lang: typescript
           label: importBatch
@@ -5805,7 +5912,7 @@ paths:
             });
 
             async function run() {
-              const result = await panora.linkedUsers.batch.importBatch({
+              const result = await panora.linkedUsers.importBatch({
                 linkedUserOriginIds: [
                   "id_1",
                 ],
@@ -5890,7 +5997,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
-      x-speakeasy-group: linked_users.{id}
+      x-speakeasy-group: linkedUsers
       x-codeSamples:
         - lang: typescript
           label: retrieveLinkedUser
@@ -5902,7 +6009,7 @@ paths:
             });
 
             async function run() {
-              const result = await panora.linkedUsers.id.retrieve({
+              const result = await panora.linkedUsers.retrieve({
                 id: "801f9ede-c698-4e66-a7fc-48d19eebaa4f",
               });
 
@@ -5973,7 +6080,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
       tags: *ref_18
-      x-speakeasy-group: linked_users.fromremoteid
+      x-speakeasy-group: linkedUsers
       x-codeSamples:
         - lang: typescript
           label: remoteId
@@ -5985,7 +6092,7 @@ paths:
             });
 
             async function run() {
-              const result = await panora.linkedUsers.fromremoteid.remoteId({
+              const result = await panora.linkedUsers.remoteId({
                 remoteId: "id_1",
               });
 
@@ -6226,7 +6333,7 @@ paths:
                 $ref: '#/components/schemas/CustomFieldResponse'
       tags: &ref_20
         - fieldMappings
-      x-speakeasy-group: field_mappings.define
+      x-speakeasy-group: fieldMappings
       x-codeSamples:
         - lang: typescript
           label: definitions
@@ -6239,7 +6346,7 @@ paths:
             });
 
             async function run() {
-              const result = await panora.fieldMappings.define.definitions({
+              const result = await panora.fieldMappings.definitions({
                 objectTypeOwner: ObjectTypeOwner.Company,
                 name: "fav_dish",
                 description: "My favorite dish",
@@ -6325,6 +6432,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
       tags: *ref_20
+      x-speakeasy-group: fieldMappings
       x-codeSamples:
         - lang: typescript
           label: defineCustomField
@@ -6432,7 +6540,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CustomFieldResponse'
       tags: *ref_20
-      x-speakeasy-group: field_mappings.map
+      x-speakeasy-group: fieldMappings
       x-codeSamples:
         - lang: typescript
           label: map
@@ -6444,7 +6552,7 @@ paths:
             });
 
             async function run() {
-              const result = await panora.fieldMappings.map.map({
+              const result = await panora.fieldMappings.map({
                 attributeId: "801f9ede-c698-4e66-a7fc-48d19eebaa4f",
                 sourceCustomFieldId: "id_1",
                 sourceProvider: "hubspot",
@@ -6750,18 +6858,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -6794,6 +6905,9 @@ paths:
             async function run() {
               const result = await panora.hris.bankinfos.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -6962,18 +7076,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -7006,6 +7123,9 @@ paths:
             async function run() {
               const result = await panora.hris.benefits.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -7174,18 +7294,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -7218,6 +7341,9 @@ paths:
             async function run() {
               const result = await panora.hris.companies.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -7386,18 +7512,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -7430,6 +7559,9 @@ paths:
             async function run() {
               const result = await panora.hris.dependents.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -7598,18 +7730,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -7643,6 +7778,9 @@ paths:
             async function run() {
               const result = await panora.hris.employeepayrollruns.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -7811,18 +7949,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -7855,6 +7996,9 @@ paths:
             async function run() {
               const result = await panora.hris.employees.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -8122,18 +8266,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -8167,6 +8314,9 @@ paths:
             async function run() {
               const result = await panora.hris.employerbenefits.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -8335,18 +8485,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -8379,6 +8532,9 @@ paths:
             async function run() {
               const result = await panora.hris.employments.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -8547,18 +8703,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -8591,6 +8750,9 @@ paths:
             async function run() {
               const result = await panora.hris.groups.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -8759,18 +8921,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -8803,6 +8968,9 @@ paths:
             async function run() {
               const result = await panora.hris.locations.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -8971,18 +9139,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -9015,6 +9186,9 @@ paths:
             async function run() {
               const result = await panora.hris.paygroups.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -9183,18 +9357,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -9227,6 +9404,9 @@ paths:
             async function run() {
               const result = await panora.hris.payrollruns.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -9395,18 +9575,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -9439,6 +9622,9 @@ paths:
             async function run() {
               const result = await panora.hris.timeoffs.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -9706,18 +9892,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -9750,6 +9939,9 @@ paths:
             async function run() {
               const result = await panora.hris.timeoffbalances.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -9918,18 +10110,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -9963,6 +10158,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.actions.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -10236,18 +10434,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -10281,6 +10482,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.automations.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -10556,18 +10760,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -10601,6 +10808,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.campaigns.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -10874,18 +11084,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -10919,6 +11132,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.contacts.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -11192,18 +11408,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -11237,6 +11456,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.emails.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -11406,18 +11628,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -11451,6 +11676,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.events.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -11620,18 +11848,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -11665,6 +11896,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.lists.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -11934,18 +12168,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -11979,6 +12216,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.messages.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -12148,18 +12388,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -12193,6 +12436,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.templates.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -12462,18 +12708,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -12507,6 +12756,9 @@ paths:
             async function run() {
               const result = await panora.marketingautomation.users.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -12676,18 +12928,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -12720,6 +12975,9 @@ paths:
             async function run() {
               const result = await panora.ats.activities.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -13028,18 +13286,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -13072,6 +13333,9 @@ paths:
             async function run() {
               const result = await panora.ats.applications.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -13396,18 +13660,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -13440,6 +13707,9 @@ paths:
             async function run() {
               const result = await panora.ats.attachments.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -13748,18 +14018,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -13792,6 +14065,9 @@ paths:
             async function run() {
               const result = await panora.ats.candidates.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -14196,18 +14472,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -14240,6 +14519,9 @@ paths:
             async function run() {
               const result = await panora.ats.departments.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -14408,18 +14690,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -14452,6 +14737,9 @@ paths:
             async function run() {
               const result = await panora.ats.interviews.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -14778,18 +15066,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -14823,6 +15114,9 @@ paths:
             async function run() {
               const result = await panora.ats.jobinterviewstages.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -14991,18 +15285,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -15035,6 +15332,9 @@ paths:
             async function run() {
               const result = await panora.ats.jobs.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -15203,18 +15503,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -15247,6 +15550,9 @@ paths:
             async function run() {
               const result = await panora.ats.offers.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -15415,18 +15721,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -15459,6 +15768,9 @@ paths:
             async function run() {
               const result = await panora.ats.offices.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -15627,18 +15939,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -15671,6 +15986,9 @@ paths:
             async function run() {
               const result = await panora.ats.rejectreasons.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -15839,18 +16157,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -15883,6 +16204,9 @@ paths:
             async function run() {
               const result = await panora.ats.scorecards.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -16051,18 +16375,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -16095,6 +16422,9 @@ paths:
             async function run() {
               const result = await panora.ats.tags.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -16263,18 +16593,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -16307,6 +16640,9 @@ paths:
             async function run() {
               const result = await panora.ats.users.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -16475,18 +16811,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -16519,6 +16858,9 @@ paths:
             async function run() {
               const result = await panora.ats.eeocs.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -16682,18 +17024,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -16726,6 +17071,9 @@ paths:
             async function run() {
               const result = await panora.accounting.accounts.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -16997,18 +17345,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -17041,6 +17392,9 @@ paths:
             async function run() {
               const result = await panora.accounting.addresses.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -17209,18 +17563,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -17254,6 +17611,9 @@ paths:
             async function run() {
               const result = await panora.accounting.attachments.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -17525,18 +17885,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -17570,6 +17933,9 @@ paths:
             async function run() {
               const result = await panora.accounting.balancesheets.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -17738,18 +18104,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -17783,6 +18152,9 @@ paths:
             async function run() {
               const result = await panora.accounting.cashflowstatements.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -17951,18 +18323,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -17996,6 +18371,9 @@ paths:
             async function run() {
               const result = await panora.accounting.companyinfos.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -18164,18 +18542,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -18208,6 +18589,9 @@ paths:
             async function run() {
               const result = await panora.accounting.contacts.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -18479,18 +18863,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -18524,6 +18911,9 @@ paths:
             async function run() {
               const result = await panora.accounting.creditnotes.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -18692,18 +19082,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -18736,6 +19129,9 @@ paths:
             async function run() {
               const result = await panora.accounting.expenses.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -19007,18 +19403,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -19052,6 +19451,9 @@ paths:
             async function run() {
               const result = await panora.accounting.incomestatements.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -19220,18 +19622,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -19264,6 +19669,9 @@ paths:
             async function run() {
               const result = await panora.accounting.invoices.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -19535,18 +19943,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -19579,6 +19990,9 @@ paths:
             async function run() {
               const result = await panora.accounting.items.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -19747,18 +20161,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -19792,6 +20209,9 @@ paths:
             async function run() {
               const result = await panora.accounting.journalentries.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -20063,18 +20483,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -20107,6 +20530,9 @@ paths:
             async function run() {
               const result = await panora.accounting.payments.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -20378,18 +20804,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -20423,6 +20852,9 @@ paths:
             async function run() {
               const result = await panora.accounting.phonenumbers.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -20591,18 +21023,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -20636,6 +21071,9 @@ paths:
             async function run() {
               const result = await panora.accounting.purchaseorders.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -20907,18 +21345,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -20951,6 +21392,9 @@ paths:
             async function run() {
               const result = await panora.accounting.taxrates.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -21119,18 +21563,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -21164,6 +21611,9 @@ paths:
             async function run() {
               const result = await panora.accounting.trackingcategories.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -21332,18 +21782,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -21377,6 +21830,9 @@ paths:
             async function run() {
               const result = await panora.accounting.transactions.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -21545,18 +22001,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -21590,6 +22049,9 @@ paths:
             async function run() {
               const result = await panora.accounting.vendorcredits.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -21758,18 +22220,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -21802,6 +22267,9 @@ paths:
             async function run() {
               const result = await panora.filestorage.drives.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -21970,18 +22438,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -22014,6 +22485,9 @@ paths:
             async function run() {
               const result = await panora.filestorage.files.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -22319,18 +22793,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -22363,6 +22840,9 @@ paths:
             async function run() {
               const result = await panora.filestorage.folders.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -22671,18 +23151,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -22715,6 +23198,9 @@ paths:
             async function run() {
               const result = await panora.filestorage.groups.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -22883,18 +23369,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -22927,6 +23416,9 @@ paths:
             async function run() {
               const result = await panora.filestorage.users.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -23095,18 +23587,21 @@ paths:
         - name: remote_data
           required: false
           in: query
+          example: true
           description: Set to true to include data from the original software.
           schema:
             type: boolean
         - name: limit
           required: false
           in: query
+          example: 10
           description: Set to get the number of records.
           schema:
             type: number
         - name: cursor
           required: false
           in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
           description: Set to get the number of records after this cursor.
           schema:
             type: string
@@ -23140,6 +23635,9 @@ paths:
             async function run() {
               const result = await panora.ticketing.attachments.list({
                 xConnectionToken: "<value>",
+                remoteData: true,
+                limit: 10,
+                cursor: "1b8b05bb-5273-4012-b520-8657b0b90874",
               });
 
               // Handle the result
@@ -25998,7 +26496,9 @@ components:
             - ats.scorecard.pulled
             - ats.tag.pulled
             - ats.user.pulled
+            - filestorage.file.created
             - filestorage.file.pulled
+            - filestorage.folder.created
             - filestorage.folder.pulled
             - filestorage.group.pulled
             - filestorage.user.pulled
