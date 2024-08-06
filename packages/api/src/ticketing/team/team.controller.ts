@@ -28,7 +28,6 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('ticketing/teams')
 @Controller('ticketing/teams')
 export class TeamController {

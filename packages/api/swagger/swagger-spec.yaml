@@ -12561,7 +12561,9 @@ components:
             - ats.scorecard.pulled
             - ats.tag.pulled
             - ats.user.pulled
+            - filestorage.file.created
             - filestorage.file.pulled
+            - filestorage.folder.created
             - filestorage.folder.pulled
             - filestorage.group.pulled
             - filestorage.user.pulled

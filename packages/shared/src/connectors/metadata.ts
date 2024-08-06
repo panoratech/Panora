@@ -2726,10 +2726,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
           apiUrl: 'https://graph.microsoft.com/v1.0',
-          authBaseUrl: (END_USER_TENANT_NAME) => `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?resource=https://${END_USER_TENANT_NAME}.sharepoint.com`
-        },
-        options: {
-          end_user_domain: true
+          authBaseUrl:`https://login.microsoftonline.com/common/oauth2/v2.0/authorize`
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
