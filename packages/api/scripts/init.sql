@@ -374,7 +374,8 @@ CREATE TABLE connector_sets
  crm_zendesk      boolean NULL,
  crm_close        boolean NULL,
  fs_box           boolean NULL,
- CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
+  tcg_github boolean NULL,
+CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
 -- ************************************** connection_strategies
