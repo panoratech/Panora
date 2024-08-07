@@ -54,7 +54,7 @@ export class LinearService implements IUserService {
       this.logger.log(`Synced linear users !`);
 
       return {
-        data: resp.data.users.nodes,
+        data: resp.data.data.users.nodes,
         message: 'Linear users retrieved',
         statusCode: 200,
       };
