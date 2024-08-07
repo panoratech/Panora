@@ -37,7 +37,7 @@ export class CustomerController {
 
   @ApiOperation({
     operationId: 'listEcommerceCustomers',
-    summary: 'List a batch of Customers',
+    summary: 'List Customers',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -74,8 +74,8 @@ export class CustomerController {
 
   @ApiOperation({
     operationId: 'retrieveEcommerceCustomer',
-    summary: 'Retrieve a Customer',
-    description: 'Retrieve a customer from any connected Ats software',
+    summary: 'Retrieve Customers',
+    description: 'Retrieve customers from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

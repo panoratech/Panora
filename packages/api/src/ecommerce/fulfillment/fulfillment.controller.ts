@@ -37,7 +37,7 @@ export class FulfillmentController {
 
   @ApiOperation({
     operationId: 'listEcommerceFulfillments',
-    summary: 'List a batch of Fulfillments',
+    summary: 'List Fulfillments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -74,8 +74,8 @@ export class FulfillmentController {
 
   @ApiOperation({
     operationId: 'retrieveEcommerceFulfillment',
-    summary: 'Retrieve a Fulfillment',
-    description: 'Retrieve a fulfillment from any connected Ats software',
+    summary: 'Retrieve Fulfillments',
+    description: 'Retrieve fulfillments from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

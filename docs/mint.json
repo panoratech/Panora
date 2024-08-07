@@ -482,33 +482,33 @@
       "group": "Ecommerce Objects",
       "pages": [
         {
-          "group": "Product",
+          "group": "Products",
           "pages": [
-            "ecommerce/products/list-product",
-            "ecommerce/products/retrieve-a-product",
-            "ecommerce/products/create-a-product"
+            "ecommerce/products/list",
+            "ecommerce/products/retrieve",
+            "ecommerce/products/create"
           ]
         },
         {
-          "group": "Order",
+          "group": "Orders",
           "pages": [
-            "ecommerce/orders/list-orders",
-            "ecommerce/orders/create-a-order",
-            "ecommerce/orders/retrieve-a-order"
+            "ecommerce/orders/list",
+            "ecommerce/orders/create",
+            "ecommerce/orders/retrieve"
           ]
         },
         {
-          "group": "Fulfillment",
+          "group": "Fulfillments",
           "pages": [
-            "ecommerce/fulfillments/list-fulfillments",
-            "ecommerce/fulfillments/retrieve-a-fulfillment"
+            "ecommerce/fulfillments/list",
+            "ecommerce/fulfillments/retrieve"
           ]
         },
         {
-          "group": "Customer",
+          "group": "Customers",
           "pages": [
-            "ecommerce/customers/list-customers",
-            "ecommerce/customers/retrieve-a-customer"
+            "ecommerce/customers/list",
+            "ecommerce/customers/retrieve"
           ]
         }
       ]

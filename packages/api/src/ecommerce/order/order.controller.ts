@@ -44,7 +44,7 @@ export class OrderController {
 
   @ApiOperation({
     operationId: 'listEcommerceOrders',
-    summary: 'List a batch of Orders',
+    summary: 'List Orders',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -81,8 +81,8 @@ export class OrderController {
 
   @ApiOperation({
     operationId: 'retrieveEcommerceOrder',
-    summary: 'Retrieve a Order',
-    description: 'Retrieve a order from any connected Ats software',
+    summary: 'Retrieve Orders',
+    description: 'Retrieve orders from any connected Ats software',
   })
   @ApiParam({
     name: 'id',

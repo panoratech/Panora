@@ -44,7 +44,7 @@ export class ProductController {
 
   @ApiOperation({
     operationId: 'listEcommerceProducts',
-    summary: 'List a batch of Products',
+    summary: 'List Products',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -81,8 +81,8 @@ export class ProductController {
 
   @ApiOperation({
     operationId: 'retrieveEcommerceProduct',
-    summary: 'Retrieve a Product',
-    description: 'Retrieve a product from any connected Ats software',
+    summary: 'Retrieve Products',
+    description: 'Retrieve products from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
