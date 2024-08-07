@@ -19,7 +19,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: API is healthy
+          description: Api is healthy
           content:
             application/json:
               schema:
@@ -109,8 +109,6 @@ paths:
       responses:
         '200':
           description: ''
-        '200':
-          description: ''
         '201':
           description: ''
           content:
@@ -131,8 +129,6 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ''
         '200':
           description: ''
         '201':
