@@ -1,3 +1,5 @@
+import { LinearTeamInput, LinearTeamOutput } from '@ticketing/team/services/linear/types';
+
 import { GitlabUserInput, GitlabUserOutput } from '@ticketing/user/services/gitlab/types';
 import { LinearUserInput, LinearUserOutput } from '@ticketing/user/services/linear/types';
 
@@ -173,7 +175,7 @@ export type OriginalTeamInput =
   | ZendeskTeamInput
   | FrontTeamInput
   | GorgiasTeamInput
-  | JiraTeamInput;
+  | JiraTeamInput | LinearTeamInput;
 
 /* attachment */
 export type OriginalAttachmentInput = null;
@@ -236,7 +238,7 @@ export type OriginalTeamOutput =
   | ZendeskTeamOutput
   | FrontTeamOutput
   | GorgiasTeamOutput
-  | JiraTeamOutput;
+  | JiraTeamOutput | LinearTeamOutput;
 
 /* attachment */
 export type OriginalAttachmentOutput =
