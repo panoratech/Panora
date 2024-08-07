@@ -179,7 +179,6 @@ paths:
 
 
             s.auth.login.sign_in(request={
-                "id_user": "<value>",
                 "email": "Oda.Treutel97@hotmail.com",
                 "password_hash": "<value>",
             })
@@ -202,7 +201,6 @@ paths:
                     gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
                 )
                 request := components.LoginDto{
-                    IDUser: "<value>",
                     Email: "Oda.Treutel97@hotmail.com",
                     PasswordHash: "<value>",
                 }
@@ -217,7 +215,7 @@ paths:
             }
         - lang: ruby
           label: signIn
-          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n\nreq = ::OpenApiSDK::Shared::LoginDto.new(\n  id_user: \"<value>\",\n  email: \"Oda.Treutel97@hotmail.com\",\n  password_hash: \"<value>\",\n)\n    \nres = s.auth_login.sign_in(req)\n\nif res.status_code == 200\n  # handle response\nend"
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n\nreq = ::OpenApiSDK::Shared::LoginDto.new(\n  email: \"Oda.Treutel97@hotmail.com\",\n  password_hash: \"<value>\",\n)\n    \nres = s.auth_login.sign_in(req)\n\nif res.status_code == 200\n  # handle response\nend"
   /connections:
     get:
       operationId: getConnections
@@ -6215,6 +6213,47 @@ paths:
         - lang: typescript
           label: getFieldMappingValues
           source: "import { Panora } from \"@panora/sdk\";\n\nconst panora = new Panora({\n  apiKey: \"<YOUR_API_KEY_HERE>\",\n});\n\nasync function run() {\n  await panora.fieldMappings.getFieldMappingValues();\n\n  \n}\n\nrun();"
+        - lang: python
+          label: getFieldMappingValues
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            s.field_mappings.get_field_mapping_values()
+
+            # Use the SDK ...
+        - lang: go
+          label: getFieldMappingValues
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+
+                ctx := context.Background()
+                res, err := s.FieldMappings.GetFieldMappingValues(ctx)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: getFieldMappingValues
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.field_mappings.get_field_mapping_values()\n\nif res.status_code == 200\n  # handle response\nend"
   /field_mappings/entities:
     get:
       operationId: getFieldMappingsEntities
@@ -6229,6 +6268,47 @@ paths:
         - lang: typescript
           label: getFieldMappingsEntities
           source: "import { Panora } from \"@panora/sdk\";\n\nconst panora = new Panora({\n  apiKey: \"<YOUR_API_KEY_HERE>\",\n});\n\nasync function run() {\n  await panora.fieldMappings.getFieldMappingsEntities();\n\n  \n}\n\nrun();"
+        - lang: python
+          label: getFieldMappingsEntities
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            s.field_mappings.get_field_mappings_entities()
+
+            # Use the SDK ...
+        - lang: go
+          label: getFieldMappingsEntities
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+
+                ctx := context.Background()
+                res, err := s.FieldMappings.GetFieldMappingsEntities(ctx)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: getFieldMappingsEntities
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.field_mappings.get_field_mappings_entities()\n\nif res.status_code == 200\n  # handle response\nend"
   /field_mappings/attributes:
     get:
       operationId: getFieldMappings
@@ -6243,6 +6323,47 @@ paths:
         - lang: typescript
           label: getFieldMappings
           source: "import { Panora } from \"@panora/sdk\";\n\nconst panora = new Panora({\n  apiKey: \"<YOUR_API_KEY_HERE>\",\n});\n\nasync function run() {\n  await panora.fieldMappings.getFieldMappings();\n\n  \n}\n\nrun();"
+        - lang: python
+          label: getFieldMappings
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            s.field_mappings.get_field_mappings()
+
+            # Use the SDK ...
+        - lang: go
+          label: getFieldMappings
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+
+                ctx := context.Background()
+                res, err := s.FieldMappings.GetFieldMappings(ctx)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: getFieldMappings
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.field_mappings.get_field_mappings()\n\nif res.status_code == 200\n  # handle response\nend"
   /field_mappings/define:
     post:
       operationId: definitions
@@ -6706,15 +6827,9 @@ paths:
             )
 
 
-            res = s.passthrough.request(integration_id="<value>", linked_user_id="<value>", vertical="<value>", pass_through_request_dto={
+            res = s.passthrough.request(x_connection_token="<value>", pass_through_request_dto={
                 "method": panora_sdk.PassThroughRequestDtoMethod.GET,
                 "path": "/dev",
-                "data": {
-                    "key": "<value>",
-                },
-                "headers": {
-                    "key": "<value>",
-                },
             })
 
             if res is not None:
@@ -6736,36 +6851,24 @@ paths:
                 s := gosdk.New(
                     gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
                 )
-                var integrationID string = "<value>"
-
-                var linkedUserID string = "<value>"
-
-                var vertical string = "<value>"
+                var xConnectionToken string = "<value>"
 
                 passThroughRequestDto := components.PassThroughRequestDto{
                     Method: components.PassThroughRequestDtoMethodGet,
                     Path: gosdk.String("/dev"),
-                    Data: components.CreateDataMapOfAny(
-                            map[string]any{
-                                "key": "<value>",
-                            },
-                    ),
-                    Headers: map[string]any{
-                        "key": "<value>",
-                    },
                 }
                 ctx := context.Background()
-                res, err := s.Passthrough.Request(ctx, integrationID, linkedUserID, vertical, passThroughRequestDto)
+                res, err := s.Passthrough.Request(ctx, xConnectionToken, passThroughRequestDto)
                 if err != nil {
                     log.Fatal(err)
                 }
-                if res.PassThroughResponse != nil {
+                if res.TwoHundredApplicationJSONObject != nil {
                     // handle response
                 }
             }
         - lang: ruby
           label: request
-          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.passthrough.request(integration_id=\"<value>\", linked_user_id=\"<value>\", vertical=\"<value>\", pass_through_request_dto=::OpenApiSDK::Shared::PassThroughRequestDto.new(\n    method: ::OpenApiSDK::Shared::PassThroughRequestDtoMethod::GET,\n    path: \"/dev\",\n    data: \"<value>\",\n    headers: {\n      \"Johns\": \"<value>\",\n    },\n  ))\n\nif ! res.pass_through_response.nil?\n  # handle response\nend"
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.passthrough.request(x_connection_token=\"<value>\", pass_through_request_dto=::OpenApiSDK::Shared::PassThroughRequestDto.new(\n    method: ::OpenApiSDK::Shared::PassThroughRequestDtoMethod::GET,\n    path: \"/dev\",\n  ))\n\nif ! res.two_hundred_application_json_object.nil?\n  # handle response\nend"
   /passthrough/{retryId}:
     get:
       operationId: getRetriedRequestResponse
@@ -6787,6 +6890,47 @@ paths:
         - lang: typescript
           label: getRetriedRequestResponse
           source: "import { Panora } from \"@panora/sdk\";\n\nconst panora = new Panora({\n  apiKey: \"<YOUR_API_KEY_HERE>\",\n});\n\nasync function run() {\n  await panora.passthrough.retryid.getRetriedRequestResponse({\n    retryId: \"<value>\",\n  });\n\n  \n}\n\nrun();"
+        - lang: python
+          label: getRetriedRequestResponse
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            s.passthrough.retryid.get_retried_request_response(retry_id="<value>")
+
+            # Use the SDK ...
+        - lang: go
+          label: getRetriedRequestResponse
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+                var retryID string = "<value>"
+                ctx := context.Background()
+                res, err := s.Passthrough.{retryid}.GetRetriedRequestResponse(ctx, retryID)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: getRetriedRequestResponse
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.passthrough_retryid.get_retried_request_response(retry_id=\"<value>\")\n\nif res.status_code == 200\n  # handle response\nend"
   /hris/bankinfos:
     get:
       operationId: listHrisBankInfo
@@ -22078,7 +22222,7 @@ paths:
             )
 
 
-            res = s.filestorage.files.create(x_connection_token="<value>", remote_data=False, unified_filestorage_file_input={
+            res = s.filestorage.files.create(x_connection_token="<value>", unified_filestorage_file_input={
                 "name": "my_paris_photo.png",
                 "file_url": "https://example.com/my_paris_photo.png",
                 "mime_type": "application/pdf",
@@ -22090,7 +22234,7 @@ paths:
                     "fav_dish": "broccoli",
                     "fav_color": "red",
                 },
-            })
+            }, remote_data=False)
 
             if res is not None:
                 # handle response
@@ -22113,8 +22257,6 @@ paths:
                 )
                 var xConnectionToken string = "<value>"
 
-                var remoteData bool = false
-
                 unifiedFilestorageFileInput := components.UnifiedFilestorageFileInput{
                     Name: gosdk.String("my_paris_photo.png"),
                     FileURL: gosdk.String("https://example.com/my_paris_photo.png"),
@@ -22128,8 +22270,10 @@ paths:
                         "fav_color": "red",
                     },
                 }
+
+                var remoteData *bool = gosdk.Bool(false)
                 ctx := context.Background()
-                res, err := s.Filestorage.Files.Create(ctx, xConnectionToken, remoteData, unifiedFilestorageFileInput)
+                res, err := s.Filestorage.Files.Create(ctx, xConnectionToken, unifiedFilestorageFileInput, remoteData)
                 if err != nil {
                     log.Fatal(err)
                 }
@@ -22139,7 +22283,7 @@ paths:
             }
         - lang: ruby
           label: createFilestorageFile
-          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.filestorage_files.create(x_connection_token=\"<value>\", remote_data=false, unified_filestorage_file_input=::OpenApiSDK::Shared::UnifiedFilestorageFileInput.new(\n    name: \"my_paris_photo.png\",\n    file_url: \"https://example.com/my_paris_photo.png\",\n    mime_type: \"application/pdf\",\n    size: \"1024\",\n    folder_id: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    permission: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    shared_link: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    field_mappings: {\n      \"online\": \"<value>\",\n    },\n  ))\n\nif ! res.unified_filestorage_file_output.nil?\n  # handle response\nend"
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.filestorage_files.create(x_connection_token=\"<value>\", unified_filestorage_file_input=::OpenApiSDK::Shared::UnifiedFilestorageFileInput.new(\n    name: \"my_paris_photo.png\",\n    file_url: \"https://example.com/my_paris_photo.png\",\n    mime_type: \"application/pdf\",\n    size: \"1024\",\n    folder_id: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    permission: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    shared_link: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    field_mappings: {\n      \"online\": \"<value>\",\n    },\n  ), remote_data=false)\n\nif ! res.unified_filestorage_file_output.nil?\n  # handle response\nend"
   /filestorage/files/{id}:
     get:
       operationId: retrieveFilestorageFile
@@ -22428,7 +22572,7 @@ paths:
             )
 
 
-            res = s.filestorage.folders.create(x_connection_token="<value>", remote_data=False, unified_filestorage_folder_input={
+            res = s.filestorage.folders.create(x_connection_token="<value>", unified_filestorage_folder_input={
                 "name": "school",
                 "size": "2048",
                 "folder_url": "https://example.com/school",
@@ -22441,7 +22585,7 @@ paths:
                     "fav_dish": "broccoli",
                     "fav_color": "red",
                 },
-            })
+            }, remote_data=False)
 
             if res is not None:
                 # handle response
@@ -22464,8 +22608,6 @@ paths:
                 )
                 var xConnectionToken string = "<value>"
 
-                var remoteData bool = false
-
                 unifiedFilestorageFolderInput := components.UnifiedFilestorageFolderInput{
                     Name: gosdk.String("school"),
                     Size: gosdk.String("2048"),
@@ -22480,8 +22622,10 @@ paths:
                         "fav_color": "red",
                     },
                 }
+
+                var remoteData *bool = gosdk.Bool(false)
                 ctx := context.Background()
-                res, err := s.Filestorage.Folders.Create(ctx, xConnectionToken, remoteData, unifiedFilestorageFolderInput)
+                res, err := s.Filestorage.Folders.Create(ctx, xConnectionToken, unifiedFilestorageFolderInput, remoteData)
                 if err != nil {
                     log.Fatal(err)
                 }
@@ -22491,7 +22635,7 @@ paths:
             }
         - lang: ruby
           label: createFilestorageFolder
-          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.filestorage_folders.create(x_connection_token=\"<value>\", remote_data=false, unified_filestorage_folder_input=::OpenApiSDK::Shared::UnifiedFilestorageFolderInput.new(\n    name: \"school\",\n    size: \"2048\",\n    folder_url: \"https://example.com/school\",\n    description: \"All things school related\",\n    drive_id: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    parent_folder_id: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    shared_link: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    permission: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    field_mappings: {\n      \"online\": \"<value>\",\n    },\n  ))\n\nif ! res.unified_filestorage_folder_output.nil?\n  # handle response\nend"
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.filestorage_folders.create(x_connection_token=\"<value>\", unified_filestorage_folder_input=::OpenApiSDK::Shared::UnifiedFilestorageFolderInput.new(\n    name: \"school\",\n    size: \"2048\",\n    folder_url: \"https://example.com/school\",\n    description: \"All things school related\",\n    drive_id: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    parent_folder_id: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    shared_link: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    permission: \"801f9ede-c698-4e66-a7fc-48d19eebaa4f\",\n    field_mappings: {\n      \"online\": \"<value>\",\n    },\n  ), remote_data=false)\n\nif ! res.unified_filestorage_folder_output.nil?\n  # handle response\nend"
   /filestorage/folders/{id}:
     get:
       operationId: retrieveFilestorageFolder
@@ -23097,6 +23241,31 @@ paths:
             }
 
             run();
+        - lang: python
+          label: listEcommerceProducts
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.products.list(x_connection_token="<value>", remote_data=True, limit=10, cursor="1b8b05bb-5273-4012-b520-8657b0b90874")
+
+            if res is not None:
+                while True:
+                    # handle items
+
+                    res = res.Next()
+                    if res is None:
+                        break
+        - lang: go
+          label: listEcommerceProducts
+          source: "package main\n\nimport(\n\tgosdk \"github.com/panoratech/go-sdk\"\n\t\"context\"\n\t\"log\"\n)\n\nfunc main() {\n    s := gosdk.New(\n        gosdk.WithSecurity(\"<YOUR_API_KEY_HERE>\"),\n    )\n    var xConnectionToken string = \"<value>\"\n\n    var remoteData *bool = gosdk.Bool(true)\n\n    var limit *float64 = gosdk.Float64(10)\n\n    var cursor *string = gosdk.String(\"1b8b05bb-5273-4012-b520-8657b0b90874\")\n    ctx := context.Background()\n    res, err := s.Ecommerce.Products.List(ctx, xConnectionToken, remoteData, limit, cursor)\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.Object != nil {\n                for {\n            // handle items\n        \n            res, err = res.Next()\n        \n            if err != nil {\n                // handle error\n            }\n        \n            if res == nil {\n                break\n            }\n        }\n        \n    }\n}"
+        - lang: ruby
+          label: listEcommerceProducts
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_products.list(x_connection_token=\"<value>\", remote_data=true, limit=10.0, cursor=\"1b8b05bb-5273-4012-b520-8657b0b90874\")\n\nif ! res.object.nil?\n  # handle response\nend"
     post:
       operationId: createEcommerceProduct
       summary: Create Products
@@ -23152,6 +23321,54 @@ paths:
             }
 
             run();
+        - lang: python
+          label: createEcommerceProduct
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.products.create(x_connection_token="<value>", unified_ecommerce_product_input={}, remote_data=False)
+
+            if res is not None:
+                # handle response
+                pass
+        - lang: go
+          label: createEcommerceProduct
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"github.com/panoratech/go-sdk/models/components"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+                var xConnectionToken string = "<value>"
+
+                unifiedEcommerceProductInput := components.UnifiedEcommerceProductInput{}
+
+                var remoteData *bool = gosdk.Bool(false)
+                ctx := context.Background()
+                res, err := s.Ecommerce.Products.Create(ctx, xConnectionToken, unifiedEcommerceProductInput, remoteData)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res.UnifiedEcommerceProductOutput != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: createEcommerceProduct
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_products.create(x_connection_token=\"<value>\", unified_ecommerce_product_input=::OpenApiSDK::Shared::UnifiedEcommerceProductInput.new(), remote_data=false)\n\nif ! res.unified_ecommerce_product_output.nil?\n  # handle response\nend"
   /ecommerce/products/{id}:
     get:
       operationId: retrieveEcommerceProduct
@@ -23206,6 +23423,51 @@ paths:
             }
 
             run();
+        - lang: python
+          label: retrieveEcommerceProduct
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.products.retrieve(x_connection_token="<value>", id="<value>")
+
+            if res is not None:
+                # handle response
+                pass
+        - lang: go
+          label: retrieveEcommerceProduct
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+                var xConnectionToken string = "<value>"
+
+                var id string = "<value>"
+                ctx := context.Background()
+                res, err := s.Ecommerce.Products.Retrieve(ctx, xConnectionToken, id, nil)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res.UnifiedEcommerceProductOutput != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: retrieveEcommerceProduct
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_products.retrieve(x_connection_token=\"<value>\", id=\"<value>\", remote_data=false)\n\nif ! res.unified_ecommerce_product_output.nil?\n  # handle response\nend"
   /ecommerce/orders:
     get:
       operationId: listEcommerceOrders
@@ -23287,6 +23549,31 @@ paths:
             }
 
             run();
+        - lang: python
+          label: listEcommerceOrders
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.orders.list(x_connection_token="<value>", remote_data=True, limit=10, cursor="1b8b05bb-5273-4012-b520-8657b0b90874")
+
+            if res is not None:
+                while True:
+                    # handle items
+
+                    res = res.Next()
+                    if res is None:
+                        break
+        - lang: go
+          label: listEcommerceOrders
+          source: "package main\n\nimport(\n\tgosdk \"github.com/panoratech/go-sdk\"\n\t\"context\"\n\t\"log\"\n)\n\nfunc main() {\n    s := gosdk.New(\n        gosdk.WithSecurity(\"<YOUR_API_KEY_HERE>\"),\n    )\n    var xConnectionToken string = \"<value>\"\n\n    var remoteData *bool = gosdk.Bool(true)\n\n    var limit *float64 = gosdk.Float64(10)\n\n    var cursor *string = gosdk.String(\"1b8b05bb-5273-4012-b520-8657b0b90874\")\n    ctx := context.Background()\n    res, err := s.Ecommerce.Orders.List(ctx, xConnectionToken, remoteData, limit, cursor)\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.Object != nil {\n                for {\n            // handle items\n        \n            res, err = res.Next()\n        \n            if err != nil {\n                // handle error\n            }\n        \n            if res == nil {\n                break\n            }\n        }\n        \n    }\n}"
+        - lang: ruby
+          label: listEcommerceOrders
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_orders.list(x_connection_token=\"<value>\", remote_data=true, limit=10.0, cursor=\"1b8b05bb-5273-4012-b520-8657b0b90874\")\n\nif ! res.object.nil?\n  # handle response\nend"
     post:
       operationId: createEcommerceOrder
       summary: Create Orders
@@ -23342,6 +23629,54 @@ paths:
             }
 
             run();
+        - lang: python
+          label: createEcommerceOrder
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.orders.create(x_connection_token="<value>", unified_ecommerce_order_input={}, remote_data=False)
+
+            if res is not None:
+                # handle response
+                pass
+        - lang: go
+          label: createEcommerceOrder
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"github.com/panoratech/go-sdk/models/components"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+                var xConnectionToken string = "<value>"
+
+                unifiedEcommerceOrderInput := components.UnifiedEcommerceOrderInput{}
+
+                var remoteData *bool = gosdk.Bool(false)
+                ctx := context.Background()
+                res, err := s.Ecommerce.Orders.Create(ctx, xConnectionToken, unifiedEcommerceOrderInput, remoteData)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res.UnifiedEcommerceOrderOutput != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: createEcommerceOrder
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_orders.create(x_connection_token=\"<value>\", unified_ecommerce_order_input=::OpenApiSDK::Shared::UnifiedEcommerceOrderInput.new(), remote_data=false)\n\nif ! res.unified_ecommerce_order_output.nil?\n  # handle response\nend"
   /ecommerce/orders/{id}:
     get:
       operationId: retrieveEcommerceOrder
@@ -23396,6 +23731,51 @@ paths:
             }
 
             run();
+        - lang: python
+          label: retrieveEcommerceOrder
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.orders.retrieve(x_connection_token="<value>", id="<value>")
+
+            if res is not None:
+                # handle response
+                pass
+        - lang: go
+          label: retrieveEcommerceOrder
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+                var xConnectionToken string = "<value>"
+
+                var id string = "<value>"
+                ctx := context.Background()
+                res, err := s.Ecommerce.Orders.Retrieve(ctx, xConnectionToken, id, nil)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res.UnifiedEcommerceOrderOutput != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: retrieveEcommerceOrder
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_orders.retrieve(x_connection_token=\"<value>\", id=\"<value>\", remote_data=false)\n\nif ! res.unified_ecommerce_order_output.nil?\n  # handle response\nend"
   /ecommerce/customers:
     get:
       operationId: listEcommerceCustomers
@@ -23477,6 +23857,31 @@ paths:
             }
 
             run();
+        - lang: python
+          label: listEcommerceCustomers
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.customers.list(x_connection_token="<value>", remote_data=True, limit=10, cursor="1b8b05bb-5273-4012-b520-8657b0b90874")
+
+            if res is not None:
+                while True:
+                    # handle items
+
+                    res = res.Next()
+                    if res is None:
+                        break
+        - lang: go
+          label: listEcommerceCustomers
+          source: "package main\n\nimport(\n\tgosdk \"github.com/panoratech/go-sdk\"\n\t\"context\"\n\t\"log\"\n)\n\nfunc main() {\n    s := gosdk.New(\n        gosdk.WithSecurity(\"<YOUR_API_KEY_HERE>\"),\n    )\n    var xConnectionToken string = \"<value>\"\n\n    var remoteData *bool = gosdk.Bool(true)\n\n    var limit *float64 = gosdk.Float64(10)\n\n    var cursor *string = gosdk.String(\"1b8b05bb-5273-4012-b520-8657b0b90874\")\n    ctx := context.Background()\n    res, err := s.Ecommerce.Customers.List(ctx, xConnectionToken, remoteData, limit, cursor)\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.Object != nil {\n                for {\n            // handle items\n        \n            res, err = res.Next()\n        \n            if err != nil {\n                // handle error\n            }\n        \n            if res == nil {\n                break\n            }\n        }\n        \n    }\n}"
+        - lang: ruby
+          label: listEcommerceCustomers
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_customers.list(x_connection_token=\"<value>\", remote_data=true, limit=10.0, cursor=\"1b8b05bb-5273-4012-b520-8657b0b90874\")\n\nif ! res.object.nil?\n  # handle response\nend"
   /ecommerce/customers/{id}:
     get:
       operationId: retrieveEcommerceCustomer
@@ -23531,6 +23936,51 @@ paths:
             }
 
             run();
+        - lang: python
+          label: retrieveEcommerceCustomer
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.customers.retrieve(x_connection_token="<value>", id="<value>")
+
+            if res is not None:
+                # handle response
+                pass
+        - lang: go
+          label: retrieveEcommerceCustomer
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+                var xConnectionToken string = "<value>"
+
+                var id string = "<value>"
+                ctx := context.Background()
+                res, err := s.Ecommerce.Customers.Retrieve(ctx, xConnectionToken, id, nil)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res.UnifiedEcommerceCustomerOutput != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: retrieveEcommerceCustomer
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_customers.retrieve(x_connection_token=\"<value>\", id=\"<value>\", remote_data=false)\n\nif ! res.unified_ecommerce_customer_output.nil?\n  # handle response\nend"
   /ecommerce/fulfillments:
     get:
       operationId: listEcommerceFulfillments
@@ -23613,6 +24063,31 @@ paths:
             }
 
             run();
+        - lang: python
+          label: listEcommerceFulfillments
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.fulfillments.list(x_connection_token="<value>", remote_data=True, limit=10, cursor="1b8b05bb-5273-4012-b520-8657b0b90874")
+
+            if res is not None:
+                while True:
+                    # handle items
+
+                    res = res.Next()
+                    if res is None:
+                        break
+        - lang: go
+          label: listEcommerceFulfillments
+          source: "package main\n\nimport(\n\tgosdk \"github.com/panoratech/go-sdk\"\n\t\"context\"\n\t\"log\"\n)\n\nfunc main() {\n    s := gosdk.New(\n        gosdk.WithSecurity(\"<YOUR_API_KEY_HERE>\"),\n    )\n    var xConnectionToken string = \"<value>\"\n\n    var remoteData *bool = gosdk.Bool(true)\n\n    var limit *float64 = gosdk.Float64(10)\n\n    var cursor *string = gosdk.String(\"1b8b05bb-5273-4012-b520-8657b0b90874\")\n    ctx := context.Background()\n    res, err := s.Ecommerce.Fulfillments.List(ctx, xConnectionToken, remoteData, limit, cursor)\n    if err != nil {\n        log.Fatal(err)\n    }\n    if res.Object != nil {\n                for {\n            // handle items\n        \n            res, err = res.Next()\n        \n            if err != nil {\n                // handle error\n            }\n        \n            if res == nil {\n                break\n            }\n        }\n        \n    }\n}"
+        - lang: ruby
+          label: listEcommerceFulfillments
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_fulfillments.list(x_connection_token=\"<value>\", remote_data=true, limit=10.0, cursor=\"1b8b05bb-5273-4012-b520-8657b0b90874\")\n\nif ! res.object.nil?\n  # handle response\nend"
   /ecommerce/fulfillments/{id}:
     get:
       operationId: retrieveEcommerceFulfillment
@@ -23667,6 +24142,51 @@ paths:
             }
 
             run();
+        - lang: python
+          label: retrieveEcommerceFulfillment
+          source: |-
+            from panora_sdk import Panora
+
+            s = Panora(
+                api_key="<YOUR_API_KEY_HERE>",
+            )
+
+
+            res = s.ecommerce.fulfillments.retrieve(x_connection_token="<value>", id="<value>")
+
+            if res is not None:
+                # handle response
+                pass
+        - lang: go
+          label: retrieveEcommerceFulfillment
+          source: |-
+            package main
+
+            import(
+            	gosdk "github.com/panoratech/go-sdk"
+            	"context"
+            	"log"
+            )
+
+            func main() {
+                s := gosdk.New(
+                    gosdk.WithSecurity("<YOUR_API_KEY_HERE>"),
+                )
+                var xConnectionToken string = "<value>"
+
+                var id string = "<value>"
+                ctx := context.Background()
+                res, err := s.Ecommerce.Fulfillments.Retrieve(ctx, xConnectionToken, id, nil)
+                if err != nil {
+                    log.Fatal(err)
+                }
+                if res.UnifiedEcommerceFulfillmentOutput != nil {
+                    // handle response
+                }
+            }
+        - lang: ruby
+          label: retrieveEcommerceFulfillment
+          source: "require 'panora'\n\n\ns = ::OpenApiSDK::Panora.new\ns.config_security(\n  ::OpenApiSDK::Shared::Security.new(\n    api_key: \"<YOUR_API_KEY_HERE>\",\n  )\n)\n\n    \nres = s.ecommerce_fulfillments.retrieve(x_connection_token=\"<value>\", id=\"<value>\", remote_data=false)\n\nif ! res.unified_ecommerce_fulfillment_output.nil?\n  # handle response\nend"
   /ticketing/attachments:
     get:
       operationId: listTicketingAttachments
