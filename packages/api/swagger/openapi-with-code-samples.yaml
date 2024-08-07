@@ -80,7 +80,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: API is healthy
+          description: Api is healthy
           content:
             application/json:
               schema:
@@ -2141,10 +2141,10 @@ paths:
                   addresses: [
                     {
                       street1: "5th Avenue",
-                      street2: "<value>",
+                      street2: "Street 2",
                       city: "New York",
                       state: "NY",
-                      postalCode: "46842",
+                      postalCode: "10001",
                       country: "USA",
                       addressType: AddressType.Work,
                       ownerType: "<value>",
@@ -2558,11 +2558,11 @@ paths:
                   ],
                   addresses: [
                     {
-                      street1: "<value>",
-                      street2: "<value>",
+                      street1: "5th Avenue",
+                      street2: "Street 2",
                       city: "Anytown",
                       state: "CA",
-                      postalCode: "97398",
+                      postalCode: "10001",
                       country: "USA",
                       addressType: AddressType.Personal,
                       ownerType: "<value>",
@@ -23163,7 +23163,7 @@ paths:
   /ecommerce/products:
     get:
       operationId: listEcommerceProducts
-      summary: List a batch of Products
+      summary: List Products
       parameters:
         - name: x-connection-token
           required: true
@@ -23304,6 +23304,7 @@ paths:
           label: createEcommerceProduct
           source: |-
             import { Panora } from "@panora/sdk";
+            import { UnifiedEcommerceProductInputProductStatus } from "@panora/sdk/models/components";
 
             const panora = new Panora({
               apiKey: "<YOUR_API_KEY_HERE>",
@@ -23313,7 +23314,23 @@ paths:
               const result = await panora.ecommerce.products.create({
                 xConnectionToken: "<value>",
                 remoteData: false,
-                unifiedEcommerceProductInput: {},
+                unifiedEcommerceProductInput: {
+                  productUrl: "https://product_url/tee",
+                  productType: "teeshirt",
+                  productStatus: UnifiedEcommerceProductInputProductStatus.Active,
+                  imagesUrls: [
+                    "https://myproduct/image",
+                  ],
+                  description: "best tee ever",
+                  vendor: "vendor_extern",
+                  variants: [
+                    {},
+                  ],
+                  tags: [
+                    "tag_1",
+                  ],
+                  fieldMappings: {},
+                },
               });
 
               // Handle the result
@@ -23372,8 +23389,8 @@ paths:
   /ecommerce/products/{id}:
     get:
       operationId: retrieveEcommerceProduct
-      summary: Retrieve a Product
-      description: Retrieve a product from any connected Ats software
+      summary: Retrieve Products
+      description: Retrieve products from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -23471,7 +23488,7 @@ paths:
   /ecommerce/orders:
     get:
       operationId: listEcommerceOrders
-      summary: List a batch of Orders
+      summary: List Orders
       parameters:
         - name: x-connection-token
           required: true
@@ -23612,6 +23629,7 @@ paths:
           label: createEcommerceOrder
           source: |-
             import { Panora } from "@panora/sdk";
+            import { UnifiedEcommerceOrderInputCurrency } from "@panora/sdk/models/components";
 
             const panora = new Panora({
               apiKey: "<YOUR_API_KEY_HERE>",
@@ -23621,7 +23639,20 @@ paths:
               const result = await panora.ecommerce.orders.create({
                 xConnectionToken: "<value>",
                 remoteData: false,
-                unifiedEcommerceOrderInput: {},
+                unifiedEcommerceOrderInput: {
+                  orderStatus: "PAID",
+                  orderNumber: "19823838833",
+                  paymentStatus: "SUCCESS",
+                  currency: UnifiedEcommerceOrderInputCurrency.Aud,
+                  totalPrice: 300,
+                  totalDiscount: 10,
+                  totalShipping: 120,
+                  totalTax: 120,
+                  fulfillmentStatus: "delivered",
+                  customerId: "801f9ede-c698-4e66-a7fc-48d19eebaa4f",
+                  items: {},
+                  fieldMappings: {},
+                },
               });
 
               // Handle the result
@@ -23680,8 +23711,8 @@ paths:
   /ecommerce/orders/{id}:
     get:
       operationId: retrieveEcommerceOrder
-      summary: Retrieve a Order
-      description: Retrieve a order from any connected Ats software
+      summary: Retrieve Orders
+      description: Retrieve orders from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -23779,7 +23810,7 @@ paths:
   /ecommerce/customers:
     get:
       operationId: listEcommerceCustomers
-      summary: List a batch of Customers
+      summary: List Customers
       parameters:
         - name: x-connection-token
           required: true
@@ -23885,8 +23916,8 @@ paths:
   /ecommerce/customers/{id}:
     get:
       operationId: retrieveEcommerceCustomer
-      summary: Retrieve a Customer
-      description: Retrieve a customer from any connected Ats software
+      summary: Retrieve Customers
+      description: Retrieve customers from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -23984,7 +24015,7 @@ paths:
   /ecommerce/fulfillments:
     get:
       operationId: listEcommerceFulfillments
-      summary: List a batch of Fulfillments
+      summary: List Fulfillments
       parameters:
         - name: x-connection-token
           required: true
@@ -24091,8 +24122,8 @@ paths:
   /ecommerce/fulfillments/{id}:
     get:
       operationId: retrieveEcommerceFulfillment
-      summary: Retrieve a Fulfillment
-      description: Retrieve a fulfillment from any connected Ats software
+      summary: Retrieve Fulfillments
+      description: Retrieve fulfillments from any connected Ats software
       parameters:
         - name: x-connection-token
           required: true
@@ -25332,25 +25363,31 @@ components:
         street_1:
           type: string
           nullable: true
+          example: 5th Avenue
           description: The street
         street_2:
           type: string
           nullable: true
+          example: Street 2
           description: 'More information about the street '
         city:
           type: string
           nullable: true
+          example: New York
           description: The city
         state:
           type: string
+          example: New York
           nullable: true
           description: The state
         postal_code:
           type: string
+          example: '10001'
           nullable: true
           description: The postal code
         country:
           type: string
+          example: United States of America
           nullable: true
           description: The country
         address_type:
@@ -25359,6 +25396,7 @@ components:
             - PERSONAL
             - WORK
           nullable: true
+          example: PERSONAL
           description: The address type. Authorized values are either PERSONAL or WORK.
         owner_type:
           type: string
@@ -29427,93 +29465,157 @@ components:
         - name
         - email
         - is_me
+    Variant:
+      type: object
+      properties: {}
     UnifiedEcommerceProductOutput:
       type: object
       properties:
         product_url:
           type: string
+          example: https://product_url/tee
+          nullable: true
           description: The URL of the product
         product_type:
           type: string
+          example: teeshirt
+          nullable: true
           description: The type of the product
         product_status:
           type: string
+          example: ACTIVE
+          nullable: true
+          enum: &ref_145
+            - ARCHIVED
+            - ACTIVE
+            - DRAFT
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
+          example: &ref_146
+            - https://myproduct/image
+          nullable: true
           description: The URLs of the product images
           type: array
           items:
             type: string
         description:
           type: string
+          example: best tee ever
+          nullable: true
           description: The description of the product
         vendor:
           type: string
+          example: vendor_extern
+          nullable: true
           description: The vendor of the product
         variants:
+          example: &ref_147
+            - title: teeshirt
+              price: 20
+              sku: '3'
+              options: null
+              weight: 10
+              inventory_quantity: 100
           description: The variants of the product
           type: array
           items:
-            type: object
+            $ref: '#/components/schemas/Variant'
         tags:
+          example: &ref_148
+            - tag_1
+          nullable: true
           description: The tags associated with the product
           type: array
           items:
             type: string
         field_mappings:
           type: object
+          example: &ref_149
+            fav_dish: broccoli
+            fav_color: red
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party & Panora
         id:
           type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
           description: The UUID of the product
         remote_id:
           type: string
+          example: id_1
+          nullable: true
           description: The remote ID of the product in the context of the 3rd Party
         remote_data:
           type: object
+          example:
+            fav_dish: broccoli
+            fav_color: red
+          nullable: true
           description: The remote data of the customer in the context of the 3rd Party
         created_at:
           type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
           description: The created date of the object
         modified_at:
           type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
           description: The modified date of the object
     UnifiedEcommerceProductInput:
       type: object
       properties:
         product_url:
           type: string
+          example: https://product_url/tee
+          nullable: true
           description: The URL of the product
         product_type:
           type: string
+          example: teeshirt
+          nullable: true
           description: The type of the product
         product_status:
           type: string
+          example: ACTIVE
+          nullable: true
+          enum: *ref_145
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
+          example: *ref_146
+          nullable: true
           description: The URLs of the product images
           type: array
           items:
             type: string
         description:
           type: string
+          example: best tee ever
+          nullable: true
           description: The description of the product
         vendor:
           type: string
+          example: vendor_extern
+          nullable: true
           description: The vendor of the product
         variants:
+          example: *ref_147
           description: The variants of the product
           type: array
           items:
-            type: object
+            $ref: '#/components/schemas/Variant'
         tags:
+          example: *ref_148
+          nullable: true
           description: The tags associated with the product
           type: array
           items:
             type: string
         field_mappings:
           type: object
+          example: *ref_149
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party & Panora
     UnifiedEcommerceOrderOutput:
@@ -29521,96 +29623,322 @@ components:
       properties:
         order_status:
           type: string
+          example: PAID
+          nullable: true
           description: The status of the order
         order_number:
           type: string
+          example: 19823838833
+          nullable: true
           description: The number of the order
         payment_status:
           type: string
+          example: SUCCESS
+          nullable: true
           description: The payment status of the order
         currency:
           type: string
+          nullable: true
+          example: AUD
+          enum: &ref_150
+            - AED
+            - AFN
+            - ALL
+            - AMD
+            - ANG
+            - AOA
+            - ARS
+            - AUD
+            - AWG
+            - AZN
+            - BAM
+            - BBD
+            - BDT
+            - BGN
+            - BHD
+            - BIF
+            - BMD
+            - BND
+            - BOB
+            - BRL
+            - BSD
+            - BTN
+            - BWP
+            - BYN
+            - BZD
+            - CAD
+            - CDF
+            - CHF
+            - CLP
+            - CNY
+            - COP
+            - CRC
+            - CUP
+            - CVE
+            - CZK
+            - DJF
+            - DKK
+            - DOP
+            - DZD
+            - EGP
+            - ERN
+            - ETB
+            - EUR
+            - FJD
+            - FKP
+            - FOK
+            - GBP
+            - GEL
+            - GGP
+            - GHS
+            - GIP
+            - GMD
+            - GNF
+            - GTQ
+            - GYD
+            - HKD
+            - HNL
+            - HRK
+            - HTG
+            - HUF
+            - IDR
+            - ILS
+            - IMP
+            - INR
+            - IQD
+            - IRR
+            - ISK
+            - JEP
+            - JMD
+            - JOD
+            - JPY
+            - KES
+            - KGS
+            - KHR
+            - KID
+            - KMF
+            - KRW
+            - KWD
+            - KYD
+            - KZT
+            - LAK
+            - LBP
+            - LKR
+            - LRD
+            - LSL
+            - LYD
+            - MAD
+            - MDL
+            - MGA
+            - MKD
+            - MMK
+            - MNT
+            - MOP
+            - MRU
+            - MUR
+            - MVR
+            - MWK
+            - MXN
+            - MYR
+            - MZN
+            - NAD
+            - NGN
+            - NIO
+            - NOK
+            - NPR
+            - NZD
+            - OMR
+            - PAB
+            - PEN
+            - PGK
+            - PHP
+            - PKR
+            - PLN
+            - PYG
+            - QAR
+            - RON
+            - RSD
+            - RUB
+            - RWF
+            - SAR
+            - SBD
+            - SCR
+            - SDG
+            - SEK
+            - SGD
+            - SHP
+            - SLE
+            - SLL
+            - SOS
+            - SRD
+            - SSP
+            - STN
+            - SYP
+            - SZL
+            - THB
+            - TJS
+            - TMT
+            - TND
+            - TOP
+            - TRY
+            - TTD
+            - TVD
+            - TWD
+            - TZS
+            - UAH
+            - UGX
+            - USD
+            - UYU
+            - UZS
+            - VES
+            - VND
+            - VUV
+            - WST
+            - XAF
+            - XCD
+            - XDR
+            - XOF
+            - XPF
+            - YER
+            - ZAR
+            - ZMW
+            - ZWL
           description: >-
             The currency of the order. Authorized value must be of type CurrencyCode (ISO 4217)
         total_price:
           type: number
+          example: 300
+          nullable: true
           description: The total price of the order
         total_discount:
           type: number
+          example: 10
+          nullable: true
           description: The total discount on the order
         total_shipping:
           type: number
+          example: 120
+          nullable: true
           description: The total shipping cost of the order
         total_tax:
           type: number
+          example: 120
+          nullable: true
           description: The total tax on the order
         fulfillment_status:
           type: string
+          nullable: true
+          example: delivered
           description: The fulfillment status of the order
         customer_id:
           type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
           description: The UUID of the customer associated with the order
         items:
           type: object
+          nullable: true
+          example: &ref_151 {}
           description: The items in the order
         field_mappings:
           type: object
+          example: &ref_152
+            fav_dish: broccoli
+            fav_color: red
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party & Panora
         id:
           type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
           description: The UUID of the order
         remote_id:
           type: string
+          example: id_1
+          nullable: true
           description: The remote ID of the order in the context of the 3rd Party
         remote_data:
           type: object
+          example:
+            fav_dish: broccoli
+            fav_color: red
+          nullable: true
           description: The remote data of the customer in the context of the 3rd Party
         created_at:
           type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
           description: The created date of the object
         modified_at:
           type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
           description: The modified date of the object
     UnifiedEcommerceOrderInput:
       type: object
       properties:
         order_status:
           type: string
+          example: PAID
+          nullable: true
           description: The status of the order
         order_number:
           type: string
+          example: 19823838833
+          nullable: true
           description: The number of the order
         payment_status:
           type: string
+          example: SUCCESS
+          nullable: true
           description: The payment status of the order
         currency:
           type: string
+          nullable: true
+          example: AUD
+          enum: *ref_150
           description: >-
             The currency of the order. Authorized value must be of type CurrencyCode (ISO 4217)
         total_price:
           type: number
+          example: 300
+          nullable: true
           description: The total price of the order
         total_discount:
           type: number
+          example: 10
+          nullable: true
           description: The total discount on the order
         total_shipping:
           type: number
+          example: 120
+          nullable: true
           description: The total shipping cost of the order
         total_tax:
           type: number
+          example: 120
+          nullable: true
           description: The total tax on the order
         fulfillment_status:
           type: string
+          nullable: true
+          example: delivered
           description: The fulfillment status of the order
         customer_id:
           type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
           description: The UUID of the customer associated with the order
         items:
           type: object
+          nullable: true
+          example: *ref_151
           description: The items in the order
         field_mappings:
           type: object
+          example: *ref_152
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party & Panora
     UnifiedEcommerceCustomerOutput:
@@ -29618,80 +29946,139 @@ components:
       properties:
         email:
           type: string
+          example: joedoe@gmail.com
+          nullable: true
           description: The email of the customer
         first_name:
           type: string
+          example: Joe
+          nullable: true
           description: The first name of the customer
         last_name:
           type: string
+          example: Doe
+          nullable: true
           description: The last name of the customer
         phone_number:
           type: string
+          example: '+336666666'
+          nullable: true
           description: The phone number of the customer
         addresses:
+          example:
+            - address_type: PERSONAL
+              street_1: 5th Avenue
+              state: New York
+              city: New York
+              country: United States of America
+          nullable: true
           description: The addresses of the customer
           type: array
           items:
-            type: object
+            $ref: '#/components/schemas/Address'
         field_mappings:
           type: object
+          example:
+            fav_dish: broccoli
+            fav_color: red
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party & Panora
         id:
           type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
           description: The UUID of the customer
         remote_id:
           type: string
+          example: id_1
+          nullable: true
           description: The remote ID of the customer in the context of the 3rd Party
         remote_data:
           type: object
+          example:
+            fav_dish: broccoli
+            fav_color: red
+          nullable: true
           description: The remote data of the customer in the context of the 3rd Party
         created_at:
           type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
           description: The created date of the object
         modified_at:
           type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
           description: The modified date of the object
     UnifiedEcommerceFulfillmentOutput:
       type: object
       properties:
         carrier:
           type: string
+          nullable: true
+          example: DHL
           description: The carrier of the fulfilment
         tracking_urls:
+          nullable: true
+          example:
+            - https://tracing-url.sf.com
           description: The tracking URLs of the fulfilment
           type: array
           items:
             type: string
         tracking_numbers:
+          nullable: true
+          example:
+            - track_1029_191919
           description: The tracking numbers of the fulfilment
           type: array
           items:
             type: string
         items:
           type: object
+          nullable: true
+          example: {}
           description: The items in the fulfilment
         order_id:
           type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
           description: The UUID of the order associated with the fulfilment
         field_mappings:
           type: object
+          example:
+            fav_dish: broccoli
+            fav_color: red
+          nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party & Panora
         id:
           type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
           description: The UUID of the fulfilment
         remote_id:
           type: string
+          example: id_1
+          nullable: true
           description: The remote ID of the fulfilment in the context of the 3rd Party
         remote_data:
           type: object
+          example:
+            fav_dish: broccoli
+            fav_color: red
+          nullable: true
           description: The remote data of the customer in the context of the 3rd Party
         created_at:
           type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
           description: The created date of the object
         modified_at:
           type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
           description: The modified date of the object
     UnifiedTicketingAttachmentOutput:
       type: object
@@ -29724,7 +30111,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_145
+          example: &ref_153
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -29795,7 +30182,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_145
+          example: *ref_153
           description: >-
             The custom field mappings of the attachment between the remote 3rd party & Panora
           additionalProperties: true
