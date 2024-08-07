@@ -9,9 +9,9 @@ export type AuthType = {
     properties?: string[]; // for api key it is needed to know what is asked e.g apikey, usertoken etc
     authStructure?: { // if its not speicfied we assume there is only 1 row in the arrray with headerParamName = Authorization & prefix = Bearer
         headerParamName: string;
-        prefix?: string; //some dont have any prefix 
+        prefix?: string; // some dont have any prefix 
         valueName?: string;
-        reqFormat?: 'MUTLIPART'; //if specified it means we are informing about the structure to send multiform data
+        reqFormat?: 'MUTLIPART'; // if specified it means we are informing about the structure to send multiform data
     }[];
 }
 export enum SoftwareMode {

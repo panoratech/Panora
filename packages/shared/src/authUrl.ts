@@ -51,7 +51,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   }
   let baseRedirectURL = apiUrl;
   // We check if https is needed in local if yes we take the ingress setup in .env   and passed through redirectUriIngress
-  if(config.options && config.options.local_redirect_uri_in_https == true && redirectUriIngress && redirectUriIngress.status === true){
+  if (config.options && config.options.local_redirect_uri_in_https === true && redirectUriIngress && redirectUriIngress.status === true) {
     baseRedirectURL = redirectUriIngress.value!;
   }
   const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`); 
@@ -59,7 +59,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
   // const vertical = findConnectorCategory(providerName);
-  if (vertical == null) { 
+  if (vertical === null) { 
     throw new ReferenceError('vertical is null');
   }
   const authStrategy = config.authStrategy!.strategy;
@@ -132,7 +132,6 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   let BASE_URL: string;
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
-
   if( needsSubdomain(providerName, vertical) ) {
     if(typeof baseUrl === 'string') {
       BASE_URL = baseUrl;
@@ -206,7 +205,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       break;
     case 'klaviyo':
       const {codeChallenge, codeVerifier}= generateCodes()
-      params += `&code_challenge_method=S256&code_challenge=${codeChallenge}` //todo: store codeVerifier in a store
+      params += `&code_challenge_method=S256&code_challenge=${codeChallenge}` // todo: store codeVerifier in a store
       break;
     default:
       break;

@@ -132,7 +132,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: {
           strategy: AuthStrategy.basic,
-          properties: ["password"]
+          properties: ['password']
         }
       },
       'capsule': { 
@@ -1233,7 +1233,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: {
           strategy: AuthStrategy.basic,
-          properties: ["username"]
+          properties: ['username']
         }
       },
       'bamboohr': {
@@ -2794,7 +2794,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'read_all_orders,read_assigned_fulfillment_orders,read_customers,read_fulfillments,read_orders,write_orders,read_products,write_products',
         urls: {
           docsUrl: 'https://shopify.dev/docs/apps/build',
-          apiUrl: (store_name: string) => `https://${store_name}.myshopify.com`,
+          apiUrl: (storeName: string) => `https://${storeName}.myshopify.com`,
           authBaseUrl: (shop: string) => `https://${shop}.myshopify.com/admin/oauth/authorize`
         },
         logoPath: 'https://cdn.eastsideco.com/media/v3/services/ecommerce-services/shopify-logo.png',
@@ -2823,8 +2823,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'woocommerce': {
         urls: {
           docsUrl: 'https://woocommerce.github.io/woocommerce-rest-api-docs/#introduction',
-          apiUrl: (store_name: string) => `https://${store_name}.com`,
-          authBaseUrl: (store_name: string) => `https://${store_name}.com/wc-auth/v1/authorize`
+          apiUrl: (storeName: string) => `https://${storeName}.com`,
+          authBaseUrl: (storeName: string) => `https://${storeName}.com/wc-auth/v1/authorize`
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHiusc7S5-BoiU1YKCztJMv_Qj7wlim4TwbA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
