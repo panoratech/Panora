@@ -52,7 +52,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   let baseRedirectURL = apiUrl;
   // We check if https is needed in local if yes we take the ingress setup in .env   and passed through redirectUriIngress
   if(config.options && config.options.local_redirect_uri_in_https == true && redirectUriIngress && redirectUriIngress.status === true){
-    baseRedirectURL = redirectUriIngress.value;
+    baseRedirectURL = redirectUriIngress.value!;
   }
   const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`); 
   const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
@@ -143,7 +143,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     if(typeof baseUrl === 'string') {
       BASE_URL = baseUrl;
     } else {
-      BASE_URL = (baseUrl as DynamicAuthorization)(additionalParams.end_user_domain);
+      BASE_URL = (baseUrl as DynamicAuthorization)(additionalParams!.end_user_domain);
     }
   } else {
     BASE_URL = baseUrl as StringAuthorization;
