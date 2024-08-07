@@ -56,7 +56,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   }
   const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`); 
   let state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
-  if (providerName == 'microsoftdynamicssales') {
+  if (providerName === 'microsoftdynamicssales') {
     state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl, resource: additionalParams!.end_user_domain }));
   }
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
@@ -167,9 +167,9 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   }
 
   if (needsScope(providerName, vertical) && scopes) {
-    if(providerName === 'slack') {
+    if (providerName === 'slack') {
       params += `&scope=&user_scope=${encodeURIComponent(scopes)}`;
-    } else if (providerName == 'microsoftdynamicssales') {
+    } else if (providerName === 'microsoftdynamicssales') {
       const url = new URL(BASE_URL);
       // Extract the base URL without parameters
       const base = url.origin + url.pathname;
@@ -178,10 +178,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       BASE_URL = base;
       let b = `https://${resource}/.default`;
       b += (' offline_access'); 
-      console.log("scopes is "+ b)
-      console.log("BASE URL is "+ BASE_URL)
       params += `&scope=${encodeURIComponent(b)}`;
-    }else {
+    } else {
       params += `&scope=${encodeURIComponent(scopes)}`;
     }
   }
