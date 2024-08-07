@@ -11,6 +11,8 @@ import {
 export class UnifiedEcommerceFulfillmentInput {
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
+    example: 'DHL',
     description: 'The carrier of the fulfilment',
   })
   @IsString()
@@ -19,6 +21,8 @@ export class UnifiedEcommerceFulfillmentInput {
 
   @ApiPropertyOptional({
     type: [String],
+    nullable: true,
+    example: ['https://tracing-url.sf.com'],
     description: 'The tracking URLs of the fulfilment',
   })
   @IsArray()
@@ -28,6 +32,8 @@ export class UnifiedEcommerceFulfillmentInput {
 
   @ApiPropertyOptional({
     type: [String],
+    nullable: true,
+    example: ['track_1029_191919'],
     description: 'The tracking numbers of the fulfilment',
   })
   @IsArray()
@@ -37,6 +43,8 @@ export class UnifiedEcommerceFulfillmentInput {
 
   @ApiPropertyOptional({
     type: Object,
+    nullable: true,
+    example: {},
     description: 'The items in the fulfilment',
   })
   @IsObject()
@@ -45,6 +53,8 @@ export class UnifiedEcommerceFulfillmentInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the order associated with the fulfilment',
   })
   @IsUUID()
@@ -53,6 +63,11 @@ export class UnifiedEcommerceFulfillmentInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -63,6 +78,8 @@ export class UnifiedEcommerceFulfillmentInput {
 export class UnifiedEcommerceFulfillmentOutput extends UnifiedEcommerceFulfillmentInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the fulfilment',
   })
   @IsUUID()
@@ -71,6 +88,8 @@ export class UnifiedEcommerceFulfillmentOutput extends UnifiedEcommerceFulfillme
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
+    nullable: true,
     description:
       'The remote ID of the fulfilment in the context of the 3rd Party',
   })
@@ -80,6 +99,11 @@ export class UnifiedEcommerceFulfillmentOutput extends UnifiedEcommerceFulfillme
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    nullable: true,
     description:
       'The remote data of the customer in the context of the 3rd Party',
   })
@@ -88,6 +112,8 @@ export class UnifiedEcommerceFulfillmentOutput extends UnifiedEcommerceFulfillme
 
   @ApiPropertyOptional({
     type: String,
+    example: '2024-10-01T12:00:00Z',
+    nullable: true,
     description: 'The created date of the object',
   })
   @IsDateString()
@@ -96,6 +122,8 @@ export class UnifiedEcommerceFulfillmentOutput extends UnifiedEcommerceFulfillme
 
   @ApiPropertyOptional({
     type: String,
+    example: '2024-10-01T12:00:00Z',
+    nullable: true,
     description: 'The modified date of the object',
   })
   @IsDateString()

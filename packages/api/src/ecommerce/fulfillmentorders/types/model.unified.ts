@@ -12,6 +12,11 @@ export class UnifiedEcommerceFulfillmentOrdersInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    nullable: true,
     description:
       'The custom field mappings of the object between the remote 3rd party & Panora',
   })
@@ -22,6 +27,8 @@ export class UnifiedEcommerceFulfillmentOrdersInput {
 export class UnifiedEcommerceFulfillmentOrdersOutput extends UnifiedEcommerceFulfillmentOrdersInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
     description: 'The UUID of the fulfillmentorders',
   })
   @IsUUID()
@@ -30,6 +37,8 @@ export class UnifiedEcommerceFulfillmentOrdersOutput extends UnifiedEcommerceFul
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
+    nullable: true,
     description:
       'The remote ID of the fulfillmentorders in the context of the 3rd Party',
   })
@@ -39,6 +48,11 @@ export class UnifiedEcommerceFulfillmentOrdersOutput extends UnifiedEcommerceFul
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    nullable: true,
     description:
       'The remote data of the fulfillmentorders in the context of the 3rd Party',
   })

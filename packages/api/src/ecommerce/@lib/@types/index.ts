@@ -56,6 +56,7 @@ export enum EcommerceObject {
 export class Address {
   @ApiProperty({
     type: String,
+    example: '5th Avenue',
     description: 'The street',
   })
   @IsString()
@@ -63,6 +64,7 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: 'Street 2',
     description: 'More information about the street ',
   })
   @IsString()
@@ -71,6 +73,7 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: 'New York',
     description: 'The city',
   })
   @IsString()
@@ -78,6 +81,8 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: 'New York',
+    nullable: true,
     description: 'The state',
   })
   @IsString()
@@ -85,6 +90,8 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: '10001',
+    nullable: true,
     description: 'The postal code',
   })
   @IsString()
@@ -92,6 +99,8 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: 'United States of America',
+    nullable: true,
     description: 'The country',
   })
   @IsString()
@@ -99,6 +108,9 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    enum: ['PERSONAL', 'WORK'],
+    example: 'PERSONAL',
+    nullable: true,
     description:
       'The address type. Authorized values are either PERSONAL or WORK.',
   })
