@@ -35,6 +35,7 @@ export type StateDataType = {
   linkedUserId: string;
   providerName: string;
   returnUrl?: string;
+  [key: string]: any;
 };
 
 export class BodyDataType {
@@ -81,15 +82,21 @@ export class ConnectionsController {
       }
 
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
-      const { projectId, vertical, linkedUserId, providerName, returnUrl } =
-        stateData;
+      const {
+        projectId,
+        vertical,
+        linkedUserId,
+        providerName,
+        returnUrl,
+        resource,
+      } = stateData;
 
       const service = this.categoryConnectionRegistry.getService(
         vertical.toLowerCase(),
       );
       await service.handleCallBack(
         providerName,
-        { linkedUserId, projectId, code, otherParams },
+        { linkedUserId, projectId, code, otherParams, resource },
         'oauth2',
       );
       if (providerName == 'shopify') {

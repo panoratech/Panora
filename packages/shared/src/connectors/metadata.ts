@@ -203,18 +203,21 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.oauth2
         }
       },
-      'microsoft_dynamics_sales': {
-        scopes: '',
+      'microsoftdynamicssales': {
+        scopes: 'offline_access',
         urls: {
           docsUrl: '',
-          authBaseUrl: '',
-          apiUrl: '',
+          authBaseUrl: (orgName) => `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?resource=${orgName}`,
+          apiUrl: `/api/data/v9.2`,
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://play-lh.googleusercontent.com/MC_Aoa7rlMjGtcgAdiLJGeIm3-kpVw7APQmQUrUZtXuoZokiqVOJqR-bTu7idJBD8g',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
+        options: {
+          end_user_domain: true
+        },
         authStrategy: {
-          strategy: AuthStrategy.api_key
+          strategy: AuthStrategy.oauth2
         }
       },
       'nutshell': {

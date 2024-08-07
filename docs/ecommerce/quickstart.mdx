@@ -4,7 +4,7 @@ description: "Read data from multiple Ecommerce platforms using a single API"
 icon: "star"
 ---
 
-## List files in a Ecommerce provider using Panora
+## List products in a Ecommerce provider using Panora
 
 <Check>
   We assume for this tutorial that you have a valid Panora API Key, and a
@@ -32,13 +32,13 @@ icon: "star"
         </CodeGroup>
     </Step>
 
-     <Step title="List files in your Ecommerce:">
-        <Info>In this example, we will list files in a Ecommerce. Visit other sections of the documentation to find category-specific examples</Info>
+     <Step title="List products in your Ecommerce:">
+        <Info>In this example, we will list products in a Ecommerce. Visit other sections of the documentation to find category-specific examples</Info>
         <CodeGroup>
 
             ```shell curl
             curl --request GET \
-            --url https://api.panora.dev/filestorage/files \
+            --url https://api.panora.dev/ecommerce/products \
             --header 'x-api-key: <api-key>' \
             --header 'x-connection-token: <x-connection-token>'
             ```
@@ -50,7 +50,7 @@ icon: "star"
                 apiKey: process.env.API_KEY,
             });
 
-            const result = await panora.filestorage.files.list({
+            const result = await panora.ecommerce.products.list({
                 xConnectionToken: "YOUR_USER_CONNECTION_TOKEN",
             });
 
@@ -65,7 +65,7 @@ icon: "star"
                 api_key=os.getenv("API_KEY", ""),
             )
 
-            res = panora.filestorage.files.list(x_connection_token="YOUR_USER_CONNECTION_TOKEN")
+            res = panora.ecommerce.products.list(x_connection_token="YOUR_USER_CONNECTION_TOKEN")
 
             print(res)
             ```
