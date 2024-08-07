@@ -80,7 +80,7 @@ export class PassthroughController {
   @UseGuards(ApiKeyAuthGuard)
   @Get(':retryId')
   async getRetriedRequestResponse(
-    @Param('id') retryId: string,
+    @Param('retryId') retryId: string,
   ): Promise<AxiosResponse | null> {
     return await this.retryService.getRetryStatus(retryId);
   }

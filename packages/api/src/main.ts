@@ -14,6 +14,9 @@ function addSpeakeasyGroup(document: any) {
     const pathParts = path.split('/').filter((part) => part);
     let groupName;
 
+    if (pathParts[0] === 'passthrough') {
+      groupName = 'passthrough';
+    }
     if (pathParts[0] === 'webhooks') {
       groupName = 'webhooks';
     } else if (pathParts[0] === 'sync') {
