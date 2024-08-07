@@ -319,9 +319,7 @@ export class CommentService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));*/
+      const field_mappings = Object.fromEntries(fieldMappingsMap);*/
 
       // Fetch attachment IDs associated with the ticket
       const attachments = await this.prisma.tcg_attachments.findMany({

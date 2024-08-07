@@ -20,7 +20,6 @@ import { GitlabService } from './services/gitlab';
 import { GitlabTagMapper } from './services/gitlab/mappers';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [TagController],
   providers: [
     TagService,

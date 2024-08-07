@@ -49,9 +49,7 @@ export class UserService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedAtsUserOutput format
       const unifiedUser: UnifiedAtsUserOutput = {
@@ -179,12 +177,7 @@ export class UserService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedAtsUserOutput format
           return {

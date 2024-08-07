@@ -15,7 +15,6 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { Utils } from '@filestorage/@lib/@utils';
 
 @Module({
-  imports: [BullQueueModule],
   providers: [
     PermissionService,
 

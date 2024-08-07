@@ -31,6 +31,7 @@ export class ContactService {
   async addContact(
     unifiedContactData: UnifiedAccountingContactInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,

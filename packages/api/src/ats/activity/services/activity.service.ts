@@ -201,9 +201,7 @@ export class ActivityService {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       const unifiedActivity: UnifiedAtsActivityOutput = {
         id: activity.id_ats_activity,

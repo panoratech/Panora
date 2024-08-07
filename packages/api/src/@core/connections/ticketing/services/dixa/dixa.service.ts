@@ -1,26 +1,77 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { ITicketingConnectionService } from '../../types';
-import { ServiceRegistry } from '../registry.service';
-import { CONNECTORS_METADATA } from '@panora/shared';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { APIKeyCallbackParams } from '@@core/connections/@utils/types';
+import {
+  AbstractBaseConnectionService,
+  APIKeyCallbackParams,
+  PassthroughInput,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
+import { PassthroughResponse } from '@@core/passthrough/types';
+import { Injectable } from '@nestjs/common';
+import { CONNECTORS_METADATA } from '@panora/shared';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
-export class DixaConnectionService implements ITicketingConnectionService {
+export class DixaConnectionService extends AbstractBaseConnectionService {
+  private readonly type: string;
+
   constructor(
-    private prisma: PrismaService,
+    protected prisma: PrismaService,
     private logger: LoggerService,
-    private cryptoService: EncryptionService,
+    protected cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private connectionUtils: ConnectionUtils,
+    private retryService: RetryHandler,
   ) {
+    super(prisma, cryptoService);
     this.logger.setContext(DixaConnectionService.name);
     this.registry.registerService('dixa', this);
+  }
+
+  async passthrough(
+    input: PassthroughInput,
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
+    try {
+      const { headers } = input;
+      const config = await this.constructPassthrough(input, connectionId);
+
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: connectionId,
+        },
+      });
+
+      config.headers['Authorization'] = `Basic ${Buffer.from(
+        `${this.cryptoService.decrypt(connection.access_token)}:`,
+      ).toString('base64')}`;
+
+      config.headers = {
+        ...config.headers,
+        ...headers,
+      };
+
+      return await this.retryService.makeRequest(
+        {
+          method: config.method,
+          url: config.url,
+          data: config.data,
+          headers: config.headers,
+        },
+        'ticketing.dixa.passthrough',
+        config.linkedUserId,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  handleTokenRefresh?(opts: RefreshParams): Promise<any> {
+    return Promise.resolve();
   }
 
   async handleCallback(opts: APIKeyCallbackParams) {

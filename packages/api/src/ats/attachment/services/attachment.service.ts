@@ -231,9 +231,7 @@ export class AttachmentService {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       const unifiedAttachment: UnifiedAtsAttachmentOutput = {
         id: attachment.id_ats_candidate_attachment,

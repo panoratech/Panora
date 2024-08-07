@@ -18,7 +18,6 @@ import { ZendeskTicketMapper } from './services/zendesk/mappers';
 import { SyncService } from './sync/sync.service';
 import { TicketController } from './ticket.controller';
 @Module({
-  imports: [BullQueueModule],
   controllers: [TicketController],
   providers: [
     TicketService,

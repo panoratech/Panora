@@ -167,6 +167,7 @@ export class ExpenseController {
       return this.expenseService.addExpense(
         unifiedExpenseData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -38,7 +38,7 @@ export class ZohoService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/Accounts`,
+        `${connection.account_url}/v5/Accounts`,
         { data: [companyData] },
         {
           headers: {
@@ -50,7 +50,7 @@ export class ZohoService implements ICompanyService {
         },
       );
       const final_res = await axios.get(
-        `${connection.account_url}/Accounts/${resp.data.data[0].details.id}`,
+        `${connection.account_url}/v5/Accounts/${resp.data.data[0].details.id}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export class ZohoService implements ICompanyService {
       const fields =
         'Owner,Industry,Billing_Street,Billing_Code,Billing_City,Billing_State,Employees,Phone,Description,Account_Name';
       const resp = await axios.get(
-        `${connection.account_url}/Accounts?fields=${fields}`,
+        `${connection.account_url}/v5/Accounts?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

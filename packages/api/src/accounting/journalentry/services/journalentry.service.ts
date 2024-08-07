@@ -31,6 +31,7 @@ export class JournalEntryService {
   async addJournalEntry(
     unifiedJournalEntryData: UnifiedAccountingJournalentryInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,

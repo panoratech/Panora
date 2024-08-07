@@ -474,6 +474,48 @@
     {
       "group": "",
       "pages": [
+        "ecommerce/quickstart",
+        "ecommerce/overview"
+      ]
+    },
+    {
+      "group": "Ecommerce Objects",
+      "pages": [
+        {
+          "group": "Product",
+          "pages": [
+            "ecommerce/products/list-product",
+            "ecommerce/products/retrieve-a-product",
+            "ecommerce/products/create-a-product"
+          ]
+        },
+        {
+          "group": "Order",
+          "pages": [
+            "ecommerce/orders/list-orders",
+            "ecommerce/orders/create-a-order",
+            "ecommerce/orders/retrieve-a-order"
+          ]
+        },
+        {
+          "group": "Fulfillment",
+          "pages": [
+            "ecommerce/fulfillments/list-fulfillments",
+            "ecommerce/fulfillments/retrieve-a-fulfillment"
+          ]
+        },
+        {
+          "group": "Customer",
+          "pages": [
+            "ecommerce/customers/list-customers",
+            "ecommerce/customers/retrieve-a-customer"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "",
+      "pages": [
         "ticketing/quickstart",
         "ticketing/overview"
       ]
@@ -715,19 +757,8 @@
       "group": "Core Resources",
       "pages": [
         {
-          "group": "Auth",
-          "pages": [
-            "api-reference/auth/register",
-            "api-reference/auth/log-in",
-            "api-reference/auth/get-users",
-            "api-reference/auth/retrieve-api-keys",
-            "api-reference/auth/create-api-key"
-          ]
-        },
-        {
           "group": "Connections",
           "pages": [
-            "api-reference/connections/capture-oauth-callback",
             "api-reference/connections/list-connections"
           ]
         },
@@ -740,10 +771,22 @@
           ]
         },
         {
-          "group": "Organisations",
+          "group": "Field Mappings",
           "pages": [
-            "api-reference/organisations/retrieve-organisations",
-            "api-reference/organisations/create-an-organisation"
+            "api-reference/field_mappings/create-custom-field",
+            "api-reference/field_mappings/define-target-field",
+            "api-reference/field_mappings/map-custom-field",
+            "api-reference/field_mappings/retrieve-field-mappings-entities",
+            "api-reference/field_mappings/retrieve-field-mappings-values",
+            "api-reference/field_mappings/retrieve-field-mappings"
+          ]
+        },
+        {
+          "group": "Linked Users",
+          "pages": [
+            "api-reference/linked_users/create",
+            "api-reference/linked_users/list",
+            "api-reference/linked_users/retrieve"
           ]
         },
         {
@@ -752,7 +795,7 @@
             "api-reference/projects/retrieve-projects",
             "api-reference/projects/create-a-project"
           ]
-        },
+        }, 
         {
           "group": "Events",
           "pages": [

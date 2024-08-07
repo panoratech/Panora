@@ -26,12 +26,6 @@ export class AshbyService implements IUserService {
     );
     this.registry.registerService('ashby', this);
   }
-  addUser(
-    userData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalUserOutput>> {
-    throw new Error('Method not implemented.');
-  }
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyUserOutput[]>> {
     try {

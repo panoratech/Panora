@@ -214,9 +214,7 @@ export class FolderService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
       let permission;
       if (folder.id_fs_permission) {
         const perm = await this.prisma.fs_permissions.findUnique({

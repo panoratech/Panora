@@ -5,3 +5,4 @@ export const ACCOUNTING_PROVIDERS = [];
 export const TICKETING_PROVIDERS = ['zendesk', 'front', 'jira', 'gorgias', 'gitlab'];
 export const MARKETINGAUTOMATION_PROVIDERS = [];
 export const FILESTORAGE_PROVIDERS = [];
+export const ECOMMERCE_PROVIDERS = ['shopify'];

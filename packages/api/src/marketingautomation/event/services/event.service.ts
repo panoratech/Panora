@@ -5,7 +5,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedMarketingautomationEventInput, UnifiedMarketingautomationEventOutput } from '../types/model.unified';
+import {
+  UnifiedMarketingautomationEventInput,
+  UnifiedMarketingautomationEventOutput,
+} from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';

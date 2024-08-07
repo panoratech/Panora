@@ -164,6 +164,7 @@ export class EmployeeController {
       return this.employeeService.addEmployee(
         unifiedEmployeeData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

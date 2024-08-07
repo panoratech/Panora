@@ -37,7 +37,7 @@ export class PipedriveService implements IEngagementService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/activities`,
+        `${connection.account_url}/v1/activities`,
         JSON.stringify(engagementData),
         {
           headers: {
@@ -89,7 +89,7 @@ export class PipedriveService implements IEngagementService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/activities`, {
+      const resp = await axios.get(`${connection.account_url}/v1/activities`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -122,7 +122,7 @@ export class PipedriveService implements IEngagementService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/activities`, {
+      const resp = await axios.get(`${connection.account_url}/v1/activities`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -155,7 +155,7 @@ export class PipedriveService implements IEngagementService {
         },
       });
 
-      const resp = await axios.get(`https://api.pipedrive.com/v1/activities`, {
+      const resp = await axios.get(`${connection.account_url}/v1/activities`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -318,7 +318,7 @@ private connectionUtils: ConnectionUtils
         @Query() query: QueryDto,
   ) {
     try{
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );
@@ -388,7 +388,7 @@ private connectionUtils: ConnectionUtils
     @Query('remote_data') remote_data?: boolean,
   ) {
     try{
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
       );

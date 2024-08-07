@@ -10,7 +10,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: {
           docsUrl: 'https://developers.hubspot.com/docs/api/crm/understanding-the-crm',
           authBaseUrl: 'https://app-eu1.hubspot.com/oauth/authorize',
-          apiUrl: 'https://api.hubapi.com/crm/v3',
+          apiUrl: 'https://api.hubapi.com/crm',
           customPropertiesUrl: 'https://api.hubapi.com/properties/v1/contacts/properties',
         },
         logoPath: 'https://assets-global.website-files.com/6421a177cdeeaf3c6791b745/64d61202dd99e63d40d446f6_hubspot%20logo.png',
@@ -26,7 +26,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: {
           docsUrl: 'https://developers.attio.com/reference',
           authBaseUrl: 'https://app.attio.com/authorize',
-          apiUrl: 'https://api.attio.com/v2',
+          apiUrl: 'https://api.attio.com',
           customPropertiesUrl: '/docs/standard-objects-people',
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJWZsShi0G6mZ451MngEvQrmJ2JIGH-AF8JyFU-q-n3w&s',
@@ -40,7 +40,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: {
           docsUrl: 'https://www.zoho.com/crm/developer/docs/api/v5/',
           authBaseUrl: 'https://accounts.zoho.com/oauth/v2/auth',
-          apiUrl: '/crm/v5', // the base part is contained in the connection service
+          apiUrl: (zohoLocationBaseUrl: string) => `${zohoLocationBaseUrl}/crm`,
           customPropertiesUrl: '/settings/fields?module=Contact',
         },
         logoPath: 'https://assets-global.website-files.com/64f68d43d25e5962af5f82dd/64f68d43d25e5962af5f9812_64ad8bbe47c78358489b29fc_645e3ccf636a8d659f320e25_Group%25252012.png',
@@ -53,7 +53,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: { 
           docsUrl: 'https://developers.pipedrive.com/docs/api/v1',
           authBaseUrl: 'https://oauth.pipedrive.com/oauth/authorize',
-          apiUrl: 'https://api.pipedrive.com/v1',
+          apiUrl: 'https://api.pipedrive.com',
           customPropertiesUrl: '/v1/personFields',
         },
         logoPath: 'https://asset.brandfetch.io/idZG_U1qqs/ideqSFbb2E.jpeg',
@@ -84,7 +84,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: {
           docsUrl: 'https://developer.zendesk.com/api-reference/sales-crm/introduction/',
           authBaseUrl: 'https://api.getbase.com/oauth2/authorize',
-          apiUrl: 'https://api.getbase.com/v2',
+          apiUrl: 'https://api.getbase.com',
           customPropertiesUrl: '/contact/custom_fields',
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
@@ -93,7 +93,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.oauth2
         }
       },
-      'accelo': {
+      'accelo': { 
         urls: {
           docsUrl: 'https://api.accelo.com/docs/#introduction',
           authBaseUrl: (domain) => `https://${domain}.api.accelo.com/oauth2/v0/authorize`,
@@ -131,10 +131,11 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.api_key
+          strategy: AuthStrategy.basic,
+          properties: ["password"]
         }
       },
-      'capsule': {
+      'capsule': { 
         urls: {
           docsUrl: 'https://developer.capsulecrm.com/',
           authBaseUrl: 'https://api.capsulecrm.com/oauth/authorise',
@@ -154,7 +155,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: {
           docsUrl: 'https://developer.close.com/',
           authBaseUrl: 'https://app.close.com/oauth2/authorize',
-          apiUrl: 'https://api.close.com/api/v1',
+          apiUrl: 'https://api.close.com/api',
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEH77yPBUkStmoc1ZtgJS4XeBmQiaq_Q1vgF5oerOGbg&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
@@ -385,7 +386,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'read write',
         urls: {
           docsUrl: 'https://developer.zendesk.com/api-reference/sales-crm/introduction/',
-          apiUrl: (myDomain) => `https://${myDomain}.zendesk.com/api/v2`,
+          apiUrl: (myDomain) => `https://${myDomain}.zendesk.com/api`,
           authBaseUrl: (myDomain) => `https://${myDomain}.zendesk.com/oauth/authorizations/new`
         }, 
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
@@ -402,7 +403,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
             'ticketing.tickets.events',
             'ticketing.comments.events',
             'ticketing.tags.events',
-            'ticketing.attachments.events',
+            'ticketing.attachments.events', 
             'ticketing.accounts.events',
             'ticketing.users.events',
             'ticketing.contacts.events',
@@ -430,13 +431,16 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider offline_access',
         urls: {
           docsUrl: 'https://developer.atlassian.com/cloud/jira/platform/rest/v3',
-          apiUrl: (cloudId) => `https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3`, 
-          authBaseUrl: 'https://auth.atlassian.com/authorize',
+          apiUrl: (cloudId) => `https://api.atlassian.com/ex/jira/${cloudId}/rest/api`, 
+          authBaseUrl: 'https://auth.atlassian.com/authorize', 
+        },
+        options: {
+          local_redirect_uri_in_https: true
         },
         logoPath: 'https://logowik.com/content/uploads/images/jira3124.jpg',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         authStrategy: {
-          strategy: AuthStrategy.oauth2
+          strategy: AuthStrategy.oauth2 
         }
       },
       'linear': {
@@ -457,7 +461,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'api read_api read_user create_runner k8s_proxy read_repository write_repository sudo admin_mode read_service_ping openid profile email',
         urls: {
           docsUrl: 'https://docs.gitlab.com/ee/api/rest/#',
-          apiUrl: 'https://gitlab.com/api/v4',
+          apiUrl: 'https://gitlab.com/api',
           authBaseUrl: 'https://gitlab.com/oauth/authorize',
         },
         logoPath: 'https://asset.brandfetch.io/idw382nG0m/idVn6myaqy.png',
@@ -1125,7 +1129,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'klaviyo': {
-        scopes: '',
+        scopes: 'campaigns:read accounts:read events:read events:write profiles:read profiles:write webhooks:read webhooks:write lists:read templates:read',
         urls: {
           docsUrl: 'https://developers.klaviyo.com/en/reference/api_overview',
           apiUrl: 'https://a.klaviyo.com/api',
@@ -1205,7 +1209,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
     },
-    'ats': {
+    'ats': { 
       'applicantstack': {
         scopes: '',
         urls: {
@@ -1228,7 +1232,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.api_key
+          strategy: AuthStrategy.basic,
+          properties: ["username"]
         }
       },
       'bamboohr': {
@@ -2684,7 +2689,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'https://www.googleapis.com/auth/drive',
         urls: {
           docsUrl: '',
-          apiUrl: 'https://www.googleapis.com/drive/v2',
+          apiUrl: 'https://www.googleapis.com/drive',
           authBaseUrl: 'https://accounts.google.com/o/oauth2/v2/auth'
         },
         logoPath: 'https://static-00.iconduck.com/assets.00/google-drive-icon-2048x2048-j5sa1hcp.png',
@@ -2698,7 +2703,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'Files.Read.All offline_access openid User.Read',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
-          apiUrl: 'https://graph.microsoft.com/v1.0',
+          apiUrl: 'https://graph.microsoft.com',
           authBaseUrl: 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
         },
         logoPath: 'https://logowik.com/content/uploads/images/4964-microsoft-onedrive-new.jpg',
@@ -2711,7 +2716,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'dropbox': {
         urls: {
           docsUrl: 'https://www.dropbox.com/developers/documentation/http/documentation',
-          apiUrl: 'https://api.dropboxapi.com/2',
+          apiUrl: 'https://api.dropboxapi.com',
           authBaseUrl: 'https://www.dropbox.com/oauth2/authorize'
         },
         logoPath: 'https://cdn2.iconfinder.com/data/icons/metro-ui-dock/512/Dropbox.png',
@@ -2731,6 +2736,9 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        options: {
+          local_redirect_uri_in_https: true
+        },
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2738,7 +2746,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'box': {
         urls: {
           docsUrl: 'https://developer.box.com/reference/',
-          apiUrl: 'https://api.box.com/2.0',
+          apiUrl: 'https://api.box.com',
           authBaseUrl: 'https://account.box.com/api/oauth2/authorize'
         },
         logoPath: 'https://gdm-catalog-fmapi-prod.imgix.net/ProductLogo/95b201e8-845a-4064-a9b2-a8eb49d19ca3.png?w=128&h=128&fit=max&dpr=3&auto=format&q=50',
@@ -2753,13 +2761,13 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'notion': {
         urls: {
           docsUrl: 'https://developers.notion.com/docs/getting-started',
-          apiUrl: 'https://api.notion.com/v1',
+          apiUrl: 'https://api.notion.com',
           authBaseUrl: 'https://api.notion.com/v1/oauth/authorize'
         },
         logoPath: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
-        authStrategy: {
+        authStrategy: { 
           strategy: AuthStrategy.oauth2
         }
       },
@@ -2778,6 +2786,54 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         authStrategy: {
           strategy: AuthStrategy.oauth2
+        }
+      },
+    },
+    'ecommerce': {
+      'shopify': {
+        scopes: 'read_all_orders,read_assigned_fulfillment_orders,read_customers,read_fulfillments,read_orders,write_orders,read_products,write_products',
+        urls: {
+          docsUrl: 'https://shopify.dev/docs/apps/build',
+          apiUrl: (store_name: string) => `https://${store_name}.myshopify.com`,
+          authBaseUrl: (shop: string) => `https://${shop}.myshopify.com/admin/oauth/authorize`
+        },
+        logoPath: 'https://cdn.eastsideco.com/media/v3/services/ecommerce-services/shopify-logo.png',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+        options: {
+          end_user_domain: true,
+        }
+      },
+      'magento': {
+        urls: {
+          docsUrl: 'https://developer.adobe.com/commerce/webapi/get-started/',
+          apiUrl: '',
+          authBaseUrl: ''
+        },
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKRidZq3jXGYOIZ2X2EruCx0pFMkbsHineLg&s',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+      },
+      'woocommerce': {
+        urls: {
+          docsUrl: 'https://woocommerce.github.io/woocommerce-rest-api-docs/#introduction',
+          apiUrl: (store_name: string) => `https://${store_name}.com`,
+          authBaseUrl: (store_name: string) => `https://${store_name}.com/wc-auth/v1/authorize`
+        },
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHiusc7S5-BoiU1YKCztJMv_Qj7wlim4TwbA&s',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+        options: {
+          company_subdomain: true,
         }
       },
     }

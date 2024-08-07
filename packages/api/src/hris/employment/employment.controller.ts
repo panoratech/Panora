@@ -33,7 +33,6 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('hris/employments')
 @Controller('hris/employments')
 export class EmploymentController {

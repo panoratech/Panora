@@ -18,7 +18,6 @@ import { GorgiasUserMapper } from './services/gorgias/mappers';
 import { JiraUserMapper } from './services/jira/mappers';
 import { ZendeskUserMapper } from './services/zendesk/mappers';
 @Module({
-  imports: [BullQueueModule],
   controllers: [UserController],
   providers: [
     UserService,

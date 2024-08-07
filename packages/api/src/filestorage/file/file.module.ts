@@ -12,7 +12,6 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { Utils } from '@filestorage/@lib/@utils';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [FileController],
   providers: [
     FileService,

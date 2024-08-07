@@ -5,11 +5,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface ITagService extends IBaseObjectService {
-  addTag(
-    tagData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalTagOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalTagOutput[]>>;
 }
 

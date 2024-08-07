@@ -61,9 +61,7 @@ export class PermissionService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedFilestoragePermissionOutput format
       const unifiedPermission: UnifiedFilestoragePermissionOutput = {

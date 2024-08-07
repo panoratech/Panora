@@ -31,6 +31,7 @@ export class PurchaseOrderService {
   async addPurchaseOrder(
     unifiedPurchaseOrderData: UnifiedAccountingPurchaseorderInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,

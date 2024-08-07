@@ -39,7 +39,7 @@ export class PipedriveService implements ITaskService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/activities`,
+        `${connection.account_url}/v1/activities`,
         JSON.stringify(taskData),
         {
           headers: {
@@ -72,7 +72,7 @@ export class PipedriveService implements ITaskService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/activities?type=task`,
+        `${connection.account_url}/v1/activities?type=task`,
         {
           headers: {
             'Content-Type': 'application/json',

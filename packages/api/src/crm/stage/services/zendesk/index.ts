@@ -39,7 +39,7 @@ export class ZendeskService implements IStageService {
         where: { id_crm_deal: deal_id as string },
       });
       const deal = await axios.get(
-        `${connection.account_url}/deals/${res.remote_id}`,
+        `${connection.account_url}/v2/deals/${res.remote_id}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export class ZendeskService implements IStageService {
         },
       );
       const stage_remote_id: number = deal.data.data.stage_id;
-      const resp = await axios.get(`${connection.account_url}/stages`, {
+      const resp = await axios.get(`${connection.account_url}/v2/stages`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

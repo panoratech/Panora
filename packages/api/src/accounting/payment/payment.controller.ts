@@ -166,6 +166,7 @@ export class PaymentController {
       return this.paymentService.addPayment(
         unifiedPaymentData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

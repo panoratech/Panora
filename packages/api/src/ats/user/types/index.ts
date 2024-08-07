@@ -5,11 +5,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IUserService extends IBaseObjectService {
-  addUser(
-    userData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalUserOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalUserOutput[]>>;
 }
 

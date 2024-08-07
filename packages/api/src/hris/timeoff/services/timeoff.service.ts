@@ -31,6 +31,7 @@ export class TimeoffService {
   async addTimeoff(
     unifiedTimeoffData: UnifiedHrisTimeoffInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,

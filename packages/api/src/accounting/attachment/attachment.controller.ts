@@ -34,7 +34,6 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('accounting/attachments')
 @Controller('accounting/attachments')
 export class AttachmentController {
@@ -167,6 +166,7 @@ export class AttachmentController {
       return this.attachmentService.addAttachment(
         unifiedAttachmentData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -167,6 +167,7 @@ export class InvoiceController {
       return this.invoiceService.addInvoice(
         unifiedInvoiceData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

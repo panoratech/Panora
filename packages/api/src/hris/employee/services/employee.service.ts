@@ -31,6 +31,7 @@ export class EmployeeService {
   async addEmployee(
     unifiedEmployeeData: UnifiedHrisEmployeeInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,

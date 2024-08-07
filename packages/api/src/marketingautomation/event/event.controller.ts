@@ -33,7 +33,6 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('marketingautomation/events')
 @Controller('marketingautomation/events')
 export class EventController {
@@ -123,10 +122,10 @@ export class EventController {
       );
     return this.eventService.getEvent(
       id,
-      linkedUserId,
-      remoteSource,
       connectionId,
       projectId,
+      linkedUserId,
+      remoteSource,
       remote_data,
     );
   }

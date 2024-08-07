@@ -34,7 +34,6 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('hris/timeoffs')
 @Controller('hris/timeoffs')
 export class TimeoffController {
@@ -164,6 +163,7 @@ export class TimeoffController {
       return this.timeoffService.addTimeoff(
         unifiedTimeoffData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

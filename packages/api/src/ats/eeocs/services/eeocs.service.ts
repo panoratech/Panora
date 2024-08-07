@@ -55,9 +55,7 @@ export class EeocsService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedAtsEeocsOutput format
       const unifiedEeocs: UnifiedAtsEeocsOutput = {
@@ -185,12 +183,7 @@ export class EeocsService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedAtsEeocsOutput format
           return {

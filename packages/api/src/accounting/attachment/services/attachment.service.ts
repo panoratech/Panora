@@ -30,6 +30,7 @@ export class AttachmentService {
   async addAttachment(
     unifiedAttachmentData: UnifiedAccountingAttachmentInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,

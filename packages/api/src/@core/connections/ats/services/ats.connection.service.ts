@@ -4,6 +4,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import {
   CallbackParams,
   IConnectionCategory,
+  PassthroughInput,
   RefreshParams,
 } from '@@core/connections/@utils/types';
 import { Injectable } from '@nestjs/common';
@@ -11,6 +12,7 @@ import { connections as Connection } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from './registry.service';
 import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { PassthroughResponse } from '@@core/passthrough/types';
 
 @Injectable()
 export class AtsConnectionsService implements IConnectionCategory {
@@ -41,7 +43,7 @@ export class AtsConnectionsService implements IConnectionCategory {
   async handleCallBack(
     providerName: string,
     callbackOpts: CallbackParams,
-    type_strategy: 'oauth' | 'apikey' | 'basic',
+    type_strategy: 'oauth2' | 'apikey' | 'basic',
   ) {
     try {
       const serviceName = providerName.toLowerCase();
@@ -99,6 +101,27 @@ export class AtsConnectionsService implements IConnectionCategory {
         projectId: id_project,
       };
       await service.handleTokenRefresh(refreshOpts);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async passthrough(
+    input: PassthroughInput,
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
+    try {
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: connectionId,
+        },
+      });
+      const serviceName = connection.provider_slug.toLowerCase();
+      const service = this.serviceRegistry.getService(serviceName);
+      if (!service) {
+        throw new ReferenceError(`Unknown provider, found ${serviceName}`);
+      }
+      return await service.passthrough(input, connectionId);
     } catch (error) {
       throw error;
     }

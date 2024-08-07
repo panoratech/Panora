@@ -168,6 +168,7 @@ export class JournalEntryController {
       return this.journalentryService.addJournalEntry(
         unifiedJournalEntryData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

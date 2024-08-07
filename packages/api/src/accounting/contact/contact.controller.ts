@@ -167,6 +167,7 @@ export class ContactController {
       return this.contactService.addContact(
         unifiedContactData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

@@ -41,7 +41,7 @@ export class CloseService implements IStageService {
       const res = await this.prisma.crm_deals.findUnique({
         where: { id_crm_deal: deal_id as string },
       });
-      const baseURL = `${connection.account_url}/activity/status_change/opportunity/?opportunity_id=${res.remote_id}`;
+      const baseURL = `${connection.account_url}/v1/activity/status_change/opportunity/?opportunity_id=${res.remote_id}`;
 
       const resp = await axios.get(baseURL, {
         headers: {

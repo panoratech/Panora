@@ -168,6 +168,7 @@ export class PurchaseOrderController {
       return this.purchaseorderService.addPurchaseOrder(
         unifiedPurchaseOrderData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

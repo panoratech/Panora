@@ -42,13 +42,13 @@ export class ZohoService implements INoteService {
       let url: string;
       switch (noteData.Parent_Id.module.api_name) {
         case 'Accounts':
-          url = `${connection.account_url}/Accounts/${noteData.Parent_Id.id}/Notes`;
+          url = `${connection.account_url}/v5/Accounts/${noteData.Parent_Id.id}/Notes`;
           break;
         case 'Contacts':
-          url = `${connection.account_url}/Contacts/${noteData.Parent_Id.id}/Notes`;
+          url = `${connection.account_url}/v5/Contacts/${noteData.Parent_Id.id}/Notes`;
           break;
         case 'Deals':
-          url = `${connection.account_url}/Deals/${noteData.Parent_Id.id}/Notes`;
+          url = `${connection.account_url}/v5/Deals/${noteData.Parent_Id.id}/Notes`;
           break;
       }
       const resp = await axios.post(
@@ -65,7 +65,7 @@ export class ZohoService implements INoteService {
       );
 
       const final_res = await axios.get(
-        `${connection.account_url}/Notes/${resp.data.data[0].details.id}?fields=Parent_Id,Owner,Created_Time,Note_Content`,
+        `${connection.account_url}/v5/Notes/${resp.data.data[0].details.id}?fields=Parent_Id,Owner,Created_Time,Note_Content`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export class ZohoService implements INoteService {
       });
       const fields = 'Note_Title,Note_Content,Owner,ParentId';
       const resp = await axios.get(
-        `${connection.account_url}/Notes?fields=${fields}`,
+        `${connection.account_url}/v5/Notes?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

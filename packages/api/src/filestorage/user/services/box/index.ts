@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IUserService } from '@filestorage/user/types';
-import { FileStorageObject } from '@filestorage/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
-import { BoxUserInput, BoxUserOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
+import { FileStorageObject } from '@filestorage/@lib/@types';
+import { IUserService } from '@filestorage/user/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { BoxUserOutput } from './types';
 
 @Injectable()
 export class BoxService implements IUserService {
@@ -37,7 +36,7 @@ export class BoxService implements IUserService {
           vertical: 'filestorage',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/users`, {
+      const resp = await axios.get(`${connection.account_url}/2.0/users`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

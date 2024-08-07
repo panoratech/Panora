@@ -11,7 +11,6 @@ import { SyncService } from './sync/sync.service';
 import { UserController } from './user.controller';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 @Module({
-  imports: [BullQueueModule],
   controllers: [UserController],
   providers: [
     UserService,

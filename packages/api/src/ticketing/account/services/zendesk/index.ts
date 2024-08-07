@@ -40,8 +40,8 @@ export class ZendeskService implements IAccountService {
       });
       const remote_account_id = webhook_remote_identifier as string;
       const request_url = remote_account_id
-        ? `${connection.account_url}/organizations/${remote_account_id}.json`
-        : `${connection.account_url}/organizations.json`;
+        ? `${connection.account_url}/v2/organizations/${remote_account_id}.json`
+        : `${connection.account_url}/v2/organizations.json`;
       const resp = await axios.get(request_url, {
         headers: {
           'Content-Type': 'application/json',

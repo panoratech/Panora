@@ -6,7 +6,6 @@ import { WebhookProcessor } from './webhook.processor';
 import { WebhookService } from './webhook.service';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [WebhookController],
   providers: [WebhookService, WebhookProcessor, ValidateUserService],
   exports: [WebhookService, WebhookProcessor, ValidateUserService],

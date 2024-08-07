@@ -20,7 +20,6 @@ import { ZendeskService } from './services/zendesk';
 import { ZendeskCommentMapper } from './services/zendesk/mappers';
 import { SyncService } from './sync/sync.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [CommentController],
   providers: [
     CommentService,

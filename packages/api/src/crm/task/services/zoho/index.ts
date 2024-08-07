@@ -38,7 +38,7 @@ export class ZohoService implements ITaskService {
       const fields =
         'Status,Owner,Description,Due_Date,Priority,Closed_Time,Subject,What_Id';
       const resp = await axios.get(
-        `${connection.account_url}/Tasks?fields=${fields}`,
+        `${connection.account_url}/v5/Tasks?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

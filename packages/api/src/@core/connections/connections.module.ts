@@ -11,6 +11,7 @@ import { HrisConnectionModule } from './hris/hris.connection.module';
 import { ManagementConnectionsModule } from './management/management.connection.module';
 import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
+import { EcommerceConnectionModule } from './ecommerce/ecommerce.connection.module';
 
 @Module({
   controllers: [ConnectionsController],
@@ -23,6 +24,7 @@ import { TicketingConnectionModule } from './ticketing/ticketing.connection.modu
     MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
     HrisConnectionModule,
+    EcommerceConnectionModule,
     SyncModule,
   ],
   providers: [ValidateUserService, OAuthTokenRefreshService],
@@ -35,6 +37,7 @@ import { TicketingConnectionModule } from './ticketing/ticketing.connection.modu
     AtsConnectionModule,
     MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
+    EcommerceConnectionModule,
     HrisConnectionModule,
     ManagementConnectionsModule,
   ],

@@ -44,7 +44,7 @@ export class JiraService implements ICommentService {
 
       // Send request without attachments
       const resp = await axios.post(
-        `${connection.account_url}/issue/${remoteIdTicket}/comment`,
+        `${connection.account_url}/3/issue/${remoteIdTicket}/comment`,
         JSON.stringify(commentData),
         {
           headers: {
@@ -92,7 +92,7 @@ export class JiraService implements ICommentService {
 
         // Send request with attachments
         const resp_ = await axios.post(
-          `${connection.account_url}/issue/${remoteIdTicket}/attachments`,
+          `${connection.account_url}/3/issue/${remoteIdTicket}/attachments`,
           formData,
           {
             headers: {
@@ -137,7 +137,7 @@ export class JiraService implements ICommentService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/issue/${ticket.remote_id}/comment`,
+        `${connection.account_url}/3/issue/${ticket.remote_id}/comment`,
         {
           headers: {
             'Content-Type': 'application/json',

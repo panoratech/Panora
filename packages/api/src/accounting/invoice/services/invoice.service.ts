@@ -31,6 +31,7 @@ export class InvoiceService {
   async addInvoice(
     unifiedInvoiceData: UnifiedAccountingInvoiceInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,

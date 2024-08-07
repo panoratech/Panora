@@ -215,9 +215,7 @@ export class ApplicationService {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       const resOffers = await this.prisma.ats_offers.findMany({
         where: {

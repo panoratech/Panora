@@ -47,7 +47,7 @@ export class JiraService implements ITagService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/issue/${ticket.remote_id}?fields=labels`,
+        `${connection.account_url}/3/issue/${ticket.remote_id}?fields=labels`,
         {
           headers: {
             'Content-Type': 'application/json',

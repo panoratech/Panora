@@ -28,7 +28,6 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('ticketing/users')
 @Controller('ticketing/users')
 export class UserController {

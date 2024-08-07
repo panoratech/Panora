@@ -13,7 +13,6 @@ export const scopes = [
     'crm.task.pulled',
     'crm.task.created',
     'crm.user.pulled',
-
     'ticketing.ticket.created',
     'ticketing.ticket.pulled',
     'ticketing.comment.created',

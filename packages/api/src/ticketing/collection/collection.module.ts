@@ -18,7 +18,6 @@ import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [CollectionController],
   providers: [
     CollectionService,

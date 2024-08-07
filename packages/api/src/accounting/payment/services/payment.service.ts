@@ -31,6 +31,7 @@ export class PaymentService {
   async addPayment(
     unifiedPaymentData: UnifiedAccountingPaymentInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,

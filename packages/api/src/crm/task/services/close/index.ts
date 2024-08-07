@@ -39,7 +39,7 @@ export class CloseService implements ITaskService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/task`,
+        `${connection.account_url}/v1/task`,
         JSON.stringify(taskData),
         {
           headers: {
@@ -72,7 +72,7 @@ export class CloseService implements ITaskService {
         },
       });
 
-      const baseURL = `${connection.account_url}/task`;
+      const baseURL = `${connection.account_url}/v1/task`;
 
       const resp = await axios.get(baseURL, {
         headers: {

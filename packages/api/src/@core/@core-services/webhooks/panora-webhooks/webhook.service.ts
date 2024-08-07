@@ -144,7 +144,7 @@ export class WebhookService {
       });
       this.logger.log('adding webhook to the queue ');
       // we send the delivery webhook to the queue so it can be processed by our dispatcher worker
-      const job = await this.queues.getPanoraWebhookSender().add({
+      await this.queues.getPanoraWebhookSender().add({
         webhook_delivery_id: w_delivery.id_webhook_delivery_attempt,
       });
     } catch (error) {

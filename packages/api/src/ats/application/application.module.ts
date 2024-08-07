@@ -18,7 +18,6 @@ import { AshbyApplicationMapper } from './services/ashby/mappers';
 import { Utils } from '@ats/@lib/@utils';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [ApplicationController],
   providers: [
     ApplicationService,

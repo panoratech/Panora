@@ -16,7 +16,6 @@ import { BoxSharedLinkMapper } from './services/box/mappers';
 import { Utils } from '@filestorage/@lib/@utils';
 
 @Module({
-  imports: [BullQueueModule],
   providers: [
     SharedLinkService,
 

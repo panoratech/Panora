@@ -9,9 +9,12 @@ import { ConnectionUtils } from '../connections/@utils/index';
 import { CategoryConnectionRegistry } from './registries/connections-categories.registry';
 import { PrismaService } from './prisma/prisma.service';
 import { FieldMappingService } from './../field-mapping/field-mapping.service';
+import { BullQueueModule } from './queues/queue.module';
+import { RetryModule } from './request-retry/module';
 
 @Global()
 @Module({
+  imports: [BullQueueModule, RetryModule],
   providers: [
     PrismaService,
     MappersRegistry,
@@ -35,6 +38,8 @@ import { FieldMappingService } from './../field-mapping/field-mapping.service';
     LoggerService,
     ConnectionUtils,
     FieldMappingService,
+    BullQueueModule,
+    RetryModule,
   ],
 })
 export class CoreSharedModule {}

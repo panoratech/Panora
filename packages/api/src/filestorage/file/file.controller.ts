@@ -144,6 +144,14 @@ export class FileController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
+  @ApiQuery({
+    name: 'remote_data',
+    example: false,
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original Accounting software.',
+  })
   @ApiBody({ type: UnifiedFilestorageFileInput })
   @ApiPostCustomResponse(UnifiedFilestorageFileOutput)
   @UseGuards(ApiKeyAuthGuard)
