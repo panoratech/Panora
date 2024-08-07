@@ -109,6 +109,8 @@ paths:
       responses:
         '200':
           description: ''
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -129,6 +131,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '200':
           description: ''
         '201':

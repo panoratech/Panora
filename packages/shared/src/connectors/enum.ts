@@ -16,6 +16,7 @@ export enum TicketingConnectors {
     FRONT = 'front',
     JIRA = 'jira',
     GORGIAS = 'gorgias',
+    GITHUB = 'github',
     GITLAB = 'gitlab'
 }
 
