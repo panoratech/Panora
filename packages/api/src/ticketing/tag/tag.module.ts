@@ -1,3 +1,5 @@
+import { LinearTagMapper } from './services/linear/mappers';
+import { LinearService } from './services/linear';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -41,6 +43,8 @@ import { GitlabTagMapper } from './services/gitlab/mappers';
     JiraTagMapper,
     GorgiasTagMapper,
     GitlabTagMapper,
+    LinearService,
+    LinearTagMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

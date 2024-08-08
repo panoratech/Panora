@@ -1,3 +1,5 @@
+import { LinearTagInput, LinearTagOutput } from '@ticketing/tag/services/linear/types';
+
 import { LinearTeamInput, LinearTeamOutput } from '@ticketing/team/services/linear/types';
 
 import { GitlabUserInput, GitlabUserOutput } from '@ticketing/user/services/gitlab/types';
@@ -168,7 +170,7 @@ export type OriginalTagInput =
   | FrontTagInput
   | GorgiasTagInput
   | JiraTagInput
-  | GitlabTagInput;
+  | GitlabTagInput | LinearTagInput;
 
 /* team */
 export type OriginalTeamInput =
@@ -231,7 +233,7 @@ export type OriginalTagOutput =
   | FrontTagOutput
   | GorgiasTagOutput
   | JiraTagOutput
-  | GitlabTagOutput;
+  | GitlabTagOutput | LinearTagOutput;
 
 /* team */
 export type OriginalTeamOutput =
