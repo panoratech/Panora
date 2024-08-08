@@ -298,11 +298,6 @@ export class CoreSyncService {
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),
-      () =>
-        this.registry.getService('ecommerce', 'fulfillment').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
     ];
     for (const task of tasks) {
       try {

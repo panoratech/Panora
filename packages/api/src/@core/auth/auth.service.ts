@@ -60,7 +60,6 @@ export class AuthService {
       where: { email },
       data: { password_hash: hashedPassword },
     });
-    console.log(updatedPassword);
     return { message: 'Password reset successfully' };
   }
 
@@ -68,9 +67,6 @@ export class AuthService {
     database_token: string,
     request_token: string,
   ): Promise<boolean> {
-    console.log('a is ' + request_token);
-    console.log('b is ' + database_token);
-
     const isValidToken = await bcrypt.compare(request_token, database_token);
     return isValidToken;
   }

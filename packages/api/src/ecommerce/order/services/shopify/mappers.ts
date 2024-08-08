@@ -86,7 +86,7 @@ export class ShopifyOrderMapper implements IOrderMapper {
     const opts: any = {};
     if (order.customer && order.customer.id) {
       const customer_id = await this.utils.getCustomerIdFromRemote(
-        order.customer.id.toString(),
+        String(order.customer.id),
         connectionId,
       );
       if (customer_id) {
@@ -106,6 +106,7 @@ export class ShopifyOrderMapper implements IOrderMapper {
         (sum, line) => sum + parseFloat(line.price || '0'),
         0,
       ),
+      ...opts,
       total_tax: parseFloat((order.total_tax as string) || '0'),
       fulfillment_status: order.fulfillment_status || '',
       field_mappings: customFieldMappings?.reduce(

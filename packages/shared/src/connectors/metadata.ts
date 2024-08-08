@@ -2802,7 +2802,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://cdn.eastsideco.com/media/v3/services/ecommerce-services/shopify-logo.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key', 'store_url']

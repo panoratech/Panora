@@ -52,7 +52,7 @@ export class ShopifyService implements IOrderService {
       );
 
       return {
-        data: resp.data.order,
+        data: resp.data.orders,
         message: 'Shopify order created',
         statusCode: 201,
       };

@@ -189,12 +189,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     data: data,
                   });
                 } else {
-                  console.log(
-                    'addy is ' +
-                      JSON.stringify(data) +
-                      ' id is ' +
-                      existingCustomer.id_ecom_customer,
-                  );
                   return this.prisma.ecom_addresses.create({
                     data: {
                       ...data,
@@ -224,12 +218,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
           if (normalizedAddresses && normalizedAddresses.length > 0) {
             await Promise.all(
               normalizedAddresses.map((data) => {
-                console.log(
-                  'addy is ' +
-                    JSON.stringify(data) +
-                    ' id is ' +
-                    newCus.id_ecom_customer,
-                );
                 this.prisma.ecom_addresses.create({
                   data: {
                     ...data,

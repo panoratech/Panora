@@ -200,6 +200,7 @@ export class ProductService {
             this.prisma.ecom_product_variants.create({
               data: {
                 ...data,
+                remote_deleted: false,
                 id_ecom_product: newProduct.id_ecom_product,
                 id_connection: connection_id,
               },
