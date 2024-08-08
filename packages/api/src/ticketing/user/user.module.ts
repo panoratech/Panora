@@ -1,5 +1,7 @@
 import { LinearUserMapper } from './services/linear/mappers';
 import { LinearService } from './services/linear';
+import { GithubUserMapper } from './services/github/mappers';
+import { GithubService } from './services/github';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
 import { FrontService } from './services/front';
@@ -20,7 +22,6 @@ import { GorgiasUserMapper } from './services/gorgias/mappers';
 import { JiraUserMapper } from './services/jira/mappers';
 import { ZendeskUserMapper } from './services/zendesk/mappers';
 @Module({
-  imports: [BullQueueModule],
   controllers: [UserController],
   providers: [
     UserService,
@@ -41,9 +42,11 @@ import { ZendeskUserMapper } from './services/zendesk/mappers';
     JiraUserMapper,
     GorgiasUserMapper,
     GitlabUserMapper,
+    GithubService,
+    GithubUserMapper,
     LinearService,
     LinearUserMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService, IngestDataService],
 })
-export class UserModule {}
+export class UserModule { }

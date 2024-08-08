@@ -29,6 +29,8 @@ export class GroupService {
     id_grouping_group: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisGroupOutput> {
     return;
@@ -36,6 +38,7 @@ export class GroupService {
 
   async getGroups(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

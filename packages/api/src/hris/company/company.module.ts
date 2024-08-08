@@ -17,7 +17,6 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [CompanyController],
   providers: [
     CompanyService,

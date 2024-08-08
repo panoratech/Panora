@@ -13,6 +13,8 @@ export class GroupService {
     id_fs_group: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedFilestorageGroupOutput> {
     try {
@@ -46,9 +48,7 @@ export class GroupService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       let usersArray;
       if (group.users) {
@@ -93,6 +93,8 @@ export class GroupService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'filestorage.group.pull',
@@ -113,6 +115,7 @@ export class GroupService {
 
   async getGroups(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -187,12 +190,7 @@ export class GroupService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           let usersArray;
           if (group.users) {
@@ -226,22 +224,25 @@ export class GroupService {
       let res: UnifiedFilestorageGroupOutput[] = unifiedGroups;
 
       if (remote_data) {
-        const remote_array_data: UnifiedFilestorageGroupOutput[] = await Promise.all(
-          res.map(async (group) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: group.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...group, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedFilestorageGroupOutput[] =
+          await Promise.all(
+            res.map(async (group) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: group.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...group, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'filestorage.group.pull',

@@ -4,7 +4,10 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedFilestorageFileInput, UnifiedFilestorageFileOutput } from '../types/model.unified';
+import {
+  UnifiedFilestorageFileInput,
+  UnifiedFilestorageFileOutput,
+} from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
@@ -30,6 +33,7 @@ export class FileService {
   async addFile(
     unifiedFileData: UnifiedFilestorageFileInput,
     connection_id: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -99,12 +103,16 @@ export class FileService {
         unique_fs_file_id,
         undefined,
         undefined,
+        connection_id,
+        projectId,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: projectId,
           id_event: uuidv4(),
           status: status_resp,
           type: 'filestorage.file.created',
@@ -175,6 +183,8 @@ export class FileService {
     id_fs_file: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedFilestorageFileOutput> {
     try {
@@ -204,9 +214,7 @@ export class FileService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       let permission;
       if (file.id_fs_permission) {
@@ -256,6 +264,8 @@ export class FileService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'filestorage.file.pull',
@@ -276,6 +286,7 @@ export class FileService {
 
   async getFiles(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -350,10 +361,8 @@ export class FileService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           let permission;
           if (file.id_fs_permission) {
@@ -392,23 +401,26 @@ export class FileService {
       let res: UnifiedFilestorageFileOutput[] = unifiedFiles;
 
       if (remote_data) {
-        const remote_array_data: UnifiedFilestorageFileOutput[] = await Promise.all(
-          res.map(async (file) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: file.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...file, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedFilestorageFileOutput[] =
+          await Promise.all(
+            res.map(async (file) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: file.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...file, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'filestorage.file.pull',

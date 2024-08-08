@@ -12,14 +12,17 @@ type UseOAuthProps = {
   redirectIngressUri: {
     status: boolean;
     value: string | null;
-  }     // URL of the User's Server
+  },
   onSuccess: () => void;
+  additionalParams?: {
+    end_user_domain: string;
+  }
 };
 
-const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, redirectIngressUri, onSuccess }: UseOAuthProps) => {
+const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId,additionalParams, redirectIngressUri, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
   const intervalRef = useRef<number | ReturnType<typeof setInterval> | null>(null);
-  const authWindowRef = useRef<Window | null>(null); 
+  const authWindowRef = useRef<Window | null>(null);  
 
   useEffect(() => {
     // Perform any setup logic here
@@ -48,7 +51,7 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
   const openModal = async (onWindowClose: () => void) => {
     const apiUrl = config.API_URL!;
     const authUrl = await constructAuthUrl({
-      projectId, linkedUserId, providerName, returnUrl, apiUrl , vertical, rediectUriIngress: redirectIngressUri 
+      projectId, linkedUserId, providerName, returnUrl, apiUrl , vertical,additionalParams, redirectUriIngress: redirectIngressUri 
     });
 
     if (!authUrl) {
@@ -66,12 +69,12 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, 
     const interval = setInterval(() => {
       try {
         const redirectedURL = authWindow!.location.href;
-        // const redirectedURL = authWindow!.location.protocol + '//' + authWindow!.location.hostname + (authWindow!.location.port ? ':' + authWindow!.location.port : '');
-        if (redirectedURL === returnUrl) {
-          onSuccess();
+        const urlParams = new URL(redirectedURL).searchParams;
+        const success = urlParams.get('success'); // Example parameter
+        if (redirectedURL === returnUrl || success) {
+          onSuccess(); 
           clearExistingInterval(true);
         }
-
       } catch (e) {
         console.error(e)
       }

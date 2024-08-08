@@ -1,19 +1,18 @@
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
 import { Injectable } from '@nestjs/common';
-import { PassThroughRequestDto } from './dto/passthrough.dto';
-import { PassThroughResponse } from './types';
-import axios, { AxiosResponse } from 'axios';
-import { CONNECTORS_METADATA } from '@panora/shared';
+import { AxiosResponse } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { PassThroughRequestDto } from './dto/passthrough.dto';
+import { PassthroughResponse } from './types';
 
 @Injectable()
 export class PassthroughService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private cryptoService: EncryptionService,
+    private categoryConnectionRegistry: CategoryConnectionRegistry,
   ) {
     this.logger.setContext(PassthroughService.name);
   }
@@ -23,13 +22,16 @@ export class PassthroughService {
     integrationId: string,
     linkedUserId: string,
     vertical: string,
-  ): Promise<PassThroughResponse> {
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
     try {
-      //TODO;
-      const { method, path, data, headers } = requestParams;
+      const { method, path, data, request_format, overrideBaseUrl, headers } =
+        requestParams;
 
       const job_resp_create = await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: '',
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
           type: 'pull',
@@ -41,57 +43,36 @@ export class PassthroughService {
           id_linked_user: linkedUserId,
         },
       });
-      const intId = integrationId.toLowerCase();
-      const providerUrl =
-        CONNECTORS_METADATA[vertical.toLowerCase()][intId].urls.apiUrl;
-      const BASE_URL = `${providerUrl}${path}`;
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
+
+      const service = this.categoryConnectionRegistry.getService(
+        vertical.toLowerCase(),
+      );
+      const response = await service.passthrough(
+        {
+          method,
+          path,
+          headers,
+          req_type: request_format,
+          overrideBaseUrl: overrideBaseUrl,
+          data: data,
         },
-      });
-      const URL = connection.account_url
-        ? connection.account_url + BASE_URL
-        : BASE_URL;
-
-      const response: AxiosResponse = await axios({
-        method,
-        url: URL,
-        data,
-        headers /*: {
-          ...headers,
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
-        },*/,
-      });
-
-      const status_resp =
-        method == 'GET'
-          ? response.status === 200
-            ? 'success'
-            : 'fail'
-          : 'POST'
-          ? response.status === 200
-            ? 'success'
-            : 'fail'
-          : 'success';
-
+        connectionId,
+      );
+      let status;
+      if ('retryId' in response) {
+        //failed
+        status = 429;
+      }
       await this.prisma.events.update({
         where: {
           id_event: job_resp_create.id_event,
         },
         data: {
-          status: status_resp,
+          status: status || (response as AxiosResponse).status,
         },
       });
 
-      return {
-        url: URL,
-        status: response.status,
-        data: response.data,
-      };
+      return response;
     } catch (error) {
       throw error;
     }

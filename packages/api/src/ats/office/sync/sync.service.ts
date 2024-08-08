@@ -135,14 +135,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
           existingOffice = await this.prisma.ats_offices.findFirst({
             where: {
               name: office.name,
-              id_connection: connection_id,
+              
             },
           });
         } else {
           existingOffice = await this.prisma.ats_offices.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }
@@ -167,7 +167,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_office: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

@@ -1,13 +1,15 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { CoreSyncService } from '@@core/sync/sync.service';
+import { ApiGetArrayCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 import { ConnectionsError } from '@@core/utils/errors';
 import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Query,
   Request,
@@ -17,12 +19,15 @@ import {
 import {
   ApiBody,
   ApiExcludeController,
+  ApiExcludeEndpoint,
   ApiOperation,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
 import { Response } from 'express';
+import { Connection } from './@utils/types';
 
 export type StateDataType = {
   projectId: string;
@@ -30,6 +35,7 @@ export type StateDataType = {
   linkedUserId: string;
   providerName: string;
   returnUrl?: string;
+  [key: string]: any;
 };
 
 export class BodyDataType {
@@ -38,11 +44,11 @@ export class BodyDataType {
 }
 
 @ApiTags('connections')
-@ApiExcludeController()
 @Controller('connections')
 export class ConnectionsController {
   constructor(
     private categoryConnectionRegistry: CategoryConnectionRegistry,
+    private coreSync: CoreSyncService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
@@ -56,10 +62,11 @@ export class ConnectionsController {
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiQuery({ name: 'code', required: true, type: String })
   @ApiResponse({ status: 200 })
+  @ApiExcludeEndpoint()
   @Get('oauth/callback')
   async handleOAuthCallback(@Res() res: Response, @Query() query: any) {
     try {
-      const { state, code, location } = query;
+      const { state, code, ...otherParams } = query;
       if (!code) {
         throw new ConnectionsError({
           name: 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR',
@@ -75,21 +82,30 @@ export class ConnectionsController {
       }
 
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
-      const { projectId, vertical, linkedUserId, providerName, returnUrl } =
-        stateData;
+      const {
+        projectId,
+        vertical,
+        linkedUserId,
+        providerName,
+        returnUrl,
+        resource,
+      } = stateData;
 
       const service = this.categoryConnectionRegistry.getService(
         vertical.toLowerCase(),
       );
       await service.handleCallBack(
         providerName,
-        { linkedUserId, projectId, code, location },
-        'oauth',
+        { linkedUserId, projectId, code, otherParams, resource },
+        'oauth2',
       );
-
-      res.redirect(returnUrl);
-
-      /*if (
+      if (providerName == 'shopify') {
+        // we must redirect using shop and host to get a valid session on shopify server
+        service.redirectUponConnection(res, otherParams);
+      } else {
+        res.redirect(returnUrl);
+      }
+      if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
       ) {
@@ -100,7 +116,7 @@ export class ConnectionsController {
           providerName,
           linkedUserId,
         );
-      }*/
+      }
     } catch (error) {
       throw error;
     }
@@ -131,12 +147,16 @@ export class ConnectionsController {
     operationId: 'handleApiKeyCallback',
     summary: 'Capture api key or basic auth callback',
   })
+  @ApiExcludeEndpoint()
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiBody({ type: BodyDataType })
-  @UseGuards(JwtAuthGuard)
   @ApiResponse({ status: 201 })
   @Post('basicorapikey/callback')
-  async handleApiKeyCallback(@Query() query: any, @Body() body: BodyDataType) {
+  async handleApiKeyCallback(
+    @Res() res: Response,
+    @Query() query: any,
+    @Body() body: BodyDataType,
+  ) {
     try {
       const { state } = query;
       if (!state) {
@@ -147,20 +167,32 @@ export class ConnectionsController {
       }
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
       const { projectId, vertical, linkedUserId, providerName } = stateData;
-      const { apikey, ...body_data } = body;
 
-      await this.categoryConnectionRegistry
-        .getService(vertical.toLowerCase())
-        .handleCallBack(
-          providerName,
-          {
-            projectId,
-            linkedUserId,
-            apikey,
-            body_data,
-          },
-          'apikey',
-        );
+      const { apikey, ...body_data } = body;
+      const strategy =
+        CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
+          .authStrategy.strategy;
+
+      const body_ =
+        strategy == AuthStrategy.api_key
+          ? {
+              projectId,
+              linkedUserId,
+              apikey,
+              body_data,
+            }
+          : {
+              projectId,
+              linkedUserId,
+              body_data,
+            };
+      const strategy_type =
+        strategy == AuthStrategy.api_key ? 'apikey' : 'basic';
+
+      const service = this.categoryConnectionRegistry.getService(
+        vertical.toLowerCase(),
+      );
+      await service.handleCallBack(providerName, body_, strategy_type);
       /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false
@@ -173,6 +205,7 @@ export class ConnectionsController {
           linkedUserId,
         );
       }*/
+      res.redirect(`/`);
     } catch (error) {
       throw error;
     }
@@ -182,10 +215,11 @@ export class ConnectionsController {
     operationId: 'getConnections',
     summary: 'List Connections',
   })
+  @ApiExcludeEndpoint()
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
-  @Get()
-  async list(@Request() req: any) {
+  @Get('internal')
+  async list_internal(@Request() req: any) {
     try {
       const { id_project } = req.user;
       return await this.prisma.connections.findMany({
@@ -198,12 +232,19 @@ export class ConnectionsController {
     }
   }
 
-  @Get('list')
-  async list2(@Query('projectid') req: string) {
+  @ApiOperation({
+    operationId: 'getConnections',
+    summary: 'List Connections',
+  })
+  @ApiGetArrayCustomResponse(Connection)
+  @UseGuards(ApiKeyAuthGuard)
+  @Get()
+  async list(@Request() req: any) {
     try {
+      const { id_project } = req.user;
       return await this.prisma.connections.findMany({
         where: {
-          id_project: req,
+          id_project: id_project,
         },
       });
     } catch (error) {

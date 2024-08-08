@@ -32,6 +32,8 @@ export class IncomeStatementService {
     id_incomestatementing_incomestatement: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingIncomestatementOutput> {
     return;
@@ -39,6 +41,7 @@ export class IncomeStatementService {
 
   async getIncomeStatements(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

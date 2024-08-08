@@ -2,6 +2,7 @@ import { CONNECTORS_METADATA } from './connectors/metadata';
 import { needsEndUserSubdomain, needsScope, needsSubdomain, OAuth2AuthData, providerToType } from './envConfig';
 import { AuthStrategy, DynamicAuthorization, ProviderConfig, StringAuthorization } from './types';
 import { randomString } from './utils';
+import * as crypto from 'crypto';
 
 interface AuthParams {
   projectId: string;
@@ -10,27 +11,59 @@ interface AuthParams {
   returnUrl: string;
   apiUrl: string;
   vertical: string;
-  rediectUriIngress?: {
+  redirectUriIngress?: {
     status: boolean;
     value: string | null;
   };
+  additionalParams?: {
+    end_user_domain: string; // needed for instance with shopify or sharepoint to construct the auth domain
+  }
+}
+
+function generateCodes() {
+  const base64URLEncode = (str: Buffer): string => {
+      return str.toString('base64')
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=/g, '');
+  }
+
+  const verifier = base64URLEncode(crypto.randomBytes(32));
+
+  const sha256 = (buffer: Buffer): Buffer => {
+      return crypto.createHash('sha256').update(buffer).digest();
+  }
+
+  const challenge = base64URLEncode(sha256(Buffer.from(verifier)));
+
+  return {
+      codeVerifier: verifier,
+      codeChallenge: challenge
+  }
 }
 
 // make sure to check wether its api_key or oauth2 to build the right auth
 // make sure to check if client has own credentials to connect or panora managed ones
-export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, rediectUriIngress }: AuthParams) => {
-  const encodedRedirectUrl = encodeURIComponent(`${rediectUriIngress && rediectUriIngress.status === true ? rediectUriIngress.value : apiUrl}/connections/oauth/callback`); 
-  const state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
-  // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
-  // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
-  // const vertical = findConnectorCategory(providerName);
-  if (vertical == null) {
-    throw new ReferenceError('vertical is null');
-  }
-
+export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, returnUrl, apiUrl, vertical, additionalParams, redirectUriIngress }: AuthParams) => {
   const config = CONNECTORS_METADATA[vertical.toLowerCase()][providerName];
   if (!config) {
     throw new Error(`Unsupported provider: ${providerName}`);
+  }
+  let baseRedirectURL = apiUrl;
+  // We check if https is needed in local if yes we take the ingress setup in .env   and passed through redirectUriIngress
+  if (config.options && config.options.local_redirect_uri_in_https === true && redirectUriIngress && redirectUriIngress.status === true) {
+    baseRedirectURL = redirectUriIngress.value!;
+  }
+  const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`); 
+  let state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
+  if (providerName === 'microsoftdynamicssales') {
+    state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl, resource: additionalParams!.end_user_domain }));
+  }
+  // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
+  // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
+  // const vertical = findConnectorCategory(providerName);
+  if (vertical === null) { 
+    throw new ReferenceError('vertical is null');
   }
   const authStrategy = config.authStrategy!.strategy;
 
@@ -44,7 +77,8 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
         config,
         encodedRedirectUrl,
         state,
-        apiUrl
+        apiUrl,
+        additionalParams
       });
     case AuthStrategy.api_key:
       return handleApiKeyUrl();
@@ -62,6 +96,9 @@ interface HandleOAuth2Url {
   encodedRedirectUrl: string;
   state: string;
   apiUrl: string;
+  additionalParams?: {
+    end_user_domain: string; // needed for instance with shopify or sharepoint to construct the auth domain
+  }
 }
 
 const handleOAuth2Url = async (input: HandleOAuth2Url) => {
@@ -73,7 +110,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     config,
     encodedRedirectUrl,
     state,
-    apiUrl,
+    apiUrl ,
+    additionalParams,
   } = input;
 
   const type = providerToType(providerName, vertical, authStrategy); 
@@ -97,7 +135,6 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
 
   let BASE_URL: string;
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
-
   if( needsSubdomain(providerName, vertical) ) {
     if(typeof baseUrl === 'string') {
       BASE_URL = baseUrl;
@@ -108,8 +145,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     if(typeof baseUrl === 'string') {
       BASE_URL = baseUrl;
     } else {
-      BASE_URL = (baseUrl as DynamicAuthorization)('END_USER_SUBDOMAIN'); // TODO: get the END-USER domain from the hook (data coming from webapp client)
-      // TODO: add the end user subdomain as query param on the redirect uri ?
+      BASE_URL = (baseUrl as DynamicAuthorization)(additionalParams!.end_user_domain);
     }
   } else {
     BASE_URL = baseUrl as StringAuthorization;
@@ -126,13 +162,23 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if(providerName === 'helpscout') {
     params = `client_id=${encodeURIComponent(clientId)}&state=${state}`;
   }
-  if(providerName === 'pipedrive') {
+  if(providerName === 'pipedrive' || providerName === 'shopify') {
     params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
   }
 
   if (needsScope(providerName, vertical) && scopes) {
-    if(providerName === 'slack') {
+    if (providerName === 'slack') {
       params += `&scope=&user_scope=${encodeURIComponent(scopes)}`;
+    } else if (providerName === 'microsoftdynamicssales') {
+      const url = new URL(BASE_URL);
+      // Extract the base URL without parameters
+      const base = url.origin + url.pathname;
+      // Extract the resource parameter
+      const resource = url.searchParams.get('resource');
+      BASE_URL = base;
+      let b = `https://${resource}/.default`;
+      b += (' offline_access'); 
+      params += `&scope=${encodeURIComponent(b)}`;
     } else {
       params += `&scope=${encodeURIComponent(scopes)}`;
     }
@@ -171,7 +217,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       params += `&owner=user`
       break;
     case 'klaviyo':
-      params += `&code_challenge_method=S256&code_challenge=` // TODO
+      const {codeChallenge, codeVerifier}= generateCodes()
+      params += `&code_challenge_method=S256&code_challenge=${codeChallenge}` // todo: store codeVerifier in a store
       break;
     default:
       break;

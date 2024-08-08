@@ -8,7 +8,7 @@ const useConnections = () => {
   return useQuery({
     queryKey: ['connections'], 
     queryFn: async (): Promise<Connection[]> => {
-      const response = await fetch(`${config.API_URL}/connections`,{
+      const response = await fetch(`${config.API_URL}/connections/internal`,{
         method: 'GET',
         headers: {
             'Content-Type': 'application/json', 

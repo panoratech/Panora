@@ -18,16 +18,16 @@ icon: "star"
     <Step title="Setup your API Key in your code:">
         <CodeGroup>
             ```javascript TypeScript SDK
-            import { PanoraSDK } from '@panora/sdk-typescript';
-            const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+            import { Panora } from '@panora/sdk';
+            const panora = new Panora({ apiKey: process.env.API_KEY });
             ```
 
             ```python Python SDK
-            sdk = PanoraSDK('YOUR_BEARER_TOKEN')
-            ```
-
-            ```java Java SDK
-            PanoraSDK sdk = new PanoraSDK("YOUR_BEARER_TOKEN");
+            import os
+            from panora_sdk import Panora
+            panora = Panora(
+                api_key=os.getenv("API_KEY", ""),
+            )
             ```
         </CodeGroup>
     </Step>
@@ -39,7 +39,7 @@ icon: "star"
             ```shell curl
             curl --request POST \
             --url https://api.panora.dev/ticketing/tickets \
-            --header 'Authorization: Bearer dfsdf' \
+            --header 'x-api-key: <api-key>' \
             --header 'Content-Type: application/json' \
             --header 'x-connection-token: <connection_token>' \
             --data '{
@@ -52,8 +52,8 @@ icon: "star"
             ```
 
             ```javascript TypeScript
-            import { PanoraSDK } from '@panora/sdk-typescript';
-            const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+            import { Panora } from '@panora/sdk';
+            const panora = new Panora({ apiKey: process.env.API_KEY });
 
             (async () => {
             const input = {
@@ -63,34 +63,33 @@ icon: "star"
                 status: 'open',
                 assignee: 'support_agent',
             };
-            const result = await sdk.ticketingTicket.createTicket(input, 'connection_token', {
-                remoteData: true,
+            const result = await panora.ticketing.tickets.create({
+                xConnectionToken: "YOUR_USER_CONNECTION_TOKEN",
+                unifiedTicketingTicketInput: input,
             });
-            console.log(result);
+            console.log(result); 
             })();
             ```
 
             ```python Python
-            from os import getenv
-            from pprint import pprint
-            from panorasdk import PanoraSDK
-            sdk = PanoraSDK()
-            sdk.set_access_token(getenv("YOUR_API_KEY"))
-            request_body = {
+            import os
+            from panora_sdk import Panora
+
+            panora = Panora(
+                api_key=os.getenv("API_KEY", ""),
+            )
+
+            body = {
                 'subject': 'Issue with login',
                 'description': 'User is unable to login with correct credentials',
                 'priority': 'high',
                 'status': 'open',
                 'assignee': 'support_agent'
             }
-            results = sdk.ticketing_ticket.create_ticket(
-                request_input = request_body,
-                connection_token = 'USER_CONNECTION_TOKEN',
-                remote_data = True
-            )
 
-            pprint(vars(results))
+            res = panora.ticketing.tickets.create(x_connection_token="YOUR_USER_CONNECTION_TOKEN", unified_ticketing_ticket_input=body)
 
+            print(res)
             ```
         </CodeGroup>
     </Step>

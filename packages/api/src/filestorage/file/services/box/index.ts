@@ -45,7 +45,7 @@ export class BoxService implements IFileService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/folders/${folder.remote_id}/items`,
+        `${connection.account_url}/2.0/folders/${folder.remote_id}/items`,
         {
           headers: {
             'Content-Type': 'application/json',

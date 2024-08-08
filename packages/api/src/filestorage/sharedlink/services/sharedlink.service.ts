@@ -25,6 +25,8 @@ export class SharedLinkService {
     id_fs_shared_link: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedFilestorageSharedlinkOutput> {
     try {
@@ -54,9 +56,7 @@ export class SharedLinkService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedFilestorageSharedlinkOutput format
       const unifiedSharedLink: UnifiedFilestorageSharedlinkOutput = {
@@ -90,6 +90,8 @@ export class SharedLinkService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'filestorage.sharedlink.pull',
@@ -110,6 +112,7 @@ export class SharedLinkService {
 
   async getSharedlinks(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -162,70 +165,74 @@ export class SharedLinkService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedSharedLinks: UnifiedFilestorageSharedlinkOutput[] = await Promise.all(
-        sharedlinks.map(async (sharedlink) => {
-          // Fetch field mappings for the shared link
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: sharedlink.id_fs_shared_link,
+      const unifiedSharedLinks: UnifiedFilestorageSharedlinkOutput[] =
+        await Promise.all(
+          sharedlinks.map(async (sharedlink) => {
+            // Fetch field mappings for the shared link
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: {
+                  ressource_owner_id: sharedlink.id_fs_shared_link,
+                },
               },
-            },
-            include: {
-              attribute: true,
-            },
-          });
+              include: {
+                attribute: true,
+              },
+            });
 
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
+            // Create a map to store unique field mappings
+            const fieldMappingsMap = new Map();
 
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
 
-          // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+            // Convert the map to an array of objects
+            const field_mappings = Array.from(
+              fieldMappingsMap,
+              ([key, value]) => ({ [key]: value }),
+            );
 
-          // Transform to UnifiedFilestorageSharedlinkOutput format
-          return {
-            id: sharedlink.id_fs_shared_link,
-            url: sharedlink.url,
-            download_url: sharedlink.download_url,
-            folder_id: sharedlink.id_fs_folder,
-            file_id: sharedlink.id_fs_file,
-            scope: sharedlink.scope,
-            password_protected: sharedlink.password_protected,
-            password: sharedlink.password,
-            field_mappings: field_mappings,
-            created_at: sharedlink.created_at,
-            modified_at: sharedlink.modified_at,
-          };
-        }),
-      );
+            // Transform to UnifiedFilestorageSharedlinkOutput format
+            return {
+              id: sharedlink.id_fs_shared_link,
+              url: sharedlink.url,
+              download_url: sharedlink.download_url,
+              folder_id: sharedlink.id_fs_folder,
+              file_id: sharedlink.id_fs_file,
+              scope: sharedlink.scope,
+              password_protected: sharedlink.password_protected,
+              password: sharedlink.password,
+              field_mappings: field_mappings,
+              created_at: sharedlink.created_at,
+              modified_at: sharedlink.modified_at,
+            };
+          }),
+        );
 
       let res: UnifiedFilestorageSharedlinkOutput[] = unifiedSharedLinks;
 
       if (remote_data) {
-        const remote_array_data: UnifiedFilestorageSharedlinkOutput[] = await Promise.all(
-          res.map(async (sharedlink) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: sharedlink.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...sharedlink, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedFilestorageSharedlinkOutput[] =
+          await Promise.all(
+            res.map(async (sharedlink) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: sharedlink.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...sharedlink, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'filestorage.sharedlink.pull',

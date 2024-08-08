@@ -70,7 +70,7 @@ export class PipedriveService implements INoteService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/notes`, {
+      const resp = await axios.get(`${connection.account_url}/v1/notes`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

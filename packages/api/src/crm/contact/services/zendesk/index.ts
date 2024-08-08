@@ -38,7 +38,7 @@ export class ZendeskService implements IContactService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/contacts`,
+        `${connection.account_url}/v2/contacts`,
         {
           data: contactData,
         },
@@ -73,7 +73,7 @@ export class ZendeskService implements IContactService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/contacts`, {
+      const resp = await axios.get(`${connection.account_url}/v2/contacts`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

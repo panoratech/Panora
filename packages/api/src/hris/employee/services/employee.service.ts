@@ -31,6 +31,7 @@ export class EmployeeService {
   async addEmployee(
     unifiedEmployeeData: UnifiedHrisEmployeeInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -42,6 +43,8 @@ export class EmployeeService {
     id_employeeing_employee: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisEmployeeOutput> {
     return;
@@ -49,6 +52,7 @@ export class EmployeeService {
 
   async getEmployees(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

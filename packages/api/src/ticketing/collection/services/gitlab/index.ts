@@ -37,7 +37,7 @@ export class GitlabService implements ICollectionService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/projects?membership=true`,
+        `${connection.account_url}/v4/projects?membership=true`,
         {
           headers: {
             'Content-Type': 'application/json',

@@ -139,14 +139,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
             where: {
               overall_recommendation: scoreCard.overall_recommendation,
               id_ats_application: scoreCard.application_id,
-              id_connection: connection_id,
+              
             },
           });
         } else {
           existingScoreCard = await this.prisma.ats_scorecards.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }
@@ -174,7 +174,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_scorecard: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

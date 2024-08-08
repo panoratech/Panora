@@ -60,7 +60,7 @@ export class ZendeskService implements ITicketService {
 
             //TODO:; fetch the right file from AWS s3
             const s3File = '';
-            const url = `${connection.account_url}/uploads.json?filename=${res.file_name}`;
+            const url = `${connection.account_url}/v2/uploads.json?filename=${res.file_name}`;
 
             const resp = await axios.get(url, {
               headers: {
@@ -90,7 +90,7 @@ export class ZendeskService implements ITicketService {
       );
 
       const resp = await axios.post(
-        `${connection.account_url}/tickets.json`,
+        `${connection.account_url}/v2/tickets.json`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -124,8 +124,8 @@ export class ZendeskService implements ITicketService {
       const remote_ticket_id = webhook_remote_identifier as string;
 
       const request_url = remote_ticket_id
-        ? `${connection.account_url}/tickets/${remote_ticket_id}.json`
-        : `${connection.account_url}/tickets.json`;
+        ? `${connection.account_url}/v2/tickets/${remote_ticket_id}.json`
+        : `${connection.account_url}/v2/tickets.json`;
 
       const resp = await axios.get(request_url, {
         headers: {

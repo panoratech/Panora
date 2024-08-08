@@ -72,11 +72,7 @@ export default function Page() {
                             <CreateUserForm/>
                         </TabsContent>
                     </Tabs>
-                    {activeTab === 'login' && (
-                        <Button variant="link" onClick={() => setActiveTab('forgot-password')}>
-                            Forgot Password?
-                        </Button>
-                    )}
+                    
                     {activeTab === 'forgot-password' && (
                         <Button variant="link" onClick={() => setActiveTab('login')}>
                             Back to Login

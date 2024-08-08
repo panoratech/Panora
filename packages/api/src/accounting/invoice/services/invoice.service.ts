@@ -31,6 +31,7 @@ export class InvoiceService {
   async addInvoice(
     unifiedInvoiceData: UnifiedAccountingInvoiceInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -42,6 +43,8 @@ export class InvoiceService {
     id_invoiceing_invoice: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingInvoiceOutput> {
     return;
@@ -49,6 +52,7 @@ export class InvoiceService {
 
   async getInvoices(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

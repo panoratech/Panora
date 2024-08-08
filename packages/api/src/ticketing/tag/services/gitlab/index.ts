@@ -37,7 +37,7 @@ export class GitlabService implements ITagService {
         },
       });
 
-      const groups = await axios.get(`${connection.account_url}/groups`, {
+      const groups = await axios.get(`${connection.account_url}/v4/groups`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -49,7 +49,7 @@ export class GitlabService implements ITagService {
       for (const group of groups.data) {
         if (group.id) {
           const tags = await axios.get(
-            `${connection.account_url}/groups/${group.id}/labels`,
+            `${connection.account_url}/v4/groups/${group.id}/labels`,
             {
               headers: {
                 'Content-Type': 'application/json',

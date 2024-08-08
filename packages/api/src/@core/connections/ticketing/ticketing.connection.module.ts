@@ -1,11 +1,9 @@
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/webhook.module';
 import { ManagedWebhooksModule } from '@@core/@core-services/webhooks/third-parties-webhooks/managed-webhooks.module';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { Module } from '@nestjs/common';
-import { ConnectionUtils } from '../@utils';
 import { AhaConnectionService } from './services/aha/aha.service';
 import { AsanaConnectionService } from './services/asana/asana.service';
 import { ClickupConnectionService } from './services/clickup/clickup.service';
@@ -22,14 +20,11 @@ import { ServiceRegistry } from './services/registry.service';
 import { TicketingConnectionsService } from './services/ticketing.connection.service';
 import { WrikeConnectionService } from './services/wrike/wrike.service';
 import { ZendeskConnectionService } from './services/zendesk/zendesk.service';
-import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
-import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
   imports: [WebhookModule, ManagedWebhooksModule, BullQueueModule],
   providers: [
     EnvironmentService,
-
     ServiceRegistry,
     ConnectionsStrategiesService,
     //PROVIDERS SERVICES
@@ -51,7 +46,6 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
   ],
   exports: [
     EnvironmentService,
-
     ServiceRegistry,
     ConnectionsStrategiesService,
     //PROVIDERS SERVICES

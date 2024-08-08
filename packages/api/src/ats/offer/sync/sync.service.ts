@@ -133,7 +133,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const existingOffer = await this.prisma.ats_offers.findFirst({
           where: {
             remote_id: originId,
-            id_connection: connection_id,
+            
           },
         });
 
@@ -163,7 +163,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               created_at: new Date(),
               id_linked_user: linkedUserId,
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

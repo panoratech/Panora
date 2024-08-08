@@ -18,7 +18,6 @@ import { ZendeskAccountMapper } from './services/zendesk/mappers';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [AccountController],
   providers: [
     AccountService,

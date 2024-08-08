@@ -36,7 +36,7 @@ export class JiraService implements IUserService {
           vertical: 'ticketing',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/users/search`, {
+      const resp = await axios.get(`${connection.account_url}/3/users/search`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -50,7 +50,7 @@ export class JiraService implements IUserService {
         const accountId = user.account_id;
         if (accountId) {
           const emailResp = await axios.get(
-            `${connection.account_url}/users/email?accountId=${accountId}`,
+            `${connection.account_url}/3/users/email?accountId=${accountId}`,
             {
               headers: {
                 'Content-Type': 'application/json',

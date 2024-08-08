@@ -314,6 +314,7 @@ export class Email {
 
   @ApiProperty({
     type: String,
+    enum: ['PERSONAL', 'WORK'],
     nullable: true,
     description:
       'The email address type. Authorized values are either PERSONAL or WORK.',
@@ -324,6 +325,7 @@ export class Email {
 
   @ApiPropertyOptional({
     type: String,
+    enum: ['COMPANY', 'CONTACT'],
     nullable: true,
     description: 'The owner type of an email',
   })
@@ -345,6 +347,7 @@ export class Phone {
 
   @ApiProperty({
     type: String,
+    enum: ['MOBILE', 'WORK'],
     nullable: true,
     description: 'The phone type. Authorized values are either MOBILE or WORK',
   })
@@ -365,6 +368,7 @@ export class Address {
   @ApiProperty({
     type: String,
     nullable: true,
+    example: '5th Avenue',
     description: 'The street',
   })
   @IsString()
@@ -373,6 +377,7 @@ export class Address {
   @ApiProperty({
     type: String,
     nullable: true,
+    example: 'Street 2',
     description: 'More information about the street ',
   })
   @IsString()
@@ -382,6 +387,7 @@ export class Address {
   @ApiProperty({
     type: String,
     nullable: true,
+    example: 'New York',
     description: 'The city',
   })
   @IsString()
@@ -389,6 +395,7 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: 'New York',
     nullable: true,
     description: 'The state',
   })
@@ -397,6 +404,7 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: '10001',
     nullable: true,
     description: 'The postal code',
   })
@@ -405,6 +413,7 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: 'United States of America',
     nullable: true,
     description: 'The country',
   })
@@ -413,7 +422,9 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    enum: ['PERSONAL', 'WORK'],
     nullable: true,
+    example: 'PERSONAL',
     description:
       'The address type. Authorized values are either PERSONAL or WORK.',
   })

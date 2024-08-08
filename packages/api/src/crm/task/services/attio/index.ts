@@ -37,7 +37,7 @@ export class AttioService implements ITaskService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/tasks`,
+        `${connection.account_url}/v2/tasks`,
         JSON.stringify(taskData),
         {
           headers: {
@@ -51,7 +51,7 @@ export class AttioService implements ITaskService {
       const linked_records = await Promise.all(
         resp.data.data.linked_records.map(async (record) => {
           const res = await axios.get(
-            `https://api.attio.com/v2/objects/${record.target_object_id}`,
+            `${connection.account_url}/objects/${record.target_object_id}`,
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ export class AttioService implements ITaskService {
         },
       });
 
-      const baseURL = `${connection.account_url}/tasks`;
+      const baseURL = `${connection.account_url}/v2/tasks`;
 
       const resp = await axios.get(baseURL, {
         headers: {

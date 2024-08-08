@@ -37,7 +37,7 @@ export class ZendeskService implements IDealService {
       });
 
       const resp = await axios.post(
-        `${connection.account_url}/deals`,
+        `${connection.account_url}/v2/deals`,
         {
           data: dealData,
         },
@@ -72,7 +72,7 @@ export class ZendeskService implements IDealService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/deals`, {
+      const resp = await axios.get(`${connection.account_url}/v2/deals`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -1,5 +1,7 @@
 import { LinearCollectionMapper } from './services/linear/mappers';
 import { LinearService } from './services/linear';
+import { GithubCollectionMapper } from './services/github/mappers';
+import { GithubService } from './services/github';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
@@ -20,7 +22,6 @@ import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [CollectionController],
   providers: [
     CollectionService,
@@ -38,9 +39,11 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     /* PROVIDERS MAPPERS */
     JiraCollectionMapper,
     GitlabCollectionMapper,
+    GithubService,
+    GithubCollectionMapper,
     LinearService,
     LinearCollectionMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
-export class CollectionModule {}
+export class CollectionModule { }

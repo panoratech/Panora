@@ -11,11 +11,41 @@ export enum CrmObject {
 
 export enum HrisObject {}
 
-export enum AtsObject {}
+export enum AtsObject {
+  activity = 'activity',
+  application = 'application',
+  attachment = 'attachment',
+  candidate = 'candidate',
+  department = 'department',
+  eeocs = 'eeocs',
+  interview = 'interview',
+  job = 'job',
+  jobinterviewstage = 'jobinterviewstage',
+  offer = 'offer',
+  office = 'office',
+  rejectreason = 'rejectreason',
+  scorecard = 'scorecard',
+  tag = 'tag',
+  user = 'user'
+}
 
 export enum AccountingObject {}
 
-export enum FileStorageObject {}
+export enum EcommerceObject {
+ order = 'order',
+ fulfillment = 'fulfillment',
+ product = 'product',
+ customer = 'customer',
+ fulfillmentorders = 'fulfillmentorders'
+}
+
+export enum FileStorageObject {
+    drive = 'drive',
+    file = 'file',
+    folder = 'folder',
+    group = 'group',
+    user = 'user'
+}
 
 export enum MarketingAutomationObject {}
 
@@ -39,4 +69,7 @@ const prependPrefixToEnumValues = (prefix: string, enumObj: any) => {
 export const standardObjects = [
     ...prependPrefixToEnumValues('crm', CrmObject),
     ...prependPrefixToEnumValues('ticketing', TicketingObject),
+    ...prependPrefixToEnumValues('filestorage', FileStorageObject),
+    ...prependPrefixToEnumValues('ats', AtsObject),
+    ...prependPrefixToEnumValues('ecommerce', EcommerceObject),
 ];

@@ -9,7 +9,7 @@ interface IProDto {
 
 const useCreateProject = () => {    
     const add = async (data: IProDto) => {
-        const response = await fetch(`${config.API_URL}/projects`, {
+        const response = await fetch(`${config.API_URL}/projects/internal`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

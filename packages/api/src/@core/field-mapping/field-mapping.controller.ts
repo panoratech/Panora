@@ -24,6 +24,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 
 @ApiTags('fieldMappings')
 @Controller('field_mappings')
@@ -42,8 +43,8 @@ export class FieldMappingController {
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @ApiExcludeEndpoint()
-  @Get('entities')
-  getEntities() {
+  @Get('internal/entities')
+  getInternalEntities() {
     return this.fieldMappingService.getEntities();
   }
 
@@ -53,9 +54,9 @@ export class FieldMappingController {
   })
   @ApiResponse({ status: 200 })
   @ApiExcludeEndpoint()
-  @Get('attributes')
+  @Get('internal/attributes')
   @UseGuards(JwtAuthGuard)
-  getAttributes(@Request() req: any) {
+  getInternalAttributes(@Request() req: any) {
     const { id_project } = req.user;
     return this.fieldMappingService.getAttributes(id_project);
   }
@@ -66,9 +67,9 @@ export class FieldMappingController {
   })
   @ApiResponse({ status: 200 })
   @ApiExcludeEndpoint()
-  @Get('values')
+  @Get('internal/values')
   @UseGuards(JwtAuthGuard)
-  getValues() {
+  getInternalValues() {
     return this.fieldMappingService.getValues();
   }
 
@@ -77,10 +78,92 @@ export class FieldMappingController {
     summary: 'Define target Field',
   })
   @ApiBody({ type: DefineTargetFieldDto })
+  @ApiExcludeEndpoint()
   @ApiPostCustomResponse(CustomFieldResponse)
-  //define target field on our unified model
-  @Post('define')
+  @Post('internal/define')
   @UseGuards(JwtAuthGuard)
+  defineInternalTargetField(
+    @Request() req: any,
+    @Body() defineTargetFieldDto: DefineTargetFieldDto,
+  ) {
+    const { id_project } = req.user;
+    return this.fieldMappingService.defineTargetField(
+      defineTargetFieldDto,
+      id_project,
+    );
+  }
+
+  @ApiOperation({ operationId: 'map', summary: 'Map Custom Field' })
+  @ApiBody({ type: MapFieldToProviderDto })
+  @ApiPostCustomResponse(CustomFieldResponse)
+  @UseGuards(JwtAuthGuard)
+  @ApiExcludeEndpoint()
+  @Post('internal/map')
+  mapInternalFieldToProvider(
+    @Body() mapFieldToProviderDto: MapFieldToProviderDto,
+  ) {
+    return this.fieldMappingService.mapFieldToProvider(mapFieldToProviderDto);
+  }
+
+  @ApiOperation({
+    operationId: 'defineCustomField',
+    summary: 'Create Custom Field',
+  })
+  @ApiExcludeEndpoint()
+  @ApiBody({ type: CustomFieldCreateDto })
+  @ApiPostCustomResponse(CustomFieldResponse)
+  @Post('internal')
+  @UseGuards(JwtAuthGuard)
+  createInternalCustomField(
+    @Request() req: any,
+    @Body() data: CustomFieldCreateDto,
+  ) {
+    const { id_project } = req.user;
+    return this.fieldMappingService.createCustomField(data, id_project);
+  }
+
+  @ApiOperation({
+    operationId: 'getFieldMappingValues',
+    summary: 'Retrieve field mappings values',
+  })
+  @ApiResponse({ status: 200 })
+  @Get('values')
+  @UseGuards(ApiKeyAuthGuard)
+  getValues() {
+    return this.fieldMappingService.getValues();
+  }
+
+  @ApiOperation({
+    operationId: 'getFieldMappingsEntities',
+    summary: 'Retrieve field mapping entities',
+  })
+  @ApiResponse({ status: 200 })
+  @UseGuards(ApiKeyAuthGuard)
+  @Get('entities')
+  getEntities() {
+    return this.fieldMappingService.getEntities();
+  }
+
+  @ApiOperation({
+    operationId: 'getFieldMappings',
+    summary: 'Retrieve field mappings',
+  })
+  @ApiResponse({ status: 200 })
+  @Get('attributes')
+  @UseGuards(ApiKeyAuthGuard)
+  getAttributes(@Request() req: any) {
+    const { id_project } = req.user;
+    return this.fieldMappingService.getAttributes(id_project);
+  }
+
+  @ApiOperation({
+    operationId: 'definitions',
+    summary: 'Define target Field',
+  })
+  @ApiBody({ type: DefineTargetFieldDto })
+  @ApiPostCustomResponse(CustomFieldResponse)
+  @Post('define')
+  @UseGuards(ApiKeyAuthGuard)
   defineTargetField(
     @Request() req: any,
     @Body() defineTargetFieldDto: DefineTargetFieldDto,
@@ -99,7 +182,7 @@ export class FieldMappingController {
   @ApiBody({ type: CustomFieldCreateDto })
   @ApiPostCustomResponse(CustomFieldResponse)
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   createCustomField(@Request() req: any, @Body() data: CustomFieldCreateDto) {
     const { id_project } = req.user;
     return this.fieldMappingService.createCustomField(data, id_project);
@@ -108,7 +191,7 @@ export class FieldMappingController {
   @ApiOperation({ operationId: 'map', summary: 'Map Custom Field' })
   @ApiBody({ type: MapFieldToProviderDto })
   @ApiPostCustomResponse(CustomFieldResponse)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ApiKeyAuthGuard)
   @Post('map')
   mapFieldToProvider(@Body() mapFieldToProviderDto: MapFieldToProviderDto) {
     return this.fieldMappingService.mapFieldToProvider(mapFieldToProviderDto);
@@ -121,7 +204,7 @@ export class FieldMappingController {
   @ApiResponse({ status: 200 })
   @ApiExcludeEndpoint()
   @UseGuards(JwtAuthGuard)
-  @Get('properties')
+  @Get('internal/properties')
   getCustomProperties(
     @Query('linkedUserId') linkedUserId: string,
     @Query('providerId') providerId: string,

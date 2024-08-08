@@ -22,10 +22,13 @@ import { AccountService } from './services/account.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { UnifiedTicketingAccountOutput } from './types/model.unified';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('ticketing/accounts')
 @Controller('ticketing/accounts')
 export class AccountController {
@@ -53,16 +56,17 @@ export class AccountController {
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getAccounts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.accountService.getAccounts(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -106,7 +110,7 @@ export class AccountController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -114,6 +118,8 @@ export class AccountController {
       id,
       remoteSource,
       linkedUserId,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

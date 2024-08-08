@@ -18,7 +18,6 @@ import { ZohoStageMapper } from './services/zoho/mappers';
 import { StageController } from './stage.controller';
 import { SyncService } from './sync/sync.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [StageController],
   providers: [
     StageService,

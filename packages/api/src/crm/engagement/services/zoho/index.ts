@@ -36,7 +36,7 @@ export class ZohoService implements IEngagementService {
       const fields =
         'Owner,Description,Campaign_Name,End_Date,Start_Date,Type,Created_By,Subject,Call_Type,Who_Id, Call_Start_Time, Call_Duration';
       const resp = await axios.get(
-        `${connection.account_url}/Calls?fields=${fields}`,
+        `${connection.account_url}/v5/Calls?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export class ZohoService implements IEngagementService {
       const fields =
         'Owner,Description,End_DateTime,Start_DateTime,Subject,What_Id,Who_Id,Participants,Event_Title';
       const resp = await axios.get(
-        `${connection.account_url}/Events?fields=${fields}`,
+        `${connection.account_url}/v5/Events?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',

@@ -35,6 +35,8 @@ export class AccountService {
     id_accounting_account: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingAccountOutput> {
     return;
@@ -42,6 +44,7 @@ export class AccountService {
 
   async getAccounts(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

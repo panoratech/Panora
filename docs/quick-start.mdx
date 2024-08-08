@@ -126,14 +126,16 @@ Once the user successfully completes the granting auth flow, the connection will
       </Check>
       <Info>
         You can find the Typescript SDK on NPM
-        [here](https://www.npmjs.com/package/@panora/sdk-typescript)
+        [here](https://www.npmjs.com/package/@panora/sdk)
       </Info>
       In this example, we will create a contact in a CRM. Visit other sections of the [documentation](/api-reference/introduction) to find category-specific examples.
       <CodeGroup>
         ```javascript TypeScript
-        import { PanoraSDK } from '@panora/sdk-typescript';
+        import { Panora } from "@panora/sdk";
 
-        const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+        const panora = new Panora({
+          apiKey: process.env.API_KEY,
+        });
 
         const input = {
             first_name: 'tom',
@@ -152,21 +154,23 @@ Once the user successfully completes the granting auth flow, the connection will
             ],
         };
 
-        const result = await sdk.crmContact.addContact(input, 'MY_USER_CONNECTION_TOKEN', {
-            remoteData: true,
+        const result = await panora.crm.contacts.create({
+          xConnectionToken: "YOUR_USER_CONNECTION_TOKEN",
+          unifiedCrmContactInput: input,
         });
 
         console.log(result);
         ```
 
         ```python Python
-        from panorasdk import PanoraSDK
+        import os
+        from panora_sdk import Panora
 
-        sdk = PanoraSDK()
+        panora = Panora(
+          api_key=os.getenv("API_KEY", ""),
+        )
 
-        sdk.set_access_token("MY_API_KEY")
-
-        request_body = {
+        body = {
           'first_name': 'tom',
           'last_name': 'jedusor',
           'email_addresses': [
@@ -183,20 +187,16 @@ Once the user successfully completes the granting auth flow, the connection will
           ]
         }
 
-        results = sdk.crm_contact.add_contact(
-            request_input = request_body,
-            connection_token = 'MY_USER_CONNECTION_TOKEN',
-            remote_data = True
-        )
+        res = panora.crm.contacts.create(x_connection_token="YOUR_USER_CONNECTION_TOKEN", unified_crm_contact_input=body)
 
-        print(results)
+        print(res)
         ```
 
         ```shell curl
         curl --request POST \
         --url https://api.panora.dev/crm/contacts \
-        --header 'Authorization: Bearer <MY_API_KEY>' \
         --header 'Content-Type: application/json' \
+        --header 'x-api-key: <api-key>' \
         --header 'x-connection-token: <MY_USER_CONNECTION_TOKEN>' \
         --data '{
             "first_name": "tom",
@@ -219,9 +219,10 @@ Once the user successfully completes the granting auth flow, the connection will
 
 Let’s break down what’s happening here:
 
-- We import the `Panora SDK`, which provides a convenient way to interact with the Panora Unified API.
-- We create an instance of the `Panora SDK` client, passing in our API key.
-- We call the `sdk.crmContact.addContact` method to add a contact inside a 3rd party. We specify the input we want to use (see [here](/crm/contacts/overview) for reference).
+- We import the `Panora` sdk, which provides a convenient way to interact with the Panora Unified API.
+- We create an instance of the `Panora` client, passing in our API key.
+- We call the `panora.crm.contacts.create` method to add a contact inside a 3rd party. We specify the input we want to use (see [here](/crm/contacts/overview) for reference).
+- We pass the connection token catched during step 1 ([More info here](/core-concepts/auth#catch-connection-tokens))
 - Finally, we print the response.
 
 ## Next Steps

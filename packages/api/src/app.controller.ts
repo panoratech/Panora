@@ -27,7 +27,7 @@ export class AppController {
 
   @ApiOperation({ operationId: 'health' })
   @ApiOkResponse({
-    description: 'API is healthy',
+    description: 'Api is healthy',
     schema: {
       type: 'number',
       example: 200,

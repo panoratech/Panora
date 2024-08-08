@@ -31,6 +31,7 @@ export class TimeoffService {
   async addTimeoff(
     unifiedTimeoffData: UnifiedHrisTimeoffInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -42,6 +43,8 @@ export class TimeoffService {
     id_timeoffing_timeoff: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisTimeoffOutput> {
     return;
@@ -49,6 +52,7 @@ export class TimeoffService {
 
   async getTimeoffs(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

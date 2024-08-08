@@ -29,12 +29,6 @@ export class AshbyService implements IJobInterviewStageService {
     );
     this.registry.registerService('ashby', this);
   }
-  addJobInterviewStage(
-    jobinterviewstageData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalJobInterviewStageOutput>> {
-    throw new Error('Method not implemented.');
-  }
 
   async sync(
     data: SyncParam,

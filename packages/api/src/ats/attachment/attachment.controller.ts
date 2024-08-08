@@ -27,14 +27,14 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { AttachmentService } from './services/attachment.service';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('ats/attachments')
 @Controller('ats/attachments')
 export class AttachmentController {
@@ -61,16 +61,17 @@ export class AttachmentController {
   @Get()
   async getAttachments(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.attachmentService.getAttachments(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -92,12 +93,14 @@ export class AttachmentController {
     required: true,
     type: String,
     description: 'id of the attachment you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -113,7 +116,7 @@ export class AttachmentController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -121,6 +124,8 @@ export class AttachmentController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
@@ -141,6 +146,7 @@ export class AttachmentController {
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
+    example: false,
   })
   @ApiBody({ type: UnifiedAtsAttachmentInput })
   @ApiPostCustomResponse(UnifiedAtsAttachmentOutput)
@@ -152,13 +158,14 @@ export class AttachmentController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.attachmentService.addAttachment(
         unifiedAttachmentData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

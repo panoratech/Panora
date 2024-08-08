@@ -6,6 +6,8 @@ export type ConnectionMetadata = {
   linkedUserId: string;
   remoteSource: string;
   connectionId: string;
+  projectId: string;
+  vertical: string;
 };
 
 @Injectable()
@@ -16,10 +18,10 @@ export class ConnectionUtils {
     token: string,
   ): Promise<ConnectionMetadata> {
     try {
-      console.log('**********')
+      console.log('**********');
       console.log(token);
-      console.log('**********')
-      
+      console.log('**********');
+
       const res = await this.prisma.connections.findFirst({
         where: {
           connection_token: token,
@@ -31,6 +33,8 @@ export class ConnectionUtils {
         linkedUserId: res.id_linked_user,
         remoteSource: res.provider_slug,
         connectionId: res.id_connection,
+        vertical: res.vertical,
+        projectId: res.id_project,
       };
     } catch (error) {
       throw error;

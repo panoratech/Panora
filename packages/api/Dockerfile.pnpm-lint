@@ -1,0 +1,24 @@
+################################################
+# 1/ move to the repo root directory
+# 2/ build the image : docker build -t package_linter -f ./packages/api/Dockerfile.lint .
+# 3/ run with: docker run -v $(pwd):/app/ package_linter
+################################################
+
+FROM node:20-alpine AS base
+
+# =======================================================================
+FROM base AS linter
+RUN apk add --no-cache libc6-compat netcat-openbsd curl
+RUN apk update
+
+# Set pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+RUN pnpm add -g turbo@1.13.4
+
+WORKDIR /app/packages/api
+
+CMD pnpm run lint

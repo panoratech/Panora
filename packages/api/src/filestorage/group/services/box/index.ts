@@ -34,7 +34,7 @@ export class BoxService implements IGroupService {
           vertical: 'filestorage',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/groups`, {
+      const resp = await axios.get(`${connection.account_url}/2.0/groups`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

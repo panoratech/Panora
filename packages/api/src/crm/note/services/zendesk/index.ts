@@ -37,7 +37,7 @@ export class ZendeskService implements INoteService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/notes`,
+        `${connection.account_url}/v2/notes`,
         {
           data: noteData,
         },
@@ -72,7 +72,7 @@ export class ZendeskService implements INoteService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/notes`, {
+      const resp = await axios.get(`${connection.account_url}/v2/notes`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -4,6 +4,7 @@ import { IsUUID, IsOptional, IsString } from 'class-validator';
 export class UnifiedAtsRejectreasonInput {
   @ApiPropertyOptional({
     type: String,
+    example: 'Candidate inexperienced',
     nullable: true,
     description: 'The name of the reject reason',
   })
@@ -13,6 +14,10 @@ export class UnifiedAtsRejectreasonInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -27,6 +32,7 @@ export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
     type: String,
     nullable: true,
     description: 'The UUID of the reject reason',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @IsUUID()
   @IsOptional()
@@ -37,6 +43,7 @@ export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
     nullable: true,
     description:
       'The remote ID of the reject reason in the context of the 3rd Party',
+    example: 'id_1',
   })
   @IsString()
   @IsOptional()
@@ -44,6 +51,10 @@ export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:
@@ -53,6 +64,7 @@ export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The created date of the object',
@@ -61,6 +73,7 @@ export class UnifiedAtsRejectreasonOutput extends UnifiedAtsRejectreasonInput {
   created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modified date of the object',
