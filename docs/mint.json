@@ -66,7 +66,7 @@
       ]
     },
     {
-      "group": "Unified Objects",
+      "group": "CRM Objects",
       "pages": [
         {
           "group": "Contacts",
@@ -185,6 +185,13 @@
       ]
     },
     {
+      "group": "",
+      "pages": [
+        "accounting/quickstart",
+        "accounting/overview"
+      ]
+    },
+    {
       "group": "Accounting Objects",
       "pages": [
         {
@@ -285,12 +292,6 @@
           ]
         },
         {
-          "group": "Overview",
-          "pages": [
-            "accounting/overview"
-          ]
-        },
-        {
           "group": "Payments",
           "pages": [
             "accounting/payments/create-a-payment",
@@ -311,12 +312,6 @@
             "accounting/purchaseorders/list-purchaseorders",
             "accounting/purchaseorders/retrieve-a-purchaseorder",
             "accounting/purchaseorders/create-a-purchaseorder"
-          ]
-        },
-        {
-          "group": "Quickstart",
-          "pages": [
-            "accounting/quickstart"
           ]
         },
         {
@@ -521,7 +516,7 @@
       ]
     },
     {
-      "group": "Unified Objects",
+      "group": "Ticketing Objects",
       "pages": [
         {
           "group": "Accounts",
@@ -602,7 +597,7 @@
       ]
     },
     {
-      "group": "Unified Objects",
+      "group": "CRM Objects",
       "pages": [
         {
           "group": "CRM",
