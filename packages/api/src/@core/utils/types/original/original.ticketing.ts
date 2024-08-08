@@ -1,3 +1,5 @@
+import { LinearCommentInput, LinearCommentOutput } from '@ticketing/comment/services/linear/types';
+
 import { LinearCollectionInput, LinearCollectionOutput } from '@ticketing/collection/services/linear/types';
 
 import { LinearTagInput, LinearTagOutput } from '@ticketing/tag/services/linear/types';
@@ -149,7 +151,7 @@ export type OriginalCommentInput =
   | FrontCommentInput
   | GorgiasCommentInput
   | JiraCommentInput
-  | GitlabCommentInput;
+  | GitlabCommentInput | LinearCommentInput;
 //| JiraCommentServiceMgmtInput;
 /* user */
 export type OriginalUserInput =
@@ -214,7 +216,7 @@ export type OriginalCommentOutput =
   | FrontCommentOutput
   | GorgiasCommentOutput
   | JiraCommentOutput
-  | GitlabCommentOutput;
+  | GitlabCommentOutput | LinearCommentOutput;
 /* user */
 export type OriginalUserOutput =
   | ZendeskUserOutput

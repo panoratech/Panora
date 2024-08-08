@@ -1,3 +1,5 @@
+import { LinearCommentMapper } from './services/linear/mappers';
+import { LinearService } from './services/linear';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
@@ -42,6 +44,8 @@ import { SyncService } from './sync/sync.service';
     JiraCommentMapper,
     GorgiasCommentMapper,
     GitlabCommentMapper,
+    LinearService,
+    LinearCommentMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
