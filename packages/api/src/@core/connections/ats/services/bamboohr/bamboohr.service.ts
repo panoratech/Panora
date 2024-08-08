@@ -14,7 +14,7 @@ import { Injectable } from '@nestjs/common';
 import {
   AuthStrategy,
   CONNECTORS_METADATA,
-  OAuth2AuthData,
+  DynamicApiUrl,
   providerToType,
 } from '@panora/shared';
 import axios from 'axios';
@@ -91,7 +91,8 @@ export class BamboohrConnectionService extends AbstractBaseConnectionService {
 
   async handleCallback(opts: OAuthCallbackParams) {
     try {
-      const { linkedUserId, projectId, code } = opts;
+      const { linkedUserId, projectId, body } = opts;
+      const { username, company_subdomain } = body;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -100,71 +101,20 @@ export class BamboohrConnectionService extends AbstractBaseConnectionService {
         },
       });
 
-      //reconstruct the redirect URI that was passed in the githubend it must be the same
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
-
-      const CREDENTIALS = (await this.cService.getCredentials(
-        projectId,
-        this.type,
-      )) as OAuth2AuthData;
-
-      const formData = new URLSearchParams({
-        redirect_uri: REDIRECT_URI,
-        code: code,
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        scope: CONNECTORS_METADATA['ats']['bamboohr'].scopes,
-      });
-      const res = await axios.post(
-        `https://<company>.bamboohr.com/token.php?request=token`,
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
-        },
-      );
-      const data: BamboohrOAuthResponse = res.data;
-      this.logger.log(
-        'OAuth credentials : bamboohr ats ' + JSON.stringify(data),
-      );
-
-      const formData_ = new URLSearchParams({
-        id_token: data.id_token,
-        applicationKey: '', // TODO
-      });
-      //fetch the api key of the user
-      const res_ = await axios.post(
-        `https://api.bamboohr.com/api/gateway.php/{company}/v1/oidcLogin`,
-        formData_.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
-        },
-      );
-      const data_: {
-        success: boolean;
-        userId: number;
-        employeeId: number;
-        key: string;
-      } = res_.data;
-      this.logger.log(
-        'OAuth credentials : bamboohr ats apikey res ' + JSON.stringify(data_),
-      );
-
       let db_res;
       const connection_token = uuidv4();
-
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['ats']['bamboohr'].urls
+          .apiUrl as DynamicApiUrl
+      )(company_subdomain);
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
           where: {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(data_.key),
-            account_url: `https://api.bamboohr.com/api/gateway.php/{company}`,
+            access_token: this.cryptoService.encrypt(username),
+            account_url: BASE_API_URL,
             status: 'valid',
             created_at: new Date(),
           },
@@ -176,9 +126,9 @@ export class BamboohrConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'bamboohr',
             vertical: 'ats',
-            token_type: 'oauth2',
-            account_url: `https://api.bamboohr.com/api/gateway.php/{company}`,
-            access_token: this.cryptoService.encrypt(data_.key),
+            token_type: 'basic',
+            account_url: BASE_API_URL,
+            access_token: this.cryptoService.encrypt(username),
             status: 'valid',
             created_at: new Date(),
             projects: {

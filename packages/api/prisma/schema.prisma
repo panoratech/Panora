@@ -189,7 +189,7 @@ model crm_contacts {
 model crm_deals {
   id_crm_deal        String            @id(map: "pk_crm_deal") @db.Uuid
   name               String
-  description        String
+  description        String?
   amount             BigInt
   created_at         DateTime          @db.Timestamp(6)
   modified_at        DateTime          @db.Timestamp(6)
@@ -503,6 +503,7 @@ model tcg_collections {
   remote_platform   String?
   collection_type   String?
   parent_collection String?  @db.Uuid
+  id_tcg_ticket     String?  @db.Uuid
   created_at        DateTime @db.Timestamp(6)
   modified_at       DateTime @db.Timestamp(6)
   id_linked_user    String   @db.Uuid
@@ -517,14 +518,14 @@ model tcg_comments {
   is_private        Boolean?
   remote_id         String?
   remote_platform   String?
-  created_at        DateTime?         @db.Timestamp(6)
-  modified_at       DateTime?         @db.Timestamp(6)
   creator_type      String?
   id_tcg_attachment String[]
   id_tcg_ticket     String?           @db.Uuid
   id_tcg_contact    String?           @db.Uuid
   id_tcg_user       String?           @db.Uuid
   id_linked_user    String?           @db.Uuid
+  created_at        DateTime?         @db.Timestamp(6)
+  modified_at       DateTime?         @db.Timestamp(6)
   id_connection     String            @db.Uuid
   tcg_attachments   tcg_attachments[]
   tcg_tickets       tcg_tickets?      @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_40_1")
@@ -595,14 +596,14 @@ model tcg_tickets {
   collections     String[]
   completed_at    DateTime?         @db.Timestamp(6)
   priority        String?
-  created_at      DateTime          @db.Timestamp(6)
-  modified_at     DateTime          @db.Timestamp(6)
   assigned_to     String[]
   remote_id       String?
   remote_platform String?
   creator_type    String?
   id_tcg_user     String?           @db.Uuid
-  id_linked_user  String            @db.Uuid
+  id_linked_user  String?           @db.Uuid
+  created_at      DateTime          @db.Timestamp(6)
+  modified_at     DateTime          @db.Timestamp(6)
   id_connection   String            @db.Uuid
   tcg_attachments tcg_attachments[]
   tcg_comments    tcg_comments[]
@@ -619,10 +620,10 @@ model tcg_users {
   remote_id       String?
   remote_platform String?
   teams           String[]
-  created_at      DateTime?      @db.Timestamp(6)
-  modified_at     DateTime?      @db.Timestamp(6)
   id_linked_user  String?        @db.Uuid
   id_connection   String         @db.Uuid
+  created_at      DateTime?      @db.Timestamp(6)
+  modified_at     DateTime?      @db.Timestamp(6)
   tcg_comments    tcg_comments[]
 }
 
@@ -677,7 +678,6 @@ model connector_sets {
   crm_zendesk      Boolean?
   crm_close        Boolean?
   fs_box           Boolean?
-  tcg_github       Boolean?
   projects         projects[]
 }
 
@@ -1639,7 +1639,6 @@ model acc_vendor_credits {
   tracking_categories  String[]
   accounting_period    String?   @db.Uuid
 }
-
 
 model ecom_customers {
   id_ecom_customer String           @id(map: "pk_ecom_customers") @db.Uuid

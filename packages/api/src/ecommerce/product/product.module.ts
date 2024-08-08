@@ -10,6 +10,8 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { Utils } from '@ecommerce/@lib/@utils';
 import { ShopifyService } from './services/shopify';
 import { ShopifyProductMapper } from './services/shopify/mappers';
+import { WoocommerceService } from './services/woocommerce';
+import { WoocommerceProductMapper } from './services/woocommerce/mappers';
 
 @Module({
   controllers: [ProductController],
@@ -22,8 +24,10 @@ import { ShopifyProductMapper } from './services/shopify/mappers';
     IngestDataService,
     Utils,
     ShopifyProductMapper,
+    WoocommerceProductMapper,
     /* PROVIDERS SERVICES */
     ShopifyService,
+    WoocommerceService,
   ],
   exports: [SyncService],
 })

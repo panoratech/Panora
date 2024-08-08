@@ -194,6 +194,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                   return this.prisma.ecom_product_variants.create({
                     data: {
                       ...data,
+                      remote_deleted: false,
                       id_ecom_product: existingProduct.id_ecom_product,
                       id_connection: connection_id,
                     },
@@ -210,6 +211,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ecom_product: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
+              remote_deleted: false,
               id_connection: connection_id,
             },
           });
@@ -220,6 +222,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 this.prisma.ecom_product_variants.create({
                   data: {
                     ...data,
+                    remote_deleted: false,
                     id_ecom_product: newProd.id_ecom_product,
                     id_connection: connection_id,
                   },

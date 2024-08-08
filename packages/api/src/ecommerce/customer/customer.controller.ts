@@ -9,6 +9,8 @@ import {
   Param,
   Query,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiHeader,
@@ -46,6 +48,7 @@ export class CustomerController {
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiPaginatedResponse(UnifiedEcommerceCustomerOutput)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getCustomers(

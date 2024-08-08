@@ -107,8 +107,6 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ''
         '201':
           description: ''
           content:
@@ -129,8 +127,6 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ''
         '201':
           description: ''
           content:
@@ -161,8 +157,6 @@ paths:
                     type: object
                     additionalProperties: true
                     description: Dynamic event payload
-        '201':
-          description: ''
       tags: *ref_0
       x-speakeasy-group: webhooks
   /ticketing/tickets:
@@ -189,7 +183,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -314,7 +307,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -406,7 +398,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -496,7 +487,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -632,7 +622,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -757,7 +746,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -882,7 +870,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -1006,7 +993,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -1131,7 +1117,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -1256,7 +1241,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -1348,7 +1332,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -1472,7 +1455,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -1564,7 +1546,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -1657,7 +1638,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -1785,7 +1765,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -1877,7 +1856,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -2177,15 +2155,11 @@ paths:
           required: false
           in: query
           schema:
-            minimum: 1
-            default: 1
             type: number
         - name: limit
           required: false
           in: query
           schema:
-            minimum: 1
-            default: 10
             type: number
       responses:
         '200':
@@ -2216,12 +2190,6 @@ paths:
               $ref: '#/components/schemas/PassThroughRequestDto'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-        '201':
           description: ''
           content:
             application/json:
@@ -2272,7 +2240,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -2364,7 +2331,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -2456,7 +2422,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -2548,7 +2513,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -2640,7 +2604,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -2733,7 +2696,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -2857,7 +2819,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -2950,7 +2911,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -3042,7 +3002,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -3134,7 +3093,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -3226,7 +3184,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -3318,7 +3275,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -3410,7 +3366,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -3534,7 +3489,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -3626,7 +3580,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -3756,7 +3709,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -3888,7 +3840,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -4018,7 +3969,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -4148,7 +4098,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -4243,7 +4192,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -4338,7 +4286,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -4467,7 +4414,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -4562,7 +4508,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -4691,7 +4636,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -4786,7 +4730,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -4911,7 +4854,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5036,7 +4978,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5161,7 +5102,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5286,7 +5226,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5378,7 +5317,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5503,7 +5441,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5596,7 +5533,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5688,7 +5624,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5780,7 +5715,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5872,7 +5806,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -5964,7 +5897,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6056,7 +5988,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6148,7 +6079,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6240,7 +6170,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6330,7 +6259,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6455,7 +6383,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6547,7 +6474,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6673,7 +6599,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6766,7 +6691,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6859,7 +6783,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -6952,7 +6875,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -7077,7 +6999,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -7170,7 +7091,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -7295,7 +7215,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -7388,7 +7307,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -7513,7 +7431,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -7605,7 +7522,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -7731,7 +7647,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -7856,7 +7771,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -7949,7 +7863,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8075,7 +7988,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8167,7 +8079,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8260,7 +8171,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8353,7 +8263,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8446,7 +8355,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8538,7 +8446,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8663,7 +8570,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8788,7 +8694,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8880,7 +8785,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -8972,7 +8876,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -9095,7 +8998,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -9218,7 +9120,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -9308,7 +9209,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -9399,7 +9299,6 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
-            default: 30
             type: number
         - name: cursor
           required: false
@@ -9530,6 +9429,7 @@ components:
         password_hash:
           type: string
       required:
+        - id_user
         - email
         - password_hash
     Connection:
@@ -9617,8 +9517,8 @@ components:
           description: The unique UUID of the webhook.
         endpoint_description:
           type: string
-          nullable: true
           example: Webhook to receive connection events
+          nullable: true
           description: The description of the webhook.
         url:
           type: string
@@ -9656,8 +9556,8 @@ components:
         last_update:
           format: date-time
           type: string
-          nullable: true
           example: '2024-10-01T12:00:00Z'
+          nullable: true
           description: The last update date of the webhook.
       required:
         - id_webhook_endpoint
@@ -9692,6 +9592,7 @@ components:
             type: string
       required:
         - url
+        - description
         - scope
     SignatureVerificationDto:
       type: object
@@ -11824,6 +11725,8 @@ components:
         - id_project
         - name
         - sync_mode
+        - pull_frequency
+        - redirect_url
         - id_user
         - id_connector_set
     CreateProjectDto:
@@ -12192,10 +12095,10 @@ components:
       type: object
       properties:
         method:
+          type: string
           enum:
             - GET
             - POST
-          type: string
         path:
           type: string
           nullable: true
@@ -12214,11 +12117,12 @@ components:
           type: object
           additionalProperties: true
           nullable: true
-        headers:
-          type: object
       required:
         - method
         - path
+        - data
+        - request_format
+        - overrideBaseUrl
     UnifiedHrisBankinfoOutput:
       type: object
       properties: {}

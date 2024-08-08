@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsBoolean, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 // To provide a default limit
-const DEFAULT_PAGE_SIZE = 30;
+export const DEFAULT_PAGE_SIZE = 50;
 
 export class QueryDto {
   @ApiProperty({
@@ -27,9 +27,10 @@ export class QueryDto {
     required: false,
     description: 'Set to get the number of records.',
   })
+  @Type(() => Number)
   @IsOptional()
   @IsNumber()
-  @Transform((p) => Number(p.value))
+  @Transform((value) => Number(value))
   limit: number = DEFAULT_PAGE_SIZE;
 
   @ApiProperty({
