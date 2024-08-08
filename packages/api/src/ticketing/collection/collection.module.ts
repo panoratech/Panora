@@ -1,3 +1,5 @@
+import { LinearCollectionMapper } from './services/linear/mappers';
+import { LinearService } from './services/linear';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
@@ -36,6 +38,8 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     /* PROVIDERS MAPPERS */
     JiraCollectionMapper,
     GitlabCollectionMapper,
+    LinearService,
+    LinearCollectionMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

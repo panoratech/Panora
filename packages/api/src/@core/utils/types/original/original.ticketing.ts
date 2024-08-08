@@ -1,3 +1,5 @@
+import { LinearCollectionInput, LinearCollectionOutput } from '@ticketing/collection/services/linear/types';
+
 import { LinearTagInput, LinearTagOutput } from '@ticketing/tag/services/linear/types';
 
 import { LinearTeamInput, LinearTeamOutput } from '@ticketing/team/services/linear/types';
@@ -183,7 +185,7 @@ export type OriginalTeamInput =
 export type OriginalAttachmentInput = null;
 export type OriginalCollectionInput =
   | JiraCollectionInput
-  | GitlabCollectionInput;
+  | GitlabCollectionInput | LinearCollectionInput;
 
 export type TicketingObjectInput =
   | OriginalTicketInput
@@ -253,7 +255,7 @@ export type OriginalAttachmentOutput =
 
 export type OriginalCollectionOutput =
   | JiraCollectionOutput
-  | GitlabCollectionOutput;
+  | GitlabCollectionOutput | LinearCollectionOutput;
 
 export type TicketingObjectOutput =
   | OriginalTicketOutput
