@@ -1247,7 +1247,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'openid+email',
         urls: {
           docsUrl: 'https://documentation.bamboohr.com/docs/getting-started',
-          apiUrl: (company_subdomain) => `https://api.bamboohr.com/api/gateway.php/${company_subdomain}`,
+          apiUrl: (companySubdomain) => `https://api.bamboohr.com/api/gateway.php/${companySubdomain}`,
         },
         logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
