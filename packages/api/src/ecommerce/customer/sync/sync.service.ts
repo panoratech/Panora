@@ -189,6 +189,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     data: data,
                   });
                 } else {
+                  console.log(
+                    'addy is ' +
+                      JSON.stringify(data) +
+                      ' id is ' +
+                      existingCustomer.id_ecom_customer,
+                  );
                   return this.prisma.ecom_addresses.create({
                     data: {
                       ...data,
@@ -210,13 +216,20 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ecom_customer: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
+              remote_deleted: false,
               id_connection: connection_id,
             },
           });
 
           if (normalizedAddresses && normalizedAddresses.length > 0) {
             await Promise.all(
-              normalizedAddresses.map((data) =>
+              normalizedAddresses.map((data) => {
+                console.log(
+                  'addy is ' +
+                    JSON.stringify(data) +
+                    ' id is ' +
+                    newCus.id_ecom_customer,
+                );
                 this.prisma.ecom_addresses.create({
                   data: {
                     ...data,
@@ -225,8 +238,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     remote_deleted: false,
                     //todo: id_connection: connection_id,
                   },
-                }),
-              ),
+                });
+              }),
             );
           }
 

@@ -119,7 +119,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.api_key
+          strategy: AuthStrategy.api_key,
+          properties: ['api_key']
         }
       },
       'affinity': {
@@ -495,7 +496,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -580,7 +581,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.api_key
+          strategy: AuthStrategy.api_key,
+          properties: ['api_key']
         }
       },
       'freshdesk': {
@@ -1033,7 +1035,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.api_key
+          strategy: AuthStrategy.api_key,
+          properties: ['api_key']
         }
       },
       'wave_financial': {
@@ -1208,7 +1211,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.oauth2
+          strategy: AuthStrategy.api_key,
+          properties: ['api_key']
         }
       },
     },
@@ -1243,18 +1247,15 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'openid+email',
         urls: {
           docsUrl: 'https://documentation.bamboohr.com/docs/getting-started',
-          apiUrl: '',
-          authBaseUrl: (END_USER_DOMAIN) => `https://${END_USER_DOMAIN}.bamboohr.com/authorize.php?request=authorize`
-        },
-        options: {
-          end_user_domain: true
+          apiUrl: (company_subdomain) => `https://api.bamboohr.com/api/gateway.php/${company_subdomain}`,
         },
         logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.api_key
-        }
+          strategy: AuthStrategy.basic,
+          properties: ['username', 'company_subdomain']
+        },
       },
       'breezy': {
         scopes: '',
@@ -2798,16 +2799,13 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         urls: {
           docsUrl: 'https://shopify.dev/docs/apps/build',
           apiUrl: (storeName: string) => `https://${storeName}.myshopify.com`,
-          authBaseUrl: (shop: string) => `https://${shop}.myshopify.com/admin/oauth/authorize`
         },
         logoPath: 'https://cdn.eastsideco.com/media/v3/services/ecommerce-services/shopify-logo.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.oauth2
-        },
-        options: {
-          end_user_domain: true,
+          strategy: AuthStrategy.api_key,
+          properties: ['api_key', 'store_url']
         }
       },
       'magento': {
@@ -2826,17 +2824,14 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'woocommerce': {
         urls: {
           docsUrl: 'https://woocommerce.github.io/woocommerce-rest-api-docs/#introduction',
-          apiUrl: (storeName: string) => `https://${storeName}.com`,
-          authBaseUrl: (storeName: string) => `https://${storeName}.com/wc-auth/v1/authorize`
+          apiUrl: (storeName: string) => `https://${storeName}/wp-json/wc`,
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHiusc7S5-BoiU1YKCztJMv_Qj7wlim4TwbA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: false,
+        active: true,
         authStrategy: {
-          strategy: AuthStrategy.oauth2
-        },
-        options: {
-          company_subdomain: true,
+          strategy: AuthStrategy.basic,
+          properties: ['username', 'password', 'store_url']
         }
       },
     }

@@ -75,7 +75,7 @@ export class AshbyConnectionService extends AbstractBaseConnectionService {
 
   async handleCallback(opts: BasicAuthCallbackParams) {
     try {
-      const { linkedUserId, projectId, body_data } = opts;
+      const { linkedUserId, projectId, body } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -93,7 +93,7 @@ export class AshbyConnectionService extends AbstractBaseConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(body_data.username),
+            access_token: this.cryptoService.encrypt(body.username),
             account_url: CONNECTORS_METADATA['ats']['ashby'].urls
               .apiUrl as string,
             status: 'valid',
@@ -110,7 +110,7 @@ export class AshbyConnectionService extends AbstractBaseConnectionService {
             token_type: 'basic',
             account_url: CONNECTORS_METADATA['ats']['ashby'].urls
               .apiUrl as string,
-            access_token: this.cryptoService.encrypt(body_data.username),
+            access_token: this.cryptoService.encrypt(body.username),
             status: 'valid',
             created_at: new Date(),
             projects: {

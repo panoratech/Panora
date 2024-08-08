@@ -74,7 +74,7 @@ export class AffinityConnectionService extends AbstractBaseConnectionService {
 
   async handleCallback(opts: BasicAuthCallbackParams) {
     try {
-      const { linkedUserId, projectId, body_data } = opts;
+      const { linkedUserId, projectId, body } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -92,7 +92,7 @@ export class AffinityConnectionService extends AbstractBaseConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(body_data.password),
+            access_token: this.cryptoService.encrypt(body.password),
             account_url: CONNECTORS_METADATA['crm']['affinity'].urls
               .apiUrl as string,
             status: 'valid',
@@ -109,7 +109,7 @@ export class AffinityConnectionService extends AbstractBaseConnectionService {
             token_type: 'basic',
             account_url: CONNECTORS_METADATA['crm']['affinity'].urls
               .apiUrl as string,
-            access_token: this.cryptoService.encrypt(body_data.password),
+            access_token: this.cryptoService.encrypt(body.password),
             status: 'valid',
             created_at: new Date(),
             projects: {

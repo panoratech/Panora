@@ -42,6 +42,7 @@ export class FulfillmentOrdersController {
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiCustomResponse(UnifiedEcommerceFulfillmentOrdersOutput)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getFulfillmentOrderss(

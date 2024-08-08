@@ -27,10 +27,6 @@ import {
 } from "@/components/ui/dialog"
 import useCreateApiKeyConnection from '@/hooks/queries/useCreateApiKeyConnection';
 
-interface IApiKeyFormData {
-  apikey: string;
-  [key : string]: string
-}
 
 interface IBasicAuthFormData {
   [key : string]: string
@@ -48,7 +44,6 @@ const ProviderModal = () => {
   }>({provider:'',category:''});
   const [startFlow, setStartFlow] = useState<boolean>(false);
   const [preStartFlow, setPreStartFlow] = useState<boolean>(false);
-  const [openApiKeyDialog,setOpenApiKeyDialog] = useState<boolean>(false);
   const [openBasicAuthDialog,setOpenBasicAuthDialog] = useState<boolean>(false);
   const [openDomainDialog, setOpenDomainDialog] = useState<boolean>(false);
   const [projectId, setProjectId] = useState<string>("");
@@ -76,8 +71,6 @@ const ProviderModal = () => {
   const {mutate : createApiKeyConnection} = useCreateApiKeyConnection();
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
   const {data: connectorsForProject} = useProjectConnectors(isProjectIdReady ? projectId : null);
-
-  const {register,formState: {errors},handleSubmit,reset} = useForm<IApiKeyFormData>();
   const {register: register2, formState: {errors: errors2}, handleSubmit: handleSubmit2, reset: reset2} = useForm<IBasicAuthFormData>();
 
   useEffect(() => { 
@@ -191,9 +184,7 @@ const ProviderModal = () => {
 
   const handleStartFlow = () => {
     const providerMetadata = CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider];
-    if (providerMetadata.authStrategy.strategy === AuthStrategy.api_key) {
-      setOpenApiKeyDialog(true);
-    } else if(providerMetadata.authStrategy.strategy === AuthStrategy.basic) {
+    if (providerMetadata.authStrategy.strategy === AuthStrategy.api_key || providerMetadata.authStrategy.strategy === AuthStrategy.basic) {
       setOpenBasicAuthDialog(true);
     } else if (providerMetadata?.options?.end_user_domain) {
       setOpenDomainDialog(true);
@@ -237,58 +228,9 @@ const ProviderModal = () => {
     });
   }
 
-  const onCloseApiKeyDialog = (dialogState : boolean) => {
-    setOpenApiKeyDialog(dialogState);
-    reset();
-  }
-
   const onCloseBasicAuthDialog = (dialogState : boolean) => {
     setOpenBasicAuthDialog(dialogState);
     reset2();
-  }
-
-
-  const onApiKeySubmit = (values: IApiKeyFormData) => {
-    // const extraFields = getValues()
-    onCloseApiKeyDialog(false);
-    setLoading({status: true, provider: selectedProvider?.provider!});
-    setPreStartFlow(false);
-
-    // Creating API Key Connection
-    createApiKeyConnection({
-      query : {
-        linkedUserId: magicLink?.id_linked_user as string,
-        projectId: projectId,
-        providerName: selectedProvider?.provider!,
-        vertical: selectedProvider?.category!
-      },
-      data: values  
-    },
-    {
-      onSuccess: () => {
-        setSelectedProvider({
-          provider: '',
-          category: ''
-        });   
-        
-        setLoading({
-            status: false,
-            provider: ''
-        });
-        setOpenSuccessDialog(true);
-      },
-      onError: (error) => {
-        setErrorResponse({errorPresent:true,errorMessage: error.message});
-        setLoading({
-          status: false,
-          provider: ''
-        });
-        setSelectedProvider({
-          provider: '',
-          category: ''
-        });  
-      }
-    });
   }
 
   const onBasicAuthSubmit = (values: IBasicAuthFormData) => {
@@ -402,63 +344,6 @@ const ProviderModal = () => {
       </CardFooter>
     </Card>
 
-    {/* Dialog for apikey input */}
-    <Dialog open={openApiKeyDialog} onOpenChange={onCloseApiKeyDialog}>
-      <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Enter a API key</DialogTitle>
-      </DialogHeader>
-      {/* <Form {...form}> */}
-        <form onSubmit={handleSubmit(onApiKeySubmit)}>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-              <Label className={errors.apikey ? 'text-destructive' : ''}>Enter your API key for {selectedProvider?.provider.substring(0,1).toUpperCase()}{selectedProvider?.provider.substring(1)}</Label>
-              <Input 
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                      placeholder="Your api key"
-                      {...register('apikey',{
-                        required: 'Api Key must be at least 2 characters',
-                        minLength: {
-                          value:2,
-                          message: 'Api Key must be at least 2 characters'
-                        }
-                      
-                      })}
-              />
-              <div>{errors.apikey && (<p className='text-sm font-medium text-destructive'>{errors.apikey.message}</p>)}</div>
-            {/* </div> */}
-            {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
-            (
-              <>
-              <Label className={errors[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {selectedProvider?.provider}</Label>
-              <Input
-                  type='text'
-                  placeholder={`Your ${fieldName}`}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                  {...register(fieldName,{
-                    required: `${fieldName} must be at least 2 characters`,
-                    minLength:{
-                      value:2,
-                      message: `${fieldName} must be at least 2 characters`,
-                    }
-                  })}
-              />
-              {errors[fieldName] && (<p className='text-sm font-medium text-destructive'>{errors[fieldName]?.message}</p>)}
-              </>
-            ))}
-          </div>
-        </div>
-      <DialogFooter>
-        <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCloseApiKeyDialog(false)}>Cancel</Button>
-        <Button type='submit' size="sm" className="h-7 gap-1">
-          Continue
-        </Button>
-      </DialogFooter>
-        </form>
-      {/* </Form> */}
-      </DialogContent>
-    </Dialog>
-
     {/* Dialog for basic auth input */}
     <Dialog open={openBasicAuthDialog} onOpenChange={onCloseBasicAuthDialog}>
       <DialogContent>
@@ -472,7 +357,7 @@ const ProviderModal = () => {
             {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
             (
               <>
-              <Label className={errors2[fieldName] ? 'text-destructive' : ''}>Enter your API Key for {selectedProvider?.provider.substring(0,1).toUpperCase()}{selectedProvider?.provider.substring(1)}</Label>
+              <Label className={errors2[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {selectedProvider?.provider.substring(0,1).toUpperCase()}{selectedProvider?.provider.substring(1)}</Label>
               <Input
                     type='text'
                     placeholder={`Your ${fieldName}`}
@@ -510,7 +395,7 @@ const ProviderModal = () => {
           <form onSubmit={(e) => { e.preventDefault(); onDomainSubmit(); }}>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label className={errors.end_user_domain ? 'text-destructive' : ''}>
+                <Label className={errors2.end_user_domain ? 'text-destructive' : ''}>
                   Enter your domain for {`${selectedProvider?.provider.substring(0,1).toUpperCase()}${selectedProvider?.provider.substring(1)}`}
                   {domainFormats[selectedProvider?.provider.toLowerCase()] && (
                     <span className="text-sm text-gray-500"> (e.g., {domainFormats[selectedProvider?.provider.toLowerCase()]})</span>
@@ -521,7 +406,7 @@ const ProviderModal = () => {
                   placeholder="Your domain"
                   onChange={(e) => setEndUserDomain(e.target.value)}
                 />
-                <div>{errors.end_user_domain && (<p className='text-sm font-medium text-destructive'>{errors.end_user_domain.message}</p>)}</div>
+                <div>{errors2.end_user_domain && (<p className='text-sm font-medium text-destructive'>{errors2.end_user_domain.message}</p>)}</div>
               </div>
             </div>
             <DialogFooter>

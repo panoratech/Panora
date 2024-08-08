@@ -94,7 +94,7 @@ export class BrevoConnectionService extends AbstractBaseConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(opts.apikey),
+            access_token: this.cryptoService.encrypt(opts.body.api_key),
             account_url: CONNECTORS_METADATA['marketingautomation']['brevo']
               .urls.apiUrl as string,
             status: 'valid',
@@ -111,7 +111,7 @@ export class BrevoConnectionService extends AbstractBaseConnectionService {
             token_type: 'api_key',
             account_url: CONNECTORS_METADATA['marketingautomation']['brevo']
               .urls.apiUrl as string,
-            access_token: this.cryptoService.encrypt(opts.apikey),
+            access_token: this.cryptoService.encrypt(opts.body.api_key),
             status: 'valid',
             created_at: new Date(),
             projects: {

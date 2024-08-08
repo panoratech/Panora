@@ -11,6 +11,8 @@ import {
   Post,
   Query,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -53,6 +55,7 @@ export class OrderController {
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiPaginatedResponse(UnifiedEcommerceOrderOutput)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getOrders(

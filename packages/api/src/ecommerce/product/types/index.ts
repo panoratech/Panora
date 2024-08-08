@@ -1,5 +1,8 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedEcommerceProductInput, UnifiedEcommerceProductOutput } from './model.unified';
+import {
+  UnifiedEcommerceProductInput,
+  UnifiedEcommerceProductOutput,
+} from './model.unified';
 import { OriginalProductOutput } from '@@core/utils/types/original/original.ecommerce';
 import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';

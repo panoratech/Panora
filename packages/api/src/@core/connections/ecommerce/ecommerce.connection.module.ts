@@ -7,6 +7,7 @@ import { Module } from '@nestjs/common';
 import { EcommerceConnectionsService } from './services/ecommerce.connection.service';
 import { ServiceRegistry } from './services/registry.service';
 import { ShopifyConnectionService } from './services/shopify/shopify.service';
+import { WoocommerceConnectionService } from './services/woocommerce/woocommerce.service';
 
 @Module({
   imports: [WebhookModule, BullQueueModule],
@@ -18,6 +19,7 @@ import { ShopifyConnectionService } from './services/shopify/shopify.service';
     ConnectionsStrategiesService,
     //PROVIDERS SERVICES,
     ShopifyConnectionService,
+    WoocommerceConnectionService,
   ],
   exports: [EcommerceConnectionsService],
 })
