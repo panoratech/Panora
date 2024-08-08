@@ -71,8 +71,6 @@ const ProviderModal = () => {
   const {mutate : createApiKeyConnection} = useCreateApiKeyConnection();
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
   const {data: connectorsForProject} = useProjectConnectors(isProjectIdReady ? projectId : null);
-
-  const {register,formState: {errors},handleSubmit,reset} = useForm<IApiKeyFormData>();
   const {register: register2, formState: {errors: errors2}, handleSubmit: handleSubmit2, reset: reset2} = useForm<IBasicAuthFormData>();
 
   useEffect(() => { 
