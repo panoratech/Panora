@@ -2,21 +2,27 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
   AbstractBaseConnectionService,
-  APIKeyCallbackParams,
+  OAuthCallbackParams,
   PassthroughInput,
   RefreshParams,
 } from '@@core/connections/@utils/types';
 import { PassthroughResponse } from '@@core/passthrough/types';
 import { Injectable } from '@nestjs/common';
-import { CONNECTORS_METADATA } from '@panora/shared';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  DynamicApiUrl,
+  providerToType,
+} from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
-export class DixaConnectionService extends AbstractBaseConnectionService {
+export class BigcommerceConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
@@ -25,11 +31,13 @@ export class DixaConnectionService extends AbstractBaseConnectionService {
     protected cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private connectionUtils: ConnectionUtils,
+    private cService: ConnectionsStrategiesService,
     private retryService: RetryHandler,
   ) {
     super(prisma, cryptoService);
-    this.logger.setContext(DixaConnectionService.name);
-    this.registry.registerService('dixa', this);
+    this.logger.setContext(BigcommerceConnectionService.name);
+    this.registry.registerService('bigcommerce', this);
+    this.type = providerToType('bigcommerce', 'ecommerce', AuthStrategy.oauth2);
   }
 
   async passthrough(
@@ -46,13 +54,13 @@ export class DixaConnectionService extends AbstractBaseConnectionService {
         },
       });
 
-      config.headers['Authorization'] = `Basic ${Buffer.from(
-        `${this.cryptoService.decrypt(connection.access_token)}:`,
-      ).toString('base64')}`;
-
+      const access_token = JSON.parse(
+        this.cryptoService.decrypt(connection.access_token),
+      );
       config.headers = {
         ...config.headers,
         ...headers,
+        'X-Auth-Token': access_token,
       };
 
       return await this.retryService.makeRequest(
@@ -62,7 +70,7 @@ export class DixaConnectionService extends AbstractBaseConnectionService {
           data: config.data,
           headers: config.headers,
         },
-        'ticketing.dixa.passthrough',
+        'ecommerce.bigcommerce.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -70,23 +78,24 @@ export class DixaConnectionService extends AbstractBaseConnectionService {
     }
   }
 
-  handleTokenRefresh?(opts: RefreshParams): Promise<any> {
-    return Promise.resolve();
-  }
-
-  async handleCallback(opts: APIKeyCallbackParams) {
+  async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, body } = opts;
+      const { api_key, store_hash } = body;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'dixa',
-          vertical: 'ticketing',
+          provider_slug: 'bigcommerce',
+          vertical: 'ecommerce',
         },
       });
 
       let db_res;
       const connection_token = uuidv4();
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['ecommerce']['bigcommerce'].urls
+          .apiUrl as DynamicApiUrl
+      )(store_hash);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -94,9 +103,8 @@ export class DixaConnectionService extends AbstractBaseConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(body.api_key),
-            account_url: CONNECTORS_METADATA['ticketing']['dixa'].urls
-              .apiUrl as string,
+            access_token: this.cryptoService.encrypt(api_key),
+            account_url: BASE_API_URL,
             status: 'valid',
             created_at: new Date(),
           },
@@ -106,12 +114,11 @@ export class DixaConnectionService extends AbstractBaseConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'dixa',
-            vertical: 'ticketing',
-            token_type: 'api_key',
-            account_url: CONNECTORS_METADATA['ticketing']['dixa'].urls
-              .apiUrl as string,
-            access_token: this.cryptoService.encrypt(body.api_key),
+            provider_slug: 'bigcommerce',
+            vertical: 'ecommerce',
+            token_type: 'basic',
+            account_url: BASE_API_URL,
+            access_token: this.cryptoService.encrypt(api_key),
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -132,5 +139,9 @@ export class DixaConnectionService extends AbstractBaseConnectionService {
     } catch (error) {
       throw error;
     }
+  }
+
+  handleTokenRefresh?(opts: RefreshParams): Promise<any> {
+    throw new Error('Method not implemented.');
   }
 }

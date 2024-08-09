@@ -8,10 +8,10 @@ import { Injectable } from '@nestjs/common';
 import { EcommerceObject } from '@panora/shared';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
-import { ShopifyOrderInput, ShopifyOrderOutput } from './types';
+import { WoocommerceOrderInput, WoocommerceOrderOutput } from './types';
 
 @Injectable()
-export class ShopifyService implements IOrderService {
+export class WoocommerceService implements IOrderService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -19,41 +19,47 @@ export class ShopifyService implements IOrderService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      EcommerceObject.order.toUpperCase() + ':' + ShopifyService.name,
+      EcommerceObject.order.toUpperCase() + ':' + WoocommerceService.name,
     );
-    this.registry.registerService('shopify', this);
+    this.registry.registerService('woocommerce', this);
   }
 
   async addOrder(
-    orderData: ShopifyOrderInput,
+    orderData: WoocommerceOrderInput,
     linkedUserId: string,
-  ): Promise<ApiResponse<ShopifyOrderOutput>> {
+  ): Promise<ApiResponse<WoocommerceOrderOutput>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'shopify',
+          provider_slug: 'woocommerce',
           vertical: 'ecommerce',
         },
       });
+      const decryptedData = JSON.parse(
+        this.cryptoService.decrypt(connection.access_token),
+      );
+
+      const { username, password } = decryptedData;
+
       const resp = await axios.post(
-        `${connection.account_url}/admin/api/2024-07/orders.json`,
+        `${connection.account_url}/v3/orders`,
         {
           order: orderData,
         },
         {
           headers: {
             'Content-Type': 'application/json',
-            'X-Shopify-Access-Token': this.cryptoService.decrypt(
-              connection.access_token,
-            ),
+            Authorization: `Basic ${Buffer.from(
+              `${username}:${password}`,
+            ).toString('base64')}`,
           },
         },
       );
 
       return {
-        data: resp.data.orders,
-        message: 'Shopify order created',
+        data: resp.data.order,
+        message: 'Woocommerce order created',
         statusCode: 201,
       };
     } catch (error) {
@@ -61,34 +67,37 @@ export class ShopifyService implements IOrderService {
     }
   }
 
-  async sync(data: SyncParam): Promise<ApiResponse<ShopifyOrderOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<WoocommerceOrderOutput[]>> {
     try {
       const { linkedUserId } = data;
 
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'shopify',
+          provider_slug: 'woocommerce',
           vertical: 'ecommerce',
         },
       });
-      const resp = await axios.get(
-        `${connection.account_url}/admin/api/2024-07/orders.json`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Shopify-Access-Token': this.cryptoService.decrypt(
-              connection.access_token,
-            ),
-          },
-        },
+      const decryptedData = JSON.parse(
+        this.cryptoService.decrypt(connection.access_token),
       );
-      const orders: ShopifyOrderOutput[] = resp.data.orders;
-      this.logger.log(`Synced shopify orders !`);
+
+      const { username, password } = decryptedData;
+
+      const resp = await axios.get(`${connection.account_url}/v3/orders`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${Buffer.from(
+            `${username}:${password}`,
+          ).toString('base64')}`,
+        },
+      });
+      const orders: WoocommerceOrderOutput[] = resp.data;
+      this.logger.log(`Synced woocommerce orders !`);
 
       return {
         data: orders,
-        message: 'Shopify orders retrieved',
+        message: 'Woocommerce orders retrieved',
         statusCode: 200,
       };
     } catch (error) {

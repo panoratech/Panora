@@ -6,7 +6,7 @@ import {
   ApiPaginatedResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
-import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { DEFAULT_PAGE_SIZE, QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   Body,
   Controller,
@@ -16,6 +16,8 @@ import {
   Post,
   Query,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -53,6 +55,7 @@ export class ProductController {
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiPaginatedResponse(UnifiedEcommerceProductOutput)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getProducts(

@@ -88,9 +88,9 @@ export class WorkdayConnectionService extends AbstractBaseConnectionService {
       // construct a custom key as workday asks for 3 params (X-Api-Key, X-User-Token, X-User-Email)
       // we simply use the string panoradelimiter to separate and encode easily
       const data_to_encode = this.connectionUtils.applyPanoraDelimiter([
-        opts.apikey,
-        opts.body_data.userToken,
-        opts.body_data.userEmail,
+        opts.body.api_key,
+        opts.body.userToken,
+        opts.body.userEmail,
       ]);
 
       if (isNotUnique) {

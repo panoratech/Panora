@@ -17,11 +17,10 @@ export type OAuthCallbackParams = {
 export type APIKeyCallbackParams = {
   projectId: string;
   linkedUserId: string;
-  apikey: string;
-  body_data?: { [key: string]: any };
+  body?: { [key: string]: any };
 };
 
-export type BasicAuthCallbackParams = Omit<APIKeyCallbackParams, 'apikey'>;
+export type BasicAuthCallbackParams = APIKeyCallbackParams;
 
 // Define the discriminated union type for callback parameters
 export type CallbackParams =

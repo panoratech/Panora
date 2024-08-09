@@ -175,6 +175,7 @@ export class ProductService {
               return this.prisma.ecom_product_variants.create({
                 data: {
                   ...email,
+                  remote_deleted: false,
                   id_ecom_product: existingProduct.id_ecom_product,
                   id_connection: connection_id,
                 },
@@ -190,6 +191,7 @@ export class ProductService {
       data.remote_id = product.remote_id;
       data.id_connection = connection_id;
       data.id_ecom_product = uuidv4();
+      data.remote_deleted = false;
 
       const newProduct = await this.prisma.ecom_products.create({ data: data });
       if (normalizedVariants && normalizedVariants.length > 0) {
@@ -198,6 +200,7 @@ export class ProductService {
             this.prisma.ecom_product_variants.create({
               data: {
                 ...data,
+                remote_deleted: false,
                 id_ecom_product: newProduct.id_ecom_product,
                 id_connection: connection_id,
               },
@@ -329,7 +332,6 @@ export class ProductService {
     try {
       let prev_cursor = null;
       let next_cursor = null;
-
       if (cursor) {
         const isCursorPresent = await this.prisma.ecom_products.findFirst({
           where: {
@@ -371,70 +373,72 @@ export class ProductService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const UnifiedEcommerceProducts: UnifiedEcommerceProductOutput[] = await Promise.all(
-        products.map(async (product) => {
-          // Fetch field mappings for the product
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: product.id_ecom_product,
+      const UnifiedEcommerceProducts: UnifiedEcommerceProductOutput[] =
+        await Promise.all(
+          products.map(async (product) => {
+            // Fetch field mappings for the product
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: {
+                  ressource_owner_id: product.id_ecom_product,
+                },
               },
-            },
-            include: {
-              attribute: true,
-            },
-          });
+              include: {
+                attribute: true,
+              },
+            });
 
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
+            // Create a map to store unique field mappings
+            const fieldMappingsMap = new Map();
 
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
 
-          // Convert the map to an array of objects
-          const field_mappings = Object.fromEntries(fieldMappingsMap);
+            // Convert the map to an array of objects
+            const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedEcommerceProductOutput format
-          return {
-            id: product.id_ecom_product,
-            product_url: product.product_url,
-            product_type: product.product_type,
-            product_status: product.product_status,
-            images_urls: product.images_urls,
-            description: product.description,
-            vendor: product.vendor,
-            variants: product.ecom_product_variants.map((variant) => ({
-              title: variant.title,
-              price: Number(variant.price),
-              sku: variant.sku,
-              options: variant.options,
-              weight: Number(variant.weight),
-              inventory_quantity: Number(variant.inventory_quantity),
-            })),
-            tags: product.tags,
-            field_mappings: field_mappings,
-            remote_id: product.remote_id,
-            created_at: product.created_at.toISOString(),
-            modified_at: product.modified_at.toISOString(),
-          };
-        }),
-      );
+            // Transform to UnifiedEcommerceProductOutput format
+            return {
+              id: product.id_ecom_product,
+              product_url: product.product_url,
+              product_type: product.product_type,
+              product_status: product.product_status,
+              images_urls: product.images_urls,
+              description: product.description,
+              vendor: product.vendor,
+              variants: product.ecom_product_variants.map((variant) => ({
+                title: variant.title,
+                price: Number(variant.price),
+                sku: variant.sku,
+                options: variant.options,
+                weight: Number(variant.weight),
+                inventory_quantity: Number(variant.inventory_quantity),
+              })),
+              tags: product.tags,
+              field_mappings: field_mappings,
+              remote_id: product.remote_id,
+              created_at: product.created_at.toISOString(),
+              modified_at: product.modified_at.toISOString(),
+            };
+          }),
+        );
 
       let res: UnifiedEcommerceProductOutput[] = UnifiedEcommerceProducts;
 
       if (remote_data) {
-        const remote_array_data: UnifiedEcommerceProductOutput[] = await Promise.all(
-          res.map(async (product) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: product.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...product, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedEcommerceProductOutput[] =
+          await Promise.all(
+            res.map(async (product) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: product.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...product, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }

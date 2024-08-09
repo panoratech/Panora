@@ -19,7 +19,7 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
     this.mappersRegistry.registerService(
       'ecommerce',
       'customer',
-      'ashby',
+      'shopify',
       this,
     );
   }
@@ -41,7 +41,9 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedEcommerceCustomerOutput | UnifiedEcommerceCustomerOutput[]> {
+  ): Promise<
+    UnifiedEcommerceCustomerOutput | UnifiedEcommerceCustomerOutput[]
+  > {
     if (!Array.isArray(source)) {
       return await this.mapSingleCustomerToUnified(
         source,
@@ -69,28 +71,37 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedEcommerceCustomerOutput> {
-    return {
+    const result = {
       remote_id: customer.id?.toString(),
       remote_data: customer,
       email: customer.email || null,
       first_name: customer.first_name || null,
       last_name: customer.last_name || null,
       phone_number: customer.phone || null,
-      addresses:
-        customer.addresses?.map((address) => ({
-          street_1: address.address1,
-          street_2: address.address2 || undefined,
-          city: address.city,
-          state: address.province,
-          postal_code: address.zip,
-          country: address.country,
-          address_type: address.default ? 'PERSONAL' : 'WORK',
-        })) || [],
+      addresses: [],
       field_mappings:
         customFieldMappings?.reduce((acc, mapping) => {
           acc[mapping.slug] = customer[mapping.remote_id];
           return acc;
         }, {} as Record<string, any>) || {},
     };
+
+    if (customer.addresses) {
+      for (const add of customer.addresses) {
+        if (add.address1 && add.city && add.country) {
+          result.addresses.push({
+            street_1: add.address1,
+            street_2: add.address2 || undefined,
+            city: add.city,
+            state: add.province,
+            postal_code: add.zip,
+            country: add.country,
+            address_type: add.default ? 'PERSONAL' : 'WORK',
+          });
+        }
+      }
+    }
+
+    return result;
   }
 }

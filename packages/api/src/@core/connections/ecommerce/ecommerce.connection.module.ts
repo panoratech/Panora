@@ -7,6 +7,10 @@ import { Module } from '@nestjs/common';
 import { EcommerceConnectionsService } from './services/ecommerce.connection.service';
 import { ServiceRegistry } from './services/registry.service';
 import { ShopifyConnectionService } from './services/shopify/shopify.service';
+import { WoocommerceConnectionService } from './services/woocommerce/woocommerce.service';
+import { SquarespaceConnectionService } from './services/squarespace/squarespace.service';
+import { BigcommerceConnectionService } from './services/bigcommerce/bigcommerce.service';
+import { EbayConnectionService } from './services/ebay/ebay.service';
 
 @Module({
   imports: [WebhookModule, BullQueueModule],
@@ -18,6 +22,10 @@ import { ShopifyConnectionService } from './services/shopify/shopify.service';
     ConnectionsStrategiesService,
     //PROVIDERS SERVICES,
     ShopifyConnectionService,
+    WoocommerceConnectionService,
+    SquarespaceConnectionService,
+    BigcommerceConnectionService,
+    EbayConnectionService,
   ],
   exports: [EcommerceConnectionsService],
 })

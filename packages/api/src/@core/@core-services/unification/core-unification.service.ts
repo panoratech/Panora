@@ -165,7 +165,7 @@ export class CoreUnification {
       switch (vertical.toLowerCase()) {
         case ConnectorCategory.Ecommerce:
           targetType_ = targetType as EcommerceObject;
-          const ecommerceRegistry = this.registry.getService('crm');
+          const ecommerceRegistry = this.registry.getService('ecommerce');
           return ecommerceRegistry.desunify({
             sourceObject,
             targetType_,
@@ -210,7 +210,7 @@ export class CoreUnification {
           });
         case ConnectorCategory.Hris:
           targetType_ = targetType as HrisObject;
-          const hrisRegistry = this.registry.getService('crm');
+          const hrisRegistry = this.registry.getService('hris');
           return hrisRegistry.desunify({
             sourceObject,
             targetType_,
@@ -219,8 +219,9 @@ export class CoreUnification {
           });
         case ConnectorCategory.MarketingAutomation:
           targetType_ = targetType as MarketingAutomationObject;
-          const marketingautomationRegistry =
-            this.registry.getService('arketingautomation');
+          const marketingautomationRegistry = this.registry.getService(
+            'marketingautomation',
+          );
           return marketingautomationRegistry.desunify({
             sourceObject,
             targetType_,

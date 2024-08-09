@@ -172,6 +172,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               ...baseData,
               id_ecom_order: uuidv4(),
               created_at: new Date(),
+              remote_deleted: false,
               remote_id: originId,
               id_connection: connection_id,
             },

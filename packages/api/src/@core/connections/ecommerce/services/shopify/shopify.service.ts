@@ -1,6 +1,7 @@
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
@@ -15,13 +16,10 @@ import {
   AuthStrategy,
   CONNECTORS_METADATA,
   DynamicApiUrl,
-  OAuth2AuthData,
   providerToType,
 } from '@panora/shared';
-import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../registry.service';
-import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 
 export type ShopifyOAuthResponse = {
   access_token: string;
@@ -77,7 +75,7 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
           data: config.data,
           headers: config.headers,
         },
-        'ecommerce.ashby.passthrough',
+        'ecommerce.shopify.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -91,54 +89,28 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
 
   async handleCallback(opts: OAuthCallbackParams) {
     try {
-      const { linkedUserId, projectId, code, hmac, shop } = opts;
+      const { linkedUserId, projectId, body } = opts;
+      const { api_key, store_url } = body;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'shopify',
+          provider_slug: 'woocommerce',
           vertical: 'ecommerce',
         },
       });
-
-      const shopRegex = /^[a-zA-Z0-9][a-zA-Z0-9\-]*\.myshopify\.com/;
-
-      const CREDENTIALS = (await this.cService.getCredentials(
-        projectId,
-        this.type,
-      )) as OAuth2AuthData;
-
-      if (!shopRegex.test(shop)) {
-        throw new Error('Invalid shop received through shopify request');
-      }
-      //todo: check hmac
-      const formData = new URLSearchParams({
-        code: code,
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-      });
-      const res = await axios.post(
-        `https://${shop}.myshopify.com/admin/oauth/access_token`,
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
-        },
-      );
-      const data: ShopifyOAuthResponse = res.data;
 
       let db_res;
       const connection_token = uuidv4();
       const BASE_API_URL = (
         CONNECTORS_METADATA['ecommerce']['shopify'].urls.apiUrl as DynamicApiUrl
-      )(shop);
+      )(store_url);
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
           where: {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(data.access_token),
+            access_token: this.cryptoService.encrypt(api_key),
             account_url: BASE_API_URL,
             status: 'valid',
             created_at: new Date(),
@@ -151,9 +123,9 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
             connection_token: connection_token,
             provider_slug: 'shopify',
             vertical: 'ecommerce',
-            token_type: 'oauth2',
+            token_type: 'basic',
             account_url: BASE_API_URL,
-            access_token: this.cryptoService.encrypt(data.access_token),
+            access_token: this.cryptoService.encrypt(api_key),
             status: 'valid',
             created_at: new Date(),
             projects: {

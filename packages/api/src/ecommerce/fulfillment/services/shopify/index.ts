@@ -39,7 +39,6 @@ export class ShopifyService implements IFulfillmentService {
           vertical: 'ecommerce',
         },
       });
-
       //retrieve ticket remote id so we can retrieve the comments in the original software
       const order = await this.prisma.ecom_orders.findUnique({
         where: {

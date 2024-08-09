@@ -167,32 +167,25 @@ export class ConnectionsController {
       }
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
       const { projectId, vertical, linkedUserId, providerName } = stateData;
-
-      const { apikey, ...body_data } = body;
       const strategy =
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .authStrategy.strategy;
 
-      const body_ =
-        strategy == AuthStrategy.api_key
-          ? {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            }
-          : {
-              projectId,
-              linkedUserId,
-              body_data,
-            };
       const strategy_type =
         strategy == AuthStrategy.api_key ? 'apikey' : 'basic';
 
       const service = this.categoryConnectionRegistry.getService(
         vertical.toLowerCase(),
       );
-      await service.handleCallBack(providerName, body_, strategy_type);
+      await service.handleCallBack(
+        providerName,
+        {
+          projectId,
+          linkedUserId,
+          body,
+        },
+        strategy_type,
+      );
       /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false

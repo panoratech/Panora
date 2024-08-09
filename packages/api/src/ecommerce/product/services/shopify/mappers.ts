@@ -16,7 +16,12 @@ export class ShopifyProductMapper implements IProductMapper {
     private utils: Utils,
     private coreUnificationService: CoreUnification,
   ) {
-    this.mappersRegistry.registerService('ecommerce', 'product', 'ashby', this);
+    this.mappersRegistry.registerService(
+      'ecommerce',
+      'product',
+      'shopify',
+      this,
+    );
   }
 
   async desunify(
@@ -27,15 +32,17 @@ export class ShopifyProductMapper implements IProductMapper {
     }[],
   ): Promise<ShopifyProductInput> {
     const res: any = {
-      // todo title: source.,
+      title: source.description,
       body_html: source.description,
       vendor: source.vendor,
       product_type: source.product_type.toLowerCase(),
-      status: source.product_status,
+      status: source.product_status.toLowerCase(),
     };
     if (source.variants) {
       res.variants = source.variants.map((item) => ({
         option1: item.title,
+        inventory_quantity: item.inventory_quantity,
+        weight: item.weight,
         price: item.price,
         sku: item.sku,
       }));
@@ -92,7 +99,7 @@ export class ShopifyProductMapper implements IProductMapper {
       vendor: product.vendor,
       variants: product.variants?.map((variant) => ({
         title: variant.title,
-        price: variant.price,
+        price: Number(variant.price),
         sku: variant.sku,
         options: variant.option1,
         weight: variant.weight,

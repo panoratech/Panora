@@ -162,7 +162,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if(providerName === 'helpscout') {
     params = `client_id=${encodeURIComponent(clientId)}&state=${state}`;
   }
-  if(providerName === 'pipedrive' || providerName === 'shopify') {
+  if(providerName === 'pipedrive' || providerName === 'shopify' || providerName === 'squarespace') {
     params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
   }
 
@@ -187,6 +187,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // Special cases for certain providers
   switch (providerName) {
     case 'zoho':
+    case 'squarespace':
       params += '&access_type=offline';
       break;
     case 'jira':
