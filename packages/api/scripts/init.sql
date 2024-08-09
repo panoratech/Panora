@@ -28,10 +28,10 @@ CREATE TABLE webhook_endpoints
  url                  text NOT NULL,
  secret               text NOT NULL,
  active               boolean NOT NULL,
- created_at           timestamp NOT NULL,
+ created_at           timestamp with time zone NOT NULL,
  "scope"              text[] NULL,
  id_project           uuid NOT NULL,
- last_update          timestamp NULL,
+ last_update          timestamp with time zone NULL,
  CONSTRAINT PK_webhook_endpoint PRIMARY KEY ( id_webhook_endpoint )
 );
 COMMENT ON COLUMN webhook_endpoints.endpoint_description IS 'An optional description of what the webhook is used for';
@@ -49,8 +49,8 @@ CREATE TABLE users
  first_name              text NOT NULL,
  last_name               text NOT NULL,
  id_stytch               text NULL,
- created_at              timestamp NOT NULL DEFAULT NOW(),
- modified_at             timestamp NOT NULL DEFAULT NOW(),
+ created_at              timestamp with time zone NOT NULL DEFAULT NOW(),
+ modified_at             timestamp with time zone NOT NULL DEFAULT NOW(),
  reset_token             text NULL,
  reset_token_expires_at  timestamp with time zone NULL,
  CONSTRAINT PK_users PRIMARY KEY ( id_user ),
@@ -75,8 +75,8 @@ CREATE TABLE tcg_users
  teams           text[] NULL,
  id_linked_user  uuid NULL,
  id_connection   uuid NOT NULL,
- created_at      timestamp NULL,
- modified_at     timestamp NULL,
+ created_at      timestamp with time zone NULL,
+ modified_at     timestamp with time zone NULL,
  CONSTRAINT PK_tcg_users PRIMARY KEY ( id_tcg_user )
 );
 COMMENT ON TABLE tcg_users IS 'The User object is used to represent an employee within a company.';
@@ -108,8 +108,8 @@ CREATE TABLE tcg_collections
  collection_type   text NULL,
  parent_collection uuid NULL,
  id_tcg_ticket     uuid NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  id_linked_user    uuid NOT NULL,
  id_connection     uuid NOT NULL,
  CONSTRAINT PK_tcg_collections PRIMARY KEY ( id_tcg_collection )
@@ -123,8 +123,8 @@ CREATE TABLE tcg_accounts
  name            text NULL,
  domains         text[] NULL,
  remote_platform text NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
+ created_at      timestamp with time zone NOT NULL,
+ modified_at     timestamp with time zone NOT NULL,
  id_linked_user  uuid NULL,
  id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_account PRIMARY KEY ( id_tcg_account )
@@ -138,7 +138,7 @@ CREATE TABLE remote_data
  ressource_owner_id uuid NULL,
  "format"           text NULL,
  data               text NULL,
- created_at         timestamp NULL,
+ created_at         timestamp with time zone NULL,
  CONSTRAINT PK_remote_data PRIMARY KEY ( id_remote_data ),
  CONSTRAINT Force_Unique_ressourceOwnerId UNIQUE ( ressource_owner_id )
 );
@@ -155,12 +155,141 @@ CREATE TABLE managed_webhooks
  api_version           text NULL,
  active_events         text[] NULL,
  remote_signing_secret text NULL,
- modified_at           timestamp NOT NULL,
- created_at            timestamp NOT NULL,
+ modified_at           timestamp with time zone NOT NULL,
+ created_at            timestamp with time zone NOT NULL,
  CONSTRAINT PK_managed_webhooks PRIMARY KEY ( id_managed_webhook )
 );
 COMMENT ON COLUMN managed_webhooks.endpoint IS 'UUID that will be used in the final URL to help identify where to route data
  ex: api.panora.dev/mw/{managed_webhooks.endpoint}';
+
+-- ************************************** hris_time_off
+CREATE TABLE hris_time_off
+(
+ id_hris_time_off   uuid NOT NULL,
+ employee           uuid NULL,
+ approver           uuid NULL,
+ status             text NULL,
+ employee_note      text NULL,
+ units              text NULL,
+ amount             bigint NULL,
+ request_type       text NULL,
+ start_time         timestamp with time zone NULL,
+ end_time           timestamp with time zone NULL,
+ remote_id          text NULL,
+ remote_created_at  timestamp with time zone NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_was_deleted boolean NOT NULL,
+ id_connection      uuid NOT NULL,
+ CONSTRAINT PK_hris_time_off PRIMARY KEY ( id_hris_time_off )
+);
+COMMENT ON COLUMN hris_time_off.employee IS 'id_hris_employee of the employee requesting the time off';
+COMMENT ON COLUMN hris_time_off.approver IS 'id_hris_employee of the manager approving the time off';
+
+-- ************************************** hris_payroll_runs
+CREATE TABLE hris_payroll_runs
+(
+ id_hris_payroll_run uuid NOT NULL,
+ run_state           text NULL,
+ run_type            text NULL,
+ start_date          timestamp with time zone NULL,
+ end_date            timestamp with time zone NULL,
+ check_date          timestamp with time zone NULL,
+ remote_id           text NULL,
+ remote_created_at   timestamp with time zone NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ remote_was_deleted  boolean NOT NULL,
+ id_connection       uuid NOT NULL,
+ CONSTRAINT PK_hris_payroll_runs PRIMARY KEY ( id_hris_payroll_run )
+);
+
+-- ************************************** hris_pay_groups
+CREATE TABLE hris_pay_groups
+(
+ id_hris_pay_group  uuid NOT NULL,
+ pay_group_name     text NULL,
+ remote_id          text NULL,
+ remote_created_at  timestamp with time zone NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_was_deleted boolean NOT NULL,
+ id_connection      uuid NOT NULL,
+ CONSTRAINT PK_hris_pay_groups PRIMARY KEY ( id_hris_pay_group )
+);
+
+-- ************************************** hris_locations
+CREATE TABLE hris_locations
+(
+ id_hris_location   uuid NOT NULL,
+ name               text NULL,
+ phone_number       text NULL,
+ street_1           text NULL,
+ street_2           text NULL,
+ city               text NULL,
+ "state"            text NULL,
+ zip_code           text NULL,
+ country            text NULL,
+ location_type      text NULL,
+ remote_id          text NOT NULL,
+ remote_created_at  timestamp with time zone NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_was_deleted boolean NOT NULL,
+ id_connection      uuid NOT NULL,
+ CONSTRAINT PK_hris_locations PRIMARY KEY ( id_hris_location )
+);
+COMMENT ON COLUMN hris_locations.location_type IS 'HOME, WORK';
+
+-- ************************************** hris_groups
+CREATE TABLE hris_groups
+(
+ id_hris_group      uuid NOT NULL,
+ parent_group       uuid NULL,
+ name               text NULL,
+ type               text NULL,
+ remote_id          text NOT NULL,
+ remote_created_at  timestamp with time zone NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_was_deleted boolean NOT NULL,
+ id_connection      uuid NOT NULL,
+ CONSTRAINT PK_hris_groups PRIMARY KEY ( id_hris_group )
+);
+COMMENT ON COLUMN hris_groups.parent_group IS 'id_hris_group of parent group';
+
+-- ************************************** hris_employer_benefits
+CREATE TABLE hris_employer_benefits
+(
+ id_hris_employer_benefit uuid NOT NULL,
+ id_connection            uuid NOT NULL,
+ benefit_plan_type        text NULL,
+ name                     text NULL,
+ description              text NULL,
+ deduction_code           text NULL,
+ remote_id                text NULL,
+ remote_created_at        timestamp with time zone NULL,
+ remote_was_deleted       boolean NOT NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ CONSTRAINT PK_hris_employer_benefits PRIMARY KEY ( id_hris_employer_benefit )
+);
+
+-- ************************************** hris_companies
+CREATE TABLE hris_companies
+(
+ id_hris_company    uuid NOT NULL,
+ legal_name         text NULL,
+ display_name       text NULL,
+ eins               text[] NULL,
+ remote_id          text NULL,
+ remote_created_at  timestamp with time zone NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_was_deleted boolean NOT NULL,
+ id_connection      uuid NOT NULL,
+ CONSTRAINT PK_hris_companies PRIMARY KEY ( id_hris_company )
+);
 
 -- ************************************** fs_users
 CREATE TABLE fs_users
@@ -170,8 +299,8 @@ CREATE TABLE fs_users
  email         text NULL,
  is_me         boolean NOT NULL,
  remote_id     text NULL,
- created_at    timestamp NOT NULL,
- modified_at   timestamp NOT NULL,
+ created_at    timestamp with time zone NOT NULL,
+ modified_at   timestamp with time zone NOT NULL,
  id_connection uuid NOT NULL,
  CONSTRAINT PK_fs_users PRIMARY KEY ( id_fs_user )
 );
@@ -206,8 +335,8 @@ CREATE TABLE fs_permissions
  "group"          uuid NULL,
  type             text NULL,
  roles            text[] NULL,
- created_at       timestamp NOT NULL,
- modified_at      timestamp NOT NULL,
+ created_at       timestamp with time zone NOT NULL,
+ modified_at      timestamp with time zone NOT NULL,
  id_connection    uuid NOT NULL,
  CONSTRAINT PK_fs_permissions PRIMARY KEY ( id_fs_permission )
 );
@@ -221,8 +350,8 @@ CREATE TABLE fs_groups
  users              text[] NULL,
  remote_id          text NULL,
  remote_was_deleted boolean NOT NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  id_connection      uuid NOT NULL,
  CONSTRAINT PK_fs_groups PRIMARY KEY ( id_fs_group )
 );
@@ -234,10 +363,10 @@ CREATE TABLE fs_drives
  id_fs_drive       uuid NOT NULL,
  drive_url         text NULL,
  name              text NULL,
- remote_created_at timestamp NULL,
+ remote_created_at timestamp with time zone NULL,
  remote_id         text NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  id_connection     uuid NOT NULL,
  CONSTRAINT PK_fs_drives PRIMARY KEY ( id_fs_drive )
 );
@@ -335,8 +464,8 @@ CREATE TABLE crm_users
  id_crm_user     uuid NOT NULL,
  name            text NULL,
  email           text NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
+ created_at      timestamp with time zone NOT NULL,
+ modified_at     timestamp with time zone NOT NULL,
  id_linked_user  uuid NULL,
  remote_id       text NULL,
  remote_platform text NULL,
@@ -349,8 +478,8 @@ CREATE TABLE crm_deals_stages
 (
  id_crm_deals_stage uuid NOT NULL,
  stage_name         text NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  id_linked_user     uuid NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
@@ -374,8 +503,9 @@ CREATE TABLE connector_sets
  crm_zendesk      boolean NULL,
  crm_close        boolean NULL,
  fs_box           boolean NULL,
-  tcg_github boolean NULL,
-CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
+ tcg_github       boolean NULL,
+ ecom_woocommerce boolean NULL,
+ CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
 -- ************************************** connection_strategies
@@ -763,12 +893,12 @@ CREATE TABLE tcg_tickets
  name            text NULL,
  status          text NULL,
  description     text NULL,
- due_date        timestamp NULL,
+ due_date        timestamp with time zone NULL,
  ticket_type     text NULL,
  parent_ticket   uuid NULL,
  tags            text[] NULL,
  collections     text[] NULL,
- completed_at    timestamp NULL,
+ completed_at    timestamp with time zone NULL,
  priority        text NULL,
  assigned_to     text[] NULL,
  remote_id       text NULL,
@@ -776,8 +906,8 @@ CREATE TABLE tcg_tickets
  creator_type    text NULL,
  id_tcg_user     uuid NULL,
  id_linked_user  uuid NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
+ created_at      timestamp with time zone NOT NULL,
+ modified_at     timestamp with time zone NOT NULL,
  id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_tickets PRIMARY KEY ( id_tcg_ticket )
 );
@@ -802,8 +932,8 @@ CREATE TABLE tcg_contacts
  details         text NULL,
  remote_id       text NULL,
  remote_platform text NULL,
- created_at      timestamp NULL,
- modified_at     timestamp NULL,
+ created_at      timestamp with time zone NULL,
+ modified_at     timestamp with time zone NULL,
  id_tcg_account  uuid NULL,
  id_linked_user  uuid NULL,
  id_connection   uuid NOT NULL,
@@ -837,6 +967,48 @@ COMMENT ON COLUMN projects.sync_mode IS 'Can be realtime or periodic_pull';
 COMMENT ON COLUMN projects.pull_frequency IS 'Frequency in seconds for pulls
 ex 3600 for one hour';
 
+-- ************************************** hris_employees
+CREATE TABLE hris_employees
+(
+ id_hris_employee    uuid NOT NULL,
+ remote_id           text NULL,
+ remote_created_at   timestamp with time zone NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ remote_was_deleted  boolean NOT NULL,
+ id_connection       uuid NOT NULL,
+ groups              text[] NULL,
+ employee_number     text NULL,
+ id_hris_company     uuid NULL,
+ first_name          text NULL,
+ last_name           text NULL,
+ preferred_name      text NULL,
+ display_full_name   text NULL,
+ username            text NULL,
+ work_email          text NULL,
+ personal_email      text NULL,
+ mobile_phone_number text NULL,
+ employments         text[] NULL,
+ ssn                 text NULL,
+ gender              text NULL,
+ ethnicity           text NULL,
+ marital_status      text NULL,
+ date_of_birth       date NULL,
+ start_date          date NULL,
+ employment_status   text NULL,
+ termination_date    date NULL,
+ avatar_url          text NULL,
+ CONSTRAINT PK_hris_employees PRIMARY KEY ( id_hris_employee ),
+ CONSTRAINT FK_employee_companyId FOREIGN KEY ( id_hris_company ) REFERENCES hris_companies ( id_hris_company )
+);
+CREATE INDEX FKX_employee_companyId ON hris_employees
+(
+ id_hris_company
+);
+COMMENT ON COLUMN hris_employees.groups IS 'array of id_hris_group';
+COMMENT ON COLUMN hris_employees.employments IS 'array of id_hris_employment';
+COMMENT ON COLUMN hris_employees.gender IS 'The employee''s gender. Possible options are: MALE, FEMALE, NON-BINARY, OTHER, or PREFER_NOT_TO_DISCLOSE. If the original value doesn''t correspond to any of these categories, it will be returned as is.';
+
 -- ************************************** fs_folders
 CREATE TABLE fs_folders
 (
@@ -847,8 +1019,8 @@ CREATE TABLE fs_folders
  description      text NULL,
  parent_folder    uuid NULL,
  remote_id        text NULL,
- created_at       timestamp NOT NULL,
- modified_at      timestamp NOT NULL,
+ created_at       timestamp with time zone NOT NULL,
+ modified_at      timestamp with time zone NOT NULL,
  id_fs_drive      uuid NULL,
  id_connection    uuid NOT NULL,
  id_fs_permission uuid NULL,
@@ -921,8 +1093,8 @@ CREATE TABLE crm_contacts
  id_crm_contact  uuid NOT NULL,
  first_name      text NULL,
  last_name       text NULL,
- created_at      timestamp NULL,
- modified_at     timestamp NULL,
+ created_at      timestamp with time zone NULL,
+ modified_at     timestamp with time zone NULL,
  remote_id       text NULL,
  remote_platform text NULL,
  id_crm_user     uuid NULL,
@@ -944,8 +1116,8 @@ CREATE TABLE crm_companies
  name                text NULL,
  industry            text NULL,
  number_of_employees bigint NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  remote_id           text NULL,
  remote_platform     text NULL,
  id_crm_user         uuid NULL,
@@ -1401,8 +1573,8 @@ CREATE TABLE tcg_tags
  remote_id       text NULL,
  remote_platform text NULL,
  id_tcg_ticket   uuid NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
+ created_at      timestamp with time zone NOT NULL,
+ modified_at     timestamp with time zone NOT NULL,
  id_linked_user  uuid NULL,
  id_connection   uuid NOT NULL,
  CONSTRAINT PK_tcg_tags PRIMARY KEY ( id_tcg_tag ),
@@ -1428,8 +1600,8 @@ CREATE TABLE tcg_comments
  id_tcg_contact    uuid NULL,
  id_tcg_user       uuid NULL,
  id_linked_user    uuid NULL,
- created_at        timestamp NULL,
- modified_at       timestamp NULL,
+ created_at        timestamp with time zone NULL,
+ modified_at       timestamp with time zone NULL,
  id_connection     uuid NOT NULL,
  CONSTRAINT PK_tcg_comments PRIMARY KEY ( id_tcg_comment ),
  CONSTRAINT FK_41 FOREIGN KEY ( id_tcg_contact ) REFERENCES tcg_contacts ( id_tcg_contact ),
@@ -1468,6 +1640,198 @@ CREATE INDEX FK_proectID_linked_users ON linked_users
 COMMENT ON COLUMN linked_users.linked_user_origin_id IS 'id of the customer, in our customers own systems';
 COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME company)';
 
+-- ************************************** hris_timesheet_entries
+CREATE TABLE hris_timesheet_entries
+(
+ id_hris_timesheet_entry uuid NOT NULL,
+ hours_worked            bigint NULL,
+ start_time              timestamp with time zone NULL,
+ end_time                timestamp with time zone NULL,
+ id_hris_employee        uuid NULL,
+ remote_id               text NULL,
+ remote_created_at       timestamp with time zone NULL,
+ created_at              timestamp with time zone NOT NULL,
+ modified_at             timestamp with time zone NOT NULL,
+ remote_was_deleted      boolean NOT NULL,
+ id_connection           uuid NOT NULL,
+ CONSTRAINT PK_hris_timesheet_entries PRIMARY KEY ( id_hris_timesheet_entry ),
+ CONSTRAINT FK_timesheet_entry_employee_Id FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
+);
+CREATE INDEX FKx_timesheet_entry_employee_Id ON hris_timesheet_entries
+(
+ id_hris_employee
+);
+
+-- ************************************** hris_time_off_balances
+CREATE TABLE hris_time_off_balances
+(
+ id_hris_time_off_balance uuid NOT NULL,
+ balance                  bigint NULL,
+ id_hris_employee         uuid NULL,
+ used                     bigint NULL,
+ policy_type              text NULL,
+ remote_id                text NULL,
+ remote_created_at        timestamp with time zone NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ remote_was_deleted       boolean NOT NULL,
+ id_connection            uuid NOT NULL,
+ CONSTRAINT PK_hris_time_off_balances PRIMARY KEY ( id_hris_time_off_balance ),
+ CONSTRAINT FK_hris_timeoff_balance_hris_employee_ID FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
+);
+CREATE INDEX FKx_hris_timeoff_balance_hris_employee_ID ON hris_time_off_balances
+(
+ id_hris_employee
+);
+
+-- ************************************** hris_employments
+CREATE TABLE hris_employments
+(
+ id_hris_employment uuid NOT NULL,
+ job_title          text NOT NULL,
+ pay_rate           bigint NULL,
+ pay_period         text NULL,
+ pay_frequency      text NULL,
+ pay_currency       text NULL,
+ flsa_status        text NULL,
+ effective_date     date NULL,
+ employment_type    text NULL,
+ remote_id          text NULL,
+ remote_created_at  timestamp with time zone NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_was_deleted boolean NOT NULL,
+ id_connection      uuid NOT NULL,
+ id_hris_pay_group  uuid NULL,
+ id_hris_employee   uuid NULL,
+ CONSTRAINT PK_hris_employments PRIMARY KEY ( id_hris_employment ),
+ CONSTRAINT FK_107 FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee ),
+ CONSTRAINT FK_employments_pay_group_Id FOREIGN KEY ( id_hris_pay_group ) REFERENCES hris_pay_groups ( id_hris_pay_group )
+);
+CREATE INDEX FK_2 ON hris_employments
+(
+ id_hris_employee
+);
+CREATE INDEX FKx_employments_pay_group_Id ON hris_employments
+(
+ id_hris_pay_group
+);
+COMMENT ON COLUMN hris_employments.pay_rate IS 'pay rate, in usd, in cents';
+COMMENT ON COLUMN hris_employments.pay_period IS 'The time period covered by this pay rate. Available options are: HOUR, DAY, WEEK, EVERY_TWO_WEEKS, SEMIMONTHLY, MONTH, QUARTER, EVERY_SIX_MONTHS, and YEAR. If there is no direct match, the original value provided will be returned as is.';
+
+-- ************************************** hris_employee_payroll_runs
+CREATE TABLE hris_employee_payroll_runs
+(
+ id_hris_employee_payroll_run uuid NOT NULL,
+ id_hris_employee             uuid NULL,
+ id_hris_payroll_run          uuid NULL,
+ gross_pay                    bigint NULL,
+ net_pay                      bigint NULL,
+ start_date                   timestamp with time zone NULL,
+ end_date                     timestamp with time zone NULL,
+ check_date                   timestamp with time zone NULL,
+ remote_id                    text NULL,
+ remote_created_at            timestamp with time zone NULL,
+ created_at                   timestamp with time zone NOT NULL,
+ modified_at                  timestamp with time zone NOT NULL,
+ remote_was_deleted           boolean NOT NULL,
+ id_connection                uuid NOT NULL,
+ CONSTRAINT PK_hris_employee_payroll_runs PRIMARY KEY ( id_hris_employee_payroll_run ),
+ CONSTRAINT FK_employee_payroll_run_payroll_run_Id FOREIGN KEY ( id_hris_payroll_run ) REFERENCES hris_payroll_runs ( id_hris_payroll_run ),
+ CONSTRAINT FK_hris_employee_payroll_run_employee_Id FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
+);
+CREATE INDEX FKx_employee_payroll_run_payroll_run_Id ON hris_employee_payroll_runs
+(
+ id_hris_payroll_run
+);
+CREATE INDEX FKx_hris_employee_payroll_run_employee_Id ON hris_employee_payroll_runs
+(
+ id_hris_employee
+);
+
+-- ************************************** hris_dependents
+CREATE TABLE hris_dependents
+(
+ id_hris_dependents uuid NOT NULL,
+ first_name         text NULL,
+ last_name          text NULL,
+ middle_name        text NULL,
+ relationship       text NULL,
+ date_of_birth      date NULL,
+ gender             text NULL,
+ phone_number       text NULL,
+ home_location      uuid NULL,
+ is_student         boolean NULL,
+ ssn                text NULL,
+ id_hris_employee   uuid NULL,
+ remote_id          text NULL,
+ remote_created_at  timestamp with time zone NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_was_deleted boolean NOT NULL,
+ id_connection      uuid NOT NULL,
+ CONSTRAINT PK_hris_dependents PRIMARY KEY ( id_hris_dependents ),
+ CONSTRAINT FK_hris_dependant_hris_employee_Id FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
+);
+CREATE INDEX FKx_hris_dependant_hris_employee_Id ON hris_dependents
+(
+ id_hris_employee
+);
+COMMENT ON COLUMN hris_dependents.home_location IS 'contains a id_hris_location';
+
+-- ************************************** hris_benefits
+CREATE TABLE hris_benefits
+(
+ id_hris_benefit          uuid NOT NULL,
+ remote_id                text NULL,
+ remote_created_at        timestamp with time zone NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ remote_was_deleted       boolean NOT NULL,
+ id_connection            uuid NOT NULL,
+ provider_name            text NULL,
+ id_hris_employee         uuid NULL,
+ employee_contribution    bigint NULL,
+ company_contribution     bigint NULL,
+ start_date               timestamp with time zone NULL,
+ end_date                 timestamp with time zone NULL,
+ id_hris_employer_benefit uuid NULL,
+ CONSTRAINT PK_hris_benefits PRIMARY KEY ( id_hris_benefit ),
+ CONSTRAINT FK_hris_benefit_employer_benefit_Id FOREIGN KEY ( id_hris_employer_benefit ) REFERENCES hris_employer_benefits ( id_hris_employer_benefit ),
+ CONSTRAINT FK_hris_benefits_employeeId FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
+);
+CREATE INDEX FKx_hris_benefit_employer_benefit_Id ON hris_benefits
+(
+ id_hris_employer_benefit
+);
+CREATE INDEX FKx_hris_benefits_employeeId ON hris_benefits
+(
+ id_hris_employee
+);
+
+-- ************************************** hris_bank_infos
+CREATE TABLE hris_bank_infos
+(
+ id_hris_bank_info  uuid NOT NULL,
+ account_type       text NULL,
+ bank_name          text NULL,
+ account_number     text NULL,
+ routing_number     text NULL,
+ remote_id          text NULL,
+ remote_created_at  timestamp with time zone NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_was_deleted boolean NOT NULL,
+ id_connection      uuid NOT NULL,
+ id_hris_employee   uuid NULL,
+ CONSTRAINT PK_hris_bank_infos PRIMARY KEY ( id_hris_bank_info ),
+ CONSTRAINT FK_bank_infos_employeeId FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
+);
+CREATE INDEX FKX_bank_infos_employeeId ON hris_bank_infos
+(
+ id_hris_employee
+);
+
 -- ************************************** fs_files
 CREATE TABLE fs_files
 (
@@ -1479,8 +1843,8 @@ CREATE TABLE fs_files
  remote_id        text NULL,
  id_fs_permission uuid NULL,
  id_fs_folder     uuid NULL,
- created_at       timestamp NOT NULL,
- modified_at      timestamp NOT NULL,
+ created_at       timestamp with time zone NOT NULL,
+ modified_at      timestamp with time zone NOT NULL,
  id_connection    uuid NOT NULL,
  CONSTRAINT PK_fs_files PRIMARY KEY ( id_fs_file )
 );
@@ -1553,8 +1917,8 @@ CREATE TABLE crm_phone_numbers
  phone_number        text NULL,
  phone_type          text NULL,
  owner_type          text NULL,
- created_at          timestamp NOT NULL,
- modified_at         timestamp NOT NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
  id_crm_company      uuid NULL,
  id_crm_contact      uuid NULL,
  id_connection       uuid NOT NULL,
@@ -1580,8 +1944,8 @@ CREATE TABLE crm_engagements
  type              text NULL,
  direction         text NULL,
  subject           text NULL,
- start_at          timestamp NULL,
- end_time          timestamp NULL,
+ start_at          timestamp with time zone NULL,
+ end_time          timestamp with time zone NULL,
  remote_id         text NULL,
  id_linked_user    uuid NULL,
  remote_platform   text NULL,
@@ -1589,8 +1953,8 @@ CREATE TABLE crm_engagements
  id_crm_user       uuid NULL,
  id_connection     uuid NOT NULL,
  contacts          text[] NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  CONSTRAINT PK_crm_engagement PRIMARY KEY ( id_crm_engagement ),
  CONSTRAINT FK_crm_engagement_crm_user FOREIGN KEY ( id_crm_user ) REFERENCES crm_users ( id_crm_user ),
  CONSTRAINT FK_29 FOREIGN KEY ( id_crm_company ) REFERENCES crm_companies ( id_crm_company )
@@ -1614,8 +1978,8 @@ CREATE TABLE crm_email_addresses
  email_address      text NOT NULL,
  email_address_type text NOT NULL,
  owner_type         text NOT NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  id_crm_company     uuid NULL,
  id_crm_contact     uuid NULL,
  id_connection      uuid NOT NULL,
@@ -1640,8 +2004,8 @@ CREATE TABLE crm_deals
  name               text NOT NULL,
  description        text NULL,
  amount             bigint NOT NULL,
- created_at         timestamp NOT NULL,
- modified_at        timestamp NOT NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
  remote_id          text NULL,
  remote_platform    text NULL,
  id_crm_user        uuid NULL,
@@ -1682,8 +2046,8 @@ CREATE TABLE crm_addresses
  id_crm_company uuid NULL,
  id_crm_contact uuid NULL,
  id_connection  uuid NOT NULL,
- created_at     timestamp NOT NULL,
- modified_at    timestamp NOT NULL,
+ created_at     timestamp with time zone NOT NULL,
+ modified_at    timestamp with time zone NOT NULL,
  owner_type     text NOT NULL,
  CONSTRAINT PK_crm_addresses PRIMARY KEY ( id_crm_address ),
  CONSTRAINT FK_14 FOREIGN KEY ( id_crm_contact ) REFERENCES crm_contacts ( id_crm_contact ),
@@ -1768,16 +2132,16 @@ CREATE TABLE api_keys
  id_user      uuid NOT NULL,
  CONSTRAINT id_ PRIMARY KEY ( id_api_key ),
  CONSTRAINT unique_api_keys UNIQUE ( api_key_hash ),
- CONSTRAINT FK_8 FOREIGN KEY ( id_user ) REFERENCES users ( id_user ),
- CONSTRAINT FK_7 FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
-);
-CREATE INDEX FK_2 ON api_keys
-(
- id_user
+ CONSTRAINT FK_api_key_project_Id FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
+ CONSTRAINT FK_api_keys_user_Id FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
 );
 CREATE INDEX FK_api_keys_projects ON api_keys
 (
  id_project
+);
+CREATE INDEX FKx_api_keys_user_Id ON api_keys
+(
+ id_user
 );
 
 -- ************************************** acc_purchase_orders_line_items
@@ -2022,8 +2386,8 @@ CREATE TABLE tcg_attachments
  file_name         text NULL,
  file_url          text NULL,
  uploader          uuid NOT NULL,
- created_at        timestamp NOT NULL,
- modified_at       timestamp NOT NULL,
+ created_at        timestamp with time zone NOT NULL,
+ modified_at       timestamp with time zone NOT NULL,
  id_linked_user    uuid NULL,
  id_tcg_ticket     uuid NULL,
  id_tcg_comment    uuid NULL,
@@ -2047,16 +2411,74 @@ COMMENT ON COLUMN tcg_attachments.id_tcg_ticket IS 'For cases where the ticketin
 -- ************************************** invite_links
 CREATE TABLE invite_links
 (
- id_invite_link uuid NOT NULL,
- status         text NOT NULL,
- email          text NULL,
- id_linked_user uuid NOT NULL,
+ id_invite_link      uuid NOT NULL,
+ status              text NOT NULL,
+ email               text NULL,
+ id_linked_user      uuid NOT NULL,
+ displayed_verticals text[] NULL,
+ displayed_providers text[] NULL,
  CONSTRAINT PK_invite_links PRIMARY KEY ( id_invite_link ),
  CONSTRAINT FK_37 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
 );
 CREATE INDEX FK_invite_link_linkedUserID ON invite_links
 (
  id_linked_user
+);
+
+-- ************************************** hris_employee_payroll_runs_taxes
+CREATE TABLE hris_employee_payroll_runs_taxes
+(
+ id_hris_employee_payroll_runs_tax uuid NOT NULL,
+ name                              text NULL,
+ amount                            bigint NULL,
+ employer_tax                      boolean NULL,
+ id_hris_employee_payroll_run      uuid NULL,
+ remote_id                         text NULL,
+ created_at                        timestamp with time zone NOT NULL,
+ modified_at                       timestamp with time zone NOT NULL,
+ CONSTRAINT PK_hris_employee_payroll_runs_taxes PRIMARY KEY ( id_hris_employee_payroll_runs_tax ),
+ CONSTRAINT FK_hris_employee_payroll_run_tax_hris_employee_payroll_run_id FOREIGN KEY ( id_hris_employee_payroll_run ) REFERENCES hris_employee_payroll_runs ( id_hris_employee_payroll_run )
+);
+CREATE INDEX FKx_hris_employee_payroll_run_tax_hris_employee_payroll_run_id ON hris_employee_payroll_runs_taxes
+(
+ id_hris_employee_payroll_run
+);
+
+-- ************************************** hris_employee_payroll_runs_earnings
+CREATE TABLE hris_employee_payroll_runs_earnings
+(
+ id_hris_employee_payroll_runs_earning uuid NOT NULL,
+ amount                                bigint NULL,
+ type                                  text NULL,
+ id_hris_employee_payroll_run          uuid NULL,
+ remote_id                             text NULL,
+ created_at                            timestamp with time zone NOT NULL,
+ modified_at                           timestamp with time zone NOT NULL,
+ CONSTRAINT PK_hris_employee_payroll_runs_earnings PRIMARY KEY ( id_hris_employee_payroll_runs_earning ),
+ CONSTRAINT FK_hris_employee_payroll_runs_earning_hris_employee_payroll_run_Id FOREIGN KEY ( id_hris_employee_payroll_run ) REFERENCES hris_employee_payroll_runs ( id_hris_employee_payroll_run )
+);
+CREATE INDEX FKx_hris_employee_payroll_runs_earning_hris_employee_payroll_run_Id ON hris_employee_payroll_runs_earnings
+(
+ id_hris_employee_payroll_run
+);
+
+-- ************************************** hris_employee_payroll_runs_deductions
+CREATE TABLE hris_employee_payroll_runs_deductions
+(
+ id_hris_employee_payroll_runs_deduction uuid NOT NULL,
+ remote_id                               text NULL,
+ created_at                              timestamp with time zone NOT NULL,
+ modified_at                             timestamp with time zone NOT NULL,
+ id_hris_employee_payroll_run            uuid NULL,
+ name                                    text NULL,
+ employee_deduction                      bigint NULL,
+ company_deduction                       bigint NULL,
+ CONSTRAINT PK_hris_employee_payroll_runs_deductions PRIMARY KEY ( id_hris_employee_payroll_runs_deduction ),
+ CONSTRAINT FK_hris_employee_payroll_runs_deduction_hris_employee_payroll_Id FOREIGN KEY ( id_hris_employee_payroll_run ) REFERENCES hris_employee_payroll_runs ( id_hris_employee_payroll_run )
+);
+CREATE INDEX FKx_hris_employee_payroll_runs_deduction_hris_employee_payroll_Id ON hris_employee_payroll_runs_deductions
+(
+ id_hris_employee_payroll_run
 );
 
 -- ************************************** events
@@ -2071,7 +2493,7 @@ CREATE TABLE events
  method         text NOT NULL,
  url            text NOT NULL,
  provider       text NOT NULL,
- "timestamp"    timestamp NOT NULL DEFAULT NOW(),
+ "timestamp"    timestamp with time zone NOT NULL DEFAULT NOW(),
  id_linked_user uuid NOT NULL,
  CONSTRAINT PK_jobs PRIMARY KEY ( id_event ),
  CONSTRAINT FK_12 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
@@ -2090,10 +2512,10 @@ CREATE TABLE crm_tasks
  subject         text NULL,
  content         text NULL,
  status          text NULL,
- due_date        timestamp NULL,
- finished_date   timestamp NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
+ due_date        timestamp with time zone NULL,
+ finished_date   timestamp with time zone NULL,
+ created_at      timestamp with time zone NOT NULL,
+ modified_at     timestamp with time zone NOT NULL,
  id_crm_user     uuid NULL,
  id_crm_company  uuid NULL,
  id_crm_deal     uuid NULL,
@@ -2124,8 +2546,8 @@ CREATE TABLE crm_notes
 (
  id_crm_note     uuid NOT NULL,
  content         text NOT NULL,
- created_at      timestamp NOT NULL,
- modified_at     timestamp NOT NULL,
+ created_at      timestamp with time zone NOT NULL,
+ modified_at     timestamp with time zone NOT NULL,
  id_crm_company  uuid NULL,
  id_crm_contact  uuid NULL,
  id_crm_deal     uuid NULL,
@@ -2167,8 +2589,8 @@ CREATE TABLE connections
  token_type           text NOT NULL,
  access_token         text NULL,
  refresh_token        text NULL,
- expiration_timestamp timestamp NULL,
- created_at           timestamp NOT NULL,
+ expiration_timestamp timestamp with time zone NULL,
+ created_at           timestamp with time zone NOT NULL,
  connection_token     text NULL,
  id_project           uuid NOT NULL,
  id_linked_user       uuid NOT NULL,
@@ -2313,9 +2735,9 @@ CREATE INDEX FK_acc_expense_expense_lines_index ON acc_expense_lines
 CREATE TABLE webhook_delivery_attempts
 (
  id_webhook_delivery_attempt uuid NOT NULL,
- "timestamp"                 timestamp NOT NULL,
+ "timestamp"                 timestamp with time zone NOT NULL,
  status                      text NOT NULL,
- next_retry                  timestamp NULL,
+ next_retry                  timestamp with time zone NULL,
  attempt_count               bigint NOT NULL,
  id_webhooks_payload         uuid NULL,
  id_webhook_endpoint         uuid NULL,
@@ -2354,7 +2776,7 @@ can be 0 1 2 3 4 5 6';
 CREATE TABLE jobs_status_history
 (
  id_jobs_status_history uuid NOT NULL,
- "timestamp"            timestamp NOT NULL DEFAULT NOW(),
+ "timestamp"            timestamp with time zone NOT NULL DEFAULT NOW(),
  previous_status        text NOT NULL,
  new_status             text NOT NULL,
  id_event               uuid NOT NULL,
