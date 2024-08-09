@@ -2862,6 +2862,48 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.oauth2
         },
       },
+      'webflow': {
+        scopes: '',
+        urls: {
+          docsUrl: 'https://developers.webflow.com/data/reference/rest-introduction',
+          apiUrl: 'https://api.webflow.com/v2',
+          authBaseUrl: 'https://webflow.com/oauth/authorize'
+        },
+        logoPath: 'https://dailybrand.co.zw/wp-content/uploads/2023/10/webflow-2.png',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+      },
+      'faire': {
+        scopes: 'READ_PRODUCTS WRITE_PRODUCTS READ_ORDERS WRITE_ORDERS READ_INVENTORIES WRITE_INVENTORIES',
+        urls: {
+          docsUrl: 'https://faire.github.io/external-api-v2-docs',
+          apiUrl: 'https://www.faire.com/external-api',
+          authBaseUrl: 'https://faire.com/oauth2/authorize'
+        },
+        logoPath: 'https://images.privco.com/production/41d79c31c7d70549830a684a77bf3076.png',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+      }, 
+      'mercadolibre': {
+        scopes: '',
+        urls: {
+          docsUrl: 'https://global-selling.mercadolibre.com/devsite/introduction-globalselling',
+          apiUrl: 'https://api.mercadolibre.com',
+          authBaseUrl: 'https://global-selling.mercadolibre.com/authorization'
+        },
+        logoPath: 'https://api.getkoala.com/web/companies/mercadolibre.com/logo',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+      },
       'woocommerce': {
         urls: {
           docsUrl: 'https://woocommerce.github.io/woocommerce-rest-api-docs/#introduction',
