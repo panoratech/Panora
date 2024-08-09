@@ -165,6 +165,9 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if(providerName === 'pipedrive' || providerName === 'shopify' || providerName === 'squarespace') {
     params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
   }
+  if(providerName === 'faire'){
+    params = `applicationId=${encodeURIComponent(clientId)}&redirectUrl=${encodedRedirectUrl}&state=${state}`;
+  }
 
   if (needsScope(providerName, vertical) && scopes) {
     if (providerName === 'slack') {
