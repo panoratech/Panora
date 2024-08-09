@@ -2822,7 +2822,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'shopify': {
-        //scopes: 'read_all_orders,read_assigned_fulfillment_orders,read_customers,read_fulfillments,read_orders,write_orders,read_products,write_products',
+        // scopes: 'read_all_orders,read_assigned_fulfillment_orders,read_customers,read_fulfillments,read_orders,write_orders,read_products,write_products',
         urls: {
           docsUrl: 'https://shopify.dev/docs/apps/build',
           apiUrl: (storeName: string) => `https://${storeName}.myshopify.com`,
