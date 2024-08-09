@@ -1,3 +1,5 @@
+import { LinearTicketInput, LinearTicketOutput } from '@ticketing/ticket/services/linear/types';
+
 import { LinearCommentInput, LinearCommentOutput } from '@ticketing/comment/services/linear/types';
 
 import { LinearCollectionInput, LinearCollectionOutput } from '@ticketing/collection/services/linear/types';
@@ -155,7 +157,7 @@ export type OriginalTicketInput =
   | FrontTicketInput
   | GorgiasTicketInput
   | JiraTicketInput
-  | GitlabTicketInput | GithubTicketInput;
+  | GitlabTicketInput | GithubTicketInput | LinearTicketInput;
 //| JiraServiceMgmtTicketInput;
 
 /* comment */
@@ -221,7 +223,7 @@ export type OriginalTicketOutput =
   | FrontTicketOutput
   | GorgiasTicketOutput
   | JiraTicketOutput
-  | GitlabTicketOutput | GithubTicketOutput;
+  | GitlabTicketOutput | GithubTicketOutput | LinearTicketOutput;
 
 /* comment */
 export type OriginalCommentOutput =
