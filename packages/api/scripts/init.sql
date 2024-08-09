@@ -509,6 +509,7 @@ CREATE TABLE connector_sets
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
+
 -- ************************************** connection_strategies
 CREATE TABLE connection_strategies
 (
