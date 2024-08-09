@@ -167,7 +167,6 @@ export class ConnectionsController {
       }
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
       const { projectId, vertical, linkedUserId, providerName } = stateData;
-
       const strategy =
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .authStrategy.strategy;
@@ -178,11 +177,15 @@ export class ConnectionsController {
       const service = this.categoryConnectionRegistry.getService(
         vertical.toLowerCase(),
       );
-      await service.handleCallBack(providerName, {
-        projectId,
-        linkedUserId,
-        body,
-      }, strategy_type);
+      await service.handleCallBack(
+        providerName,
+        {
+          projectId,
+          linkedUserId,
+          body,
+        },
+        strategy_type,
+      );
       /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false

@@ -2794,8 +2794,35 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       },
     },
     'ecommerce': {
+      'bigcommerce': {
+        urls: {
+          docsUrl: 'https://developer.bigcommerce.com/docs/rest-catalog',
+          apiUrl: (storeHash) => `https://api.bigcommerce.com/stores/${storeHash}`,
+        },
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH_-bQ399xl-yfJYhbLraU-w0yWBcppLf8NA&s',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: true,
+        authStrategy: {
+          strategy: AuthStrategy.api_key,
+          properties: ['api_key', 'store_hash']
+        }
+      },
+      'squarespace': {
+        scopes: 'website.orders,website.orders.read,website.inventory,website.inventory.read,website.products,website.products.read',
+        urls: {
+          docsUrl: 'https://developers.squarespace.com/commerce-apis/overview',
+          apiUrl: `https://api.squarespace.com`,
+          authBaseUrl: 'https://login.squarespace.com/api/1/login/oauth/provider/authorize'
+        },
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu9U-j_3EMYlKtu5dRaTl6ejitL2X6lz3pYg&s',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: true,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2,
+        }
+      },
       'shopify': {
-        scopes: 'read_all_orders,read_assigned_fulfillment_orders,read_customers,read_fulfillments,read_orders,write_orders,read_products,write_products',
+        //scopes: 'read_all_orders,read_assigned_fulfillment_orders,read_customers,read_fulfillments,read_orders,write_orders,read_products,write_products',
         urls: {
           docsUrl: 'https://shopify.dev/docs/apps/build',
           apiUrl: (storeName: string) => `https://${storeName}.myshopify.com`,

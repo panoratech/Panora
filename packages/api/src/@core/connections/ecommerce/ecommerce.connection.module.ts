@@ -8,6 +8,8 @@ import { EcommerceConnectionsService } from './services/ecommerce.connection.ser
 import { ServiceRegistry } from './services/registry.service';
 import { ShopifyConnectionService } from './services/shopify/shopify.service';
 import { WoocommerceConnectionService } from './services/woocommerce/woocommerce.service';
+import { SquarespaceConnectionService } from './services/squarespace/squarespace.service';
+import { BigcommerceConnectionService } from './services/bigcommerce/bigcommerce.service';
 
 @Module({
   imports: [WebhookModule, BullQueueModule],
@@ -20,6 +22,8 @@ import { WoocommerceConnectionService } from './services/woocommerce/woocommerce
     //PROVIDERS SERVICES,
     ShopifyConnectionService,
     WoocommerceConnectionService,
+    SquarespaceConnectionService,
+    BigcommerceConnectionService,
   ],
   exports: [EcommerceConnectionsService],
 })

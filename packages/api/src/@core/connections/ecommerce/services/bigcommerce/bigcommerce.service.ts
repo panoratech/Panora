@@ -21,13 +21,8 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../registry.service';
 
-export type ShopifyOAuthResponse = {
-  access_token: string;
-  scope: string;
-};
-
 @Injectable()
-export class ShopifyConnectionService extends AbstractBaseConnectionService {
+export class BigcommerceConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
@@ -40,9 +35,9 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
     private retryService: RetryHandler,
   ) {
     super(prisma, cryptoService);
-    this.logger.setContext(ShopifyConnectionService.name);
-    this.registry.registerService('shopify', this);
-    this.type = providerToType('shopify', 'ecommerce', AuthStrategy.oauth2);
+    this.logger.setContext(BigcommerceConnectionService.name);
+    this.registry.registerService('bigcommerce', this);
+    this.type = providerToType('bigcommerce', 'ecommerce', AuthStrategy.oauth2);
   }
 
   async passthrough(
@@ -59,13 +54,13 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
         },
       });
 
-      config.headers['X-Shopify-Access-Token'] = this.cryptoService.decrypt(
-        connection.access_token,
+      const access_token = JSON.parse(
+        this.cryptoService.decrypt(connection.access_token),
       );
-
       config.headers = {
         ...config.headers,
         ...headers,
+        'X-Auth-Token': access_token,
       };
 
       return await this.retryService.makeRequest(
@@ -75,7 +70,7 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
           data: config.data,
           headers: config.headers,
         },
-        'ecommerce.shopify.passthrough',
+        'ecommerce.bigcommerce.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -83,18 +78,14 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
     }
   }
 
-  handleTokenRefresh?(opts: RefreshParams): Promise<any> {
-    return Promise.resolve();
-  }
-
   async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, body } = opts;
-      const { api_key, store_url } = body;
+      const { api_key, store_hash } = body;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'woocommerce',
+          provider_slug: 'bigcommerce',
           vertical: 'ecommerce',
         },
       });
@@ -102,8 +93,10 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
       let db_res;
       const connection_token = uuidv4();
       const BASE_API_URL = (
-        CONNECTORS_METADATA['ecommerce']['shopify'].urls.apiUrl as DynamicApiUrl
-      )(store_url);
+        CONNECTORS_METADATA['ecommerce']['bigcommerce'].urls
+          .apiUrl as DynamicApiUrl
+      )(store_hash);
+
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
           where: {
@@ -121,7 +114,7 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'shopify',
+            provider_slug: 'bigcommerce',
             vertical: 'ecommerce',
             token_type: 'basic',
             account_url: BASE_API_URL,
@@ -148,9 +141,7 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
     }
   }
 
-  redirectUponConnection(...params: any[]): void {
-    const [{ res, host, shop }] = params;
-
-    return res.redirect(`/?shop=${shop}&host=${encodeURIComponent(host)}`);
+  handleTokenRefresh?(opts: RefreshParams): Promise<any> {
+    throw new Error('Method not implemented.');
   }
 }
