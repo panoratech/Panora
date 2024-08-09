@@ -2801,10 +2801,24 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH_-bQ399xl-yfJYhbLraU-w0yWBcppLf8NA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key', 'store_hash']
+        }
+      },
+      'ebay': {
+        scopes: '',
+        urls: {
+          docsUrl: 'https://edp.ebay.com/develop/get-started',
+          apiUrl: 'https://api.ebay.com',
+          authBaseUrl: 'https://auth.ebay.com/oauth2/authorize'
+        },
+        logoPath: 'https://www.logodesignlove.com/images/evolution/ebay-logo-01.jpg',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2,
         }
       },
       'squarespace': {
@@ -2816,7 +2830,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu9U-j_3EMYlKtu5dRaTl6ejitL2X6lz3pYg&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2,
         }
