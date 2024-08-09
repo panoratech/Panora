@@ -17,7 +17,8 @@ export enum TicketingConnectors {
     JIRA = 'jira',
     GORGIAS = 'gorgias',
     GITHUB = 'github',
-    GITLAB = 'gitlab'
+    GITLAB = 'gitlab',
+    LINEAR = 'linear'
 }
 
 export enum AccountingConnectors {

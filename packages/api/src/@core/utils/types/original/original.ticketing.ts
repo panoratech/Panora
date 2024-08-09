@@ -1,3 +1,15 @@
+import { LinearTicketInput, LinearTicketOutput } from '@ticketing/ticket/services/linear/types';
+
+import { LinearCommentInput, LinearCommentOutput } from '@ticketing/comment/services/linear/types';
+
+import { LinearCollectionInput, LinearCollectionOutput } from '@ticketing/collection/services/linear/types';
+
+import { LinearTagInput, LinearTagOutput } from '@ticketing/tag/services/linear/types';
+
+import { LinearTeamInput, LinearTeamOutput } from '@ticketing/team/services/linear/types';
+
+import { LinearUserInput, LinearUserOutput } from '@ticketing/user/services/linear/types';
+
 import { GithubCollectionInput, GithubCollectionOutput } from '@ticketing/collection/services/github/types';
 
 import { GithubCommentInput, GithubCommentOutput } from '@ticketing/comment/services/github/types';
@@ -9,6 +21,7 @@ import { GithubTeamInput, GithubTeamOutput } from '@ticketing/team/services/gith
 import { GithubTicketInput, GithubTicketOutput } from '@ticketing/ticket/services/github/types';
 
 import { GithubUserInput, GithubUserOutput } from '@ticketing/user/services/github/types';
+
 import { GitlabUserInput, GitlabUserOutput } from '@ticketing/user/services/gitlab/types';
 
 import {
@@ -144,7 +157,7 @@ export type OriginalTicketInput =
   | FrontTicketInput
   | GorgiasTicketInput
   | JiraTicketInput
-  | GitlabTicketInput | GithubTicketInput;
+  | GitlabTicketInput | GithubTicketInput | LinearTicketInput;
 //| JiraServiceMgmtTicketInput;
 
 /* comment */
@@ -153,14 +166,14 @@ export type OriginalCommentInput =
   | FrontCommentInput
   | GorgiasCommentInput
   | JiraCommentInput
-  | GitlabCommentInput | GithubCommentInput;
+  | GitlabCommentInput | GithubCommentInput | LinearCommentInput;
 //| JiraCommentServiceMgmtInput;
 /* user */
 export type OriginalUserInput =
   | ZendeskUserInput
   | FrontUserInput
   | GorgiasUserInput
-  | JiraUserInput | GithubUserInput | GitlabUserInput;
+  | JiraUserInput | GithubUserInput | GitlabUserInput | LinearUserInput;
 //| JiraServiceMgmtUserInput;
 /* account */
 export type OriginalAccountInput = ZendeskAccountInput | FrontAccountInput;
@@ -176,20 +189,20 @@ export type OriginalTagInput =
   | FrontTagInput
   | GorgiasTagInput
   | JiraTagInput
-  | GitlabTagInput | GithubTagInput;
+  | GitlabTagInput | GithubTagInput | LinearTagInput;
 
 /* team */
 export type OriginalTeamInput =
   | ZendeskTeamInput
   | FrontTeamInput
   | GorgiasTeamInput
-  | JiraTeamInput | GithubTeamInput;
+  | JiraTeamInput | GithubTeamInput | LinearTeamInput;
 
 /* attachment */
 export type OriginalAttachmentInput = null;
 export type OriginalCollectionInput =
   | JiraCollectionInput
-  | GitlabCollectionInput | GithubCollectionInput;
+  | GitlabCollectionInput | GithubCollectionInput | LinearCollectionInput;
 
 export type TicketingObjectInput =
   | OriginalTicketInput
@@ -210,7 +223,7 @@ export type OriginalTicketOutput =
   | FrontTicketOutput
   | GorgiasTicketOutput
   | JiraTicketOutput
-  | GitlabTicketOutput | GithubTicketOutput;
+  | GitlabTicketOutput | GithubTicketOutput | LinearTicketOutput;
 
 /* comment */
 export type OriginalCommentOutput =
@@ -218,13 +231,13 @@ export type OriginalCommentOutput =
   | FrontCommentOutput
   | GorgiasCommentOutput
   | JiraCommentOutput
-  | GitlabCommentOutput | GithubCommentOutput;
+  | GitlabCommentOutput | GithubCommentOutput | LinearCommentOutput;
 /* user */
 export type OriginalUserOutput =
   | ZendeskUserOutput
   | FrontUserOutput
   | GorgiasUserOutput
-  | JiraUserOutput | GithubUserOutput | GitlabUserOutput;
+  | JiraUserOutput | GithubUserOutput | GitlabUserOutput | LinearUserOutput;
 /* account */
 export type OriginalAccountOutput = ZendeskAccountOutput | FrontAccountOutput;
 /* contact */
@@ -239,14 +252,14 @@ export type OriginalTagOutput =
   | FrontTagOutput
   | GorgiasTagOutput
   | JiraTagOutput
-  | GitlabTagOutput | GithubTagOutput;
+  | GitlabTagOutput | GithubTagOutput | LinearTagOutput;
 
 /* team */
 export type OriginalTeamOutput =
   | ZendeskTeamOutput
   | FrontTeamOutput
   | GorgiasTeamOutput
-  | JiraTeamOutput | GithubTeamOutput;
+  | JiraTeamOutput | GithubTeamOutput | LinearTeamOutput;
 
 /* attachment */
 export type OriginalAttachmentOutput =
@@ -259,7 +272,7 @@ export type OriginalAttachmentOutput =
 
 export type OriginalCollectionOutput =
   | JiraCollectionOutput
-  | GitlabCollectionOutput | GithubCollectionOutput;
+  | GitlabCollectionOutput | GithubCollectionOutput | LinearCollectionOutput;
 
 export type TicketingObjectOutput =
   | OriginalTicketOutput

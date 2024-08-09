@@ -1,3 +1,5 @@
+import { LinearCollectionMapper } from './services/linear/mappers';
+import { LinearService } from './services/linear';
 import { GithubCollectionMapper } from './services/github/mappers';
 import { GithubService } from './services/github';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
@@ -39,7 +41,9 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
     GitlabCollectionMapper,
     GithubService,
     GithubCollectionMapper,
+    LinearService,
+    LinearCollectionMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
-export class CollectionModule {}
+export class CollectionModule { }

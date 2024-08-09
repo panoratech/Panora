@@ -1,3 +1,5 @@
+import { LinearTicketMapper } from './services/linear/mappers';
+import { LinearService } from './services/linear';
 import { GithubTicketMapper } from './services/github/mappers';
 import { GithubService } from './services/github';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
@@ -42,6 +44,8 @@ import { TicketController } from './ticket.controller';
     GitlabTicketMapper,
     GithubService,
     GithubTicketMapper,
+    LinearService,
+    LinearTicketMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService, IngestDataService],
 })

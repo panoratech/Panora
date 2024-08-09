@@ -1,3 +1,5 @@
+import { LinearTeamMapper } from './services/linear/mappers';
+import { LinearService } from './services/linear';
 import { GithubTeamMapper } from './services/github/mappers';
 import { GithubService } from './services/github';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
@@ -39,7 +41,9 @@ import { TeamController } from './team.controller';
     GorgiasTeamMapper,
     GithubService,
     GithubTeamMapper,
+    LinearService,
+    LinearTeamMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
-export class TeamModule {}
+export class TeamModule { }

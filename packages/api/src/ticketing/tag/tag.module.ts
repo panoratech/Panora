@@ -1,3 +1,5 @@
+import { LinearTagMapper } from './services/linear/mappers';
+import { LinearService } from './services/linear';
 import { GithubTagMapper } from './services/github/mappers';
 import { GithubService } from './services/github';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
@@ -44,7 +46,9 @@ import { GitlabTagMapper } from './services/gitlab/mappers';
     GitlabTagMapper,
     GithubService,
     GithubTagMapper,
+    LinearService,
+    LinearTagMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
-export class TagModule {}
+export class TagModule { }

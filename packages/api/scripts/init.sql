@@ -375,6 +375,7 @@ CREATE TABLE connector_sets
  crm_close        boolean NULL,
  fs_box           boolean NULL,
   tcg_github boolean NULL,
+  tcg_linear boolean NULL,
 CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
