@@ -23,16 +23,13 @@ import { ServiceRegistry } from '../registry.service';
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import axios from 'axios';
 
-export interface EbayOAuthResponse {
-  token_type: string;
-  refresh_token: string;
-  refresh_token_expires_in: number;
-  access_token: string;
-  expires_in: number;
+export interface FaireOAuthResponse {
+  accessToken: string;
+  tokenType: string;
 }
 
 @Injectable()
-export class EbayConnectionService extends AbstractBaseConnectionService {
+export class FaireConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
@@ -46,9 +43,9 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
     private retryService: RetryHandler,
   ) {
     super(prisma, cryptoService);
-    this.logger.setContext(EbayConnectionService.name);
-    this.registry.registerService('ebay', this);
-    this.type = providerToType('ebay', 'ecommerce', AuthStrategy.oauth2);
+    this.logger.setContext(FaireConnectionService.name);
+    this.registry.registerService('faire', this);
+    this.type = providerToType('faire', 'ecommerce', AuthStrategy.oauth2);
   }
 
   async passthrough(
@@ -65,13 +62,21 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
         },
       });
 
+      const CREDENTIALS = (await this.cService.getCredentials(
+        connection.id_project,
+        this.type,
+      )) as OAuth2AuthData;
+
       const access_token = JSON.parse(
         this.cryptoService.decrypt(connection.access_token),
       );
       config.headers = {
         ...config.headers,
         ...headers,
-        Authorization: `Bearer ${access_token}`,
+        'X-FAIRE-OAUTH-ACCESS-TOKEN': access_token,
+        'X-FAIRE-APP-CREDENTIALS': Buffer.from(
+          `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+        ).toString('base64'),
       };
 
       return await this.retryService.makeRequest(
@@ -81,7 +86,7 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
           data: config.data,
           headers: config.headers,
         },
-        'ecommerce.ebay.passthrough',
+        'ecommerce.faire.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -95,37 +100,42 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'ebay',
+          provider_slug: 'faire',
           vertical: 'ecommerce',
         },
       });
+      if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        grant_type: 'authorization_code',
-        redirect_uri: CREDENTIALS.SUBDOMAIN,
-        code: code,
+        redirect_url: REDIRECT_URI,
+        applicationId: CREDENTIALS.CLIENT_ID,
+        applicationSecret: CREDENTIALS.CLIENT_SECRET,
+        scope: CONNECTORS_METADATA['ecommerce']['faire'].scopes,
+        authorization_code: code,
+        grant_type: 'AUTHORIZATION_CODE',
       });
       const res = await axios.post(
-        'https://api.ebay.com/identity/v1/oauth2/token',
+        'https://www.faire.com/api/external-api-oauth2/token',
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
           },
         },
       );
-      const data: EbayOAuthResponse = res.data;
+      const data: FaireOAuthResponse = res.data;
       // save tokens for this customer inside our db
       let db_res;
       const connection_token = uuidv4();
+      const BASE_API_URL = CONNECTORS_METADATA['ecommerce']['faire'].urls
+        .apiUrl as string;
 
       if (isNotUnique) {
         // Update existing connection
@@ -134,11 +144,7 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
-            ),
+            access_token: this.cryptoService.encrypt(data.accessToken),
             status: 'valid',
             created_at: new Date(),
           },
@@ -149,16 +155,11 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'ebay',
+            provider_slug: 'faire',
             vertical: 'ecommerce',
             token_type: 'oauth2',
-            account_url: CONNECTORS_METADATA['ecommerce']['ebay'].urls
-              .apiUrl as string,
-            access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
-            ),
+            account_url: BASE_API_URL,
+            access_token: this.cryptoService.encrypt(data.accessToken),
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -183,47 +184,6 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
   }
 
   async handleTokenRefresh(opts: RefreshParams) {
-    try {
-      const { connectionId, refreshToken, projectId } = opts;
-      const CREDENTIALS = (await this.cService.getCredentials(
-        projectId,
-        this.type,
-      )) as OAuth2AuthData;
-
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-        scope: CONNECTORS_METADATA['ecommerce']['ebay'].scopes,
-      });
-
-      const res = await axios.post(
-        'https://login.ebay.com/api/1/login/oauth/provider/tokens',
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
-          },
-        },
-      );
-      const data: EbayOAuthResponse = res.data;
-      const res_ = await this.prisma.connections.update({
-        where: {
-          id_connection: connectionId,
-        },
-        data: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_in) * 1000,
-          ),
-        },
-      });
-      this.logger.log('OAuth credentials updated : ebay');
-    } catch (error) {
-      throw error;
-    }
+    return;
   }
 }

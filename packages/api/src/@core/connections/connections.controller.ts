@@ -83,7 +83,18 @@ export class ConnectionsController {
       }
 
       let stateData: StateDataType;
-      if (state.includes(':')) {
+
+      // Step 1: Check for HTML entities
+      if (state.includes('&quot;') || state.includes('&amp;')) {
+        // Step 2: Replace HTML entities
+        const decodedState = state
+          .replace(/&quot;/g, '"') // Replace &quot; with "
+          .replace(/&amp;/g, '&'); // Replace &amp; with &
+
+        // Step 3: Parse the JSON
+        stateData = JSON.parse(decodedState);
+        console.log(stateData);
+      } else if (state.includes(':')) {
         // squarespace asks for a random alphanumeric value
         // Split the random part and the base64 part
         const [randomPart, base64Part] = decodeURIComponent(state).split(':');
@@ -91,17 +102,18 @@ export class ConnectionsController {
         const jsonString = Buffer.from(base64Part, 'base64').toString('utf-8');
         stateData = JSON.parse(jsonString);
       } else {
-        // Handle the regular encoded URI case
-        const decoded = decodeURIComponent(state);
-        stateData = JSON.parse(decoded);
+        // If no HTML entities are present, parse directly
+        stateData = JSON.parse(state);
+        console.log(stateData);
       }
+
       const {
         projectId,
         vertical,
         linkedUserId,
         providerName,
         returnUrl,
-        resource,
+        ...dynamicParams
       } = stateData;
 
       const service = this.categoryConnectionRegistry.getService(
@@ -109,7 +121,7 @@ export class ConnectionsController {
       );
       await service.handleCallBack(
         providerName,
-        { linkedUserId, projectId, code, otherParams, resource },
+        { linkedUserId, projectId, code, otherParams, ...dynamicParams },
         'oauth2',
       );
       if (providerName == 'shopify') {

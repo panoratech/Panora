@@ -23,16 +23,14 @@ import { ServiceRegistry } from '../registry.service';
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import axios from 'axios';
 
-export interface EbayOAuthResponse {
-  token_type: string;
-  refresh_token: string;
-  refresh_token_expires_in: number;
+export interface WebflowOAuthResponse {
   access_token: string;
-  expires_in: number;
+  token_type: string;
+  scope: string;
 }
 
 @Injectable()
-export class EbayConnectionService extends AbstractBaseConnectionService {
+export class WebflowConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
@@ -46,9 +44,9 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
     private retryService: RetryHandler,
   ) {
     super(prisma, cryptoService);
-    this.logger.setContext(EbayConnectionService.name);
-    this.registry.registerService('ebay', this);
-    this.type = providerToType('ebay', 'ecommerce', AuthStrategy.oauth2);
+    this.logger.setContext(WebflowConnectionService.name);
+    this.registry.registerService('webflow', this);
+    this.type = providerToType('webflow', 'ecommerce', AuthStrategy.oauth2);
   }
 
   async passthrough(
@@ -81,7 +79,7 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
           data: config.data,
           headers: config.headers,
         },
-        'ecommerce.ebay.passthrough',
+        'ecommerce.webflow.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -95,38 +93,53 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'ebay',
+          provider_slug: 'webflow',
           vertical: 'ecommerce',
         },
       });
+      if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getTunnelIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
+
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        grant_type: 'authorization_code',
-        redirect_uri: CREDENTIALS.SUBDOMAIN,
+        redirect_uri: REDIRECT_URI,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         code: code,
+        grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        'https://api.ebay.com/identity/v1/oauth2/token',
+        'https://api.webflow.com/oauth/access_token',
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
           },
         },
       );
-      const data: EbayOAuthResponse = res.data;
+      const data: WebflowOAuthResponse = res.data;
       // save tokens for this customer inside our db
       let db_res;
       const connection_token = uuidv4();
-
+      const BASE_API_URL = CONNECTORS_METADATA['ecommerce']['webflow'].urls
+        .apiUrl as string;
+      // get the site id for the token
+      const site = await axios.get('https://api.webflow.com/v2/sites', {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          Authorization: `Bearer ${data.access_token}`,
+        },
+      });
+      const site_id = site.data.sites[0].id;
       if (isNotUnique) {
         // Update existing connection
         db_res = await this.prisma.connections.update({
@@ -135,10 +148,6 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
-            ),
             status: 'valid',
             created_at: new Date(),
           },
@@ -149,16 +158,11 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'ebay',
+            provider_slug: 'webflow',
             vertical: 'ecommerce',
             token_type: 'oauth2',
-            account_url: CONNECTORS_METADATA['ecommerce']['ebay'].urls
-              .apiUrl as string,
+            account_url: `${BASE_API_URL}/sites/${site_id}`,
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
-            ),
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -183,47 +187,6 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
   }
 
   async handleTokenRefresh(opts: RefreshParams) {
-    try {
-      const { connectionId, refreshToken, projectId } = opts;
-      const CREDENTIALS = (await this.cService.getCredentials(
-        projectId,
-        this.type,
-      )) as OAuth2AuthData;
-
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-        scope: CONNECTORS_METADATA['ecommerce']['ebay'].scopes,
-      });
-
-      const res = await axios.post(
-        'https://login.ebay.com/api/1/login/oauth/provider/tokens',
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
-          },
-        },
-      );
-      const data: EbayOAuthResponse = res.data;
-      const res_ = await this.prisma.connections.update({
-        where: {
-          id_connection: connectionId,
-        },
-        data: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_in) * 1000,
-          ),
-        },
-      });
-      this.logger.log('OAuth credentials updated : ebay');
-    } catch (error) {
-      throw error;
-    }
+    return;
   }
 }

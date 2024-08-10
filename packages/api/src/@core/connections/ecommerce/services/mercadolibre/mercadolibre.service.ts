@@ -23,16 +23,17 @@ import { ServiceRegistry } from '../registry.service';
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import axios from 'axios';
 
-export interface EbayOAuthResponse {
-  token_type: string;
-  refresh_token: string;
-  refresh_token_expires_in: number;
+export interface MercadolibreOAuthResponse {
   access_token: string;
-  expires_in: number;
+  token_type: string;
+  expires_in: string;
+  user_id: string;
+  scope: string;
+  refresh_token: string;
 }
 
 @Injectable()
-export class EbayConnectionService extends AbstractBaseConnectionService {
+export class MercadolibreConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
@@ -46,9 +47,13 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
     private retryService: RetryHandler,
   ) {
     super(prisma, cryptoService);
-    this.logger.setContext(EbayConnectionService.name);
-    this.registry.registerService('ebay', this);
-    this.type = providerToType('ebay', 'ecommerce', AuthStrategy.oauth2);
+    this.logger.setContext(MercadolibreConnectionService.name);
+    this.registry.registerService('mercadolibre', this);
+    this.type = providerToType(
+      'mercadolibre',
+      'ecommerce',
+      AuthStrategy.oauth2,
+    );
   }
 
   async passthrough(
@@ -65,13 +70,21 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
         },
       });
 
+      const CREDENTIALS = (await this.cService.getCredentials(
+        connection.id_project,
+        this.type,
+      )) as OAuth2AuthData;
+
       const access_token = JSON.parse(
         this.cryptoService.decrypt(connection.access_token),
       );
       config.headers = {
         ...config.headers,
         ...headers,
-        Authorization: `Bearer ${access_token}`,
+        'X-FAIRE-OAUTH-ACCESS-TOKEN': access_token,
+        'X-FAIRE-APP-CREDENTIALS': Buffer.from(
+          `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
+        ).toString('base64'),
       };
 
       return await this.retryService.makeRequest(
@@ -81,7 +94,7 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
           data: config.data,
           headers: config.headers,
         },
-        'ecommerce.ebay.passthrough',
+        'ecommerce.mercadolibre.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -95,38 +108,41 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'ebay',
+          provider_slug: 'mercadolibre',
           vertical: 'ecommerce',
         },
       });
+      if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        grant_type: 'authorization_code',
-        redirect_uri: CREDENTIALS.SUBDOMAIN,
+        redirect_uri: REDIRECT_URI,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
         code: code,
+        grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        'https://api.ebay.com/identity/v1/oauth2/token',
+        'https://api.mercadolibre.com/oauth/token',
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
           },
         },
       );
-      const data: EbayOAuthResponse = res.data;
+      const data: MercadolibreOAuthResponse = res.data;
       // save tokens for this customer inside our db
       let db_res;
       const connection_token = uuidv4();
-
+      const BASE_API_URL = CONNECTORS_METADATA['ecommerce']['mercadolibre'].urls
+        .apiUrl as string;
       if (isNotUnique) {
         // Update existing connection
         db_res = await this.prisma.connections.update({
@@ -149,11 +165,10 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'ebay',
+            provider_slug: 'mercadolibre',
             vertical: 'ecommerce',
             token_type: 'oauth2',
-            account_url: CONNECTORS_METADATA['ecommerce']['ebay'].urls
-              .apiUrl as string,
+            account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -193,22 +208,20 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
-        scope: CONNECTORS_METADATA['ecommerce']['ebay'].scopes,
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
       });
 
       const res = await axios.post(
-        'https://login.ebay.com/api/1/login/oauth/provider/tokens',
+        'https://api.mercadolibre.com/oauth/token',
         formData.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-            Authorization: `Basic ${Buffer.from(
-              `${CREDENTIALS.CLIENT_ID}:${CREDENTIALS.CLIENT_SECRET}`,
-            ).toString('base64')}`,
           },
         },
       );
-      const data: EbayOAuthResponse = res.data;
+      const data: MercadolibreOAuthResponse = res.data;
       const res_ = await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
