@@ -81,14 +81,31 @@ export class ConnectionsController {
         });
       }
 
-      const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
+      let stateData: StateDataType;
+
+      // Step 1: Check for HTML entities
+      if (state.includes('&quot;') || state.includes('&amp;')) {
+        // Step 2: Replace HTML entities
+        const decodedState = state
+          .replace(/&quot;/g, '"') // Replace &quot; with "
+          .replace(/&amp;/g, '&'); // Replace &amp; with &
+
+        // Step 3: Parse the JSON
+        stateData = JSON.parse(decodedState);
+        console.log(stateData);
+      } else {
+        // If no HTML entities are present, parse directly
+        stateData = JSON.parse(state);
+        console.log(stateData);
+      }
+
       const {
         projectId,
         vertical,
         linkedUserId,
         providerName,
         returnUrl,
-        resource,
+        ...dynamicParams
       } = stateData;
 
       const service = this.categoryConnectionRegistry.getService(
@@ -96,7 +113,7 @@ export class ConnectionsController {
       );
       await service.handleCallBack(
         providerName,
-        { linkedUserId, projectId, code, otherParams, resource },
+        { linkedUserId, projectId, code, otherParams, ...dynamicParams },
         'oauth2',
       );
       if (providerName == 'shopify') {

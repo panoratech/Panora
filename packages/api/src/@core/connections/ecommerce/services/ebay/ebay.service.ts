@@ -99,10 +99,7 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
           vertical: 'ecommerce',
         },
       });
-      if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
-
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -110,7 +107,7 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
-        redirect_uri: REDIRECT_URI,
+        redirect_uri: CREDENTIALS.SUBDOMAIN,
         code: code,
       });
       const res = await axios.post(

@@ -25,6 +25,8 @@ import axios from 'axios';
 
 export interface WebflowOAuthResponse {
   access_token: string;
+  token_type: string;
+  scope: string;
 }
 
 @Injectable()
@@ -97,7 +99,11 @@ export class WebflowConnectionService extends AbstractBaseConnectionService {
       });
       if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getTunnelIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
@@ -109,6 +115,7 @@ export class WebflowConnectionService extends AbstractBaseConnectionService {
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
         code: code,
+        grant_type: 'authorization_code',
       });
       const res = await axios.post(
         'https://api.webflow.com/oauth/access_token',
