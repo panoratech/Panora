@@ -16,8 +16,8 @@ model users {
   first_name              String
   last_name               String
   id_stytch               String?    @unique(map: "force_stytch_id_unique")
-  created_at              DateTime   @default(now()) @db.Timestamp(6)
-  modified_at             DateTime   @default(now()) @db.Timestamp(6)
+  created_at              DateTime   @default(now()) @db.Timestamptz(6)
+  modified_at             DateTime   @default(now()) @db.Timestamptz(6)
   reset_token             String?
   reset_token_expires_at  DateTime?  @db.Timestamptz(6)
   api_keys                api_keys[]
@@ -31,10 +31,10 @@ model webhook_endpoints {
   url                       String
   secret                    String
   active                    Boolean
-  created_at                DateTime                    @db.Timestamp(6)
+  created_at                DateTime                    @db.Timestamptz(6)
   scope                     String[]
   id_project                String                      @db.Uuid
-  last_update               DateTime?                   @db.Timestamp(6)
+  last_update               DateTime?                   @db.Timestamptz(6)
   webhook_delivery_attempts webhook_delivery_attempts[]
 }
 
@@ -61,8 +61,8 @@ model api_keys {
   projects     projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_7")
   users        users    @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_8")
 
-  @@index([id_user], map: "fk_2")
   @@index([id_project], map: "fk_api_keys_projects")
+  @@index([id_user], map: "fkx_api_keys_user_id")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -105,8 +105,8 @@ model connections {
   token_type           String
   access_token         String?
   refresh_token        String?
-  expiration_timestamp DateTime?    @db.Timestamp(6)
-  created_at           DateTime     @db.Timestamp(6)
+  expiration_timestamp DateTime?    @db.Timestamptz(6)
+  created_at           DateTime     @db.Timestamptz(6)
   connection_token     String?
   id_project           String       @db.Uuid
   id_linked_user       String       @db.Uuid
@@ -130,8 +130,8 @@ model crm_addresses {
   id_crm_company String?        @db.Uuid
   id_crm_contact String?        @db.Uuid
   id_connection  String         @db.Uuid
-  created_at     DateTime       @db.Timestamp(6)
-  modified_at    DateTime       @db.Timestamp(6)
+  created_at     DateTime       @db.Timestamptz(6)
+  modified_at    DateTime       @db.Timestamptz(6)
   owner_type     String
   crm_contacts   crm_contacts?  @relation(fields: [id_crm_contact], references: [id_crm_contact], onDelete: NoAction, onUpdate: NoAction, map: "fk_14")
   crm_companies  crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_15")
@@ -145,8 +145,8 @@ model crm_companies {
   name                String?
   industry            String?
   number_of_employees BigInt?
-  created_at          DateTime              @db.Timestamp(6)
-  modified_at         DateTime              @db.Timestamp(6)
+  created_at          DateTime              @db.Timestamptz(6)
+  modified_at         DateTime              @db.Timestamptz(6)
   remote_id           String?
   remote_platform     String?
   id_crm_user         String?               @db.Uuid
@@ -169,8 +169,8 @@ model crm_contacts {
   id_crm_contact      String                @id(map: "pk_crm_contacts") @db.Uuid
   first_name          String?
   last_name           String?
-  created_at          DateTime?             @db.Timestamp(6)
-  modified_at         DateTime?             @db.Timestamp(6)
+  created_at          DateTime?             @db.Timestamptz(6)
+  modified_at         DateTime?             @db.Timestamptz(6)
   remote_id           String?
   remote_platform     String?
   id_crm_user         String?               @db.Uuid
@@ -191,8 +191,8 @@ model crm_deals {
   name               String
   description        String?
   amount             BigInt
-  created_at         DateTime          @db.Timestamp(6)
-  modified_at        DateTime          @db.Timestamp(6)
+  created_at         DateTime          @db.Timestamptz(6)
+  modified_at        DateTime          @db.Timestamptz(6)
   remote_id          String?
   remote_platform    String?
   id_crm_user        String?           @db.Uuid
@@ -214,8 +214,8 @@ model crm_deals {
 model crm_deals_stages {
   id_crm_deals_stage String      @id(map: "pk_crm_deal_stages") @db.Uuid
   stage_name         String?
-  created_at         DateTime    @db.Timestamp(6)
-  modified_at        DateTime    @db.Timestamp(6)
+  created_at         DateTime    @db.Timestamptz(6)
+  modified_at        DateTime    @db.Timestamptz(6)
   id_linked_user     String?     @db.Uuid
   remote_id          String?
   remote_platform    String?
@@ -229,8 +229,8 @@ model crm_email_addresses {
   email_address      String
   email_address_type String
   owner_type         String
-  created_at         DateTime       @db.Timestamp(6)
-  modified_at        DateTime       @db.Timestamp(6)
+  created_at         DateTime       @db.Timestamptz(6)
+  modified_at        DateTime       @db.Timestamptz(6)
   id_crm_company     String?        @db.Uuid
   id_crm_contact     String?        @db.Uuid
   id_connection      String         @db.Uuid
@@ -248,8 +248,8 @@ model crm_engagements {
   type              String?
   direction         String?
   subject           String?
-  start_at          DateTime?      @db.Timestamp(6)
-  end_time          DateTime?      @db.Timestamp(6)
+  start_at          DateTime?      @db.Timestamptz(6)
+  end_time          DateTime?      @db.Timestamptz(6)
   remote_id         String?
   id_linked_user    String?        @db.Uuid
   remote_platform   String?
@@ -257,8 +257,8 @@ model crm_engagements {
   id_crm_user       String?        @db.Uuid
   id_connection     String         @db.Uuid
   contacts          String[]
-  created_at        DateTime       @db.Timestamp(6)
-  modified_at       DateTime       @db.Timestamp(6)
+  created_at        DateTime       @db.Timestamptz(6)
+  modified_at       DateTime       @db.Timestamptz(6)
   crm_companies     crm_companies? @relation(fields: [id_crm_company], references: [id_crm_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_29")
   crm_users         crm_users?     @relation(fields: [id_crm_user], references: [id_crm_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_crm_engagement_crm_user")
 
@@ -269,8 +269,8 @@ model crm_engagements {
 model crm_notes {
   id_crm_note     String         @id(map: "pk_crm_notes") @db.Uuid
   content         String
-  created_at      DateTime       @db.Timestamp(6)
-  modified_at     DateTime       @db.Timestamp(6)
+  created_at      DateTime       @db.Timestamptz(6)
+  modified_at     DateTime       @db.Timestamptz(6)
   id_crm_company  String?        @db.Uuid
   id_crm_contact  String?        @db.Uuid
   id_crm_deal     String?        @db.Uuid
@@ -295,8 +295,8 @@ model crm_phone_numbers {
   phone_number        String?
   phone_type          String?
   owner_type          String?
-  created_at          DateTime       @db.Timestamp(6)
-  modified_at         DateTime       @db.Timestamp(6)
+  created_at          DateTime       @db.Timestamptz(6)
+  modified_at         DateTime       @db.Timestamptz(6)
   id_crm_company      String?        @db.Uuid
   id_crm_contact      String?        @db.Uuid
   id_connection       String         @db.Uuid
@@ -312,10 +312,10 @@ model crm_tasks {
   subject         String?
   content         String?
   status          String?
-  due_date        DateTime?      @db.Timestamp(6)
-  finished_date   DateTime?      @db.Timestamp(6)
-  created_at      DateTime       @db.Timestamp(6)
-  modified_at     DateTime       @db.Timestamp(6)
+  due_date        DateTime?      @db.Timestamptz(6)
+  finished_date   DateTime?      @db.Timestamptz(6)
+  created_at      DateTime       @db.Timestamptz(6)
+  modified_at     DateTime       @db.Timestamptz(6)
   id_crm_user     String?        @db.Uuid
   id_crm_company  String?        @db.Uuid
   id_crm_deal     String?        @db.Uuid
@@ -336,8 +336,8 @@ model crm_users {
   id_crm_user     String            @id(map: "pk_crm_users") @db.Uuid
   name            String?
   email           String?
-  created_at      DateTime          @db.Timestamp(6)
-  modified_at     DateTime          @db.Timestamp(6)
+  created_at      DateTime          @db.Timestamptz(6)
+  modified_at     DateTime          @db.Timestamptz(6)
   id_linked_user  String?           @db.Uuid
   remote_id       String?
   remote_platform String?
@@ -388,7 +388,7 @@ model events {
   method                    String
   url                       String
   provider                  String
-  timestamp                 DateTime                    @default(now()) @db.Timestamp(6)
+  timestamp                 DateTime                    @default(now()) @db.Timestamptz(6)
   id_linked_user            String                      @db.Uuid
   linked_users              linked_users                @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
   jobs_status_history       jobs_status_history[]
@@ -398,11 +398,13 @@ model events {
 }
 
 model invite_links {
-  id_invite_link String       @id(map: "pk_invite_links") @db.Uuid
-  status         String
-  email          String?
-  id_linked_user String       @db.Uuid
-  linked_users   linked_users @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_37")
+  id_invite_link      String       @id(map: "pk_invite_links") @db.Uuid
+  status              String
+  email               String?
+  id_linked_user      String       @db.Uuid
+  displayed_verticals String[]
+  displayed_providers String[]
+  linked_users        linked_users @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_37")
 
   @@index([id_linked_user], map: "fk_invite_link_linkeduserid")
 }
@@ -410,7 +412,7 @@ model invite_links {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model jobs_status_history {
   id_jobs_status_history String   @id(map: "pk_jobs_status_history") @db.Uuid
-  timestamp              DateTime @default(now()) @db.Timestamp(6)
+  timestamp              DateTime @default(now()) @db.Timestamptz(6)
   previous_status        String
   new_status             String
   id_event               String   @db.Uuid
@@ -457,7 +459,7 @@ model remote_data {
   ressource_owner_id String?   @unique(map: "force_unique_ressourceownerid") @db.Uuid
   format             String?
   data               String?
-  created_at         DateTime? @db.Timestamp(6)
+  created_at         DateTime? @db.Timestamptz(6)
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -467,8 +469,8 @@ model tcg_accounts {
   name            String?
   domains         String[]
   remote_platform String?
-  created_at      DateTime       @db.Timestamp(6)
-  modified_at     DateTime       @db.Timestamp(6)
+  created_at      DateTime       @db.Timestamptz(6)
+  modified_at     DateTime       @db.Timestamptz(6)
   id_linked_user  String?        @db.Uuid
   id_connection   String         @db.Uuid
   tcg_contacts    tcg_contacts[]
@@ -482,8 +484,8 @@ model tcg_attachments {
   file_name         String?
   file_url          String?
   uploader          String        @db.Uuid
-  created_at        DateTime      @db.Timestamp(6)
-  modified_at       DateTime      @db.Timestamp(6)
+  created_at        DateTime      @db.Timestamptz(6)
+  modified_at       DateTime      @db.Timestamptz(6)
   id_linked_user    String?       @db.Uuid
   id_tcg_ticket     String?       @db.Uuid
   id_tcg_comment    String?       @db.Uuid
@@ -504,8 +506,8 @@ model tcg_collections {
   collection_type   String?
   parent_collection String?  @db.Uuid
   id_tcg_ticket     String?  @db.Uuid
-  created_at        DateTime @db.Timestamp(6)
-  modified_at       DateTime @db.Timestamp(6)
+  created_at        DateTime @db.Timestamptz(6)
+  modified_at       DateTime @db.Timestamptz(6)
   id_linked_user    String   @db.Uuid
   id_connection     String   @db.Uuid
 }
@@ -524,8 +526,8 @@ model tcg_comments {
   id_tcg_contact    String?           @db.Uuid
   id_tcg_user       String?           @db.Uuid
   id_linked_user    String?           @db.Uuid
-  created_at        DateTime?         @db.Timestamp(6)
-  modified_at       DateTime?         @db.Timestamp(6)
+  created_at        DateTime?         @db.Timestamptz(6)
+  modified_at       DateTime?         @db.Timestamptz(6)
   id_connection     String            @db.Uuid
   tcg_attachments   tcg_attachments[]
   tcg_tickets       tcg_tickets?      @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_40_1")
@@ -545,8 +547,8 @@ model tcg_contacts {
   details         String?
   remote_id       String?
   remote_platform String?
-  created_at      DateTime?      @db.Timestamp(6)
-  modified_at     DateTime?      @db.Timestamp(6)
+  created_at      DateTime?      @db.Timestamptz(6)
+  modified_at     DateTime?      @db.Timestamptz(6)
   id_tcg_account  String?        @db.Uuid
   id_linked_user  String?        @db.Uuid
   id_connection   String         @db.Uuid
@@ -562,8 +564,8 @@ model tcg_tags {
   remote_id       String?
   remote_platform String?
   id_tcg_ticket   String?      @db.Uuid
-  created_at      DateTime     @db.Timestamp(6)
-  modified_at     DateTime     @db.Timestamp(6)
+  created_at      DateTime     @db.Timestamptz(6)
+  modified_at     DateTime     @db.Timestamptz(6)
   id_linked_user  String?      @db.Uuid
   id_connection   String       @db.Uuid
   tcg_tickets     tcg_tickets? @relation(fields: [id_tcg_ticket], references: [id_tcg_ticket], onDelete: NoAction, onUpdate: NoAction, map: "fk_48")
@@ -589,12 +591,12 @@ model tcg_tickets {
   name            String?
   status          String?
   description     String?
-  due_date        DateTime?         @db.Timestamp(6)
+  due_date        DateTime?         @db.Timestamptz(6)
   ticket_type     String?
   parent_ticket   String?           @db.Uuid
   tags            String[]
   collections     String[]
-  completed_at    DateTime?         @db.Timestamp(6)
+  completed_at    DateTime?         @db.Timestamptz(6)
   priority        String?
   assigned_to     String[]
   remote_id       String?
@@ -602,8 +604,8 @@ model tcg_tickets {
   creator_type    String?
   id_tcg_user     String?           @db.Uuid
   id_linked_user  String?           @db.Uuid
-  created_at      DateTime          @db.Timestamp(6)
-  modified_at     DateTime          @db.Timestamp(6)
+  created_at      DateTime          @db.Timestamptz(6)
+  modified_at     DateTime          @db.Timestamptz(6)
   id_connection   String            @db.Uuid
   tcg_attachments tcg_attachments[]
   tcg_comments    tcg_comments[]
@@ -622,8 +624,8 @@ model tcg_users {
   teams           String[]
   id_linked_user  String?        @db.Uuid
   id_connection   String         @db.Uuid
-  created_at      DateTime?      @db.Timestamp(6)
-  modified_at     DateTime?      @db.Timestamp(6)
+  created_at      DateTime?      @db.Timestamptz(6)
+  modified_at     DateTime?      @db.Timestamptz(6)
   tcg_comments    tcg_comments[]
 }
 
@@ -645,9 +647,9 @@ model value {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model webhook_delivery_attempts {
   id_webhook_delivery_attempt String             @id(map: "pk_webhook_event") @db.Uuid
-  timestamp                   DateTime           @db.Timestamp(6)
+  timestamp                   DateTime           @db.Timestamptz(6)
   status                      String
-  next_retry                  DateTime?          @db.Timestamp(6)
+  next_retry                  DateTime?          @db.Timestamptz(6)
   attempt_count               BigInt
   id_webhooks_payload         String?            @db.Uuid
   id_webhook_endpoint         String?            @db.Uuid
@@ -693,18 +695,18 @@ model managed_webhooks {
   api_version           String?
   active_events         String[]
   remote_signing_secret String?
-  modified_at           DateTime @db.Timestamp(6)
-  created_at            DateTime @db.Timestamp(6)
+  modified_at           DateTime @db.Timestamptz(6)
+  created_at            DateTime @db.Timestamptz(6)
 }
 
 model fs_drives {
   id_fs_drive       String    @id(map: "pk_fs_drives") @db.Uuid
   drive_url         String?
   name              String?
-  remote_created_at DateTime? @db.Timestamp(6)
+  remote_created_at DateTime? @db.Timestamptz(6)
   remote_id         String?
-  created_at        DateTime  @db.Timestamp(6)
-  modified_at       DateTime  @db.Timestamp(6)
+  created_at        DateTime  @db.Timestamptz(6)
+  modified_at       DateTime  @db.Timestamptz(6)
   id_connection     String    @db.Uuid
 }
 
@@ -717,8 +719,8 @@ model fs_files {
   remote_id        String?
   id_fs_permission String?  @db.Uuid
   id_fs_folder     String?  @db.Uuid
-  created_at       DateTime @db.Timestamp(6)
-  modified_at      DateTime @db.Timestamp(6)
+  created_at       DateTime @db.Timestamptz(6)
+  modified_at      DateTime @db.Timestamptz(6)
   id_connection    String   @db.Uuid
 
   @@index([id_fs_folder], map: "fk_fs_file_folderid")
@@ -733,8 +735,8 @@ model fs_folders {
   description      String?
   parent_folder    String?  @db.Uuid
   remote_id        String?
-  created_at       DateTime @db.Timestamp(6)
-  modified_at      DateTime @db.Timestamp(6)
+  created_at       DateTime @db.Timestamptz(6)
+  modified_at      DateTime @db.Timestamptz(6)
   id_fs_drive      String?  @db.Uuid
   id_connection    String   @db.Uuid
   id_fs_permission String?  @db.Uuid
@@ -751,8 +753,8 @@ model fs_permissions {
   group            String?  @db.Uuid
   type             String?
   roles            String[]
-  created_at       DateTime @db.Timestamp(6)
-  modified_at      DateTime @db.Timestamp(6)
+  created_at       DateTime @db.Timestamptz(6)
+  modified_at      DateTime @db.Timestamptz(6)
   id_connection    String   @db.Uuid
 }
 
@@ -1051,8 +1053,8 @@ model fs_groups {
   users              String[]
   remote_id          String?
   remote_was_deleted Boolean
-  created_at         DateTime @db.Timestamp(6)
-  modified_at        DateTime @db.Timestamp(6)
+  created_at         DateTime @db.Timestamptz(6)
+  modified_at        DateTime @db.Timestamptz(6)
   id_connection      String   @db.Uuid
 }
 
@@ -1062,8 +1064,8 @@ model fs_users {
   email         String?
   is_me         Boolean
   remote_id     String?
-  created_at    DateTime @db.Timestamp(6)
-  modified_at   DateTime @db.Timestamp(6)
+  created_at    DateTime @db.Timestamptz(6)
+  modified_at   DateTime @db.Timestamptz(6)
   id_connection String   @db.Uuid
 }
 
@@ -1765,4 +1767,348 @@ model ecom_fulfilment_orders {
 
 model ecom_order_line_items {
   id_ecom_order_line_item String @id(map: "pk_106") @db.Uuid
+}
+
+model hris_bank_infos {
+  id_hris_bank_info  String          @id(map: "pk_hris_bank_infos") @db.Uuid
+  account_type       String?
+  bank_name          String?
+  account_number     String?
+  routing_number     String?
+  remote_id          String?
+  remote_created_at  DateTime?       @db.Timestamptz(6)
+  created_at         DateTime        @db.Timestamptz(6)
+  modified_at        DateTime        @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String          @db.Uuid
+  id_hris_employee   String?         @db.Uuid
+  hris_employees     hris_employees? @relation(fields: [id_hris_employee], references: [id_hris_employee], onDelete: NoAction, onUpdate: NoAction, map: "fk_bank_infos_employeeid")
+
+  @@index([id_hris_employee], map: "fkx_bank_infos_employeeid")
+}
+
+model hris_benefits {
+  id_hris_benefit          String                  @id(map: "pk_hris_benefits") @db.Uuid
+  remote_id                String?
+  remote_created_at        DateTime?               @db.Timestamptz(6)
+  created_at               DateTime                @db.Timestamptz(6)
+  modified_at              DateTime                @db.Timestamptz(6)
+  remote_was_deleted       Boolean
+  id_connection            String                  @db.Uuid
+  provider_name            String?
+  id_hris_employee         String?                 @db.Uuid
+  employee_contribution    BigInt?
+  company_contribution     BigInt?
+  start_date               DateTime?               @db.Timestamptz(6)
+  end_date                 DateTime?               @db.Timestamptz(6)
+  id_hris_employer_benefit String?                 @db.Uuid
+  hris_employer_benefits   hris_employer_benefits? @relation(fields: [id_hris_employer_benefit], references: [id_hris_employer_benefit], onDelete: NoAction, onUpdate: NoAction, map: "fk_hris_benefit_employer_benefit_id")
+  hris_employees           hris_employees?         @relation(fields: [id_hris_employee], references: [id_hris_employee], onDelete: NoAction, onUpdate: NoAction, map: "fk_hris_benefits_employeeid")
+
+  @@index([id_hris_employer_benefit], map: "fkx_hris_benefit_employer_benefit_id")
+  @@index([id_hris_employee], map: "fkx_hris_benefits_employeeid")
+}
+
+model hris_companies {
+  id_hris_company    String           @id(map: "pk_hris_companies") @db.Uuid
+  legal_name         String?
+  display_name       String?
+  eins               String[]
+  remote_id          String?
+  remote_created_at  DateTime?        @db.Timestamptz(6)
+  created_at         DateTime         @db.Timestamptz(6)
+  modified_at        DateTime         @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String           @db.Uuid
+  hris_employees     hris_employees[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hris_dependents {
+  id_hris_dependents String          @id(map: "pk_hris_dependents") @db.Uuid
+  first_name         String?
+  last_name          String?
+  middle_name        String?
+  relationship       String?
+  date_of_birth      DateTime?       @db.Date
+  gender             String?
+  phone_number       String?
+  home_location      String?         @db.Uuid
+  is_student         Boolean?
+  ssn                String?
+  id_hris_employee   String?         @db.Uuid
+  remote_id          String?
+  remote_created_at  DateTime?       @db.Timestamptz(6)
+  created_at         DateTime        @db.Timestamptz(6)
+  modified_at        DateTime        @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String          @db.Uuid
+  hris_employees     hris_employees? @relation(fields: [id_hris_employee], references: [id_hris_employee], onDelete: NoAction, onUpdate: NoAction, map: "fk_hris_dependant_hris_employee_id")
+
+  @@index([id_hris_employee], map: "fkx_hris_dependant_hris_employee_id")
+}
+
+model hris_employee_payroll_runs {
+  id_hris_employee_payroll_run          String                                  @id(map: "pk_hris_employee_payroll_runs") @db.Uuid
+  id_hris_employee                      String?                                 @db.Uuid
+  id_hris_payroll_run                   String?                                 @db.Uuid
+  gross_pay                             BigInt?
+  net_pay                               BigInt?
+  start_date                            DateTime?                               @db.Timestamptz(6)
+  end_date                              DateTime?                               @db.Timestamptz(6)
+  check_date                            DateTime?                               @db.Timestamptz(6)
+  remote_id                             String?
+  remote_created_at                     DateTime?                               @db.Timestamptz(6)
+  created_at                            DateTime                                @db.Timestamptz(6)
+  modified_at                           DateTime                                @db.Timestamptz(6)
+  remote_was_deleted                    Boolean
+  id_connection                         String                                  @db.Uuid
+  hris_payroll_runs                     hris_payroll_runs?                      @relation(fields: [id_hris_payroll_run], references: [id_hris_payroll_run], onDelete: NoAction, onUpdate: NoAction, map: "fk_employee_payroll_run_payroll_run_id")
+  hris_employees                        hris_employees?                         @relation(fields: [id_hris_employee], references: [id_hris_employee], onDelete: NoAction, onUpdate: NoAction, map: "fk_hris_employee_payroll_run_employee_id")
+  hris_employee_payroll_runs_deductions hris_employee_payroll_runs_deductions[]
+  hris_employee_payroll_runs_earnings   hris_employee_payroll_runs_earnings[]
+  hris_employee_payroll_runs_taxes      hris_employee_payroll_runs_taxes[]
+
+  @@index([id_hris_payroll_run], map: "fkx_employee_payroll_run_payroll_run_id")
+  @@index([id_hris_employee], map: "fkx_hris_employee_payroll_run_employee_id")
+}
+
+model hris_employee_payroll_runs_deductions {
+  id_hris_employee_payroll_runs_deduction String                      @id(map: "pk_hris_employee_payroll_runs_deductions") @db.Uuid
+  remote_id                               String?
+  created_at                              DateTime                    @db.Timestamptz(6)
+  modified_at                             DateTime                    @db.Timestamptz(6)
+  id_hris_employee_payroll_run            String?                     @db.Uuid
+  name                                    String?
+  employee_deduction                      BigInt?
+  company_deduction                       BigInt?
+  hris_employee_payroll_runs              hris_employee_payroll_runs? @relation(fields: [id_hris_employee_payroll_run], references: [id_hris_employee_payroll_run], onDelete: NoAction, onUpdate: NoAction, map: "fk_hris_employee_payroll_runs_deduction_hris_employee_payroll_i")
+
+  @@index([id_hris_employee_payroll_run], map: "fkx_hris_employee_payroll_runs_deduction_hris_employee_payroll_")
+}
+
+model hris_employee_payroll_runs_earnings {
+  id_hris_employee_payroll_runs_earning String                      @id(map: "pk_hris_employee_payroll_runs_earnings") @db.Uuid
+  amount                                BigInt?
+  type                                  String?
+  id_hris_employee_payroll_run          String?                     @db.Uuid
+  remote_id                             String?
+  created_at                            DateTime                    @db.Timestamptz(6)
+  modified_at                           DateTime                    @db.Timestamptz(6)
+  hris_employee_payroll_runs            hris_employee_payroll_runs? @relation(fields: [id_hris_employee_payroll_run], references: [id_hris_employee_payroll_run], onDelete: NoAction, onUpdate: NoAction, map: "fk_hris_employee_payroll_runs_earning_hris_employee_payroll_run")
+
+  @@index([id_hris_employee_payroll_run], map: "fkx_hris_employee_payroll_runs_earning_hris_employee_payroll_ru")
+}
+
+model hris_employee_payroll_runs_taxes {
+  id_hris_employee_payroll_runs_tax String                      @id(map: "pk_hris_employee_payroll_runs_taxes") @db.Uuid
+  name                              String?
+  amount                            BigInt?
+  employer_tax                      Boolean?
+  id_hris_employee_payroll_run      String?                     @db.Uuid
+  remote_id                         String?
+  created_at                        DateTime                    @db.Timestamptz(6)
+  modified_at                       DateTime                    @db.Timestamptz(6)
+  hris_employee_payroll_runs        hris_employee_payroll_runs? @relation(fields: [id_hris_employee_payroll_run], references: [id_hris_employee_payroll_run], onDelete: NoAction, onUpdate: NoAction, map: "fk_hris_employee_payroll_run_tax_hris_employee_payroll_run_id")
+
+  @@index([id_hris_employee_payroll_run], map: "fkx_hris_employee_payroll_run_tax_hris_employee_payroll_run_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hris_employees {
+  id_hris_employee           String                       @id(map: "pk_hris_employees") @db.Uuid
+  remote_id                  String?
+  remote_created_at          DateTime?                    @db.Timestamptz(6)
+  created_at                 DateTime                     @db.Timestamptz(6)
+  modified_at                DateTime                     @db.Timestamptz(6)
+  remote_was_deleted         Boolean
+  id_connection              String                       @db.Uuid
+  groups                     String[]
+  employee_number            String?
+  id_hris_company            String?                      @db.Uuid
+  first_name                 String?
+  last_name                  String?
+  preferred_name             String?
+  display_full_name          String?
+  username                   String?
+  work_email                 String?
+  personal_email             String?
+  mobile_phone_number        String?
+  employments                String[]
+  ssn                        String?
+  gender                     String?
+  ethnicity                  String?
+  marital_status             String?
+  date_of_birth              DateTime?                    @db.Date
+  start_date                 DateTime?                    @db.Date
+  employment_status          String?
+  termination_date           DateTime?                    @db.Date
+  avatar_url                 String?
+  hris_bank_infos            hris_bank_infos[]
+  hris_benefits              hris_benefits[]
+  hris_dependents            hris_dependents[]
+  hris_employee_payroll_runs hris_employee_payroll_runs[]
+  hris_companies             hris_companies?              @relation(fields: [id_hris_company], references: [id_hris_company], onDelete: NoAction, onUpdate: NoAction, map: "fk_employee_companyid")
+  hris_employments           hris_employments[]
+  hris_time_off_balances     hris_time_off_balances[]
+  hris_timesheet_entries     hris_timesheet_entries[]
+
+  @@index([id_hris_company], map: "fkx_employee_companyid")
+}
+
+model hris_employer_benefits {
+  id_hris_employer_benefit String          @id(map: "pk_hris_employer_benefits") @db.Uuid
+  id_connection            String          @db.Uuid
+  benefit_plan_type        String?
+  name                     String?
+  description              String?
+  deduction_code           String?
+  remote_id                String?
+  remote_created_at        DateTime?       @db.Timestamptz(6)
+  remote_was_deleted       Boolean
+  created_at               DateTime        @db.Timestamptz(6)
+  modified_at              DateTime        @db.Timestamptz(6)
+  hris_benefits            hris_benefits[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hris_employments {
+  id_hris_employment String           @id(map: "pk_hris_employments") @db.Uuid
+  job_title          String
+  pay_rate           BigInt?
+  pay_period         String?
+  pay_frequency      String?
+  pay_currency       String?
+  flsa_status        String?
+  effective_date     DateTime?        @db.Date
+  employment_type    String?
+  remote_id          String?
+  remote_created_at  DateTime?        @db.Timestamptz(6)
+  created_at         DateTime         @db.Timestamptz(6)
+  modified_at        DateTime         @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String           @db.Uuid
+  id_hris_pay_group  String?          @db.Uuid
+  id_hris_employee   String?          @db.Uuid
+  hris_employees     hris_employees?  @relation(fields: [id_hris_employee], references: [id_hris_employee], onDelete: NoAction, onUpdate: NoAction, map: "fk_107")
+  hris_pay_groups    hris_pay_groups? @relation(fields: [id_hris_pay_group], references: [id_hris_pay_group], onDelete: NoAction, onUpdate: NoAction, map: "fk_employments_pay_group_id")
+
+  @@index([id_hris_employee], map: "fk_2")
+  @@index([id_hris_pay_group], map: "fkx_employments_pay_group_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hris_groups {
+  id_hris_group      String   @id(map: "pk_hris_groups") @db.Uuid
+  parent_group       String?  @db.Uuid
+  name               String?
+  type               String?
+  remote_id          String
+  remote_created_at  DateTime @db.Timestamptz(6)
+  created_at         DateTime @db.Timestamptz(6)
+  modified_at        DateTime @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String   @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hris_locations {
+  id_hris_location   String   @id(map: "pk_hris_locations") @db.Uuid
+  name               String?
+  phone_number       String?
+  street_1           String?
+  street_2           String?
+  city               String?
+  state              String?
+  zip_code           String?
+  country            String?
+  location_type      String?
+  remote_id          String
+  remote_created_at  DateTime @db.Timestamptz(6)
+  created_at         DateTime @db.Timestamptz(6)
+  modified_at        DateTime @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String   @db.Uuid
+}
+
+model hris_pay_groups {
+  id_hris_pay_group  String             @id(map: "pk_hris_pay_groups") @db.Uuid
+  pay_group_name     String?
+  remote_id          String?
+  remote_created_at  DateTime?          @db.Timestamptz(6)
+  created_at         DateTime           @db.Timestamptz(6)
+  modified_at        DateTime           @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String             @db.Uuid
+  hris_employments   hris_employments[]
+}
+
+model hris_payroll_runs {
+  id_hris_payroll_run        String                       @id(map: "pk_hris_payroll_runs") @db.Uuid
+  run_state                  String?
+  run_type                   String?
+  start_date                 DateTime?                    @db.Timestamptz(6)
+  end_date                   DateTime?                    @db.Timestamptz(6)
+  check_date                 DateTime?                    @db.Timestamptz(6)
+  remote_id                  String?
+  remote_created_at          DateTime?                    @db.Timestamptz(6)
+  created_at                 DateTime                     @db.Timestamptz(6)
+  modified_at                DateTime                     @db.Timestamptz(6)
+  remote_was_deleted         Boolean
+  id_connection              String                       @db.Uuid
+  hris_employee_payroll_runs hris_employee_payroll_runs[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hris_time_off {
+  id_hris_time_off   String    @id(map: "pk_hris_time_off") @db.Uuid
+  employee           String?   @db.Uuid
+  approver           String?   @db.Uuid
+  status             String?
+  employee_note      String?
+  units              String?
+  amount             BigInt?
+  request_type       String?
+  start_time         DateTime? @db.Timestamptz(6)
+  end_time           DateTime? @db.Timestamptz(6)
+  remote_id          String?
+  remote_created_at  DateTime? @db.Timestamptz(6)
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String    @db.Uuid
+}
+
+model hris_time_off_balances {
+  id_hris_time_off_balance String          @id(map: "pk_hris_time_off_balances") @db.Uuid
+  balance                  BigInt?
+  id_hris_employee         String?         @db.Uuid
+  used                     BigInt?
+  policy_type              String?
+  remote_id                String?
+  remote_created_at        DateTime?       @db.Timestamptz(6)
+  created_at               DateTime        @db.Timestamptz(6)
+  modified_at              DateTime        @db.Timestamptz(6)
+  remote_was_deleted       Boolean
+  id_connection            String          @db.Uuid
+  hris_employees           hris_employees? @relation(fields: [id_hris_employee], references: [id_hris_employee], onDelete: NoAction, onUpdate: NoAction, map: "fk_hris_timeoff_balance_hris_employee_id")
+
+  @@index([id_hris_employee], map: "fkx_hris_timeoff_balance_hris_employee_id")
+}
+
+model hris_timesheet_entries {
+  id_hris_timesheet_entry String          @id(map: "pk_hris_timesheet_entries") @db.Uuid
+  hours_worked            BigInt?
+  start_time              DateTime?       @db.Timestamptz(6)
+  end_time                DateTime?       @db.Timestamptz(6)
+  id_hris_employee        String?         @db.Uuid
+  remote_id               String?
+  remote_created_at       DateTime?       @db.Timestamptz(6)
+  created_at              DateTime        @db.Timestamptz(6)
+  modified_at             DateTime        @db.Timestamptz(6)
+  remote_was_deleted      Boolean
+  id_connection           String          @db.Uuid
+  hris_employees          hris_employees? @relation(fields: [id_hris_employee], references: [id_hris_employee], onDelete: NoAction, onUpdate: NoAction, map: "fk_timesheet_entry_employee_id")
+
+  @@index([id_hris_employee], map: "fkx_timesheet_entry_employee_id")
 }

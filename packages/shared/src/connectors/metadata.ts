@@ -2819,7 +2819,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         options: {
           local_redirect_uri_in_https: true,
-          company_subdomain: true
+          oauth_attributes: ['ruvalue']
         },
         authStrategy: {
           strategy: AuthStrategy.oauth2,

@@ -61,7 +61,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   }
   if(providerName === 'squarespace'){
     const randomState = randomString();
-    state = encodeURIComponent(randomState + ':' + Buffer.from(JSON.stringify({
+    state = encodeURIComponent(randomState + 'squarespace_delimiter' + Buffer.from(JSON.stringify({
       projectId,
       linkedUserId,
       providerName,
@@ -180,7 +180,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
     params = `applicationId=${encodeURIComponent(clientId)}&redirectUrl=${encodedRedirectUrl}&state=${state}`;
   }
   if (providerName === 'ebay') {
-    params = `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${data.SUBDOMAIN}&state=${state}`;
+    params = `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${data.RUVALUE}&state=${state}`;
   }
 
   if (needsScope(providerName, vertical) && scopes) {

@@ -107,7 +107,7 @@ export class EbayConnectionService extends AbstractBaseConnectionService {
 
       const formData = new URLSearchParams({
         grant_type: 'authorization_code',
-        redirect_uri: CREDENTIALS.SUBDOMAIN,
+        redirect_uri: CREDENTIALS.RUVALUE,
         code: code,
       });
       const res = await axios.post(
