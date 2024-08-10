@@ -682,6 +682,7 @@ model connector_sets {
   fs_box           Boolean?
   tcg_github       Boolean?
   ecom_woocommerce Boolean?
+  ecom_shopify     Boolean?
   projects         projects[]
 }
 
@@ -2057,7 +2058,7 @@ model hris_payroll_runs {
   id_connection              String                       @db.Uuid
   hris_employee_payroll_runs hris_employee_payroll_runs[]
 }
-
+ 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model hris_time_off {
   id_hris_time_off   String    @id(map: "pk_hris_time_off") @db.Uuid

@@ -12221,52 +12221,1473 @@ components:
         - path
     UnifiedHrisBankinfoOutput:
       type: object
-      properties: {}
+      properties:
+        account_type:
+          type: string
+          example: checking
+          nullable: true
+          description: The type of the bank account
+        bank_name:
+          type: string
+          example: Bank of America
+          nullable: true
+          description: The name of the bank
+        account_number:
+          type: string
+          example: '1234567890'
+          nullable: true
+          description: The account number
+        routing_number:
+          type: string
+          example: '021000021'
+          nullable: true
+          description: The routing number of the bank
+        employee_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated employee
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the bank info record
+        remote_id:
+          type: string
+          example: id_1
+          nullable: true
+          description: The remote ID of the bank info in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the bank info in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the bank info was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the bank info record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the bank info record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the bank info was deleted in the remote system
+      required:
+        - id
+        - created_at
+        - modified_at
+        - remote_was_deleted
     UnifiedHrisBenefitOutput:
       type: object
-      properties: {}
+      properties:
+        provider_name:
+          type: string
+          example: Health Insurance Provider
+          nullable: true
+          description: The name of the benefit provider
+        employee_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated employee
+        employee_contribution:
+          type: number
+          example: 100
+          nullable: true
+          description: The employee contribution amount
+        company_contribution:
+          type: number
+          example: 200
+          nullable: true
+          description: The company contribution amount
+        start_date:
+          type: string
+          example: '2024-01-01T00:00:00Z'
+          nullable: true
+          description: The start date of the benefit
+        end_date:
+          type: string
+          example: '2024-12-31T23:59:59Z'
+          nullable: true
+          description: The end date of the benefit
+        employer_benefit_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated employer benefit
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the benefit record
+        remote_id:
+          type: string
+          example: benefit_1234
+          nullable: true
+          description: The remote ID of the benefit in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the benefit in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the benefit was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the benefit record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the benefit record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the benefit was deleted in the remote system
     UnifiedHrisCompanyOutput:
       type: object
-      properties: {}
+      properties:
+        legal_name:
+          type: string
+          example: Acme Corporation
+          nullable: true
+          description: The legal name of the company
+        display_name:
+          type: string
+          example: Acme Corp
+          nullable: true
+          description: The display name of the company
+        eins:
+          example:
+            - 12-3456789
+            - 98-7654321
+          nullable: true
+          description: The Employer Identification Numbers (EINs) of the company
+          type: array
+          items:
+            type: string
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the company record
+        remote_id:
+          type: string
+          example: company_1234
+          nullable: true
+          description: The remote ID of the company in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the company in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the company was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the company record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the company record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the company was deleted in the remote system
     UnifiedHrisDependentOutput:
       type: object
-      properties: {}
+      properties:
+        first_name:
+          type: string
+          example: John
+          nullable: true
+          description: The first name of the dependent
+        last_name:
+          type: string
+          example: Doe
+          nullable: true
+          description: The last name of the dependent
+        middle_name:
+          type: string
+          example: Michael
+          nullable: true
+          description: The middle name of the dependent
+        relationship:
+          type: string
+          example: Child
+          nullable: true
+          description: The relationship of the dependent to the employee
+        date_of_birth:
+          type: string
+          example: '2020-01-01'
+          nullable: true
+          description: The date of birth of the dependent
+        gender:
+          type: string
+          example: Male
+          nullable: true
+          description: The gender of the dependent
+        phone_number:
+          type: string
+          example: '+1234567890'
+          nullable: true
+          description: The phone number of the dependent
+        home_location:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the home location
+        is_student:
+          type: boolean
+          example: true
+          nullable: true
+          description: Indicates if the dependent is a student
+        ssn:
+          type: string
+          example: 123-45-6789
+          nullable: true
+          description: The Social Security Number of the dependent
+        employee_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated employee
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the dependent record
+        remote_id:
+          type: string
+          example: dependent_1234
+          nullable: true
+          description: The remote ID of the dependent in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the dependent in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the dependent was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the dependent record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the dependent record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the dependent was deleted in the remote system
+    DeductionItem:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Health Insurance
+          nullable: true
+          description: The name of the deduction
+        employee_deduction:
+          type: number
+          example: 100
+          nullable: true
+          description: The amount of employee deduction
+        company_deduction:
+          type: number
+          example: 200
+          nullable: true
+          description: The amount of company deduction
+    EarningItem:
+      type: object
+      properties:
+        amount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The amount of the earning
+        type:
+          type: string
+          example: Salary
+          nullable: true
+          description: The type of the earning
+    TaxItem:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Federal Income Tax
+          nullable: true
+          description: The name of the tax
+        amount:
+          type: number
+          example: 250
+          nullable: true
+          description: The amount of the tax
+        employer_tax:
+          type: boolean
+          example: true
+          nullable: true
+          description: Indicates if this is an employer tax
     UnifiedHrisEmployeepayrollrunOutput:
       type: object
-      properties: {}
+      properties:
+        employee_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated employee
+        payroll_run_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated payroll run
+        gross_pay:
+          type: number
+          example: 5000
+          nullable: true
+          description: The gross pay amount
+        net_pay:
+          type: number
+          example: 4000
+          nullable: true
+          description: The net pay amount
+        start_date:
+          type: string
+          example: '2023-01-01T00:00:00Z'
+          nullable: true
+          description: The start date of the pay period
+        end_date:
+          type: string
+          example: '2023-01-15T23:59:59Z'
+          nullable: true
+          description: The end date of the pay period
+        check_date:
+          type: string
+          example: '2023-01-20T00:00:00Z'
+          nullable: true
+          description: The date the check was issued
+        deductions:
+          nullable: true
+          description: The list of deductions for this payroll run
+          type: array
+          items:
+            $ref: '#/components/schemas/DeductionItem'
+        earnings:
+          nullable: true
+          description: The list of earnings for this payroll run
+          type: array
+          items:
+            $ref: '#/components/schemas/EarningItem'
+        taxes:
+          nullable: true
+          description: The list of taxes for this payroll run
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxItem'
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the employee payroll run record
+        remote_id:
+          type: string
+          example: payroll_run_1234
+          nullable: true
+          description: >-
+            The remote ID of the employee payroll run in the context of the 3rd
+            Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: >-
+            The remote data of the employee payroll run in the context of the
+            3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: >-
+            The date when the employee payroll run was created in the 3rd party
+            system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the employee payroll run record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the employee payroll run record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: >-
+            Indicates if the employee payroll run was deleted in the remote
+            system
     UnifiedHrisEmployeeOutput:
       type: object
-      properties: {}
+      properties:
+        groups:
+          example: &ref_123
+            - Group1
+            - Group2
+          nullable: true
+          description: The groups the employee belongs to
+          type: array
+          items:
+            type: string
+        employee_number:
+          type: string
+          example: EMP001
+          nullable: true
+          description: The employee number
+        company_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company
+        first_name:
+          type: string
+          example: John
+          nullable: true
+          description: The first name of the employee
+        last_name:
+          type: string
+          example: Doe
+          nullable: true
+          description: The last name of the employee
+        preferred_name:
+          type: string
+          example: Johnny
+          nullable: true
+          description: The preferred name of the employee
+        display_full_name:
+          type: string
+          example: John Doe
+          nullable: true
+          description: The full display name of the employee
+        username:
+          type: string
+          example: johndoe
+          nullable: true
+          description: The username of the employee
+        work_email:
+          type: string
+          example: john.doe@company.com
+          nullable: true
+          description: The work email of the employee
+        personal_email:
+          type: string
+          example: john.doe@personal.com
+          nullable: true
+          description: The personal email of the employee
+        mobile_phone_number:
+          type: string
+          example: '+1234567890'
+          nullable: true
+          description: The mobile phone number of the employee
+        employments:
+          example: &ref_124
+            - Employment1
+            - Employment2
+          nullable: true
+          description: The employments of the employee
+          type: array
+          items:
+            type: string
+        ssn:
+          type: string
+          example: 123-45-6789
+          nullable: true
+          description: The Social Security Number of the employee
+        gender:
+          type: string
+          example: Male
+          nullable: true
+          description: The gender of the employee
+        ethnicity:
+          type: string
+          example: Caucasian
+          nullable: true
+          description: The ethnicity of the employee
+        marital_status:
+          type: string
+          example: Married
+          nullable: true
+          description: The marital status of the employee
+        date_of_birth:
+          type: string
+          example: '1990-01-01'
+          nullable: true
+          description: The date of birth of the employee
+        start_date:
+          type: string
+          example: '2020-01-01'
+          nullable: true
+          description: The start date of the employee
+        employment_status:
+          type: string
+          example: Active
+          nullable: true
+          description: The employment status of the employee
+        termination_date:
+          type: string
+          example: '2025-01-01'
+          nullable: true
+          description: The termination date of the employee
+        avatar_url:
+          type: string
+          example: https://example.com/avatar.jpg
+          nullable: true
+          description: The URL of the employee's avatar
+        field_mappings:
+          type: object
+          example: &ref_125
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the employee record
+        remote_id:
+          type: string
+          example: employee_1234
+          nullable: true
+          description: The remote ID of the employee in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the employee in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the employee was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the employee record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the employee record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the employee was deleted in the remote system
     UnifiedHrisEmployeeInput:
       type: object
-      properties: {}
+      properties:
+        groups:
+          example: *ref_123
+          nullable: true
+          description: The groups the employee belongs to
+          type: array
+          items:
+            type: string
+        employee_number:
+          type: string
+          example: EMP001
+          nullable: true
+          description: The employee number
+        company_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company
+        first_name:
+          type: string
+          example: John
+          nullable: true
+          description: The first name of the employee
+        last_name:
+          type: string
+          example: Doe
+          nullable: true
+          description: The last name of the employee
+        preferred_name:
+          type: string
+          example: Johnny
+          nullable: true
+          description: The preferred name of the employee
+        display_full_name:
+          type: string
+          example: John Doe
+          nullable: true
+          description: The full display name of the employee
+        username:
+          type: string
+          example: johndoe
+          nullable: true
+          description: The username of the employee
+        work_email:
+          type: string
+          example: john.doe@company.com
+          nullable: true
+          description: The work email of the employee
+        personal_email:
+          type: string
+          example: john.doe@personal.com
+          nullable: true
+          description: The personal email of the employee
+        mobile_phone_number:
+          type: string
+          example: '+1234567890'
+          nullable: true
+          description: The mobile phone number of the employee
+        employments:
+          example: *ref_124
+          nullable: true
+          description: The employments of the employee
+          type: array
+          items:
+            type: string
+        ssn:
+          type: string
+          example: 123-45-6789
+          nullable: true
+          description: The Social Security Number of the employee
+        gender:
+          type: string
+          example: Male
+          nullable: true
+          description: The gender of the employee
+        ethnicity:
+          type: string
+          example: Caucasian
+          nullable: true
+          description: The ethnicity of the employee
+        marital_status:
+          type: string
+          example: Married
+          nullable: true
+          description: The marital status of the employee
+        date_of_birth:
+          type: string
+          example: '1990-01-01'
+          nullable: true
+          description: The date of birth of the employee
+        start_date:
+          type: string
+          example: '2020-01-01'
+          nullable: true
+          description: The start date of the employee
+        employment_status:
+          type: string
+          example: Active
+          nullable: true
+          description: The employment status of the employee
+        termination_date:
+          type: string
+          example: '2025-01-01'
+          nullable: true
+          description: The termination date of the employee
+        avatar_url:
+          type: string
+          example: https://example.com/avatar.jpg
+          nullable: true
+          description: The URL of the employee's avatar
+        field_mappings:
+          type: object
+          example: *ref_125
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedHrisEmployerbenefitOutput:
       type: object
-      properties: {}
+      properties:
+        benefit_plan_type:
+          type: string
+          example: Health Insurance
+          nullable: true
+          description: The type of the benefit plan
+        name:
+          type: string
+          example: Company Health Plan
+          nullable: true
+          description: The name of the employer benefit
+        description:
+          type: string
+          example: Comprehensive health insurance coverage for employees
+          nullable: true
+          description: The description of the employer benefit
+        deduction_code:
+          type: string
+          example: HEALTH-001
+          nullable: true
+          description: The deduction code for the employer benefit
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the employer benefit record
+        remote_id:
+          type: string
+          example: benefit_1234
+          nullable: true
+          description: >-
+            The remote ID of the employer benefit in the context of the 3rd
+            Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: >-
+            The remote data of the employer benefit in the context of the 3rd
+            Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: >-
+            The date when the employer benefit was created in the 3rd party
+            system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the employer benefit record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the employer benefit record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the employer benefit was deleted in the remote system
     UnifiedHrisEmploymentOutput:
       type: object
-      properties: {}
+      properties:
+        job_title:
+          type: string
+          example: Software Engineer
+          nullable: true
+          description: The job title of the employment
+        pay_rate:
+          type: number
+          example: 100000
+          nullable: true
+          description: The pay rate of the employment
+        pay_period:
+          type: string
+          example: Monthly
+          nullable: true
+          description: The pay period of the employment
+        pay_frequency:
+          type: string
+          example: Bi-weekly
+          nullable: true
+          description: The pay frequency of the employment
+        pay_currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the pay
+        flsa_status:
+          type: string
+          example: Exempt
+          nullable: true
+          description: The FLSA status of the employment
+        effective_date:
+          type: string
+          example: '2023-01-01'
+          nullable: true
+          description: The effective date of the employment
+        employment_type:
+          type: string
+          example: Full-time
+          nullable: true
+          description: The type of employment
+        pay_group_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated pay group
+        employee_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated employee
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the employment record
+        remote_id:
+          type: string
+          example: employment_1234
+          nullable: true
+          description: The remote ID of the employment in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the employment in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the employment was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the employment record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the employment record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the employment was deleted in the remote system
     UnifiedHrisGroupOutput:
       type: object
-      properties: {}
+      properties:
+        parent_group:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the parent group
+        name:
+          type: string
+          example: Engineering Team
+          nullable: true
+          description: The name of the group
+        type:
+          type: string
+          example: Department
+          nullable: true
+          description: The type of the group
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the group record
+        remote_id:
+          type: string
+          example: group_1234
+          nullable: true
+          description: The remote ID of the group in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the group in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the group was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the group record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the group record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the group was deleted in the remote system
     UnifiedHrisLocationOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Headquarters
+          nullable: true
+          description: The name of the location
+        phone_number:
+          type: string
+          example: '+1234567890'
+          nullable: true
+          description: The phone number of the location
+        street_1:
+          type: string
+          example: 123 Main St
+          nullable: true
+          description: The first line of the street address
+        street_2:
+          type: string
+          example: Suite 456
+          nullable: true
+          description: The second line of the street address
+        city:
+          type: string
+          example: San Francisco
+          nullable: true
+          description: The city of the location
+        state:
+          type: string
+          example: CA
+          nullable: true
+          description: The state or region of the location
+        zip_code:
+          type: string
+          example: '94105'
+          nullable: true
+          description: The zip or postal code of the location
+        country:
+          type: string
+          example: USA
+          nullable: true
+          description: The country of the location
+        location_type:
+          type: string
+          example: Office
+          nullable: true
+          description: The type of the location
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the location record
+        remote_id:
+          type: string
+          example: location_1234
+          nullable: true
+          description: The remote ID of the location in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the location in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the location was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the location record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the location record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the location was deleted in the remote system
     UnifiedHrisPaygroupOutput:
       type: object
-      properties: {}
+      properties:
+        pay_group_name:
+          type: string
+          example: Monthly Salaried
+          nullable: true
+          description: The name of the pay group
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the pay group record
+        remote_id:
+          type: string
+          example: paygroup_1234
+          nullable: true
+          description: The remote ID of the pay group in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the pay group in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the pay group was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the pay group record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the pay group record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the pay group was deleted in the remote system
     UnifiedHrisPayrollrunOutput:
       type: object
-      properties: {}
+      properties:
+        run_state:
+          type: string
+          example: Completed
+          nullable: true
+          description: The state of the payroll run
+        run_type:
+          type: string
+          example: Regular
+          nullable: true
+          description: The type of the payroll run
+        start_date:
+          type: string
+          example: '2024-01-01T00:00:00Z'
+          nullable: true
+          description: The start date of the payroll run
+        end_date:
+          type: string
+          example: '2024-01-15T23:59:59Z'
+          nullable: true
+          description: The end date of the payroll run
+        check_date:
+          type: string
+          example: '2024-01-20T00:00:00Z'
+          nullable: true
+          description: The check date of the payroll run
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the payroll run record
+        remote_id:
+          type: string
+          example: payroll_run_1234
+          nullable: true
+          description: The remote ID of the payroll run in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the payroll run in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The date when the payroll run was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The created date of the payroll run record
+        modified_at:
+          type: string
+          example: '2024-10-01T12:00:00Z'
+          nullable: true
+          description: The last modified date of the payroll run record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the payroll run was deleted in the remote system
+        employee_payroll_runs:
+          example:
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: >-
+            The UUIDs of the employee payroll runs associated with this payroll
+            run
+          type: array
+          items:
+            type: string
     UnifiedHrisTimeoffOutput:
       type: object
-      properties: {}
+      properties:
+        employee:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the employee taking time off
+        approver:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the approver for the time off request
+        status:
+          type: string
+          example: Approved
+          nullable: true
+          description: The status of the time off request
+        employee_note:
+          type: string
+          example: Annual vacation
+          nullable: true
+          description: A note from the employee about the time off request
+        units:
+          type: string
+          example: Days
+          nullable: true
+          description: The units used for the time off (e.g., Days, Hours)
+        amount:
+          type: number
+          example: 5
+          nullable: true
+          description: The amount of time off requested
+        request_type:
+          type: string
+          example: Vacation
+          nullable: true
+          description: The type of time off request
+        start_time:
+          type: string
+          example: '2024-07-01T09:00:00Z'
+          nullable: true
+          description: The start time of the time off
+        end_time:
+          type: string
+          example: '2024-07-05T17:00:00Z'
+          nullable: true
+          description: The end time of the time off
+        field_mappings:
+          type: object
+          example: &ref_126
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the time off record
+        remote_id:
+          type: string
+          example: timeoff_1234
+          nullable: true
+          description: The remote ID of the time off in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the time off in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the time off was created in the 3rd party system
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the time off record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the time off record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the time off was deleted in the remote system
     UnifiedHrisTimeoffInput:
       type: object
-      properties: {}
+      properties:
+        employee:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the employee taking time off
+        approver:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the approver for the time off request
+        status:
+          type: string
+          example: Approved
+          nullable: true
+          description: The status of the time off request
+        employee_note:
+          type: string
+          example: Annual vacation
+          nullable: true
+          description: A note from the employee about the time off request
+        units:
+          type: string
+          example: Days
+          nullable: true
+          description: The units used for the time off (e.g., Days, Hours)
+        amount:
+          type: number
+          example: 5
+          nullable: true
+          description: The amount of time off requested
+        request_type:
+          type: string
+          example: Vacation
+          nullable: true
+          description: The type of time off request
+        start_time:
+          type: string
+          example: '2024-07-01T09:00:00Z'
+          nullable: true
+          description: The start time of the time off
+        end_time:
+          type: string
+          example: '2024-07-05T17:00:00Z'
+          nullable: true
+          description: The end time of the time off
+        field_mappings:
+          type: object
+          example: *ref_126
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedHrisTimeoffbalanceOutput:
       type: object
-      properties: {}
+      properties:
+        balance:
+          type: number
+          example: 80
+          nullable: true
+          description: The current balance of time off
+        employee_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated employee
+        used:
+          type: number
+          example: 40
+          nullable: true
+          description: The amount of time off used
+        policy_type:
+          type: string
+          example: Vacation
+          nullable: true
+          description: The type of time off policy
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the time off balance record
+        remote_id:
+          type: string
+          example: timeoff_balance_1234
+          nullable: true
+          description: >-
+            The remote ID of the time off balance in the context of the 3rd
+            Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: >-
+            The remote data of the time off balance in the context of the 3rd
+            Party
+        remote_created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: >-
+            The date when the time off balance was created in the 3rd party
+            system
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the time off balance record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the time off balance record
+        remote_was_deleted:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the time off balance was deleted in the remote system
     UnifiedMarketingautomationActionOutput:
       type: object
       properties: {}
@@ -12320,7 +13741,7 @@ components:
       properties:
         activity_type:
           type: string
-          enum: &ref_123
+          enum: &ref_127
             - NOTE
             - EMAIL
             - OTHER
@@ -12339,7 +13760,7 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: &ref_124
+          enum: &ref_128
             - ADMIN_ONLY
             - PUBLIC
             - PRIVATE
@@ -12359,7 +13780,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: &ref_125
+          example: &ref_129
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -12402,7 +13823,7 @@ components:
       properties:
         activity_type:
           type: string
-          enum: *ref_123
+          enum: *ref_127
           example: NOTE
           nullable: true
           description: The type of activity
@@ -12418,7 +13839,7 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: *ref_124
+          enum: *ref_128
           example: PUBLIC
           nullable: true
           description: The visibility of the activity
@@ -12435,7 +13856,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: *ref_125
+          example: *ref_129
           additionalProperties: true
           nullable: true
           description: >-
@@ -12459,7 +13880,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: &ref_126
+          example: &ref_130
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
             - 12345678-1234-1234-1234-123456789012
           type: array
@@ -12496,7 +13917,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: &ref_127
+          example: &ref_131
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -12562,7 +13983,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: *ref_126
+          example: *ref_130
           type: array
           items:
             type: string
@@ -12597,7 +14018,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: *ref_127
+          example: *ref_131
           additionalProperties: true
           nullable: true
           description: >-
@@ -12619,7 +14040,7 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: &ref_128
+          enum: &ref_132
             - RESUME
             - COVER_LETTER
             - OFFER_LETTER
@@ -12645,7 +14066,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: &ref_129
+          example: &ref_133
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -12699,7 +14120,7 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: *ref_128
+          enum: *ref_132
           nullable: true
           description: The type of the file
         remote_created_at:
@@ -12721,7 +14142,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: *ref_129
+          example: *ref_133
           additionalProperties: true
           nullable: true
           description: >-
@@ -12799,37 +14220,37 @@ components:
           description: The last interaction date with the candidate
         attachments:
           type: array
-          items: &ref_130
+          items: &ref_134
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
-          example: &ref_131
+          example: &ref_135
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The attachments UUIDs of the candidate
         applications:
           type: array
-          items: &ref_132
+          items: &ref_136
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
-          example: &ref_133
+          example: &ref_137
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The applications UUIDs of the candidate
         tags:
           type: array
-          items: &ref_134
+          items: &ref_138
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedAtsTagOutput'
-          example: &ref_135
+          example: &ref_139
             - tag_1
             - tag_2
           nullable: true
           description: The tags of the candidate
         urls:
-          example: &ref_136
+          example: &ref_140
             - url: mywebsite.com
               url_type: WEBSITE
           nullable: true
@@ -12840,7 +14261,7 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: &ref_137
+          example: &ref_141
             - phone_number: '+33660688899'
               phone_type: WORK
           nullable: true
@@ -12849,7 +14270,7 @@ components:
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: &ref_138
+          example: &ref_142
             - email_address: joedoe@gmail.com
               email_address_type: WORK
           nullable: true
@@ -12859,7 +14280,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: &ref_139
+          example: &ref_143
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -12955,24 +14376,24 @@ components:
           description: The last interaction date with the candidate
         attachments:
           type: array
-          items: *ref_130
-          example: *ref_131
+          items: *ref_134
+          example: *ref_135
           nullable: true
           description: The attachments UUIDs of the candidate
         applications:
           type: array
-          items: *ref_132
-          example: *ref_133
+          items: *ref_136
+          example: *ref_137
           nullable: true
           description: The applications UUIDs of the candidate
         tags:
           type: array
-          items: *ref_134
-          example: *ref_135
+          items: *ref_138
+          example: *ref_139
           nullable: true
           description: The tags of the candidate
         urls:
-          example: *ref_136
+          example: *ref_140
           nullable: true
           description: >-
             The urls of the candidate, possible values for Url type are WEBSITE,
@@ -12981,14 +14402,14 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: *ref_137
+          example: *ref_141
           nullable: true
           description: The phone numbers of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: *ref_138
+          example: *ref_142
           nullable: true
           description: The email addresses of the candidate
           type: array
@@ -12996,7 +14417,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: *ref_139
+          example: *ref_143
           additionalProperties: true
           nullable: true
           description: >-
@@ -13056,7 +14477,7 @@ components:
       properties:
         status:
           type: string
-          enum: &ref_140
+          enum: &ref_144
             - SCHEDULED
             - AWAITING_FEEDBACK
             - COMPLETED
@@ -13079,7 +14500,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: &ref_141
+          example: &ref_145
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the interviewers
@@ -13117,7 +14538,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: &ref_142
+          example: &ref_146
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -13160,7 +14581,7 @@ components:
       properties:
         status:
           type: string
-          enum: *ref_140
+          enum: *ref_144
           example: SCHEDULED
           nullable: true
           description: The status of the interview
@@ -13180,7 +14601,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: *ref_141
+          example: *ref_145
           nullable: true
           description: The UUIDs of the interviewers
           type: array
@@ -13217,7 +14638,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: *ref_142
+          example: *ref_146
           additionalProperties: true
           nullable: true
           description: >-
@@ -13917,88 +15338,2331 @@ components:
           description: The modified date of the object
     UnifiedAccountingAccountOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Cash
+          nullable: true
+          description: The name of the account
+        description:
+          type: string
+          example: Main cash account for daily operations
+          nullable: true
+          description: A description of the account
+        classification:
+          type: string
+          example: Asset
+          nullable: true
+          description: The classification of the account
+        type:
+          type: string
+          example: Current Asset
+          nullable: true
+          description: The type of the account
+        status:
+          type: string
+          example: Active
+          nullable: true
+          description: The status of the account
+        current_balance:
+          type: number
+          example: 10000
+          nullable: true
+          description: The current balance of the account
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the account
+        account_number:
+          type: string
+          example: '1000'
+          nullable: true
+          description: The account number
+        parent_account:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the parent account
+        company_info_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        field_mappings:
+          type: object
+          example: &ref_147
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the account record
+        remote_id:
+          type: string
+          example: account_1234
+          nullable: true
+          description: The remote ID of the account in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the account in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the account record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the account record
     UnifiedAccountingAccountInput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Cash
+          nullable: true
+          description: The name of the account
+        description:
+          type: string
+          example: Main cash account for daily operations
+          nullable: true
+          description: A description of the account
+        classification:
+          type: string
+          example: Asset
+          nullable: true
+          description: The classification of the account
+        type:
+          type: string
+          example: Current Asset
+          nullable: true
+          description: The type of the account
+        status:
+          type: string
+          example: Active
+          nullable: true
+          description: The status of the account
+        current_balance:
+          type: number
+          example: 10000
+          nullable: true
+          description: The current balance of the account
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the account
+        account_number:
+          type: string
+          example: '1000'
+          nullable: true
+          description: The account number
+        parent_account:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the parent account
+        company_info_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        field_mappings:
+          type: object
+          example: *ref_147
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAccountingAddressOutput:
       type: object
-      properties: {}
+      properties:
+        type:
+          type: string
+          example: Billing
+          nullable: true
+          description: The type of the address
+        street_1:
+          type: string
+          example: 123 Main St
+          nullable: true
+          description: The first line of the street address
+        street_2:
+          type: string
+          example: Apt 4B
+          nullable: true
+          description: The second line of the street address
+        city:
+          type: string
+          example: New York
+          nullable: true
+          description: The city of the address
+        state:
+          type: string
+          example: NY
+          nullable: true
+          description: The state of the address
+        country_subdivision:
+          type: string
+          example: New York
+          nullable: true
+          description: The country subdivision (e.g., province or state) of the address
+        country:
+          type: string
+          example: USA
+          nullable: true
+          description: The country of the address
+        zip:
+          type: string
+          example: '10001'
+          nullable: true
+          description: The zip or postal code of the address
+        contact_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        company_info_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the address record
+        remote_id:
+          type: string
+          example: address_1234
+          nullable: true
+          description: The remote ID of the address in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the address in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the address record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the address record
     UnifiedAccountingAttachmentOutput:
       type: object
-      properties: {}
+      properties:
+        file_name:
+          type: string
+          example: invoice.pdf
+          nullable: true
+          description: The name of the attached file
+        file_url:
+          type: string
+          example: https://example.com/files/invoice.pdf
+          nullable: true
+          description: The URL where the file can be accessed
+        account_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated account
+        field_mappings:
+          type: object
+          example: &ref_148
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the attachment record
+        remote_id:
+          type: string
+          example: attachment_1234
+          nullable: true
+          description: The remote ID of the attachment in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the attachment in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the attachment record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the attachment record
     UnifiedAccountingAttachmentInput:
       type: object
-      properties: {}
+      properties:
+        file_name:
+          type: string
+          example: invoice.pdf
+          nullable: true
+          description: The name of the attached file
+        file_url:
+          type: string
+          example: https://example.com/files/invoice.pdf
+          nullable: true
+          description: The URL where the file can be accessed
+        account_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated account
+        field_mappings:
+          type: object
+          example: *ref_148
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAccountingBalancesheetOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Q2 2024 Balance Sheet
+          nullable: true
+          description: The name of the balance sheet
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency used in the balance sheet
+        company_info_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        date:
+          type: string
+          example: '2024-06-30T23:59:59Z'
+          nullable: true
+          description: The date of the balance sheet
+        net_assets:
+          type: number
+          example: 1000000
+          nullable: true
+          description: The net assets value
+        assets:
+          example:
+            - Cash
+            - Accounts Receivable
+            - Inventory
+          nullable: true
+          description: The list of assets
+          type: array
+          items:
+            type: string
+        liabilities:
+          example:
+            - Accounts Payable
+            - Long-term Debt
+          nullable: true
+          description: The list of liabilities
+          type: array
+          items:
+            type: string
+        equity:
+          example:
+            - Common Stock
+            - Retained Earnings
+          nullable: true
+          description: The list of equity items
+          type: array
+          items:
+            type: string
+        remote_generated_at:
+          type: string
+          example: '2024-07-01T12:00:00Z'
+          nullable: true
+          description: The date when the balance sheet was generated in the remote system
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the balance sheet record
+        remote_id:
+          type: string
+          example: balancesheet_1234
+          nullable: true
+          description: The remote ID of the balance sheet in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the balance sheet in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the balance sheet record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the balance sheet record
     UnifiedAccountingCashflowstatementOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Q2 2024 Cash Flow Statement
+          nullable: true
+          description: The name of the cash flow statement
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency used in the cash flow statement
+        company_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company
+        start_period:
+          type: string
+          example: '2024-04-01T00:00:00Z'
+          nullable: true
+          description: The start date of the period covered by the cash flow statement
+        end_period:
+          type: string
+          example: '2024-06-30T23:59:59Z'
+          nullable: true
+          description: The end date of the period covered by the cash flow statement
+        cash_at_beginning_of_period:
+          type: number
+          example: 1000000
+          nullable: true
+          description: The cash balance at the beginning of the period
+        cash_at_end_of_period:
+          type: number
+          example: 1200000
+          nullable: true
+          description: The cash balance at the end of the period
+        remote_generated_at:
+          type: string
+          example: '2024-07-01T12:00:00Z'
+          nullable: true
+          description: >-
+            The date when the cash flow statement was generated in the remote
+            system
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the cash flow statement record
+        remote_id:
+          type: string
+          example: cashflowstatement_1234
+          nullable: true
+          description: >-
+            The remote ID of the cash flow statement in the context of the 3rd
+            Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: >-
+            The remote data of the cash flow statement in the context of the 3rd
+            Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the cash flow statement record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the cash flow statement record
     UnifiedAccountingCompanyinfoOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Acme Corporation
+          nullable: true
+          description: The name of the company
+        legal_name:
+          type: string
+          example: Acme Corporation LLC
+          nullable: true
+          description: The legal name of the company
+        tax_number:
+          type: string
+          example: '123456789'
+          nullable: true
+          description: The tax number of the company
+        fiscal_year_end_month:
+          type: number
+          example: 12
+          nullable: true
+          description: The month of the fiscal year end (1-12)
+        fiscal_year_end_day:
+          type: number
+          example: 31
+          nullable: true
+          description: The day of the fiscal year end (1-31)
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency used by the company
+        urls:
+          example:
+            - https://www.acmecorp.com
+            - https://store.acmecorp.com
+          nullable: true
+          description: The URLs associated with the company
+          type: array
+          items:
+            type: string
+        tracking_categories:
+          example:
+            - Department
+            - Project
+            - Location
+          nullable: true
+          description: The tracking categories used by the company
+          type: array
+          items:
+            type: string
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the company info record
+        remote_id:
+          type: string
+          example: company_1234
+          nullable: true
+          description: The remote ID of the company info in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the company info in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the company info was created in the remote system
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the company info record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the company info record
     UnifiedAccountingContactOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: John Doe
+          nullable: true
+          description: The name of the contact
+        is_supplier:
+          type: boolean
+          example: true
+          nullable: true
+          description: Indicates if the contact is a supplier
+        is_customer:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the contact is a customer
+        email_address:
+          type: string
+          example: john.doe@example.com
+          nullable: true
+          description: The email address of the contact
+        tax_number:
+          type: string
+          example: '123456789'
+          nullable: true
+          description: The tax number of the contact
+        status:
+          type: string
+          example: Active
+          nullable: true
+          description: The status of the contact
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency associated with the contact
+        remote_updated_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the contact was last updated in the remote system
+        company_info_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        field_mappings:
+          type: object
+          example: &ref_149
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the contact record
+        remote_id:
+          type: string
+          example: contact_1234
+          nullable: true
+          description: The remote ID of the contact in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the contact in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the contact record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the contact record
     UnifiedAccountingContactInput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: John Doe
+          nullable: true
+          description: The name of the contact
+        is_supplier:
+          type: boolean
+          example: true
+          nullable: true
+          description: Indicates if the contact is a supplier
+        is_customer:
+          type: boolean
+          example: false
+          nullable: true
+          description: Indicates if the contact is a customer
+        email_address:
+          type: string
+          example: john.doe@example.com
+          nullable: true
+          description: The email address of the contact
+        tax_number:
+          type: string
+          example: '123456789'
+          nullable: true
+          description: The tax number of the contact
+        status:
+          type: string
+          example: Active
+          nullable: true
+          description: The status of the contact
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency associated with the contact
+        remote_updated_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the contact was last updated in the remote system
+        company_info_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        field_mappings:
+          type: object
+          example: *ref_149
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAccountingCreditnoteOutput:
       type: object
-      properties: {}
+      properties:
+        transaction_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the credit note transaction
+        status:
+          type: string
+          example: Issued
+          nullable: true
+          description: The status of the credit note
+        number:
+          type: string
+          example: CN-001
+          nullable: true
+          description: The number of the credit note
+        contact_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        company_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the credit note
+        total_amount:
+          type: number
+          example: 10000
+          nullable: true
+          description: The total amount of the credit note
+        remaining_credit:
+          type: number
+          example: 5000
+          nullable: true
+          description: The remaining credit on the credit note
+        tracking_categories:
+          example:
+            - Project A
+            - Department B
+          nullable: true
+          description: The tracking categories associated with the credit note
+          type: array
+          items:
+            type: string
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the credit note
+        payments:
+          example:
+            - PAYMENT-001
+            - PAYMENT-002
+          nullable: true
+          description: The payments associated with the credit note
+          type: array
+          items:
+            type: string
+        applied_payments:
+          example:
+            - APPLIED-001
+            - APPLIED-002
+          nullable: true
+          description: The applied payments associated with the credit note
+          type: array
+          items:
+            type: string
+        accounting_period_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the credit note record
+        remote_id:
+          type: string
+          example: creditnote_1234
+          nullable: true
+          description: The remote ID of the credit note in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the credit note in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the credit note was created in the remote system
+        remote_updated_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the credit note was last updated in the remote system
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the credit note record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the credit note record
     UnifiedAccountingExpenseOutput:
       type: object
-      properties: {}
+      properties:
+        transaction_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the expense transaction
+        total_amount:
+          type: number
+          example: 10000
+          nullable: true
+          description: The total amount of the expense
+        sub_total:
+          type: number
+          example: 9000
+          nullable: true
+          description: The sub-total amount of the expense (before tax)
+        total_tax_amount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total tax amount of the expense
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the expense
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the expense
+        memo:
+          type: string
+          example: Business lunch with client
+          nullable: true
+          description: A memo or description for the expense
+        account_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated account
+        contact_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        company_info_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        tracking_categories:
+          example: &ref_150
+            - Project A
+            - Department B
+          nullable: true
+          description: The tracking categories associated with the expense
+          type: array
+          items:
+            type: string
+        field_mappings:
+          type: object
+          example: &ref_151
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the expense record
+        remote_id:
+          type: string
+          example: expense_1234
+          nullable: true
+          description: The remote ID of the expense in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the expense in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the expense was created in the remote system
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the expense record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the expense record
     UnifiedAccountingExpenseInput:
       type: object
-      properties: {}
+      properties:
+        transaction_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the expense transaction
+        total_amount:
+          type: number
+          example: 10000
+          nullable: true
+          description: The total amount of the expense
+        sub_total:
+          type: number
+          example: 9000
+          nullable: true
+          description: The sub-total amount of the expense (before tax)
+        total_tax_amount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total tax amount of the expense
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the expense
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the expense
+        memo:
+          type: string
+          example: Business lunch with client
+          nullable: true
+          description: A memo or description for the expense
+        account_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated account
+        contact_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        company_info_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        tracking_categories:
+          example: *ref_150
+          nullable: true
+          description: The tracking categories associated with the expense
+          type: array
+          items:
+            type: string
+        field_mappings:
+          type: object
+          example: *ref_151
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAccountingIncomestatementOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Q2 2024 Income Statement
+          nullable: true
+          description: The name of the income statement
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency used in the income statement
+        start_period:
+          type: string
+          example: '2024-04-01T00:00:00Z'
+          nullable: true
+          description: The start date of the period covered by the income statement
+        end_period:
+          type: string
+          example: '2024-06-30T23:59:59Z'
+          nullable: true
+          description: The end date of the period covered by the income statement
+        gross_profit:
+          type: number
+          example: 1000000
+          nullable: true
+          description: The gross profit for the period
+        net_operating_income:
+          type: number
+          example: 800000
+          nullable: true
+          description: The net operating income for the period
+        net_income:
+          type: number
+          example: 750000
+          nullable: true
+          description: The net income for the period
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the income statement record
+        remote_id:
+          type: string
+          example: incomestatement_1234
+          nullable: true
+          description: >-
+            The remote ID of the income statement in the context of the 3rd
+            Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: >-
+            The remote data of the income statement in the context of the 3rd
+            Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the income statement record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the income statement record
     UnifiedAccountingInvoiceOutput:
       type: object
-      properties: {}
+      properties:
+        type:
+          type: string
+          example: Sales
+          nullable: true
+          description: The type of the invoice
+        number:
+          type: string
+          example: INV-001
+          nullable: true
+          description: The invoice number
+        issue_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date the invoice was issued
+        due_date:
+          type: string
+          example: '2024-07-15T12:00:00Z'
+          nullable: true
+          description: The due date of the invoice
+        paid_on_date:
+          type: string
+          example: '2024-07-10T12:00:00Z'
+          nullable: true
+          description: The date the invoice was paid
+        memo:
+          type: string
+          example: Payment for services rendered
+          nullable: true
+          description: A memo or note on the invoice
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the invoice
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the invoice
+        total_discount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total discount applied to the invoice
+        sub_total:
+          type: number
+          example: 10000
+          nullable: true
+          description: The subtotal of the invoice
+        status:
+          type: string
+          example: Paid
+          nullable: true
+          description: The status of the invoice
+        total_tax_amount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total tax amount on the invoice
+        total_amount:
+          type: number
+          example: 11000
+          nullable: true
+          description: The total amount of the invoice
+        balance:
+          type: number
+          example: 0
+          nullable: true
+          description: The remaining balance on the invoice
+        contact_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        accounting_period_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        tracking_categories:
+          example: &ref_152
+            - Project A
+            - Department B
+          nullable: true
+          description: The tracking categories associated with the invoice
+          type: array
+          items:
+            type: string
+        field_mappings:
+          type: object
+          example: &ref_153
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the invoice record
+        remote_id:
+          type: string
+          example: invoice_1234
+          nullable: true
+          description: The remote ID of the invoice in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the invoice in the context of the 3rd Party
+        remote_updated_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the invoice was last updated in the remote system
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the invoice record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the invoice record
     UnifiedAccountingInvoiceInput:
       type: object
-      properties: {}
+      properties:
+        type:
+          type: string
+          example: Sales
+          nullable: true
+          description: The type of the invoice
+        number:
+          type: string
+          example: INV-001
+          nullable: true
+          description: The invoice number
+        issue_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date the invoice was issued
+        due_date:
+          type: string
+          example: '2024-07-15T12:00:00Z'
+          nullable: true
+          description: The due date of the invoice
+        paid_on_date:
+          type: string
+          example: '2024-07-10T12:00:00Z'
+          nullable: true
+          description: The date the invoice was paid
+        memo:
+          type: string
+          example: Payment for services rendered
+          nullable: true
+          description: A memo or note on the invoice
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the invoice
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the invoice
+        total_discount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total discount applied to the invoice
+        sub_total:
+          type: number
+          example: 10000
+          nullable: true
+          description: The subtotal of the invoice
+        status:
+          type: string
+          example: Paid
+          nullable: true
+          description: The status of the invoice
+        total_tax_amount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total tax amount on the invoice
+        total_amount:
+          type: number
+          example: 11000
+          nullable: true
+          description: The total amount of the invoice
+        balance:
+          type: number
+          example: 0
+          nullable: true
+          description: The remaining balance on the invoice
+        contact_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        accounting_period_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        tracking_categories:
+          example: *ref_152
+          nullable: true
+          description: The tracking categories associated with the invoice
+          type: array
+          items:
+            type: string
+        field_mappings:
+          type: object
+          example: *ref_153
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAccountingItemOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Product A
+          nullable: true
+          description: The name of the accounting item
+        status:
+          type: string
+          example: Active
+          nullable: true
+          description: The status of the accounting item
+        unit_price:
+          type: number
+          example: 1000
+          nullable: true
+          description: The unit price of the item in cents
+        purchase_price:
+          type: number
+          example: 800
+          nullable: true
+          description: The purchase price of the item in cents
+        sales_account:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated sales account
+        purchase_account:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated purchase account
+        id_acc_company_info:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the accounting item record
+        remote_id:
+          type: string
+          example: item_1234
+          nullable: true
+          description: The remote ID of the item in the context of the 3rd Party
+        remote_updated_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the item was last updated in the remote system
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the item in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the accounting item record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the accounting item record
     UnifiedAccountingJournalentryOutput:
       type: object
-      properties: {}
+      properties:
+        transaction_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the transaction
+        payments:
+          example: &ref_154
+            - payment1
+            - payment2
+          nullable: true
+          description: The payments associated with the journal entry
+          type: array
+          items:
+            type: string
+        applied_payments:
+          example: &ref_155
+            - appliedPayment1
+            - appliedPayment2
+          nullable: true
+          description: The applied payments for the journal entry
+          type: array
+          items:
+            type: string
+        memo:
+          type: string
+          example: Monthly expense journal entry
+          nullable: true
+          description: A memo or note for the journal entry
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the journal entry
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the journal entry
+        id_acc_company_info:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: false
+          description: The UUID of the associated company info
+        journal_number:
+          type: string
+          example: JE-001
+          nullable: true
+          description: The journal number
+        tracking_categories:
+          example: &ref_156
+            - Category1
+            - Category2
+          nullable: true
+          description: The tracking categories associated with the journal entry
+          type: array
+          items:
+            type: string
+        id_acc_accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        posting_status:
+          type: string
+          example: Posted
+          nullable: true
+          description: The posting status of the journal entry
+        field_mappings:
+          type: object
+          example: &ref_157
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the journal entry record
+        remote_id:
+          type: string
+          example: journal_entry_1234
+          nullable: false
+          description: The remote ID of the journal entry in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the journal entry was created in the remote system
+        remote_modiified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: >-
+            The date when the journal entry was last modified in the remote
+            system
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the journal entry in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the journal entry record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the journal entry record
     UnifiedAccountingJournalentryInput:
       type: object
-      properties: {}
+      properties:
+        transaction_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the transaction
+        payments:
+          example: *ref_154
+          nullable: true
+          description: The payments associated with the journal entry
+          type: array
+          items:
+            type: string
+        applied_payments:
+          example: *ref_155
+          nullable: true
+          description: The applied payments for the journal entry
+          type: array
+          items:
+            type: string
+        memo:
+          type: string
+          example: Monthly expense journal entry
+          nullable: true
+          description: A memo or note for the journal entry
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the journal entry
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the journal entry
+        id_acc_company_info:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: false
+          description: The UUID of the associated company info
+        journal_number:
+          type: string
+          example: JE-001
+          nullable: true
+          description: The journal number
+        tracking_categories:
+          example: *ref_156
+          nullable: true
+          description: The tracking categories associated with the journal entry
+          type: array
+          items:
+            type: string
+        id_acc_accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        posting_status:
+          type: string
+          example: Posted
+          nullable: true
+          description: The posting status of the journal entry
+        field_mappings:
+          type: object
+          example: *ref_157
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAccountingPaymentOutput:
       type: object
-      properties: {}
+      properties:
+        id_acc_invoice:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated invoice
+        transaction_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the transaction
+        id_acc_contact:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        id_acc_account:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated account
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the payment
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the payment
+        total_amount:
+          type: number
+          example: 10000
+          nullable: true
+          description: The total amount of the payment in cents
+        type:
+          type: string
+          example: Credit Card
+          nullable: true
+          description: The type of payment
+        id_acc_company_info:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        id_acc_accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        tracking_categories:
+          example: &ref_158
+            - Category1
+            - Category2
+          nullable: true
+          description: The tracking categories associated with the payment
+          type: array
+          items:
+            type: string
+        field_mappings:
+          type: object
+          example: &ref_159
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the payment record
+        remote_id:
+          type: string
+          example: payment_1234
+          nullable: true
+          description: The remote ID of the payment in the context of the 3rd Party
+        remote_updated_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the payment was last updated in the remote system
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the payment in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the payment record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the payment record
     UnifiedAccountingPaymentInput:
       type: object
-      properties: {}
+      properties:
+        id_acc_invoice:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated invoice
+        transaction_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the transaction
+        id_acc_contact:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        id_acc_account:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated account
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the payment
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the payment
+        total_amount:
+          type: number
+          example: 10000
+          nullable: true
+          description: The total amount of the payment in cents
+        type:
+          type: string
+          example: Credit Card
+          nullable: true
+          description: The type of payment
+        id_acc_company_info:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        id_acc_accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        tracking_categories:
+          example: *ref_158
+          nullable: true
+          description: The tracking categories associated with the payment
+          type: array
+          items:
+            type: string
+        field_mappings:
+          type: object
+          example: *ref_159
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAccountingPhonenumberOutput:
       type: object
-      properties: {}
+      properties:
+        number:
+          type: string
+          example: '+1234567890'
+          nullable: true
+          description: The phone number
+        type:
+          type: string
+          example: Mobile
+          nullable: true
+          description: The type of phone number
+        id_acc_company_info:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        id_acc_contact:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: false
+          description: The UUID of the associated contact
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the phone number record
+        remote_id:
+          type: string
+          example: phone_1234
+          nullable: true
+          description: The remote ID of the phone number in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the phone number in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the phone number record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the phone number record
     UnifiedAccountingPurchaseorderOutput:
       type: object
-      properties: {}
+      properties:
+        status:
+          type: string
+          example: Pending
+          nullable: true
+          description: The status of the purchase order
+        issue_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The issue date of the purchase order
+        purchase_order_number:
+          type: string
+          example: PO-001
+          nullable: true
+          description: The purchase order number
+        delivery_date:
+          type: string
+          example: '2024-07-15T12:00:00Z'
+          nullable: true
+          description: The delivery date for the purchase order
+        delivery_address:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the delivery address
+        customer:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the customer
+        vendor:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the vendor
+        memo:
+          type: string
+          example: Purchase order for Q3 inventory
+          nullable: true
+          description: A memo or note for the purchase order
+        company:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the company
+        total_amount:
+          type: number
+          example: 100000
+          nullable: true
+          description: The total amount of the purchase order in cents
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the purchase order
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the purchase order
+        tracking_categories:
+          example: &ref_160
+            - Category1
+            - Category2
+          nullable: true
+          description: The tracking categories associated with the purchase order
+          type: array
+          items:
+            type: string
+        id_acc_accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        field_mappings:
+          type: object
+          example: &ref_161
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the purchase order record
+        remote_id:
+          type: string
+          example: po_1234
+          nullable: true
+          description: The remote ID of the purchase order in the context of the 3rd Party
+        remote_created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the purchase order was created in the remote system
+        remote_updated_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: >-
+            The date when the purchase order was last updated in the remote
+            system
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: >-
+            The remote data of the purchase order in the context of the 3rd
+            Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the purchase order record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the purchase order record
     UnifiedAccountingPurchaseorderInput:
       type: object
-      properties: {}
+      properties:
+        status:
+          type: string
+          example: Pending
+          nullable: true
+          description: The status of the purchase order
+        issue_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The issue date of the purchase order
+        purchase_order_number:
+          type: string
+          example: PO-001
+          nullable: true
+          description: The purchase order number
+        delivery_date:
+          type: string
+          example: '2024-07-15T12:00:00Z'
+          nullable: true
+          description: The delivery date for the purchase order
+        delivery_address:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the delivery address
+        customer:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the customer
+        vendor:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the vendor
+        memo:
+          type: string
+          example: Purchase order for Q3 inventory
+          nullable: true
+          description: A memo or note for the purchase order
+        company:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the company
+        total_amount:
+          type: number
+          example: 100000
+          nullable: true
+          description: The total amount of the purchase order in cents
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the purchase order
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the purchase order
+        tracking_categories:
+          example: *ref_160
+          nullable: true
+          description: The tracking categories associated with the purchase order
+          type: array
+          items:
+            type: string
+        id_acc_accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        field_mappings:
+          type: object
+          example: *ref_161
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
     UnifiedAccountingTaxrateOutput:
       type: object
-      properties: {}
+      properties:
+        description:
+          type: string
+          example: VAT 20%
+          nullable: true
+          description: The description of the tax rate
+        total_tax_ratge:
+          type: number
+          example: 2000
+          nullable: true
+          description: The total tax rate in basis points (e.g., 2000 for 20%)
+        effective_tax_rate:
+          type: number
+          example: 1900
+          nullable: true
+          description: The effective tax rate in basis points (e.g., 1900 for 19%)
+        company:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the tax rate record
+        remote_id:
+          type: string
+          example: tax_rate_1234
+          nullable: true
+          description: The remote ID of the tax rate in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the tax rate in the context of the 3rd Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the tax rate record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the tax rate record
     UnifiedAccountingTrackingcategoryOutput:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Department
+          nullable: true
+          description: The name of the tracking category
+        status:
+          type: string
+          example: Active
+          nullable: true
+          description: The status of the tracking category
+        category_type:
+          type: string
+          example: Expense
+          nullable: true
+          description: The type of the tracking category
+        parent_category:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the parent category, if applicable
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the tracking category record
+        remote_id:
+          type: string
+          example: tracking_category_1234
+          nullable: true
+          description: >-
+            The remote ID of the tracking category in the context of the 3rd
+            Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: >-
+            The remote data of the tracking category in the context of the 3rd
+            Party
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the tracking category record
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the tracking category record
     UnifiedAccountingTransactionOutput:
       type: object
-      properties: {}
+      properties:
+        transaction_type:
+          type: string
+          example: Sale
+          nullable: true
+          description: The type of the transaction
+        number:
+          type: string
+          example: '1001'
+          nullable: true
+          description: The transaction number
+        transaction_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the transaction
+        total_amount:
+          type: string
+          example: '1000'
+          nullable: true
+          description: The total amount of the transaction
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the transaction
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the transaction
+        tracking_categories:
+          example:
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of tracking categories associated with the transaction
+          type: array
+          items:
+            type: string
+        id_acc_account:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated account
+        id_acc_contact:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        id_acc_company_info:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        id_acc_accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the transaction record
+        remote_id:
+          type: string
+          example: remote_id_1234
+          nullable: false
+          description: The remote ID of the transaction
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: false
+          description: The created date of the transaction
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: false
+          description: The last modified date of the transaction
+        remote_updated_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the transaction was last updated in the remote system
     UnifiedAccountingVendorcreditOutput:
       type: object
-      properties: {}
+      properties:
+        number:
+          type: string
+          example: VC-001
+          nullable: true
+          description: The number of the vendor credit
+        transaction_date:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the transaction
+        vendor:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the vendor associated with the credit
+        total_amount:
+          type: string
+          example: '1000'
+          nullable: true
+          description: The total amount of the vendor credit
+        currency:
+          type: string
+          example: USD
+          nullable: true
+          description: The currency of the vendor credit
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the vendor credit
+        company:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company
+        tracking_categories:
+          example:
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of tracking categories associated with the vendor credit
+          type: array
+          items:
+            type: string
+        accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the vendor credit record
+        remote_id:
+          type: string
+          example: remote_id_1234
+          nullable: true
+          description: The remote ID of the vendor credit
+        created_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: false
+          description: The created date of the vendor credit
+        modified_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: false
+          description: The last modified date of the vendor credit
+        remote_updated_at:
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: >-
+            The date when the vendor credit was last updated in the remote
+            system
     UnifiedFilestorageDriveOutput:
       type: object
       properties:
@@ -14101,7 +17765,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_143
+          example: &ref_162
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -14187,7 +17851,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_143
+          example: *ref_162
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -14245,7 +17909,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: &ref_144
+          example: &ref_163
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -14336,7 +18000,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: *ref_144
+          example: *ref_163
           additionalProperties: true
           nullable: true
           description: >-
@@ -14501,13 +18165,13 @@ components:
           type: string
           example: ACTIVE
           nullable: true
-          enum: &ref_145
+          enum: &ref_164
             - ARCHIVED
             - ACTIVE
             - DRAFT
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
-          example: &ref_146
+          example: &ref_165
             - https://myproduct/image
           nullable: true
           description: The URLs of the product images
@@ -14525,7 +18189,7 @@ components:
           nullable: true
           description: The vendor of the product
         variants:
-          example: &ref_147
+          example: &ref_166
             - title: teeshirt
               price: 20
               sku: '3'
@@ -14537,7 +18201,7 @@ components:
           items:
             $ref: '#/components/schemas/Variant'
         tags:
-          example: &ref_148
+          example: &ref_167
             - tag_1
           nullable: true
           description: The tags associated with the product
@@ -14546,7 +18210,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: &ref_149
+          example: &ref_168
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -14597,10 +18261,10 @@ components:
           type: string
           example: ACTIVE
           nullable: true
-          enum: *ref_145
+          enum: *ref_164
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
-          example: *ref_146
+          example: *ref_165
           nullable: true
           description: The URLs of the product images
           type: array
@@ -14617,13 +18281,13 @@ components:
           nullable: true
           description: The vendor of the product
         variants:
-          example: *ref_147
+          example: *ref_166
           description: The variants of the product
           type: array
           items:
             $ref: '#/components/schemas/Variant'
         tags:
-          example: *ref_148
+          example: *ref_167
           nullable: true
           description: The tags associated with the product
           type: array
@@ -14631,7 +18295,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: *ref_149
+          example: *ref_168
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -14658,7 +18322,7 @@ components:
           type: string
           nullable: true
           example: AUD
-          enum: &ref_150
+          enum: &ref_169
             - AED
             - AFN
             - ALL
@@ -14857,11 +18521,11 @@ components:
         items:
           type: object
           nullable: true
-          example: &ref_151 {}
+          example: &ref_170 {}
           description: The items in the order
         field_mappings:
           type: object
-          example: &ref_152
+          example: &ref_171
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -14917,7 +18581,7 @@ components:
           type: string
           nullable: true
           example: AUD
-          enum: *ref_150
+          enum: *ref_169
           description: >-
             The currency of the order. Authorized value must be of type
             CurrencyCode (ISO 4217)
@@ -14954,11 +18618,11 @@ components:
         items:
           type: object
           nullable: true
-          example: *ref_151
+          example: *ref_170
           description: The items in the order
         field_mappings:
           type: object
-          example: *ref_152
+          example: *ref_171
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -15135,7 +18799,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_153
+          example: &ref_172
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -15207,7 +18871,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_153
+          example: *ref_172
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora
