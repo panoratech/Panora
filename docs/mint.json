@@ -66,7 +66,7 @@
       ]
     },
     {
-      "group": "Unified Objects",
+      "group": "CRM Objects",
       "pages": [
         {
           "group": "Contacts",
@@ -138,6 +138,7 @@
     {
       "group": "",
       "pages": [
+        "file-storage/quickstart",
         "file-storage/overview"
       ]
     },
@@ -181,6 +182,13 @@
             "file-storage/users/retrieve-a-user"
           ]
         }
+      ]
+    },
+    {
+      "group": "",
+      "pages": [
+        "accounting/quickstart",
+        "accounting/overview"
       ]
     },
     {
@@ -284,12 +292,6 @@
           ]
         },
         {
-          "group": "Overview",
-          "pages": [
-            "accounting/overview"
-          ]
-        },
-        {
           "group": "Payments",
           "pages": [
             "accounting/payments/create-a-payment",
@@ -310,12 +312,6 @@
             "accounting/purchaseorders/list-purchaseorders",
             "accounting/purchaseorders/retrieve-a-purchaseorder",
             "accounting/purchaseorders/create-a-purchaseorder"
-          ]
-        },
-        {
-          "group": "Quickstart",
-          "pages": [
-            "accounting/quickstart"
           ]
         },
         {
@@ -351,6 +347,7 @@
     {
       "group": "",
       "pages": [
+        "ats/quickstart",
         "ats/overview"
       ]
     },
@@ -472,12 +469,54 @@
     {
       "group": "",
       "pages": [
+        "ecommerce/quickstart",
+        "ecommerce/overview"
+      ]
+    },
+    {
+      "group": "Ecommerce Objects",
+      "pages": [
+        {
+          "group": "Products",
+          "pages": [
+            "ecommerce/products/list",
+            "ecommerce/products/retrieve",
+            "ecommerce/products/create"
+          ]
+        },
+        {
+          "group": "Orders",
+          "pages": [
+            "ecommerce/orders/list",
+            "ecommerce/orders/create",
+            "ecommerce/orders/retrieve"
+          ]
+        },
+        {
+          "group": "Fulfillments",
+          "pages": [
+            "ecommerce/fulfillments/list",
+            "ecommerce/fulfillments/retrieve"
+          ]
+        },
+        {
+          "group": "Customers",
+          "pages": [
+            "ecommerce/customers/list",
+            "ecommerce/customers/retrieve"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "",
+      "pages": [
         "ticketing/quickstart",
         "ticketing/overview"
       ]
     },
     {
-      "group": "Unified Objects",
+      "group": "Ticketing Objects",
       "pages": [
         {
           "group": "Accounts",
@@ -558,7 +597,7 @@
       ]
     },
     {
-      "group": "Unified Objects",
+      "group": "CRM Objects",
       "pages": [
         {
           "group": "CRM",
@@ -713,43 +752,36 @@
       "group": "Core Resources",
       "pages": [
         {
-          "group": "Auth",
-          "pages": [
-            "api-reference/auth/register",
-            "api-reference/auth/log-in",
-            "api-reference/auth/get-users",
-            "api-reference/auth/retrieve-api-keys",
-            "api-reference/auth/create-api-key"
-          ]
-        },
-        {
           "group": "Connections",
           "pages": [
-            "api-reference/connections/capture-oauth-callback",
             "api-reference/connections/list-connections"
           ]
         },
         {
-          "group": "Webhook",
+          "group": "Webhooks",
           "pages": [
-            "api-reference/webhook/retrieve-webhooks-metadata",
-            "api-reference/webhook/add-webhook-metadata",
-            "api-reference/webhook/update-webhook-status"
+            "api-reference/webhooks/list",
+            "api-reference/webhooks/create",
+            "api-reference/webhooks/update"
+          ]
+        },
+        {
+          "group": "Field Mappings",
+          "pages": [
+            "api-reference/field_mappings/create-custom-field",
+            "api-reference/field_mappings/define-target-field",
+            "api-reference/field_mappings/map-custom-field",
+            "api-reference/field_mappings/retrieve-field-mappings-entities",
+            "api-reference/field_mappings/retrieve-field-mappings-values",
+            "api-reference/field_mappings/retrieve-field-mappings"
           ]
         },
         {
           "group": "Linked Users",
           "pages": [
-            "api-reference/linked-users/add-linked-user",
-            "api-reference/linked-users/retrieve-linked-users",
-            "api-reference/linked-users/retrieve-a-linked-user"
-          ]
-        },
-        {
-          "group": "Organisations",
-          "pages": [
-            "api-reference/organisations/retrieve-organisations",
-            "api-reference/organisations/create-an-organisation"
+            "api-reference/linked_users/create",
+            "api-reference/linked_users/list",
+            "api-reference/linked_users/retrieve"
           ]
         },
         {
@@ -758,30 +790,11 @@
             "api-reference/projects/retrieve-projects",
             "api-reference/projects/create-a-project"
           ]
-        },
-        {
-          "group": "Field Mappings",
-          "pages": [
-            "api-reference/field-mapping/retrieve-field-mapping-entities",
-            "api-reference/field-mapping/retrieve-field-mappings",
-            "api-reference/field-mapping/retrieve-field-mappings-values",
-            "api-reference/field-mapping/define-target-field",
-            "api-reference/field-mapping/map-custom-field",
-            "api-reference/field-mapping/retrieve-custom-properties"
-          ]
-        },
+        }, 
         {
           "group": "Events",
           "pages": [
             "api-reference/events/retrieve-events"
-          ]
-        },
-        {
-          "group": "Magic Links",
-          "pages": [
-            "api-reference/magic-link/create-a-magic-link",
-            "api-reference/magic-link/retrieve-magic-links",
-            "api-reference/magic-link/retrieve-a-magic-link"
           ]
         },
         {
@@ -857,7 +870,7 @@
                   "group":"Selfhost",
                   "icon":"house-laptop",
                   "pages":[
-                     "open-source/self_hosting/self-host-guide",
+                     "open-source/self_hosting/guide",
                      "open-source/self_hosting/envVariables",
                      "open-source/self_hosting/ngrok"
                   ]
@@ -897,6 +910,10 @@
     {
       "name": "CRM",
       "url": "crm"
+    },
+    {
+      "name": "E-Commerce",
+      "url": "ecommerce"
     },
     {
       "name": "File Storage",

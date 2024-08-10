@@ -37,14 +37,17 @@ export class JiraService implements ITeamService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/groups/picker`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const resp = await axios.get(
+        `${connection.account_url}/3/groups/picker`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
       this.logger.log(`Synced jira teams !`);
 
       return {

@@ -15,6 +15,7 @@ export type AttachmentType =
 export class UnifiedAtsAttachmentInput {
   @ApiPropertyOptional({
     type: String,
+    example: 'https://example.com/file.pdf',
     nullable: true,
     description: 'The URL of the file',
   })
@@ -24,6 +25,7 @@ export class UnifiedAtsAttachmentInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'file.pdf',
     nullable: true,
     description: 'The name of the file',
   })
@@ -33,6 +35,8 @@ export class UnifiedAtsAttachmentInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'RESUME',
+    enum: ['RESUME', 'COVER_LETTER', 'OFFER_LETTER', 'OTHER'],
     nullable: true,
     description: 'The type of the file',
   })
@@ -41,7 +45,9 @@ export class UnifiedAtsAttachmentInput {
   attachment_type?: AttachmentType | string;
 
   @ApiPropertyOptional({
-    type: Date,
+    type: String,
+    example: '2024-10-01T12:00:00Z',
+    format: 'date-time',
     nullable: true,
     description: 'The remote creation date of the attachment',
   })
@@ -50,7 +56,9 @@ export class UnifiedAtsAttachmentInput {
   remote_created_at?: string;
 
   @ApiPropertyOptional({
-    type: Date,
+    type: String,
+    example: '2024-10-01T12:00:00Z',
+    format: 'date-time',
     nullable: true,
     description: 'The remote modification date of the attachment',
   })
@@ -60,6 +68,7 @@ export class UnifiedAtsAttachmentInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the candidate',
   })
@@ -69,6 +78,10 @@ export class UnifiedAtsAttachmentInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -81,6 +94,7 @@ export class UnifiedAtsAttachmentInput {
 export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the attachment',
   })
@@ -90,6 +104,7 @@ export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The remote ID of the attachment',
   })
@@ -99,6 +114,10 @@ export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:
@@ -108,6 +127,7 @@ export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The created date of the object',
@@ -116,6 +136,7 @@ export class UnifiedAtsAttachmentOutput extends UnifiedAtsAttachmentInput {
   created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modified date of the object',

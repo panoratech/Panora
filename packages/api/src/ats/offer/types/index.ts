@@ -5,7 +5,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IOfferService extends IBaseObjectService {
-  addOffer(
+  addOffer?(
     offerData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalOfferOutput>>;

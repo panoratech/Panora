@@ -37,14 +37,17 @@ export class JiraService implements ICollectionService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/project/search`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const resp = await axios.get(
+        `${connection.account_url}/3/project/search`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
       this.logger.log(`Synced jira collections !`);
 
       return {

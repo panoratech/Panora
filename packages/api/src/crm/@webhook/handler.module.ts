@@ -7,7 +7,6 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 @Module({
-  imports: [BullQueueModule],
   providers: [
     EnvironmentService,
     CrmWebhookHandlerService,

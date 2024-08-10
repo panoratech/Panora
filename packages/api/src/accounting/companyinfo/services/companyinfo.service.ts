@@ -32,6 +32,8 @@ export class CompanyInfoService {
     id_companyinfoing_companyinfo: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAccountingCompanyinfoOutput> {
     return;
@@ -39,6 +41,7 @@ export class CompanyInfoService {
 
   async getCompanyInfos(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

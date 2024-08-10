@@ -40,7 +40,7 @@ export class PipedriveService implements IStageService {
         where: { id_crm_deal: deal_id as string },
       });
 
-      const deals = await axios.get(`${connection.account_url}/deals`, {
+      const deals = await axios.get(`${connection.account_url}/v1/deals`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -52,7 +52,7 @@ export class PipedriveService implements IStageService {
       const deal = deals.data.data.find(
         (item) => String(item.id) === res.remote_id,
       );
-      const resp = await axios.get(`${connection.account_url}/stages`, {
+      const resp = await axios.get(`${connection.account_url}/v1/stages`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

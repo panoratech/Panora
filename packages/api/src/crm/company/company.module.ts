@@ -26,7 +26,6 @@ import { ZohoCompanyMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [CompanyController],
   providers: [
     CompanyService,

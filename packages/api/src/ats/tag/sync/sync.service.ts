@@ -134,14 +134,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
           existingTag = await this.prisma.ats_candidate_tags.findFirst({
             where: {
               name: tag.name,
-              id_connection: connection_id,
+              
             },
           });
         } else {
           existingTag = await this.prisma.ats_candidate_tags.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }
@@ -165,7 +165,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_candidate_tag: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

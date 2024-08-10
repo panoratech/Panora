@@ -2,6 +2,7 @@ import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiOperation,
+  ApiParam,
   ApiProperty,
   ApiResponse,
   ApiTags,
@@ -11,16 +12,35 @@ import { CoreSyncService } from './sync.service';
 import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
 export class ResyncStatusDto {
-  @ApiProperty({ type: Date, nullable: true })
+  @ApiProperty({ type: Date, example: '', nullable: true })
   timestamp: Date;
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({
+    type: String,
+    example: 'ticketing',
+    enum: [
+      'ticketing',
+      'ats',
+      'accounting',
+      'hris',
+      'crm',
+      'filestorage',
+      'ecommerce',
+      'marketingautomation',
+    ],
+    nullable: true,
+  })
   vertical: string;
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String, example: 'gitlab', nullable: true })
   provider: string;
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({
+    type: String,
+    example: 'success',
+    enum: ['success', 'fail'],
+    nullable: true,
+  })
   status: string;
 }
 @ApiTags('sync')
@@ -36,6 +56,21 @@ export class SyncController {
   @ApiOperation({
     operationId: 'status',
     summary: 'Retrieve sync status of a certain vertical',
+  })
+  @ApiParam({
+    name: 'vertical',
+    type: String,
+    example: 'ticketing',
+    enum: [
+      'ticketing',
+      'marketingautomation',
+      'crm',
+      'filestorage',
+      'ats',
+      'hris',
+      'accounting',
+      'ecommerce',
+    ],
   })
   @ApiResponse({ status: 200 })
   @Get('status/:vertical')

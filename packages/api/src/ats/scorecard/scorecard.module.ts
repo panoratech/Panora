@@ -16,7 +16,6 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { Utils } from '@ats/@lib/@utils';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [ScoreCardController],
   providers: [
     ScoreCardService,

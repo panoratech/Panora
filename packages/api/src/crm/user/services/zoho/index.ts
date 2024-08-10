@@ -37,7 +37,7 @@ export class ZohoService implements IUserService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/users?type=AllUsers`,
+        `${connection.account_url}/v5/users?type=AllUsers`,
         {
           headers: {
             'Content-Type': 'application/json',

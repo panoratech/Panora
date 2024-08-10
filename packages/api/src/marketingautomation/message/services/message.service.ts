@@ -31,6 +31,8 @@ export class MessageService {
     id_messageing_message: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedMarketingautomationMessageOutput> {
     return;
@@ -38,6 +40,7 @@ export class MessageService {
 
   async getMessages(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

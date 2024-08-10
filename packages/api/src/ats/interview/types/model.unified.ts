@@ -13,6 +13,8 @@ export type InterviewStatus = 'SCHEDULED' | 'AWAITING_FEEDBACK' | 'COMPLETED';
 export class UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
+    enum: ['SCHEDULED', 'AWAITING_FEEDBACK', 'COMPLETED'],
+    example: 'SCHEDULED',
     nullable: true,
     description: 'The status of the interview',
   })
@@ -22,6 +24,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the application',
   })
@@ -31,6 +34,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the job interview stage',
   })
@@ -40,6 +44,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the organizer',
   })
@@ -49,6 +54,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: [String],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     nullable: true,
     description: 'The UUIDs of the interviewers',
   })
@@ -58,6 +64,7 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'San Francisco',
     nullable: true,
     description: 'The location of the interview',
   })
@@ -66,6 +73,7 @@ export class UnifiedAtsInterviewInput {
   location?: string;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The start date and time of the interview',
@@ -75,6 +83,7 @@ export class UnifiedAtsInterviewInput {
   start_at?: string;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The end date and time of the interview',
@@ -84,6 +93,7 @@ export class UnifiedAtsInterviewInput {
   end_at?: string;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The remote creation date of the interview',
@@ -93,6 +103,7 @@ export class UnifiedAtsInterviewInput {
   remote_created_at?: string;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The remote modification date of the interview',
@@ -103,6 +114,10 @@ export class UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -115,6 +130,7 @@ export class UnifiedAtsInterviewInput {
 export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the interview',
   })
@@ -124,6 +140,7 @@ export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description:
       'The remote ID of the interview in the context of the 3rd Party',
@@ -134,6 +151,10 @@ export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:
@@ -143,6 +164,7 @@ export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The created date of the object',
@@ -151,6 +173,7 @@ export class UnifiedAtsInterviewOutput extends UnifiedAtsInterviewInput {
   created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modified date of the object',

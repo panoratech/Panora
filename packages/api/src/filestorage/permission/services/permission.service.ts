@@ -30,6 +30,8 @@ export class PermissionService {
     id_fs_permission: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedFilestoragePermissionOutput> {
     try {
@@ -59,9 +61,7 @@ export class PermissionService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedFilestoragePermissionOutput format
       const unifiedPermission: UnifiedFilestoragePermissionOutput = {
@@ -93,6 +93,8 @@ export class PermissionService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'filestorage.permission.pull',
@@ -113,6 +115,7 @@ export class PermissionService {
 
   async getPermissions(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -165,68 +168,72 @@ export class PermissionService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedPermissions: UnifiedFilestoragePermissionOutput[] = await Promise.all(
-        permissions.map(async (permission) => {
-          // Fetch field mappings for the permission
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: permission.id_fs_permission,
+      const unifiedPermissions: UnifiedFilestoragePermissionOutput[] =
+        await Promise.all(
+          permissions.map(async (permission) => {
+            // Fetch field mappings for the permission
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: {
+                  ressource_owner_id: permission.id_fs_permission,
+                },
               },
-            },
-            include: {
-              attribute: true,
-            },
-          });
+              include: {
+                attribute: true,
+              },
+            });
 
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
+            // Create a map to store unique field mappings
+            const fieldMappingsMap = new Map();
 
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
 
-          // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+            // Convert the map to an array of objects
+            const field_mappings = Array.from(
+              fieldMappingsMap,
+              ([key, value]) => ({ [key]: value }),
+            );
 
-          // Transform to UnifiedFilestoragePermissionOutput format
-          return {
-            id: permission.id_fs_permission,
-            user_id: permission.user,
-            group_id: permission.group,
-            type: permission.type,
-            roles: permission.roles,
-            field_mappings: field_mappings,
-            remote_id: permission.remote_id,
-            created_at: permission.created_at,
-            modified_at: permission.modified_at,
-          };
-        }),
-      );
+            // Transform to UnifiedFilestoragePermissionOutput format
+            return {
+              id: permission.id_fs_permission,
+              user_id: permission.user,
+              group_id: permission.group,
+              type: permission.type,
+              roles: permission.roles,
+              field_mappings: field_mappings,
+              remote_id: permission.remote_id,
+              created_at: permission.created_at,
+              modified_at: permission.modified_at,
+            };
+          }),
+        );
 
       let res: UnifiedFilestoragePermissionOutput[] = unifiedPermissions;
 
       if (remote_data) {
-        const remote_array_data: UnifiedFilestoragePermissionOutput[] = await Promise.all(
-          res.map(async (permission) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: permission.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...permission, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedFilestoragePermissionOutput[] =
+          await Promise.all(
+            res.map(async (permission) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: permission.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...permission, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'filestorage.permission.pull',

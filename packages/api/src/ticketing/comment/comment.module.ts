@@ -1,3 +1,5 @@
+import { GithubCommentMapper } from './services/github/mappers';
+import { GithubService } from './services/github';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
@@ -20,7 +22,6 @@ import { ZendeskService } from './services/zendesk';
 import { ZendeskCommentMapper } from './services/zendesk/mappers';
 import { SyncService } from './sync/sync.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [CommentController],
   providers: [
     CommentService,
@@ -42,6 +43,8 @@ import { SyncService } from './sync/sync.service';
     JiraCommentMapper,
     GorgiasCommentMapper,
     GitlabCommentMapper,
+    GithubService,
+    GithubCommentMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

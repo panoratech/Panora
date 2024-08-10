@@ -14,6 +14,8 @@ export class UserService {
     id_ats_user: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsUserOutput> {
     try {
@@ -47,9 +49,7 @@ export class UserService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedAtsUserOutput format
       const unifiedUser: UnifiedAtsUserOutput = {
@@ -83,6 +83,8 @@ export class UserService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.user.pull',
@@ -103,6 +105,7 @@ export class UserService {
 
   async getUsers(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -139,9 +142,7 @@ export class UserService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (users.length === limit + 1) {
@@ -176,12 +177,7 @@ export class UserService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedAtsUserOutput format
           return {
@@ -220,6 +216,8 @@ export class UserService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.user.pull',

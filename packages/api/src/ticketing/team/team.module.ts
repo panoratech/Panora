@@ -1,3 +1,5 @@
+import { GithubTeamMapper } from './services/github/mappers';
+import { GithubService } from './services/github';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -17,7 +19,6 @@ import { SyncService } from './sync/sync.service';
 import { TeamController } from './team.controller';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [TeamController],
   providers: [
     TeamService,
@@ -36,6 +37,8 @@ import { TeamController } from './team.controller';
     FrontTeamMapper,
     JiraTeamMapper,
     GorgiasTeamMapper,
+    GithubService,
+    GithubTeamMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

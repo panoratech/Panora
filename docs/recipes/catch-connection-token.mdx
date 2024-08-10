@@ -108,49 +108,46 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
         ```shell Curl
         curl --request POST \
              --url https://api.panora.dev/webhook \
-             --header 'Authorization: Bearer <MY_API_KEY>' \
+             --header 'x-api-key: <api-key>' \
              --header 'Content-Type: application/json' \
              --data '{
-                "url": "https://example.com/my/webhook/endpoint",
+                "url": "https://acme.com/webhook_receiver",
                 "description": "Receive Connection Creation Events",
                 "scope": [
                     "connection.created"
                 ]
              }'
         ```
-
+ 
         ```ts Typescript
-        import { PanoraSDK } from '@panora/sdk-typescript';
+        import { Panora } from '@panora/sdk';
 
-        const sdk = new PanoraSDK({ accessToken: MY_API_KEY});
+        const panora = new Panora({ apiKey: process.env.API_KEY});
 
-        const input = {
-            description: 'Receive Connection Creation Events',
-            scope: ['connection.created'],
-            url: 'https://example.com/my/webhook/endpoint',
-        };
-        const result = await sdk.webhook.createWebhookMetadata(input);
+        const result = await panora.webhooks.create({
+            url: "https://acme.com/webhook_receiver",
+            description: "Webhook to receive connection events",
+            scope: [
+                "connection.created",
+            ],
+        });
         console.log(result);
         ```
 
         ```python Python
-        from panorasdk import PanoraSDK
+        import os
+        from panora_sdk import Panora
 
-        sdk = PanoraSDK()
-
-        sdk.set_access_token("MY_API_KEY")
-
-        request_body = {
-            description: 'Receive Connection Creation Events',
-            scope: ['connection.created'],
-            url: 'https://example.com/my/webhook/endpoint',
-        }
-
-        results = sdk.webhook.create_webhook_metadata(
-            request_input = request_body,
+        panora = Panora(
+            api_key=os.getenv("API_KEY", ""),
         )
 
-        print(results)
+        res = panora.webhooks.create(request={
+            "url": "https://acme.com/webhook_receiver",
+            "scope": [
+                "connection.created",
+            ],
+        })
         ```
         </CodeGroup>
 
@@ -165,11 +162,11 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
         <CodeGroup>
         ```javascript Node
         import express, { Request, Response } from 'express';
-        import { PanoraSDK } from '@panora/sdk-typescript';
+        import { Panora } from '@panora/sdk';
 
         // Set your api key
         // See your keys here: https://dashboard.panora.dev/api-keys
-        const panora = new PanoraSDK({ accessToken: "MY_API_KEY" });
+        const panora = new Panora({ apiKey: process.env.API_KEY });
 
         // Find your endpoint's secret in your webhook settings in the Config Page
         const endpointSecret = 'whsec_...';
@@ -187,7 +184,11 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
 
             try {
                 // Verifies that the event comes from Panora and not from malicious sender
-                event = await panora.webhook.verifyEvent(request.body, sig, endpointSecret);
+                event = await panora.webhooks.verifyEvent({
+                    payload: request.body,
+                    signature: sig,
+                    secret: endpointSecret,
+                });
             }
             catch (err) {
                 response.status(400).send(`Webhook Error: ${err.message}`);
@@ -213,13 +214,15 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
 
 
         ```python Python
-        from panorasdk import PanoraSDK
+        import os
+        from panora_sdk import Panora
         from django.http import HttpResponse
 
         # Set your secret key.
         # See your keys here: https://dashboard.panora.dev/api-keys
-        panora = PanoraSDK('YOUR_API_KEY')
-
+        panora = Panora(
+            api_key=os.getenv("API_KEY", ""),
+        )
         # Find your endpoint's secret in your webhook settings in the Config Page
         endpoint_secret = 'whsec_...'
 
@@ -233,9 +236,11 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
 
             try:
                 # Verifies that the event comes from Panora and not from malicious sender
-                event = panora.webhook.verify_event(
-                    payload, sig_header, endpoint_secret
-                )
+                event = panora.webhooks.verify_event(request={
+                    "payload": payload,
+                    "signature": sig_header,
+                    "secret": endpoint_secret,
+                })
             except ValueError as e:
                 # Invalid payload
                 print('Error parsing payload: {}'.format(str(e)))

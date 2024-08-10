@@ -30,6 +30,7 @@ export class ContactService {
   async addContact(
     unifiedContactData: UnifiedMarketingautomationContactInput,
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -41,6 +42,8 @@ export class ContactService {
     id_contacting_contact: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedMarketingautomationContactOutput> {
     return;
@@ -48,6 +51,7 @@ export class ContactService {
 
   async getContacts(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

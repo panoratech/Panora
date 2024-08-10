@@ -38,7 +38,7 @@ export class CloseService implements IContactService {
       });
 
       const resp = await axios.post(
-        `${connection.account_url}/contact`,
+        `${connection.account_url}/v1/contact`,
         JSON.stringify(contactData),
         {
           headers: {
@@ -71,7 +71,7 @@ export class CloseService implements IContactService {
         },
       });
 
-      const baseURL = `${connection.account_url}/contact`;
+      const baseURL = `${connection.account_url}/v1/contact`;
 
       const resp = await axios.get(baseURL, {
         headers: {

@@ -3,13 +3,14 @@ import { useMutation } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 
 interface ResetPasswordData {
-    token: string;
-    newPassword: string;
+    email: string;
+    reset_token: string;
+    new_password: string;
 }
 
 const useResetPassword = () => {
     const call = async (data: ResetPasswordData) => {
-        const response = await fetch(`${config.API_URL}/auth/reset-password`, {
+        const response = await fetch(`${config.API_URL}/auth/reset_password`, {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

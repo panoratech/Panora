@@ -32,6 +32,7 @@ export class ApplicationService {
   async addApplication(
     unifiedApplicationData: UnifiedAtsApplicationInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -109,12 +110,16 @@ export class ApplicationService {
         unique_ats_application_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'ats.application.created',
@@ -189,6 +194,8 @@ export class ApplicationService {
     id_ats_application: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsApplicationOutput> {
     try {
@@ -208,9 +215,7 @@ export class ApplicationService {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       const resOffers = await this.prisma.ats_offers.findMany({
         where: {
@@ -257,6 +262,8 @@ export class ApplicationService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'ats.application.pull',
@@ -278,6 +285,7 @@ export class ApplicationService {
 
   async getApplications(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -308,9 +316,7 @@ export class ApplicationService {
         take: limit + 1,
         cursor: cursor ? { id_ats_application: cursor } : undefined,
         orderBy: { created_at: 'asc' },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (applications.length === limit + 1) {
@@ -396,6 +402,8 @@ export class ApplicationService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.application.pull',

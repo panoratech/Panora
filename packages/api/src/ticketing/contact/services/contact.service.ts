@@ -15,6 +15,8 @@ export class ContactService {
     id_ticketing_contact: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketingContactOutput> {
     try {
@@ -44,9 +46,7 @@ export class ContactService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedTicketingContactOutput format
       const unifiedContact: UnifiedTicketingContactOutput = {
@@ -72,6 +72,8 @@ export class ContactService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.contact.pull',
@@ -91,7 +93,8 @@ export class ContactService {
   }
 
   async getContacts(
-    connection_id: string,
+   connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -166,10 +169,8 @@ export class ContactService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedTicketingContactOutput format
           return {
@@ -205,6 +206,8 @@ export class ContactService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.contact.pull',

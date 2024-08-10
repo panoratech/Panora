@@ -1,32 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import {
-  Action,
-  ActionType,
-  ConnectionsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { ICrmConnectionService } from '../../types';
-import { ServiceRegistry } from '../registry.service';
-import {
-  OAuth2AuthData,
-  CONNECTORS_METADATA,
-  providerToType,
-} from '@panora/shared';
-import { AuthStrategy } from '@panora/shared';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import {
+  AbstractBaseConnectionService,
   OAuthCallbackParams,
+  PassthroughInput,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { PassthroughResponse } from '@@core/passthrough/types';
+import { Injectable } from '@nestjs/common';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../registry.service';
 
 export type CopperOAuthResponse = {
   access_token: string;
@@ -35,20 +30,64 @@ export type CopperOAuthResponse = {
 };
 
 @Injectable()
-export class CopperConnectionService implements ICrmConnectionService {
+export class CopperConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
   constructor(
-    private prisma: PrismaService,
+    protected prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
-    private cryptoService: EncryptionService,
+    protected cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
     private connectionUtils: ConnectionUtils,
+    private retryService: RetryHandler,
   ) {
+    super(prisma, cryptoService);
     this.logger.setContext(CopperConnectionService.name);
     this.registry.registerService('copper', this);
     this.type = providerToType('copper', 'crm', AuthStrategy.oauth2);
+  }
+
+  async passthrough(
+    input: PassthroughInput,
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
+    try {
+      const { headers } = input;
+      const config = await this.constructPassthrough(input, connectionId);
+
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: connectionId,
+        },
+      });
+
+      config.headers['Authorization'] = `Basic ${Buffer.from(
+        `${this.cryptoService.decrypt(connection.access_token)}:`,
+      ).toString('base64')}`;
+
+      config.headers = {
+        ...config.headers,
+        ...headers,
+      };
+
+      return await this.retryService.makeRequest(
+        {
+          method: config.method,
+          url: config.url,
+          data: config.data,
+          headers: config.headers,
+        },
+        'crm.copper.passthrough',
+        config.linkedUserId,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  handleTokenRefresh?(opts: RefreshParams): Promise<any> {
+    return Promise.resolve();
   }
 
   async handleCallback(opts: OAuthCallbackParams) {
@@ -111,7 +150,7 @@ export class CopperConnectionService implements ICrmConnectionService {
             connection_token: connection_token,
             provider_slug: 'copper',
             vertical: 'crm',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['crm']['copper'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),

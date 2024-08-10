@@ -5,7 +5,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IJobService extends IBaseObjectService {
-  addJob(
+  addJob?(
     jobData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalJobOutput>>;

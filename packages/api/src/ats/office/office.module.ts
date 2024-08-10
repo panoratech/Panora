@@ -18,7 +18,6 @@ import { AshbyOfficeMapper } from './services/ashby/mappers';
 import { Utils } from '@ats/@lib/@utils';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [OfficeController],
   providers: [
     OfficeService,

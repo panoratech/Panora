@@ -13,6 +13,8 @@ export type ActivityVisibility = 'ADMIN_ONLY' | 'PUBLIC' | 'PRIVATE';
 export class UnifiedAtsActivityInput {
   @ApiPropertyOptional({
     type: String,
+    enum: ['NOTE', 'EMAIL', 'OTHER'],
+    example: 'NOTE',
     nullable: true,
     description: 'The type of activity',
   })
@@ -22,6 +24,7 @@ export class UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'Email subject',
     nullable: true,
     description: 'The subject of the activity',
   })
@@ -31,6 +34,7 @@ export class UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'Dear Diana, I love you',
     nullable: true,
     description: 'The body of the activity',
   })
@@ -40,6 +44,8 @@ export class UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
+    enum: ['ADMIN_ONLY', 'PUBLIC', 'PRIVATE'],
+    example: 'PUBLIC',
     nullable: true,
     description: 'The visibility of the activity',
   })
@@ -49,6 +55,7 @@ export class UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the candidate',
   })
@@ -57,7 +64,9 @@ export class UnifiedAtsActivityInput {
   candidate_id?: string;
 
   @ApiPropertyOptional({
-    type: Date,
+    type: String,
+    format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The remote creation date of the activity',
   })
@@ -67,6 +76,10 @@ export class UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -79,6 +92,7 @@ export class UnifiedAtsActivityInput {
 export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the activity',
   })
@@ -88,6 +102,7 @@ export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description:
       'The remote ID of the activity in the context of the 3rd Party',
@@ -98,6 +113,10 @@ export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:
@@ -107,6 +126,7 @@ export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The created date of the object',
@@ -115,6 +135,7 @@ export class UnifiedAtsActivityOutput extends UnifiedAtsActivityInput {
   created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modified date of the object',

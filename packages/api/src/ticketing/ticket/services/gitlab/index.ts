@@ -42,7 +42,7 @@ export class GitlabService implements ITicketService {
       };
 
       const resp = await axios.post(
-        `${connection.account_url}/projects/${ticketData.project_id}/issues`,
+        `${connection.account_url}/v4/projects/${ticketData.project_id}/issues`,
         JSON.stringify(DATA),
         {
           headers: {
@@ -56,7 +56,7 @@ export class GitlabService implements ITicketService {
       //insert comment
       if (comment) {
         const resp_ = await axios.post(
-          `${connection.account_url}/projects/${ticketData.project_id}/issues/${resp.data.iid}/notes`,
+          `${connection.account_url}/v4/projects/${ticketData.project_id}/issues/${resp.data.iid}/notes`,
           JSON.stringify(comment),
           {
             headers: {
@@ -90,7 +90,7 @@ export class GitlabService implements ITicketService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/issues?scope=created_by_me&scope=assigned_to_me`,
+        `${connection.account_url}/v4/issues?scope=created_by_me&scope=assigned_to_me`,
         {
           headers: {
             'Content-Type': 'application/json',

@@ -36,7 +36,7 @@ export class CloseService implements IDealService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/opportunity`,
+        `${connection.account_url}/v1/opportunity`,
         JSON.stringify(dealData),
         {
           headers: {
@@ -71,7 +71,7 @@ export class CloseService implements IDealService {
         },
       });
 
-      const baseURL = `${connection.account_url}/opportunity`;
+      const baseURL = `${connection.account_url}/v1/opportunity`;
       const resp = await axios.get(baseURL, {
         headers: {
           'Content-Type': 'application/json',

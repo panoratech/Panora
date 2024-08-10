@@ -43,7 +43,7 @@ export class JiraService implements ITicketService {
       //first check if issueType is the right one
 
       const a = await axios.get(
-        `${connection.account_url}/issuetype/project?projectId=${ticketData.fields.project.id}`,
+        `${connection.account_url}/3/issuetype/project?projectId=${ticketData.fields.project.id}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export class JiraService implements ITicketService {
       } else {
         //insert the issuetype
         const resp = await axios.post(
-          `${connection.account_url}/issuetype`,
+          `${connection.account_url}/3/issuetype`,
           JSON.stringify({
             description: ticketData.fields.issuetype.name,
             name: ticketData.fields.issuetype.name,
@@ -135,7 +135,7 @@ export class JiraService implements ITicketService {
         },
       };
       const resp = await axios.post(
-        `${connection.account_url}/issue`,
+        `${connection.account_url}/3/issue`,
         JSON.stringify(ticketData),
         {
           headers: {
@@ -150,7 +150,7 @@ export class JiraService implements ITicketService {
       if (comment && comment[0]) {
         // Add comment if someone wants to add one when creation of the ticket
         const resp_comment = await axios.post(
-          `${connection.account_url}/issue/${resp.data.id}/comment`,
+          `${connection.account_url}/3/issue/${resp.data.id}/comment`,
           JSON.stringify(comment[0]),
           {
             headers: {
@@ -198,7 +198,7 @@ export class JiraService implements ITicketService {
 
         // Send request with attachments
         const resp_ = await axios.post(
-          `${connection.account_url}/issue/${resp.data.id}/attachments`,
+          `${connection.account_url}/3/issue/${resp.data.id}/attachments`,
           formData,
           {
             headers: {
@@ -240,7 +240,7 @@ export class JiraService implements ITicketService {
           vertical: 'ticketing',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/search`, {
+      const resp = await axios.get(`${connection.account_url}/3/search`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -26,12 +26,6 @@ export class AshbyService implements IOfferService {
     );
     this.registry.registerService('ashby', this);
   }
-  addOffer(
-    offerData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalOfferOutput>> {
-    throw new Error('Method not implemented.');
-  }
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyOfferOutput[]>> {
     try {

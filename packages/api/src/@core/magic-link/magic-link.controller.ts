@@ -1,11 +1,20 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { MagicLinkService } from './magic-link.service';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';
 import {
   ApiBody,
   ApiExcludeController,
   ApiOperation,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -48,10 +57,15 @@ export class MagicLinkController {
     operationId: 'getMagicLink',
     summary: 'Retrieve Magic Links',
   })
-  @ApiQuery({ name: 'id', required: true, type: String })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    type: String,
+  })
   @ApiResponse({ status: 200 })
-  @Get('single')
-  getMagicLink(@Query('id') id: string) {
+  @Get(':id')
+  getMagicLink(@Param('id') id: string) {
     return this.magicLinkService.getMagicLink(id);
   }
 }

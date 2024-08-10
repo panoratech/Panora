@@ -26,12 +26,6 @@ export class AshbyService implements ITagService {
     );
     this.registry.registerService('ashby', this);
   }
-  addTag(
-    tagData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalTagOutput>> {
-    throw new Error('Method not implemented.');
-  }
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyTagOutput[]>> {
     try {

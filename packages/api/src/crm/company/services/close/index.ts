@@ -40,7 +40,7 @@ export class CloseService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/lead`,
+        `${connection.account_url}/v1/lead`,
         JSON.stringify(companyData),
         {
           headers: {
@@ -75,7 +75,7 @@ export class CloseService implements ICompanyService {
 
       const commonPropertyNames = Object.keys(commonCompanyCloseProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/lead`;
+      const baseURL = `${connection.account_url}/v1/lead`;
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
         .join('&');

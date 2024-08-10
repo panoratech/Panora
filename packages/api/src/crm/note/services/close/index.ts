@@ -37,7 +37,7 @@ export class CloseService implements INoteService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/activity/note`,
+        `${connection.account_url}/v1/activity/note`,
         JSON.stringify(noteData),
         {
           headers: {
@@ -70,7 +70,7 @@ export class CloseService implements INoteService {
         },
       });
 
-      const baseURL = `${connection.account_url}/activity/note`;
+      const baseURL = `${connection.account_url}/v1/activity/note`;
 
       const resp = await axios.get(baseURL, {
         headers: {

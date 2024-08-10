@@ -4,6 +4,7 @@ import { IsOptional, IsString, IsUUID } from 'class-validator';
 export class UnifiedCrmNoteInput {
   @ApiProperty({
     type: String,
+    example: 'My notes taken during the meeting',
     description: 'The content of the note',
     nullable: true,
   })
@@ -12,8 +13,9 @@ export class UnifiedCrmNoteInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the user tied to the note',
     nullable: true,
-    description: 'The UUID of the user tied the note',
   })
   @IsUUID()
   @IsOptional()
@@ -21,6 +23,7 @@ export class UnifiedCrmNoteInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the company tied to the note',
   })
@@ -30,8 +33,9 @@ export class UnifiedCrmNoteInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the contact tied to the note',
     nullable: true,
-    description: 'The UUID fo the contact tied to the note',
   })
   @IsUUID()
   @IsOptional()
@@ -39,6 +43,7 @@ export class UnifiedCrmNoteInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the deal tied to the note',
   })
@@ -48,6 +53,10 @@ export class UnifiedCrmNoteInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     description:
       'The custom field mappings of the note between the remote 3rd party & Panora',
@@ -60,6 +69,7 @@ export class UnifiedCrmNoteInput {
 export class UnifiedCrmNoteOutput extends UnifiedCrmNoteInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the note',
   })
@@ -69,8 +79,9 @@ export class UnifiedCrmNoteOutput extends UnifiedCrmNoteInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
+    description: 'The ID of the note in the context of the Crm 3rd Party',
     nullable: true,
-    description: 'The id of the note in the context of the Crm 3rd Party',
   })
   @IsString()
   @IsOptional()
@@ -78,6 +89,10 @@ export class UnifiedCrmNoteOutput extends UnifiedCrmNoteInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:
@@ -87,6 +102,7 @@ export class UnifiedCrmNoteOutput extends UnifiedCrmNoteInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The created date of the object',
@@ -95,6 +111,7 @@ export class UnifiedCrmNoteOutput extends UnifiedCrmNoteInput {
   created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modified date of the object',

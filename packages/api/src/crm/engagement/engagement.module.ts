@@ -24,7 +24,6 @@ import { ZohoService } from './services/zoho';
 import { ZohoEngagementMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [EngagementController],
   providers: [
     EngagementService,

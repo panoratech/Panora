@@ -8,7 +8,6 @@ import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { Utils } from '@filestorage/@lib/@utils';
 @Module({
-  imports: [BullQueueModule],
   controllers: [DriveController],
   providers: [
     DriveService,

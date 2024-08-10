@@ -26,13 +26,6 @@ export class AshbyService implements IDepartmentService {
     );
     this.registry.registerService('ashby', this);
   }
-  addDepartment(
-    departmentData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalDepartmentOutput>> {
-    throw new Error('Method not implemented.');
-  }
-
   async sync(data: SyncParam): Promise<ApiResponse<AshbyDepartmentOutput[]>> {
     try {
       const { linkedUserId } = data;

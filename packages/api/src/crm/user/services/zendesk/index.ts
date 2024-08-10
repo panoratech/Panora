@@ -35,7 +35,7 @@ export class ZendeskService implements IUserService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/users`, {
+      const resp = await axios.get(`${connection.account_url}/v2/users`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

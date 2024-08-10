@@ -38,7 +38,7 @@ export class ZohoService implements IContactService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/Contacts`,
+        `${connection.account_url}/v5/Contacts`,
         { data: [contactData] },
         {
           headers: {
@@ -51,7 +51,7 @@ export class ZohoService implements IContactService {
       );
 
       const final_res = await axios.get(
-        `${connection.account_url}/Contacts/${resp.data.data[0].details.id}`,
+        `${connection.account_url}/v5/Contacts/${resp.data.data[0].details.id}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export class ZohoService implements IContactService {
       const fields =
         'First_Name,Last_Name,Full_Name,Email,Phone,Mailing_Street,Other_Street,Mailing_City,Other_City,Mailing_State,Other_State,Mailing_Zip,Other_Zip,Mailing_Country,Other_Country';
       const resp = await axios.get(
-        `${connection.account_url}/Contacts?fields=${fields}`,
+        `${connection.account_url}/v5/Contacts?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',
