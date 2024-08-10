@@ -24,6 +24,11 @@ export class RedtailOpportunityService implements IOpportunityService {
     this.registry.registerService('redtail-opportunity', this);
   }
 
+  private getBasicAuthHeader(username: string, password: string, apiKey: string): string {
+    const credentials = `${apiKey}:${username}:${password}`;
+    return `Basic ${Buffer.from(credentials).toString('base64')}`;
+  }
+
   async addOpportunity(
     opportunityData: RedtailOpportunityInput,
     linkedUserId: string,
@@ -37,15 +42,19 @@ export class RedtailOpportunityService implements IOpportunityService {
         },
       });
 
+      const authHeader = this.getBasicAuthHeader(
+        connection.username, // assuming these fields exist
+        connection.password,
+        connection.api_key,
+      );
+
       const resp = await axios.post(
         `${connection.account_url}/opportunities`,
         JSON.stringify(opportunityData),
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
+            Authorization: authHeader,
           },
         },
       );
@@ -72,12 +81,16 @@ export class RedtailOpportunityService implements IOpportunityService {
         },
       });
 
+      const authHeader = this.getBasicAuthHeader(
+        connection.username, 
+        connection.password,
+        connection.api_key,
+      );
+
       const resp = await axios.get(`${connection.account_url}/opportunities`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+          Authorization: authHeader,
         },
       });
 

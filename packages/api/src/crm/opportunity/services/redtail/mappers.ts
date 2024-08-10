@@ -6,7 +6,10 @@ import {
   UnifiedOpportunityOutput,
 } from '@crm/opportunity/types/model.unified';
 import { Injectable } from '@nestjs/common';
-import { RetailOpportunityInput, RetailOpportunityOutput } from './types';
+import {
+  RedtailOpportunityInput,
+  RedtailOpportunityOutput,
+} from './types';
 
 @Injectable()
 export class RetailOpportunityMapper implements IOpportunityMapper {
@@ -20,31 +23,37 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<RetailOpportunityInput> {
-    const result: any = {
-      name: source.title,
+  ): Promise<RedtailOpportunityInput> {
+    const result: RedtailOpportunityInput = {
+      title: source.title,
       description: source.description,
       amount: source.amount,
-      close_date: source.close_date ? new Date(source.close_date).toISOString() : null,
+      close_date: source.close_date ? new Date(source.close_date) : undefined,
+      probability: source.probability,
+      stage: source.stage || 'Prospecting', // Default stage
+      projected_revenue: source.projected_revenue,
+      actual_revenue: source.actual_revenue,
+      deleted: source.deleted,
     };
 
     if (source.owner_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.owner_id);
       if (owner_id) {
-        result.owner_id = owner_id;
+        result.owner_id = { id: owner_id, name: '', email: '', has_pic: 0, pic_hash: '', active_flag: false, value: 0 };
       }
     }
+
     if (source.account_id) {
-      result.account_id = await this.utils.getRemoteIdFromAccountUuid(source.account_id);
+      result.company_id = await this.utils.getRemoteIdFromAccountUuid(source.account_id);
     }
 
     if (customFieldMappings && source.field_mappings) {
-      for (const [k, v] of Object.entries(source.field_mappings)) {
+      for (const [slug, value] of Object.entries(source.field_mappings)) {
         const mapping = customFieldMappings.find(
-          (mapping) => mapping.slug === k,
+          (mapping) => mapping.slug === slug,
         );
         if (mapping) {
-          result[mapping.remote_id] = v;
+          result[mapping.remote_id] = value;
         }
       }
     }
@@ -53,7 +62,7 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
   }
 
   async unify(
-    source: RetailOpportunityOutput | RetailOpportunityOutput[],
+    source: RedtailOpportunityOutput | RedtailOpportunityOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
@@ -61,7 +70,7 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
     }[],
   ): Promise<UnifiedOpportunityOutput | UnifiedOpportunityOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleOpportunityToUnified(
+      return this.mapSingleOpportunityToUnified(
         source,
         connectionId,
         customFieldMappings,
@@ -80,7 +89,7 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
   }
 
   private async mapSingleOpportunityToUnified(
-    opportunity: RetailOpportunityOutput,
+    opportunity: RedtailOpportunityOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
@@ -95,40 +104,40 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
     }
 
     let opts: any = {};
-    if (opportunity.owner_id) {
+    if (opportunity.owner_id?.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
-        opportunity.owner_id,
+        opportunity.owner_id.id,
         connectionId,
       );
       if (user_id) {
-        opts = {
-          ...opts,
-          owner_id: user_id,
-        };
+        opts.owner_id = user_id;
       }
     }
-    if (opportunity.account_id) {
+
+    if (opportunity.company_id) {
       const account_id = await this.utils.getAccountUuidFromRemoteId(
-        opportunity.account_id,
+        opportunity.company_id.toString(),
         connectionId,
       );
       if (account_id) {
-        opts = {
-          ...opts,
-          account_id: account_id,
-        };
+        opts.account_id = account_id;
       }
     }
 
     return {
       remote_id: opportunity.id,
       remote_data: opportunity,
-      title: opportunity.name,
+      title: opportunity.title,
       description: opportunity.description,
       amount: opportunity.amount,
-      close_date: opportunity.close_date,
+      close_date: opportunity.close_date.toISOString(),
       field_mappings,
       ...opts,
+      probability: opportunity.probability,
+      stage: opportunity.stage,
+      projected_revenue: opportunity.projected_revenue,
+      actual_revenue: opportunity.actual_revenue,
+      deleted: opportunity.deleted,
     };
   }
 }

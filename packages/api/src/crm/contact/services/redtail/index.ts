@@ -4,7 +4,6 @@ import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
@@ -38,15 +37,15 @@ export class RedtailService implements IContactService {
         },
       });
 
+      const authHeader = this.createAuthHeader(connection.api_key, connection.user_key);
+
       const resp = await axios.post(
         `${connection.account_url}/contacts`,
         JSON.stringify(contactData),
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
+            Authorization: authHeader,
           },
         },
       );
@@ -71,12 +70,13 @@ export class RedtailService implements IContactService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/persons`, {
+
+      const authHeader = this.createAuthHeader(connection.api_key, connection.user_key);
+
+      const resp = await axios.get(`${connection.account_url}/contacts`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+          Authorization: authHeader,
         },
       });
 
@@ -88,5 +88,10 @@ export class RedtailService implements IContactService {
     } catch (error) {
       throw error;
     }
+  }
+
+  private createAuthHeader(apiKey: string, userKey: string): string {
+    const credentials = `${apiKey}:${userKey}`;
+    return `Userkeyauth ${Buffer.from(credentials).toString('base64')}`;
   }
 }

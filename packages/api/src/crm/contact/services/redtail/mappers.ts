@@ -1,13 +1,11 @@
-import { Address } from '@crm/@lib/@types';
 import {
   UnifiedContactInput,
   UnifiedContactOutput,
-
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
 import { RedtailContactInput, RedtailContactOutput } from './types';
-import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { Utils } from '@crm/lib/utils';
+import { MappersRegistry } from '@core/core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -27,7 +25,7 @@ export class RedtailContactMapper implements IContactMapper {
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
     const emailObject = primaryEmail
-      ? [{ value: primaryEmail, primary: true, label: null }]
+      ? [{ value: primaryEmail, primary: true, label: '' }]
       : [];
     const phoneObject = primaryPhone
       ? [
@@ -37,7 +35,7 @@ export class RedtailContactMapper implements IContactMapper {
             label:
               source.phone_numbers?.[0]?.phone_type == 'MOBILE'
                 ? 'Mobile'
-                : null,
+                : '',
           },
         ]
       : [];
@@ -55,7 +53,7 @@ export class RedtailContactMapper implements IContactMapper {
           name: owner.name,
           email: owner.email,
           has_pic: 0,
-          pic_hash: null,
+          pic_hash: "",
           active_flag: false,
           value: 0,
         };
@@ -91,7 +89,6 @@ export class RedtailContactMapper implements IContactMapper {
       );
     }
 
-    // Handling array of HubspotContactOutput
     return Promise.all(
       source.map((contact) =>
         this.mapSingleContactToUnified(
@@ -118,7 +115,7 @@ export class RedtailContactMapper implements IContactMapper {
       }
     }
     let opts: any = {};
-    if (contact.owner_id.id) {
+    if (contact.owner_id?.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(contact.owner_id.id),
         connectionId,
@@ -135,11 +132,11 @@ export class RedtailContactMapper implements IContactMapper {
       remote_data: contact,
       first_name: contact.first_name,
       last_name: contact.last_name,
-      email_addresses: contact.email.map((e) => ({
+      email_addresses: contact.email?.map((e) => ({
         email_address: e.value,
         email_address_type: e.label ? e.label.toUpperCase() : null,
       })), // Map each email
-      phone_numbers: contact.phone.map((p) => ({
+      phone_numbers: contact.phone?.map((p) => ({
         phone_number: p.value,
         phone_type: p.label ? p.label.toUpperCase() : null,
       })), // Map each phone number,

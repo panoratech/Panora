@@ -4,21 +4,13 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { Utils } from '@crm/@lib/@utils';
 import { Module } from '@nestjs/common';
 import { OpportunityController } from './opportunity.controller';
-import { CloseService } from './services/close';
-import { CloseOpportunityMapper } from './services/close/mappers';
-import { HubspotService } from './services/hubspot';
-import { AttioService } from './services/attio';
-import { HubspotOpportunityMapper } from './services/hubspot/mappers';
 import { OpportunityService } from './services/opportunity.service';
-import { PipedriveService } from './services/pipedrive';
-import { PipedriveOpportunityMapper } from './services/pipedrive/mappers';
+import { RedtailService } from './services/pipedrive';
+import { RedtailOpportunityMapper } from './services/pipedrive/mappers';
 import { ServiceRegistry } from './services/registry.service';
-import { ZendeskService } from './services/zendesk';
-import { ZendeskOpportunityMapper } from './services/zendesk/mappers';
-import { ZohoService } from './services/zoho';
-import { ZohoOpportunityMapper } from './services/zoho/mappers';
-import { AttioOpportunityMapper } from './services/attio/mappers';
 import { SyncService } from './sync/sync.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 
 @Module({
   imports: [BullQueueModule],
@@ -30,20 +22,12 @@ import { SyncService } from './sync/sync.service';
     ServiceRegistry,
     Utils,
     IngestDataService,
+    ConnectionUtils,
+    LoggerService,
     /* PROVIDERS SERVICES */
-    ZendeskService,
-    ZohoService,
-    PipedriveService,
-    HubspotService,
-    AttioService,
-    CloseService,
+    RedtailService,
     /* PROVIDERS MAPPERS */
-    ZendeskOpportunityMapper,
-    ZohoOpportunityMapper,
-    PipedriveOpportunityMapper,
-    AttioOpportunityMapper,
-    HubspotOpportunityMapper,
-    CloseOpportunityMapper,
+    RedtailOpportunityMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

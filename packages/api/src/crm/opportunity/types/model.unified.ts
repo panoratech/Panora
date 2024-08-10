@@ -63,4 +63,14 @@ export class UnifiedOpportunityOutput extends UnifiedOpportunityInput {
   @ApiPropertyOptional({ type: {}, description: 'The modified date of the object' })
   @IsOptional()
   modified_at?: any;
+
+  @ApiPropertyOptional({ type: String, description: 'The title of the opportunity' })
+  @IsString()
+  @IsOptional()
+  title?: string;
+
+  @ApiPropertyOptional({ type: Number, description: 'The amount of the opportunity' })
+  @IsNumber()
+  @IsOptional()
+  amount?: number;
 }

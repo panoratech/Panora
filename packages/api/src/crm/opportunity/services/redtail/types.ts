@@ -1,5 +1,3 @@
-// opportunity -> service -> redtail -> types.ts
-
 export interface RedtailOpportunity {
   id: string;
   title: string;
@@ -25,13 +23,15 @@ export interface RedtailOpportunity {
   won_deals_count: number;
   lost_deals_count: number;
   active_flag: boolean;
+  projected_revenue?: number;
+  actual_revenue?: number;
+  deleted?: boolean;
   [key: string]: any;
 }
 
 export type RedtailOpportunityInput = Partial<RedtailOpportunity>;
 export type RedtailOpportunityOutput = RedtailOpportunity;
 
-// Optional: Define any common properties or constants related to opportunities here
 export const commonOpportunityRedtailProperties = {
   defaultStage: 'Prospecting',
   defaultProbability: 0.1,
