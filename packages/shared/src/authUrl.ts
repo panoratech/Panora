@@ -59,7 +59,17 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   if (providerName === 'microsoftdynamicssales') {
     state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl, resource: additionalParams!.end_user_domain }));
   }
-
+  if(providerName === 'squarespace'){
+    const randomState = randomString();
+    state = encodeURIComponent(randomState + ':' + Buffer.from(JSON.stringify({
+      projectId,
+      linkedUserId,
+      providerName,
+      vertical,
+      returnUrl,
+      resource: additionalParams.end_user_domain
+  })).toString('base64'));
+  }
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
   // const vertical = findConnectorCategory(providerName);

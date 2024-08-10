@@ -67,6 +67,7 @@ export class ConnectionsController {
   async handleOAuthCallback(@Res() res: Response, @Query() query: any) {
     try {
       const { state, code, ...otherParams } = query;
+
       if (!code) {
         throw new ConnectionsError({
           name: 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR',
@@ -93,6 +94,13 @@ export class ConnectionsController {
         // Step 3: Parse the JSON
         stateData = JSON.parse(decodedState);
         console.log(stateData);
+      } else if (state.includes(':')) {
+        // squarespace asks for a random alphanumeric value
+        // Split the random part and the base64 part
+        const [randomPart, base64Part] = decodeURIComponent(state).split(':');
+        // Decode the base64 part to get the original JSON
+        const jsonString = Buffer.from(base64Part, 'base64').toString('utf-8');
+        stateData = JSON.parse(jsonString);
       } else {
         // If no HTML entities are present, parse directly
         stateData = JSON.parse(state);

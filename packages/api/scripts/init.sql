@@ -374,7 +374,9 @@ CREATE TABLE connector_sets
  crm_zendesk      boolean NULL,
  crm_close        boolean NULL,
  fs_box           boolean NULL,
-  tcg_github boolean NULL,
+ tcg_github       boolean NULL,
+ ecom_woocommerce boolean NULL,
+ ecom_shopify     boolean NULL,
 CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
