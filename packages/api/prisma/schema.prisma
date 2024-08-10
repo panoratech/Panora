@@ -678,6 +678,9 @@ model connector_sets {
   crm_zendesk      Boolean?
   crm_close        Boolean?
   fs_box           Boolean?
+  tcg_github       Boolean?
+  ecom_woocommerce Boolean?
+  ecom_shopify     Boolean?
   projects         projects[]
 }
 
