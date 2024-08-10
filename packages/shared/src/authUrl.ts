@@ -67,7 +67,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
       providerName,
       vertical,
       returnUrl,
-      resource: additionalParams.end_user_domain
+      resource: additionalParams.end_user_domain!
   })).toString('base64'));
   }
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
