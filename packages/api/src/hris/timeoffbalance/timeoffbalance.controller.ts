@@ -27,13 +27,13 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('hris/timeoffbalances')
 @Controller('hris/timeoffbalances')
 export class TimeoffBalanceController {
@@ -46,7 +46,7 @@ export class TimeoffBalanceController {
   }
 
   @ApiOperation({
-    operationId: 'listHrisTimeoffbalance',
+    operationId: 'listHrisTimeoffbalances',
     summary: 'List  TimeoffBalances',
   })
   @ApiHeader({
@@ -60,16 +60,17 @@ export class TimeoffBalanceController {
   @Get()
   async getTimeoffBalances(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
       return this.timeoffbalanceService.getTimeoffBalances(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -91,12 +92,14 @@ export class TimeoffBalanceController {
     required: true,
     type: String,
     description: 'id of the timeoffbalance you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -112,7 +115,7 @@ export class TimeoffBalanceController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -120,6 +123,8 @@ export class TimeoffBalanceController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }

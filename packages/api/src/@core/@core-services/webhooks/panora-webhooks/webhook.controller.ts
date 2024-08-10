@@ -22,6 +22,7 @@ import {
   ApiExcludeEndpoint,
   ApiOperation,
   ApiTags,
+  ApiParam,
 } from '@nestjs/swagger';
 import {
   SignatureVerificationDto,
@@ -66,6 +67,13 @@ export class WebhookController {
 
   @ApiOperation({ operationId: 'delete', summary: 'Delete Webhook' })
   @ApiPostCustomResponse(WebhookResponse)
+  @ApiParam({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+    description: 'id of the webhook to delete.',
+  })
   @Delete(':id')
   @UseGuards(ApiKeyAuthGuard)
   async deleteWebhook(@Request() req: any, @Param('id') whId: string) {
@@ -89,6 +97,13 @@ export class WebhookController {
   })
   @UseGuards(ApiKeyAuthGuard)
   @ApiPostCustomResponse(WebhookResponse)
+  @ApiParam({
+    name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    required: true,
+    type: String,
+    description: 'id of the webhook to update.',
+  })
   @Put(':id')
   async updateWebhookStatus(
     @Request() req: any,
@@ -126,7 +141,7 @@ export class WebhookController {
 
   @ApiOperation({
     operationId: 'createWebhookPublic',
-    summary: 'Add webhook metadata',
+    summary: 'Create webhook',
   })
   @ApiBody({ type: WebhookDto })
   @ApiPostCustomResponse(WebhookResponse)
@@ -139,7 +154,7 @@ export class WebhookController {
 
   @ApiOperation({
     operationId: 'createWebhookInternal',
-    summary: 'Add webhook metadata',
+    summary: 'Create webhook',
   })
   @ApiBody({ type: WebhookDto })
   @ApiExcludeEndpoint()

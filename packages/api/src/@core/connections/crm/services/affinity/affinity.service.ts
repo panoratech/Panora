@@ -1,31 +1,80 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { ICrmConnectionService } from '../../types';
-import { ServiceRegistry } from '../registry.service';
-import { CONNECTORS_METADATA } from '@panora/shared';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { APIKeyCallbackParams } from '@@core/connections/@utils/types';
+import {
+  AbstractBaseConnectionService,
+  BasicAuthCallbackParams,
+  PassthroughInput,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
+import { PassthroughResponse } from '@@core/passthrough/types';
+import { Injectable } from '@nestjs/common';
+import { CONNECTORS_METADATA } from '@panora/shared';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
-export class AffinityConnectionService implements ICrmConnectionService {
+export class AffinityConnectionService extends AbstractBaseConnectionService {
   constructor(
-    private prisma: PrismaService,
+    protected prisma: PrismaService,
     private logger: LoggerService,
-    private cryptoService: EncryptionService,
+    protected cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private connectionUtils: ConnectionUtils,
+    private retryService: RetryHandler,
   ) {
+    super(prisma, cryptoService);
     this.logger.setContext(AffinityConnectionService.name);
     this.registry.registerService('affinity', this);
   }
 
-  async handleCallback(opts: APIKeyCallbackParams) {
+  async passthrough(
+    input: PassthroughInput,
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
     try {
-      const { linkedUserId, projectId } = opts;
+      const { headers } = input;
+      const config = await this.constructPassthrough(input, connectionId);
+
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: connectionId,
+        },
+      });
+
+      config.headers['Authorization'] = `Basic ${Buffer.from(
+        `${this.cryptoService.decrypt(connection.access_token)}:`,
+      ).toString('base64')}`;
+
+      config.headers = {
+        ...config.headers,
+        ...headers,
+      };
+
+      return await this.retryService.makeRequest(
+        {
+          method: config.method,
+          url: config.url,
+          data: config.data,
+          headers: config.headers,
+        },
+        'crm.affinity.passthrough',
+        config.linkedUserId,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  handleTokenRefresh?(opts: RefreshParams): Promise<any> {
+    return Promise.resolve();
+  }
+
+  async handleCallback(opts: BasicAuthCallbackParams) {
+    try {
+      const { linkedUserId, projectId, body } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -43,7 +92,7 @@ export class AffinityConnectionService implements ICrmConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(opts.apikey),
+            access_token: this.cryptoService.encrypt(body.password),
             account_url: CONNECTORS_METADATA['crm']['affinity'].urls
               .apiUrl as string,
             status: 'valid',
@@ -57,10 +106,10 @@ export class AffinityConnectionService implements ICrmConnectionService {
             connection_token: connection_token,
             provider_slug: 'affinity',
             vertical: 'crm',
-            token_type: 'api_key',
+            token_type: 'basic',
             account_url: CONNECTORS_METADATA['crm']['affinity'].urls
               .apiUrl as string,
-            access_token: this.cryptoService.encrypt(opts.apikey),
+            access_token: this.cryptoService.encrypt(body.password),
             status: 'valid',
             created_at: new Date(),
             projects: {

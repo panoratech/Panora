@@ -15,6 +15,9 @@ import { Queues } from './types';
       {
         name: Queues.SYNC_JOBS_WORKER,
       },
+      {
+        name: Queues.FAILED_PASSTHROUGH_REQUESTS_HANDLER,
+      },
     ),
   ],
   providers: [BullQueueService],

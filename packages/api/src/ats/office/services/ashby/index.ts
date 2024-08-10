@@ -26,12 +26,6 @@ export class AshbyService implements IOfficeService {
     );
     this.registry.registerService('ashby', this);
   }
-  addOffice(
-    officeData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalOfficeOutput>> {
-    throw new Error('Method not implemented.');
-  }
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyOfficeOutput[]>> {
     try {

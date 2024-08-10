@@ -34,6 +34,7 @@ export class ActivityService {
   async addActivity(
     unifiedActivityData: UnifiedAtsActivityInput,
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
@@ -100,12 +101,16 @@ export class ActivityService {
         unique_ats_activity_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
           type: 'ats.activity.created',
@@ -177,6 +182,8 @@ export class ActivityService {
     id_ats_activity: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsActivityOutput> {
     try {
@@ -194,9 +201,7 @@ export class ActivityService {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       const unifiedActivity: UnifiedAtsActivityOutput = {
         id: activity.id_ats_activity,
@@ -227,6 +232,8 @@ export class ActivityService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connectionId,
+            id_project: projectId,
             id_event: uuidv4(),
             status: 'success',
             type: 'ats.activity.pull',
@@ -248,6 +255,7 @@ export class ActivityService {
 
   async getActivities(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -278,9 +286,7 @@ export class ActivityService {
         take: limit + 1,
         cursor: cursor ? { id_ats_activity: cursor } : undefined,
         orderBy: { created_at: 'asc' },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (activities.length === limit + 1) {
@@ -306,10 +312,8 @@ export class ActivityService {
             fieldMappingsMap.set(value.attribute.slug, value.data);
           });
 
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           return {
             id: activity.id_ats_activity,
@@ -345,6 +349,8 @@ export class ActivityService {
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.activity.pull',

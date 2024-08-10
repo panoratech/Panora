@@ -1,3 +1,5 @@
+import { GithubTagMapper } from './services/github/mappers';
+import { GithubService } from './services/github';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -20,7 +22,6 @@ import { GitlabService } from './services/gitlab';
 import { GitlabTagMapper } from './services/gitlab/mappers';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [TagController],
   providers: [
     TagService,
@@ -41,6 +42,8 @@ import { GitlabTagMapper } from './services/gitlab/mappers';
     JiraTagMapper,
     GorgiasTagMapper,
     GitlabTagMapper,
+    GithubService,
+    GithubTagMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

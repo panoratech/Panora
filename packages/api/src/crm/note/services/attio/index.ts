@@ -37,7 +37,7 @@ export class AttioService implements INoteService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/notes`,
+        `${connection.account_url}/v2/notes`,
         JSON.stringify(noteData),
         {
           headers: {
@@ -70,7 +70,7 @@ export class AttioService implements INoteService {
         },
       });
 
-      const baseURL = `${connection.account_url}/notes`;
+      const baseURL = `${connection.account_url}/v2/notes`;
 
       const resp = await axios.get(baseURL, {
         headers: {

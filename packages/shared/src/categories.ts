@@ -6,7 +6,8 @@ export enum ConnectorCategory {
     Ticketing = 'ticketing',
     MarketingAutomation = 'marketingautomation',
     FileStorage = 'filestorage',
-    Management = 'management'
+    Management = 'management',
+    Ecommerce = 'ecommerce'
 }
 
 export const categoriesVerticals: ConnectorCategory[] = Object.values(ConnectorCategory);

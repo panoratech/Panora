@@ -42,9 +42,9 @@ export class AshbyService implements ICandidateService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
+            Authorization: `Basic ${Buffer.from(
+              `${this.cryptoService.decrypt(connection.access_token)}:`,
+            ).toString('base64')}`,
           },
         },
       );

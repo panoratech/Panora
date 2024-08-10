@@ -137,7 +137,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           await this.prisma.ats_applications.findFirst({
             where: {
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
 
@@ -169,7 +169,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_application: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              id_connection: connection_id,
+              
             },
           });
         }

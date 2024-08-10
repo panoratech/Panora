@@ -23,6 +23,7 @@ export class AttachmentService {
     connection_id: string,
     integrationId: string,
     linkedUserId: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketingAttachmentOutput> {
     try {
@@ -82,11 +83,15 @@ export class AttachmentService {
         unique_ticketing_attachment_id,
         undefined,
         undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.attachment.push', //sync, push or pull
@@ -115,6 +120,8 @@ export class AttachmentService {
     id_ticketing_attachment: string,
     linkedUserId: string,
     integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketingAttachmentOutput> {
     try {
@@ -144,9 +151,7 @@ export class AttachmentService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedTicketingAttachmentOutput format
       let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
@@ -190,6 +195,8 @@ export class AttachmentService {
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
+            id_connection: connection_id,
+            id_project: project_id,
             id_event: uuidv4(),
             status: 'success',
             type: 'ticketing.attachment.pull',
@@ -210,6 +217,7 @@ export class AttachmentService {
 
   async getAttachments(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -262,79 +270,83 @@ export class AttachmentService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedAttachments: UnifiedTicketingAttachmentOutput[] = await Promise.all(
-        attachments.map(async (attachment) => {
-          // Fetch field mappings for the attachment
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: attachment.id_tcg_attachment,
+      const unifiedAttachments: UnifiedTicketingAttachmentOutput[] =
+        await Promise.all(
+          attachments.map(async (attachment) => {
+            // Fetch field mappings for the attachment
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: {
+                  ressource_owner_id: attachment.id_tcg_attachment,
+                },
               },
-            },
-            include: {
-              attribute: true,
-            },
-          });
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
+              include: {
+                attribute: true,
+              },
+            });
+            // Create a map to store unique field mappings
+            const fieldMappingsMap = new Map();
 
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
 
-          // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
-          let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
-            id: attachment.id_tcg_attachment,
-            file_name: attachment.file_name,
-            file_url: attachment.file_url,
-            uploader: attachment.uploader,
-            field_mappings: field_mappings,
-            remote_id: attachment.remote_id,
-            created_at: attachment.created_at,
-            modified_at: attachment.modified_at,
-          };
-          if (attachment.id_tcg_comment) {
-            unifiedAttachment = {
-              ...unifiedAttachment,
-              comment_id: attachment.id_tcg_comment,
+            // Convert the map to an array of objects
+            const field_mappings = Array.from(
+              fieldMappingsMap,
+              ([key, value]) => ({ [key]: value }),
+            );
+            let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
+              id: attachment.id_tcg_attachment,
+              file_name: attachment.file_name,
+              file_url: attachment.file_url,
+              uploader: attachment.uploader,
+              field_mappings: field_mappings,
+              remote_id: attachment.remote_id,
+              created_at: attachment.created_at,
+              modified_at: attachment.modified_at,
             };
-          }
-          if (attachment.id_tcg_ticket) {
-            unifiedAttachment = {
-              ...unifiedAttachment,
-              ticket_id: attachment.id_tcg_ticket,
-            };
-          }
+            if (attachment.id_tcg_comment) {
+              unifiedAttachment = {
+                ...unifiedAttachment,
+                comment_id: attachment.id_tcg_comment,
+              };
+            }
+            if (attachment.id_tcg_ticket) {
+              unifiedAttachment = {
+                ...unifiedAttachment,
+                ticket_id: attachment.id_tcg_ticket,
+              };
+            }
 
-          // Transform to UnifiedTicketingAttachmentOutput format
-          return unifiedAttachment;
-        }),
-      );
+            // Transform to UnifiedTicketingAttachmentOutput format
+            return unifiedAttachment;
+          }),
+        );
 
       let res: UnifiedTicketingAttachmentOutput[] = unifiedAttachments;
 
       if (remote_data) {
-        const remote_array_data: UnifiedTicketingAttachmentOutput[] = await Promise.all(
-          res.map(async (attachment) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: attachment.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...attachment, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedTicketingAttachmentOutput[] =
+          await Promise.all(
+            res.map(async (attachment) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: attachment.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...attachment, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.attachment.pull',

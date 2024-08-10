@@ -45,7 +45,7 @@ export class HubspotService implements IContactService {
         properties: contactData,
       };
       const resp = await axios.post(
-        `${connection.account_url}/objects/contacts`,
+        `${connection.account_url}/crm/v3/objects/contacts`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -80,7 +80,7 @@ export class HubspotService implements IContactService {
 
       const commonPropertyNames = Object.keys(commonHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/objects/contacts`;
+      const baseURL = `${connection.account_url}/v3/objects/contacts`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

@@ -1,19 +1,19 @@
+import { IConnectionService } from '@@core/connections/@utils/types';
 import { Injectable } from '@nestjs/common';
-import { IFilestorageConnectionService } from '../types';
 
 @Injectable()
 export class ServiceRegistry {
-  private serviceMap: Map<string, IFilestorageConnectionService>;
+  private serviceMap: Map<string, IConnectionService>;
 
   constructor() {
-    this.serviceMap = new Map<string, IFilestorageConnectionService>();
+    this.serviceMap = new Map<string, IConnectionService>();
   }
 
-  registerService(serviceKey: string, service: IFilestorageConnectionService) {
+  registerService(serviceKey: string, service: IConnectionService) {
     this.serviceMap.set(serviceKey, service);
   }
 
-  getService(integrationId: string): IFilestorageConnectionService {
+  getService(integrationId: string): IConnectionService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
       throw new ReferenceError(

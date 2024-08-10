@@ -17,6 +17,8 @@ export class ScoreCardService {
     id_ats_scorecard: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsScorecardOutput> {
     try {
@@ -50,9 +52,7 @@ export class ScoreCardService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedAtsScorecardOutput format
       const unifiedScoreCard: UnifiedAtsScorecardOutput = {
@@ -84,6 +84,8 @@ export class ScoreCardService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.scorecard.pull',
@@ -104,6 +106,7 @@ export class ScoreCardService {
 
   async getScoreCards(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -140,9 +143,7 @@ export class ScoreCardService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (scorecards.length === limit + 1) {
@@ -178,12 +179,7 @@ export class ScoreCardService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedAtsScorecardOutput format
           return {
@@ -204,22 +200,25 @@ export class ScoreCardService {
       let res: UnifiedAtsScorecardOutput[] = unifiedScoreCards;
 
       if (remote_data) {
-        const remote_array_data: UnifiedAtsScorecardOutput[] = await Promise.all(
-          res.map(async (scorecard) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: scorecard.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...scorecard, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedAtsScorecardOutput[] =
+          await Promise.all(
+            res.map(async (scorecard) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: scorecard.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...scorecard, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.scorecard.pull',

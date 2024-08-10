@@ -14,6 +14,8 @@ export class RejectReasonService {
     id_ats_reject_reason: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsRejectreasonOutput> {
     try {
@@ -49,9 +51,7 @@ export class RejectReasonService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedAtsRejectreasonOutput format
       const unifiedRejectReason: UnifiedAtsRejectreasonOutput = {
@@ -79,6 +79,8 @@ export class RejectReasonService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.rejectreason.pull',
@@ -99,6 +101,7 @@ export class RejectReasonService {
 
   async getRejectReasons(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -135,9 +138,7 @@ export class RejectReasonService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (rejectReasons.length === limit + 1) {
@@ -212,6 +213,8 @@ export class RejectReasonService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.rejectreason.pull',

@@ -12,6 +12,8 @@ export class BullQueueService {
     public readonly panoraWebhookDeliveryQueue: Queue,
     @InjectQueue(Queues.SYNC_JOBS_WORKER)
     public readonly syncJobsQueue: Queue,
+    @InjectQueue(Queues.FAILED_PASSTHROUGH_REQUESTS_HANDLER)
+    public readonly failedPassthroughRequestsQueue: Queue,
   ) {}
 
   // getters
@@ -21,6 +23,12 @@ export class BullQueueService {
   }
   getPanoraWebhookSender() {
     return this.panoraWebhookDeliveryQueue;
+  }
+  getSyncJobsQueue() {
+    return this.syncJobsQueue;
+  }
+  getFailedPassthroughRequestsQueue() {
+    return this.failedPassthroughRequestsQueue;
   }
 
   // setters

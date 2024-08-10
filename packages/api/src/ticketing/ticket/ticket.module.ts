@@ -1,3 +1,5 @@
+import { GithubTicketMapper } from './services/github/mappers';
+import { GithubService } from './services/github';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -18,7 +20,6 @@ import { ZendeskTicketMapper } from './services/zendesk/mappers';
 import { SyncService } from './sync/sync.service';
 import { TicketController } from './ticket.controller';
 @Module({
-  imports: [BullQueueModule],
   controllers: [TicketController],
   providers: [
     TicketService,
@@ -39,6 +40,8 @@ import { TicketController } from './ticket.controller';
     JiraTicketMapper,
     GorgiasTicketMapper,
     GitlabTicketMapper,
+    GithubService,
+    GithubTicketMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService, IngestDataService],
 })

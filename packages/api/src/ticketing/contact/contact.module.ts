@@ -15,7 +15,6 @@ import { ZendeskService } from './services/zendesk';
 import { ZendeskContactMapper } from './services/zendesk/mappers';
 import { SyncService } from './sync/sync.service';
 @Module({
-  imports: [BullQueueModule],
   controllers: [ContactController],
   providers: [
     ContactService,

@@ -36,7 +36,7 @@ export class AttioService implements IUserService {
         },
       });
 
-      const baseURL = `${connection.account_url}/workspace_members`;
+      const baseURL = `${connection.account_url}/v2/workspace_members`;
       const resp = await axios.get(baseURL, {
         headers: {
           'Content-Type': 'application/json',

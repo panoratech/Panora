@@ -4,6 +4,7 @@ import { IsOptional, IsString, IsUUID } from 'class-validator';
 export class UnifiedTicketingContactInput {
   @ApiProperty({
     type: String,
+    example: 'Joe',
     nullable: true,
     description: 'The name of the contact',
   })
@@ -12,6 +13,7 @@ export class UnifiedTicketingContactInput {
 
   @ApiProperty({
     type: String,
+    example: 'joedoe@acme.org',
     nullable: true,
     description: 'The email address of the contact',
   })
@@ -20,6 +22,7 @@ export class UnifiedTicketingContactInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '+33 6 50 11 11 10',
     nullable: true,
     description: 'The phone number of the contact',
   })
@@ -29,6 +32,7 @@ export class UnifiedTicketingContactInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'Contact Details',
     nullable: true,
     description: 'The details of the contact',
   })
@@ -38,6 +42,10 @@ export class UnifiedTicketingContactInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     description:
       'The custom field mappings of the contact between the remote 3rd party & Panora',
@@ -48,22 +56,31 @@ export class UnifiedTicketingContactInput {
 }
 
 export class UnifiedTicketingContactOutput extends UnifiedTicketingContactInput {
-  @ApiPropertyOptional({ type: String, description: 'The UUID of the contact' })
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the contact',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
+    description: 'The remote ID of the contact in the context of the 3rd Party',
     nullable: true,
-    description: 'The id of the contact in the context of the 3rd Party',
   })
-  @IsOptional()
   @IsString()
+  @IsOptional()
   remote_id?: string;
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:
@@ -73,6 +90,7 @@ export class UnifiedTicketingContactOutput extends UnifiedTicketingContactInput 
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The created date of the object',
@@ -81,6 +99,7 @@ export class UnifiedTicketingContactOutput extends UnifiedTicketingContactInput 
   created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modified date of the object',

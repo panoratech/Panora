@@ -43,9 +43,6 @@ services:
       REDIS_PASS: ${REDIS_PASS}
       REDIS_USER: ${REDIS_USER}
       REDIS_PORT: ${REDIS_PORT}
-      MAIL_HOST: ${MAIL_HOST}
-      MAIL_USER: ${MAIL_USER}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
       WEBAPP_URL: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
       #REDIS_TLS: 1 # set this variable to 1 when Redis is AWS hosted 
       REDIS_DB: ${REDIS_DB}
@@ -166,11 +163,23 @@ services:
       HELPSCOUT_TICKETING_CLOUD_CLIENT_SECRET: ${HELPSCOUT_TICKETING_CLOUD_CLIENT_SECRET}
       IRONCLAD_TICKETING_CLOUD_CLIENT_ID: ${IRONCLAD_TICKETING_CLOUD_CLIENT_ID}
       IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET: ${IRONCLAD_TICKETING_CLOUD_CLIENT_SECRET}
+      SHOPIFY_ECOMMERCE_CLOUD_CLIENT_ID: ${SHOPIFY_ECOMMERCE_CLOUD_CLIENT_ID}
+      SHOPIFY_ECOMMERCE_CLOUD_CLIENT_SECRET: ${SHOPIFY_ECOMMERCE_CLOUD_CLIENT_SECRET}
+      SQUARESPACE_ECOMMERCE_CLOUD_CLIENT_ID: ${SQUARESPACE_ECOMMERCE_CLOUD_CLIENT_ID}
+      SQUARESPACE_ECOMMERCE_CLOUD_CLIENT_SECRET: ${SQUARESPACE_ECOMMERCE_CLOUD_CLIENT_SECRET}
+      EBAY_ECOMMERCE_CLOUD_CLIENT_ID: ${EBAY_ECOMMERCE_CLOUD_CLIENT_ID}
+      EBAY_ECOMMERCE_CLOUD_CLIENT_SECRET: ${EBAY_ECOMMERCE_CLOUD_CLIENT_SECRET}
+      EBAY_ECOMMERCE_CLOUD_SUBDOMAIN: ${EBAY_ECOMMERCE_CLOUD_SUBDOMAIN}
+      FAIRE_ECOMMERCE_CLOUD_CLIENT_ID: ${FAIRE_ECOMMERCE_CLOUD_CLIENT_ID}
+      FAIRE_ECOMMERCE_CLOUD_CLIENT_SECRET: ${FAIRE_ECOMMERCE_CLOUD_CLIENT_SECRET}
+      WEBFLOW_ECOMMERCE_CLOUD_CLIENT_ID: ${WEBFLOW_ECOMMERCE_CLOUD_CLIENT_ID}
+      WEBFLOW_ECOMMERCE_CLOUD_CLIENT_SECRET: ${WEBFLOW_ECOMMERCE_CLOUD_CLIENT_SECRET}
       EMAIL_SENDING_ADDRESS: ${EMAIL_SENDING_ADDRESS}
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
+
 
     restart: unless-stopped
     ports:
@@ -264,31 +273,31 @@ services:
   #   volumes:
   #     - pgadmin-data:/var/lib/pgadmin
 
-  # ngrok:
-  #   image: ngrok/ngrok:latest
-  #   restart: always
-  #   command:
-  #     - "start"
-  #     - "--all"
-  #     - "--config"
-  #     - "/etc/ngrok.yml"
-  #   volumes:
-  #     - ./ngrok.yml:/etc/ngrok.yml
-  #   ports:
-  #   - 4040:4040
-  #   depends_on:
-  #     api:
-  #       condition: service_healthy
-  #   network_mode: "host"
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: always
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    ports:
+    - 4040:4040
+    depends_on:
+      api:
+        condition: service_healthy
+    network_mode: "host"
 
-  # docs:
-  #   build:
-  #     dockerfile: ./Dockerfile.dev
-  #     context: ./docs/
-  #   ports:
-  #     - 911:3000
-  #   volumes:
-  #     - ./docs/:/app
+  docs:
+    build:
+      dockerfile: ./Dockerfile.dev
+      context: ./docs/
+    ports:
+      - 911:3000
+    volumes:
+      - ./docs/:/app
 
 volumes:
   local_pgdata:

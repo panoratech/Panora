@@ -14,6 +14,8 @@ export class OfficeService {
     id_ats_office: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedAtsOfficeOutput> {
     try {
@@ -47,9 +49,7 @@ export class OfficeService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
       // Transform to UnifiedAtsOfficeOutput format
       const unifiedOffice: UnifiedAtsOfficeOutput = {
@@ -78,6 +78,8 @@ export class OfficeService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.office.pull',
@@ -98,6 +100,7 @@ export class OfficeService {
 
   async getOffices(
     connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,
@@ -134,9 +137,7 @@ export class OfficeService {
         orderBy: {
           created_at: 'asc',
         },
-        where: {
-          id_connection: connection_id,
-        },
+        where: {},
       });
 
       if (offices.length === limit + 1) {
@@ -172,12 +173,7 @@ export class OfficeService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({
-              [key]: value,
-            }),
-          );
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedAtsOfficeOutput format
           return {
@@ -211,6 +207,8 @@ export class OfficeService {
       }
       await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ats.office.pull',

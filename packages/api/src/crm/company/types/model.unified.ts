@@ -11,6 +11,7 @@ import {
 export class UnifiedCrmCompanyInput {
   @ApiProperty({
     type: String,
+    example: 'Acme',
     description: 'The name of the company',
     nullable: true,
   })
@@ -19,6 +20,8 @@ export class UnifiedCrmCompanyInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'ACCOUNTING',
+    enum: Industry,
     description:
       'The industry of the company. Authorized values can be found in the Industry enum.',
     nullable: true,
@@ -29,6 +32,7 @@ export class UnifiedCrmCompanyInput {
 
   @ApiPropertyOptional({
     type: Number,
+    example: 10,
     description: 'The number of employees of the company',
     nullable: true,
   })
@@ -38,6 +42,7 @@ export class UnifiedCrmCompanyInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the user who owns the company',
     nullable: true,
   })
@@ -48,6 +53,12 @@ export class UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     description: 'The email addresses of the company',
     type: [Email],
+    example: [
+      {
+        email_address: 'acme@gmail.com',
+        email_address_type: 'WORK',
+      },
+    ],
     nullable: true,
   })
   @IsOptional()
@@ -56,6 +67,15 @@ export class UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     description: 'The addresses of the company',
     type: [Address],
+    example: [
+      {
+        street_1: '5th Avenue',
+        city: 'New York',
+        state: 'NY',
+        country: 'USA',
+        address_type: 'WORK',
+      },
+    ],
     nullable: true,
   })
   @IsOptional()
@@ -64,6 +84,12 @@ export class UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     description: 'The phone numbers of the company',
     type: [Phone],
+    example: [
+      {
+        phone_number: '+33660606067',
+        phone_type: 'WORK',
+      },
+    ],
     nullable: true,
   })
   @IsOptional()
@@ -71,6 +97,10 @@ export class UnifiedCrmCompanyInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The custom field mappings of the company between the remote 3rd party & Panora',
     nullable: true,
@@ -84,6 +114,7 @@ export class UnifiedCrmCompanyOutput extends UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     type: String,
     description: 'The UUID of the company',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
   })
   @IsUUID()
@@ -92,6 +123,7 @@ export class UnifiedCrmCompanyOutput extends UnifiedCrmCompanyInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     description: 'The id of the company in the context of the Crm 3rd Party',
     nullable: true,
   })
@@ -101,6 +133,10 @@ export class UnifiedCrmCompanyOutput extends UnifiedCrmCompanyInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     description:
       'The remote data of the company in the context of the Crm 3rd Party',
     nullable: true,
@@ -111,6 +147,7 @@ export class UnifiedCrmCompanyOutput extends UnifiedCrmCompanyInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
     nullable: true,
   })
@@ -119,6 +156,7 @@ export class UnifiedCrmCompanyOutput extends UnifiedCrmCompanyInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
     nullable: true,
   })

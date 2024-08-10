@@ -14,13 +14,16 @@ function addSpeakeasyGroup(document: any) {
     const pathParts = path.split('/').filter((part) => part);
     let groupName;
 
+    if (pathParts[0] === 'passthrough') {
+      groupName = 'passthrough';
+    }
     if (pathParts[0] === 'webhooks') {
       groupName = 'webhooks';
     } else if (pathParts[0] === 'sync') {
       groupName = 'sync';
-    } else if (pathParts[0] === 'linked-users') {
+    } else if (pathParts[0] === 'linked_users') {
       groupName = 'linkedUsers';
-    } else if (pathParts[0] === 'field-mappings') {
+    } else if (pathParts[0] === 'field_mappings') {
       groupName = 'fieldMappings';
     } else if (pathParts.length >= 2) {
       groupName = `${pathParts[0].toLowerCase()}.${pathParts[1].toLowerCase()}`;
@@ -29,6 +32,26 @@ function addSpeakeasyGroup(document: any) {
     if (groupName) {
       for (const method in document.paths[path]) {
         document.paths[path][method]['x-speakeasy-group'] = groupName;
+        if (
+          groupName !== 'webhooks' &&
+          groupName !== 'linkedUsers' &&
+          method === 'get' &&
+          document.paths[path][method]['operationId'].startsWith('list')
+        ) {
+          document.paths[path][method]['x-speakeasy-pagination'] = {
+            type: 'cursor',
+            inputs: [
+              {
+                name: 'cursor',
+                in: 'parameters',
+                type: 'cursor',
+              },
+            ],
+            outputs: {
+              nextCursor: '$.next_cursor',
+            },
+          };
+        }
       }
     }
   }

@@ -32,6 +32,8 @@ export class DependentService {
     id_dependenting_dependent: string,
     linkedUserId: string,
     integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisDependentOutput> {
     return;
@@ -39,6 +41,7 @@ export class DependentService {
 
   async getDependents(
     connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     limit: number,

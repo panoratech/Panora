@@ -40,8 +40,8 @@ export class ZendeskService implements IUserService {
       });
       const remote_user_id = webhook_remote_identifier as string;
       const request_url = remote_user_id
-        ? `${connection.account_url}/users/${remote_user_id}.json`
-        : `${connection.account_url}/users.json`;
+        ? `${connection.account_url}/v2/users/${remote_user_id}.json`
+        : `${connection.account_url}/v2/users.json`;
 
       const resp = await axios.get(request_url, {
         headers: {

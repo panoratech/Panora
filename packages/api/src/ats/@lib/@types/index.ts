@@ -154,6 +154,7 @@ export class Email {
 
   @ApiProperty({
     type: String,
+    enum: ['PERSONAL', 'WORK'],
     nullable: true,
     description:
       'The email address type. Authorized values are either PERSONAL or WORK.',
@@ -175,6 +176,7 @@ export class Phone {
 
   @ApiProperty({
     type: String,
+    enum: ['MOBILE', 'WORK'],
     nullable: true,
     description: 'The phone type. Authorized values are either MOBILE or WORK',
   })

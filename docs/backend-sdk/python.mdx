@@ -6,43 +6,37 @@ description: "Introduction to our Python SDK"
 ## Installing & instantiating the Python SDK
 
 ```bash
-pip install panorasdk
+pip install panora-sdk
 ```
-
+or 
+```bash
+poetry add panora-sdk
+```
 Instantiate the SDK:
 
 <Tip>Go to your dashboard to get your [API Key](https://dashboard.panora.dev/api-keys)</Tip>
 
 ```python
-sdk = PanoraSDK('YOUR_API_KEY')
-```
+import os
+from panora_sdk import Panora
 
-Or through the `set_access_token` method:
-
-```python
-sdk = PanoraSDK()
-sdk.set_access_token('YOUR_API_KEY')
-```
-
-You can also set it for each service individually:
-
-```python
-sdk = PanoraSDK()
-sdk.main.set_access_token('YOUR_API_KEY')
+panora = Panora(
+  api_key=os.getenv("API_KEY", ""),
+)
 ```
 
 ### List all connections to your app
 
 ```python
-from panorasdk import PanoraSDK
+import os
+from panora_sdk import Panora
 
-sdk = PanoraSDK()
+panora = Panora(
+  api_key=os.getenv("API_KEY", ""),
+)
+res = panora.connections.list()
 
-sdk.set_access_token("YOUR_API_KEY")
-
-results = sdk.connections.get_connections()
-
-print(results)
+print(res)
 ```
 
 This will list all the connections available, across all users. You should get an object similar to this one below. Read more about the `connection` object here in the [API reference](/connections/overview) or the [glossary](/glossary/connection-object).

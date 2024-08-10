@@ -10,6 +10,7 @@ import {
 export class UnifiedAtsJobinterviewstageInput {
   @ApiPropertyOptional({
     type: String,
+    example: 'Second Call',
     nullable: true,
     description: 'The name of the job interview stage',
   })
@@ -19,6 +20,7 @@ export class UnifiedAtsJobinterviewstageInput {
 
   @ApiPropertyOptional({
     type: Number,
+    example: 1,
     nullable: true,
     description: 'The order of the stage',
   })
@@ -28,6 +30,7 @@ export class UnifiedAtsJobinterviewstageInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the job',
   })
@@ -37,6 +40,10 @@ export class UnifiedAtsJobinterviewstageInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -49,6 +56,7 @@ export class UnifiedAtsJobinterviewstageInput {
 export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewstageInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the job interview stage',
   })
@@ -58,6 +66,7 @@ export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewsta
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description:
       'The remote ID of the job interview stage in the context of the 3rd Party',
@@ -68,6 +77,10 @@ export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewsta
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:
@@ -77,6 +90,7 @@ export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewsta
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The created date of the object',
@@ -85,6 +99,7 @@ export class UnifiedAtsJobinterviewstageOutput extends UnifiedAtsJobinterviewsta
   created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modified date of the object',

@@ -16,6 +16,7 @@ import { FileStorageModule } from './filestorage/filestorage.module';
 import { HrisModule } from './hris/hris.module';
 import { MarketingAutomationModule } from './marketingautomation/marketingautomation.module';
 import { CoreSharedModule } from '@@core/@core-services/module';
+import { EcommerceModule } from '@ecommerce/ecommerce.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CoreSharedModule } from '@@core/@core-services/module';
     AtsModule,
     AccountingModule,
     FileStorageModule,
+    EcommerceModule,
     CrmModule,
     TicketingModule,
     ThrottlerModule.forRoot([

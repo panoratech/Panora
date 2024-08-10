@@ -21,7 +21,6 @@ import { ZohoDealMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 
 @Module({
-  imports: [BullQueueModule],
   controllers: [DealController],
   providers: [
     DealService,

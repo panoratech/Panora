@@ -7,6 +7,8 @@ export type PermissionRole = 'READ' | 'WRITE' | 'OWNER';
 export class UnifiedFilestoragePermissionInput {
   @ApiProperty({
     type: [String],
+    example: ['READ'],
+    enum: ['READ', 'WRITE', 'OWNER'],
     nullable: true,
     description: 'The roles of the permission',
   })
@@ -15,6 +17,8 @@ export class UnifiedFilestoragePermissionInput {
 
   @ApiProperty({
     type: String,
+    enum: ['USER', 'GROUP', 'COMPANY', 'ANYONE'],
+    example: 'USER',
     nullable: true,
     description: 'The type of the permission',
   })
@@ -24,6 +28,7 @@ export class UnifiedFilestoragePermissionInput {
 
   @ApiProperty({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the user tied to the permission',
   })
@@ -32,6 +37,7 @@ export class UnifiedFilestoragePermissionInput {
 
   @ApiProperty({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the group tied to the permission',
   })
@@ -40,6 +46,10 @@ export class UnifiedFilestoragePermissionInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -52,6 +62,7 @@ export class UnifiedFilestoragePermissionInput {
 export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermissionInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the permission',
   })
@@ -61,6 +72,7 @@ export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermis
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description: 'The id of the permission in the context of the 3rd Party',
   })
@@ -70,6 +82,10 @@ export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermis
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -79,6 +95,7 @@ export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermis
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The created date of the object',
@@ -87,6 +104,7 @@ export class UnifiedFilestoragePermissionOutput extends UnifiedFilestoragePermis
   created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modified date of the object',

@@ -26,12 +26,6 @@ export class AshbyService implements IJobService {
     );
     this.registry.registerService('ashby', this);
   }
-  addJob(
-    jobData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalJobOutput>> {
-    throw new Error('Method not implemented.');
-  }
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyJobOutput[]>> {
     try {

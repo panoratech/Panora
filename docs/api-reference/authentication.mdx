@@ -16,9 +16,11 @@ You also have to catch a [connection token](/core-concepts/auth) which contains 
 <Info>In this example, we will create a contact in a CRM. Visit other sections of the [documentation](/ticketing/overview) to find category-specific examples.</Info>
 <CodeGroup>
   ```javascript TypeScript
-  import { PanoraSDK } from '@panora/sdk-typescript';
+  import { Panora } from "@panora/sdk";
 
-  const sdk = new PanoraSDK({ accessToken: "MY_API_KEY" });
+  const panora = new Panora({
+    apiKey: process.env.API_KEY,
+  });
 
   const input = {
       first_name: 'tom',
@@ -37,21 +39,23 @@ You also have to catch a [connection token](/core-concepts/auth) which contains 
       ],
   };
 
-  const result = await sdk.crmContact.addContact(input, 'MY_USER_CONNECTION_TOKEN', {
-    remoteData: true,
+  const result = await panora.crm.contacts.create({
+    xConnectionToken: "YOUR_USER_CONNECTION_TOKEN",
+    unifiedCrmContactInput: input,
   });
 
   console.log(result);
   ```
 
-  ```python Python
-  from panorasdk import PanoraSDK
+ ```python Python
+  import os
+  from panora_sdk import Panora
 
-  sdk = PanoraSDK()
+  panora = Panora(
+    api_key=os.getenv("API_KEY", ""),
+  )
 
-  sdk.set_access_token("MY_API_KEY")
-
-  request_body = {
+  body = {
     'first_name': 'tom',
     'last_name': 'jedusor',
     'email_addresses': [
@@ -68,19 +72,15 @@ You also have to catch a [connection token](/core-concepts/auth) which contains 
     ]
   }
 
-  results = sdk.crm_contact.add_contact(
-    request_input = request_body,
-    connection_token = 'MY_USER_CONNECTION_TOKEN',
-    remote_data = True
-  )
+  res = panora.crm.contacts.create(x_connection_token="YOUR_USER_CONNECTION_TOKEN", unified_crm_contact_input=body)
 
-  print(results)
+  print(res)
   ```
 
   ```shell curl
   curl --request POST \
   --url https://api.panora.dev/crm/contacts \
-  --header 'Authorization: Bearer <MY_API_KEY>' \
+  --header 'x-api-key: <api-key>' \
   --header 'Content-Type: application/json' \
   --header 'x-connection-token: <MY_USER_CONNECTION_TOKEN>' \
   --data '{

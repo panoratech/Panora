@@ -38,7 +38,7 @@ export class PipedriveService implements IDealService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/deals`,
+        `${connection.account_url}/v1/deals`,
         JSON.stringify(dealData),
         {
           headers: {
@@ -69,7 +69,7 @@ export class PipedriveService implements IDealService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/deals`, {
+      const resp = await axios.get(`${connection.account_url}/v1/deals`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

@@ -51,9 +51,9 @@ export class AshbyService implements IAttachmentService {
           {
             headers: {
               'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${this.cryptoService.decrypt(
-                connection.access_token,
-              )}`,
+              Authorization: `Basic ${Buffer.from(
+                `${this.cryptoService.decrypt(connection.access_token)}:`,
+              ).toString('base64')}`,
             },
           },
         );
@@ -66,9 +66,9 @@ export class AshbyService implements IAttachmentService {
           {
             headers: {
               'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${this.cryptoService.decrypt(
-                connection.access_token,
-              )}`,
+              Authorization: `Basic ${Buffer.from(
+                `${this.cryptoService.decrypt(connection.access_token)}:`,
+              ).toString('base64')}`,
             },
           },
         );

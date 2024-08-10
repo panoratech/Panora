@@ -1,0 +1,75 @@
+---
+title: "Quick Start"
+description: "Read data from multiple Ecommerce platforms using a single API"
+icon: "star"
+---
+
+## List products in a Ecommerce provider using Panora
+
+<Check>
+  We assume for this tutorial that you have a valid Panora API Key, and a
+  `connection_token`. Find help [here](/core-concepts/auth).
+</Check>
+
+<Steps>
+    <Info>
+        You can find the Typescript SDK [here](https://www.npmjs.com/package/@panora/sdk-typescript)
+    </Info>
+    <Step title="Setup your API Key in your code:">
+        <CodeGroup>
+            ```javascript TypeScript SDK
+            import { Panora } from '@panora/sdk';
+            const panora = new Panora({ apiKey: process.env.API_KEY });
+            ```
+
+            ```python Python SDK
+            import os
+            from panora_sdk import Panora
+            panora = Panora(
+                api_key=os.getenv("API_KEY", ""),
+            )
+            ```
+        </CodeGroup>
+    </Step>
+
+     <Step title="List products in your Ecommerce:">
+        <Info>In this example, we will list products in a Ecommerce. Visit other sections of the documentation to find category-specific examples</Info>
+        <CodeGroup>
+
+            ```shell curl
+            curl --request GET \
+            --url https://api.panora.dev/ecommerce/products \
+            --header 'x-api-key: <api-key>' \
+            --header 'x-connection-token: <x-connection-token>'
+            ```
+
+            ```javascript TypeScript
+            import { Panora } from "@panora/sdk";
+
+            const panora = new Panora({
+                apiKey: process.env.API_KEY,
+            });
+
+            const result = await panora.ecommerce.products.list({
+                xConnectionToken: "YOUR_USER_CONNECTION_TOKEN",
+            });
+
+            console.log(result);
+            ```
+
+            ```python Python
+            import os
+            from panora_sdk import Panora
+
+            panora = Panora(
+                api_key=os.getenv("API_KEY", ""),
+            )
+
+            res = panora.ecommerce.products.list(x_connection_token="YOUR_USER_CONNECTION_TOKEN")
+
+            print(res)
+            ```
+        </CodeGroup>
+    </Step>
+
+</Steps>

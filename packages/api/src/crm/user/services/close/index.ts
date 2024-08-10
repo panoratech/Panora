@@ -37,7 +37,7 @@ export class CloseService implements IUserService {
         },
       });
 
-      const baseURL = `${connection.account_url}/user`;
+      const baseURL = `${connection.account_url}/v1/user`;
       const resp = await axios.get(baseURL, {
         headers: {
           'Content-Type': 'application/json',

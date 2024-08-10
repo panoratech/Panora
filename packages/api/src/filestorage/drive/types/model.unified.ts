@@ -5,6 +5,7 @@ export class UnifiedFilestorageDriveInput {
   @ApiProperty({
     type: String,
     nullable: true,
+    example: 'school',
     description: 'The name of the drive',
   })
   @IsString()
@@ -13,6 +14,7 @@ export class UnifiedFilestorageDriveInput {
   @ApiProperty({
     type: String,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'When the third party s drive was created.',
   })
   @IsString()
@@ -21,6 +23,7 @@ export class UnifiedFilestorageDriveInput {
   @ApiProperty({
     type: String,
     nullable: true,
+    example: 'https://example.com/school',
     description: 'The url of the drive',
   })
   @IsString()
@@ -28,6 +31,10 @@ export class UnifiedFilestorageDriveInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -41,6 +48,7 @@ export class UnifiedFilestorageDriveOutput extends UnifiedFilestorageDriveInput 
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the drive',
   })
   @IsUUID()
@@ -50,6 +58,7 @@ export class UnifiedFilestorageDriveOutput extends UnifiedFilestorageDriveInput 
   @ApiPropertyOptional({
     type: String,
     nullable: true,
+    example: 'id_1',
     description: 'The id of the drive in the context of the 3rd Party',
   })
   @IsString()
@@ -59,6 +68,10 @@ export class UnifiedFilestorageDriveOutput extends UnifiedFilestorageDriveInput 
   @ApiPropertyOptional({
     type: Object,
     nullable: true,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     description: 'The remote data of the drive in the context of the 3rd Party',
   })
@@ -68,6 +81,7 @@ export class UnifiedFilestorageDriveOutput extends UnifiedFilestorageDriveInput 
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'The created date of the object',
   })
   @IsOptional()
@@ -76,6 +90,7 @@ export class UnifiedFilestorageDriveOutput extends UnifiedFilestorageDriveInput 
   @ApiPropertyOptional({
     type: Date,
     nullable: true,
+    example: '2024-10-01T12:00:00Z',
     description: 'The modified date of the object',
   })
   @IsOptional()

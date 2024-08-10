@@ -40,7 +40,7 @@ These endpoint return [Linked Account object(s)](/glossary/linked-account-object
  ```shell Import a single existing user
   curl --request POST \
       --url https://api.panora.dev/linked-users \
-      --header 'Authorization: Bearer <MY_API_KEY>' \
+      --header 'x-api-key: <api-key>' \
       --header 'Content-Type: application/json' \
       --data '{
           "linked_user_origin_id": "acme_user_1", # your remote id (id representing your existing user inside your system)
@@ -51,7 +51,7 @@ These endpoint return [Linked Account object(s)](/glossary/linked-account-object
   ```shell Import a batch of existing users
   curl --request POST \
       --url https://api.panora.dev/linked-users/batch \
-      --header 'Authorization: Bearer <MY_API_KEY>' \
+      --header 'x-api-key: <api-key>' \
       --header 'Content-Type: application/json' \
       --data '{
           "linked_user_origin_ids": ["acme_user_1", "acme_user_2", "acme_user_3"], # array of remote ids (ids representing your existing users inside your system)
@@ -76,11 +76,11 @@ At any point in your code, if you have successfully added your linked users (see
  ```shell linkedUserFromRemoteId
     curl --request GET \
             --url https://api.panora.dev/linked-users/fromRemoteId?remoteId=acme_id_1 \
-            --header 'Authorization: Bearer <MY_API_KEY>' \
+            --header 'x-api-key: <api-key>' \
     ```
     ```shell fetchLinkedUsers
     curl --request GET \
             --url https://api.panora.dev/linked-users \
-            --header 'Authorization: Bearer <MY_API_KEY>' \
+            --header 'x-api-key: <api-key>' \
     ```
 </CodeGroup>

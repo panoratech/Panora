@@ -21,7 +21,6 @@ import { ZohoTaskMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 import { TaskController } from './task.controller';
 @Module({
-  imports: [BullQueueModule],
   controllers: [TaskController],
   providers: [
     TaskService,

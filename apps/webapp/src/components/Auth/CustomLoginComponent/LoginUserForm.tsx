@@ -133,7 +133,7 @@ const LoginUserForm = () => {
             </CardContent>
             <CardFooter>
                 <Button type='submit' size="sm" className='h-7 gap-1'>Login</Button>
-                <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                <Link href="/b2c/login/forgot-password" className="text-sm ml-4 text-white-600 hover:underline">
                     Forgot Password?
                 </Link>
             </CardFooter>

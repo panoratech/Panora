@@ -2,7 +2,11 @@ import { Email, Phone, Url } from '@ats/@lib/@types';
 import { UnifiedAtsApplicationOutput } from '@ats/application/types/model.unified';
 import { UnifiedAtsAttachmentOutput } from '@ats/attachment/types/model.unified';
 import { UnifiedAtsTagOutput } from '@ats/tag/types/model.unified';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import {
   IsUUID,
   IsOptional,
@@ -14,6 +18,7 @@ import {
 export class UnifiedAtsCandidateInput {
   @ApiPropertyOptional({
     type: String,
+    example: 'Joe',
     nullable: true,
     description: 'The first name of the candidate',
   })
@@ -23,6 +28,7 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'Doe',
     nullable: true,
     description: 'The last name of the candidate',
   })
@@ -32,6 +38,7 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'Acme',
     nullable: true,
     description: 'The company of the candidate',
   })
@@ -41,6 +48,7 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'Analyst',
     nullable: true,
     description: 'The title of the candidate',
   })
@@ -50,6 +58,7 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'New York',
     nullable: true,
     description: 'The locations of the candidate',
   })
@@ -59,6 +68,7 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: Boolean,
+    example: false,
     nullable: true,
     description: 'Whether the candidate is private',
   })
@@ -68,6 +78,7 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: Boolean,
+    example: true,
     nullable: true,
     description: 'Whether the candidate is reachable by email',
   })
@@ -76,7 +87,9 @@ export class UnifiedAtsCandidateInput {
   email_reachable?: boolean;
 
   @ApiPropertyOptional({
-    type: Date,
+    type: String,
+    example: '2024-10-01T12:00:00Z',
+    format: 'date-time',
     nullable: true,
     description: 'The remote creation date of the candidate',
   })
@@ -85,7 +98,9 @@ export class UnifiedAtsCandidateInput {
   remote_created_at?: string;
 
   @ApiPropertyOptional({
-    type: Date,
+    type: String,
+    example: '2024-10-01T12:00:00Z',
+    format: 'date-time',
     nullable: true,
     description: 'The remote modification date of the candidate',
   })
@@ -94,7 +109,9 @@ export class UnifiedAtsCandidateInput {
   remote_modified_at?: string;
 
   @ApiPropertyOptional({
-    type: Date,
+    type: String,
+    example: '2024-10-01T12:00:00Z',
+    format: 'date-time',
     nullable: true,
     description: 'The last interaction date with the candidate',
   })
@@ -103,7 +120,14 @@ export class UnifiedAtsCandidateInput {
   last_interaction_at?: string;
 
   @ApiPropertyOptional({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedAtsAttachmentOutput) },
+      ],
+    },
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     nullable: true,
     description: 'The attachments UUIDs of the candidate',
   })
@@ -112,7 +136,14 @@ export class UnifiedAtsCandidateInput {
   attachments?: (string | UnifiedAtsAttachmentOutput)[];
 
   @ApiPropertyOptional({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedAtsApplicationOutput) },
+      ],
+    },
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     nullable: true,
     description: 'The applications UUIDs of the candidate',
   })
@@ -121,7 +152,11 @@ export class UnifiedAtsCandidateInput {
   applications?: (string | UnifiedAtsApplicationOutput)[];
 
   @ApiPropertyOptional({
-    type: [String],
+    type: 'array',
+    items: {
+      oneOf: [{ type: 'string' }, { $ref: getSchemaPath(UnifiedAtsTagOutput) }],
+    },
+    example: ['tag_1', 'tag_2'],
     nullable: true,
     description: 'The tags of the candidate',
   })
@@ -131,6 +166,12 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: [Url],
+    example: [
+      {
+        url: 'mywebsite.com',
+        url_type: 'WEBSITE',
+      },
+    ],
     nullable: true,
     description:
       'The urls of the candidate, possible values for Url type are WEBSITE, BLOG, LINKEDIN, GITHUB, or OTHER',
@@ -140,6 +181,12 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: [Phone],
+    example: [
+      {
+        phone_number: '+33660688899',
+        phone_type: 'WORK',
+      },
+    ],
     nullable: true,
     description: 'The phone numbers of the candidate',
   })
@@ -148,6 +195,12 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: [Email],
+    example: [
+      {
+        email_address: 'joedoe@gmail.com',
+        email_address_type: 'WORK',
+      },
+    ],
     nullable: true,
     description: 'The email addresses of the candidate',
   })
@@ -156,6 +209,10 @@ export class UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     additionalProperties: true,
     nullable: true,
     description:
@@ -168,6 +225,7 @@ export class UnifiedAtsCandidateInput {
 export class UnifiedAtsCandidateOutput extends UnifiedAtsCandidateInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the candidate',
   })
@@ -177,6 +235,7 @@ export class UnifiedAtsCandidateOutput extends UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description: 'The id of the candidate in the context of the 3rd Party',
   })
@@ -186,6 +245,10 @@ export class UnifiedAtsCandidateOutput extends UnifiedAtsCandidateInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:
@@ -195,6 +258,7 @@ export class UnifiedAtsCandidateOutput extends UnifiedAtsCandidateInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The created date of the object',
@@ -203,6 +267,7 @@ export class UnifiedAtsCandidateOutput extends UnifiedAtsCandidateInput {
   created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modified date of the object',
@@ -214,6 +279,7 @@ export class UnifiedAtsCandidateOutput extends UnifiedAtsCandidateInput {
 export class UnifiedCandidateUrlInput {
   @ApiPropertyOptional({
     type: String,
+    example: 'mywebsite.com',
     nullable: true,
     description: 'The value of the URL',
   })
@@ -223,6 +289,7 @@ export class UnifiedCandidateUrlInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'WEBSITE',
     nullable: true,
     description: 'The type of the URL',
   })
@@ -231,25 +298,30 @@ export class UnifiedCandidateUrlInput {
   type?: string;
 
   @ApiPropertyOptional({
+    format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The creation date of the URL',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
+    format: 'date-time',
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modification date of the URL',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the candidate',
   })
@@ -261,6 +333,7 @@ export class UnifiedCandidateUrlInput {
 export class UnifiedCandidateUrlOutput extends UnifiedCandidateUrlInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the URL',
   })
@@ -270,6 +343,7 @@ export class UnifiedCandidateUrlOutput extends UnifiedCandidateUrlInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description: 'The remote ID of the URL in the context of the 3rd Party',
   })
@@ -279,6 +353,10 @@ export class UnifiedCandidateUrlOutput extends UnifiedCandidateUrlInput {
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description: 'The remote data of the URL in the context of the 3rd Party',
@@ -290,6 +368,7 @@ export class UnifiedCandidateUrlOutput extends UnifiedCandidateUrlInput {
 export class UnifiedCandidatePhoneNumberInput {
   @ApiPropertyOptional({
     type: String,
+    example: '+33650009898',
     nullable: true,
     description: 'The phone number value',
   })
@@ -299,6 +378,7 @@ export class UnifiedCandidatePhoneNumberInput {
 
   @ApiPropertyOptional({
     type: String,
+    example: 'WORK',
     nullable: true,
     description: 'The type of phone number',
   })
@@ -307,25 +387,28 @@ export class UnifiedCandidatePhoneNumberInput {
   type?: string;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The creation date of the phone number',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modification date of the phone number',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the candidate',
   })
@@ -337,6 +420,7 @@ export class UnifiedCandidatePhoneNumberInput {
 export class UnifiedCandidatePhoneNumberOutput extends UnifiedCandidatePhoneNumberInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the phone number',
   })
@@ -346,6 +430,7 @@ export class UnifiedCandidatePhoneNumberOutput extends UnifiedCandidatePhoneNumb
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description:
       'The remote ID of the phone number in the context of the 3rd Party',
@@ -356,6 +441,10 @@ export class UnifiedCandidatePhoneNumberOutput extends UnifiedCandidatePhoneNumb
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:
@@ -366,13 +455,18 @@ export class UnifiedCandidatePhoneNumberOutput extends UnifiedCandidatePhoneNumb
 }
 
 export class UnifiedCandidateEmailAddressInput {
-  @ApiPropertyOptional({ type: String, description: 'The email address value' })
+  @ApiPropertyOptional({
+    type: String,
+    example: 'joedoe@gmail.com',
+    description: 'The email address value',
+  })
   @IsString()
   @IsOptional()
   value?: string;
 
   @ApiPropertyOptional({
     type: String,
+    example: 'WORK',
     nullable: true,
     description: 'The type of email address',
   })
@@ -381,25 +475,28 @@ export class UnifiedCandidateEmailAddressInput {
   type?: string;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The creation date of the email address',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
     type: Date,
     nullable: true,
     description: 'The modification date of the email address',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the candidate',
   })
@@ -411,6 +508,7 @@ export class UnifiedCandidateEmailAddressInput {
 export class UnifiedCandidateEmailAddressOutput extends UnifiedCandidateEmailAddressInput {
   @ApiPropertyOptional({
     type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     nullable: true,
     description: 'The UUID of the email address',
   })
@@ -420,6 +518,7 @@ export class UnifiedCandidateEmailAddressOutput extends UnifiedCandidateEmailAdd
 
   @ApiPropertyOptional({
     type: String,
+    example: 'id_1',
     nullable: true,
     description:
       'The remote ID of the email address in the context of the 3rd Party',
@@ -430,6 +529,10 @@ export class UnifiedCandidateEmailAddressOutput extends UnifiedCandidateEmailAdd
 
   @ApiPropertyOptional({
     type: Object,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
     nullable: true,
     additionalProperties: true,
     description:

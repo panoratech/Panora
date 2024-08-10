@@ -29,14 +29,14 @@ import {
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-//@ApiKeyAuth()
+
 @ApiTags('crm/tasks')
 @Controller('crm/tasks')
 export class TaskController {
@@ -50,7 +50,7 @@ export class TaskController {
 
   @ApiOperation({
     operationId: 'listCrmTask',
-    summary: 'List  Tasks',
+    summary: 'List Tasks',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -64,10 +64,10 @@ export class TaskController {
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getTasks(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
@@ -75,6 +75,7 @@ export class TaskController {
 
       return this.taskService.getTasks(
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         limit,
@@ -96,12 +97,14 @@ export class TaskController {
     required: true,
     type: String,
     description: 'id of the task you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -117,7 +120,7 @@ export class TaskController {
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    const { linkedUserId, remoteSource } =
+    const { linkedUserId, remoteSource, connectionId, projectId } =
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
@@ -125,6 +128,8 @@ export class TaskController {
       id,
       linkedUserId,
       remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
   }
@@ -156,13 +161,14 @@ export class TaskController {
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource, connectionId } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.taskService.addTask(
         unifiedTaskData,
         connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

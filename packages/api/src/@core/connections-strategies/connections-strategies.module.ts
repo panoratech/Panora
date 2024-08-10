@@ -1,5 +1,3 @@
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ValidateUserService } from '@@core/utils/services/validate-user.service';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
