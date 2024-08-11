@@ -182,6 +182,9 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   if (providerName === 'ebay') {
     params = `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${data.RUVALUE}&state=${state}`;
   }
+  if (providerName === 'amazon') {
+    params = `application_id=${encodeURIComponent(data.APPLICATION_ID)}&state=${state}&version=beta`;
+  }
 
   if (needsScope(providerName, vertical) && scopes) {
     if (providerName === 'slack') {

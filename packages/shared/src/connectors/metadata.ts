@@ -2839,6 +2839,23 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.oauth2,
         }
       },
+      'amazon': {
+        urls: {
+          docsUrl: 'https://developer-docs.amazon.com/sp-api/docs/welcome',
+          apiUrl: 'https://sandbox.sellingpartnerapi-na.amazon.com', // north america prod is https://sellingpartnerapi-na.amazon.com
+          authBaseUrl: 'https://sellercentral.amazon.com/apps/authorize/consent'
+        },
+        logoPath: 'https://cdn.vectorstock.com/i/500p/39/87/astana-kazakhstan-20-july-2020-amazon-icon-vector-34243987.jpg',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: true,
+        options: {
+          local_redirect_uri_in_https: true,
+          oauth_attributes: ['application_id']
+        },
+        authStrategy: {
+          strategy: AuthStrategy.oauth2,
+        }
+      },
       'shopify': {
         // scopes: 'read_all_orders,read_assigned_fulfillment_orders,read_customers,read_fulfillments,read_orders,write_orders,read_products,write_products',
         urls: {

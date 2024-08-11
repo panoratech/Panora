@@ -12,7 +12,7 @@ import {
 export class UnifiedEcommerceOrderInput {
   @ApiPropertyOptional({
     type: String,
-    example: 'PAID', //todo
+    example: 'PAID',
     nullable: true,
     description: 'The status of the order',
   })
@@ -33,6 +33,7 @@ export class UnifiedEcommerceOrderInput {
   @ApiPropertyOptional({
     type: String,
     example: 'SUCCESS',
+    enum: ['SUCCESS', 'FAIL'],
     nullable: true,
     description: 'The payment status of the order',
   })
@@ -94,7 +95,7 @@ export class UnifiedEcommerceOrderInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
-    example: 'delivered', //todo
+    example: 'delivered',
     description: 'The fulfillment status of the order',
   })
   @IsString()

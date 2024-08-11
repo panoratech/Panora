@@ -10,7 +10,7 @@ import { connections as Connection2 } from '@prisma/client';
 export type OAuthCallbackParams = {
   projectId: string;
   linkedUserId: string;
-  code: string;
+  code?: string;
   [key: string]: any;
 };
 

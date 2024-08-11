@@ -14652,13 +14652,16 @@ components:
         payment_status:
           type: string
           example: SUCCESS
+          enum: &ref_150
+            - SUCCESS
+            - FAIL
           nullable: true
           description: The payment status of the order
         currency:
           type: string
           nullable: true
           example: AUD
-          enum: &ref_150
+          enum: &ref_151
             - AED
             - AFN
             - ALL
@@ -14857,11 +14860,11 @@ components:
         items:
           type: object
           nullable: true
-          example: &ref_151 {}
+          example: &ref_152 {}
           description: The items in the order
         field_mappings:
           type: object
-          example: &ref_152
+          example: &ref_153
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -14911,13 +14914,14 @@ components:
         payment_status:
           type: string
           example: SUCCESS
+          enum: *ref_150
           nullable: true
           description: The payment status of the order
         currency:
           type: string
           nullable: true
           example: AUD
-          enum: *ref_150
+          enum: *ref_151
           description: >-
             The currency of the order. Authorized value must be of type
             CurrencyCode (ISO 4217)
@@ -14954,11 +14958,11 @@ components:
         items:
           type: object
           nullable: true
-          example: *ref_151
+          example: *ref_152
           description: The items in the order
         field_mappings:
           type: object
-          example: *ref_152
+          example: *ref_153
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -15135,7 +15139,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_153
+          example: &ref_154
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -15207,7 +15211,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_153
+          example: *ref_154
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora

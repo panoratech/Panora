@@ -66,12 +66,14 @@ export class ConnectionsController {
   @Get('oauth/callback')
   async handleOAuthCallback(@Res() res: Response, @Query() query: any) {
     try {
-      const { state, code, ...otherParams } = query;
+      const { state, code, spapi_oauth_code, ...otherQueryParams } = query;
 
-      if (!code) {
+      if (!code && !spapi_oauth_code) {
         throw new ConnectionsError({
           name: 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR',
-          message: `No Callback Params found for code, found ${code}`,
+          message: `No Callback Params found for code, found ${
+            code || spapi_oauth_code
+          }`,
         });
       }
 
@@ -115,7 +117,7 @@ export class ConnectionsController {
         linkedUserId,
         providerName,
         returnUrl,
-        ...dynamicParams
+        ...dynamicStateParams
       } = stateData;
 
       const service = this.categoryConnectionRegistry.getService(
@@ -123,12 +125,19 @@ export class ConnectionsController {
       );
       await service.handleCallBack(
         providerName,
-        { linkedUserId, projectId, code, otherParams, ...dynamicParams },
+        {
+          linkedUserId,
+          projectId,
+          code,
+          spapi_oauth_code,
+          ...otherQueryParams,
+          ...dynamicStateParams,
+        },
         'oauth2',
       );
       if (providerName == 'shopify') {
         // we must redirect using shop and host to get a valid session on shopify server
-        service.redirectUponConnection(res, otherParams);
+        service.redirectUponConnection(res, ...otherQueryParams);
       } else {
         res.redirect(returnUrl);
       }
