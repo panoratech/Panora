@@ -1,4 +1,4 @@
-export interface RedtailOpportunity {
+export interface RedtailDeal {
   id: string;
   title: string;
   description: string;
@@ -29,10 +29,5 @@ export interface RedtailOpportunity {
   [key: string]: any;
 }
 
-export type RedtailOpportunityInput = Partial<RedtailOpportunity>;
-export type RedtailOpportunityOutput = RedtailOpportunity;
-
-export const commonOpportunityRedtailProperties = {
-  defaultStage: 'Prospecting',
-  defaultProbability: 0.1,
-};
+export type RedtailDealInput = Partial<RedtailDeal>;
+export type RedtailDealOutput = RedtailDealInput;

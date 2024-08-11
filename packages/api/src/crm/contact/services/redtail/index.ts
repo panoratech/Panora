@@ -19,8 +19,8 @@ export class RedtailService implements IContactService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      CrmObject.contact.toUpperCase() + ':' + RedtailService.name,
-    );
+        `${CrmObject.contact.toUpperCase()}:${RedtailService.name}`,
+       );
     this.registry.registerService('redtail', this);
   }
 
@@ -28,7 +28,6 @@ export class RedtailService implements IContactService {
     contactData: RedtailContactInput,
     linkedUserId: string,
   ): Promise<ApiResponse<RedtailContactOutput>> {
-    try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -54,13 +53,9 @@ export class RedtailService implements IContactService {
         message: 'Redtail contact created',
         statusCode: 201,
       };
-    } catch (error) {
-      throw error;
     }
-  }
 
   async sync(data: SyncParam): Promise<ApiResponse<RedtailContactOutput[]>> {
-    try {
       const { linkedUserId } = data;
 
       const connection = await this.prisma.connections.findFirst({
@@ -85,10 +80,7 @@ export class RedtailService implements IContactService {
         message: 'Redtail contacts retrieved',
         statusCode: 200,
       };
-    } catch (error) {
-      throw error;
     }
-  }
 
   private createAuthHeader(apiKey: string, userKey: string): string {
     const credentials = `${apiKey}:${userKey}`;

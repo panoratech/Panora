@@ -5,13 +5,13 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
-import { IOpportunityService } from '@crm/opportunity/types';
+import { IDealService } from '@crm/opportunity/types';
 import { CrmObject } from '@crm/@lib/@types';
-import { RedtailOpportunityInput, RedtailOpportunityOutput } from './types';
+import { RedtailDealInput, RedtailDealOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
-export class RedtailOpportunityService implements IOpportunityService {
+export class RedtailService implements IDealService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -19,9 +19,9 @@ export class RedtailOpportunityService implements IOpportunityService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      CrmObject.opportunity.toUpperCase() + ':' + RedtailOpportunityService.name,
-    );
-    this.registry.registerService('redtail-opportunity', this);
+         `${CrmObject.opportunity.toUpperCase()}:${RedtailService.name}`,
+       );
+    this.registry.registerService('redtail', this);
   }
 
   private getBasicAuthHeader(username: string, password: string, apiKey: string): string {
@@ -29,10 +29,10 @@ export class RedtailOpportunityService implements IOpportunityService {
     return `Basic ${Buffer.from(credentials).toString('base64')}`;
   }
 
-  async addOpportunity(
-    opportunityData: RedtailOpportunityInput,
+  async addDeal(
+    opportunityData: RedtailDealInput,
     linkedUserId: string,
-  ): Promise<ApiResponse<RedtailOpportunityOutput>> {
+  ): Promise<ApiResponse<RedtailDealOutput>> {
     try {
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -60,16 +60,16 @@ export class RedtailOpportunityService implements IOpportunityService {
       );
       return {
         data: resp.data.data,
-        message: 'Redtail opportunity created',
+        message: 'Redtail deal created',
         statusCode: 201,
       };
     } catch (error) {
-      this.logger.error(`Error adding opportunity: ${error.message}`);
+      this.logger.error(`Error adding deal: ${error.message}`);
       throw error;
     }
   }
 
-  async sync(data: SyncParam): Promise<ApiResponse<RedtailOpportunityOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<RedtailDealOutput[]>> {
     try {
       const { linkedUserId } = data;
 
@@ -96,11 +96,11 @@ export class RedtailOpportunityService implements IOpportunityService {
 
       return {
         data: resp.data.data,
-        message: 'Redtail opportunities retrieved',
+        message: 'Redtail deal retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      this.logger.error(`Error syncing opportunities: ${error.message}`);
+      this.logger.error(`Error syncing deals: ${error.message}`);
       throw error;
     }
   }

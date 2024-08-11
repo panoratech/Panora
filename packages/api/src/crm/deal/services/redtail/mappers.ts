@@ -1,35 +1,33 @@
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Utils } from '@crm/@lib/@utils';
-import { IOpportunityMapper } from '@crm/opportunity/types';
+import { IDealMapper } from '@crm/deal/types';
 import {
-  UnifiedOpportunityInput,
-  UnifiedOpportunityOutput,
-} from '@crm/opportunity/types/model.unified';
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
+} from '@crm/deal/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import {
-  RedtailOpportunityInput,
-  RedtailOpportunityOutput,
+  RedtailDealInput,
+  RedtailDealOutput,
 } from './types';
 
 @Injectable()
-export class RetailOpportunityMapper implements IOpportunityMapper {
+export class RetailDealMapper implements IDealMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
-    this.mappersRegistry.registerService('crm', 'opportunity', 'retail', this);
+    this.mappersRegistry.registerService('crm', 'deal', 'retail', this);
   }
 
   async desunify(
-    source: UnifiedOpportunityInput,
+    source: UnifiedCrmDealInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<RedtailOpportunityInput> {
-    const result: RedtailOpportunityInput = {
-      title: source.title,
+  ): Promise<RedtailDealInput> {
+    const result: RedtailDealInput = {
+      name: source.name,
+      value: source.amount,
       description: source.description,
-      amount: source.amount,
-      close_date: source.close_date ? new Date(source.close_date) : undefined,
-      probability: source.probability,
       stage: source.stage || 'Prospecting', // Default stage
       projected_revenue: source.projected_revenue,
       actual_revenue: source.actual_revenue,
@@ -62,15 +60,15 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
   }
 
   async unify(
-    source: RedtailOpportunityOutput | RedtailOpportunityOutput[],
+    source: RedtailDealOutput | RedtailDealOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOpportunityOutput | UnifiedOpportunityOutput[]> {
+  ): Promise<UnifiedCrmDealOutput | UnifiedCrmDealOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleOpportunityToUnified(
+      return this.mapSingleDealToUnified(
         source,
         connectionId,
         customFieldMappings,
@@ -78,9 +76,9 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
     }
 
     return Promise.all(
-      source.map((opportunity) =>
-        this.mapSingleOpportunityToUnified(
-          opportunity,
+      source.map((deal) =>
+        this.mapSingleDealToUnified(
+          deal,
           connectionId,
           customFieldMappings,
         ),
@@ -88,25 +86,25 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
     );
   }
 
-  private async mapSingleOpportunityToUnified(
-    opportunity: RedtailOpportunityOutput,
+  private async mapSingleDealToUnified(
+    deal: RedtailDealOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedOpportunityOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
-        field_mappings[mapping.slug] = opportunity[mapping.remote_id];
+        field_mappings[mapping.slug] = deal[mapping.remote_id];
       }
     }
 
-    let opts: any = {};
-    if (opportunity.owner_id?.id) {
+    const opts: any = {};
+    if (deal.owner_id?.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
-        opportunity.owner_id.id,
+        deal.owner_id.id,
         connectionId,
       );
       if (user_id) {
@@ -114,9 +112,9 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
       }
     }
 
-    if (opportunity.company_id) {
+    if (deal.company_id) {
       const account_id = await this.utils.getAccountUuidFromRemoteId(
-        opportunity.company_id.toString(),
+        deal.company_id.toString(),
         connectionId,
       );
       if (account_id) {
@@ -125,19 +123,17 @@ export class RetailOpportunityMapper implements IOpportunityMapper {
     }
 
     return {
-      remote_id: opportunity.id,
-      remote_data: opportunity,
-      title: opportunity.title,
-      description: opportunity.description,
-      amount: opportunity.amount,
-      close_date: opportunity.close_date.toISOString(),
+      remote_id: deal.id,
+      remote_data: deal,
+      name: deal.name,
+      value: deal.value,
       field_mappings,
       ...opts,
-      probability: opportunity.probability,
-      stage: opportunity.stage,
-      projected_revenue: opportunity.projected_revenue,
-      actual_revenue: opportunity.actual_revenue,
-      deleted: opportunity.deleted,
+      description: deal.description || '',
+      stage: deal.stage,
+      projected_revenue: deal.projected_revenue,
+      actual_revenue: deal.actual_revenue,
+      deleted: deal.deleted,
     };
   }
 }
