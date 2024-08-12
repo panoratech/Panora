@@ -97,7 +97,6 @@ export class WebflowConnectionService extends AbstractBaseConnectionService {
           vertical: 'ecommerce',
         },
       });
-      if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'

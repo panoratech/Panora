@@ -198,7 +198,7 @@ export class ConnectionsStrategiesService {
       case AuthStrategy.oauth2:
         const dynamic_attributes =
           CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()]
-            .options.oauth_attributes || [];
+            ?.options?.oauth_attributes || [];
         attributes = ['client_id', 'client_secret', ...dynamic_attributes];
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
@@ -283,10 +283,10 @@ export class ConnectionsStrategiesService {
             ),
           };
         }
-        const dynamic_attributes =
-          CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()]
-            .options.oauth_attributes;
-        if (dynamic_attributes) {
+        const object =
+          CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()];
+        if (object.options && object.options.oauth_attributes) {
+          const dynamic_attributes = object.options.oauth_attributes;
           for (const attr of dynamic_attributes) {
             data = {
               ...data,

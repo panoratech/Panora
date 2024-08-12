@@ -128,8 +128,6 @@ export class GitlabConnectionService extends AbstractBaseConnectionService {
         'OAuth credentials : gitlab ticketing ' + JSON.stringify(data),
       );
 
-      // console.log("Gitlab Credentials : ", data)
-
       let db_res;
       const connection_token = uuidv4();
 
@@ -209,7 +207,6 @@ export class GitlabConnectionService extends AbstractBaseConnectionService {
         },
       );
       const data: GitlabOAuthResponse = res.data;
-      // console.log("Gitlab Credentials (In refresh) : ", data)
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,

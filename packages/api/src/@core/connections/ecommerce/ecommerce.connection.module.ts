@@ -14,6 +14,7 @@ import { EbayConnectionService } from './services/ebay/ebay.service';
 import { WebflowConnectionService } from './services/webflow/webflow.service';
 import { FaireConnectionService } from './services/faire/faire.service';
 import { MercadolibreConnectionService } from './services/mercadolibre/mercadolibre.service';
+import { AmazonConnectionService } from './services/amazon/amazon.service';
 
 @Module({
   imports: [WebhookModule, BullQueueModule],
@@ -32,6 +33,7 @@ import { MercadolibreConnectionService } from './services/mercadolibre/mercadoli
     WebflowConnectionService,
     FaireConnectionService,
     MercadolibreConnectionService,
+    AmazonConnectionService,
   ],
   exports: [EcommerceConnectionsService],
 })

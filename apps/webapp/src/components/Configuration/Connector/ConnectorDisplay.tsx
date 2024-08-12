@@ -76,7 +76,6 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
   })
 
   // Extract oauth_attributes from the connector metadata
-  console.log('item is '+JSON.stringify(item))
   const oauthAttributes = CONNECTORS_METADATA[item?.vertical!][item?.name!].options?.oauth_attributes || [];
 
   // Update the form schema to include dynamic fields
@@ -359,15 +358,25 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
         onSuccess(data) {
           if (item?.authStrategy.strategy === AuthStrategy.oauth2) {
             let i = 0;
-            if(needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase())){
+            if (needsSubdomain(item.name.toLowerCase(), item.vertical?.toLowerCase()!)) {
               form.setValue("subdomain", data[i]);
-              i = 1;
+              i += 1;
             }
+
+            // Set client_id and client_secret
             form.setValue("client_id", data[i]);
             form.setValue("client_secret", data[i + 1]);
-            form.setValue("scope", data[i + 2]);
+            i += 2; // Increment i after setting client_id and client_secret
+
+            // Check if scope is needed and set the value if so
+            if (needsScope(item.name.toLowerCase(), item.vertical?.toLowerCase()!)) {
+              form.setValue("scope", data[i]);
+              i += 1;
+            }
+
+            // Set any additional OAuth attributes
             oauthAttributes.forEach((attr: string, index: number) => {
-              form.setValue(attr as keyof z.infer<typeof formSchema>, data[i + 3 + index]);
+              form.setValue(attr as keyof z.infer<typeof formSchema>, data[i + index]);
             });
           }
           if (item?.authStrategy.strategy === AuthStrategy.api_key) {

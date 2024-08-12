@@ -8,7 +8,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IOrderService extends IBaseObjectService {
-  addOrder(
+  addOrder?(
     orderData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalOrderOutput>>;
