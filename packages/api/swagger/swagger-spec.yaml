@@ -14636,12 +14636,20 @@ components:
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
+    LineItem:
+      type: object
+      properties: {}
     UnifiedEcommerceOrderOutput:
       type: object
       properties:
         order_status:
           type: string
-          example: PAID
+          example: UNSHIPPED
+          enum: &ref_150
+            - PENDING
+            - UNSHIPPED
+            - SHIPPED
+            - CANCELED
           nullable: true
           description: The status of the order
         order_number:
@@ -14652,7 +14660,7 @@ components:
         payment_status:
           type: string
           example: SUCCESS
-          enum: &ref_150
+          enum: &ref_151
             - SUCCESS
             - FAIL
           nullable: true
@@ -14661,7 +14669,7 @@ components:
           type: string
           nullable: true
           example: AUD
-          enum: &ref_151
+          enum: &ref_152
             - AED
             - AFN
             - ALL
@@ -14850,7 +14858,11 @@ components:
         fulfillment_status:
           type: string
           nullable: true
-          example: delivered
+          example: PENDING
+          enum: &ref_153
+            - PENDING
+            - FULFILLED
+            - CANCELED
           description: The fulfillment status of the order
         customer_id:
           type: string
@@ -14858,13 +14870,39 @@ components:
           nullable: true
           description: The UUID of the customer associated with the order
         items:
-          type: object
           nullable: true
-          example: &ref_152 {}
+          example: &ref_154
+            - remote_id: '12345'
+              product_id: prod_001
+              variant_id: var_001
+              sku: SKU123
+              title: Sample Product
+              quantity: 2
+              price: '19.99'
+              total: '39.98'
+              fulfillment_status: PENDING
+              requires_shipping: true
+              taxable: true
+              weight: 1.5
+              variant_title: Size M
+              vendor: Sample Vendor
+              properties:
+                - name: Color
+                  value: Red
+              tax_lines:
+                - title: Sales Tax
+                  price: '3.00'
+                  rate: 0.075
+              discount_allocations:
+                - amount: '5.00'
+                  discount_application_index: 0
           description: The items in the order
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_153
+          example: &ref_155
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -14903,7 +14941,8 @@ components:
       properties:
         order_status:
           type: string
-          example: PAID
+          example: UNSHIPPED
+          enum: *ref_150
           nullable: true
           description: The status of the order
         order_number:
@@ -14914,14 +14953,14 @@ components:
         payment_status:
           type: string
           example: SUCCESS
-          enum: *ref_150
+          enum: *ref_151
           nullable: true
           description: The payment status of the order
         currency:
           type: string
           nullable: true
           example: AUD
-          enum: *ref_151
+          enum: *ref_152
           description: >-
             The currency of the order. Authorized value must be of type
             CurrencyCode (ISO 4217)
@@ -14948,7 +14987,8 @@ components:
         fulfillment_status:
           type: string
           nullable: true
-          example: delivered
+          example: PENDING
+          enum: *ref_153
           description: The fulfillment status of the order
         customer_id:
           type: string
@@ -14956,13 +14996,15 @@ components:
           nullable: true
           description: The UUID of the customer associated with the order
         items:
-          type: object
           nullable: true
-          example: *ref_152
+          example: *ref_154
           description: The items in the order
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_153
+          example: *ref_155
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -15139,7 +15181,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_154
+          example: &ref_156
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -15211,7 +15253,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_154
+          example: *ref_156
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora

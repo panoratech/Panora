@@ -9,12 +9,17 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { Utils } from '@ecommerce/@lib/@utils';
 import { SquarespaceOrderOutput, SquarespaceOrderInput } from './types';
 import { CurrencyCode } from '@@core/utils/types';
+import { EcommerceObject } from '@ecommerce/@lib/@types';
+import { SquarespaceCustomerOutput } from '@ecommerce/customer/services/squarespace/types';
+import { UnifiedEcommerceCustomerOutput } from '@ecommerce/customer/types/model.unified';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class SquarespaceOrderMapper implements IOrderMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
+    private ingestService: IngestDataService,
     private coreUnificationService: CoreUnification,
   ) {
     this.mappersRegistry.registerService(
@@ -119,25 +124,39 @@ export class SquarespaceOrderMapper implements IOrderMapper {
   ): Promise<UnifiedEcommerceOrderOutput> {
     const opts: any = {};
     if (order.customerEmail) {
-      const customer_id = await this.utils.getCustomerIdFromRemote(
-        order.customerEmail,
+      const customers = await this.ingestService.ingestData<
+        UnifiedEcommerceCustomerOutput,
+        SquarespaceCustomerOutput
+      >(
+        [
+          {
+            firstName: order.shippingAddress.firstName,
+            lastName: order.shippingAddress.lastName,
+            address: order.shippingAddress,
+            email: order.customerEmail,
+          },
+        ],
+        'squarespace',
         connectionId,
+        'ecommerce',
+        EcommerceObject.customer,
+        [],
       );
-      if (customer_id) {
-        opts.customer_id = customer_id;
+      if (customers && customers[0]) {
+        opts.customer_id = customers[0].id_ecom_customer;
       }
     }
     return {
       remote_id: order.id?.toString(),
       remote_data: order,
-      order_status: order.fulfillmentStatus || '',
+      order_status: null,
       order_number: order.orderNumber?.toString() || '',
-      payment_status: order.fulfillmentStatus || '',
+      payment_status: 'PAID',
       currency: (order.subtotal.currency as CurrencyCode) || null,
-      total_price: parseFloat(order.subtotal.value || '0'),
-      total_discount: parseFloat(order.discountTotal?.value || '0'),
-      total_shipping: parseFloat(order.shippingTotal?.value || '0'),
-      total_tax: parseFloat(order.taxTotal?.value || '0'),
+      total_price: parseInt(order.subtotal.value || '0'),
+      total_discount: parseInt(order.discountTotal?.value || '0'),
+      total_shipping: parseInt(order.shippingTotal?.value || '0'),
+      total_tax: parseInt(order.taxTotal?.value || '0'),
       fulfillment_status: order.fulfillmentStatus || '',
       field_mappings: customFieldMappings?.reduce(
         (acc, mapping) => ({
@@ -148,20 +167,6 @@ export class SquarespaceOrderMapper implements IOrderMapper {
         {},
       ),
       ...opts,
-    };
-  }
-
-  private mapAddress(address: any) {
-    return {
-      firstName: address.firstName || '',
-      lastName: address.lastName || '',
-      address1: address.address1 || '',
-      address2: address.address2 || null,
-      city: address.city || '',
-      state: address.state || '',
-      countryCode: address.countryCode || '',
-      postalCode: address.postalCode || '',
-      phone: address.phone || '',
     };
   }
 

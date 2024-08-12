@@ -26,43 +26,6 @@ export class SquarespaceService implements IProductService {
     this.registry.registerService('squarespace', this);
   }
 
-  async addProduct(
-    productData: SquarespaceProductInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<SquarespaceProductOutput>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'squarespace',
-          vertical: 'ecommerce',
-        },
-      });
-      const resp = await axios.post(
-        `${connection.account_url}/1.1/commerce/products`,
-        {
-          product: productData,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-
-      return {
-        data: resp.data,
-        message: 'Squarespace product created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async sync(
     data: SyncParam,
   ): Promise<ApiResponse<SquarespaceProductOutput[]>> {
@@ -77,7 +40,7 @@ export class SquarespaceService implements IProductService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/1.1/commerce/products`,
+        `${connection.account_url}/1.1/commerce/products?type=PHYSICAL,DIGITAL`,
         {
           headers: {
             'Content-Type': 'application/json',

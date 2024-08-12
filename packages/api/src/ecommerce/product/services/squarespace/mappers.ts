@@ -31,62 +31,7 @@ export class SquarespaceProductMapper implements IProductMapper {
       remote_id: string;
     }[],
   ): Promise<SquarespaceProductInput> {
-    const res: any = {
-      type: source.product_type?.toUpperCase() || 'PHYSICAL', // Defaulting to PHYSICAL
-      storePageId:
-        customFieldMappings?.find((mapping) => mapping.slug === 'storePageId')
-          ?.remote_id || '',
-      name: source.description?.split(' ')[0] || 'Default Name', // Assuming name is the first word of the description
-      description: source.description,
-      url: source.product_url || '',
-      tags: source.tags || [],
-      isVisible: source.product_status === 'ACTIVE',
-      seoOptions: {
-        title: source.description?.substring(0, 60) || 'SEO Title',
-        description: source.description || 'SEO Description',
-      },
-      variantAttributes: source.variants?.map((v) => v.options) || [],
-      variants: source.variants?.map((variant) => ({
-        sku: variant.sku,
-        pricing: {
-          basePrice: { currency: 'USD', value: variant.price.toString() },
-          salePrice: { currency: 'USD', value: variant.price.toString() }, // Assuming no sale price
-          onSale: false,
-        },
-        stock: {
-          quantity: variant.inventory_quantity,
-          unlimited: variant.inventory_quantity === -1, // Assuming -1 means unlimited
-        },
-        attributes: { option1: variant.options },
-        shippingMeasurements: {
-          weight: { unit: 'POUND', value: variant.weight },
-          dimensions: {
-            unit: 'INCH',
-            length: 0,
-            width: 0,
-            height: 0,
-          },
-        },
-        image: {
-          id: '',
-          altText: '',
-          url: '',
-          originalSize: { width: 0, height: 0 },
-          availableFormats: [],
-        },
-      })),
-      images:
-        source.images_urls?.map((url) => ({
-          altText: 'Product Image',
-          url: url,
-          originalSize: { width: 0, height: 0 },
-          availableFormats: [],
-        })) || [],
-      createdOn: new Date().toISOString(),
-      modifiedOn: new Date().toISOString(),
-    };
-
-    return res;
+    return;
   }
 
   async unify(

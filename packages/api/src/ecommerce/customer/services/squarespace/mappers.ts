@@ -72,19 +72,32 @@ export class SquarespaceCustomerMapper implements ICustomerMapper {
     }[],
   ): Promise<UnifiedEcommerceCustomerOutput> {
     const result: UnifiedEcommerceCustomerOutput = {
-      remote_id: customer.id?.toString(),
+      remote_id: null,
       remote_data: customer,
       email: customer.email || null,
       first_name: customer.firstName || null,
       last_name: customer.lastName || null,
       phone_number: null,
-      addresses: [],
       field_mappings:
         customFieldMappings?.reduce((acc, mapping) => {
           acc[mapping.slug] = customer[mapping.remote_id];
           return acc;
         }, {} as Record<string, any>) || {},
     };
+    if (customer.address) {
+      const add = customer.address;
+      result.addresses = [
+        {
+          street_1: add.address1,
+          street_2: add.address2 || null,
+          city: add.city,
+          state: add.state,
+          postal_code: add.postalCode,
+          country: add.countryCode,
+          address_type: 'SHIPPING',
+        },
+      ];
+    }
 
     return result;
   }

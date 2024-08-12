@@ -59,7 +59,7 @@ export class WoocommerceOrderMapper implements IOrderMapper {
         quantity: item.quantity,
         tax_class: '',
         subtotal: item.price.toString(),
-        total: (item.price * item.quantity).toString(),
+        total: (parseFloat(item.price) * item.quantity).toString(),
         sku: item.sku,
       })) as any;
     }
@@ -110,14 +110,14 @@ export class WoocommerceOrderMapper implements IOrderMapper {
       remote_data: order,
       order_status: this.mapWooCommerceStatusToUnified(order.status),
       order_number: order.number,
-      payment_status: order.status, // WooCommerce doesn't have a separate payment status
+      payment_status: order.status,
       currency: order.currency as CurrencyCode,
       total_price: parseFloat(order.total || '0'),
       total_discount: parseFloat(order.discount_total || '0'),
       total_shipping: parseFloat(order.shipping_total || '0'),
       total_tax: parseFloat(order.total_tax || '0'),
       fulfillment_status: order.status, // WooCommerce doesn't have a separate fulfillment status
-      items: {},
+      items: [],
       field_mappings: {},
     };
     if (order.customer_id) {
@@ -128,15 +128,13 @@ export class WoocommerceOrderMapper implements IOrderMapper {
     }
 
     if (order.line_items) {
-      result.items = order.line_items.reduce((acc, item) => {
-        acc[item.id.toString()] = {
-          title: item.name,
-          price: parseFloat(item.price),
-          quantity: item.quantity,
-          sku: item.sku,
-        };
-        return acc;
-      }, {});
+      result.items = order.line_items.map((item) => ({
+        remote_id: item.id,
+        title: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        sku: item.sku,
+      }));
     }
 
     if (customFieldMappings && order.meta_data) {
@@ -156,16 +154,10 @@ export class WoocommerceOrderMapper implements IOrderMapper {
     status?: string,
   ): WoocommerceOrderInput['status'] {
     switch (status) {
-      case 'PAID':
-        return 'processing';
-      case 'UNPAID':
+      case 'PENDING':
         return 'pending';
-      case 'CANCELLED':
-        return 'cancelled';
-      case 'REFUNDED':
-        return 'refunded';
       default:
-        return 'pending';
+        return status as WoocommerceOrderInput['status'];
     }
   }
 
@@ -173,18 +165,10 @@ export class WoocommerceOrderMapper implements IOrderMapper {
     status?: WoocommerceOrderInput['status'],
   ): string {
     switch (status) {
-      case 'processing':
-      case 'completed':
-        return 'PAID';
       case 'pending':
-      case 'on-hold':
-        return 'UNPAID';
-      case 'cancelled':
-        return 'CANCELLED';
-      case 'refunded':
-        return 'REFUNDED';
+        return 'PENDING';
       default:
-        return 'UNPAID';
+        return status;
     }
   }
 }

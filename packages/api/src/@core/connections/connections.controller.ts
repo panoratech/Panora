@@ -95,7 +95,6 @@ export class ConnectionsController {
 
         // Step 3: Parse the JSON
         stateData = JSON.parse(decodedState);
-        console.log(stateData);
       } else if (state.includes('squarespace_delimiter')) {
         // squarespace asks for a random alphanumeric value
         // Split the random part and the base64 part
@@ -108,7 +107,6 @@ export class ConnectionsController {
       } else {
         // If no HTML entities are present, parse directly
         stateData = JSON.parse(state);
-        console.log(stateData);
       }
 
       const {
@@ -170,7 +168,6 @@ export class ConnectionsController {
     @Query('state') state: string,
   ) {
     try {
-      console.log(client_id)
       if (!account) throw new ReferenceError('account prop not found');
       const params = `?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}&state=${state}&nonce=${nonce}&scope=${scope}`;
       res.redirect(`https://${account}.gorgias.com/oauth/authorize${params}`);

@@ -1533,7 +1533,7 @@ CREATE TABLE ecom_addresses
  modified_at      timestamp with time zone NOT NULL,
  created_at       timestamp with time zone NOT NULL,
  remote_deleted   boolean NOT NULL,
- id_ecom_order    uuid NOT NULL,
+ id_ecom_order    uuid NULL,
  CONSTRAINT PK_ecom_customer_addresses PRIMARY KEY ( id_ecom_address ),
  CONSTRAINT FK_ecom_customer_customeraddress FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer ),
  CONSTRAINT FK_ecom_order_address FOREIGN KEY ( id_ecom_order ) REFERENCES ecom_orders ( id_ecom_order )

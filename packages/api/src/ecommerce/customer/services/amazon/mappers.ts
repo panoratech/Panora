@@ -1,4 +1,4 @@
-import { ShopifyCustomerInput, ShopifyCustomerOutput } from './types';
+import { AmazonCustomerOutput } from './types';
 import {
   UnifiedEcommerceCustomerInput,
   UnifiedEcommerceCustomerOutput,
@@ -10,7 +10,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { Utils } from '@ecommerce/@lib/@utils';
 
 @Injectable()
-export class ShopifyCustomerMapper implements ICustomerMapper {
+export class AmazonCustomerMapper implements ICustomerMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
@@ -19,7 +19,7 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
     this.mappersRegistry.registerService(
       'ecommerce',
       'customer',
-      'shopify',
+      'amazon',
       this,
     );
   }
@@ -30,12 +30,12 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<ShopifyCustomerInput> {
+  ): Promise<any> {
     return;
   }
 
   async unify(
-    source: ShopifyCustomerOutput | ShopifyCustomerOutput[],
+    source: AmazonCustomerOutput | AmazonCustomerOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
@@ -51,7 +51,7 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
         customFieldMappings,
       );
     }
-    // Handling array of ShopifyCustomerOutput
+    // Handling array of AmazonCustomerOutput
     return Promise.all(
       source.map((customer) =>
         this.mapSingleCustomerToUnified(
@@ -64,42 +64,33 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
   }
 
   private async mapSingleCustomerToUnified(
-    customer: ShopifyCustomerOutput,
+    customer: AmazonCustomerOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedEcommerceCustomerOutput> {
-    const result = {
-      remote_id: customer.id?.toString(),
+    const result: UnifiedEcommerceCustomerOutput = {
+      remote_id: null,
       remote_data: customer,
-      email: customer.email || null,
-      first_name: customer.first_name || null,
-      last_name: customer.last_name || null,
-      phone_number: customer.phone || null,
-      addresses: [],
-      field_mappings:
-        customFieldMappings?.reduce((acc, mapping) => {
-          acc[mapping.slug] = customer[mapping.remote_id];
-          return acc;
-        }, {} as Record<string, any>) || {},
+      email: customer.BuyerEmail || null,
+      first_name: customer.BuyerName || null,
+      phone_number: null,
     };
-
-    if (customer.addresses) {
-      for (const add of customer.addresses) {
-        if (add.address1 && add.city && add.country) {
-          result.addresses.push({
-            street_1: add.address1,
-            street_2: add.address2 || undefined,
-            city: add.city,
-            state: add.province,
-            postal_code: add.zip,
-            country: add.country,
-            address_type: add.default ? 'SHIPPING' : null,
-          });
-        }
-      }
+    if (customer.Address) {
+      const add = customer.Address;
+      result.addresses = [
+        {
+          street_1: add.AddressLine1,
+          street_2: null,
+          city: add.City,
+          state: add.StateOrRegion,
+          postal_code: add.PostalCode,
+          country: add.CountryCode,
+          address_type: 'SHIPPING',
+        },
+      ];
     }
 
     return result;

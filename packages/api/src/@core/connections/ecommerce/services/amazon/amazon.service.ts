@@ -98,7 +98,6 @@ export class AmazonConnectionService extends AbstractBaseConnectionService {
           vertical: 'ecommerce',
         },
       });
-      if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
@@ -141,6 +140,8 @@ export class AmazonConnectionService extends AbstractBaseConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            account_url: CONNECTORS_METADATA['ecommerce']['amazon'].urls
+              .apiUrl as string,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),

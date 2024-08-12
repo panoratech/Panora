@@ -1,5 +1,6 @@
 /* INPUT */
 
+import { AmazonCustomerOutput } from '@ecommerce/customer/services/amazon/types';
 import {
   ShopifyCustomerInput,
   ShopifyCustomerOutput,
@@ -20,6 +21,10 @@ import {
   ShopifyFulfillmentOrdersInput,
   ShopifyFulfillmentOrdersOutput,
 } from '@ecommerce/fulfillmentorders/services/shopify/types';
+import {
+  AmazonOrderInput,
+  AmazonOrderOutput,
+} from '@ecommerce/order/services/amazon/types';
 import {
   ShopifyOrderInput,
   ShopifyOrderOutput,
@@ -55,7 +60,8 @@ export type OriginalProductInput =
 export type OriginalOrderInput =
   | ShopifyOrderInput
   | WoocommerceOrderInput
-  | SquarespaceOrderInput;
+  | SquarespaceOrderInput
+  | AmazonOrderInput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersInput = ShopifyFulfillmentOrdersInput;
@@ -88,7 +94,8 @@ export type OriginalProductOutput =
 export type OriginalOrderOutput =
   | ShopifyOrderOutput
   | WoocommerceOrderOutput
-  | SquarespaceOrderOutput;
+  | SquarespaceOrderOutput
+  | AmazonOrderOutput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersOutput = ShopifyFulfillmentOrdersOutput;
@@ -97,7 +104,8 @@ export type OriginalFulfillmentOrdersOutput = ShopifyFulfillmentOrdersOutput;
 export type OriginalCustomerOutput =
   | ShopifyCustomerOutput
   | WoocommerceCustomerOutput
-  | SquarespaceCustomerOutput;
+  | SquarespaceCustomerOutput
+  | AmazonCustomerOutput;
 
 /* fulfillment */
 export type OriginalFulfillmentOutput = ShopifyFulfillmentOutput;

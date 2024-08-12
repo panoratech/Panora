@@ -1751,9 +1751,9 @@ model ecom_addresses {
   modified_at      DateTime       @db.Timestamptz(6)
   created_at       DateTime       @db.Timestamptz(6)
   remote_deleted   Boolean
-  id_ecom_order    String         @db.Uuid
+  id_ecom_order    String?        @db.Uuid
   ecom_customers   ecom_customers @relation(fields: [id_ecom_customer], references: [id_ecom_customer], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_customer_customeraddress")
-  ecom_orders      ecom_orders    @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_address")
+  ecom_orders      ecom_orders?   @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_address")
 
   @@index([id_ecom_customer], map: "fk_index_ecom_customer_customeraddress")
   @@index([id_ecom_order], map: "fk_index_fk_ecom_order_address")

@@ -101,11 +101,8 @@ export class WealthboxConnectionService extends AbstractBaseConnectionService {
           vertical: 'crm',
         },
       });
-      if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${
-        this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,

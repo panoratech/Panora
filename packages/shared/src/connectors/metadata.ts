@@ -2834,7 +2834,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu9U-j_3EMYlKtu5dRaTl6ejitL2X6lz3pYg&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2,
         }
@@ -2842,7 +2842,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'amazon': {
         urls: {
           docsUrl: 'https://developer-docs.amazon.com/sp-api/docs/welcome',
-          apiUrl: 'https://sandbox.sellingpartnerapi-na.amazon.com', // north america prod is https://sellingpartnerapi-na.amazon.com
+          apiUrl: 'https://sellingpartnerapi-na.amazon.com',
           authBaseUrl: 'https://sellercentral.amazon.com/apps/authorize/consent'
         },
         logoPath: 'https://cdn.vectorstock.com/i/500p/39/87/astana-kazakhstan-20-july-2020-amazon-icon-vector-34243987.jpg',

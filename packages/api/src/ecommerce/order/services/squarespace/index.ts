@@ -25,44 +25,6 @@ export class SquarespaceService implements IOrderService {
     this.registry.registerService('squarespace', this);
   }
 
-  async addOrder(
-    orderData: SquarespaceOrderInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<SquarespaceOrderOutput>> {
-    try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'squarespace',
-          vertical: 'ecommerce',
-        },
-      });
-      const resp = await axios.post(
-        `${connection.account_url}/1.0/commerce/orders`,
-        {
-          order: orderData,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Idempotency-Key': uuidv4(),
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-
-      return {
-        data: resp.data,
-        message: 'Squarespace order created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async sync(data: SyncParam): Promise<ApiResponse<SquarespaceOrderOutput[]>> {
     try {
       const { linkedUserId } = data;

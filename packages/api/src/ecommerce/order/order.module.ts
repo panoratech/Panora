@@ -11,6 +11,10 @@ import { ShopifyOrderMapper } from './services/shopify/mappers';
 import { WoocommerceService } from './services/woocommerce';
 import { WoocommerceOrderMapper } from './services/woocommerce/mappers';
 import { SyncService } from './sync/sync.service';
+import { SquarespaceService } from './services/squarespace';
+import { SquarespaceOrderMapper } from './services/squarespace/mappers';
+import { AmazonOrderMapper } from './services/amazon/mappers';
+import { AmazonService } from './services/amazon';
 
 @Module({
   controllers: [OrderController],
@@ -24,9 +28,13 @@ import { SyncService } from './sync/sync.service';
     Utils,
     ShopifyOrderMapper,
     WoocommerceOrderMapper,
+    SquarespaceOrderMapper,
+    AmazonOrderMapper,
     /* PROVIDERS SERVICES */
     ShopifyService,
     WoocommerceService,
+    SquarespaceService,
+    AmazonService,
   ],
   exports: [SyncService],
 })

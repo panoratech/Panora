@@ -7,18 +7,50 @@ import {
   IsDateString,
   IsInt,
   IsObject,
+  IsIn,
+  IsEnum,
 } from 'class-validator';
 
+export class LineItem {
+  remote_id: string | number; // Common and essential identifier
+  product_id: string | number; // Identifier for the product
+  variant_id?: string | number; // Identifier for the variant, optional as it's not always present
+  sku: string | null; // Stock Keeping Unit, essential for inventory
+  title: string; // Name or title of the product
+  quantity: number; // Number of items ordered
+  price: string; // Price per unit, critical for financials
+  total: string; // Total price, often needed for order summaries
+  fulfillment_status?: string; // Status of fulfillment, important for tracking
+  requires_shipping: boolean; // Whether the item requires shipping
+  taxable: boolean; // Whether the item is subject to tax
+  weight?: number; // Weight of the item, important for shipping calculations
+  variant_title?: string; // Title of the variant, optional but useful
+  vendor?: string | null; // Vendor information, optional but useful
+  properties?: { name: string; value: string }[]; // Custom properties, important for customization
+  tax_lines?: {
+    title: string;
+    price: string;
+    rate: number;
+  }[]; // Tax details, essential for tax calculations
+  discount_allocations?: {
+    amount: string;
+    discount_application_index: number;
+  }[]; // Discount details, important for pricing
+}
+
+export type OrderStatus = 'PENDING' | 'UNSHIPPED' | 'SHIPPED' | 'CANCELED';
+export type FulfillmentStatus = 'PENDING' | 'FULFILLED' | 'CANCELED';
 export class UnifiedEcommerceOrderInput {
   @ApiPropertyOptional({
     type: String,
-    example: 'PAID',
+    example: 'UNSHIPPED',
+    enum: ['PENDING', 'UNSHIPPED', 'SHIPPED', 'CANCELED'],
     nullable: true,
     description: 'The status of the order',
   })
-  @IsString()
+  @IsIn(['PENDING', 'UNSHIPPED', 'SHIPPED', 'CANCELED'])
   @IsOptional()
-  order_status?: string;
+  order_status?: OrderStatus | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -37,9 +69,9 @@ export class UnifiedEcommerceOrderInput {
     nullable: true,
     description: 'The payment status of the order',
   })
-  @IsString()
+  @IsIn(['SUCCESS', 'FAIL'])
   @IsOptional()
-  payment_status?: string;
+  payment_status?: 'SUCCESS' | 'FAIL' | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -49,6 +81,7 @@ export class UnifiedEcommerceOrderInput {
     description:
       'The currency of the order. Authorized value must be of type CurrencyCode (ISO 4217)',
   })
+  @IsEnum(CurrencyCode)
   @IsOptional()
   currency?: CurrencyCode;
 
@@ -95,12 +128,13 @@ export class UnifiedEcommerceOrderInput {
   @ApiPropertyOptional({
     type: String,
     nullable: true,
-    example: 'delivered',
+    example: 'PENDING',
+    enum: ['PENDING', 'FULFILLED', 'CANCELED'],
     description: 'The fulfillment status of the order',
   })
-  @IsString()
+  @IsIn(['PENDING', 'FULFILLED', 'CANCELED'])
   @IsOptional()
-  fulfillment_status?: string;
+  fulfillment_status?: FulfillmentStatus | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -113,14 +147,35 @@ export class UnifiedEcommerceOrderInput {
   customer_id?: string;
 
   @ApiPropertyOptional({
-    type: Object,
+    type: [LineItem],
     nullable: true,
-    example: {},
+    example: [
+      {
+        remote_id: '12345',
+        product_id: 'prod_001',
+        variant_id: 'var_001',
+        sku: 'SKU123',
+        title: 'Sample Product',
+        quantity: 2,
+        price: '19.99',
+        total: '39.98',
+        fulfillment_status: 'PENDING',
+        requires_shipping: true,
+        taxable: true,
+        weight: 1.5,
+        variant_title: 'Size M',
+        vendor: 'Sample Vendor',
+        properties: [{ name: 'Color', value: 'Red' }],
+        tax_lines: [{ title: 'Sales Tax', price: '3.00', rate: 0.075 }],
+        discount_allocations: [
+          { amount: '5.00', discount_application_index: 0 },
+        ],
+      },
+    ],
     description: 'The items in the order',
   })
-  @IsObject()
   @IsOptional()
-  items?: Record<string, any>;
+  items?: Partial<LineItem>[];
 
   @ApiPropertyOptional({
     type: Object,
