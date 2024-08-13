@@ -1,5 +1,13 @@
 /* INPUT */
 
+import { GustoBenefitOutput } from '@hris/benefit/services/gusto/types';
+import { GustoCompanyOutput } from '@hris/company/services/gusto/types';
+import { GustoEmployeeOutput } from '@hris/employee/services/gusto/types';
+import { GustoEmployerbenefitOutput } from '@hris/employerbenefit/services/gusto/types';
+import { GustoEmploymentOutput } from '@hris/employment/services/gusto/types';
+import { GustoGroupOutput } from '@hris/group/services/gusto/types';
+import { GustoLocationOutput } from '@hris/location/services/gusto/types';
+
 /* bankinfo */
 export type OriginalBankInfoInput = any;
 
@@ -42,6 +50,9 @@ export type OriginalTimeoffInput = any;
 /* timeoffbalance */
 export type OriginalTimeoffBalanceInput = any;
 
+/* timesheetentry */
+export type OriginalTimesheetentryInput = any;
+
 export type HrisObjectInput =
   | OriginalBankInfoInput
   | OriginalBenefitInput
@@ -56,7 +67,8 @@ export type HrisObjectInput =
   | OriginalPayGroupInput
   | OriginalPayrollRunInput
   | OriginalTimeoffInput
-  | OriginalTimeoffBalanceInput;
+  | OriginalTimeoffBalanceInput
+  | OriginalTimesheetentryInput;
 
 /* OUTPUT */
 
@@ -64,31 +76,31 @@ export type HrisObjectInput =
 export type OriginalBankInfoOutput = any;
 
 /* benefit */
-export type OriginalBenefitOutput = any;
+export type OriginalBenefitOutput = GustoBenefitOutput;
 
 /* company */
-export type OriginalCompanyOutput = any;
+export type OriginalCompanyOutput = GustoCompanyOutput;
 
 /* dependent */
 export type OriginalDependentOutput = any;
 
 /* employee */
-export type OriginalEmployeeOutput = any;
+export type OriginalEmployeeOutput = GustoEmployeeOutput;
 
 /* employeepayrollrun */
 export type OriginalEmployeePayrollRunOutput = any;
 
 /* employerbenefit */
-export type OriginalEmployerBenefitOutput = any;
+export type OriginalEmployerBenefitOutput = GustoEmployerbenefitOutput;
 
 /* employment */
-export type OriginalEmploymentOutput = any;
+export type OriginalEmploymentOutput = GustoEmploymentOutput;
 
 /* group */
-export type OriginalGroupOutput = any;
+export type OriginalGroupOutput = GustoGroupOutput;
 
 /* location */
-export type OriginalLocationOutput = any;
+export type OriginalLocationOutput = GustoLocationOutput;
 
 /* paygroup */
 export type OriginalPayGroupOutput = any;
@@ -101,6 +113,9 @@ export type OriginalTimeoffOutput = any;
 
 /* timeoffbalance */
 export type OriginalTimeoffBalanceOutput = any;
+
+/* timesheetentry */
+export type OriginalTimesheetentryOutput = any;
 
 export type HrisObjectOutput =
   | OriginalBankInfoOutput
@@ -116,4 +131,5 @@ export type HrisObjectOutput =
   | OriginalPayGroupOutput
   | OriginalPayrollRunOutput
   | OriginalTimeoffOutput
-  | OriginalTimeoffBalanceOutput;
+  | OriginalTimeoffBalanceOutput
+  | OriginalTimesheetentryOutput;

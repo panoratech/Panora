@@ -95,6 +95,14 @@ export class ConnectionsController {
 
         // Step 3: Parse the JSON
         stateData = JSON.parse(decodedState);
+      } else if (state.includes('deel_delimiter')) {
+        // squarespace asks for a random alphanumeric value
+        // Split the random part and the base64 part
+        const [randomPart, base64Part] =
+          decodeURIComponent(state).split('deel_delimiter');
+        // Decode the base64 part to get the original JSON
+        const jsonString = Buffer.from(base64Part, 'base64').toString('utf-8');
+        stateData = JSON.parse(jsonString);
       } else if (state.includes('squarespace_delimiter')) {
         // squarespace asks for a random alphanumeric value
         // Split the random part and the base64 part

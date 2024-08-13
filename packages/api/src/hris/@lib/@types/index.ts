@@ -67,6 +67,11 @@ import {
   UnifiedHrisTimeoffbalanceInput,
   UnifiedHrisTimeoffbalanceOutput,
 } from '@hris/timeoffbalance/types/model.unified';
+import { ITimesheetentryService } from '@hris/timesheetentry/types';
+import {
+  UnifiedHrisTimesheetEntryInput,
+  UnifiedHrisTimesheetEntryOutput,
+} from '@hris/timesheetentry/types/model.unified';
 
 export enum HrisObject {
   bankinfo = 'bankinfo',
@@ -83,6 +88,7 @@ export enum HrisObject {
   payrollrun = 'payrollrun',
   timeoff = 'timeoff',
   timeoffbalance = 'timeoffbalance',
+  timesheetentry = 'timesheetentry',
 }
 
 export type UnifiedHris =
@@ -113,7 +119,9 @@ export type UnifiedHris =
   | UnifiedHrisLocationInput
   | UnifiedHrisLocationOutput
   | UnifiedHrisPaygroupInput
-  | UnifiedHrisPaygroupOutput;
+  | UnifiedHrisPaygroupOutput
+  | UnifiedHrisTimesheetEntryInput
+  | UnifiedHrisTimesheetEntryOutput;
 
 export type IHrisService =
   | IBankInfoService
@@ -128,4 +136,5 @@ export type IHrisService =
   | ITimeoffBalanceService
   | IPayrollRunService
   | IPayGroupService
-  | ILocationService;
+  | ILocationService
+  | ITimesheetentryService;

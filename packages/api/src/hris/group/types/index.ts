@@ -2,17 +2,10 @@ import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import { UnifiedHrisGroupInput, UnifiedHrisGroupOutput } from './model.unified';
 import { OriginalGroupOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IGroupService {
-  addGroup(
-    groupData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalGroupOutput>>;
-
-  syncGroups(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalGroupOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalGroupOutput[]>>;
 }
 
 export interface IGroupMapper {

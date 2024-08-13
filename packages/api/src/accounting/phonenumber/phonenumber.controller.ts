@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -28,8 +30,10 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { QueryDto } from '@@core/utils/dtos/query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
-
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiTags('accounting/phonenumbers')
 @Controller('accounting/phonenumbers')
@@ -52,6 +56,7 @@ export class PhoneNumberController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @ApiPaginatedResponse(UnifiedAccountingPhonenumberOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()

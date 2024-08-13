@@ -1,35 +1,27 @@
 import { Module } from '@nestjs/common';
 import { GroupController } from './group.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { GroupService } from './services/group.service';
 import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { SyncService } from './sync/sync.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-
+import { GustoGroupMapper } from './services/gusto/mappers';
+import { GustoService } from './services/gusto';
+import { Utils } from '@hris/@lib/@utils';
 @Module({
   controllers: [GroupController],
   providers: [
     GroupService,
-
     SyncService,
     WebhookService,
-
     CoreUnification,
-
     ServiceRegistry,
-
     IngestDataService,
+    GustoGroupMapper,
+    Utils,
     /* PROVIDERS SERVICES */
+    GustoService,
   ],
   exports: [SyncService],
 })

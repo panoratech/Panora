@@ -52,6 +52,7 @@ export class PassthroughController {
       remoteSource: integrationId,
       connectionId,
       vertical,
+      projectId,
     } = await this.connectionUtils.getConnectionMetadataFromConnectionToken(
       connection_token,
     );
@@ -61,6 +62,7 @@ export class PassthroughController {
       linkedUserId,
       vertical,
       connectionId,
+      projectId,
     );
   }
 

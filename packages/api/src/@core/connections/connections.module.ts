@@ -8,7 +8,7 @@ import { ConnectionsController } from './connections.controller';
 import { CrmConnectionModule } from './crm/crm.connection.module';
 import { FilestorageConnectionModule } from './filestorage/filestorage.connection.module';
 import { HrisConnectionModule } from './hris/hris.connection.module';
-import { ManagementConnectionsModule } from './management/management.connection.module';
+import { ProductivityConnectionsModule } from './productivity/productivity.connection.module';
 import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
 import { EcommerceConnectionModule } from './ecommerce/ecommerce.connection.module';
@@ -17,7 +17,7 @@ import { EcommerceConnectionModule } from './ecommerce/ecommerce.connection.modu
   controllers: [ConnectionsController],
   imports: [
     CrmConnectionModule,
-    ManagementConnectionsModule,
+    ProductivityConnectionsModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
     AtsConnectionModule,
@@ -39,7 +39,7 @@ import { EcommerceConnectionModule } from './ecommerce/ecommerce.connection.modu
     FilestorageConnectionModule,
     EcommerceConnectionModule,
     HrisConnectionModule,
-    ManagementConnectionsModule,
+    ProductivityConnectionsModule,
   ],
 })
 export class ConnectionsModule {}

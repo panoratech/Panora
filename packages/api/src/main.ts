@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import { AppModule } from './app.module';
+import { generatePanoraParamsSpec } from '@@core/utils/decorators/utils';
 
 function addSpeakeasyGroup(document: any) {
   for (const path in document.paths) {
@@ -87,8 +88,11 @@ async function bootstrap() {
     ],
   };
   document['x-speakeasy-name-override'] =
-    extendedSpecs['x-speakeasy-name-override']; // Add extended specs
+    extendedSpecs['x-speakeasy-name-override'];
   addSpeakeasyGroup(document);
+
+  await generatePanoraParamsSpec(document);
+
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   SwaggerModule.setup('docs', app, document);

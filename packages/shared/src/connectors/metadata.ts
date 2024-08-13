@@ -2087,12 +2087,12 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'gusto': {
         urls: {
           docsUrl: 'https://docs.gusto.com/app-integrations/docs/introduction',
-          apiUrl: 'https://api.gusto.com/v1',
+          apiUrl: 'https://api.gusto.com', // api.gusto-demo.com
           authBaseUrl: 'https://api.gusto-demo.com/oauth/authorize'
         },
         logoPath: 'https://cdn.runalloy.com/landing/uploads-new/Gusto_Logo_67ca008403.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2761,7 +2761,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
     },
-    'management': {
+    'productivity': {
       'notion': {
         urls: {
           docsUrl: 'https://developers.notion.com/docs/getting-started',

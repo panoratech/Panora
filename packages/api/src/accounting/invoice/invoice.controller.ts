@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -34,7 +36,6 @@ import {
   ApiPostCustomResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('accounting/invoices')
 @Controller('accounting/invoices')
 export class InvoiceController {
@@ -58,6 +59,7 @@ export class InvoiceController {
   })
   @ApiPaginatedResponse(UnifiedAccountingInvoiceOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getInvoices(
     @Headers('x-connection-token') connection_token: string,

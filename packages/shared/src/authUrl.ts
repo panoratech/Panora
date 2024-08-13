@@ -54,12 +54,23 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   if (config.options && config.options.local_redirect_uri_in_https === true && redirectUriIngress && redirectUriIngress.status === true) {
     baseRedirectURL = redirectUriIngress.value!;
   }
-  let encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`); 
+  const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`); 
   let state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   if (providerName === 'microsoftdynamicssales') {
     state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl, resource: additionalParams!.end_user_domain }));
   }
-  if(providerName === 'squarespace'){
+  if (providerName === 'deel') {
+    const randomState = randomString();
+    state = encodeURIComponent(randomState + 'deel_delimiter' + Buffer.from(JSON.stringify({
+      projectId,
+      linkedUserId,
+      providerName,
+      vertical,
+      returnUrl,
+      resource: additionalParams!.end_user_domain!
+    })).toString('base64'));
+  }
+  if (providerName === 'squarespace') {
     const randomState = randomString();
     state = encodeURIComponent(randomState + 'squarespace_delimiter' + Buffer.from(JSON.stringify({
       projectId,
@@ -68,7 +79,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
       vertical,
       returnUrl,
       resource: additionalParams!.end_user_domain!
-  })).toString('base64'));
+    })).toString('base64'));
   }
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
@@ -199,6 +210,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       let b = `https://${resource}/.default`;
       b += (' offline_access'); 
       params += `&scope=${encodeURIComponent(b)}`;
+    } else if (providerName === 'deel') {
+      params += `&scope=${encodeURIComponent(scopes.replace(/\t/g, ' '))}`;
     } else {
       params += `&scope=${encodeURIComponent(scopes)}`;
     }

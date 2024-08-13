@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalTransactionOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ITransactionService {
   addTransaction(
@@ -12,10 +13,7 @@ export interface ITransactionService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalTransactionOutput>>;
 
-  syncTransactions(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTransactionOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalTransactionOutput[]>>;
 }
 
 export interface ITransactionMapper {
@@ -34,5 +32,7 @@ export interface ITransactionMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAccountingTransactionOutput | UnifiedAccountingTransactionOutput[]>;
+  ): Promise<
+    UnifiedAccountingTransactionOutput | UnifiedAccountingTransactionOutput[]
+  >;
 }

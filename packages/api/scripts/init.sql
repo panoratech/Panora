@@ -178,7 +178,6 @@ CREATE TABLE managed_webhooks
 COMMENT ON COLUMN managed_webhooks.endpoint IS 'UUID that will be used in the final URL to help identify where to route data
  ex: api.panora.dev/mw/{managed_webhooks.endpoint}';
 
-
 -- ************************************** hris_time_off
 CREATE TABLE hris_time_off
 (
@@ -200,10 +199,8 @@ CREATE TABLE hris_time_off
  id_connection      uuid NOT NULL,
  CONSTRAINT PK_hris_time_off PRIMARY KEY ( id_hris_time_off )
 );
-
 COMMENT ON COLUMN hris_time_off.employee IS 'id_hris_employee of the employee requesting the time off';
 COMMENT ON COLUMN hris_time_off.approver IS 'id_hris_employee of the manager approving the time off';
-
 
 -- ************************************** hris_payroll_runs
 CREATE TABLE hris_payroll_runs
@@ -223,7 +220,6 @@ CREATE TABLE hris_payroll_runs
  CONSTRAINT PK_hris_payroll_runs PRIMARY KEY ( id_hris_payroll_run )
 );
 
-
 -- ************************************** hris_pay_groups
 CREATE TABLE hris_pay_groups
 (
@@ -238,7 +234,6 @@ CREATE TABLE hris_pay_groups
  CONSTRAINT PK_hris_pay_groups PRIMARY KEY ( id_hris_pay_group )
 );
 
-
 -- ************************************** hris_locations
 CREATE TABLE hris_locations
 (
@@ -249,24 +244,20 @@ CREATE TABLE hris_locations
  street_2           text NULL,
  city               text NULL,
  "state"            text NULL,
+ id_hris_company    uuid NULL,
+ id_hris_employee   uuid NULL,
  zip_code           text NULL,
  country            text NULL,
  location_type      text NULL,
- remote_id          text NOT NULL,
+ remote_id          text NULL,
  remote_created_at  timestamp with time zone NOT NULL,
  created_at         timestamp with time zone NOT NULL,
  modified_at        timestamp with time zone NOT NULL,
  remote_was_deleted boolean NOT NULL,
  id_connection      uuid NOT NULL,
- id_hris_employee   uuid NULL,
- id_hris_company    uuid NULL,
  CONSTRAINT PK_hris_locations PRIMARY KEY ( id_hris_location )
 );
-
 COMMENT ON COLUMN hris_locations.location_type IS 'HOME, WORK';
-COMMENT ON COLUMN hris_locations.id_hris_employee IS 'uuid of the employee this location belongs to';
-COMMENT ON COLUMN hris_locations.id_hris_company IS 'uuid of the company this location belongs to';
-
 
 -- ************************************** hris_groups
 CREATE TABLE hris_groups
@@ -283,14 +274,13 @@ CREATE TABLE hris_groups
  id_connection      uuid NOT NULL,
  CONSTRAINT PK_hris_groups PRIMARY KEY ( id_hris_group )
 );
-
 COMMENT ON COLUMN hris_groups.parent_group IS 'id_hris_group of parent group';
-
 
 -- ************************************** hris_employer_benefits
 CREATE TABLE hris_employer_benefits
 (
  id_hris_employer_benefit uuid NOT NULL,
+ id_connection            uuid NOT NULL,
  benefit_plan_type        text NULL,
  name                     text NULL,
  description              text NULL,
@@ -300,10 +290,8 @@ CREATE TABLE hris_employer_benefits
  remote_was_deleted       boolean NOT NULL,
  created_at               timestamp with time zone NOT NULL,
  modified_at              timestamp with time zone NOT NULL,
- id_connection            uuid NOT NULL,
  CONSTRAINT PK_hris_employer_benefits PRIMARY KEY ( id_hris_employer_benefit )
 );
-
 
 -- ************************************** hris_companies
 CREATE TABLE hris_companies
@@ -318,10 +306,8 @@ CREATE TABLE hris_companies
  modified_at        timestamp with time zone NOT NULL,
  remote_was_deleted boolean NOT NULL,
  id_connection      uuid NOT NULL,
- location           uuid NULL,
  CONSTRAINT PK_hris_companies PRIMARY KEY ( id_hris_company )
 );
-
 
 -- ************************************** fs_users
 CREATE TABLE fs_users
@@ -561,6 +547,7 @@ CREATE TABLE connector_sets
  ecom_squarespace boolean NULL,
  CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
+
 
 
 -- ************************************** connection_strategies
@@ -1066,11 +1053,17 @@ COMMENT ON COLUMN projects.pull_frequency IS 'Frequency in seconds for pulls
 
 ex 3600 for one hour';
 
-
 -- ************************************** hris_employees
 CREATE TABLE hris_employees
 (
  id_hris_employee    uuid NOT NULL,
+ remote_id           text NULL,
+ remote_created_at   timestamp with time zone NULL,
+ created_at          timestamp with time zone NOT NULL,
+ modified_at         timestamp with time zone NOT NULL,
+ remote_was_deleted  boolean NOT NULL,
+ id_connection       uuid NOT NULL,
+ manager             uuid NULL,
  groups              text[] NULL,
  employee_number     text NULL,
  id_hris_company     uuid NULL,
@@ -1092,26 +1085,16 @@ CREATE TABLE hris_employees
  employment_status   text NULL,
  termination_date    date NULL,
  avatar_url          text NULL,
- remote_id           text NULL,
- remote_created_at   timestamp with time zone NULL,
- created_at          timestamp with time zone NOT NULL,
- modified_at         timestamp with time zone NOT NULL,
- remote_was_deleted  boolean NOT NULL,
- id_connection       uuid NOT NULL,
- manager             uuid NULL,
  CONSTRAINT PK_hris_employees PRIMARY KEY ( id_hris_employee ),
  CONSTRAINT FK_employee_companyId FOREIGN KEY ( id_hris_company ) REFERENCES hris_companies ( id_hris_company )
 );
-
 CREATE INDEX FKX_employee_companyId ON hris_employees
 (
  id_hris_company
 );
-
 COMMENT ON COLUMN hris_employees.groups IS 'array of id_hris_group';
 COMMENT ON COLUMN hris_employees.employments IS 'array of id_hris_employment';
 COMMENT ON COLUMN hris_employees.gender IS 'The employee''s gender. Possible options are: MALE, FEMALE, NON-BINARY, OTHER, or PREFER_NOT_TO_DISCLOSE. If the original value doesn''t correspond to any of these categories, it will be returned as is.';
-
 
 -- ************************************** fs_folders
 CREATE TABLE fs_folders
@@ -1823,7 +1806,6 @@ CREATE INDEX FK_proectID_linked_users ON linked_users
 COMMENT ON COLUMN linked_users.linked_user_origin_id IS 'id of the customer, in our customers own systems';
 COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME company)';
 
-
 -- ************************************** hris_timesheet_entries
 CREATE TABLE hris_timesheet_entries
 (
@@ -1841,12 +1823,10 @@ CREATE TABLE hris_timesheet_entries
  CONSTRAINT PK_hris_timesheet_entries PRIMARY KEY ( id_hris_timesheet_entry ),
  CONSTRAINT FK_timesheet_entry_employee_Id FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
 );
-
 CREATE INDEX FKx_timesheet_entry_employee_Id ON hris_timesheet_entries
 (
  id_hris_employee
 );
-
 
 -- ************************************** hris_time_off_balances
 CREATE TABLE hris_time_off_balances
@@ -1865,12 +1845,10 @@ CREATE TABLE hris_time_off_balances
  CONSTRAINT PK_hris_time_off_balances PRIMARY KEY ( id_hris_time_off_balance ),
  CONSTRAINT FK_hris_timeoff_balance_hris_employee_ID FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
 );
-
 CREATE INDEX FKx_hris_timeoff_balance_hris_employee_ID ON hris_time_off_balances
 (
  id_hris_employee
 );
-
 
 -- ************************************** hris_employments
 CREATE TABLE hris_employments
@@ -1896,20 +1874,16 @@ CREATE TABLE hris_employments
  CONSTRAINT FK_107 FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee ),
  CONSTRAINT FK_employments_pay_group_Id FOREIGN KEY ( id_hris_pay_group ) REFERENCES hris_pay_groups ( id_hris_pay_group )
 );
-
 CREATE INDEX FK_2 ON hris_employments
 (
  id_hris_employee
 );
-
 CREATE INDEX FKx_employments_pay_group_Id ON hris_employments
 (
  id_hris_pay_group
 );
-
 COMMENT ON COLUMN hris_employments.pay_rate IS 'pay rate, in usd, in cents';
 COMMENT ON COLUMN hris_employments.pay_period IS 'The time period covered by this pay rate. Available options are: HOUR, DAY, WEEK, EVERY_TWO_WEEKS, SEMIMONTHLY, MONTH, QUARTER, EVERY_SIX_MONTHS, and YEAR. If there is no direct match, the original value provided will be returned as is.';
-
 
 -- ************************************** hris_employee_payroll_runs
 CREATE TABLE hris_employee_payroll_runs
@@ -1932,22 +1906,19 @@ CREATE TABLE hris_employee_payroll_runs
  CONSTRAINT FK_employee_payroll_run_payroll_run_Id FOREIGN KEY ( id_hris_payroll_run ) REFERENCES hris_payroll_runs ( id_hris_payroll_run ),
  CONSTRAINT FK_hris_employee_payroll_run_employee_Id FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
 );
-
 CREATE INDEX FKx_employee_payroll_run_payroll_run_Id ON hris_employee_payroll_runs
 (
  id_hris_payroll_run
 );
-
 CREATE INDEX FKx_hris_employee_payroll_run_employee_Id ON hris_employee_payroll_runs
 (
  id_hris_employee
 );
 
-
 -- ************************************** hris_dependents
 CREATE TABLE hris_dependents
 (
- id_hris_dependent  uuid NOT NULL,
+ id_hris_dependents uuid NOT NULL,
  first_name         text NULL,
  last_name          text NULL,
  middle_name        text NULL,
@@ -1965,22 +1936,25 @@ CREATE TABLE hris_dependents
  modified_at        timestamp with time zone NOT NULL,
  remote_was_deleted boolean NOT NULL,
  id_connection      uuid NOT NULL,
- CONSTRAINT PK_hris_dependents PRIMARY KEY ( id_hris_dependent ),
+ CONSTRAINT PK_hris_dependents PRIMARY KEY ( id_hris_dependents ),
  CONSTRAINT FK_hris_dependant_hris_employee_Id FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
 );
-
 CREATE INDEX FKx_hris_dependant_hris_employee_Id ON hris_dependents
 (
  id_hris_employee
 );
-
 COMMENT ON COLUMN hris_dependents.home_location IS 'contains a id_hris_location';
-
 
 -- ************************************** hris_benefits
 CREATE TABLE hris_benefits
 (
  id_hris_benefit          uuid NOT NULL,
+ remote_id                text NULL,
+ remote_created_at        timestamp with time zone NULL,
+ created_at               timestamp with time zone NOT NULL,
+ modified_at              timestamp with time zone NOT NULL,
+ remote_was_deleted       boolean NOT NULL,
+ id_connection            uuid NOT NULL,
  provider_name            text NULL,
  id_hris_employee         uuid NULL,
  employee_contribution    bigint NULL,
@@ -1988,27 +1962,18 @@ CREATE TABLE hris_benefits
  start_date               timestamp with time zone NULL,
  end_date                 timestamp with time zone NULL,
  id_hris_employer_benefit uuid NULL,
- remote_id                text NULL,
- remote_created_at        timestamp with time zone NULL,
- created_at               timestamp with time zone NOT NULL,
- modified_at              timestamp with time zone NOT NULL,
- remote_was_deleted       boolean NOT NULL,
- id_connection            uuid NOT NULL,
  CONSTRAINT PK_hris_benefits PRIMARY KEY ( id_hris_benefit ),
  CONSTRAINT FK_hris_benefit_employer_benefit_Id FOREIGN KEY ( id_hris_employer_benefit ) REFERENCES hris_employer_benefits ( id_hris_employer_benefit ),
  CONSTRAINT FK_hris_benefits_employeeId FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
 );
-
 CREATE INDEX FKx_hris_benefit_employer_benefit_Id ON hris_benefits
 (
  id_hris_employer_benefit
 );
-
 CREATE INDEX FKx_hris_benefits_employeeId ON hris_benefits
 (
  id_hris_employee
 );
-
 
 -- ************************************** hris_bank_infos
 CREATE TABLE hris_bank_infos
@@ -2028,12 +1993,10 @@ CREATE TABLE hris_bank_infos
  CONSTRAINT PK_hris_bank_infos PRIMARY KEY ( id_hris_bank_info ),
  CONSTRAINT FK_bank_infos_employeeId FOREIGN KEY ( id_hris_employee ) REFERENCES hris_employees ( id_hris_employee )
 );
-
 CREATE INDEX FKX_bank_infos_employeeId ON hris_bank_infos
 (
  id_hris_employee
 );
-
 
 -- ************************************** fs_files
 CREATE TABLE fs_files
@@ -2378,17 +2341,14 @@ CREATE TABLE api_keys
  CONSTRAINT FK_api_key_project_Id FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
  CONSTRAINT FK_api_keys_user_Id FOREIGN KEY ( id_user ) REFERENCES users ( id_user )
 );
-
 CREATE INDEX FK_api_keys_projects ON api_keys
 (
  id_project
 );
-
 CREATE INDEX FKx_api_keys_user_Id ON api_keys
 (
  id_user
 );
-
 
 -- ************************************** acc_purchase_orders_line_items
 CREATE TABLE acc_purchase_orders_line_items
@@ -2423,6 +2383,7 @@ CREATE TABLE acc_phone_numbers
  id_acc_phone_number uuid NOT NULL,
  "number"            text NULL,
  type                text NULL,
+ remote_id           text NULL,
  created_at          timestamp with time zone NOT NULL,
  modified_at         timestamp with time zone NOT NULL,
  id_acc_company_info uuid NULL,
@@ -2621,6 +2582,7 @@ CREATE TABLE acc_addresses
  street_1            text NULL,
  street_2            text NULL,
  city                text NULL,
+ remote_id           text NULL,
  "state"             text NULL,
  country_subdivision text NULL,
  country             text NULL,
@@ -2630,7 +2592,6 @@ CREATE TABLE acc_addresses
  id_acc_contact      uuid NULL,
  id_acc_company_info uuid NULL,
  id_connection       uuid NOT NULL,
- remote_id           text NULL,
  CONSTRAINT PK_acc_addresses PRIMARY KEY ( id_acc_address )
 );
 
@@ -2706,7 +2667,6 @@ CREATE INDEX FK_invite_link_linkedUserID ON invite_links
  id_linked_user
 );
 
-
 -- ************************************** hris_employee_payroll_runs_taxes
 CREATE TABLE hris_employee_payroll_runs_taxes
 (
@@ -2721,12 +2681,10 @@ CREATE TABLE hris_employee_payroll_runs_taxes
  CONSTRAINT PK_hris_employee_payroll_runs_taxes PRIMARY KEY ( id_hris_employee_payroll_runs_tax ),
  CONSTRAINT FK_hris_employee_payroll_run_tax_hris_employee_payroll_run_id FOREIGN KEY ( id_hris_employee_payroll_run ) REFERENCES hris_employee_payroll_runs ( id_hris_employee_payroll_run )
 );
-
 CREATE INDEX FKx_hris_employee_payroll_run_tax_hris_employee_payroll_run_id ON hris_employee_payroll_runs_taxes
 (
  id_hris_employee_payroll_run
 );
-
 
 -- ************************************** hris_employee_payroll_runs_earnings
 CREATE TABLE hris_employee_payroll_runs_earnings
@@ -2741,33 +2699,29 @@ CREATE TABLE hris_employee_payroll_runs_earnings
  CONSTRAINT PK_hris_employee_payroll_runs_earnings PRIMARY KEY ( id_hris_employee_payroll_runs_earning ),
  CONSTRAINT FK_hris_employee_payroll_runs_earning_hris_employee_payroll_run_Id FOREIGN KEY ( id_hris_employee_payroll_run ) REFERENCES hris_employee_payroll_runs ( id_hris_employee_payroll_run )
 );
-
 CREATE INDEX FKx_hris_employee_payroll_runs_earning_hris_employee_payroll_run_Id ON hris_employee_payroll_runs_earnings
 (
  id_hris_employee_payroll_run
 );
 
-
 -- ************************************** hris_employee_payroll_runs_deductions
 CREATE TABLE hris_employee_payroll_runs_deductions
 (
  id_hris_employee_payroll_runs_deduction uuid NOT NULL,
+ remote_id                               text NULL,
+ created_at                              timestamp with time zone NOT NULL,
+ modified_at                             timestamp with time zone NOT NULL,
  id_hris_employee_payroll_run            uuid NULL,
  name                                    text NULL,
  employee_deduction                      bigint NULL,
  company_deduction                       bigint NULL,
- remote_id                               text NULL,
- created_at                              timestamp with time zone NOT NULL,
- modified_at                             timestamp with time zone NOT NULL,
  CONSTRAINT PK_hris_employee_payroll_runs_deductions PRIMARY KEY ( id_hris_employee_payroll_runs_deduction ),
  CONSTRAINT FK_hris_employee_payroll_runs_deduction_hris_employee_payroll_Id FOREIGN KEY ( id_hris_employee_payroll_run ) REFERENCES hris_employee_payroll_runs ( id_hris_employee_payroll_run )
 );
-
 CREATE INDEX FKx_hris_employee_payroll_runs_deduction_hris_employee_payroll_Id ON hris_employee_payroll_runs_deductions
 (
  id_hris_employee_payroll_run
 );
-
 
 -- ************************************** events
 CREATE TABLE events
@@ -2956,6 +2910,7 @@ CREATE TABLE acc_payments
  currency                 text NULL,
  exchange_rate            text NULL,
  total_amount             bigint NULL,
+ remote_id                text NULL,
  type                     text NULL,
  remote_updated_at        timestamp with time zone NULL,
  id_acc_company_info      uuid NULL,

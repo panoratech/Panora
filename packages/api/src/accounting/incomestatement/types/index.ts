@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalIncomeStatementOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IIncomeStatementService {
   addIncomeStatement(
@@ -12,10 +13,7 @@ export interface IIncomeStatementService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalIncomeStatementOutput>>;
 
-  syncIncomeStatements(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalIncomeStatementOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalIncomeStatementOutput[]>>;
 }
 
 export interface IIncomeStatementMapper {
@@ -34,5 +32,8 @@ export interface IIncomeStatementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAccountingIncomestatementOutput | UnifiedAccountingIncomestatementOutput[]>;
+  ): Promise<
+    | UnifiedAccountingIncomestatementOutput
+    | UnifiedAccountingIncomestatementOutput[]
+  >;
 }

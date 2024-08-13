@@ -10,6 +10,12 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { UnifiedAccountingAddressOutput } from '../types/model.unified';
 import { IAddressService } from '../types';
 import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { ACCOUNTING_PROVIDERS } from '@panora/shared';
+import { acc_addresses as AccAddress } from '@prisma/client';
+import { OriginalAddressOutput } from '@@core/utils/types/original/original.accounting';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -19,26 +25,139 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
+    private registry: CoreSyncRegistry,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
-  }
-  saveToDb(
-    connection_id: string,
-    linkedUserId: string,
-    data: any[],
-    originSource: string,
-    remote_data: Record<string, any>[],
-    ...rest: any
-  ): Promise<any[]> {
-    throw new Error('Method not implemented.');
-  }
-  removeInDb?(connection_id: string, remote_id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    this.registry.registerService('accounting', 'address', this);
   }
 
   async onModuleInit() {
-    // Initialization logic
+    // Initialization logic if needed
   }
 
-  // Additional methods and logic
+  @Cron('0 */8 * * *') // every 8 hours
+  async kickstartSync(user_id?: string) {
+    try {
+      this.logger.log('Syncing accounting addresses...');
+      const users = user_id
+        ? [await this.prisma.users.findUnique({ where: { id_user: user_id } })]
+        : await this.prisma.users.findMany();
+
+      if (users && users.length > 0) {
+        for (const user of users) {
+          const projects = await this.prisma.projects.findMany({
+            where: { id_user: user.id_user },
+          });
+          for (const project of projects) {
+            const linkedUsers = await this.prisma.linked_users.findMany({
+              where: { id_project: project.id_project },
+            });
+            for (const linkedUser of linkedUsers) {
+              for (const provider of ACCOUNTING_PROVIDERS) {
+                await this.syncForLinkedUser({
+                  integrationId: provider,
+                  linkedUserId: linkedUser.id_linked_user,
+                });
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async syncForLinkedUser(param: SyncLinkedUserType) {
+    try {
+      const { integrationId, linkedUserId } = param;
+      const service: IAddressService =
+        this.serviceRegistry.getService(integrationId);
+      if (!service) return;
+
+      await this.ingestService.syncForLinkedUser<
+        UnifiedAccountingAddressOutput,
+        OriginalAddressOutput,
+        IAddressService
+      >(integrationId, linkedUserId, 'accounting', 'address', service, []);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveToDb(
+    connection_id: string,
+    linkedUserId: string,
+    addresses: UnifiedAccountingAddressOutput[],
+    originSource: string,
+    remote_data: Record<string, any>[],
+  ): Promise<AccAddress[]> {
+    try {
+      const addressResults: AccAddress[] = [];
+
+      for (let i = 0; i < addresses.length; i++) {
+        const address = addresses[i];
+        const originId = address.remote_id;
+
+        let existingAddress = await this.prisma.acc_addresses.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const addressData = {
+          type: address.type,
+          street_1: address.street_1,
+          street_2: address.street_2,
+          city: address.city,
+          state: address.state,
+          country_subdivision: address.country_subdivision,
+          country: address.country,
+          zip: address.zip,
+          id_acc_contact: address.contact_id,
+          id_acc_company_info: address.company_info_id,
+          modified_at: new Date(),
+        };
+
+        if (existingAddress) {
+          existingAddress = await this.prisma.acc_addresses.update({
+            where: { id_acc_address: existingAddress.id_acc_address },
+            data: addressData,
+          });
+        } else {
+          existingAddress = await this.prisma.acc_addresses.create({
+            data: {
+              ...addressData,
+              id_acc_address: uuidv4(),
+              created_at: new Date(),
+              id_connection: connection_id,
+            },
+          });
+        }
+
+        addressResults.push(existingAddress);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          address.field_mappings,
+          existingAddress.id_acc_address,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          existingAddress.id_acc_address,
+          remote_data[i],
+        );
+      }
+
+      return addressResults;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

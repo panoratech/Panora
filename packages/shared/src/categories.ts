@@ -6,7 +6,7 @@ export enum ConnectorCategory {
     Ticketing = 'ticketing',
     MarketingAutomation = 'marketingautomation',
     FileStorage = 'filestorage',
-    Management = 'management',
+    Productivity = 'productivity',
     Ecommerce = 'ecommerce'
 }
 

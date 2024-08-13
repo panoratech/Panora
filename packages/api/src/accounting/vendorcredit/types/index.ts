@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalVendorCreditOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IVendorCreditService {
   addVendorCredit(
@@ -12,10 +13,7 @@ export interface IVendorCreditService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalVendorCreditOutput>>;
 
-  syncVendorCredits(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalVendorCreditOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalVendorCreditOutput[]>>;
 }
 
 export interface IVendorCreditMapper {
@@ -34,5 +32,7 @@ export interface IVendorCreditMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAccountingVendorcreditOutput | UnifiedAccountingVendorcreditOutput[]>;
+  ): Promise<
+    UnifiedAccountingVendorcreditOutput | UnifiedAccountingVendorcreditOutput[]
+  >;
 }

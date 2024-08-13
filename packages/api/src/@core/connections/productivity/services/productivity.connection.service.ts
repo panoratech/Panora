@@ -15,7 +15,7 @@ import { CategoryConnectionRegistry } from '@@core/@core-services/registries/con
 import { PassthroughResponse } from '@@core/passthrough/types';
 
 @Injectable()
-export class ManagementConnectionsService implements IConnectionCategory {
+export class ProductivityConnectionsService implements IConnectionCategory {
   constructor(
     private serviceRegistry: ServiceRegistry,
     private connectionCategoryRegistry: CategoryConnectionRegistry,
@@ -23,8 +23,8 @@ export class ManagementConnectionsService implements IConnectionCategory {
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
-    this.logger.setContext(ManagementConnectionsService.name);
-    this.connectionCategoryRegistry.registerService('management', this);
+    this.logger.setContext(ProductivityConnectionsService.name);
+    this.connectionCategoryRegistry.registerService('productivity', this);
   }
   //STEP 1:[FRONTEND STEP]
   //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click

@@ -150,10 +150,10 @@ services:
       FACTORIAL_HRIS_CLOUD_CLIENT_SECRET: ${FACTORIAL_ATS_CLOUD_CLIENT_SECRET}
       PAYFIT_HRIS_CLOUD_CLIENT_ID: ${PAYFIT_HRIS_CLOUD_CLIENT_ID}
       PAYFIT_HRIS_CLOUD_CLIENT_SECRET: ${PAYFIT_HRIS_CLOUD_CLIENT_SECRET}
-      NOTION_MANAGEMENT_CLOUD_CLIENT_ID: ${NOTION_MANAGEMENT_CLOUD_CLIENT_ID}
-      NOTION_MANAGEMENT_CLOUD_CLIENT_SECRET: ${NOTION_MANAGEMENT_CLOUD_CLIENT_SECRET}
-      SLACK_MANAGEMENT_CLOUD_CLIENT_ID: ${SLACK_MANAGEMENT_CLOUD_CLIENT_ID}
-      SLACK_MANAGEMENT_CLOUD_CLIENT_SECRET: ${SLACK_MANAGEMENT_CLOUD_CLIENT_SECRET}
+      NOTION_PRODUCTIVITY_CLOUD_CLIENT_ID: ${NOTION_PRODUCTIVITY_CLOUD_CLIENT_ID}
+      NOTION_PRODUCTIVITY_CLOUD_CLIENT_SECRET: ${NOTION_PRODUCTIVITY_CLOUD_CLIENT_SECRET}
+      SLACK_PRODUCTIVITY_CLOUD_CLIENT_ID: ${SLACK_PRODUCTIVITY_CLOUD_CLIENT_ID}
+      SLACK_PRODUCTIVITY_CLOUD_CLIENT_SECRET: ${SLACK_PRODUCTIVITY_CLOUD_CLIENT_SECRET}
       NAMELY_HRIS_CLOUD_CLIENT_ID: ${NAMELY_HRIS_CLOUD_CLIENT_ID}
       NAMELY_HRIS_CLOUD_CLIENT_SECRET: ${NAMELY_HRIS_CLOUD_CLIENT_SECRET}
       NAMELY_HRIS_CLOUD_SUBDOMAIN: ${NAMELY_HRIS_CLOUD_SUBDOMAIN}
@@ -276,22 +276,22 @@ services:
   #   volumes:
   #     - pgadmin-data:/var/lib/pgadmin
 
-  ngrok:
-    image: ngrok/ngrok:latest
-    restart: always
-    command:
-      - "start"
-      - "--all"
-      - "--config"
-      - "/etc/ngrok.yml"
-    volumes:
-      - ./ngrok.yml:/etc/ngrok.yml
-    ports:
-    - 4040:4040
-    depends_on:
-      api:
-        condition: service_healthy
-    network_mode: "host"
+  # ngrok:
+  #   image: ngrok/ngrok:latest
+  #   restart: always
+  #   command:
+  #     - "start"
+  #     - "--all"
+  #     - "--config"
+  #     - "/etc/ngrok.yml"
+  #   volumes:
+  #     - ./ngrok.yml:/etc/ngrok.yml
+  #   ports:
+  #   - 4040:4040
+  #   depends_on:
+  #     api:
+  #       condition: service_healthy
+  #   network_mode: "host"
 
   docs:
     build:

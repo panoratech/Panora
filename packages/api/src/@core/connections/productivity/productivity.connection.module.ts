@@ -4,14 +4,14 @@ import { WebhookModule } from '@@core/@core-services/webhooks/panora-webhooks/we
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { Module } from '@nestjs/common';
-import { ManagementConnectionsService } from './services/management.connection.service';
+import { ProductivityConnectionsService } from './services/productivity.connection.service';
 import { NotionConnectionService } from './services/notion/notion.service';
 import { ServiceRegistry } from './services/registry.service';
 import { SlackConnectionService } from './services/slack/slack.service';
 @Module({
   imports: [WebhookModule, BullQueueModule],
   providers: [
-    ManagementConnectionsService,
+    ProductivityConnectionsService,
     WebhookService,
     EnvironmentService,
     ServiceRegistry,
@@ -20,6 +20,6 @@ import { SlackConnectionService } from './services/slack/slack.service';
     NotionConnectionService,
     SlackConnectionService,
   ],
-  exports: [ManagementConnectionsService],
+  exports: [ProductivityConnectionsService],
 })
-export class ManagementConnectionsModule {}
+export class ProductivityConnectionsModule {}

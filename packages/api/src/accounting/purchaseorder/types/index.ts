@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalPurchaseOrderOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IPurchaseOrderService {
   addPurchaseOrder(
@@ -12,10 +13,7 @@ export interface IPurchaseOrderService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalPurchaseOrderOutput>>;
 
-  syncPurchaseOrders(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalPurchaseOrderOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalPurchaseOrderOutput[]>>;
 }
 
 export interface IPurchaseOrderMapper {
@@ -34,5 +32,8 @@ export interface IPurchaseOrderMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAccountingPurchaseorderOutput | UnifiedAccountingPurchaseorderOutput[]>;
+  ): Promise<
+    | UnifiedAccountingPurchaseorderOutput
+    | UnifiedAccountingPurchaseorderOutput[]
+  >;
 }
