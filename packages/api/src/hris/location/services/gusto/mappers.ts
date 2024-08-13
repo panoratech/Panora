@@ -58,7 +58,7 @@ export class GustoLocationMapper implements ILocationMapper {
   ): Promise<UnifiedHrisLocationOutput> {
     const opts: any = {};
 
-    if (location.employee_uuid) {
+    /*if (location.employee_uuid) {
       const employee_id = await this.utils.getEmployeeUuidFromRemoteId(
         location.employee_uuid,
         connectionId,
@@ -88,6 +88,7 @@ export class GustoLocationMapper implements ILocationMapper {
         ? parseFloat(location.company_contribution)
         : null,
       remote_was_deleted: null,
-    };
+    };*/
+    return;
   }
 }

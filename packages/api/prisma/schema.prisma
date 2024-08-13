@@ -1817,6 +1817,7 @@ model hris_companies {
   legal_name         String?
   display_name       String?
   eins               String[]
+  locations          String[]
   remote_id          String?
   remote_created_at  DateTime?        @db.Timestamptz(6)
   created_at         DateTime         @db.Timestamptz(6)
@@ -1926,6 +1927,8 @@ model hris_employees {
   modified_at                DateTime                     @db.Timestamptz(6)
   remote_was_deleted         Boolean
   id_connection              String                       @db.Uuid
+  locations                  String[]
+  manager                    String?
   groups                     String[]
   employee_number            String?
   id_hris_company            String?                      @db.Uuid

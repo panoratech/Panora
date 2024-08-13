@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IBankInfoService {
-  addBankinfo(
-    bankinfoData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalBankInfoOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalBankInfoOutput[]>>;
 }
 

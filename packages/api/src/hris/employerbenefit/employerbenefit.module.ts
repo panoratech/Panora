@@ -8,7 +8,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { GustoEmployerbenefitMapper } from './services/gusto/mappers';
 import { GustoService } from './services/gusto';
-
+import { Utils } from '@hris/@lib/@utils';
 @Module({
   controllers: [EmployerBenefitController],
   providers: [
@@ -17,6 +17,7 @@ import { GustoService } from './services/gusto';
     SyncService,
     WebhookService,
     ServiceRegistry,
+    Utils,
     IngestDataService,
     GustoEmployerbenefitMapper,
     /* PROVIDERS SERVICES */

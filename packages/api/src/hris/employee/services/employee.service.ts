@@ -9,6 +9,12 @@ import {
   UnifiedHrisEmployeeOutput,
 } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
+import { ApiResponse } from '@@core/utils/types';
+import { OriginalEmployeeOutput } from '@@core/utils/types/original/original.hris';
+import { HrisObject } from '@panora/shared';
+import { IEmployeeService } from '../types';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class EmployeeService {
@@ -17,9 +23,19 @@ export class EmployeeService {
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
+    private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
     private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(EmployeeService.name);
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
   }
 
   async addEmployee(
@@ -31,33 +47,141 @@ export class EmployeeService {
     remote_data?: boolean,
   ): Promise<UnifiedHrisEmployeeOutput> {
     try {
-      const service = this.serviceRegistry.getService(integrationId);
-      const resp = await service.addEmployee(unifiedEmployeeData, linkedUserId);
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
 
-      const savedEmployee = await this.prisma.hris_employees.create({
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedHrisEmployeeInput>({
+          sourceObject: unifiedEmployeeData,
+          targetType: HrisObject.employee,
+          providerName: integrationId,
+          vertical: 'hris',
+          customFieldMappings: [],
+        });
+
+      const service: IEmployeeService =
+        this.serviceRegistry.getService(integrationId);
+      const resp: ApiResponse<OriginalEmployeeOutput> =
+        await service.addEmployee(desunifiedObject, linkedUserId);
+
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalEmployeeOutput[]
+      >({
+        sourceObject: [resp.data],
+        targetType: HrisObject.employee,
+        providerName: integrationId,
+        vertical: 'hris',
+        connectionId: connection_id,
+        customFieldMappings: [],
+      })) as UnifiedHrisEmployeeOutput[];
+
+      const source_employee = resp.data;
+      const target_employee = unifiedObject[0];
+
+      const unique_hris_employee_id = await this.saveOrUpdateEmployee(
+        target_employee,
+        connection_id,
+      );
+
+      await this.ingestService.processRemoteData(
+        unique_hris_employee_id,
+        source_employee,
+      );
+
+      const result_employee = await this.getEmployee(
+        unique_hris_employee_id,
+        undefined,
+        undefined,
+        connection_id,
+        project_id,
+        remote_data,
+      );
+
+      const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
+      const event = await this.prisma.events.create({
         data: {
-          id_hris_employee: uuidv4(),
-          ...unifiedEmployeeData,
-          remote_id: resp.data.remote_id,
           id_connection: connection_id,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_was_deleted: false,
+          id_project: project_id,
+          id_event: uuidv4(),
+          status: status_resp,
+          type: 'hris.employee.push',
+          method: 'POST',
+          url: '/hris/employees',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
 
-      const result: UnifiedHrisEmployeeOutput = {
-        ...savedEmployee,
-        id: savedEmployee.id_hris_employee,
-      };
+      await this.webhook.dispatchWebhook(
+        result_employee,
+        'hris.employee.created',
+        linkedUser.id_project,
+        event.id_event,
+      );
 
-      if (remote_data) {
-        result.remote_data = resp.data;
-      }
-
-      return result;
+      return result_employee;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async saveOrUpdateEmployee(
+    employee: UnifiedHrisEmployeeOutput,
+    connectionId: string,
+  ): Promise<string> {
+    const existingEmployee = await this.prisma.hris_employees.findFirst({
+      where: { remote_id: employee.remote_id, id_connection: connectionId },
+    });
+
+    const data: any = {
+      locations: employee.locations || [],
+      groups: employee.groups || [],
+      employee_number: employee.employee_number,
+      id_hris_company: employee.company_id,
+      first_name: employee.first_name,
+      last_name: employee.last_name,
+      preferred_name: employee.preferred_name,
+      display_full_name: employee.display_full_name,
+      username: employee.username,
+      work_email: employee.work_email,
+      personal_email: employee.personal_email,
+      mobile_phone_number: employee.mobile_phone_number,
+      employments: employee.employments || [],
+      ssn: employee.ssn,
+      gender: employee.gender,
+      ethnicity: employee.ethnicity,
+      marital_status: employee.marital_status,
+      date_of_birth: employee.date_of_birth,
+      start_date: employee.start_date,
+      employment_status: employee.employment_status,
+      termination_date: employee.termination_date,
+      avatar_url: employee.avatar_url,
+      modified_at: new Date(),
+    };
+
+    if (existingEmployee) {
+      const res = await this.prisma.hris_employees.update({
+        where: { id_hris_employee: existingEmployee.id_hris_employee },
+        data: data,
+      });
+
+      return res.id_hris_employee;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = employee.remote_id;
+      data.id_connection = connectionId;
+      data.id_hris_employee = uuidv4();
+      data.remote_was_deleted = employee.remote_was_deleted ?? false;
+      data.remote_created_at = employee.remote_created_at
+        ? new Date(employee.remote_created_at)
+        : null;
+
+      const newEmployee = await this.prisma.hris_employees.create({
+        data: data,
+      });
+
+      return newEmployee.id_hris_employee;
     }
   }
 

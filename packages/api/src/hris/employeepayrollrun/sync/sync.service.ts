@@ -30,7 +30,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
-    this.registry.registerService('hris', 'employee_payroll_run', this);
+    this.registry.registerService('hris', 'employeepayrollrun', this);
   }
 
   async onModuleInit() {
@@ -81,14 +81,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         UnifiedHrisEmployeepayrollrunOutput,
         OriginalEmployeePayrollRunOutput,
         IEmployeePayrollRunService
-      >(
-        integrationId,
-        linkedUserId,
-        'hris',
-        'employee_payroll_run',
-        service,
-        [],
-      );
+      >(integrationId, linkedUserId, 'hris', 'employeepayrollrun', service, []);
     } catch (error) {
       throw error;
     }

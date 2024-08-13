@@ -2087,7 +2087,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'gusto': {
         urls: {
           docsUrl: 'https://docs.gusto.com/app-integrations/docs/introduction',
-          apiUrl: 'https://api.gusto.com',
+          apiUrl: 'https://api.gusto-demo.com',
           authBaseUrl: 'https://api.gusto-demo.com/oauth/authorize'
         },
         logoPath: 'https://cdn.runalloy.com/landing/uploads-new/Gusto_Logo_67ca008403.png',

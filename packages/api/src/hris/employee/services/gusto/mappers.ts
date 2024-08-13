@@ -108,7 +108,7 @@ export class GustoEmployeeMapper implements IEmployeeMapper {
         [],
       );
       if (employments) {
-        opts.employments = employments;
+        opts.employments = employments.map((emp) => emp.id_hris_employment);
       }
     }
 

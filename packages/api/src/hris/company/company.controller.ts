@@ -6,6 +6,8 @@ import {
   Param,
   Query,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiHeader,
@@ -47,6 +49,7 @@ export class CompanyController {
   })
   @ApiPaginatedResponse(UnifiedHrisCompanyOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getCompanies(
     @Headers('x-connection-token') connection_token: string,

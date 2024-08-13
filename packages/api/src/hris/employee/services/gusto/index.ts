@@ -28,7 +28,7 @@ export class GustoService implements IEmployeeService {
 
   async sync(data: SyncParam): Promise<ApiResponse<GustoEmployeeOutput[]>> {
     try {
-      const { linkedUserId, company_id } = data;
+      const { linkedUserId, id_company } = data;
 
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -40,7 +40,7 @@ export class GustoService implements IEmployeeService {
 
       const company = await this.prisma.hris_companies.findUnique({
         where: {
-          id_hris_company: company_id as string,
+          id_hris_company: id_company as string,
         },
         select: {
           remote_id: true,

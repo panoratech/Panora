@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ITimeoffBalanceService {
-  addTimeoffBalance(
-    timeoffbalanceData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalTimeoffBalanceOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalTimeoffBalanceOutput[]>>;
 }
 

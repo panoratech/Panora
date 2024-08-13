@@ -11,6 +11,11 @@ import {
 } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { OriginalTimesheetentryOutput } from '@@core/utils/types/original/original.hris';
+import { HrisObject } from '@panora/shared';
+import { ITimesheetentryService } from '../types';
 
 @Injectable()
 export class TimesheetentryService {
@@ -19,64 +24,167 @@ export class TimesheetentryService {
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
+    private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
     private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(TimesheetentryService.name);
   }
 
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
   async addTimesheetentry(
     unifiedTimesheetentryData: UnifiedHrisTimesheetEntryInput,
-    connection_id: string,
-    project_id: string,
+    connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
   ): Promise<UnifiedHrisTimesheetEntryOutput> {
     try {
-      const service = this.serviceRegistry.getService(integrationId);
-      const resp = await service.addTimesheetentry(
-        unifiedTimesheetentryData,
-        linkedUserId,
-      );
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+      // Add any necessary validations here, e.g., validateEmployeeId if needed
 
-      const savedTimesheetEntry =
-        await this.prisma.hris_timesheet_entries.create({
-          data: {
-            id_hris_timesheet_entry: uuidv4(),
-            ...unifiedTimesheetentryData,
-            hours_worked: unifiedTimesheetentryData.hours_worked
-              ? BigInt(unifiedTimesheetentryData.hours_worked)
-              : null,
-            start_time: unifiedTimesheetentryData.start_time
-              ? new Date(unifiedTimesheetentryData.start_time)
-              : null,
-            end_time: unifiedTimesheetentryData.end_time
-              ? new Date(unifiedTimesheetentryData.end_time)
-              : null,
-            remote_id: resp.data.remote_id,
-            id_connection: connection_id,
-            created_at: new Date(),
-            modified_at: new Date(),
-            remote_created_at: resp.data.remote_created_at
-              ? new Date(resp.data.remote_created_at)
-              : null,
-            remote_was_deleted: false,
-          },
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedHrisTimesheetEntryInput>({
+          sourceObject: unifiedTimesheetentryData,
+          targetType: HrisObject.timesheetentry,
+          providerName: integrationId,
+          vertical: 'hris',
+          customFieldMappings: [],
         });
 
-      const result: UnifiedHrisTimesheetEntryOutput = {
-        ...savedTimesheetEntry,
-        id: savedTimesheetEntry.id_hris_timesheet_entry,
-        hours_worked: Number(savedTimesheetEntry.hours_worked),
-      };
+      const service: ITimesheetentryService =
+        this.serviceRegistry.getService(integrationId);
+      const resp: ApiResponse<OriginalTimesheetentryOutput> =
+        await service.addTimesheetentry(desunifiedObject, linkedUserId);
 
-      if (remote_data) {
-        result.remote_data = resp.data;
-      }
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalTimesheetentryOutput[]
+      >({
+        sourceObject: [resp.data],
+        targetType: HrisObject.timesheetentry,
+        providerName: integrationId,
+        vertical: 'hris',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedHrisTimesheetEntryOutput[];
 
-      return result;
+      const source_timesheetentry = resp.data;
+      const target_timesheetentry = unifiedObject[0];
+
+      const unique_hris_timesheetentry_id =
+        await this.saveOrUpdateTimesheetentry(
+          target_timesheetentry,
+          connectionId,
+        );
+
+      await this.ingestService.processRemoteData(
+        unique_hris_timesheetentry_id,
+        source_timesheetentry,
+      );
+
+      const result_timesheetentry = await this.getTimesheetentry(
+        unique_hris_timesheetentry_id,
+        undefined,
+        undefined,
+        connectionId,
+        projectId,
+        remote_data,
+      );
+
+      const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
+      const event = await this.prisma.events.create({
+        data: {
+          id_connection: connectionId,
+          id_project: projectId,
+          id_event: uuidv4(),
+          status: status_resp,
+          type: 'hris.timesheetentry.push',
+          method: 'POST',
+          url: '/hris/timesheetentries',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
+
+      await this.webhook.dispatchWebhook(
+        result_timesheetentry,
+        'hris.timesheetentry.created',
+        linkedUser.id_project,
+        event.id_event,
+      );
+
+      return result_timesheetentry;
     } catch (error) {
       throw error;
+    }
+  }
+
+  private async saveOrUpdateTimesheetentry(
+    timesheetentry: UnifiedHrisTimesheetEntryOutput,
+    connectionId: string,
+  ): Promise<string> {
+    const existingTimesheetentry =
+      await this.prisma.hris_timesheet_entries.findFirst({
+        where: {
+          remote_id: timesheetentry.remote_id,
+          id_connection: connectionId,
+        },
+      });
+
+    const data: any = {
+      hours_worked: timesheetentry.hours_worked
+        ? BigInt(timesheetentry.hours_worked)
+        : null,
+      start_time: timesheetentry.start_time
+        ? new Date(timesheetentry.start_time)
+        : null,
+      end_time: timesheetentry.end_time
+        ? new Date(timesheetentry.end_time)
+        : null,
+      id_hris_employee: timesheetentry.employee_id,
+      remote_was_deleted: timesheetentry.remote_was_deleted ?? false,
+      modified_at: new Date(),
+    };
+
+    // Only include field_mappings if it exists in the input
+    if (timesheetentry.field_mappings) {
+      data.field_mappings = timesheetentry.field_mappings;
+    }
+
+    if (existingTimesheetentry) {
+      const res = await this.prisma.hris_timesheet_entries.update({
+        where: {
+          id_hris_timesheet_entry:
+            existingTimesheetentry.id_hris_timesheet_entry,
+        },
+        data: data,
+      });
+
+      return res.id_hris_timesheet_entry;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = timesheetentry.remote_id;
+      data.id_connection = connectionId;
+      data.id_hris_timesheet_entry = uuidv4();
+      data.remote_created_at = timesheetentry.remote_created_at
+        ? new Date(timesheetentry.remote_created_at)
+        : null;
+
+      const newTimesheetentry = await this.prisma.hris_timesheet_entries.create(
+        { data: data },
+      );
+
+      return newTimesheetentry.id_hris_timesheet_entry;
     }
   }
 

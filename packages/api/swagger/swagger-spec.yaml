@@ -12348,7 +12348,10 @@ components:
       properties:
         account_type:
           type: string
-          example: checking
+          example: CHECKING
+          enum:
+            - SAVINGS
+            - CHECKING
           nullable: true
           description: The type of the bank account
         bank_name:
@@ -12522,6 +12525,14 @@ components:
           example: Acme Corporation
           nullable: true
           description: The legal name of the company
+        locations:
+          example:
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: UUIDs of the of the Location associated with the company
+          type: array
+          items:
+            type: string
         display_name:
           type: string
           example: Acme Corp
@@ -12605,7 +12616,11 @@ components:
           description: The middle name of the dependent
         relationship:
           type: string
-          example: Child
+          example: CHILD
+          enum:
+            - CHILD
+            - SPOUSE
+            - DOMESTIC_PARTNER
           nullable: true
           description: The relationship of the dependent to the employee
         date_of_birth:
@@ -12616,7 +12631,13 @@ components:
           description: The date of birth of the dependent
         gender:
           type: string
-          example: Male
+          example: MALE
+          enum:
+            - MALE
+            - FEMALE
+            - NON-BINARY
+            - OTHER
+            - PREFER_NOT_TO_DISCLOSE
           nullable: true
           description: The gender of the dependent
         phone_number:
@@ -12870,6 +12891,14 @@ components:
           type: array
           items:
             type: string
+        locations:
+          example: &ref_125
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: UUIDs of the of the Location associated with the company
+          type: array
+          items:
+            type: string
         employee_number:
           type: string
           example: EMP001
@@ -12921,9 +12950,9 @@ components:
           nullable: true
           description: The mobile phone number of the employee
         employments:
-          example: &ref_125
-            - Employment1
-            - Employment2
+          example: &ref_126
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The employments of the employee
           type: array
@@ -12936,17 +12965,38 @@ components:
           description: The Social Security Number of the employee
         gender:
           type: string
-          example: Male
+          example: MALE
+          enum: &ref_127
+            - MALE
+            - FEMALE
+            - NON-BINARY
+            - OTHER
+            - PREFER_NOT_TO_DISCLOSE
           nullable: true
           description: The gender of the employee
         ethnicity:
           type: string
-          example: Caucasian
+          example: AMERICAN_INDIAN_OR_ALASKA_NATIVE
+          enum: &ref_128
+            - AMERICAN_INDIAN_OR_ALASKA_NATIVE
+            - ASIAN_OR_INDIAN_SUBCONTINENT
+            - BLACK_OR_AFRICAN_AMERICAN
+            - HISPANIC_OR_LATINO
+            - NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
+            - TWO_OR_MORE_RACES
+            - WHITE
+            - PREFER_NOT_TO_DISCLOSE
           nullable: true
           description: The ethnicity of the employee
         marital_status:
           type: string
           example: Married
+          enum: &ref_129
+            - SINGLE
+            - MARRIED_FILING_JOINTLY
+            - MARRIED_FILING_SEPARATELY
+            - HEAD_OF_HOUSEHOLD
+            - QUALIFYING_WIDOW_OR_WIDOWER_WITH_DEPENDENT_CHILD
           nullable: true
           description: The marital status of the employee
         date_of_birth:
@@ -12963,7 +13013,11 @@ components:
           description: The start date of the employee
         employment_status:
           type: string
-          example: Active
+          example: ACTIVE
+          enum: &ref_130
+            - ACTIVE
+            - PENDING
+            - INACTIVE
           nullable: true
           description: The employment status of the employee
         termination_date:
@@ -12977,9 +13031,14 @@ components:
           example: https://example.com/avatar.jpg
           nullable: true
           description: The URL of the employee's avatar
+        manager_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: UUID of the manager (employee) of the employee
         field_mappings:
           type: object
-          example: &ref_126
+          example: &ref_131
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -13036,6 +13095,13 @@ components:
           type: array
           items:
             type: string
+        locations:
+          example: *ref_125
+          nullable: true
+          description: UUIDs of the of the Location associated with the company
+          type: array
+          items:
+            type: string
         employee_number:
           type: string
           example: EMP001
@@ -13087,7 +13153,7 @@ components:
           nullable: true
           description: The mobile phone number of the employee
         employments:
-          example: *ref_125
+          example: *ref_126
           nullable: true
           description: The employments of the employee
           type: array
@@ -13100,17 +13166,20 @@ components:
           description: The Social Security Number of the employee
         gender:
           type: string
-          example: Male
+          example: MALE
+          enum: *ref_127
           nullable: true
           description: The gender of the employee
         ethnicity:
           type: string
-          example: Caucasian
+          example: AMERICAN_INDIAN_OR_ALASKA_NATIVE
+          enum: *ref_128
           nullable: true
           description: The ethnicity of the employee
         marital_status:
           type: string
           example: Married
+          enum: *ref_129
           nullable: true
           description: The marital status of the employee
         date_of_birth:
@@ -13127,7 +13196,8 @@ components:
           description: The start date of the employee
         employment_status:
           type: string
-          example: Active
+          example: ACTIVE
+          enum: *ref_130
           nullable: true
           description: The employment status of the employee
         termination_date:
@@ -13141,9 +13211,14 @@ components:
           example: https://example.com/avatar.jpg
           nullable: true
           description: The URL of the employee's avatar
+        manager_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: UUID of the manager (employee) of the employee
         field_mappings:
           type: object
-          example: *ref_126
+          example: *ref_131
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -13154,6 +13229,12 @@ components:
         benefit_plan_type:
           type: string
           example: Health Insurance
+          enum:
+            - MEDICAL
+            - HEALTH_SAVINGS
+            - INSURANCE
+            - RETIREMENT
+            - OTHER
           nullable: true
           description: The type of the benefit plan
         name:
@@ -13241,22 +13322,210 @@ components:
           description: The pay rate of the employment
         pay_period:
           type: string
-          example: Monthly
+          example: MONTHLY
+          enum:
+            - HOUR
+            - DAY
+            - WEEK
+            - EVERY_TWO_WEEKS
+            - SEMIMONTHLY
+            - MONTH
+            - QUARTER
+            - EVERY_SIX_MONTHS
+            - YEAR
           nullable: true
           description: The pay period of the employment
         pay_frequency:
           type: string
-          example: Bi-weekly
+          example: WEEKLY
+          enum:
+            - WEEKLY
+            - BIWEEKLY
+            - MONTHLY
+            - QUARTERLY
+            - SEMIANNUALLY
+            - ANNUALLY
+            - THIRTEEN-MONTHLY
+            - PRO_RATA
+            - SEMIMONTHLY
           nullable: true
           description: The pay frequency of the employment
         pay_currency:
           type: string
           example: USD
+          enum:
+            - AED
+            - AFN
+            - ALL
+            - AMD
+            - ANG
+            - AOA
+            - ARS
+            - AUD
+            - AWG
+            - AZN
+            - BAM
+            - BBD
+            - BDT
+            - BGN
+            - BHD
+            - BIF
+            - BMD
+            - BND
+            - BOB
+            - BRL
+            - BSD
+            - BTN
+            - BWP
+            - BYN
+            - BZD
+            - CAD
+            - CDF
+            - CHF
+            - CLP
+            - CNY
+            - COP
+            - CRC
+            - CUP
+            - CVE
+            - CZK
+            - DJF
+            - DKK
+            - DOP
+            - DZD
+            - EGP
+            - ERN
+            - ETB
+            - EUR
+            - FJD
+            - FKP
+            - FOK
+            - GBP
+            - GEL
+            - GGP
+            - GHS
+            - GIP
+            - GMD
+            - GNF
+            - GTQ
+            - GYD
+            - HKD
+            - HNL
+            - HRK
+            - HTG
+            - HUF
+            - IDR
+            - ILS
+            - IMP
+            - INR
+            - IQD
+            - IRR
+            - ISK
+            - JEP
+            - JMD
+            - JOD
+            - JPY
+            - KES
+            - KGS
+            - KHR
+            - KID
+            - KMF
+            - KRW
+            - KWD
+            - KYD
+            - KZT
+            - LAK
+            - LBP
+            - LKR
+            - LRD
+            - LSL
+            - LYD
+            - MAD
+            - MDL
+            - MGA
+            - MKD
+            - MMK
+            - MNT
+            - MOP
+            - MRU
+            - MUR
+            - MVR
+            - MWK
+            - MXN
+            - MYR
+            - MZN
+            - NAD
+            - NGN
+            - NIO
+            - NOK
+            - NPR
+            - NZD
+            - OMR
+            - PAB
+            - PEN
+            - PGK
+            - PHP
+            - PKR
+            - PLN
+            - PYG
+            - QAR
+            - RON
+            - RSD
+            - RUB
+            - RWF
+            - SAR
+            - SBD
+            - SCR
+            - SDG
+            - SEK
+            - SGD
+            - SHP
+            - SLE
+            - SLL
+            - SOS
+            - SRD
+            - SSP
+            - STN
+            - SYP
+            - SZL
+            - THB
+            - TJS
+            - TMT
+            - TND
+            - TOP
+            - TRY
+            - TTD
+            - TVD
+            - TWD
+            - TZS
+            - UAH
+            - UGX
+            - USD
+            - UYU
+            - UZS
+            - VES
+            - VND
+            - VUV
+            - WST
+            - XAF
+            - XCD
+            - XDR
+            - XOF
+            - XPF
+            - YER
+            - ZAR
+            - ZMW
+            - ZWL
           nullable: true
           description: The currency of the pay
         flsa_status:
           type: string
-          example: Exempt
+          example: EXEMPT
+          enum:
+            - EXEMPT
+            - SALARIED_NONEXEMPT
+            - NONEXEMPT
+            - OWNER
           nullable: true
           description: The FLSA status of the employment
         effective_date:
@@ -13267,7 +13536,13 @@ components:
           description: The effective date of the employment
         employment_type:
           type: string
-          example: Full-time
+          example: FULL_TIME
+          enum:
+            - FULL_TIME
+            - PART_TIME
+            - INTERN
+            - CONTRACTOR
+            - FREELANCE
           nullable: true
           description: The type of employment
         pay_group_id:
@@ -13344,7 +13619,13 @@ components:
           description: The name of the group
         type:
           type: string
-          example: Department
+          example: DEPARTMENT
+          enum:
+            - TEAM
+            - DEPARTMENT
+            - COST_CENTER
+            - BUSINESS_UNIT
+            - GROUP
           nullable: true
           description: The type of the group
         field_mappings:
@@ -13441,7 +13722,10 @@ components:
           description: The country of the location
         location_type:
           type: string
-          example: Office
+          example: WORK
+          enum:
+            - WORK
+            - HOME
           nullable: true
           description: The type of the location
         field_mappings:
@@ -13555,12 +13839,24 @@ components:
       properties:
         run_state:
           type: string
-          example: Completed
+          example: PAID
+          enum:
+            - PAID
+            - DRAFT
+            - APPROVED
+            - FAILED
+            - CLOSE
           nullable: true
           description: The state of the payroll run
         run_type:
           type: string
-          example: Regular
+          example: REGULAR
+          enum:
+            - REGULAR
+            - OFF_CYCLE
+            - CORRECTION
+            - TERMINATION
+            - SIGN_ON_BONUS
           nullable: true
           description: The type of the payroll run
         start_date:
@@ -13655,7 +13951,13 @@ components:
           description: The UUID of the approver for the time off request
         status:
           type: string
-          example: Approved
+          example: REQUESTED
+          enum: &ref_132
+            - REQUESTED
+            - APPROVED
+            - DECLINED
+            - CANCELLED
+            - DELETED
           nullable: true
           description: The status of the time off request
         employee_note:
@@ -13665,7 +13967,10 @@ components:
           description: A note from the employee about the time off request
         units:
           type: string
-          example: Days
+          example: DAYS
+          enum: &ref_133
+            - HOURS
+            - DAYS
           nullable: true
           description: The units used for the time off (e.g., Days, Hours)
         amount:
@@ -13675,7 +13980,14 @@ components:
           description: The amount of time off requested
         request_type:
           type: string
-          example: Vacation
+          example: VACATION
+          enum: &ref_134
+            - VACATION
+            - SICK
+            - PERSONAL
+            - JURY_DUTY
+            - VOLUNTEER
+            - BEREAVEMENT
           nullable: true
           description: The type of time off request
         start_time:
@@ -13692,7 +14004,7 @@ components:
           description: The end time of the time off
         field_mappings:
           type: object
-          example: &ref_127
+          example: &ref_135
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -13754,7 +14066,8 @@ components:
           description: The UUID of the approver for the time off request
         status:
           type: string
-          example: Approved
+          example: REQUESTED
+          enum: *ref_132
           nullable: true
           description: The status of the time off request
         employee_note:
@@ -13764,7 +14077,8 @@ components:
           description: A note from the employee about the time off request
         units:
           type: string
-          example: Days
+          example: DAYS
+          enum: *ref_133
           nullable: true
           description: The units used for the time off (e.g., Days, Hours)
         amount:
@@ -13774,7 +14088,8 @@ components:
           description: The amount of time off requested
         request_type:
           type: string
-          example: Vacation
+          example: VACATION
+          enum: *ref_134
           nullable: true
           description: The type of time off request
         start_time:
@@ -13791,7 +14106,7 @@ components:
           description: The end time of the time off
         field_mappings:
           type: object
-          example: *ref_127
+          example: *ref_135
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -13816,7 +14131,14 @@ components:
           description: The amount of time off used
         policy_type:
           type: string
-          example: Vacation
+          example: VACATION
+          enum:
+            - VACATION
+            - SICK
+            - PERSONAL
+            - JURY_DUTY
+            - VOLUNTEER
+            - BEREAVEMENT
           nullable: true
           description: The type of time off policy
         field_mappings:
@@ -13902,7 +14224,7 @@ components:
           description: Indicates if the timesheet entry was deleted in the remote system
         field_mappings:
           type: object
-          example: &ref_128
+          example: &ref_136
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -13975,7 +14297,7 @@ components:
           description: Indicates if the timesheet entry was deleted in the remote system
         field_mappings:
           type: object
-          example: *ref_128
+          example: *ref_136
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -14033,7 +14355,7 @@ components:
       properties:
         activity_type:
           type: string
-          enum: &ref_129
+          enum: &ref_137
             - NOTE
             - EMAIL
             - OTHER
@@ -14052,7 +14374,7 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: &ref_130
+          enum: &ref_138
             - ADMIN_ONLY
             - PUBLIC
             - PRIVATE
@@ -14072,7 +14394,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: &ref_131
+          example: &ref_139
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -14115,7 +14437,7 @@ components:
       properties:
         activity_type:
           type: string
-          enum: *ref_129
+          enum: *ref_137
           example: NOTE
           nullable: true
           description: The type of activity
@@ -14131,7 +14453,7 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: *ref_130
+          enum: *ref_138
           example: PUBLIC
           nullable: true
           description: The visibility of the activity
@@ -14148,7 +14470,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: *ref_131
+          example: *ref_139
           additionalProperties: true
           nullable: true
           description: >-
@@ -14172,7 +14494,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: &ref_132
+          example: &ref_140
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
             - 12345678-1234-1234-1234-123456789012
           type: array
@@ -14209,7 +14531,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: &ref_133
+          example: &ref_141
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -14275,7 +14597,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: *ref_132
+          example: *ref_140
           type: array
           items:
             type: string
@@ -14310,7 +14632,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: *ref_133
+          example: *ref_141
           additionalProperties: true
           nullable: true
           description: >-
@@ -14332,7 +14654,7 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: &ref_134
+          enum: &ref_142
             - RESUME
             - COVER_LETTER
             - OFFER_LETTER
@@ -14358,7 +14680,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: &ref_135
+          example: &ref_143
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -14412,7 +14734,7 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: *ref_134
+          enum: *ref_142
           nullable: true
           description: The type of the file
         remote_created_at:
@@ -14434,7 +14756,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: *ref_135
+          example: *ref_143
           additionalProperties: true
           nullable: true
           description: >-
@@ -14512,37 +14834,37 @@ components:
           description: The last interaction date with the candidate
         attachments:
           type: array
-          items: &ref_136
+          items: &ref_144
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
-          example: &ref_137
+          example: &ref_145
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The attachments UUIDs of the candidate
         applications:
           type: array
-          items: &ref_138
+          items: &ref_146
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
-          example: &ref_139
+          example: &ref_147
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The applications UUIDs of the candidate
         tags:
           type: array
-          items: &ref_140
+          items: &ref_148
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedAtsTagOutput'
-          example: &ref_141
+          example: &ref_149
             - tag_1
             - tag_2
           nullable: true
           description: The tags of the candidate
         urls:
-          example: &ref_142
+          example: &ref_150
             - url: mywebsite.com
               url_type: WEBSITE
           nullable: true
@@ -14553,7 +14875,7 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: &ref_143
+          example: &ref_151
             - phone_number: '+33660688899'
               phone_type: WORK
           nullable: true
@@ -14562,7 +14884,7 @@ components:
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: &ref_144
+          example: &ref_152
             - email_address: joedoe@gmail.com
               email_address_type: WORK
           nullable: true
@@ -14572,7 +14894,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: &ref_145
+          example: &ref_153
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -14668,24 +14990,24 @@ components:
           description: The last interaction date with the candidate
         attachments:
           type: array
-          items: *ref_136
-          example: *ref_137
+          items: *ref_144
+          example: *ref_145
           nullable: true
           description: The attachments UUIDs of the candidate
         applications:
           type: array
-          items: *ref_138
-          example: *ref_139
+          items: *ref_146
+          example: *ref_147
           nullable: true
           description: The applications UUIDs of the candidate
         tags:
           type: array
-          items: *ref_140
-          example: *ref_141
+          items: *ref_148
+          example: *ref_149
           nullable: true
           description: The tags of the candidate
         urls:
-          example: *ref_142
+          example: *ref_150
           nullable: true
           description: >-
             The urls of the candidate, possible values for Url type are WEBSITE,
@@ -14694,14 +15016,14 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: *ref_143
+          example: *ref_151
           nullable: true
           description: The phone numbers of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: *ref_144
+          example: *ref_152
           nullable: true
           description: The email addresses of the candidate
           type: array
@@ -14709,7 +15031,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: *ref_145
+          example: *ref_153
           additionalProperties: true
           nullable: true
           description: >-
@@ -14769,7 +15091,7 @@ components:
       properties:
         status:
           type: string
-          enum: &ref_146
+          enum: &ref_154
             - SCHEDULED
             - AWAITING_FEEDBACK
             - COMPLETED
@@ -14792,7 +15114,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: &ref_147
+          example: &ref_155
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the interviewers
@@ -14830,7 +15152,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: &ref_148
+          example: &ref_156
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -14873,7 +15195,7 @@ components:
       properties:
         status:
           type: string
-          enum: *ref_146
+          enum: *ref_154
           example: SCHEDULED
           nullable: true
           description: The status of the interview
@@ -14893,7 +15215,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: *ref_147
+          example: *ref_155
           nullable: true
           description: The UUIDs of the interviewers
           type: array
@@ -14930,7 +15252,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: *ref_148
+          example: *ref_156
           additionalProperties: true
           nullable: true
           description: >-
@@ -15664,7 +15986,7 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_149
+          enum: &ref_157
             - AED
             - AFN
             - ALL
@@ -15846,7 +16168,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: &ref_150
+          example: &ref_158
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -15918,7 +16240,7 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_149
+          enum: *ref_157
           nullable: true
           description: The currency of the account
         account_number:
@@ -15938,7 +16260,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: *ref_150
+          example: *ref_158
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -16054,7 +16376,7 @@ components:
           description: The UUID of the associated account
         field_mappings:
           type: object
-          example: &ref_151
+          example: &ref_159
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -16110,7 +16432,7 @@ components:
           description: The UUID of the associated account
         field_mappings:
           type: object
-          example: *ref_151
+          example: *ref_159
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -16986,7 +17308,7 @@ components:
           type: string
           example: USD
           nullable: true
-          enum: &ref_152
+          enum: &ref_160
             - AED
             - AFN
             - ALL
@@ -17162,7 +17484,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: &ref_153
+          example: &ref_161
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -17235,7 +17557,7 @@ components:
           type: string
           example: USD
           nullable: true
-          enum: *ref_152
+          enum: *ref_160
           description: The currency associated with the contact
         remote_updated_at:
           type: string
@@ -17249,7 +17571,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: *ref_153
+          example: *ref_161
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -17574,7 +17896,7 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_154
+          enum: &ref_162
             - AED
             - AFN
             - ALL
@@ -17765,7 +18087,7 @@ components:
           nullable: true
           description: The UUID of the associated company info
         tracking_categories:
-          example: &ref_155
+          example: &ref_163
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the tracking categories associated with the expense
@@ -17779,7 +18101,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_156
+          example: &ref_164
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -17848,7 +18170,7 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_154
+          enum: *ref_162
           nullable: true
           description: The currency of the expense
         exchange_rate:
@@ -17877,7 +18199,7 @@ components:
           nullable: true
           description: The UUID of the associated company info
         tracking_categories:
-          example: *ref_155
+          example: *ref_163
           nullable: true
           description: The UUIDs of the tracking categories associated with the expense
           type: array
@@ -17890,7 +18212,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_156
+          example: *ref_164
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -18179,861 +18501,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_157
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
-          nullable: true
-          description: The currency of the invoice
-        exchange_rate:
-          type: string
-          example: '1.2'
-          nullable: true
-          description: The exchange rate applied to the invoice
-        total_discount:
-          type: number
-          example: 1000
-          nullable: true
-          description: The total discount applied to the invoice
-        sub_total:
-          type: number
-          example: 10000
-          nullable: true
-          description: The subtotal of the invoice
-        status:
-          type: string
-          example: Paid
-          nullable: true
-          description: The status of the invoice
-        total_tax_amount:
-          type: number
-          example: 1000
-          nullable: true
-          description: The total tax amount on the invoice
-        total_amount:
-          type: number
-          example: 11000
-          nullable: true
-          description: The total amount of the invoice
-        balance:
-          type: number
-          example: 0
-          nullable: true
-          description: The remaining balance on the invoice
-        contact_id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated contact
-        accounting_period_id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated accounting period
-        tracking_categories:
-          example: &ref_158
-            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUIDs of the tracking categories associated with the invoice
-          type: array
-          items:
-            type: string
-        line_items:
-          description: The line items associated with this invoice
-          type: array
-          items:
-            $ref: '#/components/schemas/LineItem'
-        field_mappings:
-          type: object
-          example: &ref_159
-            custom_field_1: value1
-            custom_field_2: value2
-          nullable: true
-          description: >-
-            The custom field mappings of the object between the remote 3rd party
-            & Panora
-        id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the invoice record
-        remote_id:
-          type: string
-          example: invoice_1234
-          nullable: true
-          description: The remote ID of the invoice in the context of the 3rd Party
-        remote_data:
-          type: object
-          example:
-            raw_data:
-              additional_field: some value
-          nullable: true
-          description: The remote data of the invoice in the context of the 3rd Party
-        remote_updated_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The date when the invoice was last updated in the remote system
-        created_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The created date of the invoice record
-        modified_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The last modified date of the invoice record
-    UnifiedAccountingInvoiceInput:
-      type: object
-      properties:
-        type:
-          type: string
-          example: Sales
-          nullable: true
-          description: The type of the invoice
-        number:
-          type: string
-          example: INV-001
-          nullable: true
-          description: The invoice number
-        issue_date:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The date the invoice was issued
-        due_date:
-          format: date-time
-          type: string
-          example: '2024-07-15T12:00:00Z'
-          nullable: true
-          description: The due date of the invoice
-        paid_on_date:
-          format: date-time
-          type: string
-          example: '2024-07-10T12:00:00Z'
-          nullable: true
-          description: The date the invoice was paid
-        memo:
-          type: string
-          example: Payment for services rendered
-          nullable: true
-          description: A memo or note on the invoice
-        currency:
-          type: string
-          example: USD
-          enum: *ref_157
-          nullable: true
-          description: The currency of the invoice
-        exchange_rate:
-          type: string
-          example: '1.2'
-          nullable: true
-          description: The exchange rate applied to the invoice
-        total_discount:
-          type: number
-          example: 1000
-          nullable: true
-          description: The total discount applied to the invoice
-        sub_total:
-          type: number
-          example: 10000
-          nullable: true
-          description: The subtotal of the invoice
-        status:
-          type: string
-          example: Paid
-          nullable: true
-          description: The status of the invoice
-        total_tax_amount:
-          type: number
-          example: 1000
-          nullable: true
-          description: The total tax amount on the invoice
-        total_amount:
-          type: number
-          example: 11000
-          nullable: true
-          description: The total amount of the invoice
-        balance:
-          type: number
-          example: 0
-          nullable: true
-          description: The remaining balance on the invoice
-        contact_id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated contact
-        accounting_period_id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated accounting period
-        tracking_categories:
-          example: *ref_158
-          nullable: true
-          description: The UUIDs of the tracking categories associated with the invoice
-          type: array
-          items:
-            type: string
-        line_items:
-          description: The line items associated with this invoice
-          type: array
-          items:
-            $ref: '#/components/schemas/LineItem'
-        field_mappings:
-          type: object
-          example: *ref_159
-          nullable: true
-          description: >-
-            The custom field mappings of the object between the remote 3rd party
-            & Panora
-    UnifiedAccountingItemOutput:
-      type: object
-      properties:
-        name:
-          type: string
-          example: Product A
-          nullable: true
-          description: The name of the accounting item
-        status:
-          type: string
-          example: Active
-          nullable: true
-          description: The status of the accounting item
-        unit_price:
-          type: number
-          example: 1000
-          nullable: true
-          description: The unit price of the item in cents
-        purchase_price:
-          type: number
-          example: 800
-          nullable: true
-          description: The purchase price of the item in cents
-        sales_account:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated sales account
-        purchase_account:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated purchase account
-        company_info_id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated company info
-        field_mappings:
-          type: object
-          example:
-            custom_field_1: value1
-            custom_field_2: value2
-          nullable: true
-          description: >-
-            The custom field mappings of the object between the remote 3rd party
-            & Panora
-        id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the accounting item record
-        remote_id:
-          type: string
-          example: item_1234
-          nullable: true
-          description: The remote ID of the item in the context of the 3rd Party
-        remote_updated_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The date when the item was last updated in the remote system
-        remote_data:
-          type: object
-          example:
-            raw_data:
-              additional_field: some value
-          nullable: true
-          description: The remote data of the item in the context of the 3rd Party
-        created_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The created date of the accounting item record
-        modified_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The last modified date of the accounting item record
-    UnifiedAccountingJournalentryOutput:
-      type: object
-      properties:
-        transaction_date:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The date of the transaction
-        payments:
-          example: &ref_160
-            - payment1
-            - payment2
-          nullable: true
-          description: The payments associated with the journal entry
-          type: array
-          items:
-            type: string
-        applied_payments:
-          example: &ref_161
-            - appliedPayment1
-            - appliedPayment2
-          nullable: true
-          description: The applied payments for the journal entry
-          type: array
-          items:
-            type: string
-        memo:
-          type: string
-          example: Monthly expense journal entry
-          nullable: true
-          description: A memo or note for the journal entry
-        currency:
-          type: string
-          example: USD
-          enum: &ref_162
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
-          nullable: true
-          description: The currency of the journal entry
-        exchange_rate:
-          type: string
-          example: '1.2'
-          nullable: true
-          description: The exchange rate applied to the journal entry
-        id_acc_company_info:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: false
-          description: The UUID of the associated company info
-        journal_number:
-          type: string
-          example: JE-001
-          nullable: true
-          description: The journal number
-        tracking_categories:
-          example: &ref_163
-            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: >-
-            The UUIDs of the tracking categories associated with the journal
-            entry
-          type: array
-          items:
-            type: string
-        id_acc_accounting_period:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated accounting period
-        posting_status:
-          type: string
-          example: Posted
-          nullable: true
-          description: The posting status of the journal entry
-        line_items:
-          description: The line items associated with this journal entry
-          type: array
-          items:
-            $ref: '#/components/schemas/LineItem'
-        field_mappings:
-          type: object
-          example: &ref_164
-            custom_field_1: value1
-            custom_field_2: value2
-          nullable: true
-          description: >-
-            The custom field mappings of the object between the remote 3rd party
-            & Panora
-        id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the journal entry record
-        remote_id:
-          type: string
-          example: journal_entry_1234
-          nullable: false
-          description: The remote ID of the journal entry in the context of the 3rd Party
-        remote_created_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The date when the journal entry was created in the remote system
-        remote_modiified_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: >-
-            The date when the journal entry was last modified in the remote
-            system
-        remote_data:
-          type: object
-          example:
-            raw_data:
-              additional_field: some value
-          nullable: true
-          description: The remote data of the journal entry in the context of the 3rd Party
-        created_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The created date of the journal entry record
-        modified_at:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The last modified date of the journal entry record
-    UnifiedAccountingJournalentryInput:
-      type: object
-      properties:
-        transaction_date:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The date of the transaction
-        payments:
-          example: *ref_160
-          nullable: true
-          description: The payments associated with the journal entry
-          type: array
-          items:
-            type: string
-        applied_payments:
-          example: *ref_161
-          nullable: true
-          description: The applied payments for the journal entry
-          type: array
-          items:
-            type: string
-        memo:
-          type: string
-          example: Monthly expense journal entry
-          nullable: true
-          description: A memo or note for the journal entry
-        currency:
-          type: string
-          example: USD
-          enum: *ref_162
-          nullable: true
-          description: The currency of the journal entry
-        exchange_rate:
-          type: string
-          example: '1.2'
-          nullable: true
-          description: The exchange rate applied to the journal entry
-        id_acc_company_info:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: false
-          description: The UUID of the associated company info
-        journal_number:
-          type: string
-          example: JE-001
-          nullable: true
-          description: The journal number
-        tracking_categories:
-          example: *ref_163
-          nullable: true
-          description: >-
-            The UUIDs of the tracking categories associated with the journal
-            entry
-          type: array
-          items:
-            type: string
-        id_acc_accounting_period:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated accounting period
-        posting_status:
-          type: string
-          example: Posted
-          nullable: true
-          description: The posting status of the journal entry
-        line_items:
-          description: The line items associated with this journal entry
-          type: array
-          items:
-            $ref: '#/components/schemas/LineItem'
-        field_mappings:
-          type: object
-          example: *ref_164
-          nullable: true
-          description: >-
-            The custom field mappings of the object between the remote 3rd party
-            & Panora
-    UnifiedAccountingPaymentOutput:
-      type: object
-      properties:
-        invoice_id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated invoice
-        transaction_date:
-          format: date-time
-          type: string
-          example: '2024-06-15T12:00:00Z'
-          nullable: true
-          description: The date of the transaction
-        contact_id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated contact
-        account_id:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The UUID of the associated account
-        currency:
-          type: string
-          example: USD
           enum: &ref_165
             - AED
             - AFN
@@ -19198,6 +18665,861 @@ components:
             - ZMW
             - ZWL
           nullable: true
+          description: The currency of the invoice
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the invoice
+        total_discount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total discount applied to the invoice
+        sub_total:
+          type: number
+          example: 10000
+          nullable: true
+          description: The subtotal of the invoice
+        status:
+          type: string
+          example: Paid
+          nullable: true
+          description: The status of the invoice
+        total_tax_amount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total tax amount on the invoice
+        total_amount:
+          type: number
+          example: 11000
+          nullable: true
+          description: The total amount of the invoice
+        balance:
+          type: number
+          example: 0
+          nullable: true
+          description: The remaining balance on the invoice
+        contact_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        accounting_period_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        tracking_categories:
+          example: &ref_166
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUIDs of the tracking categories associated with the invoice
+          type: array
+          items:
+            type: string
+        line_items:
+          description: The line items associated with this invoice
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+        field_mappings:
+          type: object
+          example: &ref_167
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the invoice record
+        remote_id:
+          type: string
+          example: invoice_1234
+          nullable: true
+          description: The remote ID of the invoice in the context of the 3rd Party
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the invoice in the context of the 3rd Party
+        remote_updated_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the invoice was last updated in the remote system
+        created_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the invoice record
+        modified_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the invoice record
+    UnifiedAccountingInvoiceInput:
+      type: object
+      properties:
+        type:
+          type: string
+          example: Sales
+          nullable: true
+          description: The type of the invoice
+        number:
+          type: string
+          example: INV-001
+          nullable: true
+          description: The invoice number
+        issue_date:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date the invoice was issued
+        due_date:
+          format: date-time
+          type: string
+          example: '2024-07-15T12:00:00Z'
+          nullable: true
+          description: The due date of the invoice
+        paid_on_date:
+          format: date-time
+          type: string
+          example: '2024-07-10T12:00:00Z'
+          nullable: true
+          description: The date the invoice was paid
+        memo:
+          type: string
+          example: Payment for services rendered
+          nullable: true
+          description: A memo or note on the invoice
+        currency:
+          type: string
+          example: USD
+          enum: *ref_165
+          nullable: true
+          description: The currency of the invoice
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the invoice
+        total_discount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total discount applied to the invoice
+        sub_total:
+          type: number
+          example: 10000
+          nullable: true
+          description: The subtotal of the invoice
+        status:
+          type: string
+          example: Paid
+          nullable: true
+          description: The status of the invoice
+        total_tax_amount:
+          type: number
+          example: 1000
+          nullable: true
+          description: The total tax amount on the invoice
+        total_amount:
+          type: number
+          example: 11000
+          nullable: true
+          description: The total amount of the invoice
+        balance:
+          type: number
+          example: 0
+          nullable: true
+          description: The remaining balance on the invoice
+        contact_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        accounting_period_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        tracking_categories:
+          example: *ref_166
+          nullable: true
+          description: The UUIDs of the tracking categories associated with the invoice
+          type: array
+          items:
+            type: string
+        line_items:
+          description: The line items associated with this invoice
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+        field_mappings:
+          type: object
+          example: *ref_167
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+    UnifiedAccountingItemOutput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Product A
+          nullable: true
+          description: The name of the accounting item
+        status:
+          type: string
+          example: Active
+          nullable: true
+          description: The status of the accounting item
+        unit_price:
+          type: number
+          example: 1000
+          nullable: true
+          description: The unit price of the item in cents
+        purchase_price:
+          type: number
+          example: 800
+          nullable: true
+          description: The purchase price of the item in cents
+        sales_account:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated sales account
+        purchase_account:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated purchase account
+        company_info_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated company info
+        field_mappings:
+          type: object
+          example:
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the accounting item record
+        remote_id:
+          type: string
+          example: item_1234
+          nullable: true
+          description: The remote ID of the item in the context of the 3rd Party
+        remote_updated_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the item was last updated in the remote system
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the item in the context of the 3rd Party
+        created_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the accounting item record
+        modified_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the accounting item record
+    UnifiedAccountingJournalentryOutput:
+      type: object
+      properties:
+        transaction_date:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the transaction
+        payments:
+          example: &ref_168
+            - payment1
+            - payment2
+          nullable: true
+          description: The payments associated with the journal entry
+          type: array
+          items:
+            type: string
+        applied_payments:
+          example: &ref_169
+            - appliedPayment1
+            - appliedPayment2
+          nullable: true
+          description: The applied payments for the journal entry
+          type: array
+          items:
+            type: string
+        memo:
+          type: string
+          example: Monthly expense journal entry
+          nullable: true
+          description: A memo or note for the journal entry
+        currency:
+          type: string
+          example: USD
+          enum: &ref_170
+            - AED
+            - AFN
+            - ALL
+            - AMD
+            - ANG
+            - AOA
+            - ARS
+            - AUD
+            - AWG
+            - AZN
+            - BAM
+            - BBD
+            - BDT
+            - BGN
+            - BHD
+            - BIF
+            - BMD
+            - BND
+            - BOB
+            - BRL
+            - BSD
+            - BTN
+            - BWP
+            - BYN
+            - BZD
+            - CAD
+            - CDF
+            - CHF
+            - CLP
+            - CNY
+            - COP
+            - CRC
+            - CUP
+            - CVE
+            - CZK
+            - DJF
+            - DKK
+            - DOP
+            - DZD
+            - EGP
+            - ERN
+            - ETB
+            - EUR
+            - FJD
+            - FKP
+            - FOK
+            - GBP
+            - GEL
+            - GGP
+            - GHS
+            - GIP
+            - GMD
+            - GNF
+            - GTQ
+            - GYD
+            - HKD
+            - HNL
+            - HRK
+            - HTG
+            - HUF
+            - IDR
+            - ILS
+            - IMP
+            - INR
+            - IQD
+            - IRR
+            - ISK
+            - JEP
+            - JMD
+            - JOD
+            - JPY
+            - KES
+            - KGS
+            - KHR
+            - KID
+            - KMF
+            - KRW
+            - KWD
+            - KYD
+            - KZT
+            - LAK
+            - LBP
+            - LKR
+            - LRD
+            - LSL
+            - LYD
+            - MAD
+            - MDL
+            - MGA
+            - MKD
+            - MMK
+            - MNT
+            - MOP
+            - MRU
+            - MUR
+            - MVR
+            - MWK
+            - MXN
+            - MYR
+            - MZN
+            - NAD
+            - NGN
+            - NIO
+            - NOK
+            - NPR
+            - NZD
+            - OMR
+            - PAB
+            - PEN
+            - PGK
+            - PHP
+            - PKR
+            - PLN
+            - PYG
+            - QAR
+            - RON
+            - RSD
+            - RUB
+            - RWF
+            - SAR
+            - SBD
+            - SCR
+            - SDG
+            - SEK
+            - SGD
+            - SHP
+            - SLE
+            - SLL
+            - SOS
+            - SRD
+            - SSP
+            - STN
+            - SYP
+            - SZL
+            - THB
+            - TJS
+            - TMT
+            - TND
+            - TOP
+            - TRY
+            - TTD
+            - TVD
+            - TWD
+            - TZS
+            - UAH
+            - UGX
+            - USD
+            - UYU
+            - UZS
+            - VES
+            - VND
+            - VUV
+            - WST
+            - XAF
+            - XCD
+            - XDR
+            - XOF
+            - XPF
+            - YER
+            - ZAR
+            - ZMW
+            - ZWL
+          nullable: true
+          description: The currency of the journal entry
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the journal entry
+        id_acc_company_info:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: false
+          description: The UUID of the associated company info
+        journal_number:
+          type: string
+          example: JE-001
+          nullable: true
+          description: The journal number
+        tracking_categories:
+          example: &ref_171
+            - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: >-
+            The UUIDs of the tracking categories associated with the journal
+            entry
+          type: array
+          items:
+            type: string
+        id_acc_accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        posting_status:
+          type: string
+          example: Posted
+          nullable: true
+          description: The posting status of the journal entry
+        line_items:
+          description: The line items associated with this journal entry
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+        field_mappings:
+          type: object
+          example: &ref_172
+            custom_field_1: value1
+            custom_field_2: value2
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the journal entry record
+        remote_id:
+          type: string
+          example: journal_entry_1234
+          nullable: false
+          description: The remote ID of the journal entry in the context of the 3rd Party
+        remote_created_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date when the journal entry was created in the remote system
+        remote_modiified_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: >-
+            The date when the journal entry was last modified in the remote
+            system
+        remote_data:
+          type: object
+          example:
+            raw_data:
+              additional_field: some value
+          nullable: true
+          description: The remote data of the journal entry in the context of the 3rd Party
+        created_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The created date of the journal entry record
+        modified_at:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The last modified date of the journal entry record
+    UnifiedAccountingJournalentryInput:
+      type: object
+      properties:
+        transaction_date:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the transaction
+        payments:
+          example: *ref_168
+          nullable: true
+          description: The payments associated with the journal entry
+          type: array
+          items:
+            type: string
+        applied_payments:
+          example: *ref_169
+          nullable: true
+          description: The applied payments for the journal entry
+          type: array
+          items:
+            type: string
+        memo:
+          type: string
+          example: Monthly expense journal entry
+          nullable: true
+          description: A memo or note for the journal entry
+        currency:
+          type: string
+          example: USD
+          enum: *ref_170
+          nullable: true
+          description: The currency of the journal entry
+        exchange_rate:
+          type: string
+          example: '1.2'
+          nullable: true
+          description: The exchange rate applied to the journal entry
+        id_acc_company_info:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: false
+          description: The UUID of the associated company info
+        journal_number:
+          type: string
+          example: JE-001
+          nullable: true
+          description: The journal number
+        tracking_categories:
+          example: *ref_171
+          nullable: true
+          description: >-
+            The UUIDs of the tracking categories associated with the journal
+            entry
+          type: array
+          items:
+            type: string
+        id_acc_accounting_period:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated accounting period
+        posting_status:
+          type: string
+          example: Posted
+          nullable: true
+          description: The posting status of the journal entry
+        line_items:
+          description: The line items associated with this journal entry
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
+        field_mappings:
+          type: object
+          example: *ref_172
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+    UnifiedAccountingPaymentOutput:
+      type: object
+      properties:
+        invoice_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated invoice
+        transaction_date:
+          format: date-time
+          type: string
+          example: '2024-06-15T12:00:00Z'
+          nullable: true
+          description: The date of the transaction
+        contact_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated contact
+        account_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the associated account
+        currency:
+          type: string
+          example: USD
+          enum: &ref_173
+            - AED
+            - AFN
+            - ALL
+            - AMD
+            - ANG
+            - AOA
+            - ARS
+            - AUD
+            - AWG
+            - AZN
+            - BAM
+            - BBD
+            - BDT
+            - BGN
+            - BHD
+            - BIF
+            - BMD
+            - BND
+            - BOB
+            - BRL
+            - BSD
+            - BTN
+            - BWP
+            - BYN
+            - BZD
+            - CAD
+            - CDF
+            - CHF
+            - CLP
+            - CNY
+            - COP
+            - CRC
+            - CUP
+            - CVE
+            - CZK
+            - DJF
+            - DKK
+            - DOP
+            - DZD
+            - EGP
+            - ERN
+            - ETB
+            - EUR
+            - FJD
+            - FKP
+            - FOK
+            - GBP
+            - GEL
+            - GGP
+            - GHS
+            - GIP
+            - GMD
+            - GNF
+            - GTQ
+            - GYD
+            - HKD
+            - HNL
+            - HRK
+            - HTG
+            - HUF
+            - IDR
+            - ILS
+            - IMP
+            - INR
+            - IQD
+            - IRR
+            - ISK
+            - JEP
+            - JMD
+            - JOD
+            - JPY
+            - KES
+            - KGS
+            - KHR
+            - KID
+            - KMF
+            - KRW
+            - KWD
+            - KYD
+            - KZT
+            - LAK
+            - LBP
+            - LKR
+            - LRD
+            - LSL
+            - LYD
+            - MAD
+            - MDL
+            - MGA
+            - MKD
+            - MMK
+            - MNT
+            - MOP
+            - MRU
+            - MUR
+            - MVR
+            - MWK
+            - MXN
+            - MYR
+            - MZN
+            - NAD
+            - NGN
+            - NIO
+            - NOK
+            - NPR
+            - NZD
+            - OMR
+            - PAB
+            - PEN
+            - PGK
+            - PHP
+            - PKR
+            - PLN
+            - PYG
+            - QAR
+            - RON
+            - RSD
+            - RUB
+            - RWF
+            - SAR
+            - SBD
+            - SCR
+            - SDG
+            - SEK
+            - SGD
+            - SHP
+            - SLE
+            - SLL
+            - SOS
+            - SRD
+            - SSP
+            - STN
+            - SYP
+            - SZL
+            - THB
+            - TJS
+            - TMT
+            - TND
+            - TOP
+            - TRY
+            - TTD
+            - TVD
+            - TWD
+            - TZS
+            - UAH
+            - UGX
+            - USD
+            - UYU
+            - UZS
+            - VES
+            - VND
+            - VUV
+            - WST
+            - XAF
+            - XCD
+            - XDR
+            - XOF
+            - XPF
+            - YER
+            - ZAR
+            - ZMW
+            - ZWL
+          nullable: true
           description: The currency of the payment
         exchange_rate:
           type: string
@@ -19225,7 +19547,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: &ref_166
+          example: &ref_174
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the tracking categories associated with the payment
@@ -19239,7 +19561,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_167
+          example: &ref_175
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -19308,7 +19630,7 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_165
+          enum: *ref_173
           nullable: true
           description: The currency of the payment
         exchange_rate:
@@ -19337,7 +19659,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: *ref_166
+          example: *ref_174
           nullable: true
           description: The UUIDs of the tracking categories associated with the payment
           type: array
@@ -19350,7 +19672,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_167
+          example: *ref_175
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -19474,7 +19796,7 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_168
+          enum: &ref_176
             - AED
             - AFN
             - ALL
@@ -19645,7 +19967,7 @@ components:
           nullable: true
           description: The exchange rate applied to the purchase order
         tracking_categories:
-          example: &ref_169
+          example: &ref_177
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: >-
@@ -19666,7 +19988,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_170
+          example: &ref_178
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -19776,7 +20098,7 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_168
+          enum: *ref_176
           nullable: true
           description: The currency of the purchase order
         exchange_rate:
@@ -19785,7 +20107,7 @@ components:
           nullable: true
           description: The exchange rate applied to the purchase order
         tracking_categories:
-          example: *ref_169
+          example: *ref_177
           nullable: true
           description: >-
             The UUIDs of the tracking categories associated with the purchase
@@ -19805,7 +20127,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_170
+          example: *ref_178
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -20582,7 +20904,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_171
+          example: &ref_179
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -20668,7 +20990,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_171
+          example: *ref_179
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -20726,7 +21048,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: &ref_172
+          example: &ref_180
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -20817,7 +21139,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: *ref_172
+          example: *ref_180
           additionalProperties: true
           nullable: true
           description: >-
@@ -20982,13 +21304,13 @@ components:
           type: string
           example: ACTIVE
           nullable: true
-          enum: &ref_173
+          enum: &ref_181
             - ARCHIVED
             - ACTIVE
             - DRAFT
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
-          example: &ref_174
+          example: &ref_182
             - https://myproduct/image
           nullable: true
           description: The URLs of the product images
@@ -21006,7 +21328,7 @@ components:
           nullable: true
           description: The vendor of the product
         variants:
-          example: &ref_175
+          example: &ref_183
             - title: teeshirt
               price: 20
               sku: '3'
@@ -21018,7 +21340,7 @@ components:
           items:
             $ref: '#/components/schemas/Variant'
         tags:
-          example: &ref_176
+          example: &ref_184
             - tag_1
           nullable: true
           description: The tags associated with the product
@@ -21027,7 +21349,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: &ref_177
+          example: &ref_185
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -21078,10 +21400,10 @@ components:
           type: string
           example: ACTIVE
           nullable: true
-          enum: *ref_173
+          enum: *ref_181
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
-          example: *ref_174
+          example: *ref_182
           nullable: true
           description: The URLs of the product images
           type: array
@@ -21098,13 +21420,13 @@ components:
           nullable: true
           description: The vendor of the product
         variants:
-          example: *ref_175
+          example: *ref_183
           description: The variants of the product
           type: array
           items:
             $ref: '#/components/schemas/Variant'
         tags:
-          example: *ref_176
+          example: *ref_184
           nullable: true
           description: The tags associated with the product
           type: array
@@ -21112,7 +21434,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: *ref_177
+          example: *ref_185
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -21139,7 +21461,7 @@ components:
           type: string
           nullable: true
           example: AUD
-          enum: &ref_178
+          enum: &ref_186
             - AED
             - AFN
             - ALL
@@ -21338,11 +21660,11 @@ components:
         items:
           type: object
           nullable: true
-          example: &ref_179 {}
+          example: &ref_187 {}
           description: The items in the order
         field_mappings:
           type: object
-          example: &ref_180
+          example: &ref_188
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -21398,7 +21720,7 @@ components:
           type: string
           nullable: true
           example: AUD
-          enum: *ref_178
+          enum: *ref_186
           description: >-
             The currency of the order. Authorized value must be of type
             CurrencyCode (ISO 4217)
@@ -21435,11 +21757,11 @@ components:
         items:
           type: object
           nullable: true
-          example: *ref_179
+          example: *ref_187
           description: The items in the order
         field_mappings:
           type: object
-          example: *ref_180
+          example: *ref_188
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -21616,7 +21938,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_181
+          example: &ref_189
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -21688,7 +22010,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_181
+          example: *ref_189
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora

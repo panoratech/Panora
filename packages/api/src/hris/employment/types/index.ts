@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IEmploymentService {
-  addEmployment(
-    employmentData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalEmploymentOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalEmploymentOutput[]>>;
 }
 

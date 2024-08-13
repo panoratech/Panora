@@ -30,7 +30,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
-    this.registry.registerService('hris', 'time_off', this);
+    this.registry.registerService('hris', 'timeoff', this);
   }
 
   async onModuleInit() {
@@ -81,7 +81,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         UnifiedHrisTimeoffOutput,
         OriginalTimeoffOutput,
         ITimeoffService
-      >(integrationId, linkedUserId, 'hris', 'time_off', service, []);
+      >(integrationId, linkedUserId, 'hris', 'timeoff', service, []);
     } catch (error) {
       throw error;
     }

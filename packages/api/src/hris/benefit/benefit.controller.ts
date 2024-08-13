@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -33,7 +35,6 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('hris/benefits')
 @Controller('hris/benefits')
 export class BenefitController {
@@ -56,6 +57,7 @@ export class BenefitController {
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiPaginatedResponse(UnifiedHrisBenefitOutput)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getBenefits(

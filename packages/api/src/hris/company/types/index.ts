@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ICompanyService {
-  addCompany(
-    companyData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalCompanyOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalCompanyOutput[]>>;
 }
 

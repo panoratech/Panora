@@ -72,7 +72,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
-      const { integrationId, linkedUserId } = param;
+      const { integrationId, linkedUserId, id_company } = param;
       const service: IEmployeeService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
@@ -81,7 +81,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
         UnifiedHrisEmployeeOutput,
         OriginalEmployeeOutput,
         IEmployeeService
-      >(integrationId, linkedUserId, 'hris', 'employee', service, []);
+      >(integrationId, linkedUserId, 'hris', 'employee', service, [
+        {
+          param: id_company,
+          paramName: 'id_company',
+          shouldPassToService: true,
+          shouldPassToIngest: true,
+        },
+      ]);
     } catch (error) {
       throw error;
     }

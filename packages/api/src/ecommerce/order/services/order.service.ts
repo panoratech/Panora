@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedEcommerceOrderInput, UnifiedEcommerceOrderOutput } from '../types/model.unified';
+import {
+  UnifiedEcommerceOrderInput,
+  UnifiedEcommerceOrderOutput,
+} from '../types/model.unified';
 import { OriginalOrderOutput } from '@@core/utils/types/original/original.ecommerce';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
@@ -46,7 +49,7 @@ export class OrderService {
   }
 
   async addOrder(
-    UnifiedEcommerceOrderData: UnifiedEcommerceOrderInput,
+    unifiedEcommerceOrderData: UnifiedEcommerceOrderInput,
     connection_id: string,
     project_id: string,
     integrationId: string,
@@ -55,11 +58,11 @@ export class OrderService {
   ): Promise<UnifiedEcommerceOrderOutput> {
     try {
       const linkedUser = await this.validateLinkedUser(linkedUserId);
-      await this.validateCustomerId(UnifiedEcommerceOrderData.customer_id);
+      await this.validateCustomerId(unifiedEcommerceOrderData.customer_id);
 
       const desunifiedObject =
         await this.coreUnification.desunify<UnifiedEcommerceOrderInput>({
-          sourceObject: UnifiedEcommerceOrderData,
+          sourceObject: unifiedEcommerceOrderData,
           targetType: EcommerceObject.order,
           providerName: integrationId,
           vertical: 'ecommerce',
@@ -328,65 +331,67 @@ export class OrderService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const UnifiedEcommerceOrders: UnifiedEcommerceOrderOutput[] = await Promise.all(
-        orders.map(async (order) => {
-          // Fetch field mappings for the order
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: order.id_ecom_order,
+      const UnifiedEcommerceOrders: UnifiedEcommerceOrderOutput[] =
+        await Promise.all(
+          orders.map(async (order) => {
+            // Fetch field mappings for the order
+            const values = await this.prisma.value.findMany({
+              where: {
+                entity: {
+                  ressource_owner_id: order.id_ecom_order,
+                },
               },
-            },
-            include: {
-              attribute: true,
-            },
-          });
+              include: {
+                attribute: true,
+              },
+            });
 
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
+            // Create a map to store unique field mappings
+            const fieldMappingsMap = new Map();
 
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
 
-          // Convert the map to an array of objects
-          const field_mappings = Object.fromEntries(fieldMappingsMap);
+            // Convert the map to an array of objects
+            const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedEcommerceOrderOutput format
-          return {
-            id: order.id_ecom_order,
-            order_status: order.order_status,
-            order_number: order.order_number,
-            payment_status: order.payment_status,
-            currency: order.currency as CurrencyCode,
-            total_price: Number(order.total_price),
-            total_discount: Number(order.total_discount),
-            total_shipping: Number(order.total_shipping),
-            total_tax: Number(order.total_tax),
-            fulfillment_status: order.fulfillment_status,
-            customer_id: order.id_ecom_customer,
-            field_mappings: field_mappings,
-            remote_id: order.remote_id,
-            created_at: order.created_at.toISOString(),
-            modified_at: order.modified_at.toISOString(),
-          };
-        }),
-      );
+            // Transform to UnifiedEcommerceOrderOutput format
+            return {
+              id: order.id_ecom_order,
+              order_status: order.order_status,
+              order_number: order.order_number,
+              payment_status: order.payment_status,
+              currency: order.currency as CurrencyCode,
+              total_price: Number(order.total_price),
+              total_discount: Number(order.total_discount),
+              total_shipping: Number(order.total_shipping),
+              total_tax: Number(order.total_tax),
+              fulfillment_status: order.fulfillment_status,
+              customer_id: order.id_ecom_customer,
+              field_mappings: field_mappings,
+              remote_id: order.remote_id,
+              created_at: order.created_at.toISOString(),
+              modified_at: order.modified_at.toISOString(),
+            };
+          }),
+        );
 
       let res: UnifiedEcommerceOrderOutput[] = UnifiedEcommerceOrders;
 
       if (remote_data) {
-        const remote_array_data: UnifiedEcommerceOrderOutput[] = await Promise.all(
-          res.map(async (order) => {
-            const resp = await this.prisma.remote_data.findFirst({
-              where: {
-                ressource_owner_id: order.id,
-              },
-            });
-            const remote_data = JSON.parse(resp.data);
-            return { ...order, remote_data };
-          }),
-        );
+        const remote_array_data: UnifiedEcommerceOrderOutput[] =
+          await Promise.all(
+            res.map(async (order) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: order.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...order, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }

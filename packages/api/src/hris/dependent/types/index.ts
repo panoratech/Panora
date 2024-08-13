@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IDependentService {
-  addDependent(
-    dependentData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalDependentOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalDependentOutput[]>>;
 }
 

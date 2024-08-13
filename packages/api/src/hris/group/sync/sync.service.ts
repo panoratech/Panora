@@ -71,7 +71,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
-      const { integrationId, linkedUserId } = param;
+      const { integrationId, linkedUserId, id_company } = param;
       const service: IGroupService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
@@ -80,7 +80,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
         UnifiedHrisGroupOutput,
         OriginalGroupOutput,
         IGroupService
-      >(integrationId, linkedUserId, 'hris', 'group', service, []);
+      >(integrationId, linkedUserId, 'hris', 'group', service, [
+        {
+          param: id_company,
+          paramName: 'id_company',
+          shouldPassToService: true,
+          shouldPassToIngest: true,
+        },
+      ]);
     } catch (error) {
       throw error;
     }

@@ -6,6 +6,8 @@ import {
   Param,
   Query,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiHeader,
@@ -48,6 +50,7 @@ export class EmployerBenefitController {
   })
   @ApiPaginatedResponse(UnifiedHrisEmployerbenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getEmployerBenefits(
     @Headers('x-connection-token') connection_token: string,

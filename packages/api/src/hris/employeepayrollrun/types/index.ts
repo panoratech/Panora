@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IEmployeePayrollRunService {
-  addEmployeePayrollRun(
-    employeepayrollrunData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalEmployeePayrollRunOutput>>;
-
   sync(
     data: SyncParam,
   ): Promise<ApiResponse<OriginalEmployeePayrollRunOutput[]>>;

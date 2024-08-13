@@ -11,6 +11,11 @@ import {
 } from '../types/model.unified';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
+import { OriginalTimeoffOutput } from '@@core/utils/types/original/original.hris';
+import { HrisObject } from '@panora/shared';
+import { ITimeoffService } from '../types';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class TimeoffService {
@@ -19,9 +24,19 @@ export class TimeoffService {
     private logger: LoggerService,
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
+    private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
     private serviceRegistry: ServiceRegistry,
   ) {
     this.logger.setContext(TimeoffService.name);
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
   }
 
   async addTimeoff(
@@ -33,46 +48,130 @@ export class TimeoffService {
     remote_data?: boolean,
   ): Promise<UnifiedHrisTimeoffOutput> {
     try {
-      const service = this.serviceRegistry.getService(integrationId);
-      const resp = await service.addTimeoff(unifiedTimeoffData, linkedUserId);
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+      // Add any necessary validations here, e.g., validateEmployeeId if needed
 
-      const savedTimeOff = await this.prisma.hris_time_off.create({
+      const desunifiedObject =
+        await this.coreUnification.desunify<UnifiedHrisTimeoffInput>({
+          sourceObject: unifiedTimeoffData,
+          targetType: HrisObject.timeoff,
+          providerName: integrationId,
+          vertical: 'hris',
+          customFieldMappings: [],
+        });
+
+      const service: ITimeoffService =
+        this.serviceRegistry.getService(integrationId);
+      const resp: ApiResponse<OriginalTimeoffOutput> = await service.addTimeoff(
+        desunifiedObject,
+        linkedUserId,
+      );
+
+      const unifiedObject = (await this.coreUnification.unify<
+        OriginalTimeoffOutput[]
+      >({
+        sourceObject: [resp.data],
+        targetType: HrisObject.timeoff,
+        providerName: integrationId,
+        vertical: 'hris',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedHrisTimeoffOutput[];
+
+      const source_timeoff = resp.data;
+      const target_timeoff = unifiedObject[0];
+
+      const unique_hris_timeoff_id = await this.saveOrUpdateTimeoff(
+        target_timeoff,
+        connectionId,
+      );
+
+      await this.ingestService.processRemoteData(
+        unique_hris_timeoff_id,
+        source_timeoff,
+      );
+
+      const result_timeoff = await this.getTimeoff(
+        unique_hris_timeoff_id,
+        undefined,
+        undefined,
+        connectionId,
+        projectId,
+        remote_data,
+      );
+
+      const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
+      const event = await this.prisma.events.create({
         data: {
-          id_hris_time_off: uuidv4(),
-          ...unifiedTimeoffData,
-          amount: unifiedTimeoffData.amount
-            ? BigInt(unifiedTimeoffData.amount)
-            : null,
-          start_time: unifiedTimeoffData.start_time
-            ? new Date(unifiedTimeoffData.start_time)
-            : null,
-          end_time: unifiedTimeoffData.end_time
-            ? new Date(unifiedTimeoffData.end_time)
-            : null,
-          remote_id: resp.data.remote_id,
           id_connection: connectionId,
-          created_at: new Date(),
-          modified_at: new Date(),
-          remote_created_at: resp.data.remote_created_at
-            ? new Date(resp.data.remote_created_at)
-            : null,
-          remote_was_deleted: false,
+          id_project: projectId,
+          id_event: uuidv4(),
+          status: status_resp,
+          type: 'hris.timeoff.push',
+          method: 'POST',
+          url: '/hris/timeoff',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
         },
       });
 
-      const result: UnifiedHrisTimeoffOutput = {
-        ...savedTimeOff,
-        id: savedTimeOff.id_hris_time_off,
-        amount: Number(savedTimeOff.amount),
-      };
+      await this.webhook.dispatchWebhook(
+        result_timeoff,
+        'hris.timeoff.created',
+        linkedUser.id_project,
+        event.id_event,
+      );
 
-      if (remote_data) {
-        result.remote_data = resp.data;
-      }
-
-      return result;
+      return result_timeoff;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async saveOrUpdateTimeoff(
+    timeoff: UnifiedHrisTimeoffOutput,
+    connectionId: string,
+  ): Promise<string> {
+    const existingTimeoff = await this.prisma.hris_time_off.findFirst({
+      where: { remote_id: timeoff.remote_id, id_connection: connectionId },
+    });
+
+    const data: any = {
+      employee: timeoff.employee,
+      approver: timeoff.approver,
+      status: timeoff.status,
+      employee_note: timeoff.employee_note,
+      units: timeoff.units,
+      amount: timeoff.amount ? BigInt(timeoff.amount) : null,
+      request_type: timeoff.request_type,
+      start_time: timeoff.start_time ? new Date(timeoff.start_time) : null,
+      end_time: timeoff.end_time ? new Date(timeoff.end_time) : null,
+      field_mappings: timeoff.field_mappings,
+      modified_at: new Date(),
+    };
+
+    if (existingTimeoff) {
+      const res = await this.prisma.hris_time_off.update({
+        where: { id_hris_time_off: existingTimeoff.id_hris_time_off },
+        data: data,
+      });
+
+      return res.id_hris_time_off;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = timeoff.remote_id;
+      data.id_connection = connectionId;
+      data.id_hris_time_off = uuidv4();
+      data.remote_was_deleted = timeoff.remote_was_deleted ?? false;
+      data.remote_created_at = timeoff.remote_created_at
+        ? new Date(timeoff.remote_created_at)
+        : null;
+
+      const newTimeoff = await this.prisma.hris_time_off.create({ data: data });
+
+      return newTimeoff.id_hris_time_off;
     }
   }
 

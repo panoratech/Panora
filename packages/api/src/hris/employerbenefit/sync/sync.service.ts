@@ -30,7 +30,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
-    this.registry.registerService('hris', 'employer_benefit', this);
+    this.registry.registerService('hris', 'employerbenefit', this);
   }
 
   async onModuleInit() {
@@ -72,7 +72,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
-      const { integrationId, linkedUserId } = param;
+      const { integrationId, linkedUserId, id_company } = param;
       const service: IEmployerBenefitService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
@@ -81,7 +81,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
         UnifiedHrisEmployerbenefitOutput,
         OriginalEmployerBenefitOutput,
         IEmployerBenefitService
-      >(integrationId, linkedUserId, 'hris', 'employer_benefit', service, []);
+      >(integrationId, linkedUserId, 'hris', 'employerbenefit', service, [
+        {
+          param: id_company,
+          paramName: 'id_company',
+          shouldPassToService: true,
+          shouldPassToIngest: true,
+        },
+      ]);
     } catch (error) {
       throw error;
     }

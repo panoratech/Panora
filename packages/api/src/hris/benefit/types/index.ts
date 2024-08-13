@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IBenefitService {
-  addBenefit?(
-    benefitData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalBenefitOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalBenefitOutput[]>>;
 }
 

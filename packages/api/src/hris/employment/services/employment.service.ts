@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { UnifiedHrisEmploymentOutput } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
+import { CurrencyCode } from '@@core/utils/types';
 
 @Injectable()
 export class EmploymentService {
@@ -55,7 +56,7 @@ export class EmploymentService {
         pay_rate: Number(employment.pay_rate),
         pay_period: employment.pay_period,
         pay_frequency: employment.pay_frequency,
-        pay_currency: employment.pay_currency,
+        pay_currency: employment.pay_currency as CurrencyCode,
         flsa_status: employment.flsa_status,
         effective_date: employment.effective_date,
         employment_type: employment.employment_type,
@@ -145,7 +146,7 @@ export class EmploymentService {
             pay_rate: Number(employment.pay_rate),
             pay_period: employment.pay_period,
             pay_frequency: employment.pay_frequency,
-            pay_currency: employment.pay_currency,
+            pay_currency: employment.pay_currency as CurrencyCode,
             flsa_status: employment.flsa_status,
             effective_date: employment.effective_date,
             employment_type: employment.employment_type,

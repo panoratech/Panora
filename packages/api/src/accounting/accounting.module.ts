@@ -19,6 +19,7 @@ import { TaxRateModule } from './taxrate/taxrate.module';
 import { TrackingCategoryModule } from './trackingcategory/trackingcategory.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { VendorCreditModule } from './vendorcredit/vendorcredit.module';
+import { AccountingUnificationService } from './@lib/@unification';
 
 @Module({
   exports: [
@@ -43,6 +44,7 @@ import { VendorCreditModule } from './vendorcredit/vendorcredit.module';
     TransactionModule,
     VendorCreditModule,
   ],
+  providers: [AccountingUnificationService],
   imports: [
     AccountModule,
     AddressModule,

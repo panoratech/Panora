@@ -60,7 +60,7 @@ export class GustoCompanyMapper implements ICompanyMapper {
     customFieldMappings?: { slug: string; remote_id: string }[],
   ): Promise<UnifiedHrisCompanyOutput> {
     const opts: any = {};
-    if (company.locations && company.locations.length > 0) {
+    /*if (company.locations && company.locations.length > 0) {
       const locations = await this.ingestService.ingestData<
         UnifiedHrisLocationOutput,
         GustoLocationOutput
@@ -75,7 +75,7 @@ export class GustoCompanyMapper implements ICompanyMapper {
       if (locations) {
         opts.locations = locations;
       }
-    }
+    }*/
     return {
       remote_id: company.uuid || null,
       legal_name: company.name || null,
@@ -84,36 +84,5 @@ export class GustoCompanyMapper implements ICompanyMapper {
       remote_data: company,
       ...opts,
     };
-  }
-
-  private mapEntityType(entityType?: string): string | undefined {
-    switch (entityType) {
-      case 'C-Corporation':
-        return 'C-Corporation';
-      case 'S-Corporation':
-        return 'S-Corporation';
-      case 'Sole proprietor':
-        return 'Sole proprietor';
-      case 'LLC':
-        return 'LLC';
-      case 'LLP':
-        return 'LLP';
-      case 'Limited partnership':
-        return 'Limited partnership';
-      case 'Co-ownership':
-        return 'Co-ownership';
-      case 'Association':
-        return 'Association';
-      case 'Trusteeship':
-        return 'Trusteeship';
-      case 'General partnership':
-        return 'General partnership';
-      case 'Joint venture':
-        return 'Joint venture';
-      case 'Non-Profit':
-        return 'Non-Profit';
-      default:
-        return undefined;
-    }
   }
 }

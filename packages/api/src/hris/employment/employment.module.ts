@@ -3,13 +3,11 @@ import { EmploymentController } from './employment.controller';
 import { EmploymentService } from './services/employment.service';
 import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
-
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { GustoEmploymentMapper } from './services/gusto/mappers';
-
+import { Utils } from '@hris/@lib/@utils';
 @Module({
   controllers: [EmploymentController],
   providers: [
@@ -19,6 +17,7 @@ import { GustoEmploymentMapper } from './services/gusto/mappers';
     WebhookService,
     ServiceRegistry,
     IngestDataService,
+    Utils,
     GustoEmploymentMapper,
     /* PROVIDERS SERVICES */
   ],

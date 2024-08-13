@@ -8,11 +8,6 @@ import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IPayGroupService {
-  addPayGroup(
-    paygroupData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalPayGroupOutput>>;
-
   sync(data: SyncParam): Promise<ApiResponse<OriginalPayGroupOutput[]>>;
 }
 
