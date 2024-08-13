@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { PasswordInput } from "@/components/ui/password-input"
 import { z } from "zod"
 import config from "@/lib/config"
-import { AuthStrategy, providerToType, Provider, extractProvider, extractVertical, needsSubdomain, needsScope } from "@panora/shared"
+import { AuthStrategy, providerToType, Provider,CONNECTORS_METADATA, extractProvider, extractVertical, needsSubdomain, needsScope } from "@panora/shared"
 import { useEffect, useState } from "react"
 import useProjectStore from "@/state/projectStore"
 import { usePostHog } from 'posthog-js/react'
@@ -75,6 +75,14 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
     },
   })
 
+  // Extract oauth_attributes from the connector metadata
+  const oauthAttributes = CONNECTORS_METADATA[item?.vertical!][item?.name!].options?.oauth_attributes || [];
+
+  // Update the form schema to include dynamic fields
+  oauthAttributes.forEach((attr: string) => {
+    formSchema.shape[attr as keyof z.infer<typeof formSchema>] = z.string().optional(); // Add each attribute as an optional string
+  });
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(`${config.API_URL}/connections/oauth/callback`)
@@ -94,6 +102,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     const { client_id, client_secret, scope, api_key, secret, username, subdomain } = values;
     const performUpdate = mappingConnectionStrategies && mappingConnectionStrategies.length > 0;
+    const dynamicAttributes = oauthAttributes.map((attr: string) => values[attr as keyof z.infer<typeof formSchema>]).filter((value: any) => value !== undefined);
     switch (item?.authStrategy.strategy) {
       case AuthStrategy.oauth2:
         const needs_subdomain = needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase());
@@ -116,8 +125,8 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
         if (needs_scope && scope === "") {
           form.setError("scope", { "message": "Please Enter the scope" });
         }
-        let ATTRIBUTES = ["client_id", "client_secret"];
-        let VALUES = [client_id!, client_secret!];
+        let ATTRIBUTES = ["client_id", "client_secret", ...oauthAttributes];
+        let VALUES = [client_id!, client_secret!, ...dynamicAttributes];
         if(needs_subdomain){
           ATTRIBUTES.push("subdomain")
           VALUES.push(subdomain!)
@@ -134,7 +143,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
               updateToggle: false,
               status: dataToUpdate.status,
               attributes: ATTRIBUTES,
-              values: VALUES
+              values: VALUES as string[]
             }), 
               {
               loading: 'Loading...',
@@ -163,7 +172,7 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
             createCsPromise({
               type: providerToType(item?.name, item?.vertical!, AuthStrategy.oauth2),
               attributes: ATTRIBUTES,
-              values: VALUES
+              values: VALUES as string[]
             }), 
               {
               loading: 'Loading...',
@@ -343,19 +352,32 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
     if (mappingConnectionStrategies && mappingConnectionStrategies.length > 0) {
       fetchCredentials({
         type: mappingConnectionStrategies[0].type,
-        attributes: item?.authStrategy.strategy === AuthStrategy.oauth2 ? needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["subdomain", "client_id", "client_secret"] : needsScope(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["client_id", "client_secret","scope", ] : ["client_id", "client_secret"]
+        attributes: item?.authStrategy.strategy === AuthStrategy.oauth2 ? needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["subdomain", "client_id", "client_secret", ...oauthAttributes] : needsScope(item.name.toLowerCase(), item.vertical!.toLowerCase()) ? ["client_id", "client_secret","scope", ...oauthAttributes] : ["client_id", "client_secret", ...oauthAttributes]
           : item?.authStrategy.strategy === AuthStrategy.api_key ? ["api_key"] : ["username", "secret"]
       }, {
         onSuccess(data) {
           if (item?.authStrategy.strategy === AuthStrategy.oauth2) {
             let i = 0;
-            if(needsSubdomain(item.name.toLowerCase(), item.vertical!.toLowerCase())){
+            if (needsSubdomain(item.name.toLowerCase(), item.vertical?.toLowerCase()!)) {
               form.setValue("subdomain", data[i]);
-              i = 1;
+              i += 1;
             }
+
+            // Set client_id and client_secret
             form.setValue("client_id", data[i]);
             form.setValue("client_secret", data[i + 1]);
-            form.setValue("scope", data[i + 2]);
+            i += 2; // Increment i after setting client_id and client_secret
+
+            // Check if scope is needed and set the value if so
+            if (needsScope(item.name.toLowerCase(), item.vertical?.toLowerCase()!)) {
+              form.setValue("scope", data[i]);
+              i += 1;
+            }
+
+            // Set any additional OAuth attributes
+            oauthAttributes.forEach((attr: string, index: number) => {
+              form.setValue(attr as keyof z.infer<typeof formSchema>, data[i + index]);
+            });
           }
           if (item?.authStrategy.strategy === AuthStrategy.api_key) {
             form.setValue("api_key", data[0]);
@@ -501,6 +523,23 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                         )}
                       />
                     </div>
+                    {oauthAttributes.map((attr: string) => (
+                      <div className="flex flex-col" key={attr}>
+                        <FormField
+                          name={attr as keyof z.infer<typeof formSchema>}
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="flex flex-col">{attr}</FormLabel>
+                              <FormControl>
+                                <Input {...field} placeholder={`Enter ${attr}`} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    ))}
                     <div className="flex flex-col">
                       <FormLabel className="flex flex-col">Redirect URI</FormLabel>
                       <div className="flex gap-2 mt-1">

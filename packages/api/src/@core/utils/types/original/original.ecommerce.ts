@@ -1,9 +1,14 @@
 /* INPUT */
 
+import { AmazonCustomerOutput } from '@ecommerce/customer/services/amazon/types';
 import {
   ShopifyCustomerInput,
   ShopifyCustomerOutput,
 } from '@ecommerce/customer/services/shopify/types';
+import {
+  SquarespaceCustomerInput,
+  SquarespaceCustomerOutput,
+} from '@ecommerce/customer/services/squarespace/types';
 import {
   WoocommerceCustomerInput,
   WoocommerceCustomerOutput,
@@ -17,9 +22,17 @@ import {
   ShopifyFulfillmentOrdersOutput,
 } from '@ecommerce/fulfillmentorders/services/shopify/types';
 import {
+  AmazonOrderInput,
+  AmazonOrderOutput,
+} from '@ecommerce/order/services/amazon/types';
+import {
   ShopifyOrderInput,
   ShopifyOrderOutput,
 } from '@ecommerce/order/services/shopify/types';
+import {
+  SquarespaceOrderInput,
+  SquarespaceOrderOutput,
+} from '@ecommerce/order/services/squarespace/types';
 import {
   WoocommerceOrderInput,
   WoocommerceOrderOutput,
@@ -28,15 +41,27 @@ import {
   ShopifyProductInput,
   ShopifyProductOutput,
 } from '@ecommerce/product/services/shopify/types';
-import { WoocommerceProductOutput } from '@ecommerce/product/services/woocommerce/types';
+import {
+  SquarespaceProductInput,
+  SquarespaceProductOutput,
+} from '@ecommerce/product/services/squarespace/types';
+import {
+  WoocommerceProductInput,
+  WoocommerceProductOutput,
+} from '@ecommerce/product/services/woocommerce/types';
 
 /* product */
 export type OriginalProductInput =
   | ShopifyProductInput
-  | WoocommerceProductOutput;
+  | WoocommerceProductInput
+  | SquarespaceProductInput;
 
 /* order */
-export type OriginalOrderInput = ShopifyOrderInput | WoocommerceOrderInput;
+export type OriginalOrderInput =
+  | ShopifyOrderInput
+  | WoocommerceOrderInput
+  | SquarespaceOrderInput
+  | AmazonOrderInput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersInput = ShopifyFulfillmentOrdersInput;
@@ -44,7 +69,8 @@ export type OriginalFulfillmentOrdersInput = ShopifyFulfillmentOrdersInput;
 /* customer */
 export type OriginalCustomerInput =
   | ShopifyCustomerInput
-  | WoocommerceCustomerInput;
+  | WoocommerceCustomerInput
+  | SquarespaceCustomerInput;
 
 /* fulfillment */
 export type OriginalFulfillmentInput = ShopifyFulfillmentInput;
@@ -61,10 +87,15 @@ export type EcommerceObjectInput =
 /* product */
 export type OriginalProductOutput =
   | ShopifyProductOutput
-  | WoocommerceProductOutput;
+  | WoocommerceProductOutput
+  | SquarespaceProductOutput;
 
 /* order */
-export type OriginalOrderOutput = ShopifyOrderOutput | WoocommerceOrderOutput;
+export type OriginalOrderOutput =
+  | ShopifyOrderOutput
+  | WoocommerceOrderOutput
+  | SquarespaceOrderOutput
+  | AmazonOrderOutput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersOutput = ShopifyFulfillmentOrdersOutput;
@@ -72,7 +103,9 @@ export type OriginalFulfillmentOrdersOutput = ShopifyFulfillmentOrdersOutput;
 /* customer */
 export type OriginalCustomerOutput =
   | ShopifyCustomerOutput
-  | WoocommerceCustomerOutput;
+  | WoocommerceCustomerOutput
+  | SquarespaceCustomerOutput
+  | AmazonCustomerOutput;
 
 /* fulfillment */
 export type OriginalFulfillmentOutput = ShopifyFulfillmentOutput;

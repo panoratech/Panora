@@ -8,6 +8,13 @@ import { EcommerceConnectionsService } from './services/ecommerce.connection.ser
 import { ServiceRegistry } from './services/registry.service';
 import { ShopifyConnectionService } from './services/shopify/shopify.service';
 import { WoocommerceConnectionService } from './services/woocommerce/woocommerce.service';
+import { SquarespaceConnectionService } from './services/squarespace/squarespace.service';
+import { BigcommerceConnectionService } from './services/bigcommerce/bigcommerce.service';
+import { EbayConnectionService } from './services/ebay/ebay.service';
+import { WebflowConnectionService } from './services/webflow/webflow.service';
+import { FaireConnectionService } from './services/faire/faire.service';
+import { MercadolibreConnectionService } from './services/mercadolibre/mercadolibre.service';
+import { AmazonConnectionService } from './services/amazon/amazon.service';
 
 @Module({
   imports: [WebhookModule, BullQueueModule],
@@ -20,6 +27,13 @@ import { WoocommerceConnectionService } from './services/woocommerce/woocommerce
     //PROVIDERS SERVICES,
     ShopifyConnectionService,
     WoocommerceConnectionService,
+    SquarespaceConnectionService,
+    BigcommerceConnectionService,
+    EbayConnectionService,
+    WebflowConnectionService,
+    FaireConnectionService,
+    MercadolibreConnectionService,
+    AmazonConnectionService,
   ],
   exports: [EcommerceConnectionsService],
 })

@@ -54,7 +54,7 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   if (config.options && config.options.local_redirect_uri_in_https === true && redirectUriIngress && redirectUriIngress.status === true) {
     baseRedirectURL = redirectUriIngress.value!;
   }
-  const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`); 
+  let encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`); 
   let state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   if (providerName === 'microsoftdynamicssales') {
     state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl, resource: additionalParams!.end_user_domain }));
@@ -62,6 +62,17 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   if (providerName === 'deel') {
         const randomState = randomString();
     state = encodeURIComponent(randomState + 'deel_delimiter' + Buffer.from(JSON.stringify({
+      projectId,
+      linkedUserId,
+      providerName,
+      vertical,
+      returnUrl,
+      resource: additionalParams!.end_user_domain!
+  })).toString('base64'));
+  }
+  if(providerName === 'squarespace'){
+    const randomState = randomString();
+    state = encodeURIComponent(randomState + 'squarespace_delimiter' + Buffer.from(JSON.stringify({
       projectId,
       linkedUserId,
       providerName,
@@ -147,13 +158,13 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   let BASE_URL: string;
   // construct the baseAuthUrl based on the fact that client may use custom subdomain
   if( needsSubdomain(providerName, vertical) ) {
-    if(typeof baseUrl === 'string') {
+    if (typeof baseUrl === 'string') {
       BASE_URL = baseUrl;
     } else {
       BASE_URL = (baseUrl as DynamicAuthorization)(data.SUBDOMAIN as string);
     }
   } else if (needsEndUserSubdomain(providerName, vertical)) {
-    if(typeof baseUrl === 'string') {
+    if (typeof baseUrl === 'string') {
       BASE_URL = baseUrl;
     } else {
       BASE_URL = (baseUrl as DynamicAuthorization)(additionalParams!.end_user_domain);
@@ -170,11 +181,20 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // Default URL structure
   let params = `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
 
-  if(providerName === 'helpscout') {
+  if (providerName === 'helpscout') {
     params = `client_id=${encodeURIComponent(clientId)}&state=${state}`;
   }
-  if(providerName === 'pipedrive' || providerName === 'shopify') {
+  if (providerName === 'pipedrive' || providerName === 'shopify' || providerName === 'squarespace') {
     params = `client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodedRedirectUrl}&state=${state}`;
+  }
+  if (providerName === 'faire') {
+    params = `applicationId=${encodeURIComponent(clientId)}&redirectUrl=${encodedRedirectUrl}&state=${state}`;
+  }
+  if (providerName === 'ebay') {
+    params = `response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${data.RUVALUE}&state=${state}`;
+  }
+  if (providerName === 'amazon') {
+    params = `application_id=${encodeURIComponent(data.APPLICATION_ID)}&state=${state}&version=beta`;
   }
 
   if (needsScope(providerName, vertical) && scopes) {
@@ -200,6 +220,7 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
   // Special cases for certain providers
   switch (providerName) {
     case 'zoho':
+    case 'squarespace':
       params += '&access_type=offline';
       break;
     case 'jira':

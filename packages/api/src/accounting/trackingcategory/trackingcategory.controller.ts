@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -56,6 +58,7 @@ export class TrackingCategoryController {
   })
   @ApiPaginatedResponse(UnifiedAccountingTrackingcategoryOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getTrackingCategorys(
     @Headers('x-connection-token') connection_token: string,

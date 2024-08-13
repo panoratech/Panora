@@ -46,7 +46,7 @@ export interface ShopifyOrderInput {
   gateway: string;
   id: number;
   landing_site: string;
-  line_items: LineItem[];
+  line_items: Partial<LineItem>[];
   location_id: number;
   merchant_of_record_app_id: number;
   name: string;
@@ -219,13 +219,13 @@ type LineItem = {
     value: string;
   }[];
   taxable: boolean;
-  tax_lines: {
+  tax_lines: Partial<{
     title: string;
     price: string;
     price_set: MoneySet;
     channel_liable: boolean;
     rate: number;
-  }[];
+  }>[];
   total_discount: string;
   total_discount_set: MoneySet;
   discount_allocations: {

@@ -34,6 +34,7 @@ interface IBasicAuthFormData {
 
 const domainFormats: { [key: string]: string } = {
   microsoftdynamicssales: 'YOURORGNAME.api.crm12.dynamics.com',
+  bigcommerce: 'If your api domain is https://api.bigcommerce.com/stores/eubckcvkzg/v3 then store_hash is eubckcvkzg',
 };
 
 const ProviderModal = () => {
@@ -349,6 +350,9 @@ const ProviderModal = () => {
       <DialogContent>
       <DialogHeader>
         <DialogTitle>Enter your credentials</DialogTitle>
+        {domainFormats[selectedProvider?.provider.toLowerCase()] && (
+                    <span className="text-sm text-gray-500"> (e.g., {domainFormats[selectedProvider?.provider.toLowerCase()]})</span>
+                  )}    
       </DialogHeader>
       {/* <Form {...form}> */}
         <form onSubmit={handleSubmit2(onBasicAuthSubmit)}>
@@ -357,7 +361,9 @@ const ProviderModal = () => {
             {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
             (
               <>
-              <Label className={errors2[fieldName] ? 'text-destructive' : ''}>Enter your {fieldName} for {selectedProvider?.provider.substring(0,1).toUpperCase()}{selectedProvider?.provider.substring(1)}</Label>
+              <Label className={errors2[fieldName] ? 'text-destructive' : ''}>
+                Enter your {fieldName} for {selectedProvider?.provider.substring(0,1).toUpperCase()}{selectedProvider?.provider.substring(1)}
+              </Label>
               <Input
                     type='text'
                     placeholder={`Your ${fieldName}`}

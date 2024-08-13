@@ -189,11 +189,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
                     data: data,
                   });
                 } else {
+                  console.log('data is ' + JSON.stringify(data));
                   return this.prisma.ecom_addresses.create({
                     data: {
                       ...data,
                       id_ecom_customer: existingCustomer.id_ecom_customer,
-                      id_ecom_order: '',
+                      id_ecom_order: null,
                       remote_deleted: false,
                       //id_connection: connection_id,
                     },

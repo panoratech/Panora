@@ -22,6 +22,21 @@ export class Utils {
     }
   }
 
+  async getCustomerFromUUID(customer_id: string) {
+    try {
+      const res = await this.prisma.ecom_customers.findUnique({
+        where: {
+          id_ecom_customer: customer_id,
+        },
+        include: { ecom_addresses: true },
+      });
+      if (!res) return;
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getCustomerIdFromRemote(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.ecom_customers.findFirst({

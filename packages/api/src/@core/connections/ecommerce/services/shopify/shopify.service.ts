@@ -1,6 +1,7 @@
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
@@ -15,13 +16,10 @@ import {
   AuthStrategy,
   CONNECTORS_METADATA,
   DynamicApiUrl,
-  OAuth2AuthData,
   providerToType,
 } from '@panora/shared';
-import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../registry.service';
-import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 
 export type ShopifyOAuthResponse = {
   access_token: string;
@@ -104,8 +102,7 @@ export class ShopifyConnectionService extends AbstractBaseConnectionService {
       let db_res;
       const connection_token = uuidv4();
       const BASE_API_URL = (
-        CONNECTORS_METADATA['ecommerce']['shopify'].urls
-          .apiUrl as DynamicApiUrl
+        CONNECTORS_METADATA['ecommerce']['shopify'].urls.apiUrl as DynamicApiUrl
       )(store_url);
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({

@@ -40,7 +40,8 @@ export type ProviderConfig = {
         // the Oauth flow is tricky sometimes, either end_user_domain or company_subdomain can be asked
         end_user_domain?: boolean; // subdomain of the end-user connecting his account for the integration
         company_subdomain?: boolean; // subdomain of the company that embeds the integration for its end-users
-        local_redirect_uri_in_https?: boolean; // true if an https url is needed when creating oauth2 app in local for testing
+        local_redirect_uri_in_https?: boolean; // true if an https url is needed when creating oauth2 app in local for testing,
+        oauth_attributes?: string[];
     };
     realTimeWebhookMetadata?: {
         method?: 'API' | 'MANUAL';

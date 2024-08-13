@@ -96,7 +96,7 @@ export class ShopifyCustomerMapper implements ICustomerMapper {
             state: add.province,
             postal_code: add.zip,
             country: add.country,
-            address_type: add.default ? 'PERSONAL' : 'WORK',
+            address_type: add.default ? 'SHIPPING' : null,
           });
         }
       }

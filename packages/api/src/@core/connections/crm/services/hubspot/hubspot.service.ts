@@ -97,7 +97,6 @@ export class HubspotConnectionService extends AbstractBaseConnectionService {
           vertical: 'crm',
         },
       });
-      if (isNotUnique) return;
       //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
@@ -203,7 +202,7 @@ export class HubspotConnectionService extends AbstractBaseConnectionService {
 
       const queryString = new URLSearchParams(params).toString();
       const url = `https://api.hubapi.com/oauth/v1/token?${queryString}`;
-      const res = await axios.post(url, null, {
+      const res = await axios.post(url, queryString, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
         },

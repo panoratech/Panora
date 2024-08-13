@@ -17,6 +17,7 @@ export type OAuth2AuthData = {
     CLIENT_SECRET: string;
     SCOPE?: string;
     SUBDOMAIN?: string;
+    [key: string]: any; 
 }
 
 export type AuthData = BasicAuthData | ApiAuthData | OAuth2AuthData
