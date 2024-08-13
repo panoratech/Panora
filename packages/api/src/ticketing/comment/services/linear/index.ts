@@ -58,10 +58,10 @@ export class LinearService implements ICommentService {
           )}`,
         },
       });
-
+      this.logger.log(`Created linear comment !`);
 
       return {
-        data: resp.data.data.issueLabels.nodes,
+        data: resp.data.data.commentCreate.comment,
         message: 'Linear comment created',
         statusCode: 201,
       };
