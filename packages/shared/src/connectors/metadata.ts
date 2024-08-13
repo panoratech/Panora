@@ -2808,7 +2808,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'ebay': {
-        scopes: '',
+        scopes: 'https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly https://api.ebay.com/oauth/api_scope/sell.finances https://api.ebay.com/oauth/api_scope/sell.payment.dispute https://api.ebay.com/oauth/api_scope/commerce.identity.readonly https://api.ebay.com/oauth/api_scope/sell.reputation https://api.ebay.com/oauth/api_scope/sell.reputation.readonly https://api.ebay.com/oauth/api_scope/commerce.notification.subscription https://api.ebay.com/oauth/api_scope/commerce.notification.subscription.readonly https://api.ebay.com/oauth/api_scope/sell.stores https://api.ebay.com/oauth/api_scope/sell.stores.readonly',
         urls: {
           docsUrl: 'https://edp.ebay.com/develop/get-started',
           apiUrl: 'https://api.ebay.com',
@@ -2817,6 +2817,10 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://www.logodesignlove.com/images/evolution/ebay-logo-01.jpg',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: false,
+        options: {
+          local_redirect_uri_in_https: true,
+          oauth_attributes: ['ruvalue']
+        },
         authStrategy: {
           strategy: AuthStrategy.oauth2,
         }
@@ -2830,7 +2834,24 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu9U-j_3EMYlKtu5dRaTl6ejitL2X6lz3pYg&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: false,
+        active: true,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2,
+        }
+      },
+      'amazon': {
+        urls: {
+          docsUrl: 'https://developer-docs.amazon.com/sp-api/docs/welcome',
+          apiUrl: 'https://sellingpartnerapi-na.amazon.com',
+          authBaseUrl: 'https://sellercentral.amazon.com/apps/authorize/consent'
+        },
+        logoPath: 'https://cdn.vectorstock.com/i/500p/39/87/astana-kazakhstan-20-july-2020-amazon-icon-vector-34243987.jpg',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: true,
+        options: {
+          local_redirect_uri_in_https: true,
+          oauth_attributes: ['application_id']
+        },
         authStrategy: {
           strategy: AuthStrategy.oauth2,
         }
@@ -2856,6 +2877,51 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           authBaseUrl: ''
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKRidZq3jXGYOIZ2X2EruCx0pFMkbsHineLg&s',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+      },
+      'webflow': {
+        scopes: 'ecommerce:read ecommerce:write users:read authorized_user:read sites:read',
+        urls: {
+          docsUrl: 'https://developers.webflow.com/data/reference/rest-introduction',
+          apiUrl: 'https://api.webflow.com/v2',
+          authBaseUrl: 'https://webflow.com/oauth/authorize'
+        },
+        logoPath: 'https://dailybrand.co.zw/wp-content/uploads/2023/10/webflow-2.png',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+        options: {
+          local_redirect_uri_in_https: true
+        }
+      },
+      'faire': {
+        scopes: 'READ_PRODUCTS WRITE_PRODUCTS READ_ORDERS WRITE_ORDERS READ_INVENTORIES WRITE_INVENTORIES',
+        urls: {
+          docsUrl: 'https://faire.github.io/external-api-v2-docs',
+          apiUrl: 'https://www.faire.com/external-api',
+          authBaseUrl: 'https://faire.com/oauth2/authorize'
+        },
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSDg6WOKCYRvGFmwtaJ6Gv88PjAGRS9_h9EQ&s',
+        description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
+        active: false,
+        authStrategy: {
+          strategy: AuthStrategy.oauth2
+        },
+      }, 
+      'mercadolibre': {
+        scopes: '',
+        urls: {
+          docsUrl: 'https://global-selling.mercadolibre.com/devsite/introduction-globalselling',
+          apiUrl: 'https://api.mercadolibre.com',
+          authBaseUrl: 'https://global-selling.mercadolibre.com/authorization'
+        },
+        logoPath: 'https://api.getkoala.com/web/companies/mercadolibre.com/logo',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: false,
         authStrategy: {

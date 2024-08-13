@@ -61,8 +61,8 @@ model api_keys {
   projects     projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_7")
   users        users    @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_8")
 
-  @@index([id_user], map: "fk_2")
   @@index([id_project], map: "fk_api_keys_projects")
+  @@index([id_user], map: "fk_2")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -678,6 +678,9 @@ model connector_sets {
   crm_zendesk      Boolean?
   crm_close        Boolean?
   fs_box           Boolean?
+  tcg_github       Boolean?
+  ecom_woocommerce Boolean?
+  ecom_shopify     Boolean?
   projects         projects[]
 }
 
@@ -1748,9 +1751,9 @@ model ecom_addresses {
   modified_at      DateTime       @db.Timestamptz(6)
   created_at       DateTime       @db.Timestamptz(6)
   remote_deleted   Boolean
-  id_ecom_order    String         @db.Uuid
+  id_ecom_order    String?        @db.Uuid
   ecom_customers   ecom_customers @relation(fields: [id_ecom_customer], references: [id_ecom_customer], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_customer_customeraddress")
-  ecom_orders      ecom_orders    @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_address")
+  ecom_orders      ecom_orders?   @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_address")
 
   @@index([id_ecom_customer], map: "fk_index_ecom_customer_customeraddress")
   @@index([id_ecom_order], map: "fk_index_fk_ecom_order_address")

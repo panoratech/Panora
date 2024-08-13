@@ -1,7 +1,7 @@
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
@@ -10,6 +10,7 @@ import {
   PassthroughInput,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { PassthroughResponse } from '@@core/passthrough/types';
 import { Injectable } from '@nestjs/common';
 import {
   AuthStrategy,
@@ -17,42 +18,37 @@ import {
   OAuth2AuthData,
   providerToType,
 } from '@panora/shared';
-import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../registry.service';
-import { PassthroughResponse } from '@@core/passthrough/types';
-import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import axios from 'axios';
 
-export interface WealthboxOAuthResponse {
-  refresh_token: string;
+export interface WebflowOAuthResponse {
   access_token: string;
-  expires_in: number;
-  created_at: number;
-  scope: string;
   token_type: string;
+  scope: string;
 }
 
 @Injectable()
-export class WealthboxConnectionService extends AbstractBaseConnectionService {
+export class WebflowConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
     protected prisma: PrismaService,
     private logger: LoggerService,
-    private env: EnvironmentService,
     protected cryptoService: EncryptionService,
+    private env: EnvironmentService,
     private registry: ServiceRegistry,
-    private cService: ConnectionsStrategiesService,
     private connectionUtils: ConnectionUtils,
+    private cService: ConnectionsStrategiesService,
     private retryService: RetryHandler,
   ) {
     super(prisma, cryptoService);
-    this.logger.setContext(WealthboxConnectionService.name);
-    this.registry.registerService('wealthbox', this);
-    this.type = providerToType('wealthbox', 'crm', AuthStrategy.oauth2);
+    this.logger.setContext(WebflowConnectionService.name);
+    this.registry.registerService('webflow', this);
+    this.type = providerToType('webflow', 'ecommerce', AuthStrategy.oauth2);
   }
 
-  // todo
   async passthrough(
     input: PassthroughInput,
     connectionId: string,
@@ -67,13 +63,13 @@ export class WealthboxConnectionService extends AbstractBaseConnectionService {
         },
       });
 
-      config.headers['Authorization'] = `Basic ${Buffer.from(
-        `${this.cryptoService.decrypt(connection.access_token)}:`,
-      ).toString('base64')}`;
-
+      const access_token = JSON.parse(
+        this.cryptoService.decrypt(connection.access_token),
+      );
       config.headers = {
         ...config.headers,
         ...headers,
+        Authorization: `Bearer ${access_token}`,
       };
 
       return await this.retryService.makeRequest(
@@ -83,7 +79,7 @@ export class WealthboxConnectionService extends AbstractBaseConnectionService {
           data: config.data,
           headers: config.headers,
         },
-        'crm.wealthbox.passthrough',
+        'ecommerce.webflow.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -97,12 +93,16 @@ export class WealthboxConnectionService extends AbstractBaseConnectionService {
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'wealthbox',
-          vertical: 'crm',
+          provider_slug: 'webflow',
+          vertical: 'ecommerce',
         },
       });
       //reconstruct the redirect URI that was passed in the frontend it must be the same
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getTunnelIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
@@ -110,14 +110,14 @@ export class WealthboxConnectionService extends AbstractBaseConnectionService {
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        grant_type: 'authorization_code',
+        redirect_uri: REDIRECT_URI,
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
-        redirect_uri: REDIRECT_URI,
         code: code,
+        grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        'https://app.crmworkspace.com/oauth/token',
+        'https://api.webflow.com/oauth/access_token',
         formData.toString(),
         {
           headers: {
@@ -125,11 +125,20 @@ export class WealthboxConnectionService extends AbstractBaseConnectionService {
           },
         },
       );
-      const data: WealthboxOAuthResponse = res.data;
+      const data: WebflowOAuthResponse = res.data;
       // save tokens for this customer inside our db
       let db_res;
       const connection_token = uuidv4();
-
+      const BASE_API_URL = CONNECTORS_METADATA['ecommerce']['webflow'].urls
+        .apiUrl as string;
+      // get the site id for the token
+      const site = await axios.get('https://api.webflow.com/v2/sites', {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          Authorization: `Bearer ${data.access_token}`,
+        },
+      });
+      const site_id = site.data.sites[0].id;
       if (isNotUnique) {
         // Update existing connection
         db_res = await this.prisma.connections.update({
@@ -138,10 +147,6 @@ export class WealthboxConnectionService extends AbstractBaseConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + data.expires_in * 1000,
-            ),
             status: 'valid',
             created_at: new Date(),
           },
@@ -152,16 +157,11 @@ export class WealthboxConnectionService extends AbstractBaseConnectionService {
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'wealthbox',
-            vertical: 'crm',
+            provider_slug: 'webflow',
+            vertical: 'ecommerce',
             token_type: 'oauth2',
-            account_url: CONNECTORS_METADATA['crm']['wealthbox'].urls
-              .apiUrl as string,
+            account_url: `${BASE_API_URL}/sites/${site_id}`,
             access_token: this.cryptoService.encrypt(data.access_token),
-            refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            expiration_timestamp: new Date(
-              new Date().getTime() + data.expires_in * 1000,
-            ),
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -186,45 +186,6 @@ export class WealthboxConnectionService extends AbstractBaseConnectionService {
   }
 
   async handleTokenRefresh(opts: RefreshParams) {
-    try {
-      const { connectionId, refreshToken, projectId } = opts;
-      const CREDENTIALS = (await this.cService.getCredentials(
-        projectId,
-        this.type,
-      )) as OAuth2AuthData;
-
-      const params = new URLSearchParams({
-        grant_type: 'refresh_token',
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-      });
-
-      const res = await axios.post(
-        'https://app.crmworkspace.com/oauth/token',
-        params.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
-        },
-      );
-      const data: WealthboxOAuthResponse = res.data;
-      const res_ = await this.prisma.connections.update({
-        where: {
-          id_connection: connectionId,
-        },
-        data: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + data.expires_in * 1000,
-          ),
-        },
-      });
-      this.logger.log('OAuth credentials updated : wealthbox');
-    } catch (error) {
-      throw error;
-    }
+    return;
   }
 }

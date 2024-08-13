@@ -66,11 +66,14 @@ export class ConnectionsController {
   @Get('oauth/callback')
   async handleOAuthCallback(@Res() res: Response, @Query() query: any) {
     try {
-      const { state, code, ...otherParams } = query;
-      if (!code) {
+      const { state, code, spapi_oauth_code, ...otherQueryParams } = query;
+
+      if (!code && !spapi_oauth_code) {
         throw new ConnectionsError({
           name: 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR',
-          message: `No Callback Params found for code, found ${code}`,
+          message: `No Callback Params found for code, found ${
+            code || spapi_oauth_code
+          }`,
         });
       }
 
@@ -81,14 +84,38 @@ export class ConnectionsController {
         });
       }
 
-      const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
+      let stateData: StateDataType;
+
+      // Step 1: Check for HTML entities
+      if (state.includes('&quot;') || state.includes('&amp;')) {
+        // Step 2: Replace HTML entities
+        const decodedState = state
+          .replace(/&quot;/g, '"') // Replace &quot; with "
+          .replace(/&amp;/g, '&'); // Replace &amp; with &
+
+        // Step 3: Parse the JSON
+        stateData = JSON.parse(decodedState);
+      } else if (state.includes('squarespace_delimiter')) {
+        // squarespace asks for a random alphanumeric value
+        // Split the random part and the base64 part
+        const [randomPart, base64Part] = decodeURIComponent(state).split(
+          'squarespace_delimiter',
+        );
+        // Decode the base64 part to get the original JSON
+        const jsonString = Buffer.from(base64Part, 'base64').toString('utf-8');
+        stateData = JSON.parse(jsonString);
+      } else {
+        // If no HTML entities are present, parse directly
+        stateData = JSON.parse(state);
+      }
+
       const {
         projectId,
         vertical,
         linkedUserId,
         providerName,
         returnUrl,
-        resource,
+        ...dynamicStateParams
       } = stateData;
 
       const service = this.categoryConnectionRegistry.getService(
@@ -96,12 +123,19 @@ export class ConnectionsController {
       );
       await service.handleCallBack(
         providerName,
-        { linkedUserId, projectId, code, otherParams, resource },
+        {
+          linkedUserId,
+          projectId,
+          code,
+          spapi_oauth_code,
+          ...otherQueryParams,
+          ...dynamicStateParams,
+        },
         'oauth2',
       );
       if (providerName == 'shopify') {
         // we must redirect using shop and host to get a valid session on shopify server
-        service.redirectUponConnection(res, otherParams);
+        service.redirectUponConnection(res, ...otherQueryParams);
       } else {
         res.redirect(returnUrl);
       }
@@ -134,7 +168,6 @@ export class ConnectionsController {
     @Query('state') state: string,
   ) {
     try {
-      console.log(client_id)
       if (!account) throw new ReferenceError('account prop not found');
       const params = `?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}&state=${state}&nonce=${nonce}&scope=${scope}`;
       res.redirect(`https://${account}.gorgias.com/oauth/authorize${params}`);

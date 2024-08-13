@@ -11,6 +11,8 @@ import { ShopifyCustomerMapper } from './services/shopify/mappers';
 import { WoocommerceService } from './services/woocommerce';
 import { WoocommerceCustomerMapper } from './services/woocommerce/mappers';
 import { SyncService } from './sync/sync.service';
+import { SquarespaceCustomerMapper } from './services/squarespace/mappers';
+import { AmazonCustomerMapper } from './services/amazon/mappers';
 
 @Module({
   controllers: [CustomerController],
@@ -24,6 +26,8 @@ import { SyncService } from './sync/sync.service';
     Utils,
     ShopifyCustomerMapper,
     WoocommerceCustomerMapper,
+    SquarespaceCustomerMapper,
+    AmazonCustomerMapper,
     /* PROVIDERS SERVICES */
     ShopifyService,
     WoocommerceService,

@@ -374,8 +374,10 @@ CREATE TABLE connector_sets
  crm_zendesk      boolean NULL,
  crm_close        boolean NULL,
  fs_box           boolean NULL,
-  tcg_github boolean NULL,
-  tcg_linear boolean NULL,
+ tcg_github       boolean NULL,
+ ecom_woocommerce boolean NULL,
+ ecom_shopify     boolean NULL,
+ tcg_linear boolean NULL,
 CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
@@ -1532,7 +1534,7 @@ CREATE TABLE ecom_addresses
  modified_at      timestamp with time zone NOT NULL,
  created_at       timestamp with time zone NOT NULL,
  remote_deleted   boolean NOT NULL,
- id_ecom_order    uuid NOT NULL,
+ id_ecom_order    uuid NULL,
  CONSTRAINT PK_ecom_customer_addresses PRIMARY KEY ( id_ecom_address ),
  CONSTRAINT FK_ecom_customer_customeraddress FOREIGN KEY ( id_ecom_customer ) REFERENCES ecom_customers ( id_ecom_customer ),
  CONSTRAINT FK_ecom_order_address FOREIGN KEY ( id_ecom_order ) REFERENCES ecom_orders ( id_ecom_order )

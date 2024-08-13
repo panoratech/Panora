@@ -31,7 +31,7 @@ export class ShopifyOrderMapper implements IOrderMapper {
       line_items: source.items.map((item) => ({
         title: item.title,
         price: item.price,
-        grams: item.grams,
+        grams: item.weight,
         quantity: item.quantity,
         sku: item.sku,
         variant_title: item.variant_title,

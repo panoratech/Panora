@@ -8,7 +8,7 @@ import { ApiResponse } from '@@core/utils/types';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
 export interface IProductService extends IBaseObjectService {
-  addProduct(
+  addProduct?(
     productData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalProductOutput>>;

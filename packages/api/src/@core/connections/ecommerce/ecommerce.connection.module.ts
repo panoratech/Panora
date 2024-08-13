@@ -11,6 +11,10 @@ import { WoocommerceConnectionService } from './services/woocommerce/woocommerce
 import { SquarespaceConnectionService } from './services/squarespace/squarespace.service';
 import { BigcommerceConnectionService } from './services/bigcommerce/bigcommerce.service';
 import { EbayConnectionService } from './services/ebay/ebay.service';
+import { WebflowConnectionService } from './services/webflow/webflow.service';
+import { FaireConnectionService } from './services/faire/faire.service';
+import { MercadolibreConnectionService } from './services/mercadolibre/mercadolibre.service';
+import { AmazonConnectionService } from './services/amazon/amazon.service';
 
 @Module({
   imports: [WebhookModule, BullQueueModule],
@@ -26,6 +30,10 @@ import { EbayConnectionService } from './services/ebay/ebay.service';
     SquarespaceConnectionService,
     BigcommerceConnectionService,
     EbayConnectionService,
+    WebflowConnectionService,
+    FaireConnectionService,
+    MercadolibreConnectionService,
+    AmazonConnectionService,
   ],
   exports: [EcommerceConnectionsService],
 })

@@ -31,55 +31,7 @@ export class WoocommerceCustomerMapper implements ICustomerMapper {
       remote_id: string;
     }[],
   ): Promise<WoocommerceCustomerInput> {
-    const result: Partial<WoocommerceCustomerInput> = {
-      email: source.email,
-      first_name: source.first_name,
-      last_name: source.last_name,
-      username: source.email, // Assuming email is used as username
-      billing: {
-        first_name: source.first_name,
-        last_name: source.last_name,
-        email: source.email,
-        phone: source.phone_number,
-      },
-      shipping: {
-        first_name: source.first_name,
-        last_name: source.last_name,
-      },
-      meta_data: [],
-    };
-
-    if (source.addresses && source.addresses.length > 0) {
-      const primaryAddress = source.addresses[0];
-      result.billing = {
-        ...result.billing,
-        address_1: primaryAddress.street_1,
-        address_2: primaryAddress.street_2,
-        city: primaryAddress.city,
-        state: primaryAddress.state,
-        postcode: primaryAddress.postal_code,
-        country: primaryAddress.country,
-      };
-      result.shipping = {
-        ...result.shipping,
-        address_1: primaryAddress.street_1,
-        address_2: primaryAddress.street_2,
-        city: primaryAddress.city,
-        state: primaryAddress.state,
-        postcode: primaryAddress.postal_code,
-        country: primaryAddress.country,
-      };
-    }
-
-    if (customFieldMappings && source.field_mappings) {
-      result.meta_data = customFieldMappings.map((mapping) => ({
-        id: 0, // WooCommerce will assign the actual ID
-        key: mapping.slug,
-        value: source.field_mappings[mapping.remote_id] || '',
-      }));
-    }
-
-    return result as WoocommerceCustomerInput;
+    return;
   }
 
   async unify(

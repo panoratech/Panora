@@ -196,7 +196,10 @@ export class ConnectionsStrategiesService {
     let attributes: string[] = [];
     switch (authStrategy) {
       case AuthStrategy.oauth2:
-        attributes = ['client_id', 'client_secret'];
+        const dynamic_attributes =
+          CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()]
+            ?.options?.oauth_attributes || [];
+        attributes = ['client_id', 'client_secret', ...dynamic_attributes];
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
         }
@@ -279,6 +282,19 @@ export class ConnectionsStrategiesService {
               `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_SUBDOMAIN`,
             ),
           };
+        }
+        const object =
+          CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()];
+        if (object.options && object.options.oauth_attributes) {
+          const dynamic_attributes = object.options.oauth_attributes;
+          for (const attr of dynamic_attributes) {
+            data = {
+              ...data,
+              [attr.toUpperCase()]: this.configService.get<string>(
+                `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_${attr.toUpperCase()}`,
+              ),
+            };
+          }
         }
         return data;
       case AuthStrategy.api_key:
