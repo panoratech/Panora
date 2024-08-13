@@ -71,7 +71,7 @@ export class LinearService implements ITicketService {
                     )}`,
                 },
             });
-
+            this.logger.log(`Created linear ticket !`);
 
             return {
                 data: resp.data.data.issueCreate.issue,
@@ -111,7 +111,7 @@ export class LinearService implements ITicketService {
             this.logger.log(`Synced linear tickets !`);
 
             return {
-                data: resp.data.data.users.nodes,
+                data: resp.data.data.issues.nodes,
                 message: 'Linear tickets retrieved',
                 statusCode: 200,
             };
