@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalCashflowStatementOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ICashflowStatementService {
   addCashflowStatement(
@@ -12,9 +13,8 @@ export interface ICashflowStatementService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalCashflowStatementOutput>>;
 
-  syncCashflowStatements(
-    linkedUserId: string,
-    custom_properties?: string[],
+  sync(
+    data: SyncParam,
   ): Promise<ApiResponse<OriginalCashflowStatementOutput[]>>;
 }
 
@@ -34,5 +34,8 @@ export interface ICashflowStatementMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAccountingCashflowstatementOutput | UnifiedAccountingCashflowstatementOutput[]>;
+  ): Promise<
+    | UnifiedAccountingCashflowstatementOutput
+    | UnifiedAccountingCashflowstatementOutput[]
+  >;
 }

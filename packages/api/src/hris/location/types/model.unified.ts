@@ -5,8 +5,10 @@ import {
   IsString,
   IsDateString,
   IsBoolean,
+  IsIn,
 } from 'class-validator';
 
+export type LocationType = 'WORK' | 'HOME';
 export class UnifiedHrisLocationInput {
   @ApiPropertyOptional({
     type: String,
@@ -90,13 +92,15 @@ export class UnifiedHrisLocationInput {
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Office',
+    example: 'WORK',
+    enum: ['WORK', 'HOME'],
     nullable: true,
     description: 'The type of the location',
   })
   @IsString()
+  @IsIn(['WORK', 'HOME'])
   @IsOptional()
-  location_type?: string;
+  location_type?: LocationType | string;
 
   @ApiPropertyOptional({
     type: Object,
@@ -149,7 +153,7 @@ export class UnifiedHrisLocationOutput extends UnifiedHrisLocationInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description:
@@ -157,27 +161,27 @@ export class UnifiedHrisLocationOutput extends UnifiedHrisLocationInput {
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the location record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the location record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

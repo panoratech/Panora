@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@@core/utils/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -21,32 +22,33 @@ export class UnifiedAccountingIncomestatementInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
+    enum: CurrencyCode,
     nullable: true,
     description: 'The currency used in the income statement',
   })
   @IsString()
   @IsOptional()
-  currency?: string;
+  currency?: CurrencyCode;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-04-01T00:00:00Z',
     nullable: true,
     description: 'The start date of the period covered by the income statement',
   })
   @IsDateString()
   @IsOptional()
-  start_period?: string;
+  start_period?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-30T23:59:59Z',
     nullable: true,
     description: 'The end date of the period covered by the income statement',
   })
   @IsDateString()
   @IsOptional()
-  end_period?: string;
+  end_period?: Date;
 
   @ApiPropertyOptional({
     type: Number,
@@ -129,22 +131,22 @@ export class UnifiedAccountingIncomestatementOutput extends UnifiedAccountingInc
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the income statement record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the income statement record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

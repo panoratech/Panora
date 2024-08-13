@@ -82,13 +82,11 @@ export function MainNav({
   );
 }
 
-const navIconClassName = "text-gray-400 w-5";
 const navItems: Omit<NavLinkProps, 'onClick' | 'isSelected'>[] = [
   {
     name: 'connections',
     content: (
       <>
-        <Share2 className={navIconClassName} />
         Connections
       </>
     ),
@@ -97,7 +95,6 @@ const navItems: Omit<NavLinkProps, 'onClick' | 'isSelected'>[] = [
     name: 'events',
     content: (
       <>
-        <SquareGantt className={navIconClassName} />
         Events
       </>
     ),
@@ -106,7 +103,6 @@ const navItems: Omit<NavLinkProps, 'onClick' | 'isSelected'>[] = [
     name: 'configuration',
     content: (
       <>
-        <Settings2 className={navIconClassName} />
         Configuration
       </>
     ),
@@ -115,7 +111,6 @@ const navItems: Omit<NavLinkProps, 'onClick' | 'isSelected'>[] = [
     name: 'api-keys',
     content: (
       <>
-        <KeyRound className={navIconClassName} />
         API Keys
       </>
     ),
@@ -124,7 +119,6 @@ const navItems: Omit<NavLinkProps, 'onClick' | 'isSelected'>[] = [
     name: 'docs',
     content: (
       <>
-        <BookOpen className={navIconClassName} />
         <p className="pr-2">Docs</p>
       </>
     ),

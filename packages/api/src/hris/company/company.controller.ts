@@ -1,36 +1,28 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Query,
-  Get,
-  Patch,
-  Param,
-  Headers,
-  UseGuards,
-} from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
-  ApiBody,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiHeader,
-  //ApiKeyAuth,
 } from '@nestjs/swagger';
-
-import { UnifiedHrisCompanyOutput } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { CompanyService } from './services/company.service';
-import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { ConnectionUtils } from '@@core/connections/@utils';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
-import { query } from 'express';
-
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { CompanyService } from './services/company.service';
+import { UnifiedHrisCompanyOutput } from './types/model.unified';
 
 @ApiTags('hris/companies')
 @Controller('hris/companies')

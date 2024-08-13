@@ -153,22 +153,22 @@ export class UnifiedAccountingAddressOutput extends UnifiedAccountingAddressInpu
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the address record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the address record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

@@ -9,6 +9,32 @@ import {
   IsUrl,
 } from 'class-validator';
 
+export type Gender =
+  | 'MALE'
+  | 'FEMALE'
+  | 'NON-BINARY'
+  | 'OTHER'
+  | 'PREFER_NOT_TO_DISCLOSE';
+
+export type Ethnicity =
+  | 'AMERICAN_INDIAN_OR_ALASKA_NATIVE'
+  | 'ASIAN_OR_INDIAN_SUBCONTINENT'
+  | 'BLACK_OR_AFRICAN_AMERICAN'
+  | 'HISPANIC_OR_LATINO'
+  | 'NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER'
+  | 'TWO_OR_MORE_RACES'
+  | 'WHITE'
+  | 'PREFER_NOT_TO_DISCLOSE';
+
+export type MartialStatus =
+  | 'SINGLE'
+  | 'MARRIED_FILING_JOINTLY'
+  | 'MARRIED_FILING_SEPARATELY'
+  | 'HEAD_OF_HOUSEHOLD'
+  | 'QUALIFYING_WIDOW_OR_WIDOWER_WITH_DEPENDENT_CHILD';
+
+export type EmploymentStatus = 'ACTIVE' | 'PENDING' | 'INACTIVE';
+
 export class UnifiedHrisEmployeeInput {
   @ApiPropertyOptional({
     type: [String],
@@ -20,6 +46,16 @@ export class UnifiedHrisEmployeeInput {
   @IsString({ each: true })
   @IsOptional()
   groups?: string[];
+
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
+    nullable: true,
+    description: 'UUIDs of the of the Location associated with the company',
+  })
+  @IsString()
+  @IsOptional()
+  locations?: string[];
 
   @ApiPropertyOptional({
     type: String,
@@ -123,7 +159,10 @@ export class UnifiedHrisEmployeeInput {
 
   @ApiPropertyOptional({
     type: [String],
-    example: ['Employment1', 'Employment2'],
+    example: [
+      '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+      '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    ],
     nullable: true,
     description: 'The employments of the employee',
   })
@@ -144,73 +183,92 @@ export class UnifiedHrisEmployeeInput {
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Male',
+    example: 'MALE',
+    enum: ['MALE', 'FEMALE', 'NON-BINARY', 'OTHER', 'PREFER_NOT_TO_DISCLOSE'],
     nullable: true,
     description: 'The gender of the employee',
   })
   @IsString()
   @IsOptional()
-  gender?: string;
+  gender?: Gender | string;
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Caucasian',
+    example: 'AMERICAN_INDIAN_OR_ALASKA_NATIVE',
+    enum: [
+      'AMERICAN_INDIAN_OR_ALASKA_NATIVE',
+      'ASIAN_OR_INDIAN_SUBCONTINENT',
+      'BLACK_OR_AFRICAN_AMERICAN',
+      'HISPANIC_OR_LATINO',
+      'NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER',
+      'TWO_OR_MORE_RACES',
+      'WHITE',
+      'PREFER_NOT_TO_DISCLOSE',
+    ],
     nullable: true,
     description: 'The ethnicity of the employee',
   })
   @IsString()
   @IsOptional()
-  ethnicity?: string;
+  ethnicity?: Ethnicity | string;
 
   @ApiPropertyOptional({
     type: String,
     example: 'Married',
+    enum: [
+      'SINGLE',
+      'MARRIED_FILING_JOINTLY',
+      'MARRIED_FILING_SEPARATELY',
+      'HEAD_OF_HOUSEHOLD',
+      'QUALIFYING_WIDOW_OR_WIDOWER_WITH_DEPENDENT_CHILD',
+    ],
     nullable: true,
     description: 'The marital status of the employee',
   })
   @IsString()
   @IsOptional()
-  marital_status?: string;
+  marital_status?: MartialStatus | string;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '1990-01-01',
     nullable: true,
     description: 'The date of birth of the employee',
   })
   @IsDateString()
   @IsOptional()
-  date_of_birth?: string;
+  date_of_birth?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2020-01-01',
     nullable: true,
     description: 'The start date of the employee',
   })
   @IsDateString()
   @IsOptional()
-  start_date?: string;
+  start_date?: Date;
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Active',
+    example: 'ACTIVE',
+    enum: ['ACTIVE', 'PENDING', 'INACTIVE'],
     nullable: true,
     description: 'The employment status of the employee',
   })
   @IsString()
   @IsOptional()
-  employment_status?: string;
+  employment_status?: EmploymentStatus | string;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2025-01-01',
     nullable: true,
     description: 'The termination date of the employee',
   })
   @IsDateString()
   @IsOptional()
-  termination_date?: string;
+  termination_date?: Date;
 
   @ApiPropertyOptional({
     type: String,
@@ -221,6 +279,16 @@ export class UnifiedHrisEmployeeInput {
   @IsUrl()
   @IsOptional()
   avatar_url?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
+    description: 'UUID of the manager (employee) of the employee',
+  })
+  @IsUrl()
+  @IsOptional()
+  manager_id?: string;
 
   @ApiPropertyOptional({
     type: Object,
@@ -273,7 +341,7 @@ export class UnifiedHrisEmployeeOutput extends UnifiedHrisEmployeeInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description:
@@ -281,27 +349,27 @@ export class UnifiedHrisEmployeeOutput extends UnifiedHrisEmployeeInput {
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the employee record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the employee record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

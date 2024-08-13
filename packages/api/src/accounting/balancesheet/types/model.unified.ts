@@ -1,3 +1,5 @@
+import { CurrencyCode } from '@@core/utils/types';
+import { LineItem } from '@accounting/cashflowstatement/types/model.unified';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -23,12 +25,13 @@ export class UnifiedAccountingBalancesheetInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
+    enum: CurrencyCode,
     nullable: true,
     description: 'The currency used in the balance sheet',
   })
   @IsString()
   @IsOptional()
-  currency?: string;
+  currency?: CurrencyCode;
 
   @ApiPropertyOptional({
     type: String,
@@ -41,14 +44,14 @@ export class UnifiedAccountingBalancesheetInput {
   company_info_id?: string;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-30T23:59:59Z',
     nullable: true,
     description: 'The date of the balance sheet',
   })
   @IsDateString()
   @IsOptional()
-  date?: string;
+  date?: Date;
 
   @ApiPropertyOptional({
     type: Number,
@@ -94,7 +97,7 @@ export class UnifiedAccountingBalancesheetInput {
   equity?: string[];
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-07-01T12:00:00Z',
     nullable: true,
     description:
@@ -102,7 +105,15 @@ export class UnifiedAccountingBalancesheetInput {
   })
   @IsDateString()
   @IsOptional()
-  remote_generated_at?: string;
+  remote_generated_at?: Date;
+
+  @ApiPropertyOptional({
+    type: [LineItem],
+    description: 'The report items associated with this balance sheet',
+  })
+  @IsArray()
+  @IsOptional()
+  line_items?: LineItem[];
 
   @ApiPropertyOptional({
     type: Object,
@@ -155,22 +166,22 @@ export class UnifiedAccountingBalancesheetOutput extends UnifiedAccountingBalanc
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the balance sheet record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the balance sheet record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

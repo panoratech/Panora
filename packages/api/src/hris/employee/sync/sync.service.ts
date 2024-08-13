@@ -10,6 +10,12 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { UnifiedHrisEmployeeOutput } from '../types/model.unified';
 import { IEmployeeService } from '../types';
 import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { HRIS_PROVIDERS } from '@panora/shared';
+import { hris_employees as HrisEmployee } from '@prisma/client';
+import { OriginalEmployeeOutput } from '@@core/utils/types/original/original.hris';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -19,23 +25,163 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private webhook: WebhookService,
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
+    private coreUnification: CoreUnification,
+    private registry: CoreSyncRegistry,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
-  }
-  saveToDb(
-    connection_id: string,
-    linkedUserId: string,
-    data: any[],
-    originSource: string,
-    remote_data: Record<string, any>[],
-    ...rest: any
-  ): Promise<any[]> {
-    throw new Error('Method not implemented.');
+    this.registry.registerService('hris', 'employee', this);
   }
 
   async onModuleInit() {
-    // Initialization logic
+    // Initialization logic if needed
   }
 
-  // Additional methods and logic
+  @Cron('0 */8 * * *') // every 8 hours
+  async kickstartSync(user_id?: string) {
+    try {
+      this.logger.log('Syncing employees...');
+      const users = user_id
+        ? [await this.prisma.users.findUnique({ where: { id_user: user_id } })]
+        : await this.prisma.users.findMany();
+
+      if (users && users.length > 0) {
+        for (const user of users) {
+          const projects = await this.prisma.projects.findMany({
+            where: { id_user: user.id_user },
+          });
+          for (const project of projects) {
+            const linkedUsers = await this.prisma.linked_users.findMany({
+              where: { id_project: project.id_project },
+            });
+            for (const linkedUser of linkedUsers) {
+              for (const provider of HRIS_PROVIDERS) {
+                await this.syncForLinkedUser({
+                  integrationId: provider,
+                  linkedUserId: linkedUser.id_linked_user,
+                });
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async syncForLinkedUser(param: SyncLinkedUserType) {
+    try {
+      const { integrationId, linkedUserId } = param;
+      const service: IEmployeeService =
+        this.serviceRegistry.getService(integrationId);
+      if (!service) return;
+
+      await this.ingestService.syncForLinkedUser<
+        UnifiedHrisEmployeeOutput,
+        OriginalEmployeeOutput,
+        IEmployeeService
+      >(integrationId, linkedUserId, 'hris', 'employee', service, []);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async saveToDb(
+    connection_id: string,
+    linkedUserId: string,
+    employees: UnifiedHrisEmployeeOutput[],
+    originSource: string,
+    remote_data: Record<string, any>[],
+  ): Promise<HrisEmployee[]> {
+    try {
+      const employeeResults: HrisEmployee[] = [];
+
+      for (let i = 0; i < employees.length; i++) {
+        const employee = employees[i];
+        const originId = employee.remote_id;
+
+        let existingEmployee = await this.prisma.hris_employees.findFirst({
+          where: {
+            remote_id: originId,
+            id_connection: connection_id,
+          },
+        });
+
+        const employeeData = {
+          groups: employee.groups || [],
+          employee_number: employee.employee_number,
+          id_hris_company: employee.company_id,
+          first_name: employee.first_name,
+          last_name: employee.last_name,
+          preferred_name: employee.preferred_name,
+          display_full_name: employee.display_full_name,
+          locations: employee.locations,
+          username: employee.username,
+          work_email: employee.work_email,
+          personal_email: employee.personal_email,
+          mobile_phone_number: employee.mobile_phone_number,
+          employments: employee.employments || [],
+          ssn: employee.ssn,
+          gender: employee.gender,
+          manager_id: employee.manager_id,
+          ethnicity: employee.ethnicity,
+          marital_status: employee.marital_status,
+          date_of_birth: employee.date_of_birth
+            ? new Date(employee.date_of_birth)
+            : null,
+          start_date: employee.start_date
+            ? new Date(employee.start_date)
+            : null,
+          employment_status: employee.employment_status,
+          termination_date: employee.termination_date
+            ? new Date(employee.termination_date)
+            : null,
+          avatar_url: employee.avatar_url,
+          remote_id: originId,
+          remote_created_at: employee.remote_created_at
+            ? new Date(employee.remote_created_at)
+            : null,
+          modified_at: new Date(),
+          remote_was_deleted: employee.remote_was_deleted || false,
+        };
+
+        if (existingEmployee) {
+          existingEmployee = await this.prisma.hris_employees.update({
+            where: { id_hris_employee: existingEmployee.id_hris_employee },
+            data: employeeData,
+          });
+        } else {
+          existingEmployee = await this.prisma.hris_employees.create({
+            data: {
+              ...employeeData,
+              id_hris_employee: uuidv4(),
+              created_at: new Date(),
+              id_connection: connection_id,
+            },
+          });
+        }
+
+        employeeResults.push(existingEmployee);
+
+        // Process field mappings
+        await this.ingestService.processFieldMappings(
+          employee.field_mappings,
+          existingEmployee.id_hris_employee,
+          originSource,
+          linkedUserId,
+        );
+
+        // Process remote data
+        await this.ingestService.processRemoteData(
+          existingEmployee.id_hris_employee,
+          remote_data[i],
+        );
+      }
+
+      return employeeResults;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -49,24 +49,24 @@ export class UnifiedHrisBenefitInput {
   company_contribution?: number;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-01-01T00:00:00Z',
     nullable: true,
     description: 'The start date of the benefit',
   })
   @IsDateString()
   @IsOptional()
-  start_date?: string;
+  start_date?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-12-31T23:59:59Z',
     nullable: true,
     description: 'The end date of the benefit',
   })
   @IsDateString()
   @IsOptional()
-  end_date?: string;
+  end_date?: Date;
 
   @ApiPropertyOptional({
     type: String,
@@ -128,7 +128,7 @@ export class UnifiedHrisBenefitOutput extends UnifiedHrisBenefitInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description:
@@ -136,27 +136,27 @@ export class UnifiedHrisBenefitOutput extends UnifiedHrisBenefitInput {
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the benefit record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the benefit record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

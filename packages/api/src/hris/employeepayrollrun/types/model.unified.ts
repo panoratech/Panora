@@ -137,34 +137,34 @@ export class UnifiedHrisEmployeepayrollrunInput {
   net_pay?: number;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2023-01-01T00:00:00Z',
     nullable: true,
     description: 'The start date of the pay period',
   })
   @IsDateString()
   @IsOptional()
-  start_date?: string;
+  start_date?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2023-01-15T23:59:59Z',
     nullable: true,
     description: 'The end date of the pay period',
   })
   @IsDateString()
   @IsOptional()
-  end_date?: string;
+  end_date?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2023-01-20T00:00:00Z',
     nullable: true,
     description: 'The date the check was issued',
   })
   @IsDateString()
   @IsOptional()
-  check_date?: string;
+  check_date?: Date;
 
   @ApiPropertyOptional({
     type: [DeductionItem],
@@ -244,7 +244,7 @@ export class UnifiedHrisEmployeepayrollrunOutput extends UnifiedHrisEmployeepayr
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description:
@@ -252,27 +252,27 @@ export class UnifiedHrisEmployeepayrollrunOutput extends UnifiedHrisEmployeepayr
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the employee payroll run record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the employee payroll run record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

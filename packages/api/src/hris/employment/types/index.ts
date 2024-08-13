@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalEmploymentOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IEmploymentService {
   addEmployment(
@@ -12,10 +13,7 @@ export interface IEmploymentService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalEmploymentOutput>>;
 
-  syncEmployments(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalEmploymentOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalEmploymentOutput[]>>;
 }
 
 export interface IEmploymentMapper {

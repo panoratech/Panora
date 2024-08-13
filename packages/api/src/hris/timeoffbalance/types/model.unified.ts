@@ -8,6 +8,14 @@ import {
   IsBoolean,
 } from 'class-validator';
 
+export type PolicyType =
+  | 'VACATION'
+  | 'SICK'
+  | 'PERSONAL'
+  | 'JURY_DUTY'
+  | 'VOLUNTEER'
+  | 'BEREAVEMENT';
+
 export class UnifiedHrisTimeoffbalanceInput {
   @ApiPropertyOptional({
     type: Number,
@@ -41,13 +49,21 @@ export class UnifiedHrisTimeoffbalanceInput {
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Vacation',
+    example: 'VACATION',
+    enum: [
+      'VACATION',
+      'SICK',
+      'PERSONAL',
+      'JURY_DUTY',
+      'VOLUNTEER',
+      'BEREAVEMENT',
+    ],
     nullable: true,
     description: 'The type of time off policy',
   })
   @IsString()
   @IsOptional()
-  policy_type?: string;
+  policy_type?: PolicyType | string;
 
   @ApiPropertyOptional({
     type: Object,
@@ -108,7 +124,7 @@ export class UnifiedHrisTimeoffbalanceOutput extends UnifiedHrisTimeoffbalanceIn
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
     type: String,
@@ -118,7 +134,7 @@ export class UnifiedHrisTimeoffbalanceOutput extends UnifiedHrisTimeoffbalanceIn
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
     type: String,
@@ -128,7 +144,7 @@ export class UnifiedHrisTimeoffbalanceOutput extends UnifiedHrisTimeoffbalanceIn
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

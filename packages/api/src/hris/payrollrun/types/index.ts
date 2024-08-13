@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalPayrollRunOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IPayrollRunService {
   addPayrollRun(
@@ -12,10 +13,7 @@ export interface IPayrollRunService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalPayrollRunOutput>>;
 
-  syncPayrollRuns(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalPayrollRunOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalPayrollRunOutput[]>>;
 }
 
 export interface IPayrollRunMapper {

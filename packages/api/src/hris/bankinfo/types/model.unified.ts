@@ -7,16 +7,19 @@ import {
   IsBoolean,
 } from 'class-validator';
 
+export type AccountType = 'SAVINGS' | 'CHECKING';
+
 export class UnifiedHrisBankinfoInput {
   @ApiPropertyOptional({
     type: String,
-    example: 'checking',
+    example: 'CHECKING',
+    enum: ['SAVINGS', 'CHECKING'],
     nullable: true,
     description: 'The type of the bank account',
   })
   @IsString()
   @IsOptional()
-  account_type?: string;
+  account_type?: AccountType | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -91,7 +94,7 @@ export class UnifiedHrisBankinfoOutput extends UnifiedHrisBankinfoInput {
   })
   @IsString()
   @IsOptional()
-  remote_id: string;
+  remote_id?: string;
 
   @ApiPropertyOptional({
     type: Object,
@@ -105,10 +108,10 @@ export class UnifiedHrisBankinfoOutput extends UnifiedHrisBankinfoInput {
       'The remote data of the bank info in the context of the 3rd Party',
   })
   @IsOptional()
-  remote_data: Record<string, any>;
+  remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description:
@@ -116,25 +119,25 @@ export class UnifiedHrisBankinfoOutput extends UnifiedHrisBankinfoInput {
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at: string;
+  remote_created_at: Date;
 
   @ApiProperty({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the bank info record',
   })
   @IsDateString()
-  created_at: string;
+  created_at: Date;
 
   @ApiProperty({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the bank info record',
   })
   @IsDateString()
-  modified_at: string;
+  modified_at: Date;
 
   @ApiProperty({
     type: Boolean,

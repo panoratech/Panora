@@ -7,6 +7,12 @@ import {
   IsBoolean,
 } from 'class-validator';
 
+export type Type =
+  | 'TEAM'
+  | 'DEPARTMENT'
+  | 'COST_CENTER'
+  | 'BUSINESS_UNIT'
+  | 'GROUP';
 export class UnifiedHrisGroupInput {
   @ApiPropertyOptional({
     type: String,
@@ -30,13 +36,14 @@ export class UnifiedHrisGroupInput {
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Department',
+    example: 'DEPARTMENT',
+    enum: ['TEAM', 'DEPARTMENT', 'COST_CENTER', 'BUSINESS_UNIT', 'GROUP'],
     nullable: true,
     description: 'The type of the group',
   })
   @IsString()
   @IsOptional()
-  type?: string;
+  type?: Type | string;
 
   @ApiPropertyOptional({
     type: Object,
@@ -87,34 +94,34 @@ export class UnifiedHrisGroupOutput extends UnifiedHrisGroupInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The date when the group was created in the 3rd party system',
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the group record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the group record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

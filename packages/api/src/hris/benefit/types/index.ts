@@ -1,18 +1,19 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedHrisBenefitInput, UnifiedHrisBenefitOutput } from './model.unified';
+import {
+  UnifiedHrisBenefitInput,
+  UnifiedHrisBenefitOutput,
+} from './model.unified';
 import { OriginalBenefitOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IBenefitService {
-  addBenefit(
+  addBenefit?(
     benefitData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalBenefitOutput>>;
 
-  syncBenefits(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalBenefitOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalBenefitOutput[]>>;
 }
 
 export interface IBenefitMapper {

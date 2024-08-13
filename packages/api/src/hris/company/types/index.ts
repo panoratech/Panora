@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalCompanyOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ICompanyService {
   addCompany(
@@ -12,10 +13,7 @@ export interface ICompanyService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalCompanyOutput>>;
 
-  syncCompanys(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalCompanyOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalCompanyOutput[]>>;
 }
 
 export interface ICompanyMapper {

@@ -8,6 +8,20 @@ import {
   IsBoolean,
 } from 'class-validator';
 
+export type Status =
+  | 'REQUESTED'
+  | 'APPROVED'
+  | 'DECLINED'
+  | 'CANCELLED'
+  | 'DELETED';
+
+export type RequestType =
+  | 'VACATION'
+  | 'SICK'
+  | 'PERSONAL'
+  | 'JURY_DUTY'
+  | 'VOLUNTEER'
+  | 'BEREAVEMENT';
 export class UnifiedHrisTimeoffInput {
   @ApiPropertyOptional({
     type: String,
@@ -31,13 +45,14 @@ export class UnifiedHrisTimeoffInput {
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Approved',
+    example: 'REQUESTED',
+    enum: ['REQUESTED', 'APPROVED', 'DECLINED', 'CANCELLED', 'DELETED'],
     nullable: true,
     description: 'The status of the time off request',
   })
   @IsString()
   @IsOptional()
-  status?: string;
+  status?: Status | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -51,13 +66,14 @@ export class UnifiedHrisTimeoffInput {
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Days',
+    example: 'DAYS',
+    enum: ['HOURS', 'DAYS'],
     nullable: true,
     description: 'The units used for the time off (e.g., Days, Hours)',
   })
   @IsString()
   @IsOptional()
-  units?: string;
+  units?: 'HOURS' | 'DAYS' | string;
 
   @ApiPropertyOptional({
     type: Number,
@@ -71,33 +87,41 @@ export class UnifiedHrisTimeoffInput {
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Vacation',
+    example: 'VACATION',
+    enum: [
+      'VACATION',
+      'SICK',
+      'PERSONAL',
+      'JURY_DUTY',
+      'VOLUNTEER',
+      'BEREAVEMENT',
+    ],
     nullable: true,
     description: 'The type of time off request',
   })
   @IsString()
   @IsOptional()
-  request_type?: string;
+  request_type?: RequestType | string;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-07-01T09:00:00Z',
     nullable: true,
     description: 'The start time of the time off',
   })
   @IsDateString()
   @IsOptional()
-  start_time?: string;
+  start_time?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-07-05T17:00:00Z',
     nullable: true,
     description: 'The end time of the time off',
   })
   @IsDateString()
   @IsOptional()
-  end_time?: string;
+  end_time?: Date;
 
   @ApiPropertyOptional({
     type: Object,
@@ -150,7 +174,7 @@ export class UnifiedHrisTimeoffOutput extends UnifiedHrisTimeoffInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description:
@@ -158,27 +182,27 @@ export class UnifiedHrisTimeoffOutput extends UnifiedHrisTimeoffInput {
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the time off record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the time off record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

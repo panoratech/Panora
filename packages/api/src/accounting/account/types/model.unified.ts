@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@@core/utils/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -71,12 +72,13 @@ export class UnifiedAccountingAccountInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
+    enum: CurrencyCode,
     nullable: true,
     description: 'The currency of the account',
   })
   @IsString()
   @IsOptional()
-  currency?: string;
+  currency?: CurrencyCode;
 
   @ApiPropertyOptional({
     type: String,
@@ -158,22 +160,22 @@ export class UnifiedAccountingAccountOutput extends UnifiedAccountingAccountInpu
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the account record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the account record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

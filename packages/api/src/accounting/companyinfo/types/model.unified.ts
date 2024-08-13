@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@@core/utils/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -69,12 +70,13 @@ export class UnifiedAccountingCompanyinfoInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
+    enum: CurrencyCode,
     nullable: true,
     description: 'The currency used by the company',
   })
   @IsString()
   @IsOptional()
-  currency?: string;
+  currency?: CurrencyCode;
 
   @ApiPropertyOptional({
     type: [String],
@@ -89,9 +91,12 @@ export class UnifiedAccountingCompanyinfoInput {
 
   @ApiPropertyOptional({
     type: [String],
-    example: ['Department', 'Project', 'Location'],
+    example: [
+      '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+      '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    ],
     nullable: true,
-    description: 'The tracking categories used by the company',
+    description: 'The UUIDs of the tracking categories used by the company',
   })
   @IsArray()
   @IsString({ each: true })
@@ -149,7 +154,7 @@ export class UnifiedAccountingCompanyinfoOutput extends UnifiedAccountingCompany
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description:
@@ -157,25 +162,25 @@ export class UnifiedAccountingCompanyinfoOutput extends UnifiedAccountingCompany
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the company info record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the company info record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

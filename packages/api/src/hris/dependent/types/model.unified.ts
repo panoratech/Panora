@@ -7,6 +7,15 @@ import {
   IsBoolean,
 } from 'class-validator';
 
+export type Gender =
+  | 'MALE'
+  | 'FEMALE'
+  | 'NON-BINARY'
+  | 'OTHER'
+  | 'PREFER_NOT_TO_DISCLOSE';
+
+export type Relationship = 'CHILD' | 'SPOUSE' | 'DOMESTIC_PARTNER';
+
 export class UnifiedHrisDependentInput {
   @ApiPropertyOptional({
     type: String,
@@ -40,33 +49,35 @@ export class UnifiedHrisDependentInput {
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Child',
+    example: 'CHILD',
+    enum: ['CHILD', 'SPOUSE', 'DOMESTIC_PARTNER'],
     nullable: true,
     description: 'The relationship of the dependent to the employee',
   })
   @IsString()
   @IsOptional()
-  relationship?: string;
+  relationship?: Relationship | string;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2020-01-01',
     nullable: true,
     description: 'The date of birth of the dependent',
   })
   @IsDateString()
   @IsOptional()
-  date_of_birth?: string;
+  date_of_birth?: Date;
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Male',
+    example: 'MALE',
+    enum: ['MALE', 'FEMALE', 'NON-BINARY', 'OTHER', 'PREFER_NOT_TO_DISCLOSE'],
     nullable: true,
     description: 'The gender of the dependent',
   })
   @IsString()
   @IsOptional()
-  gender?: string;
+  gender?: Gender | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -169,7 +180,7 @@ export class UnifiedHrisDependentOutput extends UnifiedHrisDependentInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description:
@@ -177,27 +188,27 @@ export class UnifiedHrisDependentOutput extends UnifiedHrisDependentInput {
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the dependent record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the dependent record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

@@ -20,6 +20,16 @@ export class UnifiedHrisCompanyInput {
   legal_name?: string;
 
   @ApiPropertyOptional({
+    type: [String],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
+    nullable: true,
+    description: 'UUIDs of the of the Location associated with the company',
+  })
+  @IsString()
+  @IsOptional()
+  locations?: string[];
+
+  @ApiPropertyOptional({
     type: String,
     example: 'Acme Corp',
     nullable: true,
@@ -90,7 +100,7 @@ export class UnifiedHrisCompanyOutput extends UnifiedHrisCompanyInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description:
@@ -98,27 +108,27 @@ export class UnifiedHrisCompanyOutput extends UnifiedHrisCompanyInput {
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the company record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the company record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

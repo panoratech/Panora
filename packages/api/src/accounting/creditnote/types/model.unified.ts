@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@@core/utils/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -10,7 +11,7 @@ import {
 
 export class UnifiedAccountingCreditnoteInput {
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The date of the credit note transaction',
@@ -91,9 +92,10 @@ export class UnifiedAccountingCreditnoteInput {
 
   @ApiPropertyOptional({
     type: [String],
-    example: ['Project A', 'Department B'],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     nullable: true,
-    description: 'The tracking categories associated with the credit note',
+    description:
+      'The UUIDs of the tracking categories associated with the credit note',
   })
   @IsArray()
   @IsString({ each: true })
@@ -103,12 +105,13 @@ export class UnifiedAccountingCreditnoteInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
+    enum: CurrencyCode,
     nullable: true,
     description: 'The currency of the credit note',
   })
   @IsString()
   @IsOptional()
-  currency?: string;
+  currency?: CurrencyCode;
 
   @ApiPropertyOptional({
     type: [String],
@@ -193,7 +196,7 @@ export class UnifiedAccountingCreditnoteOutput extends UnifiedAccountingCreditno
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description:
@@ -201,10 +204,10 @@ export class UnifiedAccountingCreditnoteOutput extends UnifiedAccountingCreditno
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description:
@@ -212,25 +215,25 @@ export class UnifiedAccountingCreditnoteOutput extends UnifiedAccountingCreditno
   })
   @IsDateString()
   @IsOptional()
-  remote_updated_at?: string;
+  remote_updated_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the credit note record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the credit note record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

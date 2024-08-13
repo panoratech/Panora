@@ -1,7 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedHrisDependentInput, UnifiedHrisDependentOutput } from './model.unified';
+import {
+  UnifiedHrisDependentInput,
+  UnifiedHrisDependentOutput,
+} from './model.unified';
 import { OriginalDependentOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IDependentService {
   addDependent(
@@ -9,10 +13,7 @@ export interface IDependentService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalDependentOutput>>;
 
-  syncDependents(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalDependentOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalDependentOutput[]>>;
 }
 
 export interface IDependentMapper {

@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@@core/utils/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -8,17 +9,86 @@ import {
   IsArray,
 } from 'class-validator';
 
-// todo: expense line
-export class UnifiedAccountingExpenseInput {
+export class LineItem {
+  @ApiPropertyOptional({
+    type: Number,
+    example: 5000,
+    nullable: true,
+    description: 'The net amount of the line item in cents',
+  })
+  @IsNumber()
+  @IsOptional()
+  net_amount?: number;
+
   @ApiPropertyOptional({
     type: String,
+    example: 'USD',
+    enum: CurrencyCode,
+    nullable: true,
+    description: 'The currency of the line item',
+  })
+  @IsString()
+  @IsOptional()
+  currency?: CurrencyCode;
+
+  @ApiPropertyOptional({
+    type: String,
+    example: 'Office supplies',
+    nullable: true,
+    description: 'Description of the line item',
+  })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    example: '1.0',
+    nullable: true,
+    description: 'The exchange rate for the line item',
+  })
+  @IsString()
+  @IsOptional()
+  exchange_rate?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    example: 'line_item_1234',
+    nullable: true,
+    description: 'The remote ID of the line item',
+  })
+  @IsString()
+  @IsOptional()
+  remote_id?: string;
+
+  @ApiPropertyOptional({
+    type: Date,
+    example: '2024-06-15T12:00:00Z',
+    description: 'The created date of the line item',
+  })
+  @IsDateString()
+  @IsOptional()
+  created_at?: Date;
+
+  @ApiPropertyOptional({
+    type: Date,
+    example: '2024-06-15T12:00:00Z',
+    description: 'The last modified date of the line item',
+  })
+  @IsDateString()
+  @IsOptional()
+  modified_at?: Date;
+}
+export class UnifiedAccountingExpenseInput {
+  @ApiPropertyOptional({
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The date of the expense transaction',
   })
   @IsDateString()
   @IsOptional()
-  transaction_date?: string;
+  transaction_date?: Date;
 
   @ApiPropertyOptional({
     type: Number,
@@ -53,12 +123,13 @@ export class UnifiedAccountingExpenseInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
+    enum: CurrencyCode,
     nullable: true,
     description: 'The currency of the expense',
   })
   @IsString()
   @IsOptional()
-  currency?: string;
+  currency?: CurrencyCode;
 
   @ApiPropertyOptional({
     type: String,
@@ -112,14 +183,23 @@ export class UnifiedAccountingExpenseInput {
 
   @ApiPropertyOptional({
     type: [String],
-    example: ['Project A', 'Department B'],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
     nullable: true,
-    description: 'The tracking categories associated with the expense',
+    description:
+      'The UUIDs of the tracking categories associated with the expense',
   })
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   tracking_categories?: string[];
+
+  @ApiPropertyOptional({
+    type: [LineItem],
+    description: 'The line items associated with this expense',
+  })
+  @IsArray()
+  @IsOptional()
+  line_items?: LineItem[];
 
   @ApiPropertyOptional({
     type: Object,
@@ -171,32 +251,32 @@ export class UnifiedAccountingExpenseOutput extends UnifiedAccountingExpenseInpu
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The date when the expense was created in the remote system',
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the expense record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the expense record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

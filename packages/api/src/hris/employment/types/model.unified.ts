@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@@core/utils/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -7,6 +8,41 @@ import {
   IsDateString,
   IsBoolean,
 } from 'class-validator';
+
+export type FlsaStatus =
+  | 'EXEMPT'
+  | 'SALARIED_NONEXEMPT'
+  | 'NONEXEMPT'
+  | 'OWNER';
+
+export type EmploymentType =
+  | 'FULL_TIME'
+  | 'PART_TIME'
+  | 'INTERN'
+  | 'CONTRACTOR'
+  | 'FREELANCE';
+
+export type PayFrequency =
+  | 'WEEKLY'
+  | 'BIWEEKLY'
+  | 'MONTHLY'
+  | 'QUARTERLY'
+  | 'SEMIANNUALLY'
+  | 'ANNUALLY'
+  | 'THIRTEEN-MONTHLY'
+  | 'PRO_RATA'
+  | 'SEMIMONTHLY';
+
+export type PayPeriod =
+  | 'HOUR'
+  | 'DAY'
+  | 'WEEK'
+  | 'EVERY_TWO_WEEKS'
+  | 'SEMIMONTHLY'
+  | 'MONTH'
+  | 'QUARTER'
+  | 'EVERY_SIX_MONTHS'
+  | 'YEAR';
 
 export class UnifiedHrisEmploymentInput {
   @ApiPropertyOptional({
@@ -31,63 +67,88 @@ export class UnifiedHrisEmploymentInput {
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Monthly',
+    example: 'MONTHLY',
+    enum: [
+      'HOUR',
+      'DAY',
+      'WEEK',
+      'EVERY_TWO_WEEKS',
+      'SEMIMONTHLY',
+      'MONTH',
+      'QUARTER',
+      'EVERY_SIX_MONTHS',
+      'YEAR',
+    ],
     nullable: true,
     description: 'The pay period of the employment',
   })
   @IsString()
   @IsOptional()
-  pay_period?: string;
+  pay_period?: PayPeriod | string;
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Bi-weekly',
+    example: 'WEEKLY',
+    enum: [
+      'WEEKLY',
+      'BIWEEKLY',
+      'MONTHLY',
+      'QUARTERLY',
+      'SEMIANNUALLY',
+      'ANNUALLY',
+      'THIRTEEN-MONTHLY',
+      'PRO_RATA',
+      'SEMIMONTHLY',
+    ],
     nullable: true,
     description: 'The pay frequency of the employment',
   })
   @IsString()
   @IsOptional()
-  pay_frequency?: string;
+  pay_frequency?: PayFrequency | string;
 
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
+    enum: CurrencyCode,
     nullable: true,
     description: 'The currency of the pay',
   })
   @IsString()
   @IsOptional()
-  pay_currency?: string;
+  pay_currency?: CurrencyCode;
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Exempt',
+    example: 'EXEMPT',
+    enum: ['EXEMPT', 'SALARIED_NONEXEMPT', 'NONEXEMPT', 'OWNER'],
     nullable: true,
     description: 'The FLSA status of the employment',
   })
   @IsString()
   @IsOptional()
-  flsa_status?: string;
+  flsa_status?: FlsaStatus | string;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2023-01-01',
     nullable: true,
     description: 'The effective date of the employment',
   })
   @IsDateString()
   @IsOptional()
-  effective_date?: string;
+  effective_date?: Date;
 
   @ApiPropertyOptional({
     type: String,
-    example: 'Full-time',
+    example: 'FULL_TIME',
+    enum: ['FULL_TIME', 'PART_TIME', 'INTERN', 'CONTRACTOR', 'FREELANCE'],
     nullable: true,
     description: 'The type of employment',
   })
   @IsString()
   @IsOptional()
-  employment_type?: string;
+  employment_type?: EmploymentType | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -160,7 +221,7 @@ export class UnifiedHrisEmploymentOutput extends UnifiedHrisEmploymentInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description:
@@ -168,27 +229,27 @@ export class UnifiedHrisEmploymentOutput extends UnifiedHrisEmploymentInput {
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the employment record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the employment record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalPhoneNumberOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IPhoneNumberService {
   addPhoneNumber(
@@ -12,10 +13,7 @@ export interface IPhoneNumberService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalPhoneNumberOutput>>;
 
-  syncPhoneNumbers(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalPhoneNumberOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalPhoneNumberOutput[]>>;
 }
 
 export interface IPhoneNumberMapper {
@@ -34,5 +32,7 @@ export interface IPhoneNumberMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAccountingPhonenumberOutput | UnifiedAccountingPhonenumberOutput[]>;
+  ): Promise<
+    UnifiedAccountingPhonenumberOutput | UnifiedAccountingPhonenumberOutput[]
+  >;
 }

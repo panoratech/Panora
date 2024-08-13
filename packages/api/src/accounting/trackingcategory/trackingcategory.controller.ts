@@ -28,8 +28,10 @@ import {
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { QueryDto } from '@@core/utils/dtos/query.dto';
-import { ApiGetCustomResponse, ApiPaginatedResponse } from '@@core/utils/dtos/openapi.respone.dto';
-
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
 @ApiTags('accounting/trackingcategories')
 @Controller('accounting/trackingcategories')
@@ -65,7 +67,7 @@ export class TrackingCategoryController {
           connection_token,
         );
       const { remote_data, limit, cursor } = query;
-      return this.trackingcategoryService.getTrackingCategorys(
+      return this.trackingcategoryService.getTrackingCategories(
         connectionId,
         projectId,
         remoteSource,

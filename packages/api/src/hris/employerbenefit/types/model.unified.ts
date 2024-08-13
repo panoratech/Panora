@@ -1,22 +1,29 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsUUID,
+  IsBoolean,
+  IsDateString,
   IsOptional,
   IsString,
-  IsDateString,
-  IsBoolean,
+  IsUUID,
 } from 'class-validator';
 
+export type BenefitPlanType =
+  | 'MEDICAL'
+  | 'HEALTH_SAVINGS'
+  | 'INSURANCE'
+  | 'RETIREMENT'
+  | 'OTHER';
 export class UnifiedHrisEmployerbenefitInput {
   @ApiPropertyOptional({
     type: String,
     example: 'Health Insurance',
+    enum: ['MEDICAL', 'HEALTH_SAVINGS', 'INSURANCE', 'RETIREMENT', 'OTHER'],
     nullable: true,
     description: 'The type of the benefit plan',
   })
   @IsString()
   @IsOptional()
-  benefit_plan_type?: string;
+  benefit_plan_type?: BenefitPlanType | string;
 
   @ApiPropertyOptional({
     type: String,
@@ -99,7 +106,7 @@ export class UnifiedHrisEmployerbenefitOutput extends UnifiedHrisEmployerbenefit
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description:
@@ -107,27 +114,27 @@ export class UnifiedHrisEmployerbenefitOutput extends UnifiedHrisEmployerbenefit
   })
   @IsDateString()
   @IsOptional()
-  remote_created_at?: string;
+  remote_created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The created date of the employer benefit record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-10-01T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the employer benefit record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 
   @ApiPropertyOptional({
     type: Boolean,

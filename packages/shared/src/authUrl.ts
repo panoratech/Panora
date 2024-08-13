@@ -59,6 +59,17 @@ export const constructAuthUrl = async ({ projectId, linkedUserId, providerName, 
   if (providerName === 'microsoftdynamicssales') {
     state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl, resource: additionalParams!.end_user_domain }));
   }
+  if (providerName === 'deel') {
+        const randomState = randomString();
+    state = encodeURIComponent(randomState + 'deel_delimiter' + Buffer.from(JSON.stringify({
+      projectId,
+      linkedUserId,
+      providerName,
+      vertical,
+      returnUrl,
+      resource: additionalParams!.end_user_domain!
+  })).toString('base64'));
+  }
   // console.log('State : ', JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
   // console.log('encodedRedirect URL : ', encodedRedirectUrl); 
   // const vertical = findConnectorCategory(providerName);
@@ -179,6 +190,8 @@ const handleOAuth2Url = async (input: HandleOAuth2Url) => {
       let b = `https://${resource}/.default`;
       b += (' offline_access'); 
       params += `&scope=${encodeURIComponent(b)}`;
+    } else if (providerName === 'deel') {
+      params += `&scope=${encodeURIComponent(scopes.replace(/\t/g, ' '))}`;
     } else {
       params += `&scope=${encodeURIComponent(scopes)}`;
     }

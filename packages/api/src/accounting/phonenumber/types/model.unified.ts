@@ -30,7 +30,7 @@ export class UnifiedAccountingPhonenumberInput {
   })
   @IsUUID()
   @IsOptional()
-  id_acc_company_info?: string;
+  company_info_id?: string;
 
   @ApiPropertyOptional({
     type: String,
@@ -39,7 +39,7 @@ export class UnifiedAccountingPhonenumberInput {
     description: 'The UUID of the associated contact',
   })
   @IsUUID()
-  id_acc_contact: string;
+  contact_id: string;
 
   @ApiPropertyOptional({
     type: Object,
@@ -92,22 +92,22 @@ export class UnifiedAccountingPhonenumberOutput extends UnifiedAccountingPhonenu
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the phone number record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the phone number record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

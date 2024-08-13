@@ -1,7 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedHrisBankinfoInput, UnifiedHrisBankinfoOutput } from './model.unified';
+import {
+  UnifiedHrisBankinfoInput,
+  UnifiedHrisBankinfoOutput,
+} from './model.unified';
 import { OriginalBankInfoOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IBankInfoService {
   addBankinfo(
@@ -9,10 +13,7 @@ export interface IBankInfoService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalBankInfoOutput>>;
 
-  syncBankinfos(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalBankInfoOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalBankInfoOutput[]>>;
 }
 
 export interface IBankinfoMapper {

@@ -80,8 +80,20 @@ export class ConnectionsController {
           message: `No Callback Params found for state, found ${state}`,
         });
       }
+      let stateData: StateDataType;
+      if (state.includes('deel_delimiter')) {
+        // squarespace asks for a random alphanumeric value
+        // Split the random part and the base64 part
+        const [randomPart, base64Part] =
+          decodeURIComponent(state).split('deel_delimiter');
+        // Decode the base64 part to get the original JSON
+        const jsonString = Buffer.from(base64Part, 'base64').toString('utf-8');
+        stateData = JSON.parse(jsonString);
+      } else {
+        // If no HTML entities are present, parse directly
+        stateData = JSON.parse(state);
+      }
 
-      const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
       const {
         projectId,
         vertical,
@@ -178,11 +190,15 @@ export class ConnectionsController {
       const service = this.categoryConnectionRegistry.getService(
         vertical.toLowerCase(),
       );
-      await service.handleCallBack(providerName, {
-        projectId,
-        linkedUserId,
-        body,
-      }, strategy_type);
+      await service.handleCallBack(
+        providerName,
+        {
+          projectId,
+          linkedUserId,
+          body,
+        },
+        strategy_type,
+      );
       /*if (
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
           .active !== false

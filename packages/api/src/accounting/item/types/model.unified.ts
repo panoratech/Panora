@@ -76,7 +76,7 @@ export class UnifiedAccountingItemInput {
   })
   @IsUUID()
   @IsOptional()
-  id_acc_company_info?: string;
+  company_info_id?: string;
 
   @ApiPropertyOptional({
     type: Object,
@@ -114,14 +114,14 @@ export class UnifiedAccountingItemOutput extends UnifiedAccountingItemInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The date when the item was last updated in the remote system',
   })
   @IsDateString()
   @IsOptional()
-  remote_updated_at?: string;
+  remote_updated_at?: Date;
 
   @ApiPropertyOptional({
     type: Object,
@@ -137,22 +137,22 @@ export class UnifiedAccountingItemOutput extends UnifiedAccountingItemInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the accounting item record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the accounting item record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

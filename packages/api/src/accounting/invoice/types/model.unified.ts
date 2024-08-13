@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@@core/utils/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsUUID,
@@ -7,6 +8,119 @@ import {
   IsDateString,
   IsArray,
 } from 'class-validator';
+
+export class LineItem {
+  @ApiPropertyOptional({
+    type: String,
+    example: 'Product description',
+    nullable: true,
+    description: 'Description of the line item',
+  })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @ApiPropertyOptional({
+    type: Number,
+    example: 1000,
+    nullable: true,
+    description: 'The unit price of the item in cents',
+  })
+  @IsNumber()
+  @IsOptional()
+  unit_price?: number;
+
+  @ApiPropertyOptional({
+    type: Number,
+    example: 2,
+    nullable: true,
+    description: 'The quantity of the item',
+  })
+  @IsNumber()
+  @IsOptional()
+  quantity?: number;
+
+  @ApiPropertyOptional({
+    type: Number,
+    example: 2000,
+    nullable: true,
+    description: 'The total amount for the line item in cents',
+  })
+  @IsNumber()
+  @IsOptional()
+  total_amount?: number;
+
+  @ApiPropertyOptional({
+    type: String,
+    example: 'USD',
+    enum: CurrencyCode,
+    nullable: true,
+    description: 'The currency of the line item',
+  })
+  @IsString()
+  @IsOptional()
+  currency?: CurrencyCode;
+
+  @ApiPropertyOptional({
+    type: String,
+    example: '1.0',
+    nullable: true,
+    description: 'The exchange rate for the line item',
+  })
+  @IsString()
+  @IsOptional()
+  exchange_rate?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
+    description: 'The UUID of the associated item',
+  })
+  @IsUUID()
+  @IsOptional()
+  item_id?: string;
+
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
+    nullable: true,
+    description:
+      'The UUIDs of the tracking categories associated with the line item',
+  })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tracking_categories?: string[];
+
+  @ApiPropertyOptional({
+    type: String,
+    example: 'line_item_1234',
+    nullable: true,
+    description: 'The remote ID of the line item',
+  })
+  @IsString()
+  @IsOptional()
+  remote_id?: string;
+
+  @ApiPropertyOptional({
+    type: Date,
+    example: '2024-06-15T12:00:00Z',
+    description: 'The created date of the line item',
+  })
+  @IsDateString()
+  @IsOptional()
+  created_at?: Date;
+
+  @ApiPropertyOptional({
+    type: Date,
+    example: '2024-06-15T12:00:00Z',
+    description: 'The last modified date of the line item',
+  })
+  @IsDateString()
+  @IsOptional()
+  modified_at?: Date;
+}
 
 export class UnifiedAccountingInvoiceInput {
   @ApiPropertyOptional({
@@ -30,34 +144,34 @@ export class UnifiedAccountingInvoiceInput {
   number?: string;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The date the invoice was issued',
   })
   @IsDateString()
   @IsOptional()
-  issue_date?: string;
+  issue_date?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-07-15T12:00:00Z',
     nullable: true,
     description: 'The due date of the invoice',
   })
   @IsDateString()
   @IsOptional()
-  due_date?: string;
+  due_date?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-07-10T12:00:00Z',
     nullable: true,
     description: 'The date the invoice was paid',
   })
   @IsDateString()
   @IsOptional()
-  paid_on_date?: string;
+  paid_on_date?: Date;
 
   @ApiPropertyOptional({
     type: String,
@@ -72,12 +186,13 @@ export class UnifiedAccountingInvoiceInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
+    enum: CurrencyCode,
     nullable: true,
     description: 'The currency of the invoice',
   })
   @IsString()
   @IsOptional()
-  currency?: string;
+  currency?: CurrencyCode;
 
   @ApiPropertyOptional({
     type: String,
@@ -167,18 +282,30 @@ export class UnifiedAccountingInvoiceInput {
   })
   @IsUUID()
   @IsOptional()
-  accounting_period_id?: string;
+  accounting_period_id?: string; // todo
 
   @ApiPropertyOptional({
     type: [String],
-    example: ['Project A', 'Department B'],
+    example: [
+      '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+      '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    ],
     nullable: true,
-    description: 'The tracking categories associated with the invoice',
+    description:
+      'The UUIDs of the tracking categories associated with the invoice',
   })
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   tracking_categories?: string[];
+
+  @ApiPropertyOptional({
+    type: [LineItem],
+    description: 'The line items associated with this invoice',
+  })
+  @IsArray()
+  @IsOptional()
+  line_items?: LineItem[];
 
   @ApiPropertyOptional({
     type: Object,
@@ -230,7 +357,7 @@ export class UnifiedAccountingInvoiceOutput extends UnifiedAccountingInvoiceInpu
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description:
@@ -238,25 +365,25 @@ export class UnifiedAccountingInvoiceOutput extends UnifiedAccountingInvoiceInpu
   })
   @IsDateString()
   @IsOptional()
-  remote_updated_at?: string;
+  remote_updated_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The created date of the invoice record',
   })
   @IsDateString()
   @IsOptional()
-  created_at?: string;
+  created_at?: Date;
 
   @ApiPropertyOptional({
-    type: String,
+    type: Date,
     example: '2024-06-15T12:00:00Z',
     nullable: true,
     description: 'The last modified date of the invoice record',
   })
   @IsDateString()
   @IsOptional()
-  modified_at?: string;
+  modified_at?: Date;
 }

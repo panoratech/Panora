@@ -70,7 +70,7 @@ const projectFormSchema = z.object({
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
 interface TeamSwitcherProps extends PopoverTriggerProps {
-  projects:Project[]
+  projects: Project[]
 }
 
 interface ModalObj {
@@ -88,7 +88,7 @@ export default function TeamSwitcher({ className ,projects}: TeamSwitcherProps) 
   const { profile } = useProfileStore();
 
   const { idProject, setIdProject } = useProjectStore();
-  const {mutate : refreshAccessToken} = useRefreshAccessTokenMutation()
+  const { mutate : refreshAccessToken } = useRefreshAccessTokenMutation()
 
   const handleOpenChange = (open: boolean) => {
     setShowNewDialog(prevState => ({ ...prevState, open }));
