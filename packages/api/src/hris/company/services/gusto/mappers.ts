@@ -60,7 +60,7 @@ export class GustoCompanyMapper implements ICompanyMapper {
     customFieldMappings?: { slug: string; remote_id: string }[],
   ): Promise<UnifiedHrisCompanyOutput> {
     const opts: any = {};
-    /*if (company.locations && company.locations.length > 0) {
+    if (company.locations && company.locations.length > 0) {
       const locations = await this.ingestService.ingestData<
         UnifiedHrisLocationOutput,
         GustoLocationOutput
@@ -73,9 +73,9 @@ export class GustoCompanyMapper implements ICompanyMapper {
         [],
       );
       if (locations) {
-        opts.locations = locations;
+        opts.locations = locations.map((loc) => loc.id_hris_location);
       }
-    }*/
+    }
     return {
       remote_id: company.uuid || null,
       legal_name: company.name || null,

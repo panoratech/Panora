@@ -112,7 +112,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
           legal_name: company.legal_name,
           display_name: company.display_name,
           eins: company.eins || [],
-          locations: company.locations,
           remote_id: originId,
           remote_created_at: company.remote_created_at
             ? new Date(company.remote_created_at)
@@ -135,6 +134,19 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_connection: connection_id,
             },
           });
+        }
+
+        if (company.locations) {
+          for (const loc of company.locations) {
+            await this.prisma.hris_locations.update({
+              where: {
+                id_hris_location: loc,
+              },
+              data: {
+                id_hris_company: existingCompany.id_hris_company,
+              },
+            });
+          }
         }
 
         companyResults.push(existingCompany);

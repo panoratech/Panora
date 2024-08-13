@@ -123,7 +123,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
           last_name: employee.last_name,
           preferred_name: employee.preferred_name,
           display_full_name: employee.display_full_name,
-          locations: employee.locations,
           username: employee.username,
           work_email: employee.work_email,
           personal_email: employee.personal_email,

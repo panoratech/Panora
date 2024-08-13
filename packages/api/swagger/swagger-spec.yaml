@@ -13728,6 +13728,16 @@ components:
             - HOME
           nullable: true
           description: The type of the location
+        company_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the company associated with the location
+        employee_id:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The UUID of the employee associated with the location
         field_mappings:
           type: object
           example:

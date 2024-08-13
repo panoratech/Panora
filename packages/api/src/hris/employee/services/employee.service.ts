@@ -135,7 +135,6 @@ export class EmployeeService {
     });
 
     const data: any = {
-      locations: employee.locations || [],
       groups: employee.groups || [],
       employee_number: employee.employee_number,
       id_hris_company: employee.company_id,
@@ -213,6 +212,12 @@ export class EmployeeService {
         values.map((value) => [value.attribute.slug, value.data]),
       );
 
+      const locations = await this.prisma.hris_locations.findMany({
+        where: {
+          id_hris_employee: employee.id_hris_employee,
+        },
+      });
+
       const unifiedEmployee: UnifiedHrisEmployeeOutput = {
         id: employee.id_hris_employee,
         groups: employee.groups,
@@ -228,7 +233,6 @@ export class EmployeeService {
         mobile_phone_number: employee.mobile_phone_number,
         employments: employee.employments,
         ssn: employee.ssn,
-        locations: employee.locations,
         manager_id: employee.manager,
         gender: employee.gender,
         ethnicity: employee.ethnicity,
@@ -238,6 +242,7 @@ export class EmployeeService {
         employment_status: employee.employment_status,
         termination_date: employee.termination_date,
         avatar_url: employee.avatar_url,
+        locations: locations.map((loc) => loc.id_hris_location),
         field_mappings: field_mappings,
         remote_id: employee.remote_id,
         remote_created_at: employee.remote_created_at,
@@ -314,6 +319,12 @@ export class EmployeeService {
             values.map((value) => [value.attribute.slug, value.data]),
           );
 
+          const locations = await this.prisma.hris_locations.findMany({
+            where: {
+              id_hris_employee: employee.id_hris_employee,
+            },
+          });
+
           const unifiedEmployee: UnifiedHrisEmployeeOutput = {
             id: employee.id_hris_employee,
             groups: employee.groups,
@@ -324,7 +335,7 @@ export class EmployeeService {
             preferred_name: employee.preferred_name,
             display_full_name: employee.display_full_name,
             username: employee.username,
-            locations: employee.locations,
+            locations: locations.map((loc) => loc.id_hris_location),
             manager_id: employee.manager,
             work_email: employee.work_email,
             personal_email: employee.personal_email,

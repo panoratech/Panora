@@ -103,6 +103,26 @@ export class UnifiedHrisLocationInput {
   location_type?: LocationType | string;
 
   @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
+    description: 'The UUID of the company associated with the location',
+  })
+  @IsUUID()
+  @IsOptional()
+  company_id?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
+    description: 'The UUID of the employee associated with the location',
+  })
+  @IsUUID()
+  @IsOptional()
+  employee_id?: string;
+
+  @ApiPropertyOptional({
     type: Object,
     example: {
       custom_field_1: 'value1',

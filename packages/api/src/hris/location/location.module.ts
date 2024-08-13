@@ -7,6 +7,8 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { Utils } from '@hris/@lib/@utils';
+import { GustoLocationMapper } from './services/gusto/mappers';
+import { GustoService } from './services/gusto';
 @Module({
   controllers: [LocationController],
   providers: [
@@ -17,7 +19,9 @@ import { Utils } from '@hris/@lib/@utils';
     WebhookService,
     ServiceRegistry,
     IngestDataService,
+    GustoLocationMapper,
     /* PROVIDERS SERVICES */
+    GustoService,
   ],
   exports: [SyncService],
 })

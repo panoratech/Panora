@@ -123,12 +123,32 @@ export class CoreSyncService {
         }),
     );
 
+    const employeesLocationsTasks = employees.map(
+      (employee) => async () =>
+        this.registry.getService('hris', 'location').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+          id_employee: employee.id_hris_employee,
+        }),
+    );
+
     for (const task of companiesEmployeeTasks) {
       try {
         await task();
       } catch (error) {
         this.logger.error(
           `Companies Employee task failed: ${error.message}`,
+          error,
+        );
+      }
+    }
+
+    for (const task of employeesLocationsTasks) {
+      try {
+        await task();
+      } catch (error) {
+        this.logger.error(
+          `Companies Location task failed: ${error.message}`,
           error,
         );
       }

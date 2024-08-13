@@ -71,7 +71,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
   async syncForLinkedUser(param: SyncLinkedUserType) {
     try {
-      const { integrationId, linkedUserId } = param;
+      const { integrationId, linkedUserId, id_employee } = param;
       const service: ILocationService =
         this.serviceRegistry.getService(integrationId);
       if (!service) return;
@@ -80,7 +80,14 @@ export class SyncService implements OnModuleInit, IBaseSync {
         UnifiedHrisLocationOutput,
         OriginalLocationOutput,
         ILocationService
-      >(integrationId, linkedUserId, 'hris', 'location', service, []);
+      >(integrationId, linkedUserId, 'hris', 'location', service, [
+        {
+          param: id_employee,
+          paramName: 'id_employee',
+          shouldPassToService: true,
+          shouldPassToIngest: true,
+        },
+      ]);
     } catch (error) {
       throw error;
     }
@@ -92,6 +99,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     locations: UnifiedHrisLocationOutput[],
     originSource: string,
     remote_data: Record<string, any>[],
+    id_employee?: string,
   ): Promise<HrisLocation[]> {
     try {
       const locationResults: HrisLocation[] = [];
@@ -112,6 +120,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
           phone_number: location.phone_number,
           street_1: location.street_1,
           street_2: location.street_2,
+          id_hris_employee: id_employee || null,
+          id_hris_company: location.company_id || null,
           city: location.city,
           state: location.state,
           zip_code: location.zip_code,

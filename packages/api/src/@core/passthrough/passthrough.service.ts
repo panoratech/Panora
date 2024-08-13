@@ -23,15 +23,22 @@ export class PassthroughService {
     linkedUserId: string,
     vertical: string,
     connectionId: string,
+    projectId: string,
   ): Promise<PassthroughResponse> {
     try {
-      const { method, path, data, request_format, overrideBaseUrl, headers } =
-        requestParams;
+      const {
+        method,
+        path,
+        data,
+        request_format = 'JSON',
+        overrideBaseUrl,
+        headers,
+      } = requestParams;
 
       const job_resp_create = await this.prisma.events.create({
         data: {
           id_connection: connectionId,
-          id_project: '',
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
           type: 'pull',
@@ -68,7 +75,7 @@ export class PassthroughService {
           id_event: job_resp_create.id_event,
         },
         data: {
-          status: status || (response as AxiosResponse).status,
+          status: String(status) || String((response as AxiosResponse).status),
         },
       });
 

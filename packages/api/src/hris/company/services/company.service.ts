@@ -47,13 +47,19 @@ export class CompanyService {
         values.map((value) => [value.attribute.slug, value.data]),
       );
 
+      const locations = await this.prisma.hris_locations.findMany({
+        where: {
+          id_hris_company: company.id_hris_company,
+        },
+      });
+
       const unifiedCompany: UnifiedHrisCompanyOutput = {
         id: company.id_hris_company,
         legal_name: company.legal_name,
         display_name: company.display_name,
-        locations: company.locations,
         eins: company.eins,
         field_mappings: field_mappings,
+        locations: locations.map((loc) => loc.id_hris_location),
         remote_id: company.remote_id,
         remote_created_at: company.remote_created_at,
         created_at: company.created_at,
@@ -125,6 +131,12 @@ export class CompanyService {
             include: { attribute: true },
           });
 
+          const locations = await this.prisma.hris_locations.findMany({
+            where: {
+              id_hris_company: company.id_hris_company,
+            },
+          });
+
           const field_mappings = Object.fromEntries(
             values.map((value) => [value.attribute.slug, value.data]),
           );
@@ -134,8 +146,8 @@ export class CompanyService {
             legal_name: company.legal_name,
             display_name: company.display_name,
             eins: company.eins,
-            locations: company.locations,
             field_mappings: field_mappings,
+            locations: locations.map((loc) => loc.id_hris_location),
             remote_id: company.remote_id,
             remote_created_at: company.remote_created_at,
             created_at: company.created_at,

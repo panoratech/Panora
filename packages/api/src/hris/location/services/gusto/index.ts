@@ -71,26 +71,22 @@ export class GustoService implements ILocationService {
         },
       );
       this.logger.log(`Synced gusto locations !`);
+      const resp_home = Array.isArray(resp.data)
+        ? resp.data.map((add) => ({
+            ...add,
+            type: 'HOME',
+          }))
+        : [];
 
-      const resp_home = resp.data.map((add) => {
-        return {
-          ...add,
-          type: 'HOME',
-        };
-      });
-
-      let resp_work;
-      if (resp_.data) {
-        resp_work = resp_.data.map((add) => {
-          return {
+      const resp_work = Array.isArray(resp_.data)
+        ? resp_.data.map((add) => ({
             ...add,
             type: 'WORK',
-          };
-        });
-      }
+          }))
+        : [];
 
       return {
-        data: resp.data.map,
+        data: [...resp_home, ...resp_work],
         message: 'Gusto locations retrieved',
         statusCode: 200,
       };

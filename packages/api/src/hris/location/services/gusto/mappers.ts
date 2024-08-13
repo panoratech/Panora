@@ -56,39 +56,16 @@ export class GustoLocationMapper implements ILocationMapper {
     connectionId: string,
     customFieldMappings?: { slug: string; remote_id: string }[],
   ): Promise<UnifiedHrisLocationOutput> {
-    const opts: any = {};
-
-    /*if (location.employee_uuid) {
-      const employee_id = await this.utils.getEmployeeUuidFromRemoteId(
-        location.employee_uuid,
-        connectionId,
-      );
-      if (employee_id) {
-        opts.employee_id = employee_id;
-      }
-    }
-    if (location.company_location_uuid) {
-      const id = await this.utils.getEmployerLocationUuidFromRemoteId(
-        location.company_location_uuid,
-        connectionId,
-      );
-      if (id) {
-        opts.employer_location_id = id;
-      }
-    }
-
     return {
       remote_id: location.uuid || null,
       remote_data: location,
-      ...opts,
-      employee_contribution: location.employee_deduction
-        ? parseFloat(location.employee_deduction)
-        : null,
-      company_contribution: location.company_contribution
-        ? parseFloat(location.company_contribution)
-        : null,
-      remote_was_deleted: null,
-    };*/
-    return;
+      street_1: location.street_1,
+      street_2: location.street_2,
+      city: location.city,
+      state: location.state,
+      zip_code: location.zip,
+      country: location.country,
+      location_type: location.type,
+    };
   }
 }
