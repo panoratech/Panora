@@ -185,7 +185,7 @@ const handleOAuth2Url = async ({
       const url = new URL(BASE_URL);
       BASE_URL = url.origin + url.pathname;
       const resource = url.searchParams.get('resource');
-      let scopeValue = `https://${resource}/.default offline_access`;
+      const scopeValue = `https://${resource}/.default offline_access`;
       params += `&scope=${encodeURIComponent(scopeValue)}`;
     } else if (providerName === 'deel') {
       params += `&scope=${encodeURIComponent(scopes.replace(/\t/g, ' '))}`;

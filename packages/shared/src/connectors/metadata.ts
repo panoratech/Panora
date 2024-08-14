@@ -2937,7 +2937,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHiusc7S5-BoiU1YKCztJMv_Qj7wlim4TwbA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: true,
-        primaryColor: "#702963",
+        primaryColor: '#702963',
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ['username', 'password', 'store_url']
