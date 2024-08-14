@@ -43,7 +43,8 @@ export class LinearTicketMapper implements ITicketMapper {
             title: source.name,
             description: source.description ? source.description : null,
             // Passing new Field to retreive repositroy info to add ticket to that repo
-            project: source.collections[0] as string
+            project: source.collections ? source.collections[0] as string : null,
+            team: { id: await this.utils.getTeamRemoteIdFromUuid(source.field_mappings["team_id"]) },
         };
 
 

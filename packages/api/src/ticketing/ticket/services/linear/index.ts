@@ -50,11 +50,11 @@ export class LinearService implements ITicketService {
                     "issueCreateInput": {
                         "title": ticketData.title,
                         "description": ticketData.description,
-                        "assigneeId": ticketData.assignee.id,
-                        "parentId": ticketData.parent.id,
-                        "labelIds": ticketData.labels.nodes,
-                        "projectId": ticketData.project.id,
-                        "sourceCommentId": ticketData.comments.nodes,
+                        "assigneeId": ticketData.assignee?.id,
+                        "parentId": ticketData.parent?.id,
+                        "labelIds": ticketData.labels?.nodes,
+                        "projectId": ticketData.project?.id,
+                        "sourceCommentId": ticketData.comments?.nodes,
                         "dueDate": ticketData.dueDate,
                         "teamId": ticketData.team.id
                     }
