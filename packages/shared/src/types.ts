@@ -30,6 +30,7 @@ export type ProviderConfig = {
     active?: boolean;
     customPropertiesUrl?: string;
     authStrategy: AuthType;
+    primaryColor?: string;
     urls: {
         docsUrl: string;
         apiUrl: StaticApiUrl | DynamicApiUrl;

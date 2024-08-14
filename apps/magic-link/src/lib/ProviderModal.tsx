@@ -1,32 +1,21 @@
-import { useEffect, useState } from 'react';
-import useOAuth from '@/hooks/useOAuth';
-import { providersArray, categoryFromSlug, Provider,CONNECTORS_METADATA,AuthStrategy } from '@panora/shared/src';
-import { categoriesVerticals } from '@panora/shared/src/categories';
-import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectSeparator, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import useProjectConnectors from '@/hooks/queries/useProjectConnectors';
-import {ArrowLeftRight} from 'lucide-react';
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Input } from "@/components/ui/input";
 import Modal from '@/components/Modal';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+  DialogContent
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import useCreateApiKeyConnection from '@/hooks/queries/useCreateApiKeyConnection';
-
+import useProjectConnectors from '@/hooks/queries/useProjectConnectors';
+import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
+import useOAuth from '@/hooks/useOAuth';
+import { AuthStrategy, categoryFromSlug, CONNECTORS_METADATA, Provider, providersArray } from '@panora/shared/src';
+import { categoriesVerticals } from '@panora/shared/src/categories';
+import { ArrowLeft, ArrowLeftRight, Search, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from "react-hook-form";
 
 interface IBasicAuthFormData {
   [key : string]: string
@@ -73,6 +62,7 @@ const ProviderModal = () => {
   const {data: magicLink} = useUniqueMagicLink(uniqueMagicLinkId); 
   const {data: connectorsForProject} = useProjectConnectors(isProjectIdReady ? projectId : null);
   const {register: register2, formState: {errors: errors2}, handleSubmit: handleSubmit2, reset: reset2} = useForm<IBasicAuthFormData>();
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => { 
     const queryParams = new URLSearchParams(window.location.search);
@@ -286,165 +276,272 @@ const ProviderModal = () => {
     setStartFlow(true);
   }
 
+  const filteredProviders = data.filter(provider =>
+    provider.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (selectedCategory === "All" || provider.vertical?.toLowerCase() === selectedCategory.toLowerCase())
+  );
+
+  const handleProviderSelect = (provider: Provider) => {
+    setSelectedProvider({ provider: provider.name.toLowerCase(), category: provider.vertical!.toLowerCase() });
+    const logoPath = CONNECTORS_METADATA[provider.vertical!.toLowerCase()][provider.name.toLowerCase()].logoPath;
+    setCurrentProviderLogoURL(logoPath);
+    setCurrentProvider(provider.name.toLowerCase())
+
+    const providerMetadata = CONNECTORS_METADATA[provider.vertical!.toLowerCase()][provider.name.toLowerCase()];
+    if (providerMetadata.authStrategy.strategy === AuthStrategy.api_key || providerMetadata.authStrategy.strategy === AuthStrategy.basic) {
+      setOpenBasicAuthDialog(true);
+    } else if (providerMetadata?.options?.end_user_domain) {
+      setOpenDomainDialog(true);
+    } else {
+      setLoading({ status: true, provider: provider.name.toLowerCase() });
+      setStartFlow(true);
+    }
+  };
+
+  const formatProvider = (provider: string) => {
+    return provider.substring(0,1).toUpperCase() + provider.substring(1)
+  }
+  const formatVertical = (vertical: string) => {
+    switch(vertical){
+      case "marketingautomation":
+        return 'Marketing Automation';
+      case "filestorage":
+        return "File Storage";
+      case "crm":
+        return "CRM";
+      case "ats":
+        return "ATS";
+      case "hris":
+        return "HRIS";
+      default:
+        return vertical.substring(0,1).toUpperCase() + vertical.substring(1)
+    }
+  }
 
   return (
-    <>
-    <Card className='w-[50vw]'>
-      <CardHeader>
-        <CardTitle className='flex flex-row items-start mb-2'>Connect to your software</CardTitle>
-        <Select onValueChange={(value) => handleCategoryClick(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Categories</SelectLabel>
-              <SelectItem key="All" value="All">
-                All
-                </SelectItem>
-              <SelectSeparator/>
+    <div className="flex justify-center items-center h-screen">
+      <div className="bg-white rounded-lg shadow-lg w-96 p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Select Your Provider</h2>
+          <X className="cursor-pointer" onClick={() => {/* Close modal logic */}} />
+        </div>
+        
+        <div className="flex gap-2 mb-4">
+          <div className="relative flex-grow">
+            <Input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          </div>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-[180px] h-10 px-3 py-2 text-sm bg-white border border-input rounded-md hover:bg-accent hover:text-accent-foreground focus:outline-none !ring-0 !ring-offset-0">
+              <SelectValue placeholder="Select vertical" />
+            </SelectTrigger>
+            <SelectContent className="bg-white text-black border border-input shadow-md">
               {categoriesVerticals.map((vertical) => (
-                <SelectItem key={vertical} value={vertical}>
-                  {vertical}
+                <SelectItem 
+                  key={vertical} 
+                  value={vertical}
+                  className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900"
+                >
+                  {formatVertical(vertical)}
                 </SelectItem>
               ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </CardHeader>
-      <CardContent className="grid gap-6">
-        <div className='max-h-[400px] overflow-y-auto'>
-        <RadioGroup defaultValue="card" className="grid grid-cols-3 gap-4">
-          {(data as Provider[]).map((provider) => (
-            <div>
-            <RadioGroupItem 
-              key={`${provider.name}-${provider.vertical}`} 
-              value={`${provider.name}-${provider.vertical}`} 
-              id={`${provider.name}-${provider.vertical}`} 
-              className="peer sr-only" 
-              onClick={() => handleWalletClick(provider.name, provider.vertical!)}
-            />
-            <Label
-              htmlFor={`${provider.name}-${provider.vertical}`}
-              className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-            >
-              <img className="w-14 h-14 rounded-lg mb-2" src={provider.logoPath} alt={provider.name} />
-              <span>{provider.name.substring(0,1).toUpperCase().concat(provider.name.substring(1,provider.name.length))}</span>
-            </Label>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="space-y-2 max-h-96 overflow-y-auto">
+          {filteredProviders.map((provider) => (
+            <div
+            key={`${provider.name}-${provider.vertical}`}
+            className="flex items-center p-2 hover:bg-gray-100 cursor-pointer rounded"
+            onClick={() => handleProviderSelect(provider)}
+            > 
+            <div className="w-12 h-12 mr-3 rounded-md shadow-md overflow-hidden flex items-center justify-center bg-white">
+              <img src={provider.logoPath} alt={provider.name} className="w-full h-full object-contain" />
+            </div>
+            <span>{formatProvider(provider.name)}</span>
           </div>
           ))}
-        </RadioGroup>
         </div>
-      </CardContent>
-      <CardFooter className='flex flex-col items-start'>
+      </div>
+
+      {/* Basic Auth Dialog */}
+      <Dialog open={openBasicAuthDialog} onOpenChange={onCloseBasicAuthDialog}>
+        <DialogContent className="bg-white text-black rounded-lg shadow-lg max-w-md w-full p-0 overflow-hidden">
+          <div className="flex justify-between items-center p-4">
+            <button onClick={() => onCloseBasicAuthDialog(false)} className="text-gray-500 hover:text-gray-700">
+              <ArrowLeft size={20} />
+            </button>
+          </div>
+          
+          <div className="flex flex-col items-center px-6 pb-6">
         
-        {loading.status ? <Button className='w-full' disabled><LoadingSpinner className="w-4 mr-2"/>Loading</Button> : <Button className="w-full" onClick={handleStartFlow} disabled={!preStartFlow}>Continue</Button>}
-        {errorResponse.errorPresent ? <p className='mt-2 text-red-700'>{errorResponse.errorMessage}</p> : (<></>)}
-
-          {/* </div> */}
-      </CardFooter>
-    </Card>
-
-    {/* Dialog for basic auth input */}
-    <Dialog open={openBasicAuthDialog} onOpenChange={onCloseBasicAuthDialog}>
-      <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Enter your credentials</DialogTitle>
-        {domainFormats[selectedProvider?.provider.toLowerCase()] && (
-                    <span className="text-sm text-gray-500"> (e.g., {domainFormats[selectedProvider?.provider.toLowerCase()]})</span>
-                  )}    
-      </DialogHeader>
-      {/* <Form {...form}> */}
-        <form onSubmit={handleSubmit2(onBasicAuthSubmit)}>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            {selectedProvider.provider!=='' && selectedProvider.category!=='' && CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName : string) => 
-            (
-              <>
-              <Label className={errors2[fieldName] ? 'text-destructive' : ''}>
-                Enter your {fieldName} for {selectedProvider?.provider.substring(0,1).toUpperCase()}{selectedProvider?.provider.substring(1)}
-              </Label>
-              <Input
-                    type='text'
-                    placeholder={`Your ${fieldName}`}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"                              
-                    {...register2(fieldName,{
-                      required: `${fieldName} must be at least 2 characters`,
-                      minLength:{
-                        value:2,
+          {selectedProvider?.category && selectedProvider?.provider && CONNECTORS_METADATA[selectedProvider.category]?.[selectedProvider.provider] && (
+            <>
+              <div className="w-16 h-16 mr-3 mb-3 rounded-md shadow-md overflow-hidden flex items-center justify-center bg-white">
+                <img 
+                  src={CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].logoPath} 
+                  alt={selectedProvider.provider} 
+                  className="w-full h-full object-contain" 
+                />
+              </div>
+              <h2 className="text-xl font-semibold mb-6 text-center">
+                Connect your {selectedProvider.provider.charAt(0).toUpperCase() + selectedProvider.provider.slice(1)} Account
+              </h2>
+            </>
+          )}
+            
+            <form onSubmit={handleSubmit2(onBasicAuthSubmit)} className="w-full space-y-4">
+              {selectedProvider.provider !== '' && selectedProvider.category !== '' && 
+              CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].authStrategy.properties?.map((fieldName: string) => (
+                <div key={fieldName} className="space-y-1">
+                  <Input
+                    type={fieldName.toLowerCase().includes('password') ? 'password' : 'text'}
+                    placeholder={fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                    {...register2(fieldName, {
+                      required: `${fieldName} is required`,
+                      minLength: {
+                        value: 2,
                         message: `${fieldName} must be at least 2 characters`,
                       }
                     })}
-              />
-              {errors2[fieldName] && (<p className='text-sm font-medium text-destructive'>{errors2[fieldName]?.message}</p>)}
-              </>
-            ))}
+                  />
+                  {errors2[fieldName] && <p className='text-sm font-medium text-red-500'>{errors2[fieldName]?.message}</p>}
+                </div>
+              ))}
+              
+              <p className="text-sm text-gray-500 text-center mt-2">
+                A third-party accountant will be added.
+              </p>
+              
+              <Button 
+                type='submit' 
+                className="w-full p-2 rounded-md text-white font-semibold mt-4"
+                style={{backgroundColor: selectedProvider.provider !== '' && selectedProvider.category !== '' ? CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].primaryColor : "#00000000"}}
+              >
+                Connect
+              </Button>
+            </form>
           </div>
-        </div>
-      <DialogFooter>
-        <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCloseBasicAuthDialog(false)}>Cancel</Button>
-        <Button type='submit' size="sm" className="h-7 gap-1">
-          Continue
-        </Button>
-      </DialogFooter>
-        </form>
-      {/* </Form> */}
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
 
-    {/* Dialog for end-user domain input */}
-    <Dialog open={openDomainDialog} onOpenChange={onCloseDomainDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enter Your Domain</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={(e) => { e.preventDefault(); onDomainSubmit(); }}>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label className={errors2.end_user_domain ? 'text-destructive' : ''}>
-                  Enter your domain for {`${selectedProvider?.provider.substring(0,1).toUpperCase()}${selectedProvider?.provider.substring(1)}`}
-                  {domainFormats[selectedProvider?.provider.toLowerCase()] && (
-                    <span className="text-sm text-gray-500"> (e.g., {domainFormats[selectedProvider?.provider.toLowerCase()]})</span>
-                  )}                
-                </Label>
+      {/* Domain Dialog */}
+      <Dialog open={openDomainDialog} onOpenChange={onCloseDomainDialog}>
+        <DialogContent className="bg-white text-black rounded-lg shadow-lg max-w-md w-full p-0 overflow-hidden">
+          <div className="flex justify-between items-center p-4">
+            <button onClick={() => onCloseDomainDialog(false)} className="text-gray-500 hover:text-gray-700">
+              <ArrowLeft size={20} />
+            </button>
+          </div>
+          
+          <div className="flex flex-col items-center px-6 pb-6">
+            {selectedProvider?.category && selectedProvider?.provider && CONNECTORS_METADATA[selectedProvider.category]?.[selectedProvider.provider] && (
+              <>
+                <div className="w-16 h-16 mr-3 mb-3 rounded-md shadow-md overflow-hidden flex items-center justify-center bg-white">
+                  <img 
+                    src={CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].logoPath} 
+                    alt={selectedProvider.provider} 
+                    className="w-full h-full object-contain" 
+                  />
+                </div>
+                <h2 className="text-xl font-semibold mb-6 text-center">
+                  Connect your {selectedProvider.provider.charAt(0).toUpperCase() + selectedProvider.provider.slice(1)} Account
+                </h2>
+              </>
+            )}
+            
+            <form onSubmit={(e) => { e.preventDefault(); onDomainSubmit(); }} className="w-full space-y-4">
+              <div className="space-y-1">
                 <Input
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   placeholder="Your domain"
+                  className="w-full p-2 border border-gray-300 rounded-md"
                   onChange={(e) => setEndUserDomain(e.target.value)}
                 />
-                <div>{errors2.end_user_domain && (<p className='text-sm font-medium text-destructive'>{errors2.end_user_domain.message}</p>)}</div>
+                {errors2.end_user_domain && <p className='text-sm font-medium text-red-500'>{errors2.end_user_domain.message}</p>}
+              </div>
+              
+              {domainFormats[selectedProvider?.provider?.toLowerCase()] && (
+                <p className="text-sm text-gray-500 text-center">
+                  e.g., {domainFormats[selectedProvider.provider.toLowerCase()]}
+                </p>
+              )}
+              
+              <p className="text-sm text-gray-500 text-center mt-2">
+                A third-party accountant will be added.
+              </p>
+              
+              <Button 
+                type='submit' 
+                className="w-full p-2 rounded-md text-white font-semibold mt-4"
+                style={{backgroundColor: selectedProvider.provider !== '' && selectedProvider.category !== '' ? CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].primaryColor : "#00000000"}}
+              >
+                Connect
+              </Button>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Success Dialog */}
+      <Modal
+        open={openSuccessDialog} 
+        setOpen={CloseSuccessDialog}
+        backgroundClass="bg-black/50"
+      >
+        <div className='bg-white text-black rounded-lg shadow-lg max-w-md w-full p-0  overflow-hidden'>
+          <div className="flex justify-between items-center p-4">
+          </div>
+          
+          <div className='flex flex-col items-center px-6 pb-6'>
+            <div className='flex items-center justify-center gap-2 mb-4'>
+              <img src={'https://i.postimg.cc/25G2FwWf/logo.png'} className={`w-12 h-12 ${openSuccessDialog ? "opacity-100" : "opacity-0"} transition-all duration-500 delay-200`} />
+              <ArrowLeftRight size={25} className={`${openSuccessDialog ? "opacity-100" : "opacity-0"} transition-all duration-500 delay-200`} color='gray' />
+              <div className="w-12 h-12 rounded-md shadow-md overflow-hidden flex items-center justify-center bg-white">
+                <img className={`w-full h-full object-contain transition-all duration-700 delay-200 ${openSuccessDialog ? "scale-100 opacity-100" : "scale-50 opacity-0"}`} src={currentProviderLogoURL} alt={currentProvider} />
               </div>
             </div>
-            <DialogFooter>
-              <Button variant='outline' type="reset" size="sm" className="h-7 gap-1" onClick={() => onCloseDomainDialog(false)}>Cancel</Button>
-              <Button type='submit' size="sm" className="h-7 gap-1">
-                Continue
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-    </Dialog>
-
-    {/* OAuth Successful Modal */}
-    <Modal open={openSuccessDialog} setOpen={CloseSuccessDialog} >
-    <div className='h-[12rem] w-[20rem] justify-center flex p-1'>
-            <div className='flex flex-col gap-2 items-center'>
-            <div className='flex h-1/3 items-center justify-center gap-2'>
-            <img src={'https://i.postimg.cc/25G2FwWf/logo.png'} className={`${openSuccessDialog ? "opacity-100" : "opacity-0"} transition-all duration-500 delay-200`} width={60} height={60} />
-            <ArrowLeftRight size={25} className={`${openSuccessDialog ? "opacity-100" : "opacity-0"} transition-all duration-500 delay-200`} color='gray' />
-            
-            <img className={`w-12 h-12 transition-all duration-700 delay-200 rounded-lg ml-3 ${openSuccessDialog ? "scale-100 opacity-100" : "scale-50 opacity-0"}`} src={currentProviderLogoURL} alt={selectedProvider?.provider} />
-            
+            <h2 className={`text-xl font-semibold mb-2 text-center transition-all ease-in delay-200 ${openSuccessDialog ? "opacity-100 scale-100" : "opacity-0 scale-125"}`}>
+              Your data is being imported...
+            </h2>
+            <div className="flex items-center bg-white border-[1px] border-black text-black px-4 py-2 rounded-lg">
+              <span className="text-md mr-3">✓</span>
+              <span className="text-sm">You've successfully connected your account!</span>
             </div>
+            <button 
+              onClick={() => CloseSuccessDialog(false)}
+              className="mt-4 px-6 py-2 bg-black text-white rounded-lg font-semibold hover:bg-gray-100 hover:text-black transition-colors"
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
+      </Modal>
 
-            <div className={`text-white transition-all ease-in delay-200 ${openSuccessDialog ? "opacity-100 scale-100" : "opacity-0 scale-125"} font-semibold text-xl items-center`}>Connection Successful!</div>
+      {/* Loading state */}
+      {loading.status && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg flex items-center">
+            <LoadingSpinner className="w-6 h-6 mr-2" />
+            <span>Connecting to {loading.provider}...</span>
+          </div>
+        </div>
+      )}
 
-            <div className={`text-sm transition-all ease-in delay-200 ${openSuccessDialog ? "opacity-100 scale-100" : "opacity-0 scale-125"} text-gray-400 items-center align-middle text-center`}>The connection with {currentProvider} was successfully established. You can visit the Dashboard and verify the status.</div>
-
-            </div>
+      {/* Error message */}
+      {errorResponse.errorPresent && (
+        <div className="fixed bottom-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded z-50">
+          <p>{errorResponse.errorMessage}</p>
+        </div>
+      )}
     </div>
-    </Modal>
-    </>
   );
 };
 

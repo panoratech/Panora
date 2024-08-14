@@ -496,7 +496,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2862,9 +2862,10 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           docsUrl: 'https://shopify.dev/docs/apps/build',
           apiUrl: (storeName: string) => `https://${storeName}.myshopify.com`,
         },
-        logoPath: 'https://cdn.eastsideco.com/media/v3/services/ecommerce-services/shopify-logo.png',
+        logoPath: 'https://www.pngall.com/wp-content/uploads/13/Shopify-Logo-PNG.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: true,
+        primaryColor: '#5E8E3E',
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key', 'store_url']
@@ -2936,6 +2937,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHiusc7S5-BoiU1YKCztJMv_Qj7wlim4TwbA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: true,
+        primaryColor: "#702963",
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ['username', 'password', 'store_url']
