@@ -13,7 +13,6 @@ import { WoocommerceCustomerMapper } from './services/woocommerce/mappers';
 import { SyncService } from './sync/sync.service';
 import { SquarespaceCustomerMapper } from './services/squarespace/mappers';
 import { AmazonCustomerMapper } from './services/amazon/mappers';
-
 @Module({
   controllers: [CustomerController],
   providers: [

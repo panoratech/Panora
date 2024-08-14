@@ -7,6 +7,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -31,7 +33,6 @@ import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
-
 
 @ApiTags('hris/bankinfos')
 @Controller('hris/bankinfos')
@@ -107,6 +108,7 @@ export class BankinfoController {
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
   @ApiGetCustomResponse(UnifiedHrisBankinfoOutput)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
   async retrieve(

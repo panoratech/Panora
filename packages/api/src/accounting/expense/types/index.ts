@@ -1,7 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedAccountingExpenseInput, UnifiedAccountingExpenseOutput } from './model.unified';
+import {
+  UnifiedAccountingExpenseInput,
+  UnifiedAccountingExpenseOutput,
+} from './model.unified';
 import { OriginalExpenseOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IExpenseService {
   addExpense(
@@ -9,10 +13,7 @@ export interface IExpenseService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalExpenseOutput>>;
 
-  syncExpenses(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalExpenseOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalExpenseOutput[]>>;
 }
 
 export interface IExpenseMapper {

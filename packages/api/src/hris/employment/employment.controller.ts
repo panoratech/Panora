@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -56,6 +58,7 @@ export class EmploymentController {
   })
   @ApiPaginatedResponse(UnifiedHrisEmploymentOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getEmployments(
     @Headers('x-connection-token') connection_token: string,

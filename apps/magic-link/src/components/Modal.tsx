@@ -2,29 +2,39 @@
 import React, { useState } from 'react'
 import {X} from 'lucide-react'
 
-const Modal = ({open,setOpen,children} : {open:boolean,setOpen: (op : boolean) => void,children: React.ReactNode}) => {
+
+interface ModalProps {
+  open: boolean;
+  setOpen: (op: boolean) => void;
+  children: React.ReactNode;
+  backgroundClass?: string;
+  contentClass?: string;
+}
+
+const Modal: React.FC<ModalProps> = ({
+  open,
+  setOpen,
+  children,
+  backgroundClass = "bg-black/20 backdrop-blur ",
+  contentClass = ""
+}) => {
+  if (!open) return null;
+
   return (
     <div
       onClick={() => setOpen(false)}
       className={`
         fixed inset-0 flex justify-center items-center transition-colors
-        ${open ? "visible bg-black/20 backdrop-blur" : "invisible"}
+        ${backgroundClass}
       `}
     >
       {/* modal */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`
-        bg-[#1d1d1d] border-green-900 rounded-xl shadow p-6 transition-all
-          ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}
+        ${contentClass} transition-all
         `}
       >
-        <button
-          onClick={() => setOpen(false)}
-          className="absolute top-2 right-2 p-1 rounded-lg text-gray-400 bg-[#1d1d1d]"
-        >
-          <X color='gray' />
-        </button>
         {children}
       </div>
     </div>

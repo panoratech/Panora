@@ -1,38 +1,31 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Query,
-  Get,
-  Patch,
-  Param,
-  Headers,
-  UseGuards,
-} from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
-  ApiBody,
+  Controller,
+  Get,
+  Headers,
+  Param,
+  Query,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import {
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiHeader,
-  //ApiKeyAuth,
 } from '@nestjs/swagger';
 
-import { EmployerBenefitService } from './services/employerbenefit.service';
-import {
-  UnifiedHrisEmployerbenefitInput,
-  UnifiedHrisEmployerbenefitOutput,
-} from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { ConnectionUtils } from '@@core/connections/@utils';
 import {
   ApiGetCustomResponse,
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
-
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import { EmployerBenefitService } from './services/employerbenefit.service';
+import { UnifiedHrisEmployerbenefitOutput } from './types/model.unified';
 
 @ApiTags('hris/employerbenefits')
 @Controller('hris/employerbenefits')
@@ -57,6 +50,7 @@ export class EmployerBenefitController {
   })
   @ApiPaginatedResponse(UnifiedHrisEmployerbenefitOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getEmployerBenefits(
     @Headers('x-connection-token') connection_token: string,

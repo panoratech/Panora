@@ -48,7 +48,7 @@ export class NotionConnectionService extends AbstractBaseConnectionService {
     super(prisma, cryptoService);
     this.logger.setContext(NotionConnectionService.name);
     this.registry.registerService('notion', this);
-    this.type = providerToType('notion', 'management', AuthStrategy.oauth2);
+    this.type = providerToType('notion', 'productivity', AuthStrategy.oauth2);
   }
 
   async passthrough(
@@ -81,7 +81,7 @@ export class NotionConnectionService extends AbstractBaseConnectionService {
           data: config.data,
           headers: config.headers,
         },
-        'management.notion.passthrough',
+        'productivity.notion.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -100,7 +100,7 @@ export class NotionConnectionService extends AbstractBaseConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'notion',
-          vertical: 'management',
+          vertical: 'productivity',
         },
       });
 
@@ -130,7 +130,7 @@ export class NotionConnectionService extends AbstractBaseConnectionService {
       );
       const data: NotionOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : notion management ' + JSON.stringify(data),
+        'OAuth credentials : notion productivity ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -143,7 +143,7 @@ export class NotionConnectionService extends AbstractBaseConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
-            account_url: CONNECTORS_METADATA['management']['notion'].urls
+            account_url: CONNECTORS_METADATA['productivity']['notion'].urls
               .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
@@ -155,9 +155,9 @@ export class NotionConnectionService extends AbstractBaseConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'notion',
-            vertical: 'management',
+            vertical: 'productivity',
             token_type: 'oauth2',
-            account_url: CONNECTORS_METADATA['management']['notion'].urls
+            account_url: CONNECTORS_METADATA['productivity']['notion'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',

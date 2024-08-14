@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -33,7 +35,6 @@ import {
   ApiPaginatedResponse,
 } from '@@core/utils/dtos/openapi.respone.dto';
 
-
 @ApiTags('accounting/creditnotes')
 @Controller('accounting/creditnotes')
 export class CreditNoteController {
@@ -57,6 +58,7 @@ export class CreditNoteController {
   })
   @ApiPaginatedResponse(UnifiedAccountingCreditnoteOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getCreditNotes(
     @Headers('x-connection-token') connection_token: string,

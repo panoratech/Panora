@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalCreditNoteOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ICreditNoteService {
   addCreditNote(
@@ -12,10 +13,7 @@ export interface ICreditNoteService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalCreditNoteOutput>>;
 
-  syncCreditNotes(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalCreditNoteOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalCreditNoteOutput[]>>;
 }
 
 export interface ICreditNoteMapper {
@@ -34,5 +32,7 @@ export interface ICreditNoteMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAccountingCreditnoteOutput | UnifiedAccountingCreditnoteOutput[]>;
+  ): Promise<
+    UnifiedAccountingCreditnoteOutput | UnifiedAccountingCreditnoteOutput[]
+  >;
 }

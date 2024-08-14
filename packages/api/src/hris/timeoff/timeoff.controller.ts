@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -57,6 +59,7 @@ export class TimeoffController {
   })
   @ApiPaginatedResponse(UnifiedHrisTimeoffOutput)
   @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getTimeoffs(
     @Headers('x-connection-token') connection_token: string,

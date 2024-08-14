@@ -102,7 +102,9 @@ export class DeelConnectionService extends AbstractBaseConnectionService {
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${
-        this.env.getPanoraBaseUrl()
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getTunnelIngress()
+          : this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
@@ -190,7 +192,9 @@ export class DeelConnectionService extends AbstractBaseConnectionService {
     try {
       const { connectionId, refreshToken, projectId } = opts;
       const REDIRECT_URI = `${
-        this.env.getPanoraBaseUrl()
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getTunnelIngress()
+          : this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
 
       const formData = new URLSearchParams({

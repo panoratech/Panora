@@ -17,7 +17,13 @@ export class RetryHandler {
   ): Promise<PassthroughResponse> {
     try {
       const response: AxiosResponse = await axios(config);
-      return response;
+      const responseInfo = {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        data: response.data,
+      };
+      return responseInfo;
     } catch (error) {
       if (this.isRateLimitError(error)) {
         const retryId = uuidv4();

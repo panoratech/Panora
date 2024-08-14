@@ -13,6 +13,8 @@ import { PayGroupModule } from './paygroup/paygroup.module';
 import { PayrollRunModule } from './payrollrun/payrollrun.module';
 import { TimeoffModule } from './timeoff/timeoff.module';
 import { TimeoffBalanceModule } from './timeoffbalance/timeoffbalance.module';
+import { TimesheetentryModule } from './timesheetentry/timesheetentry.module';
+import { HrisUnificationService } from './@lib/@unification';
 
 @Module({
   exports: [
@@ -30,7 +32,9 @@ import { TimeoffBalanceModule } from './timeoffbalance/timeoffbalance.module';
     PayrollRunModule,
     TimeoffModule,
     TimeoffBalanceModule,
+    TimesheetentryModule,
   ],
+  providers: [HrisUnificationService],
   imports: [
     BankInfoModule,
     BenefitModule,
@@ -46,6 +50,7 @@ import { TimeoffBalanceModule } from './timeoffbalance/timeoffbalance.module';
     PayrollRunModule,
     TimeoffModule,
     TimeoffBalanceModule,
+    TimesheetentryModule,
   ],
 })
 export class HrisModule {}

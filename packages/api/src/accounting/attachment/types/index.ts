@@ -5,6 +5,7 @@ import {
 } from './model.unified';
 import { OriginalAttachmentOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IAttachmentService {
   addAttachment(
@@ -12,10 +13,7 @@ export interface IAttachmentService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalAttachmentOutput>>;
 
-  syncAttachments(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalAttachmentOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalAttachmentOutput[]>>;
 }
 
 export interface IAttachmentMapper {
@@ -34,5 +32,7 @@ export interface IAttachmentMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAccountingAttachmentOutput | UnifiedAccountingAttachmentOutput[]>;
+  ): Promise<
+    UnifiedAccountingAttachmentOutput | UnifiedAccountingAttachmentOutput[]
+  >;
 }

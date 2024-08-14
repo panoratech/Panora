@@ -138,6 +138,13 @@
     {
       "group": "",
       "pages": [
+        "hris/quickstart",
+        "hris/overview"
+      ]
+    },
+    {
+      "group": "",
+      "pages": [
         "file-storage/quickstart",
         "file-storage/overview"
       ]
@@ -914,6 +921,10 @@
     {
       "name": "E-Commerce",
       "url": "ecommerce"
+    },
+    {
+      "name": "HRIS",
+      "url": "hris"
     },
     {
       "name": "File Storage",

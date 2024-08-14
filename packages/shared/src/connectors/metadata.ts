@@ -131,6 +131,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://media.licdn.com/dms/image/C4D0BAQFOaK6KXEYj_w/company-logo_200_200/0/1630489791871/project_affinity_logo?e=2147483647&v=beta&t=u8j-1u3nO2m6vqgT170WJMCJyFSDiLYS_VguYOllNMI',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#244CED',
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ['password']
@@ -496,7 +497,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqz0aID6B-InxK_03P7tCtqpXNXdawBcro67CyEE0I5g&s',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -580,6 +581,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOxBDw6TkTaxR4EUGI_lNBLl4BCpd3AzXnr30cU_VEaB0jHFh__fFZJHXPB1t-451Eno8&usqp=CAU',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
+        primaryColor: '#5644D8',
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key']
@@ -1210,6 +1212,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://sbp-plugin-images.s3.eu-west-1.amazonaws.com/technologies526_65670ec92e038_brevo300.jpg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#0B996F',
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key']
@@ -1238,6 +1241,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://images.ctfassets.net/p03bi75xct27/2tVvkghDdMJxzkMca2QLnr/31b520c5e07db0103948af171fb54e99/ashby_logo_square.jpeg?q=80&fm=webp&w=2048',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#4a3ead',
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ['username']
@@ -1251,7 +1255,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
+        primaryColor: '#599D16',
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ['username', 'company_subdomain']
@@ -2087,12 +2092,12 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
       'gusto': {
         urls: {
           docsUrl: 'https://docs.gusto.com/app-integrations/docs/introduction',
-          apiUrl: 'https://api.gusto.com/v1',
+          apiUrl: 'https://api.gusto.com', // api.gusto-demo.com
           authBaseUrl: 'https://api.gusto-demo.com/oauth/authorize'
         },
         logoPath: 'https://cdn.runalloy.com/landing/uploads-new/Gusto_Logo_67ca008403.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2761,7 +2766,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
     },
-    'management': {
+    'productivity': {
       'notion': {
         urls: {
           docsUrl: 'https://developers.notion.com/docs/getting-started',
@@ -2802,6 +2807,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH_-bQ399xl-yfJYhbLraU-w0yWBcppLf8NA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: false,
+        primaryColor: '#000001',
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key', 'store_hash']
@@ -2862,9 +2868,10 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           docsUrl: 'https://shopify.dev/docs/apps/build',
           apiUrl: (storeName: string) => `https://${storeName}.myshopify.com`,
         },
-        logoPath: 'https://cdn.eastsideco.com/media/v3/services/ecommerce-services/shopify-logo.png',
+        logoPath: 'https://www.pngall.com/wp-content/uploads/13/Shopify-Logo-PNG.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: true,
+        primaryColor: '#5E8E3E',
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key', 'store_url']
@@ -2936,6 +2943,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHiusc7S5-BoiU1YKCztJMv_Qj7wlim4TwbA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: true,
+        primaryColor: '#702963',
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ['username', 'password', 'store_url']

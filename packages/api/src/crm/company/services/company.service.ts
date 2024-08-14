@@ -526,7 +526,7 @@ export class CompanyService {
 
           // Convert the map to an array of objects
           // Convert the map to an object
-const field_mappings = Object.fromEntries(fieldMappingsMap);
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedCrmCompanyOutput format
           return {

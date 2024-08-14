@@ -64,7 +64,7 @@ export class SlackConnectionService extends AbstractBaseConnectionService {
     super(prisma, cryptoService);
     this.logger.setContext(SlackConnectionService.name);
     this.registry.registerService('slack', this);
-    this.type = providerToType('slack', 'management', AuthStrategy.oauth2);
+    this.type = providerToType('slack', 'productivity', AuthStrategy.oauth2);
   }
 
   async passthrough(
@@ -97,7 +97,7 @@ export class SlackConnectionService extends AbstractBaseConnectionService {
           data: config.data,
           headers: config.headers,
         },
-        'management.slack.passthrough',
+        'productivity.slack.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -116,7 +116,7 @@ export class SlackConnectionService extends AbstractBaseConnectionService {
         where: {
           id_linked_user: linkedUserId,
           provider_slug: 'slack',
-          vertical: 'management',
+          vertical: 'productivity',
         },
       });
 
@@ -142,7 +142,7 @@ export class SlackConnectionService extends AbstractBaseConnectionService {
       );
       const data: SlackOAuthResponse = res.data;
       this.logger.log(
-        'OAuth credentials : slack management ' + JSON.stringify(data),
+        'OAuth credentials : slack productivity ' + JSON.stringify(data),
       );
 
       let db_res;
@@ -157,7 +157,7 @@ export class SlackConnectionService extends AbstractBaseConnectionService {
             access_token: this.cryptoService.encrypt(
               data.authed_user.access_token,
             ),
-            account_url: CONNECTORS_METADATA['management']['slack'].urls
+            account_url: CONNECTORS_METADATA['productivity']['slack'].urls
               .apiUrl as string,
             status: 'valid',
             created_at: new Date(),
@@ -169,9 +169,9 @@ export class SlackConnectionService extends AbstractBaseConnectionService {
             id_connection: uuidv4(),
             connection_token: connection_token,
             provider_slug: 'slack',
-            vertical: 'management',
+            vertical: 'productivity',
             token_type: 'oauth2',
-            account_url: CONNECTORS_METADATA['management']['slack'].urls
+            account_url: CONNECTORS_METADATA['productivity']['slack'].urls
               .apiUrl as string,
             access_token: this.cryptoService.encrypt(
               data.authed_user.access_token,

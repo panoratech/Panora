@@ -65,9 +65,9 @@ export class GustoConnectionService extends AbstractBaseConnectionService {
         },
       });
 
-      config.headers['Authorization'] = `Basic ${Buffer.from(
-        `${this.cryptoService.decrypt(connection.access_token)}:`,
-      ).toString('base64')}`;
+      config.headers['Authorization'] = `Bearer ${this.cryptoService.decrypt(
+        connection.access_token,
+      )}`;
 
       config.headers = {
         ...config.headers,
@@ -185,9 +185,7 @@ export class GustoConnectionService extends AbstractBaseConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${
-        this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
