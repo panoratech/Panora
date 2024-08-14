@@ -167,7 +167,7 @@ paths:
       x-codeSamples:
         - lang: typescript
           label: signIn
-          source: "import { Panora } from \"@panora/sdk\";\n\nconst panora = new Panora({\n  apiKey: \"<YOUR_API_KEY_HERE>\",\n});\n\nasync function run() {\n  await panora.auth.login.signIn({\n    idUser: \"<value>\",\n    email: \"Oda.Treutel97@hotmail.com\",\n    passwordHash: \"<value>\",\n  });\n\n  \n}\n\nrun();"
+          source: "import { Panora } from \"@panora/sdk\";\n\nconst panora = new Panora({\n  apiKey: \"<YOUR_API_KEY_HERE>\",\n});\n\nasync function run() {\n  await panora.auth.login.signIn({\n    email: \"Oda.Treutel97@hotmail.com\",\n    passwordHash: \"<value>\",\n  });\n\n  \n}\n\nrun();"
         - lang: python
           label: signIn
           source: |-
@@ -483,6 +483,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -566,6 +568,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -659,6 +663,8 @@ paths:
                     type: object
                     additionalProperties: true
                     description: Dynamic event payload
+        '201':
+          description: ''
       tags: *ref_0
       x-speakeasy-group: webhooks
       x-codeSamples:
@@ -765,6 +771,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -1216,6 +1223,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -1425,6 +1433,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -1629,6 +1638,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -1987,6 +1997,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -2400,6 +2411,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -2810,6 +2822,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -3151,6 +3164,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -3515,6 +3529,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -3857,6 +3872,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -4066,6 +4082,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -4415,6 +4432,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -4624,6 +4642,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -4834,6 +4853,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -5180,6 +5200,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -5389,6 +5410,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -6655,11 +6677,15 @@ paths:
           required: false
           in: query
           schema:
+            minimum: 1
+            default: 1
             type: number
         - name: limit
           required: false
           in: query
           schema:
+            minimum: 1
+            default: 10
             type: number
       responses:
         '200':
@@ -6756,6 +6782,12 @@ paths:
             application/json:
               schema:
                 type: object
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
       tags: &ref_21
         - passthrough
       x-speakeasy-group: passthrough
@@ -6776,13 +6808,6 @@ paths:
                 passThroughRequestDto: {
                   method: PassThroughRequestDtoMethod.Get,
                   path: "/dev",
-                  data: {},
-                requestFormat:     {
-                      "key": "<value>",
-                    },
-                  overrideBaseUrl: {
-                    "key": "<value>",
-                  },
                 },
               });
 
@@ -6930,6 +6955,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -7139,6 +7165,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -7348,6 +7375,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -7557,6 +7585,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -7766,6 +7795,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -7976,6 +8006,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -8284,6 +8315,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -8494,6 +8526,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -8703,6 +8736,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -8912,6 +8946,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -9121,6 +9156,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -9330,6 +9366,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -9539,6 +9576,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -9847,6 +9885,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -10056,6 +10095,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -10371,6 +10411,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -10688,6 +10729,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -11003,6 +11045,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -11318,6 +11361,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -11529,6 +11573,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -11740,6 +11785,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -12051,6 +12097,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -12262,6 +12309,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -12573,6 +12621,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -12784,6 +12833,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -13133,6 +13183,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -13498,6 +13549,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -13847,6 +13899,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -14300,6 +14353,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -14509,6 +14563,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -14876,6 +14931,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -15086,6 +15142,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -15295,6 +15352,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -15504,6 +15562,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -15713,6 +15772,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -15922,6 +15982,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -16131,6 +16192,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -16340,6 +16402,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -16549,6 +16612,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -16753,6 +16817,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -17065,6 +17130,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -17274,6 +17340,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -17587,6 +17654,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -17797,6 +17865,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -18007,6 +18076,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -18217,6 +18287,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -18529,6 +18600,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -18739,6 +18811,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -19051,6 +19124,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -19261,6 +19335,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -19573,6 +19648,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -19782,6 +19858,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -20095,6 +20172,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -20407,6 +20485,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -20617,6 +20696,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -20930,6 +21010,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -21139,6 +21220,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -21349,6 +21431,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -21559,6 +21642,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -21769,6 +21853,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -21978,6 +22063,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -22326,6 +22412,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -22677,6 +22764,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -22886,6 +22974,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -23095,6 +23184,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -23419,6 +23509,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -23538,7 +23629,12 @@ paths:
           label: createEcommerceOrder
           source: |-
             import { Panora } from "@panora/sdk";
-            import { UnifiedEcommerceOrderInputCurrency } from "@panora/sdk/models/components";
+            import {
+              UnifiedEcommerceOrderInputCurrency,
+              UnifiedEcommerceOrderInputFulfillmentStatus,
+              UnifiedEcommerceOrderInputOrderStatus,
+              UnifiedEcommerceOrderInputPaymentStatus,
+            } from "@panora/sdk/models/components";
 
             const panora = new Panora({
               apiKey: "<YOUR_API_KEY_HERE>",
@@ -23549,17 +23645,19 @@ paths:
                 xConnectionToken: "<value>",
                 remoteData: false,
                 unifiedEcommerceOrderInput: {
-                  orderStatus: "PAID",
+                  orderStatus: UnifiedEcommerceOrderInputOrderStatus.Unshipped,
                   orderNumber: "19823838833",
-                  paymentStatus: "SUCCESS",
+                  paymentStatus: UnifiedEcommerceOrderInputPaymentStatus.Success,
                   currency: UnifiedEcommerceOrderInputCurrency.Aud,
                   totalPrice: 300,
                   totalDiscount: 10,
                   totalShipping: 120,
                   totalTax: 120,
-                  fulfillmentStatus: "delivered",
+                  fulfillmentStatus: UnifiedEcommerceOrderInputFulfillmentStatus.Pending,
                   customerId: "801f9ede-c698-4e66-a7fc-48d19eebaa4f",
-                  items: {},
+                  items: [
+                    {},
+                  ],
                   fieldMappings: {},
                 },
               });
@@ -23740,6 +23838,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -23944,6 +24043,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -24149,6 +24249,7 @@ paths:
           example: 10
           description: Set to get the number of records.
           schema:
+            default: 50
             type: number
         - name: cursor
           required: false
@@ -24494,7 +24595,6 @@ components:
         password_hash:
           type: string
       required:
-        - id_user
         - email
         - password_hash
     Connection:
@@ -24582,8 +24682,8 @@ components:
           description: The unique UUID of the webhook.
         endpoint_description:
           type: string
-          example: Webhook to receive connection events
           nullable: true
+          example: Webhook to receive connection events
           description: The description of the webhook.
         url:
           type: string
@@ -24621,8 +24721,8 @@ components:
         last_update:
           format: date-time
           type: string
-          example: '2024-10-01T12:00:00Z'
           nullable: true
+          example: '2024-10-01T12:00:00Z'
           description: The last update date of the webhook.
       required:
         - id_webhook_endpoint
@@ -24657,7 +24757,6 @@ components:
             type: string
       required:
         - url
-        - description
         - scope
     SignatureVerificationDto:
       type: object
@@ -26748,8 +26847,6 @@ components:
         - id_project
         - name
         - sync_mode
-        - pull_frequency
-        - redirect_url
         - id_user
         - id_connector_set
     CreateProjectDto:
@@ -27118,10 +27215,10 @@ components:
       type: object
       properties:
         method:
-          type: string
           enum:
             - GET
             - POST
+          type: string
         path:
           type: string
           nullable: true
@@ -27140,12 +27237,11 @@ components:
           type: object
           additionalProperties: true
           nullable: true
+        headers:
+          type: object
       required:
         - method
         - path
-        - data
-        - request_format
-        - overrideBaseUrl
     UnifiedHrisBankinfoOutput:
       type: object
       properties: {}
@@ -29529,12 +29625,20 @@ components:
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party & Panora
+    LineItem:
+      type: object
+      properties: {}
     UnifiedEcommerceOrderOutput:
       type: object
       properties:
         order_status:
           type: string
-          example: PAID
+          example: UNSHIPPED
+          enum: &ref_150
+            - PENDING
+            - UNSHIPPED
+            - SHIPPED
+            - CANCELED
           nullable: true
           description: The status of the order
         order_number:
@@ -29545,13 +29649,16 @@ components:
         payment_status:
           type: string
           example: SUCCESS
+          enum: &ref_151
+            - SUCCESS
+            - FAIL
           nullable: true
           description: The payment status of the order
         currency:
           type: string
           nullable: true
           example: AUD
-          enum: &ref_150
+          enum: &ref_152
             - AED
             - AFN
             - ALL
@@ -29739,7 +29846,11 @@ components:
         fulfillment_status:
           type: string
           nullable: true
-          example: delivered
+          example: PENDING
+          enum: &ref_153
+            - PENDING
+            - FULFILLED
+            - CANCELED
           description: The fulfillment status of the order
         customer_id:
           type: string
@@ -29747,13 +29858,39 @@ components:
           nullable: true
           description: The UUID of the customer associated with the order
         items:
-          type: object
           nullable: true
-          example: &ref_151 {}
+          example: &ref_154
+            - remote_id: '12345'
+              product_id: prod_001
+              variant_id: var_001
+              sku: SKU123
+              title: Sample Product
+              quantity: 2
+              price: '19.99'
+              total: '39.98'
+              fulfillment_status: PENDING
+              requires_shipping: true
+              taxable: true
+              weight: 1.5
+              variant_title: Size M
+              vendor: Sample Vendor
+              properties:
+                - name: Color
+                  value: Red
+              tax_lines:
+                - title: Sales Tax
+                  price: '3.00'
+                  rate: 0.075
+              discount_allocations:
+                - amount: '5.00'
+                  discount_application_index: 0
           description: The items in the order
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_152
+          example: &ref_155
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -29791,7 +29928,8 @@ components:
       properties:
         order_status:
           type: string
-          example: PAID
+          example: UNSHIPPED
+          enum: *ref_150
           nullable: true
           description: The status of the order
         order_number:
@@ -29802,13 +29940,14 @@ components:
         payment_status:
           type: string
           example: SUCCESS
+          enum: *ref_151
           nullable: true
           description: The payment status of the order
         currency:
           type: string
           nullable: true
           example: AUD
-          enum: *ref_150
+          enum: *ref_152
           description: >-
             The currency of the order. Authorized value must be of type CurrencyCode (ISO 4217)
         total_price:
@@ -29834,7 +29973,8 @@ components:
         fulfillment_status:
           type: string
           nullable: true
-          example: delivered
+          example: PENDING
+          enum: *ref_153
           description: The fulfillment status of the order
         customer_id:
           type: string
@@ -29842,13 +29982,15 @@ components:
           nullable: true
           description: The UUID of the customer associated with the order
         items:
-          type: object
           nullable: true
-          example: *ref_151
+          example: *ref_154
           description: The items in the order
+          type: array
+          items:
+            $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_152
+          example: *ref_155
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party & Panora
@@ -30022,7 +30164,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_153
+          example: &ref_156
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -30093,7 +30235,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_153
+          example: *ref_156
           description: >-
             The custom field mappings of the attachment between the remote 3rd party & Panora
           additionalProperties: true
