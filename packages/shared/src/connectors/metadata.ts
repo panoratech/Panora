@@ -131,6 +131,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://media.licdn.com/dms/image/C4D0BAQFOaK6KXEYj_w/company-logo_200_200/0/1630489791871/project_affinity_logo?e=2147483647&v=beta&t=u8j-1u3nO2m6vqgT170WJMCJyFSDiLYS_VguYOllNMI',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#244CED',
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ['password']
@@ -580,6 +581,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOxBDw6TkTaxR4EUGI_lNBLl4BCpd3AzXnr30cU_VEaB0jHFh__fFZJHXPB1t-451Eno8&usqp=CAU',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
+        primaryColor: '#5644D8',
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key']
@@ -1210,6 +1212,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://sbp-plugin-images.s3.eu-west-1.amazonaws.com/technologies526_65670ec92e038_brevo300.jpg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#0B996F',
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key']
@@ -1238,6 +1241,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://images.ctfassets.net/p03bi75xct27/2tVvkghDdMJxzkMca2QLnr/31b520c5e07db0103948af171fb54e99/ashby_logo_square.jpeg?q=80&fm=webp&w=2048',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#4a3ead',
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ['username']
@@ -1251,7 +1255,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
+        primaryColor: '#599D16',
         authStrategy: {
           strategy: AuthStrategy.basic,
           properties: ['username', 'company_subdomain']
@@ -2802,6 +2807,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH_-bQ399xl-yfJYhbLraU-w0yWBcppLf8NA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
         active: false,
+        primaryColor: '#000001',
         authStrategy: {
           strategy: AuthStrategy.api_key,
           properties: ['api_key', 'store_hash']
