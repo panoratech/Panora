@@ -43,7 +43,7 @@ export class HubspotService implements IDealService {
         properties: dealData,
       };
       const resp = await axios.post(
-        `${connection.account_url}/v3/objects/deals`,
+        `${connection.account_url}/crm/v3/objects/deals`,
         JSON.stringify(dataBody),
         {
           headers: {

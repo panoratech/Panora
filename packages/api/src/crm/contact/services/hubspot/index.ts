@@ -80,7 +80,7 @@ export class HubspotService implements IContactService {
 
       const commonPropertyNames = Object.keys(commonHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/v3/objects/contacts`;
+      const baseURL = `${connection.account_url}/crm/v3/objects/contacts`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
