@@ -215,6 +215,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/MC_Aoa7rlMjGtcgAdiLJGeIm3-kpVw7APQmQUrUZtXuoZokiqVOJqR-bTu7idJBD8g',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#516EE2',
         options: {
           end_user_domain: true
         },

@@ -7,6 +7,403 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model crm_deals_stages {
+  id_crm_deals_stage String      @id(map: "pk_crm_deal_stages") @db.Uuid
+  stage_name         String?
+  created_at         DateTime    @db.Timestamptz(6)
+  modified_at        DateTime    @db.Timestamptz(6)
+  id_linked_user     String?     @db.Uuid
+  remote_id          String?
+  remote_platform    String?
+  id_connection      String      @db.Uuid
+  crm_deals          crm_deals[]
+}
+
+model crm_users {
+  id_crm_user     String            @id(map: "pk_crm_users") @db.Uuid
+  name            String?
+  email           String?
+  created_at      DateTime          @db.Timestamptz(6)
+  modified_at     DateTime          @db.Timestamptz(6)
+  id_linked_user  String?           @db.Uuid
+  remote_id       String?
+  remote_platform String?
+  id_connection   String            @db.Uuid
+  crm_companies   crm_companies[]
+  crm_contacts    crm_contacts[]
+  crm_deals       crm_deals[]
+  crm_engagements crm_engagements[]
+  crm_tasks       crm_tasks[]
+}
+
+model cs_attributes {
+  id_cs_attribute String @id(map: "pk_ct_attributes") @db.Uuid
+  attribute_slug  String
+  data_type       String
+  id_cs_entity    String @db.Uuid
+}
+
+model cs_entities {
+  id_cs_entity           String @id(map: "pk_ct_entities") @db.Uuid
+  id_connection_strategy String @db.Uuid
+}
+
+model cs_values {
+  id_cs_value     String @id(map: "pk_ct_values") @db.Uuid
+  value           String
+  id_cs_attribute String @db.Uuid
+}
+
+model ecom_customers {
+  id_ecom_customer String           @id(map: "pk_ecom_customers") @db.Uuid
+  remote_id        String?
+  email            String?
+  first_name       String?
+  last_name        String?
+  phone_number     String?
+  modified_at      DateTime         @db.Timestamptz(6)
+  created_at       DateTime         @db.Timestamptz(6)
+  id_connection    String           @db.Uuid
+  remote_deleted   Boolean
+  ecom_addresses   ecom_addresses[]
+  ecom_orders      ecom_orders[]
+}
+
+model ecom_fulfilment_orders {
+  id_ecom_fulfilment_order String @id(map: "pk_ecom_fulfilment_order") @db.Uuid
+}
+
+model ecom_order_line_items {
+  id_ecom_order_line_item String @id(map: "pk_106") @db.Uuid
+}
+
+model ecom_products {
+  id_ecom_product       String                  @id(map: "pk_ecom_products") @db.Uuid
+  remote_id             String?
+  product_url           String?
+  product_type          String?
+  product_status        String?
+  images_urls           String[]
+  description           String?
+  vendor                String?
+  tags                  String[]
+  modified_at           DateTime                @db.Timestamptz(6)
+  created_at            DateTime                @db.Timestamptz(6)
+  id_connection         String                  @db.Uuid
+  remote_deleted        Boolean
+  ecom_product_variants ecom_product_variants[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model entity {
+  id_entity          String      @id(map: "pk_entity") @db.Uuid
+  ressource_owner_id String      @db.Uuid
+  created_at         DateTime    @db.Timestamptz(6)
+  modified_at        DateTime    @db.Timestamptz(6)
+  attribute          attribute[]
+  value              value[]
+}
+
+model fs_drives {
+  id_fs_drive       String    @id(map: "pk_fs_drives") @db.Uuid
+  drive_url         String?
+  name              String?
+  remote_created_at DateTime? @db.Timestamptz(6)
+  remote_id         String?
+  created_at        DateTime  @db.Timestamptz(6)
+  modified_at       DateTime  @db.Timestamptz(6)
+  id_connection     String    @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model fs_groups {
+  id_fs_group        String   @id(map: "pk_fs_groups") @db.Uuid
+  name               String?
+  users              String[]
+  remote_id          String?
+  remote_was_deleted Boolean
+  created_at         DateTime @db.Timestamptz(6)
+  modified_at        DateTime @db.Timestamptz(6)
+  id_connection      String   @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model fs_permissions {
+  id_fs_permission String   @id(map: "pk_fs_permissions") @db.Uuid
+  remote_id        String?
+  user             String?  @db.Uuid
+  group            String?  @db.Uuid
+  type             String?
+  roles            String[]
+  created_at       DateTime @db.Timestamptz(6)
+  modified_at      DateTime @db.Timestamptz(6)
+  id_connection    String   @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model fs_shared_links {
+  id_fs_shared_link  String    @id(map: "pk_fs_shared_links") @db.Uuid
+  url                String?
+  download_url       String?
+  scope              String?
+  password_protected Boolean
+  password           String?
+  expires_at         DateTime? @db.Timestamptz(6)
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
+  id_connection      String    @db.Uuid
+  id_fs_folder       String?   @db.Uuid
+  id_fs_file         String?   @db.Uuid
+  remote_id          String?
+}
+
+model fs_users {
+  id_fs_user    String   @id(map: "pk_fs_users") @db.Uuid
+  name          String?
+  email         String?
+  is_me         Boolean
+  remote_id     String?
+  created_at    DateTime @db.Timestamptz(6)
+  modified_at   DateTime @db.Timestamptz(6)
+  id_connection String   @db.Uuid
+}
+
+model hris_companies {
+  id_hris_company    String           @id(map: "pk_hris_companies") @db.Uuid
+  legal_name         String?
+  display_name       String?
+  eins               String[]
+  remote_id          String?
+  remote_created_at  DateTime?        @db.Timestamptz(6)
+  created_at         DateTime         @db.Timestamptz(6)
+  modified_at        DateTime         @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String           @db.Uuid
+  hris_employees     hris_employees[]
+}
+
+model hris_employer_benefits {
+  id_hris_employer_benefit String          @id(map: "pk_hris_employer_benefits") @db.Uuid
+  id_connection            String          @db.Uuid
+  benefit_plan_type        String?
+  name                     String?
+  description              String?
+  deduction_code           String?
+  remote_id                String?
+  remote_created_at        DateTime?       @db.Timestamptz(6)
+  remote_was_deleted       Boolean
+  created_at               DateTime        @db.Timestamptz(6)
+  modified_at              DateTime        @db.Timestamptz(6)
+  hris_benefits            hris_benefits[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hris_groups {
+  id_hris_group      String   @id(map: "pk_hris_groups") @db.Uuid
+  parent_group       String?  @db.Uuid
+  name               String?
+  type               String?
+  remote_id          String
+  remote_created_at  DateTime @db.Timestamptz(6)
+  created_at         DateTime @db.Timestamptz(6)
+  modified_at        DateTime @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String   @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hris_locations {
+  id_hris_location   String   @id(map: "pk_hris_locations") @db.Uuid
+  name               String?
+  phone_number       String?
+  street_1           String?
+  street_2           String?
+  city               String?
+  state              String?
+  id_hris_company    String?  @db.Uuid
+  id_hris_employee   String?  @db.Uuid
+  zip_code           String?
+  country            String?
+  location_type      String?
+  remote_id          String?
+  remote_created_at  DateTime @db.Timestamptz(6)
+  created_at         DateTime @db.Timestamptz(6)
+  modified_at        DateTime @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String   @db.Uuid
+}
+
+model hris_pay_groups {
+  id_hris_pay_group  String             @id(map: "pk_hris_pay_groups") @db.Uuid
+  pay_group_name     String?
+  remote_id          String?
+  remote_created_at  DateTime?          @db.Timestamptz(6)
+  created_at         DateTime           @db.Timestamptz(6)
+  modified_at        DateTime           @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String             @db.Uuid
+  hris_employments   hris_employments[]
+}
+
+model hris_payroll_runs {
+  id_hris_payroll_run        String                       @id(map: "pk_hris_payroll_runs") @db.Uuid
+  run_state                  String?
+  run_type                   String?
+  start_date                 DateTime?                    @db.Timestamptz(6)
+  end_date                   DateTime?                    @db.Timestamptz(6)
+  check_date                 DateTime?                    @db.Timestamptz(6)
+  remote_id                  String?
+  remote_created_at          DateTime?                    @db.Timestamptz(6)
+  created_at                 DateTime                     @db.Timestamptz(6)
+  modified_at                DateTime                     @db.Timestamptz(6)
+  remote_was_deleted         Boolean
+  id_connection              String                       @db.Uuid
+  hris_employee_payroll_runs hris_employee_payroll_runs[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model hris_time_off {
+  id_hris_time_off   String    @id(map: "pk_hris_time_off") @db.Uuid
+  employee           String?   @db.Uuid
+  approver           String?   @db.Uuid
+  status             String?
+  employee_note      String?
+  units              String?
+  amount             BigInt?
+  request_type       String?
+  start_time         DateTime? @db.Timestamptz(6)
+  end_time           DateTime? @db.Timestamptz(6)
+  remote_id          String?
+  remote_created_at  DateTime? @db.Timestamptz(6)
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
+  remote_was_deleted Boolean
+  id_connection      String    @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model managed_webhooks {
+  id_managed_webhook    String   @id(map: "pk_managed_webhooks") @db.Uuid
+  active                Boolean
+  id_connection         String   @db.Uuid
+  endpoint              String   @db.Uuid
+  api_version           String?
+  active_events         String[]
+  remote_signing_secret String?
+  modified_at           DateTime @db.Timestamptz(6)
+  created_at            DateTime @db.Timestamptz(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model remote_data {
+  id_remote_data     String    @id(map: "pk_remote_data") @db.Uuid
+  ressource_owner_id String?   @unique(map: "force_unique_ressourceownerid") @db.Uuid
+  format             String?
+  data               String?
+  created_at         DateTime? @db.Timestamptz(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tcg_accounts {
+  id_tcg_account  String         @id(map: "pk_tcg_account") @db.Uuid
+  remote_id       String?
+  name            String?
+  domains         String[]
+  remote_platform String?
+  created_at      DateTime       @db.Timestamptz(6)
+  modified_at     DateTime       @db.Timestamptz(6)
+  id_linked_user  String?        @db.Uuid
+  id_connection   String         @db.Uuid
+  tcg_contacts    tcg_contacts[]
+}
+
+model tcg_collections {
+  id_tcg_collection String   @id(map: "pk_tcg_collections") @db.Uuid
+  name              String?
+  description       String?
+  remote_id         String?
+  remote_platform   String?
+  collection_type   String?
+  parent_collection String?  @db.Uuid
+  id_tcg_ticket     String?  @db.Uuid
+  created_at        DateTime @db.Timestamptz(6)
+  modified_at       DateTime @db.Timestamptz(6)
+  id_linked_user    String   @db.Uuid
+  id_connection     String   @db.Uuid
+}
+
+model tcg_teams {
+  id_tcg_team     String   @id(map: "pk_tcg_teams") @db.Uuid
+  remote_id       String?
+  remote_platform String?
+  name            String?
+  description     String?
+  created_at      DateTime @db.Timestamp(6)
+  modified_at     DateTime @db.Timestamp(6)
+  id_linked_user  String?  @db.Uuid
+  id_connection   String   @db.Uuid
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model tcg_users {
+  id_tcg_user     String         @id(map: "pk_tcg_users") @db.Uuid
+  name            String?
+  email_address   String?
+  remote_id       String?
+  remote_platform String?
+  teams           String[]
+  id_linked_user  String?        @db.Uuid
+  id_connection   String         @db.Uuid
+  created_at      DateTime?      @db.Timestamptz(6)
+  modified_at     DateTime?      @db.Timestamptz(6)
+  tcg_comments    tcg_comments[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  id_user                 String     @id(map: "pk_users") @db.Uuid
+  identification_strategy String
+  email                   String?    @unique(map: "unique_email")
+  password_hash           String?
+  first_name              String
+  last_name               String
+  id_stytch               String?    @unique(map: "force_stytch_id_unique")
+  created_at              DateTime   @default(now()) @db.Timestamptz(6)
+  modified_at             DateTime   @default(now()) @db.Timestamptz(6)
+  reset_token             String?
+  reset_token_expires_at  DateTime?  @db.Timestamptz(6)
+  api_keys                api_keys[]
+  projects                projects[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model webhook_endpoints {
+  id_webhook_endpoint       String                      @id(map: "pk_webhook_endpoint") @db.Uuid
+  endpoint_description      String?
+  url                       String
+  secret                    String
+  active                    Boolean
+  created_at                DateTime                    @db.Timestamptz(6)
+  scope                     String[]
+  id_project                String                      @db.Uuid
+  last_update               DateTime?                   @db.Timestamptz(6)
+  webhook_delivery_attempts webhook_delivery_attempts[]
+}
+
+model webhooks_payloads {
+  id_webhooks_payload       String                      @id(map: "pk_webhooks_payload") @db.Uuid
+  data                      Json                        @db.Json
+  webhook_delivery_attempts webhook_delivery_attempts[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model webhooks_reponses {
+  id_webhooks_reponse       String                      @id(map: "pk_webhooks_reponse") @db.Uuid
+  http_response_data        String
+  http_status_code          String
+  webhook_delivery_attempts webhook_delivery_attempts[]
+}
+
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model acc_accounting_periods {
   id_acc_accounting_period String    @id(map: "pk_acc_accounting_periods") @db.Uuid
@@ -938,10 +1335,14 @@ model connector_sets {
   crm_close        Boolean?
   fs_box           Boolean?
   tcg_github       Boolean?
+  hris_gusto       Boolean?
+  hris_deel        Boolean?
+  hris_sage        Boolean?
   ecom_woocommerce Boolean?
   ecom_shopify     Boolean?
   ecom_amazon      Boolean?
   ecom_squarespace Boolean?
+  ats_ashby        Boolean?
   projects         projects[]
 }
 
@@ -1037,18 +1438,6 @@ model crm_deals {
   @@index([id_crm_user], map: "crm_deal_crm_userid")
   @@index([id_crm_deals_stage], map: "crm_deal_deal_stageid")
   @@index([id_crm_company], map: "fk_crm_deal_crmcompanyid")
-}
-
-model crm_deals_stages {
-  id_crm_deals_stage String      @id(map: "pk_crm_deal_stages") @db.Uuid
-  stage_name         String?
-  created_at         DateTime    @db.Timestamptz(6)
-  modified_at        DateTime    @db.Timestamptz(6)
-  id_linked_user     String?     @db.Uuid
-  remote_id          String?
-  remote_platform    String?
-  id_connection      String      @db.Uuid
-  crm_deals          crm_deals[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -1160,41 +1549,6 @@ model crm_tasks {
   @@index([id_crm_deal], map: "fk_crmtask_dealid")
 }
 
-model crm_users {
-  id_crm_user     String            @id(map: "pk_crm_users") @db.Uuid
-  name            String?
-  email           String?
-  created_at      DateTime          @db.Timestamptz(6)
-  modified_at     DateTime          @db.Timestamptz(6)
-  id_linked_user  String?           @db.Uuid
-  remote_id       String?
-  remote_platform String?
-  id_connection   String            @db.Uuid
-  crm_companies   crm_companies[]
-  crm_contacts    crm_contacts[]
-  crm_deals       crm_deals[]
-  crm_engagements crm_engagements[]
-  crm_tasks       crm_tasks[]
-}
-
-model cs_attributes {
-  id_cs_attribute String @id(map: "pk_ct_attributes") @db.Uuid
-  attribute_slug  String
-  data_type       String
-  id_cs_entity    String @db.Uuid
-}
-
-model cs_entities {
-  id_cs_entity           String @id(map: "pk_ct_entities") @db.Uuid
-  id_connection_strategy String @db.Uuid
-}
-
-model cs_values {
-  id_cs_value     String @id(map: "pk_ct_values") @db.Uuid
-  value           String
-  id_cs_attribute String @db.Uuid
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ecom_addresses {
   id_ecom_address  String         @id(map: "pk_ecom_customer_addresses") @db.Uuid
@@ -1217,25 +1571,6 @@ model ecom_addresses {
   @@index([id_ecom_order], map: "fk_index_fk_ecom_order_address")
 }
 
-model ecom_customers {
-  id_ecom_customer String           @id(map: "pk_ecom_customers") @db.Uuid
-  remote_id        String?
-  email            String?
-  first_name       String?
-  last_name        String?
-  phone_number     String?
-  modified_at      DateTime         @db.Timestamptz(6)
-  created_at       DateTime         @db.Timestamptz(6)
-  id_connection    String           @db.Uuid
-  remote_deleted   Boolean
-  ecom_addresses   ecom_addresses[]
-  ecom_orders      ecom_orders[]
-}
-
-model ecom_fulfilment_orders {
-  id_ecom_fulfilment_order String @id(map: "pk_ecom_fulfilment_order") @db.Uuid
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model ecom_fulfilments {
   id_ecom_fulfilment String       @id(map: "pk_ecom_fulfilments") @db.Uuid
@@ -1252,10 +1587,6 @@ model ecom_fulfilments {
   ecom_orders        ecom_orders? @relation(fields: [id_ecom_order], references: [id_ecom_order], onDelete: NoAction, onUpdate: NoAction, map: "fk_ecom_order_fulfilment")
 
   @@index([id_ecom_order], map: "fk_index_ecom_order_fulfilment")
-}
-
-model ecom_order_line_items {
-  id_ecom_order_line_item String @id(map: "pk_106") @db.Uuid
 }
 
 model ecom_orders {
@@ -1302,33 +1633,6 @@ model ecom_product_variants {
   @@index([id_ecom_product], map: "fk_index_ecom_products_variants")
 }
 
-model ecom_products {
-  id_ecom_product       String                  @id(map: "pk_ecom_products") @db.Uuid
-  remote_id             String?
-  product_url           String?
-  product_type          String?
-  product_status        String?
-  images_urls           String[]
-  description           String?
-  vendor                String?
-  tags                  String[]
-  modified_at           DateTime                @db.Timestamptz(6)
-  created_at            DateTime                @db.Timestamptz(6)
-  id_connection         String                  @db.Uuid
-  remote_deleted        Boolean
-  ecom_product_variants ecom_product_variants[]
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model entity {
-  id_entity          String      @id(map: "pk_entity") @db.Uuid
-  ressource_owner_id String      @db.Uuid
-  created_at         DateTime    @db.Timestamptz(6)
-  modified_at        DateTime    @db.Timestamptz(6)
-  attribute          attribute[]
-  value              value[]
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model events {
   id_event                  String                      @id(map: "pk_jobs") @db.Uuid
@@ -1347,17 +1651,6 @@ model events {
   webhook_delivery_attempts webhook_delivery_attempts[]
 
   @@index([id_linked_user], map: "fk_linkeduserid_projectid")
-}
-
-model fs_drives {
-  id_fs_drive       String    @id(map: "pk_fs_drives") @db.Uuid
-  drive_url         String?
-  name              String?
-  remote_created_at DateTime? @db.Timestamptz(6)
-  remote_id         String?
-  created_at        DateTime  @db.Timestamptz(6)
-  modified_at       DateTime  @db.Timestamptz(6)
-  id_connection     String    @db.Uuid
 }
 
 model fs_files {
@@ -1393,59 +1686,6 @@ model fs_folders {
 
   @@index([id_fs_drive], map: "fk_fs_folder_driveid")
   @@index([id_fs_permission], map: "fk_fs_folder_permissionid")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model fs_groups {
-  id_fs_group        String   @id(map: "pk_fs_groups") @db.Uuid
-  name               String?
-  users              String[]
-  remote_id          String?
-  remote_was_deleted Boolean
-  created_at         DateTime @db.Timestamptz(6)
-  modified_at        DateTime @db.Timestamptz(6)
-  id_connection      String   @db.Uuid
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model fs_permissions {
-  id_fs_permission String   @id(map: "pk_fs_permissions") @db.Uuid
-  remote_id        String?
-  user             String?  @db.Uuid
-  group            String?  @db.Uuid
-  type             String?
-  roles            String[]
-  created_at       DateTime @db.Timestamptz(6)
-  modified_at      DateTime @db.Timestamptz(6)
-  id_connection    String   @db.Uuid
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model fs_shared_links {
-  id_fs_shared_link  String    @id(map: "pk_fs_shared_links") @db.Uuid
-  url                String?
-  download_url       String?
-  scope              String?
-  password_protected Boolean
-  password           String?
-  expires_at         DateTime? @db.Timestamptz(6)
-  created_at         DateTime  @db.Timestamptz(6)
-  modified_at        DateTime  @db.Timestamptz(6)
-  id_connection      String    @db.Uuid
-  id_fs_folder       String?   @db.Uuid
-  id_fs_file         String?   @db.Uuid
-  remote_id          String?
-}
-
-model fs_users {
-  id_fs_user    String   @id(map: "pk_fs_users") @db.Uuid
-  name          String?
-  email         String?
-  is_me         Boolean
-  remote_id     String?
-  created_at    DateTime @db.Timestamptz(6)
-  modified_at   DateTime @db.Timestamptz(6)
-  id_connection String   @db.Uuid
 }
 
 model hris_bank_infos {
@@ -1486,20 +1726,6 @@ model hris_benefits {
 
   @@index([id_hris_employer_benefit], map: "fkx_hris_benefit_employer_benefit_id")
   @@index([id_hris_employee], map: "fkx_hris_benefits_employeeid")
-}
-
-model hris_companies {
-  id_hris_company    String           @id(map: "pk_hris_companies") @db.Uuid
-  legal_name         String?
-  display_name       String?
-  eins               String[]
-  remote_id          String?
-  remote_created_at  DateTime?        @db.Timestamptz(6)
-  created_at         DateTime         @db.Timestamptz(6)
-  modified_at        DateTime         @db.Timestamptz(6)
-  remote_was_deleted Boolean
-  id_connection      String           @db.Uuid
-  hris_employees     hris_employees[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -1636,21 +1862,6 @@ model hris_employees {
   @@index([id_hris_company], map: "fkx_employee_companyid")
 }
 
-model hris_employer_benefits {
-  id_hris_employer_benefit String          @id(map: "pk_hris_employer_benefits") @db.Uuid
-  id_connection            String          @db.Uuid
-  benefit_plan_type        String?
-  name                     String?
-  description              String?
-  deduction_code           String?
-  remote_id                String?
-  remote_created_at        DateTime?       @db.Timestamptz(6)
-  remote_was_deleted       Boolean
-  created_at               DateTime        @db.Timestamptz(6)
-  modified_at              DateTime        @db.Timestamptz(6)
-  hris_benefits            hris_benefits[]
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model hris_employments {
   id_hris_employment String           @id(map: "pk_hris_employments") @db.Uuid
@@ -1675,90 +1886,6 @@ model hris_employments {
 
   @@index([id_hris_employee], map: "fk_2")
   @@index([id_hris_pay_group], map: "fkx_employments_pay_group_id")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model hris_groups {
-  id_hris_group      String   @id(map: "pk_hris_groups") @db.Uuid
-  parent_group       String?  @db.Uuid
-  name               String?
-  type               String?
-  remote_id          String
-  remote_created_at  DateTime @db.Timestamptz(6)
-  created_at         DateTime @db.Timestamptz(6)
-  modified_at        DateTime @db.Timestamptz(6)
-  remote_was_deleted Boolean
-  id_connection      String   @db.Uuid
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model hris_locations {
-  id_hris_location   String   @id(map: "pk_hris_locations") @db.Uuid
-  name               String?
-  phone_number       String?
-  street_1           String?
-  street_2           String?
-  city               String?
-  state              String?
-  id_hris_company    String?  @db.Uuid
-  id_hris_employee   String?  @db.Uuid
-  zip_code           String?
-  country            String?
-  location_type      String?
-  remote_id          String?
-  remote_created_at  DateTime @db.Timestamptz(6)
-  created_at         DateTime @db.Timestamptz(6)
-  modified_at        DateTime @db.Timestamptz(6)
-  remote_was_deleted Boolean
-  id_connection      String   @db.Uuid
-}
-
-model hris_pay_groups {
-  id_hris_pay_group  String             @id(map: "pk_hris_pay_groups") @db.Uuid
-  pay_group_name     String?
-  remote_id          String?
-  remote_created_at  DateTime?          @db.Timestamptz(6)
-  created_at         DateTime           @db.Timestamptz(6)
-  modified_at        DateTime           @db.Timestamptz(6)
-  remote_was_deleted Boolean
-  id_connection      String             @db.Uuid
-  hris_employments   hris_employments[]
-}
-
-model hris_payroll_runs {
-  id_hris_payroll_run        String                       @id(map: "pk_hris_payroll_runs") @db.Uuid
-  run_state                  String?
-  run_type                   String?
-  start_date                 DateTime?                    @db.Timestamptz(6)
-  end_date                   DateTime?                    @db.Timestamptz(6)
-  check_date                 DateTime?                    @db.Timestamptz(6)
-  remote_id                  String?
-  remote_created_at          DateTime?                    @db.Timestamptz(6)
-  created_at                 DateTime                     @db.Timestamptz(6)
-  modified_at                DateTime                     @db.Timestamptz(6)
-  remote_was_deleted         Boolean
-  id_connection              String                       @db.Uuid
-  hris_employee_payroll_runs hris_employee_payroll_runs[]
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model hris_time_off {
-  id_hris_time_off   String    @id(map: "pk_hris_time_off") @db.Uuid
-  employee           String?   @db.Uuid
-  approver           String?   @db.Uuid
-  status             String?
-  employee_note      String?
-  units              String?
-  amount             BigInt?
-  request_type       String?
-  start_time         DateTime? @db.Timestamptz(6)
-  end_time           DateTime? @db.Timestamptz(6)
-  remote_id          String?
-  remote_created_at  DateTime? @db.Timestamptz(6)
-  created_at         DateTime  @db.Timestamptz(6)
-  modified_at        DateTime  @db.Timestamptz(6)
-  remote_was_deleted Boolean
-  id_connection      String    @db.Uuid
 }
 
 model hris_time_off_balances {
@@ -1834,19 +1961,6 @@ model linked_users {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model managed_webhooks {
-  id_managed_webhook    String   @id(map: "pk_managed_webhooks") @db.Uuid
-  active                Boolean
-  id_connection         String   @db.Uuid
-  endpoint              String   @db.Uuid
-  api_version           String?
-  active_events         String[]
-  remote_signing_secret String?
-  modified_at           DateTime @db.Timestamptz(6)
-  created_at            DateTime @db.Timestamptz(6)
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model projects {
   id_project       String         @id(map: "pk_projects") @db.Uuid
   name             String
@@ -1862,29 +1976,6 @@ model projects {
   connector_sets   connector_sets @relation(fields: [id_connector_set], references: [id_connector_set], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectorsetid")
 
   @@index([id_connector_set], map: "fk_connectors_sets")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model remote_data {
-  id_remote_data     String    @id(map: "pk_remote_data") @db.Uuid
-  ressource_owner_id String?   @unique(map: "force_unique_ressourceownerid") @db.Uuid
-  format             String?
-  data               String?
-  created_at         DateTime? @db.Timestamptz(6)
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model tcg_accounts {
-  id_tcg_account  String         @id(map: "pk_tcg_account") @db.Uuid
-  remote_id       String?
-  name            String?
-  domains         String[]
-  remote_platform String?
-  created_at      DateTime       @db.Timestamptz(6)
-  modified_at     DateTime       @db.Timestamptz(6)
-  id_linked_user  String?        @db.Uuid
-  id_connection   String         @db.Uuid
-  tcg_contacts    tcg_contacts[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -1906,21 +1997,6 @@ model tcg_attachments {
 
   @@index([id_tcg_comment], map: "fk_tcg_attachment_tcg_commentid")
   @@index([id_tcg_ticket], map: "fk_tcg_attachment_tcg_ticketid")
-}
-
-model tcg_collections {
-  id_tcg_collection String   @id(map: "pk_tcg_collections") @db.Uuid
-  name              String?
-  description       String?
-  remote_id         String?
-  remote_platform   String?
-  collection_type   String?
-  parent_collection String?  @db.Uuid
-  id_tcg_ticket     String?  @db.Uuid
-  created_at        DateTime @db.Timestamptz(6)
-  modified_at       DateTime @db.Timestamptz(6)
-  id_linked_user    String   @db.Uuid
-  id_connection     String   @db.Uuid
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -1984,18 +2060,6 @@ model tcg_tags {
   @@index([id_tcg_ticket], map: "fk_tcg_tag_tcg_ticketid")
 }
 
-model tcg_teams {
-  id_tcg_team     String   @id(map: "pk_tcg_teams") @db.Uuid
-  remote_id       String?
-  remote_platform String?
-  name            String?
-  description     String?
-  created_at      DateTime @db.Timestamp(6)
-  modified_at     DateTime @db.Timestamp(6)
-  id_linked_user  String?  @db.Uuid
-  id_connection   String   @db.Uuid
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model tcg_tickets {
   id_tcg_ticket   String            @id(map: "pk_tcg_tickets") @db.Uuid
@@ -2023,38 +2087,6 @@ model tcg_tickets {
   tcg_tags        tcg_tags[]
 
   @@index([id_tcg_user], map: "fk_tcg_ticket_tcg_user")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model tcg_users {
-  id_tcg_user     String         @id(map: "pk_tcg_users") @db.Uuid
-  name            String?
-  email_address   String?
-  remote_id       String?
-  remote_platform String?
-  teams           String[]
-  id_linked_user  String?        @db.Uuid
-  id_connection   String         @db.Uuid
-  created_at      DateTime?      @db.Timestamptz(6)
-  modified_at     DateTime?      @db.Timestamptz(6)
-  tcg_comments    tcg_comments[]
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model users {
-  id_user                 String     @id(map: "pk_users") @db.Uuid
-  identification_strategy String
-  email                   String?    @unique(map: "unique_email")
-  password_hash           String?
-  first_name              String
-  last_name               String
-  id_stytch               String?    @unique(map: "force_stytch_id_unique")
-  created_at              DateTime   @default(now()) @db.Timestamptz(6)
-  modified_at             DateTime   @default(now()) @db.Timestamptz(6)
-  reset_token             String?
-  reset_token_expires_at  DateTime?  @db.Timestamptz(6)
-  api_keys                api_keys[]
-  projects                projects[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -2092,32 +2124,4 @@ model webhook_delivery_attempts {
   @@index([id_webhook_endpoint], map: "fk_we_webhookendpointid")
   @@index([id_event], map: "fk_webhook_delivery_attempt_eventid")
   @@index([id_webhooks_reponse], map: "fk_webhook_delivery_attempt_webhook_responseid")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model webhook_endpoints {
-  id_webhook_endpoint       String                      @id(map: "pk_webhook_endpoint") @db.Uuid
-  endpoint_description      String?
-  url                       String
-  secret                    String
-  active                    Boolean
-  created_at                DateTime                    @db.Timestamptz(6)
-  scope                     String[]
-  id_project                String                      @db.Uuid
-  last_update               DateTime?                   @db.Timestamptz(6)
-  webhook_delivery_attempts webhook_delivery_attempts[]
-}
-
-model webhooks_payloads {
-  id_webhooks_payload       String                      @id(map: "pk_webhooks_payload") @db.Uuid
-  data                      Json                        @db.Json
-  webhook_delivery_attempts webhook_delivery_attempts[]
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model webhooks_reponses {
-  id_webhooks_reponse       String                      @id(map: "pk_webhooks_reponse") @db.Uuid
-  http_response_data        String
-  http_status_code          String
-  webhook_delivery_attempts webhook_delivery_attempts[]
 }
