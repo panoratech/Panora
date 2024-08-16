@@ -9,6 +9,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { Utils } from '@hris/@lib/@utils';
 import { GustoLocationMapper } from './services/gusto/mappers';
 import { GustoService } from './services/gusto';
+import { DeelLocationMapper } from './services/deel/mappers';
 @Module({
   controllers: [LocationController],
   providers: [
@@ -20,6 +21,7 @@ import { GustoService } from './services/gusto';
     ServiceRegistry,
     IngestDataService,
     GustoLocationMapper,
+    DeelLocationMapper,
     /* PROVIDERS SERVICES */
     GustoService,
   ],

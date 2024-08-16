@@ -1110,6 +1110,20 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.oauth2
         }
       },
+      'apollo': {
+        urls: {
+          docsUrl: 'https://apolloio.github.io/apollo-api-docs/?shell#introduction',
+          apiUrl: 'https://api.apollo.io'
+        },
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM4trwPJLoj7tPkFYZG6TyMVzgCX1fn2zUyA&s',
+        description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
+        active: false,
+        primaryColor: '#ffcf40',
+        authStrategy: {
+          strategy: AuthStrategy.api_key,
+          properties: ["api_key"]
+        }
+      },
       'hubspot_marketing_hub': {
         scopes: '',
         urls: {
@@ -1251,7 +1265,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'openid+email',
         urls: {
           docsUrl: 'https://documentation.bamboohr.com/docs/getting-started',
-          apiUrl: (companySubdomain) => `https://api.bamboohr.com/api/gateway.php/${companySubdomain}`,
+          apiUrl: (subdomain) => `https://api.bamboohr.com/api/gateway.php/${subdomain}`,
         },
         logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
@@ -1259,7 +1273,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         primaryColor: '#599D16',
         authStrategy: {
           strategy: AuthStrategy.basic,
-          properties: ['username', 'company_subdomain']
+          properties: ['username', 'subdomain']
         },
       },
       'breezy': {
@@ -1685,7 +1699,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.api_key
         }
       },
-      'sage_hr': {
+      'sage': {
         scopes: '',
         urls: {
           docsUrl: '',
@@ -2449,11 +2463,13 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           docsUrl: '',
           apiUrl: ''
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://assets.wheelhouse.com/media/_solution_logo_04042023_58844144.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
+        primaryColor: '#F8A22D',
         authStrategy: {
-          strategy: AuthStrategy.api_key
+          strategy: AuthStrategy.api_key,
+          properties: ["api_key"]
         }
       },
       'payfit': {
@@ -2549,18 +2565,20 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.api_key
         }
       },
-      'sage_hr': {
+      'sage': {
         scopes: '',
         urls: {
-          docsUrl: '',
-          apiUrl: ''
+          docsUrl: 'https://sagehr.docs.apiary.io/#reference',
+          apiUrl: (subdomain) => `https://${subdomain}.sage.hr`
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://appexchange.salesforce.com/partners/servlet/servlet.FileDownload?file=00P4V00000xPZsjUAG',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
+        primaryColor: '#00d639',
         authStrategy: {
-          strategy: AuthStrategy.api_key
-        }
+          strategy: AuthStrategy.api_key,
+          properties: ["api_key", "subdomain"]
+        },
       },
       'sap_successfactors': {
         scopes: '',
