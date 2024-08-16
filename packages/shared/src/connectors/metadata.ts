@@ -2026,7 +2026,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://asset.brandfetch.io/id4NSNrRnG/idXzwlo3iL.jpeg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
@@ -2566,7 +2566,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'sage': {
-        scopes: '',
         urls: {
           docsUrl: 'https://sagehr.docs.apiary.io/#reference',
           apiUrl: (subdomain) => `https://${subdomain}.sage.hr`
