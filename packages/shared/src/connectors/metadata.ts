@@ -1121,7 +1121,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         primaryColor: '#ffcf40',
         authStrategy: {
           strategy: AuthStrategy.api_key,
-          properties: ["api_key"]
+          properties: ['api_key']
         }
       },
       'hubspot_marketing_hub': {
@@ -2469,7 +2469,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         primaryColor: '#F8A22D',
         authStrategy: {
           strategy: AuthStrategy.api_key,
-          properties: ["api_key"]
+          properties: ['api_key']
         }
       },
       'payfit': {
@@ -2576,7 +2576,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         primaryColor: '#00d639',
         authStrategy: {
           strategy: AuthStrategy.api_key,
-          properties: ["api_key", "subdomain"]
+          properties: ['api_key', 'subdomain']
         },
       },
       'sap_successfactors': {
