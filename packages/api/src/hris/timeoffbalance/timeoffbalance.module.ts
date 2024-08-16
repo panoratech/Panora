@@ -7,6 +7,8 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { Utils } from '@hris/@lib/@utils';
+import { SageTimeoffbalanceMapper } from './services/sage/mappers';
+import { SageService } from './services/sage';
 @Module({
   controllers: [TimeoffBalanceController],
   providers: [
@@ -17,7 +19,9 @@ import { Utils } from '@hris/@lib/@utils';
     WebhookService,
     ServiceRegistry,
     IngestDataService,
+    SageTimeoffbalanceMapper,
     /* PROVIDERS SERVICES */
+    SageService,
   ],
   exports: [SyncService],
 })

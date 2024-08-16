@@ -13,6 +13,7 @@ import { NamelyConnectionService } from './services/namely/namely.service';
 import { PayfitConnectionService } from './services/payfit/payfit.service';
 import { ServiceRegistry } from './services/registry.service';
 import { RipplingConnectionService } from './services/rippling/rippling.service';
+import { SageConnectionService } from './services/sage/sage.service';
 
 @Module({
   imports: [WebhookModule, BullQueueModule],
@@ -30,6 +31,7 @@ import { RipplingConnectionService } from './services/rippling/rippling.service'
     FactorialConnectionService,
     NamelyConnectionService,
     BamboohrConnectionService,
+    SageConnectionService,
   ],
   exports: [HrisConnectionsService],
 })

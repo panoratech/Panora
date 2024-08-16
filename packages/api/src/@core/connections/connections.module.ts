@@ -12,6 +12,7 @@ import { ProductivityConnectionsModule } from './productivity/productivity.conne
 import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
 import { EcommerceConnectionModule } from './ecommerce/ecommerce.connection.module';
+import { CybersecurityConnectionsModule } from './cybersecurity/cybersecurity.connection.module';
 
 @Module({
   controllers: [ConnectionsController],
@@ -25,6 +26,7 @@ import { EcommerceConnectionModule } from './ecommerce/ecommerce.connection.modu
     FilestorageConnectionModule,
     HrisConnectionModule,
     EcommerceConnectionModule,
+    CybersecurityConnectionsModule,
     SyncModule,
   ],
   providers: [ValidateUserService, OAuthTokenRefreshService],
@@ -40,6 +42,7 @@ import { EcommerceConnectionModule } from './ecommerce/ecommerce.connection.modu
     EcommerceConnectionModule,
     HrisConnectionModule,
     ProductivityConnectionsModule,
+    CybersecurityConnectionsModule,
   ],
 })
 export class ConnectionsModule {}

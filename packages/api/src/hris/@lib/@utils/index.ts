@@ -35,6 +35,21 @@ export class Utils {
     }
   }
 
+  async getGroupUuidFromRemoteId(id: string, connection_id: string) {
+    try {
+      const res = await this.prisma.hris_groups.findFirst({
+        where: {
+          remote_id: id,
+          id_connection: connection_id,
+        },
+      });
+      if (!res) return;
+      return res.id_hris_group;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getEmployerBenefitUuidFromRemoteId(id: string, connection_id: string) {
     try {
       const res = await this.prisma.hris_employer_benefits.findFirst({
