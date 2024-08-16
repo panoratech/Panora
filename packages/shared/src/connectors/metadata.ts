@@ -1254,7 +1254,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://images.ctfassets.net/p03bi75xct27/2tVvkghDdMJxzkMca2QLnr/31b520c5e07db0103948af171fb54e99/ashby_logo_square.jpeg?q=80&fm=webp&w=2048',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         primaryColor: '#4a3ead',
         authStrategy: {
           strategy: AuthStrategy.basic,
@@ -1269,7 +1269,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         primaryColor: '#599D16',
         authStrategy: {
           strategy: AuthStrategy.basic,
@@ -2465,7 +2465,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://assets.wheelhouse.com/media/_solution_logo_04042023_58844144.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         primaryColor: '#F8A22D',
         authStrategy: {
           strategy: AuthStrategy.api_key,
