@@ -130,7 +130,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://media.licdn.com/dms/image/C4D0BAQFOaK6KXEYj_w/company-logo_200_200/0/1630489791871/project_affinity_logo?e=2147483647&v=beta&t=u8j-1u3nO2m6vqgT170WJMCJyFSDiLYS_VguYOllNMI',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         primaryColor: '#244CED',
         authStrategy: {
           strategy: AuthStrategy.basic,
@@ -458,7 +458,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://asset.brandfetch.io/iduDa181eM/idYYbqOlKi.png',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -1022,7 +1022,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://media.licdn.com/dms/image/D4D12AQFduz3E6g6COg/article-cover_image-shrink_600_2000/0/1697053235030?e=2147483647&v=beta&t=c2Ia7g8fJ6wAHNlnogLV_Ii765HMqSw16HxgawsxmTw',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -1065,7 +1065,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://upload.wikimedia.org/wikipedia/en/archive/9/9f/20171204173437%21Xero_software_logo.svg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true, 
+        active: false, 
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -1270,7 +1270,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         primaryColor: '#599D16',
         authStrategy: {
           strategy: AuthStrategy.basic,
@@ -1433,7 +1433,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQRGdTs2tatWjail4b3hpHLIyI-6gXZLxhvw&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -1591,7 +1591,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbR9XSB1lbZnYlLWyqMe5Px80ghtEOUqHeqw&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -1837,7 +1837,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZTX2h9yFQ0u4ziDqvfQ224wW4N1s5JvJ5nA&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.api_key
         }
@@ -2043,7 +2043,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://avatars.githubusercontent.com/u/19614805?s=280&v=4',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
@@ -2721,7 +2721,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2735,7 +2735,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://logowik.com/content/uploads/images/4964-microsoft-onedrive-new.jpg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2748,7 +2748,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://cdn2.iconfinder.com/data/icons/metro-ui-dock/512/Dropbox.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2762,7 +2762,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         primaryColor: '',
         options: {
           local_redirect_uri_in_https: true
@@ -2794,7 +2794,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: { 
           strategy: AuthStrategy.oauth2
         }
@@ -2808,7 +2808,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://assets-global.website-files.com/621c8d7ad9e04933c4e51ffb/65eba5ffa14998827c92cc01_slack-octothorpe.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         options: {
           local_redirect_uri_in_https: true
         },
@@ -2825,7 +2825,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTH_-bQ399xl-yfJYhbLraU-w0yWBcppLf8NA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         primaryColor: '#000001',
         authStrategy: {
           strategy: AuthStrategy.api_key,
@@ -2841,7 +2841,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://www.logodesignlove.com/images/evolution/ebay-logo-01.jpg',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         options: {
           local_redirect_uri_in_https: true,
           oauth_attributes: ['ruvalue']
@@ -2904,7 +2904,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKRidZq3jXGYOIZ2X2EruCx0pFMkbsHineLg&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
@@ -2918,7 +2918,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://dailybrand.co.zw/wp-content/uploads/2023/10/webflow-2.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
@@ -2935,7 +2935,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSDg6WOKCYRvGFmwtaJ6Gv88PjAGRS9_h9EQ&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
@@ -2949,7 +2949,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://api.getkoala.com/web/companies/mercadolibre.com/logo',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
@@ -2977,7 +2977,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://yt3.googleusercontent.com/NWVXYvuzHDgJJsbda7eyyz21Ba2qnq5WmuGrt9ax1rs6PP-mlDl5LCJ4ZO0Z2ZbiCq4ZoxqiGg=s900-c-k-c0x00ffffff-no-rj',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         primaryColor: '#10C096',
         authStrategy: {
           strategy: AuthStrategy.api_key,
@@ -2993,7 +2993,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://media.dev.to/cdn-cgi/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Forganization%2Fprofile_image%2F1215%2Ffe4be452-1e68-444a-bf77-db21bf3a7bdc.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
@@ -3008,7 +3008,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://pbs.twimg.com/profile_images/1410604377757216768/ocEKYniC_400x400.jpg',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         primaryColor: '#0D1E40',
         authStrategy: {
           strategy: AuthStrategy.basic,
@@ -3022,7 +3022,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://companieslogo.com/img/orig/QLYS-68c2032c.png?t=1720244493',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         primaryColor: '#ED2E28',
         authStrategy: {
           strategy: AuthStrategy.basic,
@@ -3036,7 +3036,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://images.saasworthy.com/insightvm_9113_logo_1635748346_lc0gr.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         primaryColor: '#E95722',
         authStrategy: {
           strategy: AuthStrategy.api_key,
@@ -3052,7 +3052,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://pbs.twimg.com/profile_images/1451022302578049024/6L-zG5oq_400x400.jpg',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         primaryColor: '#FC0001',
         authStrategy: {
           strategy: AuthStrategy.oauth2,
@@ -3065,7 +3065,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZHLye2za7fjLiggqC1upKhhM3T-laySJSLQ&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         primaryColor: '#522E74',
         authStrategy: {
           strategy: AuthStrategy.api_key,
@@ -3081,7 +3081,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuR4GZElDP7UNKhXS9jDGpElBTdchjg8hSsA&s',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: true,
+        active: false,
         primaryColor: '#0078D8',
         authStrategy: {
           strategy: AuthStrategy.oauth2,
