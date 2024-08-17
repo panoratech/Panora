@@ -184,7 +184,10 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       MICROSOFTDYNAMICSSALES_CRM_CLOUD_CLIENT_ID: ${MICROSOFTDYNAMICSSALES_CRM_CLOUD_CLIENT_ID}
       MICROSOFTDYNAMICSSALES_CRM_CLOUD_CLIENT_SECRET: ${MICROSOFTDYNAMICSSALES_CRM_CLOUD_CLIENT_SECRET}
-
+      SNYK_CYBERSECURITY_CLOUD_CLIENT_ID: ${SNYK_CYBERSECURITY_CLOUD_CLIENT_ID}
+      SNYK_CYBERSECURITY_CLOUD_CLIENT_SECRET: ${SNYK_CYBERSECURITY_CLOUD_CLIENT_SECRET}
+      CROWDSTRIKE_CYBERSECURITY_CLOUD_CLIENT_ID: ${CROWDSTRIKE_CYBERSECURITY_CLOUD_CLIENT_ID}
+      CROWDSTRIKE_CYBERSECURITY_CLOUD_CLIENT_SECRET: ${CROWDSTRIKE_CYBERSECURITY_CLOUD_CLIENT_SECRET}
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -277,22 +280,22 @@ services:
   #   volumes:
   #     - pgadmin-data:/var/lib/pgadmin
 
-  # ngrok:
-  #   image: ngrok/ngrok:latest
-  #   restart: always
-  #   command:
-  #     - "start"
-  #     - "--all"
-  #     - "--config"
-  #     - "/etc/ngrok.yml"
-  #   volumes:
-  #     - ./ngrok.yml:/etc/ngrok.yml
-  #   ports:
-  #   - 4040:4040
-  #   depends_on:
-  #     api:
-  #       condition: service_healthy
-  #   network_mode: "host"
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: always
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    ports:
+    - 4040:4040
+    depends_on:
+      api:
+        condition: service_healthy
+    network_mode: "host"
 
   docs:
     build:

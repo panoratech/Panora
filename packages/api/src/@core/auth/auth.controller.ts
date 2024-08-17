@@ -1,17 +1,14 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  UseGuards,
-  Request,
-  Delete,
-  Param,
-} from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBody,
   ApiExcludeEndpoint,
@@ -20,21 +17,33 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthService } from './auth.service';
 import { ApiKeyDto } from './dto/api-key.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshDto } from './dto/refresh.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
-import { ApiKeyAuthGuard } from './guards/api-key.guard';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+    private readonly encryptionService: EncryptionService,
     private logger: LoggerService,
   ) {
     this.logger.setContext(AuthController.name);
+  }
+
+  @ApiOperation({ operationId: 'generateCodes', summary: 'generateCodes' })
+  @ApiResponse({ status: 200 })
+  @Get('s256Codes')
+  @ApiExcludeEndpoint()
+  async generateCodes() {
+    return this.encryptionService.generateCodes();
   }
 
   @ApiOperation({ operationId: 'signUp', summary: 'Register' })
