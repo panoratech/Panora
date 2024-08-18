@@ -2,6 +2,7 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
@@ -10,6 +11,7 @@ import {
   PassthroughInput,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { PassthroughResponse } from '@@core/passthrough/types';
 import { Injectable } from '@nestjs/common';
 import {
   AuthStrategy,
@@ -17,11 +19,8 @@ import {
   DynamicApiUrl,
   providerToType,
 } from '@panora/shared';
-import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../registry.service';
-import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
-import { PassthroughResponse } from '@@core/passthrough/types';
 
 export type BamboohrOAuthResponse = {
   access_token: string;
@@ -92,7 +91,7 @@ export class BamboohrConnectionService extends AbstractBaseConnectionService {
   async handleCallback(opts: OAuthCallbackParams) {
     try {
       const { linkedUserId, projectId, body } = opts;
-      const { username, company_subdomain } = body;
+      const { api_key, subdomain } = body;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -104,16 +103,15 @@ export class BamboohrConnectionService extends AbstractBaseConnectionService {
       let db_res;
       const connection_token = uuidv4();
       const BASE_API_URL = (
-        CONNECTORS_METADATA['ats']['bamboohr'].urls
-          .apiUrl as DynamicApiUrl
-      )(company_subdomain);
+        CONNECTORS_METADATA['ats']['bamboohr'].urls.apiUrl as DynamicApiUrl
+      )(subdomain);
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
           where: {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(username),
+            access_token: this.cryptoService.encrypt(api_key),
             account_url: BASE_API_URL,
             status: 'valid',
             created_at: new Date(),
@@ -128,7 +126,7 @@ export class BamboohrConnectionService extends AbstractBaseConnectionService {
             vertical: 'ats',
             token_type: 'basic',
             account_url: BASE_API_URL,
-            access_token: this.cryptoService.encrypt(username),
+            access_token: this.cryptoService.encrypt(api_key),
             status: 'valid',
             created_at: new Date(),
             projects: {

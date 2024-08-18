@@ -905,7 +905,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
@@ -1274,7 +1274,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         primaryColor: '#599D16',
         authStrategy: {
           strategy: AuthStrategy.basic,
-          properties: ['username', 'subdomain']
+          properties: ['subdomain', 'api_key']
         },
       },
       'breezy': {
@@ -1838,8 +1838,10 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZTX2h9yFQ0u4ziDqvfQ224wW4N1s5JvJ5nA&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#0167AB',
         authStrategy: {
-          strategy: AuthStrategy.api_key
+          strategy: AuthStrategy.api_key,
+          properties: ['api_key']
         }
       },
       'zoho_recruit': {

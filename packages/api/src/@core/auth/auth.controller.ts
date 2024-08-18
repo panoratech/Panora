@@ -38,7 +38,10 @@ export class AuthController {
     this.logger.setContext(AuthController.name);
   }
 
-  @ApiOperation({ operationId: 'generateCodes', summary: 'generateCodes' })
+  @ApiOperation({
+    operationId: 'generateCodes',
+    summary: 'generate codes for s256 challenge',
+  })
   @ApiResponse({ status: 200 })
   @Get('s256Codes')
   @ApiExcludeEndpoint()
