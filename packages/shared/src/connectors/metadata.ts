@@ -215,6 +215,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://play-lh.googleusercontent.com/MC_Aoa7rlMjGtcgAdiLJGeIm3-kpVw7APQmQUrUZtXuoZokiqVOJqR-bTu7idJBD8g',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#516EE2',
         options: {
           end_user_domain: true
         },
@@ -1019,7 +1020,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           apiUrl: 'https://quickbooks.api.intuit.com/v3',
           authBaseUrl: 'https://appcenter.intuit.com/connect/oauth2',
         },
-        logoPath: 'https://i.ibb.co/hMhHt5G/quickbooks-app-tips.png',
+        logoPath: 'https://media.licdn.com/dms/image/D4D12AQFduz3E6g6COg/article-cover_image-shrink_600_2000/0/1697053235030?e=2147483647&v=beta&t=c2Ia7g8fJ6wAHNlnogLV_Ii765HMqSw16HxgawsxmTw',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
@@ -1062,7 +1063,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           apiUrl: 'https://api.xero.com/api.xro/2.0',
           authBaseUrl: 'https://login.xero.com/identity/connect/authorize',
         },
-        logoPath: 'https://i.ibb.co/qpc2RQZ/xeroappicon.png',
+        logoPath: 'https://upload.wikimedia.org/wikipedia/en/archive/9/9f/20171204173437%21Xero_software_logo.svg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false, 
         authStrategy: {
@@ -1273,7 +1274,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         primaryColor: '#599D16',
         authStrategy: {
           strategy: AuthStrategy.basic,
-          properties: ['username', 'subdomain']
+          properties: ['subdomain', 'api_key']
         },
       },
       'breezy': {
@@ -1430,7 +1431,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           apiUrl: 'https://api.greenhouse.io/v1/partner',
           authBaseUrl: 'https://api.greenhouse.io/oauth/authorize'
         },
-        logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
+        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQRGdTs2tatWjail4b3hpHLIyI-6gXZLxhvw&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
@@ -1837,8 +1838,10 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZTX2h9yFQ0u4ziDqvfQ224wW4N1s5JvJ5nA&s',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '#0167AB',
         authStrategy: {
-          strategy: AuthStrategy.api_key
+          strategy: AuthStrategy.api_key,
+          properties: ['api_key']
         }
       },
       'zoho_recruit': {
@@ -2718,7 +2721,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           apiUrl: 'https://www.googleapis.com/drive',
           authBaseUrl: 'https://accounts.google.com/o/oauth2/v2/auth'
         },
-        logoPath: 'https://static-00.iconduck.com/assets.00/google-drive-icon-2048x2048-j5sa1hcp.png',
+        logoPath: 'https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
@@ -2762,6 +2765,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
+        primaryColor: '',
         options: {
           local_redirect_uri_in_https: true
         },
@@ -2983,7 +2987,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'snyk': {
-        scopes: '',
+        scopes: 'org.read org.report.read org.project.read',
         urls: {
           docsUrl: 'https://docs.snyk.io/snyk-api/',
           apiUrl: 'https://api.snyk.io',

@@ -25,8 +25,10 @@ import axios from 'axios';
 
 export interface SnykOAuthResponse {
   access_token: string;
+  refresh_token: string;
   token_type: string;
   scope: string;
+  expires_in: string;
 }
 
 @Injectable()
@@ -69,7 +71,7 @@ export class SnykConnectionService extends AbstractBaseConnectionService {
       config.headers = {
         ...config.headers,
         ...headers,
-        Authorization: `Bearer ${access_token}`,
+        Authorization: `token ${access_token}`,
       };
 
       return await this.retryService.makeRequest(
@@ -89,7 +91,7 @@ export class SnykConnectionService extends AbstractBaseConnectionService {
 
   async handleCallback(opts: OAuthCallbackParams) {
     try {
-      const { linkedUserId, projectId, code } = opts;
+      const { linkedUserId, projectId, code, code_verifier } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -115,9 +117,10 @@ export class SnykConnectionService extends AbstractBaseConnectionService {
         client_secret: CREDENTIALS.CLIENT_SECRET,
         code: code,
         grant_type: 'authorization_code',
+        code_verifier: code_verifier,
       });
       const res = await axios.post(
-        'https://api.snyk.com/oauth/access_token',
+        'https://api.snyk.io/oauth2/token',
         formData.toString(),
         {
           headers: {
@@ -126,19 +129,12 @@ export class SnykConnectionService extends AbstractBaseConnectionService {
         },
       );
       const data: SnykOAuthResponse = res.data;
+      console.log('result is ' + JSON.stringify(data));
       // save tokens for this customer inside our db
       let db_res;
       const connection_token = uuidv4();
       const BASE_API_URL = CONNECTORS_METADATA['cybersecurity']['snyk'].urls
         .apiUrl as string;
-      // get the site id for the token
-      const site = await axios.get('https://api.snyk.com/v2/sites', {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          Authorization: `Bearer ${data.access_token}`,
-        },
-      });
-      const site_id = site.data.sites[0].id;
       if (isNotUnique) {
         // Update existing connection
         db_res = await this.prisma.connections.update({
@@ -147,6 +143,10 @@ export class SnykConnectionService extends AbstractBaseConnectionService {
           },
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
+            refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            expiration_timestamp: new Date(
+              new Date().getTime() + Number(data.expires_in) * 1000,
+            ),
             status: 'valid',
             created_at: new Date(),
           },
@@ -160,8 +160,12 @@ export class SnykConnectionService extends AbstractBaseConnectionService {
             provider_slug: 'snyk',
             vertical: 'cybersecurity',
             token_type: 'oauth2',
-            account_url: `${BASE_API_URL}/sites/${site_id}`,
+            account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
+            refresh_token: this.cryptoService.encrypt(data.refresh_token),
+            expiration_timestamp: new Date(
+              new Date().getTime() + Number(data.expires_in) * 1000,
+            ),
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -186,6 +190,52 @@ export class SnykConnectionService extends AbstractBaseConnectionService {
   }
 
   async handleTokenRefresh(opts: RefreshParams) {
-    return;
+    try {
+      const { connectionId, refreshToken, projectId } = opts;
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getTunnelIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
+
+      const CREDENTIALS = (await this.cService.getCredentials(
+        projectId,
+        this.type,
+      )) as OAuth2AuthData;
+
+      const formData = new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+        redirect_uri: REDIRECT_URI,
+      });
+
+      const res = await axios.post(
+        `https://app.deel.com/oauth2/tokens`,
+        formData.toString(),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        },
+      );
+      const data: SnykOAuthResponse = res.data;
+      await this.prisma.connections.update({
+        where: {
+          id_connection: connectionId,
+        },
+        data: {
+          access_token: this.cryptoService.encrypt(data.access_token),
+          refresh_token: this.cryptoService.encrypt(data.refresh_token),
+          expiration_timestamp: new Date(
+            new Date().getTime() + Number(data.expires_in) * 1000,
+          ),
+        },
+      });
+      this.logger.log('OAuth credentials updated : deel ');
+    } catch (error) {
+      throw error;
+    }
   }
 }

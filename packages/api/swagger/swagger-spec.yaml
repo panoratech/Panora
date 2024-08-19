@@ -107,6 +107,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -127,6 +129,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -157,6 +161,8 @@ paths:
                     type: object
                     additionalProperties: true
                     description: Dynamic event payload
+        '201':
+          description: ''
       tags: *ref_0
       x-speakeasy-group: webhooks
   /ticketing/tickets:
@@ -2210,6 +2216,12 @@ paths:
               $ref: '#/components/schemas/PassThroughRequestDto'
       responses:
         '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+        '201':
           description: ''
           content:
             application/json:
