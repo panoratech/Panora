@@ -9,7 +9,7 @@ type Field = {
 };
 
 type Opportunity = {
-  Filelds: Field[];
+  Fields?: Field[];
   OpportunityEventCode: number;
   OpportunityNote?: string;
   OpportunityDateTime?: string; //date and time is in the yyyy-mm-dd hh:mm:ss format.

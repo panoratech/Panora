@@ -5,11 +5,11 @@ import { LeadSquaredDealInput, LeadSquaredDealOutput } from './types';
 import axios from 'axios';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { SyncParam } from '@@core/utils/types/interface';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 
 @Injectable()
 export class LeadSquaredService implements IDealService {
@@ -72,7 +72,13 @@ export class LeadSquaredService implements IDealService {
         statusCode: 201,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.deal,
+        ActionType.POST,
+      );
     }
   }
 
@@ -83,7 +89,7 @@ export class LeadSquaredService implements IDealService {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'pipedrive',
+          provider_slug: 'leadsquared',
           vertical: 'crm',
         },
       });
@@ -111,7 +117,13 @@ export class LeadSquaredService implements IDealService {
         statusCode: 200,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.deal,
+        ActionType.POST,
+      );
     }
   }
 }

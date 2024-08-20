@@ -31,9 +31,9 @@ export class LeadSquaredEngagementMapper implements IEngagementMapper {
     );
   }
 
-  formatDate(date: Date): string {
+  formatDateForLeadSquared(date: Date): string {
     const year = date.getUTCFullYear();
-    const month = date.getUTCMonth();
+    const month = date.getUTCMonth() + 1;
     const currentDate = date.getUTCDate();
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
@@ -137,11 +137,11 @@ export class LeadSquaredEngagementMapper implements IEngagementMapper {
     };
 
     if (source.start_at) {
-      result.DueDate = this.formatDate(new Date(source.start_at));
+      result.DueDate = this.formatDateForLeadSquared(new Date(source.start_at));
     }
 
     if (source.end_time) {
-      result.EndDate = this.formatDate(new Date(source.end_time));
+      result.EndDate = this.formatDateForLeadSquared(new Date(source.end_time));
     }
 
     if (source.user_id) {
@@ -211,8 +211,8 @@ export class LeadSquaredEngagementMapper implements IEngagementMapper {
 
       // Convert milliseconds to seconds
       const durationInSeconds = Math.round(diffMilliseconds / 1000);
-      result.StartTime = this.formatDate(startDate);
-      result.EndTime = this.formatDate(endDate);
+      result.StartTime = this.formatDateForLeadSquared(startDate);
+      result.EndTime = this.formatDateForLeadSquared(endDate);
       result.CallDuration = durationInSeconds;
       result.Status = 'Answered';
     }

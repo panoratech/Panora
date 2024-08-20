@@ -8,9 +8,6 @@ import { Utils } from '@crm/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { CrmObject } from '@crm/@lib/@types';
-import { UnifiedCrmStageOutput } from '@crm/stage/types/model.unified';
-import { ZohoStageOutput } from '@crm/stage/services/zoho/types';
 
 @Injectable()
 export class LeadSquaredDealMapper implements IDealMapper {
@@ -21,6 +18,16 @@ export class LeadSquaredDealMapper implements IDealMapper {
   ) {
     this.mappersRegistry.registerService('crm', 'deal', 'leadsquared', this);
   }
+  formatDateForLeadSquared(date: Date): string {
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1;
+    const currentDate = date.getUTCDate();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+    return `${year}-${month}-${currentDate} ${hours}:${minutes}:${seconds}`;
+  }
+
   async desunify(
     source: UnifiedCrmDealInput,
     customFieldMappings?: {
@@ -29,25 +36,59 @@ export class LeadSquaredDealMapper implements IDealMapper {
     }[],
   ): Promise<LeadSquaredDealInput> {
     const result: LeadSquaredDealInput = {
-      OpportunityNote: source.description,
-      OpportunityName: source.name,
-      Amount: source.amount ?? 0,
+      LeadDetails: [],
+      Opportunity: {
+        OpportunityNote: source.name,
+        OpportunityDateTime: this.formatDateForLeadSquared(new Date()),
+        OpportunityEventCode: 11,
+        UpdateEmptyFields: true,
+        DoNotPostDuplicateActivity: true,
+        DoNotChangeOwner: true,
+        Fields: [
+          {
+            SchemaName: 'Ammount',
+            Value: source.amount.toString(),
+          },
+          {
+            SchemaName: 'Description',
+            Value: source.description,
+          },
+        ],
+      },
     };
     if (source.company_id) {
-      result.Account_Name = {
-        id: await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
-        name: await this.utils.getCompanyNameFromUuid(source.company_id),
-      };
+      const leadDetails = [
+        {
+          Attribute: 'AccountName',
+          Value:
+            (await this.utils.getCompanyNameFromUuid(source.company_id)) || '',
+        },
+        {
+          Attribute: 'ProspectID',
+          Value: await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
+        },
+        {
+          Attribute: 'SearchBy',
+          Value: 'ProspectId',
+        },
+        {
+          Attribute: '__UseUserDefinedGuid__',
+          Value: 'true',
+        },
+      ];
+      result.LeadDetails = [...result.LeadDetails, ...leadDetails];
     }
     if (source.stage_id) {
-      result.Stage = await this.utils.getStageNameFromStageUuid(
-        source.stage_id,
-      );
+      result.Opportunity.Fields.push({
+        SchemaName: 'StageId',
+        Value: await this.utils.getStageNameFromStageUuid(source.stage_id),
+      });
     }
     if (source.user_id) {
-      result.Owner = {
-        id: await this.utils.getRemoteIdFromUserUuid(source.user_id),
-      } as any;
+      result.Opportunity.Fields.push({
+        SchemaName: 'OwnerId',
+        Value: await this.utils.getRemoteIdFromUserUuid(source.user_id),
+      });
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -57,6 +98,10 @@ export class LeadSquaredDealMapper implements IDealMapper {
         );
         if (mapping) {
           result[mapping.remote_id] = v;
+          result.Opportunity.Fields.push({
+            SchemaName: k,
+            Value: v,
+          });
         }
       }
     }
@@ -101,38 +146,19 @@ export class LeadSquaredDealMapper implements IDealMapper {
         field_mappings[mapping.slug] = deal[mapping.remote_id];
       }
     }
+
     const res: UnifiedCrmDealOutput = {
       remote_id: deal.OpportunityId,
       remote_data: deal,
       name: deal.OpportunityNote,
-      description: deal.OpportunityNote ?? '', // todo null
-      amount: deal.Amount,
+      description: deal['Description']?.toString() || deal.OpportunityNote,
+      amount: Number(deal.Amount),
       field_mappings,
     };
 
-    if (deal.Stage) {
-      // we insert right way inside our db as there are no endpoint to do so in the Zoho api
-      const stage = await this.ingestService.ingestData<
-        UnifiedCrmStageOutput,
-        ZohoStageOutput
-      >(
-        [
-          {
-            Stage_Name: deal.Stage,
-          },
-        ],
-        'leadsquared',
-        connectionId,
-        'crm',
-        CrmObject.stage,
-        [],
-      );
-      res.stage_id = stage[0].id_crm_deals_stage;
-    }
-
-    if (deal.ProspectId) {
+    if (deal.OwnerId) {
       res.user_id = await this.utils.getUserUuidFromRemoteId(
-        deal.ProspectId,
+        deal.OwnerId as string,
         connectionId,
       );
     }

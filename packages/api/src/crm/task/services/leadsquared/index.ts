@@ -9,6 +9,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { LeadSquaredTaskInput, LeadSquaredTaskOutput } from './types';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 
 @Injectable()
 export class LeadSquaredService implements ITaskService {
@@ -63,7 +64,13 @@ export class LeadSquaredService implements ITaskService {
         statusCode: 201,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.task,
+        ActionType.POST,
+      );
     }
   }
 
@@ -109,7 +116,13 @@ export class LeadSquaredService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.task,
+        ActionType.POST,
+      );
     }
   }
 }

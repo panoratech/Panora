@@ -6,7 +6,7 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { ApiResponse } from '@@core/utils/types';
+import { ApiResponse, TargetObject } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import {
   LeadSquaredContactInput,
@@ -29,9 +29,9 @@ export class LeadSquaredService implements IContactService {
     this.registry.registerService('zoho', this);
   }
 
-  formatDate(date: Date): string {
+  formatDateForLeadSquared(date: Date): string {
     const year = date.getUTCFullYear();
-    const month = date.getUTCMonth();
+    const month = date.getUTCMonth() + 1;
     const currentDate = date.getUTCDate();
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
@@ -78,7 +78,13 @@ export class LeadSquaredService implements IContactService {
         statusCode: 201,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.contact,
+        ActionType.POST,
+      );
     }
   }
 
@@ -100,8 +106,8 @@ export class LeadSquaredService implements IContactService {
         'x-LSQ-SecretKey': this.cryptoService.decrypt(connection.secret_token),
       };
 
-      const fromDate = this.formatDate(new Date(0));
-      const toDate = this.formatDate(new Date());
+      const fromDate = this.formatDateForLeadSquared(new Date(0));
+      const toDate = this.formatDateForLeadSquared(new Date());
 
       const resp = await axios.get(
         `${connection.account_url}/v2/LeadManagement.svc/Leads.RecentlyModified`,
@@ -134,7 +140,13 @@ export class LeadSquaredService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.contact,
+        ActionType.GET,
+      );
     }
   }
 }

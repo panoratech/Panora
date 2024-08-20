@@ -17,8 +17,14 @@ export class LeadSquaredTaskMapper implements ITaskMapper {
     this.mappersRegistry.registerService('crm', 'task', 'leadsquared', this);
   }
 
-  formatToRequiredDateString(date: Date): string {
-    return `${date.getUTCFullYear()}-${date.getUTCMonth()}-${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCMilliseconds()}`;
+  formatDateForLeadSquared(date: Date): string {
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1;
+    const currentDate = date.getUTCDate();
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+    return `${year}-${month}-${currentDate} ${hours}:${minutes}:${seconds}`;
   }
 
   async desunify(
@@ -37,11 +43,11 @@ export class LeadSquaredTaskMapper implements ITaskMapper {
     };
 
     if (source.due_date) {
-      result.DueDate = this.formatToRequiredDateString(source.due_date);
+      result.DueDate = this.formatDateForLeadSquared(source.due_date);
     }
 
     if (source.finished_date) {
-      result.EndDate = this.formatToRequiredDateString(source.due_date);
+      result.EndDate = this.formatDateForLeadSquared(source.due_date);
     }
 
     // deal -> opportunity

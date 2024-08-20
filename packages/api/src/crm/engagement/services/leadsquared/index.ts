@@ -17,6 +17,7 @@ import {
   LeadSquaredEngagementMeetingOutput,
   LeadSquaredEngagementOutput,
 } from './types';
+import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 
 @Injectable()
 export class LeadSquaredService implements IEngagementService {
@@ -32,9 +33,9 @@ export class LeadSquaredService implements IEngagementService {
     this.registry.registerService('leadsquared', this);
   }
 
-  formatDate(date: Date): string {
+  formatDateForLeadSquared(date: Date): string {
     const year = date.getUTCFullYear();
-    const month = date.getUTCMonth();
+    const month = date.getUTCMonth() + 1;
     const currentDate = date.getUTCDate();
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
@@ -68,7 +69,13 @@ export class LeadSquaredService implements IEngagementService {
           break;
       }
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.engagement,
+        ActionType.POST,
+      );
     }
   }
 
@@ -104,7 +111,13 @@ export class LeadSquaredService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.engagement,
+        ActionType.POST,
+      );
     }
   }
 
@@ -146,8 +159,14 @@ export class LeadSquaredService implements IEngagementService {
         message: 'Leadsquared meeting created',
         statusCode: 201,
       };
-    } catch (e) {
-      throw e;
+    } catch (error) {
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.engagement,
+        ActionType.POST,
+      );
     }
   }
 
@@ -182,7 +201,13 @@ export class LeadSquaredService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.engagement,
+        ActionType.POST,
+      );
     }
   }
 
@@ -200,8 +225,8 @@ export class LeadSquaredService implements IEngagementService {
         'x-LSQ-AccessKey': this.cryptoService.decrypt(connection.access_token),
         'x-LSQ-SecretKey': this.cryptoService.decrypt(connection.secret_token),
       };
-      const fromDate = this.formatDate(new Date(0));
-      const toDate = this.formatDate(new Date());
+      const fromDate = this.formatDateForLeadSquared(new Date(0));
+      const toDate = this.formatDateForLeadSquared(new Date());
       const requestBody = {
         Parameter: {
           FromDate: fromDate,
@@ -223,7 +248,13 @@ export class LeadSquaredService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.engagement,
+        ActionType.GET,
+      );
     }
   }
 
@@ -237,8 +268,8 @@ export class LeadSquaredService implements IEngagementService {
         },
       });
 
-      const fromDate = this.formatDate(new Date(0));
-      const toDate = this.formatDate(new Date());
+      const fromDate = this.formatDateForLeadSquared(new Date(0));
+      const toDate = this.formatDateForLeadSquared(new Date());
 
       const payload = {
         FromDate: fromDate,
@@ -268,7 +299,13 @@ export class LeadSquaredService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.engagement,
+        ActionType.GET,
+      );
     }
   }
 
@@ -291,7 +328,13 @@ export class LeadSquaredService implements IEngagementService {
           break;
       }
     } catch (error) {
-      throw error;
+      handle3rdPartyServiceError(
+        error,
+        this.logger,
+        'leadsquared',
+        CrmObject.engagement,
+        ActionType.GET,
+      );
     }
   }
 }
