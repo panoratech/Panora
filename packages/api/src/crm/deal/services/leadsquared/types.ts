@@ -2,7 +2,7 @@ type LeadDetail = {
   Attribute: string;
   Value: string;
 };
-// If comments are enabled on opportunity status change, you must pass the mx_Custom_19 (of datatype ‘String’)
+
 type Field = {
   SchemaName: string;
   Value: string;

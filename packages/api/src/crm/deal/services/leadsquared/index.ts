@@ -84,7 +84,7 @@ export class LeadSquaredService implements IDealService {
 
   async sync(data: SyncParam): Promise<ApiResponse<LeadSquaredDealOutput[]>> {
     try {
-      // TODO: I'm not sure about this
+      // Have to pass the leadId and opportunityType
       const { linkedUserId, leadId, opportunityType } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {

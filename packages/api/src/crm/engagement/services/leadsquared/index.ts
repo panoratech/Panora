@@ -35,11 +35,11 @@ export class LeadSquaredService implements IEngagementService {
 
   formatDateForLeadSquared(date: Date): string {
     const year = date.getUTCFullYear();
-    const month = date.getUTCMonth() + 1;
-    const currentDate = date.getUTCDate();
-    const hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const seconds = date.getUTCSeconds();
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const currentDate = date.getUTCDate().toString().padStart(2, '0');
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
     return `${year}-${month}-${currentDate} ${hours}:${minutes}:${seconds}`;
   }
 

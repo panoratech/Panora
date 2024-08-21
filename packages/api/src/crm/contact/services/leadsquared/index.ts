@@ -31,11 +31,11 @@ export class LeadSquaredService implements IContactService {
 
   formatDateForLeadSquared(date: Date): string {
     const year = date.getUTCFullYear();
-    const month = date.getUTCMonth() + 1;
-    const currentDate = date.getUTCDate();
-    const hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    const seconds = date.getUTCSeconds();
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const currentDate = date.getUTCDate().toString().padStart(2, '0');
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    const seconds = date.getUTCSeconds().toString().padStart(2, '0');
     return `${year}-${month}-${currentDate} ${hours}:${minutes}:${seconds}`;
   }
 
@@ -121,17 +121,15 @@ export class LeadSquaredService implements IContactService {
           headers,
         },
       );
+
       const leads = resp?.data['Leads'].map(
-        (lead: LeadSquaredContactResponse) => {
-          const leadSquaredContact: LeadSquaredContactOutput = {};
-          lead.LeadPropertyList.map(
-            ({ Attribute, Value }: { Attribute: string; Value: string }) => {
-              leadSquaredContact[Attribute] = Value;
-            },
-          );
-          return leadSquaredContact;
-        },
-      );
+  (lead: LeadSquaredContactResponse) =>
+    lead.LeadPropertyList.reduce((acc, { Attribute, Value }: { Attribute: string; Value: string }) => {
+      acc[Attribute] = Value;
+      return acc;
+    }, {} as LeadSquaredContactOutput)
+);
+
       //this.logger.log('CONTACTS LEADSQUARED ' + JSON.stringify(resp.data.data));
       this.logger.log(`Synced leadsquared contacts !`);
       return {
