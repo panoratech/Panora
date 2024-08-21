@@ -26,7 +26,7 @@ export class LeadSquaredService implements IContactService {
     this.logger.setContext(
       CrmObject.contact.toUpperCase() + ':' + LeadSquaredService.name,
     );
-    this.registry.registerService('zoho', this);
+    this.registry.registerService('leadsquared', this);
   }
 
   formatDateForLeadSquared(date: Date): string {
