@@ -15,7 +15,7 @@ export class LeadSquaredContactMapper implements IContactMapper {
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
   ) {
-    this.mappersRegistry.registerService('crm', 'contact', 'zoho', this);
+    this.mappersRegistry.registerService('crm', 'contact', 'leadsquared', this);
   }
   desunify(
     source: UnifiedCrmContactInput,
