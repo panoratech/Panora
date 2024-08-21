@@ -1,6 +1,4 @@
-interface KeyValuePair {
-  [key: string]: unknown;
-}
+type KeyValuePair = Record<string, unknown>;
 
 export type LeadSquaredEngagementCall = {
   SourceNumber: string; //'+91-8611795988';

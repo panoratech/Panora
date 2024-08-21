@@ -1,6 +1,4 @@
-interface KeyValuePair {
-  [key: string]: unknown;
-}
+type KeyValuePair = Record<string, unknown>;
 
 interface LeadSquaredTask {
   UserTaskId: string;

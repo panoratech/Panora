@@ -41,7 +41,7 @@ export class LeadSquaredContactMapper implements IContactMapper {
     if (primaryPhone && source.phone_numbers?.[0]?.phone_type == 'MOBILE') {
       result.Mobile = primaryPhone;
     }
-    if (source.addresses && source.addresses[0]) {
+    if (source.addresses?.[0]) {
       result.Account_Street1 = source.addresses[0].street_1;
       result.Account_City = source.addresses[0].city;
       result.Account_State = source.addresses[0].state;
@@ -109,7 +109,7 @@ export class LeadSquaredContactMapper implements IContactMapper {
     }
     // Constructing email and phone details
     const email_addresses =
-      contact && contact.EmailAddress
+      contact?.EmailAddress
         ? [
             {
               email_address: contact.EmailAddress,
@@ -132,13 +132,13 @@ export class LeadSquaredContactMapper implements IContactMapper {
         phone_type: 'MOBILE',
       });
     }
-    if (contact && contact.Account_Fax) {
+    if (contact?.Account_Fax) {
       phone_numbers.push({
         phone_number: contact.Account_Fax,
         phone_type: 'fax',
       });
     }
-    if (contact && contact.Phone) {
+    if (contact?.Phone) {
       phone_numbers.push({
         phone_number: contact.Phone,
         phone_type: 'home',

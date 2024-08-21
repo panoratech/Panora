@@ -71,6 +71,11 @@ export class LeadSquaredService implements ITaskService {
         CrmObject.task,
         ActionType.POST,
       );
+      return {
+        data: null,
+        message: 'Failed to create Leadsquared task',
+        statusCode: 500,
+      };
     }
   }
 
@@ -123,6 +128,11 @@ export class LeadSquaredService implements ITaskService {
         CrmObject.task,
         ActionType.POST,
       );
+      return {
+        data: [],
+        message: 'Failed to retrieve Leadsquared tasks',
+        statusCode: 500,
+      };
     }
   }
 }

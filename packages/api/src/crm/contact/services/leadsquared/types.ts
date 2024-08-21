@@ -87,13 +87,13 @@ type LeadSquaredContact = {
   [key: string]: string | number | boolean | null;
 };
 
+type LeadProperty = {
+  Attribute: string;
+  Value: string;
+};
+
 export type LeadSquaredContactResponse = {
-  LeadPropertyList: [
-    {
-      Attribute: string;
-      Value: string;
-    },
-  ];
+  LeadPropertyList: LeadProperty[];
 };
 
 export type LeadSquaredContactInput = Partial<LeadSquaredContact>;

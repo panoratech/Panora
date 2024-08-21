@@ -197,9 +197,9 @@ export class LeadSquaredEngagementMapper implements IEngagementMapper {
       Direction: source.direction === 'INBOUND' ? 'Inbound' : 'Outbound',
       CallerSource: source.content || '',
       LeadId: source.company_id || '',
-      SourceNumber: '+91-8611795988', // todo,
-      DisplayNumber: '+91-8611795989', // todo
-      DestinationNumber: '+91-9611795983', // todo,
+      SourceNumber: source.source_number || '',
+      DisplayNumber: source.display_number || '',
+      DestinationNumber: source.destination_number || '',
     };
 
     if (source.start_at && source.end_time) {
