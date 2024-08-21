@@ -50,7 +50,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'pipedrive': {
-        urls: { 
+        urls: {
           docsUrl: 'https://developers.pipedrive.com/docs/api/v1',
           authBaseUrl: 'https://oauth.pipedrive.com/oauth/authorize',
           apiUrl: 'https://api.pipedrive.com',
@@ -93,7 +93,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.oauth2
         }
       },
-      'accelo': { 
+      'accelo': {
         urls: {
           docsUrl: 'https://api.accelo.com/docs/#introduction',
           authBaseUrl: (domain) => `https://${domain}.api.accelo.com/oauth2/v0/authorize`,
@@ -136,7 +136,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           properties: ['password']
         }
       },
-      'capsule': { 
+      'capsule': {
         urls: {
           docsUrl: 'https://developer.capsulecrm.com/',
           authBaseUrl: 'https://api.capsulecrm.com/oauth/authorise',
@@ -368,6 +368,30 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.oauth2
         },
         active: false
+      },
+        'leadsquared': {
+        scopes: '',
+        urls: {
+          docsUrl: 'https://apidocs.leadsquared.com/overview/#api',
+          apiUrl: 'https://api-us11.leadsquared.com', // it has different different endpoint for various regions
+        },
+        logoPath: 'https://www.leadsquared.com/wp-content/uploads/2023/12/340-x-156-300x138-1.png',
+        description: 'Sync & Create contacts, deals, engagements and tasks',
+        authStrategy: {
+          strategy: AuthStrategy.api_key,
+          authStructure: [
+            {
+              headerParamName: 'x-LSQ-AccessKey',
+              valueName: 'access_token',
+            },
+            {
+              headerParamName: 'x-LSQ-SecretKey',
+              valueName: 'secret_token',
+            },
+          ],
+          properties: ['access_token', 'secret_token']
+        },
+        active: false
       }
     },
     'ticketing': {
@@ -392,7 +416,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           docsUrl: 'https://developer.zendesk.com/api-reference/sales-crm/introduction/',
           apiUrl: (myDomain) => `https://${myDomain}.zendesk.com/api`,
           authBaseUrl: (myDomain) => `https://${myDomain}.zendesk.com/oauth/authorizations/new`
-        }, 
+        },
         logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNKVceZGVM7PbARp_2bjdOICUxlpS5B29UYlurvh6Z2Q&s',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         authStrategy: {
@@ -407,7 +431,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
             'ticketing.tickets.events',
             'ticketing.comments.events',
             'ticketing.tags.events',
-            'ticketing.attachments.events', 
+            'ticketing.attachments.events',
             'ticketing.accounts.events',
             'ticketing.users.events',
             'ticketing.contacts.events',
@@ -435,8 +459,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'read:jira-work manage:jira-project manage:jira-configuration read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider offline_access',
         urls: {
           docsUrl: 'https://developer.atlassian.com/cloud/jira/platform/rest/v3',
-          apiUrl: (cloudId) => `https://api.atlassian.com/ex/jira/${cloudId}/rest/api`, 
-          authBaseUrl: 'https://auth.atlassian.com/authorize', 
+          apiUrl: (cloudId) => `https://api.atlassian.com/ex/jira/${cloudId}/rest/api`,
+          authBaseUrl: 'https://auth.atlassian.com/authorize',
         },
         options: {
           local_redirect_uri_in_https: true
@@ -444,7 +468,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://logowik.com/content/uploads/images/jira3124.jpg',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         authStrategy: {
-          strategy: AuthStrategy.oauth2 
+          strategy: AuthStrategy.oauth2
         }
       },
       'linear': {
@@ -551,7 +575,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           docsUrl: 'https://github.com/basecamp/api/blob/master/sections/authentication.md',
           apiUrl: '',
           authBaseUrl: 'https://launchpad.37signals.com/authorization/new',
-        }, 
+        },
         logoPath: 'https://asset.brandfetch.io/id7Kew_cLD/idx-Jcj2Qo.jpeg',
         description: 'Sync & Create accounts, tickets, comments, attachments, contacts, tags, teams and users',
         active: false,
@@ -894,7 +918,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'freshbooks': {
-        scopes: '', 
+        scopes: '',
         urls: {
           docsUrl: 'https://www.freshbooks.com/api/start',
           apiUrl: 'https://api.freshbooks.com',
@@ -1054,7 +1078,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'xero': {
-        scopes: 'offline_access openid profile email accounting.transactions',       
+        scopes: 'offline_access openid profile email accounting.transactions',
         urls: {
           docsUrl: 'https://developer.xero.com/documentation/getting-started-guide/',
           apiUrl: 'https://api.xero.com/api.xro/2.0',
@@ -1062,7 +1086,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://i.ibb.co/qpc2RQZ/xeroappicon.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false, 
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -1203,7 +1227,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'brevo': {
-        urls: { 
+        urls: {
           docsUrl: 'https://developers.brevo.com/docs/getting-started',
           apiUrl: 'https://api.brevo.com/v3'
         },
@@ -1216,7 +1240,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
     },
-    'ats': { 
+    'ats': {
       'applicantstack': {
         scopes: '',
         urls: {
@@ -2460,7 +2484,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://play-lh.googleusercontent.com/EMobDJKabP1eY_63QHgPS_-TK3eRfxXaeOnERbcRaWAw573iaV74pXS9xOv997dRZtM',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false, 
+        active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2771,7 +2795,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         logoPath: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
-        authStrategy: { 
+        authStrategy: {
           strategy: AuthStrategy.oauth2
         }
       },
@@ -2913,7 +2937,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },
-      }, 
+      },
       'mercadolibre': {
         scopes: '',
         urls: {
