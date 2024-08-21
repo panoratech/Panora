@@ -123,12 +123,18 @@ export class LeadSquaredService implements IContactService {
       );
 
       const leads = resp?.data['Leads'].map(
-  (lead: LeadSquaredContactResponse) =>
-    lead.LeadPropertyList.reduce((acc, { Attribute, Value }: { Attribute: string; Value: string }) => {
-      acc[Attribute] = Value;
-      return acc;
-    }, {} as LeadSquaredContactOutput)
-);
+        (lead: LeadSquaredContactResponse) =>
+          lead.LeadPropertyList.reduce(
+            (
+              acc,
+              { Attribute, Value }: { Attribute: string; Value: string },
+            ) => {
+              acc[Attribute] = Value;
+              return acc;
+            },
+            {} as LeadSquaredContactOutput,
+          ),
+      );
 
       //this.logger.log('CONTACTS LEADSQUARED ' + JSON.stringify(resp.data.data));
       this.logger.log(`Synced leadsquared contacts !`);
