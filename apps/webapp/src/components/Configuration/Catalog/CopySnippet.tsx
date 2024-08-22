@@ -28,7 +28,7 @@ export const CopySnippet = () => {
             `<PanoraDynamicCatalogCard
                 category={ConnectorCategory.Crm}
                 projectId={"c9a1b1f8-466d-442d-a95e-11cdd00baf49"}
-                returnUrl={"https://acme.inc"}
+                optionalApiUrl={"https://acme.inc"}
                 linkedUserId={"b860d6c1-28f9-485c-86cd-fb09e60f10a2"}
             />`
         );
@@ -131,7 +131,7 @@ export const CopySnippet = () => {
                             <span className="text-cyan-600">projectId</span>{`={'c9a1b1f8-466d-442d-a95e-11cdd00baf49'}`}
                         </span>
                         <span className="pl-4">	
-                            <span className="text-rose-600">returnUrl</span>{`={'https://acme.inc'}`}
+                            <span className="text-rose-600">optionalApiUrl</span>{`={'https://acme.inc'}`}
                         </span>
                         <span className="pl-4">
                             <span className="text-amber-400">linkedUserId</span>{`={'b860d6c1-28f9-485c-86cd-fb09e60f10a2'}`}
@@ -191,7 +191,7 @@ export const CopySnippet = () => {
                         <span className="text-cyan-600">projectId</span>{`={'c9a1b1f8-466d-442d-a95e-11cdd00baf49'}`}
                     </span>
                     <span className="pl-4">	
-                        <span className="text-rose-600">returnUrl</span>{`={'https://acme.inc'}`}
+                        <span className="text-rose-600">optionalApiUrl</span>{`={'https://acme.inc'}`}
                     </span>
                     <span className="pl-4">
                         <span className="text-amber-400">linkedUserId</span>{`={'b860d6c1-28f9-485c-86cd-fb09e60f10a2'}`}
