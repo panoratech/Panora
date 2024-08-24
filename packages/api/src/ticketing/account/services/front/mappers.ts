@@ -63,6 +63,7 @@ export class FrontAccountMapper implements IAccountMapper {
       name: account.name,
       domains: account.domains.flat(),
       field_mappings: field_mappings,
+      remote_data: account
     };
 
     return unifiedAccount;
