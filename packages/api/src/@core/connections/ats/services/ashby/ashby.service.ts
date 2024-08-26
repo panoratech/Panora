@@ -93,7 +93,7 @@ export class AshbyConnectionService extends AbstractBaseConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(body.username),
+            access_token: this.cryptoService.encrypt(body.api_key),
             account_url: CONNECTORS_METADATA['ats']['ashby'].urls
               .apiUrl as string,
             status: 'valid',
@@ -110,7 +110,7 @@ export class AshbyConnectionService extends AbstractBaseConnectionService {
             token_type: 'basic',
             account_url: CONNECTORS_METADATA['ats']['ashby'].urls
               .apiUrl as string,
-            access_token: this.cryptoService.encrypt(body.username),
+            access_token: this.cryptoService.encrypt(body.api_key),
             status: 'valid',
             created_at: new Date(),
             projects: {

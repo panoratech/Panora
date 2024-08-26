@@ -1259,7 +1259,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         primaryColor: '#4a3ead',
         authStrategy: {
           strategy: AuthStrategy.basic,
-          properties: ['username']
+          properties: ['api_key']
         }
       },
       'bamboohr': {

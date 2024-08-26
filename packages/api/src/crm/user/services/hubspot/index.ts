@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IUserService } from '@crm/user/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { HubspotUserOutput, commonUserHubspotProperties } from './types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
 import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IUserService } from '@crm/user/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { HubspotUserOutput, commonUserHubspotProperties } from './types';
 
 @Injectable()
 export class HubspotService implements IUserService {

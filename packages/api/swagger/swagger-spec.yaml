@@ -151,7 +151,7 @@ paths:
             schema:
               $ref: '#/components/schemas/SignatureVerificationDto'
       responses:
-        '200':
+        '201':
           description: ''
           content:
             application/json:
@@ -161,8 +161,6 @@ paths:
                     type: object
                     additionalProperties: true
                     description: Dynamic event payload
-        '201':
-          description: ''
       tags: *ref_0
       x-speakeasy-group: webhooks
   /ticketing/tickets:

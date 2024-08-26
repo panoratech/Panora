@@ -45,7 +45,7 @@ export class HubspotService implements IContactService {
         properties: contactData,
       };
       const resp = await axios.post(
-        `${connection.account_url}/crm/v3/objects/contacts`,
+        `${connection.account_url}/v3/objects/contacts`,
         JSON.stringify(dataBody),
         {
           headers: {

@@ -176,10 +176,13 @@ export class WebhookController {
   @Post('verifyEvent')
   async verifyPayloadSignature(@Body() data: SignatureVerificationDto) {
     const { payload, signature, secret } = data;
-    return await this.webhookService.verifyPayloadSignature(
+    const resp = await this.webhookService.verifyPayloadSignature(
       payload,
       signature,
       secret,
     );
+    return {
+      data: resp,
+    };
   }
 }
