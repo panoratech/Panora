@@ -126,13 +126,13 @@ const handleOAuth2Url = async ({
   ...dyn
 }: HandleOAuth2Url) => {
   const type = providerToType(providerName, vertical, authStrategy);
-  
+
   const response = await fetch(`${apiUrl}/connection_strategies/getCredentials?projectId=${projectId}&type=${type}`);
   const data = await response.json() as OAuth2AuthData;
 
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new ReferenceError(`No client id for type ${type}`);
-  
+
   const scopes = data.SCOPE;
   const { urls: { authBaseUrl: baseUrl } } = config;
   if (!baseUrl) throw new ReferenceError(`No authBaseUrl found for type ${type}`);

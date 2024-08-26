@@ -1,3 +1,5 @@
+import { MicrosoftdynamicssalesCompanyMapper } from './services/microsoftdynamicssales/mappers';
+import { MicrosoftdynamicssalesService } from './services/microsoftdynamicssales';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
@@ -52,6 +54,8 @@ import { SyncService } from './sync/sync.service';
     PipedriveCompanyMapper,
     ZendeskCompanyMapper,
     ZohoCompanyMapper,
+    MicrosoftdynamicssalesService,
+    MicrosoftdynamicssalesCompanyMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
