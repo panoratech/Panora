@@ -181,8 +181,6 @@ export class WebhookController {
       signature,
       secret,
     );
-    return {
-      data: resp,
-    };
+    return resp;
   }
 }

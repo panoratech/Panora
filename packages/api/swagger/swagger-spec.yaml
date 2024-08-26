@@ -156,11 +156,9 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  data:
-                    type: object
-                    additionalProperties: true
-                    description: Dynamic event payload
+                type: object
+                additionalProperties: true
+                description: Dynamic event payload
       tags: *ref_0
       x-speakeasy-group: webhooks
   /ticketing/tickets:

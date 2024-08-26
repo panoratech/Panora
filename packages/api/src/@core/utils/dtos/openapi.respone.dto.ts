@@ -48,13 +48,9 @@ export const ApiPostGenericJson = (description: string) => {
   return applyDecorators(
     ApiCreatedResponse({
       schema: {
-        properties: {
-          data: {
-            type: 'object',
-            additionalProperties: true,
-            description: description,
-          },
-        },
+        type: 'object',
+        additionalProperties: true,
+        description: description,
       },
     }),
   );
