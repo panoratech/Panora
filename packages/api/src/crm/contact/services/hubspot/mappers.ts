@@ -143,14 +143,14 @@ export class HubspotContactMapper implements IContactMapper {
       email_addresses: [
         {
           email_address: contact.properties.email,
-          email_address_type: 'primary',
+          email_address_type: 'PERSONAL',
           owner_type: 'contact',
         },
       ],
       phone_numbers: [
         {
           phone_number: contact.properties.phone,
-          phone_type: 'primary',
+          phone_type: 'PERSONAL',
           owner_type: 'contact',
         },
       ],

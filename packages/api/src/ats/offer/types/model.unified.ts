@@ -71,7 +71,7 @@ export class UnifiedAtsOfferInput {
   @ApiPropertyOptional({
     type: String,
     example: 'DRAFT',
-    enum: [
+    /* enum: [
       'DRAFT',
       'APPROVAL_SENT',
       'APPROVED',
@@ -81,11 +81,11 @@ export class UnifiedAtsOfferInput {
       'DENIED',
       'SIGNED',
       'DEPRECATED',
-    ],
+    ],*/
     description: 'The status of the offer',
     nullable: true,
   })
-  @IsIn([
+  /*@IsIn([
     'DRAFT',
     'APPROVAL_SENT',
     'APPROVED',
@@ -95,7 +95,7 @@ export class UnifiedAtsOfferInput {
     'DENIED',
     'SIGNED',
     'DEPRECATED',
-  ])
+  ])*/
   @IsOptional()
   status?: OfferStatus | string;
 

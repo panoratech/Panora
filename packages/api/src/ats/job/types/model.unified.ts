@@ -45,23 +45,23 @@ export class UnifiedAtsJobInput {
 
   @ApiPropertyOptional({
     type: String,
-    enum: ['OPEN', 'CLOSED', 'DRAFT', 'ARCHIVED', 'PENDING'],
+    // enum: ['OPEN', 'CLOSED', 'DRAFT', 'ARCHIVED', 'PENDING'],
     example: 'OPEN',
     nullable: true,
     description: 'The status of the job',
   })
-  @IsIn(['OPEN', 'CLOSED', 'DRAFT', 'ARCHIVED', 'PENDING'])
+  //@IsIn(['OPEN', 'CLOSED', 'DRAFT', 'ARCHIVED', 'PENDING'])
   @IsOptional()
   status?: JobStatus | string;
 
   @ApiPropertyOptional({
     type: String,
     example: 'POSTING',
-    enum: ['POSTING', 'REQUISITION', 'PROFILE'],
+    // enum: ['POSTING', 'REQUISITION', 'PROFILE'],
     nullable: true,
     description: 'The type of the job',
   })
-  @IsIn(['POSTING', 'REQUISITION', 'PROFILE'])
+  //@IsIn(['POSTING', 'REQUISITION', 'PROFILE'])
   @IsOptional()
   type?: JobType | string;
 

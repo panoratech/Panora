@@ -13,12 +13,12 @@ export type InterviewStatus = 'SCHEDULED' | 'AWAITING_FEEDBACK' | 'COMPLETED';
 export class UnifiedAtsInterviewInput {
   @ApiPropertyOptional({
     type: String,
-    enum: ['SCHEDULED', 'AWAITING_FEEDBACK', 'COMPLETED'],
+    // enum: ['SCHEDULED', 'AWAITING_FEEDBACK', 'COMPLETED'],
     example: 'SCHEDULED',
     nullable: true,
     description: 'The status of the interview',
   })
-  @IsIn(['SCHEDULED', 'AWAITING_FEEDBACK', 'COMPLETED'])
+  //@IsIn(['SCHEDULED', 'AWAITING_FEEDBACK', 'COMPLETED'])
   @IsOptional()
   status?: InterviewStatus | string;
 

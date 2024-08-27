@@ -314,12 +314,12 @@ export class Email {
 
   @ApiProperty({
     type: String,
-    enum: ['PERSONAL', 'WORK'],
+    //enum: ['PERSONAL', 'WORK'],
     nullable: true,
     description:
       'The email address type. Authorized values are either PERSONAL or WORK.',
   })
-  @IsIn(['PERSONAL', 'WORK'])
+  ////@IsIn(['PERSONAL', 'WORK'])
   @IsString()
   email_address_type: string;
 
@@ -331,7 +331,7 @@ export class Email {
   })
   @IsString()
   @IsOptional()
-  @IsIn(['COMPANY', 'CONTACT'])
+  //@IsIn(['COMPANY', 'CONTACT'])
   owner_type?: string;
 }
 
@@ -347,11 +347,9 @@ export class Phone {
 
   @ApiProperty({
     type: String,
-    enum: ['MOBILE', 'WORK'],
     nullable: true,
     description: 'The phone type. Authorized values are either MOBILE or WORK',
   })
-  @IsIn(['MOBILE', 'WORK'])
   @IsString()
   phone_type: string;
 
@@ -422,13 +420,11 @@ export class Address {
 
   @ApiProperty({
     type: String,
-    enum: ['PERSONAL', 'WORK'],
     nullable: true,
     example: 'PERSONAL',
     description:
       'The address type. Authorized values are either PERSONAL or WORK.',
   })
-  @IsIn(['PERSONAL', 'WORK'])
   @IsOptional()
   @IsString()
   address_type?: string;

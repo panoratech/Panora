@@ -8,7 +8,7 @@ export class UnifiedFilestoragePermissionInput {
   @ApiProperty({
     type: [String],
     example: ['READ'],
-    enum: ['READ', 'WRITE', 'OWNER'],
+    // enum: ['READ', 'WRITE', 'OWNER'],
     nullable: true,
     description: 'The roles of the permission',
   })
@@ -17,12 +17,12 @@ export class UnifiedFilestoragePermissionInput {
 
   @ApiProperty({
     type: String,
-    enum: ['USER', 'GROUP', 'COMPANY', 'ANYONE'],
+    // enum: ['USER', 'GROUP', 'COMPANY', 'ANYONE'],
     example: 'USER',
     nullable: true,
     description: 'The type of the permission',
   })
-  @IsIn(['USER', 'GROUP', 'COMPANY', 'ANYONE'])
+  //@IsIn(['USER', 'GROUP', 'COMPANY', 'ANYONE'])
   @IsString()
   type: PermissionType | string;
 

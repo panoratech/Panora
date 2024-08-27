@@ -37,7 +37,7 @@ export class UnifiedHrisGroupInput {
   @ApiPropertyOptional({
     type: String,
     example: 'DEPARTMENT',
-    enum: ['TEAM', 'DEPARTMENT', 'COST_CENTER', 'BUSINESS_UNIT', 'GROUP'],
+    // enum: ['TEAM', 'DEPARTMENT', 'COST_CENTER', 'BUSINESS_UNIT', 'GROUP'],
     nullable: true,
     description: 'The type of the group',
   })

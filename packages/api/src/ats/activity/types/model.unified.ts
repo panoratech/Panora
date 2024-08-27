@@ -13,12 +13,12 @@ export type ActivityVisibility = 'ADMIN_ONLY' | 'PUBLIC' | 'PRIVATE';
 export class UnifiedAtsActivityInput {
   @ApiPropertyOptional({
     type: String,
-    enum: ['NOTE', 'EMAIL', 'OTHER'],
+    //// enum: ['NOTE', 'EMAIL', 'OTHER'],
     example: 'NOTE',
     nullable: true,
-    description: 'The type of activity',
+    description: 'The type of activity. NOTE, EMAIL or OTHER',
   })
-  @IsIn(['NOTE', 'EMAIL', 'OTHER'])
+  ////@IsIn(['NOTE', 'EMAIL', 'OTHER'])
   @IsOptional()
   activity_type?: ActivityType | string;
 
@@ -44,12 +44,13 @@ export class UnifiedAtsActivityInput {
 
   @ApiPropertyOptional({
     type: String,
-    enum: ['ADMIN_ONLY', 'PUBLIC', 'PRIVATE'],
+    // enum: ['ADMIN_ONLY', 'PUBLIC', 'PRIVATE'],
     example: 'PUBLIC',
     nullable: true,
-    description: 'The visibility of the activity',
+    description:
+      'The visibility of the activity. ADMIN_ONLY, PUBLIC or PRIVATE',
   })
-  @IsIn(['ADMIN_ONLY', 'PUBLIC', 'PRIVATE'])
+  ////@IsIn(['ADMIN_ONLY', 'PUBLIC', 'PRIVATE'])
   @IsOptional()
   visibility?: ActivityVisibility | string;
 

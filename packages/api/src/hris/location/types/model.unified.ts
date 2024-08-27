@@ -93,12 +93,12 @@ export class UnifiedHrisLocationInput {
   @ApiPropertyOptional({
     type: String,
     example: 'WORK',
-    enum: ['WORK', 'HOME'],
+    // enum: ['WORK', 'HOME'],
     nullable: true,
     description: 'The type of the location',
   })
   @IsString()
-  @IsIn(['WORK', 'HOME'])
+  //@IsIn(['WORK', 'HOME'])
   @IsOptional()
   location_type?: LocationType | string;
 

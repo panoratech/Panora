@@ -41,10 +41,10 @@ export class UnifiedEcommerceProductInput {
     type: String,
     example: 'ACTIVE',
     nullable: true,
-    enum: ['ARCHIVED', 'ACTIVE', 'DRAFT'],
+    // enum: ['ARCHIVED', 'ACTIVE', 'DRAFT'],
     description: 'The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.',
   })
-  @IsIn(['ARCHIVED', 'ACTIVE', 'DRAFT'])
+  //@IsIn(['ARCHIVED', 'ACTIVE', 'DRAFT'])
   @IsOptional()
   product_status?: string;
 

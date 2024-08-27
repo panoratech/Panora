@@ -184,7 +184,7 @@ export class UnifiedHrisEmployeeInput {
   @ApiPropertyOptional({
     type: String,
     example: 'MALE',
-    enum: ['MALE', 'FEMALE', 'NON-BINARY', 'OTHER', 'PREFER_NOT_TO_DISCLOSE'],
+    // enum: ['MALE', 'FEMALE', 'NON-BINARY', 'OTHER', 'PREFER_NOT_TO_DISCLOSE'],
     nullable: true,
     description: 'The gender of the employee',
   })
@@ -195,7 +195,7 @@ export class UnifiedHrisEmployeeInput {
   @ApiPropertyOptional({
     type: String,
     example: 'AMERICAN_INDIAN_OR_ALASKA_NATIVE',
-    enum: [
+    /* enum: [
       'AMERICAN_INDIAN_OR_ALASKA_NATIVE',
       'ASIAN_OR_INDIAN_SUBCONTINENT',
       'BLACK_OR_AFRICAN_AMERICAN',
@@ -204,7 +204,7 @@ export class UnifiedHrisEmployeeInput {
       'TWO_OR_MORE_RACES',
       'WHITE',
       'PREFER_NOT_TO_DISCLOSE',
-    ],
+    ],*/
     nullable: true,
     description: 'The ethnicity of the employee',
   })
@@ -215,13 +215,13 @@ export class UnifiedHrisEmployeeInput {
   @ApiPropertyOptional({
     type: String,
     example: 'Married',
-    enum: [
+    /* enum: [
       'SINGLE',
       'MARRIED_FILING_JOINTLY',
       'MARRIED_FILING_SEPARATELY',
       'HEAD_OF_HOUSEHOLD',
       'QUALIFYING_WIDOW_OR_WIDOWER_WITH_DEPENDENT_CHILD',
-    ],
+    ],*/
     nullable: true,
     description: 'The marital status of the employee',
   })
@@ -252,7 +252,7 @@ export class UnifiedHrisEmployeeInput {
   @ApiPropertyOptional({
     type: String,
     example: 'ACTIVE',
-    enum: ['ACTIVE', 'PENDING', 'INACTIVE'],
+    // enum: ['ACTIVE', 'PENDING', 'INACTIVE'],
     nullable: true,
     description: 'The employment status of the employee',
   })

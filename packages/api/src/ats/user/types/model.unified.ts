@@ -59,23 +59,23 @@ export class UnifiedAtsUserInput {
   @ApiPropertyOptional({
     type: String,
     example: 'ADMIN',
-    enum: [
+    /* enum: [
       'SUPER_ADMIN',
       'ADMIN',
       'TEAM_MEMBER',
       'LIMITED_TEAM_MEMBER',
       'INTERVIEWER',
-    ],
+    ],*/
     description: 'The access role of the user',
     nullable: true,
   })
-  @IsIn([
+  /*@IsIn([
     'SUPER_ADMIN',
     'ADMIN',
     'TEAM_MEMBER',
     'LIMITED_TEAM_MEMBER',
     'INTERVIEWER',
-  ])
+  ])*/
   @IsOptional()
   access_role?: UserAccessRole | string;
 

@@ -58,7 +58,7 @@ export class UnifiedAtsEeocsInput {
 
   @ApiPropertyOptional({
     type: String,
-    enum: [
+    /* enum: [
       'AMERICAN_INDIAN_OR_ALASKAN_NATIVE',
       'ASIAN',
       'BLACK_OR_AFRICAN_AMERICAN',
@@ -67,12 +67,12 @@ export class UnifiedAtsEeocsInput {
       'NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER',
       'TWO_OR_MORE_RACES',
       'DECLINE_TO_SELF_IDENTIFY',
-    ],
+    ],*/
     example: 'AMERICAN_INDIAN_OR_ALASKAN_NATIVE',
     nullable: true,
     description: 'The race of the candidate',
   })
-  @IsIn([
+  /*@IsIn([
     'AMERICAN_INDIAN_OR_ALASKAN_NATIVE',
     'ASIAN',
     'BLACK_OR_AFRICAN_AMERICAN',
@@ -81,56 +81,56 @@ export class UnifiedAtsEeocsInput {
     'NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER',
     'TWO_OR_MORE_RACES',
     'DECLINE_TO_SELF_IDENTIFY',
-  ])
+  ])*/
   @IsOptional()
   race?: EeocsRace | string;
 
   @ApiPropertyOptional({
     type: String,
     example: 'MALE',
-    enum: ['MALE', 'FEMALE', 'NON_BINARY', 'OTHER', 'DECLINE_TO_SELF_IDENTIFY'],
+    // enum: ['MALE', 'FEMALE', 'NON_BINARY', 'OTHER', 'DECLINE_TO_SELF_IDENTIFY'],
     nullable: true,
     description: 'The gender of the candidate',
   })
-  @IsIn(['MALE', 'FEMALE', 'NON_BINARY', 'OTHER', 'DECLINE_TO_SELF_IDENTIFY'])
+  //@IsIn(['MALE', 'FEMALE', 'NON_BINARY', 'OTHER', 'DECLINE_TO_SELF_IDENTIFY'])
   @IsOptional()
   gender?: EeocsGender | string;
 
   @ApiPropertyOptional({
     type: String,
     example: 'I_AM_NOT_A_PROTECTED_VETERAN',
-    enum: [
+    /* enum: [
       'I_AM_NOT_A_PROTECTED_VETERAN',
       'I_IDENTIFY_AS_ONE_OR_MORE_OF_THE_CLASSIFICATIONS_OF_A_PROTECTED_VETERAN',
       'I_DONT_WISH_TO_ANSWER',
-    ],
+    ],*/
     nullable: true,
     description: 'The veteran status of the candidate',
   })
-  @IsIn([
+  /*@IsIn([
     'I_AM_NOT_A_PROTECTED_VETERAN',
     'I_IDENTIFY_AS_ONE_OR_MORE_OF_THE_CLASSIFICATIONS_OF_A_PROTECTED_VETERAN',
     'I_DONT_WISH_TO_ANSWER',
-  ])
+  ])*/
   @IsOptional()
   veteran_status?: EeocsVeteranStatus | string;
 
   @ApiPropertyOptional({
     type: String,
-    enum: [
+    /* enum: [
       'YES_I_HAVE_A_DISABILITY_OR_PREVIOUSLY_HAD_A_DISABILITY',
       'NO_I_DONT_HAVE_A_DISABILITY',
       'I_DONT_WISH_TO_ANSWER',
-    ],
+    ],*/
     example: 'YES_I_HAVE_A_DISABILITY_OR_PREVIOUSLY_HAD_A_DISABILITY',
     nullable: true,
     description: 'The disability status of the candidate',
   })
-  @IsIn([
+  /*@IsIn([
     'YES_I_HAVE_A_DISABILITY_OR_PREVIOUSLY_HAD_A_DISABILITY',
     'NO_I_DONT_HAVE_A_DISABILITY',
     'I_DONT_WISH_TO_ANSWER',
-  ])
+  ])*/
   @IsOptional()
   disability_status?: EeocsDisabilityStatus | string;
 
