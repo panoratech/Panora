@@ -48,7 +48,7 @@ export const constructAuthUrl = async ({
   let baseRedirectURL = apiUrl;
   if (config.options?.local_redirect_uri_in_https && redirectUriIngress?.status) {
     baseRedirectURL = redirectUriIngress.value!;
-  }
+  } 
 
   const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`);
   let state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));

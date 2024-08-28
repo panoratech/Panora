@@ -26,14 +26,14 @@ export class UnifiedTicketingCollectionInput {
   @ApiPropertyOptional({
     type: String,
     example: 'PROJECT',
-    enum: ['PROJECT', 'LIST'],
+    // enum: ['PROJECT', 'LIST'],
     nullable: true,
     description:
       'The type of the collection. Authorized values are either PROJECT or LIST ',
   })
-  @IsIn(['PROJECT', 'LIST'], {
+  /*@IsIn(['PROJECT', 'LIST'], {
     message: 'Type must be either PROJECT or LIST',
-  })
+  })*/
   @IsOptional()
   collection_type?: CollectionType | string;
 }

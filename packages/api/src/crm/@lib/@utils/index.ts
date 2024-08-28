@@ -14,6 +14,7 @@ export class Utils {
     if (email_addresses) {
       normalizedEmails = email_addresses.map((email) => ({
         ...email,
+        email_address: email.email_address ?? '',
         owner_type: email.owner_type ? email.owner_type : '',
         created_at: new Date(),
         modified_at: new Date(),

@@ -46,15 +46,11 @@ export const ApiPostCustomResponse = <DataDto extends Type<unknown>>(
 
 export const ApiPostGenericJson = (description: string) => {
   return applyDecorators(
-    ApiOkResponse({
+    ApiCreatedResponse({
       schema: {
-        properties: {
-          data: {
-            type: 'object',
-            additionalProperties: true,
-            description: description,
-          },
-        },
+        type: 'object',
+        additionalProperties: true,
+        description: description,
       },
     }),
   );

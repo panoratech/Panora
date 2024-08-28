@@ -46,7 +46,7 @@ export class UnifiedHrisTimeoffInput {
   @ApiPropertyOptional({
     type: String,
     example: 'REQUESTED',
-    enum: ['REQUESTED', 'APPROVED', 'DECLINED', 'CANCELLED', 'DELETED'],
+    // enum: ['REQUESTED', 'APPROVED', 'DECLINED', 'CANCELLED', 'DELETED'],
     nullable: true,
     description: 'The status of the time off request',
   })
@@ -67,7 +67,7 @@ export class UnifiedHrisTimeoffInput {
   @ApiPropertyOptional({
     type: String,
     example: 'DAYS',
-    enum: ['HOURS', 'DAYS'],
+    // enum: ['HOURS', 'DAYS'],
     nullable: true,
     description: 'The units used for the time off (e.g., Days, Hours)',
   })
@@ -88,14 +88,14 @@ export class UnifiedHrisTimeoffInput {
   @ApiPropertyOptional({
     type: String,
     example: 'VACATION',
-    enum: [
+    /* enum: [
       'VACATION',
       'SICK',
       'PERSONAL',
       'JURY_DUTY',
       'VOLUNTEER',
       'BEREAVEMENT',
-    ],
+    ],*/
     nullable: true,
     description: 'The type of time off request',
   })

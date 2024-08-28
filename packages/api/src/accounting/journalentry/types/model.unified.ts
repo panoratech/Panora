@@ -35,7 +35,7 @@ export class LineItem {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
-    enum: CurrencyCode,
+    // enum: CurrencyCode,
     nullable: true,
     description: 'The currency of the line item',
   })
@@ -158,7 +158,7 @@ export class UnifiedAccountingJournalentryInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
-    enum: CurrencyCode,
+    // enum: CurrencyCode,
     nullable: true,
     description: 'The currency of the journal entry',
   })

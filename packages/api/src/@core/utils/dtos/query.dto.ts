@@ -30,7 +30,6 @@ export class QueryDto {
   @Type(() => Number)
   @IsOptional()
   @IsNumber()
-  @Transform((value) => Number(value))
   limit: number = DEFAULT_PAGE_SIZE;
 
   @ApiProperty({
@@ -41,7 +40,7 @@ export class QueryDto {
     description: 'Set to get the number of records after this cursor.',
   })
   @IsOptional()
-  @Transform((p) => Buffer.from(p.value, 'base64').toString())
+  //@Transform((p) => Buffer.from(p.value, 'base64').toString())
   @IsUUID()
   cursor: string;
 }

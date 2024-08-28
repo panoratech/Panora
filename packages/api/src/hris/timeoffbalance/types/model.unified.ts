@@ -50,14 +50,14 @@ export class UnifiedHrisTimeoffbalanceInput {
   @ApiPropertyOptional({
     type: String,
     example: 'VACATION',
-    enum: [
+    /*enum: [
       'VACATION',
       'SICK',
       'PERSONAL',
       'JURY_DUTY',
       'VOLUNTEER',
       'BEREAVEMENT',
-    ],
+    ],*/
     nullable: true,
     description: 'The type of time off policy',
   })

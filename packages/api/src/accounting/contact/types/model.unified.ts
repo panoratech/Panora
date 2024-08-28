@@ -74,7 +74,7 @@ export class UnifiedAccountingContactInput {
     type: String,
     example: 'USD',
     nullable: true,
-    enum: CurrencyCode,
+    // enum: CurrencyCode,
     description: 'The currency associated with the contact',
   })
   @IsString()

@@ -1,24 +1,22 @@
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { ApiResponse } from '@@core/utils/types';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { UnifiedCrmContactOutput } from '@crm/contact/types/model.unified';
-import { CrmObject } from '@crm/@lib/@types';
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
-import { v4 as uuidv4 } from 'uuid';
-import { crm_contacts as CrmContact } from '@prisma/client';
-import { IContactService } from '../types';
-import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
-import { ServiceRegistry } from '../services/registry.service';
-import { CRM_PROVIDERS } from '@panora/shared';
-import { Utils } from '@crm/@lib/@utils';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
+import { Utils } from '@crm/@lib/@utils';
+import { UnifiedCrmContactOutput } from '@crm/contact/types/model.unified';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { CRM_PROVIDERS } from '@panora/shared';
+import { crm_contacts as CrmContact } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IContactService } from '../types';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -58,12 +56,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -113,7 +111,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const service: IContactService =
         this.serviceRegistry.getService(integrationId);
       if (!service) {
-        this.logger.log(`No service found in {vertical:crm, commonObject: contact} for integration ID: ${integrationId}`);
+        this.logger.log(
+          `No service found in {vertical:crm, commonObject: contact} for integration ID: ${integrationId}`,
+        );
         return;
       }
 

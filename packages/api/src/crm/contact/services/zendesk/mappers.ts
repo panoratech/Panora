@@ -113,17 +113,17 @@ export class ZendeskContactMapper implements IContactMapper {
     }
     // Constructing the email and phone details
     const email_addresses = contact.email
-      ? [{ email_address: contact.email, email_address_type: 'primary' }]
+      ? [{ email_address: contact.email, email_address_type: 'PERSONAL' }]
       : [];
     const phone_numbers = [];
 
     if (contact.phone) {
-      phone_numbers.push({ phone_number: contact.phone, phone_type: 'work' });
+      phone_numbers.push({ phone_number: contact.phone, phone_type: 'WORK' });
     }
     if (contact.mobile) {
       phone_numbers.push({
         phone_number: contact.mobile,
-        phone_type: 'mobile',
+        phone_type: 'MOBILE',
       });
     }
 

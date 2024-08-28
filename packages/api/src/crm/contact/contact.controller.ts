@@ -62,12 +62,16 @@ export class ContactController {
   @ApiPaginatedResponse(UnifiedCrmContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
+  @UsePipes(
+    new ValidationPipe({ transform: true, disableErrorMessages: false }),
+  )
   async getContacts(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: QueryDto,
   ) {
     try {
+      console.log('Received connection_token:', connection_token);
+      console.log('Received query:', JSON.stringify(query));
       const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,

@@ -13,7 +13,7 @@ export class UnifiedHrisBankinfoInput {
   @ApiPropertyOptional({
     type: String,
     example: 'CHECKING',
-    enum: ['SAVINGS', 'CHECKING'],
+    // enum: ['SAVINGS', 'CHECKING'],
     nullable: true,
     description: 'The type of the bank account',
   })

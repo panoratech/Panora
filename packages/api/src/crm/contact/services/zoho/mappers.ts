@@ -124,13 +124,13 @@ export class ZohoContactMapper implements IContactMapper {
     if (contact && contact.Fax) {
       phone_numbers.push({
         phone_number: contact.Fax,
-        phone_type: 'fax',
+        phone_type: 'FAX',
       });
     }
     if (contact && contact.Home_Phone) {
       phone_numbers.push({
         phone_number: contact.Home_Phone,
-        phone_type: 'home',
+        phone_type: 'HOME',
       });
     }
 

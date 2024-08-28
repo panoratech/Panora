@@ -19,13 +19,13 @@ export class UnifiedCrmEngagementInput {
     type: String,
     nullable: true,
     example: 'INBOUND',
-    enum: ['INBOUND', 'OUTBOUND'],
+    // enum: ['INBOUND', 'OUTBOUND'],
     description:
       'The direction of the engagement. Authorized values are INBOUND or OUTBOUND',
   })
-  @IsIn(['INBOUND', 'OUTBOUND'], {
+  /*@IsIn(['INBOUND', 'OUTBOUND'], {
     message: 'Direction must be either INBOUND or OUTBOUND',
-  })
+  })*/
   @IsOptional()
   direction?: EngagementDirection | string;
 
@@ -61,13 +61,13 @@ export class UnifiedCrmEngagementInput {
     type: String,
     nullable: true,
     example: 'MEETING',
-    enum: ['EMAIL', 'CALL', 'MEETING'],
+    // enum: ['EMAIL', 'CALL', 'MEETING'],
     description:
       'The type of the engagement. Authorized values are EMAIL, CALL or MEETING',
   })
-  @IsIn(['EMAIL', 'CALL', 'MEETING'], {
+  /*@IsIn(['EMAIL', 'CALL', 'MEETING'], {
     message: 'Type must be either EMAIL, CALL or MEETING',
-  })
+  })*/
   type?: EngagementType | string;
 
   @ApiPropertyOptional({

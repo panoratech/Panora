@@ -108,13 +108,13 @@ export class Address {
 
   @ApiProperty({
     type: String,
-    enum: ['SHIPPING', 'BILLING'],
+    //enum: ['SHIPPING', 'BILLING'],
     example: 'SHIPPING',
     nullable: true,
     description:
       'The address type. Authorized values are either SHIPPING or BILLING.',
   })
-  @IsIn(['SHIPPING', 'BILLING'])
+  ////@IsIn(['SHIPPING', 'BILLING'])
   @IsOptional()
   @IsString()
   address_type?: 'SHIPPING' | 'BILLING' | string;

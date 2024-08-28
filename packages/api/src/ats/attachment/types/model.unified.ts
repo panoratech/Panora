@@ -36,11 +36,11 @@ export class UnifiedAtsAttachmentInput {
   @ApiPropertyOptional({
     type: String,
     example: 'RESUME',
-    enum: ['RESUME', 'COVER_LETTER', 'OFFER_LETTER', 'OTHER'],
+    //// enum: ['RESUME', 'COVER_LETTER', 'OFFER_LETTER', 'OTHER'],
     nullable: true,
     description: 'The type of the file',
   })
-  @IsIn(['RESUME', 'COVER_LETTER', 'OFFER_LETTER', 'OTHER'])
+  ////@IsIn(['RESUME', 'COVER_LETTER', 'OFFER_LETTER', 'OTHER'])
   @IsOptional()
   attachment_type?: AttachmentType | string;
 

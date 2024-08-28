@@ -1,20 +1,19 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { ApiResponse } from '@@core/utils/types';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { UnifiedCrmDealOutput } from '../types/model.unified';
-import { IDealService } from '../types';
-import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
-import { crm_deals as CrmDeal } from '@prisma/client';
-import { CRM_PROVIDERS } from '@panora/shared';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { CRM_PROVIDERS } from '@panora/shared';
+import { crm_deals as CrmDeal } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IDealService } from '../types';
+import { UnifiedCrmDealOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -48,12 +47,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log(`Syncing deals....`);
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -103,7 +102,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const service: IDealService =
         this.serviceRegistry.getService(integrationId);
       if (!service) {
-        this.logger.log(`No service found in {vertical:crm, commonObject: deal} for integration ID: ${integrationId}`);
+        this.logger.log(
+          `No service found in {vertical:crm, commonObject: deal} for integration ID: ${integrationId}`,
+        );
         return;
       }
 
@@ -141,7 +142,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const baseData: any = {
           name: deal.name ?? null,
           description: deal.description ?? null,
-          amount: deal.amount ?? null,
+          amount: deal.amount ?? 0,
           id_crm_user: deal.user_id ?? null,
           id_crm_deals_stage: deal.stage_id ?? null,
           id_crm_company: deal.company_id ?? null,

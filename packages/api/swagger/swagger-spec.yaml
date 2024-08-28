@@ -151,18 +151,14 @@ paths:
             schema:
               $ref: '#/components/schemas/SignatureVerificationDto'
       responses:
-        '200':
+        '201':
           description: ''
           content:
             application/json:
               schema:
-                properties:
-                  data:
-                    type: object
-                    additionalProperties: true
-                    description: Dynamic event payload
-        '201':
-          description: ''
+                type: object
+                additionalProperties: true
+                description: Dynamic event payload
       tags: *ref_0
       x-speakeasy-group: webhooks
   /ticketing/tickets:
@@ -9876,9 +9872,6 @@ components:
           type: string
           nullable: true
           example: USER
-          enum: &ref_121
-            - USER
-            - CONTACT
           description: >-
             The creator type of the comment. Authorized values are either USER
             or CONTACT
@@ -9903,12 +9896,12 @@ components:
             specified)
         attachments:
           type: array
-          items: &ref_122
+          items: &ref_114
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
           nullable: true
-          example: &ref_123
+          example: &ref_115
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The attachements UUIDs tied to the comment
       required:
@@ -9924,9 +9917,6 @@ components:
         status:
           type: string
           example: OPEN
-          enum: &ref_92
-            - OPEN
-            - CLOSED
           nullable: true
           description: The status of the ticket. Authorized values are OPEN or CLOSED.
         description:
@@ -9943,11 +9933,6 @@ components:
         type:
           type: string
           example: BUG
-          enum: &ref_93
-            - BUG
-            - SUBTASK
-            - TASK
-            - TO-DO
           nullable: true
           description: >-
             The type of the ticket. Authorized values are PROBLEM, QUESTION, or
@@ -9959,21 +9944,21 @@ components:
           description: The UUID of the parent ticket
         collections:
           type: array
-          items: &ref_94
+          items: &ref_92
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedTicketingCollectionOutput'
-          example: &ref_95
+          example: &ref_93
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
           type: array
-          items: &ref_96
+          items: &ref_94
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedTicketingTagOutput'
-          example: &ref_97
+          example: &ref_95
             - my_tag
             - urgent_tag
           nullable: true
@@ -9987,16 +9972,12 @@ components:
         priority:
           type: string
           example: HIGH
-          enum: &ref_98
-            - HIGH
-            - MEDIUM
-            - LOW
           nullable: true
           description: >-
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
-          example: &ref_99
+          example: &ref_96
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The users UUIDs the ticket is assigned to
@@ -10004,7 +9985,7 @@ components:
           items:
             type: string
         comment:
-          example: &ref_100
+          example: &ref_97
             content: Assigned the issue !
           nullable: true
           description: The comment of the ticket
@@ -10022,17 +10003,17 @@ components:
           description: The UUID of the contact which the ticket belongs to
         attachments:
           type: array
-          items: &ref_101
+          items: &ref_98
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedTicketingAttachmentInput'
-          example: &ref_102
+          example: &ref_99
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The attachements UUIDs tied to the ticket
           nullable: true
         field_mappings:
           type: object
-          example: &ref_103
+          example: &ref_100
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -10085,7 +10066,6 @@ components:
         status:
           type: string
           example: OPEN
-          enum: *ref_92
           nullable: true
           description: The status of the ticket. Authorized values are OPEN or CLOSED.
         description:
@@ -10102,7 +10082,6 @@ components:
         type:
           type: string
           example: BUG
-          enum: *ref_93
           nullable: true
           description: >-
             The type of the ticket. Authorized values are PROBLEM, QUESTION, or
@@ -10114,14 +10093,14 @@ components:
           description: The UUID of the parent ticket
         collections:
           type: array
-          items: *ref_94
-          example: *ref_95
+          items: *ref_92
+          example: *ref_93
           nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
           type: array
-          items: *ref_96
-          example: *ref_97
+          items: *ref_94
+          example: *ref_95
           nullable: true
           description: The tags names of the ticket
         completed_at:
@@ -10133,20 +10112,19 @@ components:
         priority:
           type: string
           example: HIGH
-          enum: *ref_98
           nullable: true
           description: >-
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
-          example: *ref_99
+          example: *ref_96
           nullable: true
           description: The users UUIDs the ticket is assigned to
           type: array
           items:
             type: string
         comment:
-          example: *ref_100
+          example: *ref_97
           nullable: true
           description: The comment of the ticket
           allOf:
@@ -10163,13 +10141,13 @@ components:
           description: The UUID of the contact which the ticket belongs to
         attachments:
           type: array
-          items: *ref_101
-          example: *ref_102
+          items: *ref_98
+          example: *ref_99
           description: The attachements UUIDs tied to the ticket
           nullable: true
         field_mappings:
           type: object
-          example: *ref_103
+          example: *ref_100
           nullable: true
           description: >-
             The custom field mappings of the ticket between the remote 3rd party
@@ -10419,9 +10397,6 @@ components:
           description: The email address
         email_address_type:
           type: string
-          enum:
-            - PERSONAL
-            - WORK
           nullable: true
           description: >-
             The email address type. Authorized values are either PERSONAL or
@@ -10471,9 +10446,6 @@ components:
           description: The country
         address_type:
           type: string
-          enum:
-            - PERSONAL
-            - WORK
           nullable: true
           example: PERSONAL
           description: The address type. Authorized values are either PERSONAL or WORK.
@@ -10501,9 +10473,6 @@ components:
             code (e.g +336676778890 for France)
         phone_type:
           type: string
-          enum:
-            - MOBILE
-            - WORK
           nullable: true
           description: The phone type. Authorized values are either MOBILE or WORK
         owner_type:
@@ -10524,154 +10493,6 @@ components:
         industry:
           type: string
           example: ACCOUNTING
-          enum: &ref_104
-            - ACCOUNTING
-            - AIRLINES_AVIATION
-            - ALTERNATIVE_DISPUTE_RESOLUTION
-            - ALTERNATIVE_MEDICINE
-            - ANIMATION
-            - APPAREL_FASHION
-            - ARCHITECTURE_PLANNING
-            - ARTS_AND_CRAFTS
-            - AUTOMOTIVE
-            - AVIATION_AEROSPACE
-            - BANKING
-            - BIOTECHNOLOGY
-            - BROADCAST_MEDIA
-            - BUILDING_MATERIALS
-            - BUSINESS_SUPPLIES_AND_EQUIPMENT
-            - CAPITAL_MARKETS
-            - CHEMICALS
-            - CIVIC_SOCIAL_ORGANIZATION
-            - CIVIL_ENGINEERING
-            - COMMERCIAL_REAL_ESTATE
-            - COMPUTER_NETWORK_SECURITY
-            - COMPUTER_GAMES
-            - COMPUTER_HARDWARE
-            - COMPUTER_NETWORKING
-            - COMPUTER_SOFTWARE
-            - INTERNET
-            - CONSTRUCTION
-            - CONSUMER_ELECTRONICS
-            - CONSUMER_GOODS
-            - CONSUMER_SERVICES
-            - COSMETICS
-            - DAIRY
-            - DEFENSE_SPACE
-            - DESIGN
-            - EDUCATION_MANAGEMENT
-            - E_LEARNING
-            - ELECTRICAL_ELECTRONIC_MANUFACTURING
-            - ENTERTAINMENT
-            - ENVIRONMENTAL_SERVICES
-            - EVENTS_SERVICES
-            - EXECUTIVE_OFFICE
-            - FACILITIES_SERVICES
-            - FARMING
-            - FINANCIAL_SERVICES
-            - FINE_ART
-            - FISHERY
-            - FOOD_BEVERAGES
-            - FOOD_PRODUCTION
-            - FUND_RAISING
-            - FURNITURE
-            - GAMBLING_CASINOS
-            - GLASS_CERAMICS_CONCRETE
-            - GOVERNMENT_ADMINISTRATION
-            - GOVERNMENT_RELATIONS
-            - GRAPHIC_DESIGN
-            - HEALTH_WELLNESS_AND_FITNESS
-            - HIGHER_EDUCATION
-            - HOSPITAL_HEALTH_CARE
-            - HOSPITALITY
-            - HUMAN_RESOURCES
-            - IMPORT_AND_EXPORT
-            - INDIVIDUAL_FAMILY_SERVICES
-            - INDUSTRIAL_AUTOMATION
-            - INFORMATION_SERVICES
-            - INFORMATION_TECHNOLOGY_AND_SERVICES
-            - INSURANCE
-            - INTERNATIONAL_AFFAIRS
-            - INTERNATIONAL_TRADE_AND_DEVELOPMENT
-            - INVESTMENT_BANKING
-            - INVESTMENT_MANAGEMENT
-            - JUDICIARY
-            - LAW_ENFORCEMENT
-            - LAW_PRACTICE
-            - LEGAL_SERVICES
-            - LEGISLATIVE_OFFICE
-            - LEISURE_TRAVEL_TOURISM
-            - LIBRARIES
-            - LOGISTICS_AND_SUPPLY_CHAIN
-            - LUXURY_GOODS_JEWELRY
-            - MACHINERY
-            - MANAGEMENT_CONSULTING
-            - MARITIME
-            - MARKET_RESEARCH
-            - MARKETING_AND_ADVERTISING
-            - MECHANICAL_OR_INDUSTRIAL_ENGINEERING
-            - MEDIA_PRODUCTION
-            - MEDICAL_DEVICES
-            - MEDICAL_PRACTICE
-            - MENTAL_HEALTH_CARE
-            - MILITARY
-            - MINING_METALS
-            - MOTION_PICTURES_AND_FILM
-            - MUSEUMS_AND_INSTITUTIONS
-            - MUSIC
-            - NANOTECHNOLOGY
-            - NEWSPAPERS
-            - NON_PROFIT_ORGANIZATION_MANAGEMENT
-            - OIL_ENERGY
-            - ONLINE_MEDIA
-            - OUTSOURCING_OFFSHORING
-            - PACKAGE_FREIGHT_DELIVERY
-            - PACKAGING_AND_CONTAINERS
-            - PAPER_FOREST_PRODUCTS
-            - PERFORMING_ARTS
-            - PHARMACEUTICALS
-            - PHILANTHROPY
-            - PHOTOGRAPHY
-            - PLASTICS
-            - POLITICAL_ORGANIZATION
-            - PRIMARY_SECONDARY_EDUCATION
-            - PRINTING
-            - PROFESSIONAL_TRAINING_COACHING
-            - PROGRAM_DEVELOPMENT
-            - PUBLIC_POLICY
-            - PUBLIC_RELATIONS_AND_COMMUNICATIONS
-            - PUBLIC_SAFETY
-            - PUBLISHING
-            - RAILROAD_MANUFACTURE
-            - RANCHING
-            - REAL_ESTATE
-            - RECREATIONAL_FACILITIES_AND_SERVICES
-            - RELIGIOUS_INSTITUTIONS
-            - RENEWABLES_ENVIRONMENT
-            - RESEARCH
-            - RESTAURANTS
-            - RETAIL
-            - SECURITY_AND_INVESTIGATIONS
-            - SEMICONDUCTORS
-            - SHIPBUILDING
-            - SPORTING_GOODS
-            - SPORTS
-            - STAFFING_AND_RECRUITING
-            - SUPERMARKETS
-            - TELECOMMUNICATIONS
-            - TEXTILES
-            - THINK_TANKS
-            - TOBACCO
-            - TRANSLATION_AND_LOCALIZATION
-            - TRANSPORTATION_TRUCKING_RAILROAD
-            - UTILITIES
-            - VENTURE_CAPITAL_PRIVATE_EQUITY
-            - VETERINARY
-            - WAREHOUSING
-            - WHOLESALE
-            - WINE_AND_SPIRITS
-            - WIRELESS
-            - WRITING_AND_EDITING
           description: >-
             The industry of the company. Authorized values can be found in the
             Industry enum.
@@ -10688,7 +10509,7 @@ components:
           nullable: true
         email_addresses:
           description: The email addresses of the company
-          example: &ref_105
+          example: &ref_101
             - email_address: acme@gmail.com
               email_address_type: WORK
           nullable: true
@@ -10697,7 +10518,7 @@ components:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
-          example: &ref_106
+          example: &ref_102
             - street_1: 5th Avenue
               city: New York
               state: NY
@@ -10709,7 +10530,7 @@ components:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
-          example: &ref_107
+          example: &ref_103
             - phone_number: '+33660606067'
               phone_type: WORK
           nullable: true
@@ -10718,7 +10539,7 @@ components:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          example: &ref_108
+          example: &ref_104
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -10767,7 +10588,6 @@ components:
         industry:
           type: string
           example: ACCOUNTING
-          enum: *ref_104
           description: >-
             The industry of the company. Authorized values can be found in the
             Industry enum.
@@ -10784,28 +10604,28 @@ components:
           nullable: true
         email_addresses:
           description: The email addresses of the company
-          example: *ref_105
+          example: *ref_101
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
-          example: *ref_106
+          example: *ref_102
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
-          example: *ref_107
+          example: *ref_103
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          example: *ref_108
+          example: *ref_104
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
@@ -10829,7 +10649,7 @@ components:
         email_addresses:
           nullable: true
           description: The email addresses of the contact
-          example: &ref_109
+          example: &ref_105
             - email: john.doe@example.com
               type: WORK
           type: array
@@ -10838,7 +10658,7 @@ components:
         phone_numbers:
           nullable: true
           description: The phone numbers of the contact
-          example: &ref_110
+          example: &ref_106
             - phone: '1234567890'
               type: WORK
           type: array
@@ -10847,7 +10667,7 @@ components:
         addresses:
           nullable: true
           description: The addresses of the contact
-          example: &ref_111
+          example: &ref_107
             - street: 123 Main St
               city: Anytown
               state: CA
@@ -10864,7 +10684,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: &ref_112
+          example: &ref_108
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -10921,21 +10741,21 @@ components:
         email_addresses:
           nullable: true
           description: The email addresses of the contact
-          example: *ref_109
+          example: *ref_105
           type: array
           items:
             $ref: '#/components/schemas/Email'
         phone_numbers:
           nullable: true
           description: The phone numbers of the contact
-          example: *ref_110
+          example: *ref_106
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         addresses:
           nullable: true
           description: The addresses of the contact
-          example: *ref_111
+          example: *ref_107
           type: array
           items:
             $ref: '#/components/schemas/Address'
@@ -10946,7 +10766,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: *ref_112
+          example: *ref_108
           nullable: true
           description: >-
             The custom field mappings of the contact between the remote 3rd
@@ -10991,7 +10811,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_113
+          example: &ref_109
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -11068,7 +10888,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_113
+          example: *ref_109
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
@@ -11089,9 +10909,6 @@ components:
           type: string
           nullable: true
           example: INBOUND
-          enum: &ref_114
-            - INBOUND
-            - OUTBOUND
           description: >-
             The direction of the engagement. Authorized values are INBOUND or
             OUTBOUND
@@ -11116,10 +10933,6 @@ components:
           type: string
           nullable: true
           example: MEETING
-          enum: &ref_115
-            - EMAIL
-            - CALL
-            - MEETING
           description: >-
             The type of the engagement. Authorized values are EMAIL, CALL or
             MEETING
@@ -11135,7 +10948,7 @@ components:
           description: The UUID of the company tied to the engagement
         contacts:
           nullable: true
-          example: &ref_116
+          example: &ref_110
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The UUIDs of contacts tied to the engagement object
           type: array
@@ -11144,7 +10957,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_117
+          example: &ref_111
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -11197,7 +11010,6 @@ components:
           type: string
           nullable: true
           example: INBOUND
-          enum: *ref_114
           description: >-
             The direction of the engagement. Authorized values are INBOUND or
             OUTBOUND
@@ -11222,7 +11034,6 @@ components:
           type: string
           nullable: true
           example: MEETING
-          enum: *ref_115
           description: >-
             The type of the engagement. Authorized values are EMAIL, CALL or
             MEETING
@@ -11238,7 +11049,7 @@ components:
           description: The UUID of the company tied to the engagement
         contacts:
           nullable: true
-          example: *ref_116
+          example: *ref_110
           description: The UUIDs of contacts tied to the engagement object
           type: array
           items:
@@ -11246,7 +11057,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_117
+          example: *ref_111
           description: >-
             The custom field mappings of the engagement between the remote 3rd
             party & Panora
@@ -11283,7 +11094,7 @@ components:
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          example: &ref_118
+          example: &ref_112
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -11353,7 +11164,7 @@ components:
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          example: *ref_118
+          example: *ref_112
           nullable: true
           description: >-
             The custom field mappings of the note between the remote 3rd party &
@@ -11425,9 +11236,6 @@ components:
         status:
           type: string
           example: PENDING
-          enum: &ref_119
-            - PENDING
-            - COMPLETED
           description: The status of the task. Authorized values are PENDING, COMPLETED.
           nullable: true
         due_date:
@@ -11457,7 +11265,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_120
+          example: &ref_113
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -11516,7 +11324,6 @@ components:
         status:
           type: string
           example: PENDING
-          enum: *ref_119
           description: The status of the task. Authorized values are PENDING, COMPLETED.
           nullable: true
         due_date:
@@ -11546,7 +11353,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_120
+          example: *ref_113
           description: >-
             The custom field mappings of the task between the remote 3rd party &
             Panora
@@ -11628,9 +11435,6 @@ components:
         collection_type:
           type: string
           example: PROJECT
-          enum:
-            - PROJECT
-            - LIST
           nullable: true
           description: >-
             The type of the collection. Authorized values are either PROJECT or
@@ -11689,7 +11493,6 @@ components:
           type: string
           nullable: true
           example: USER
-          enum: *ref_121
           description: >-
             The creator type of the comment. Authorized values are either USER
             or CONTACT
@@ -11714,9 +11517,9 @@ components:
             specified)
         attachments:
           type: array
-          items: *ref_122
+          items: *ref_114
           nullable: true
-          example: *ref_123
+          example: *ref_115
           description: The attachements UUIDs tied to the comment
         id:
           type: string
@@ -12349,9 +12152,6 @@ components:
         account_type:
           type: string
           example: CHECKING
-          enum:
-            - SAVINGS
-            - CHECKING
           nullable: true
           description: The type of the bank account
         bank_name:
@@ -12617,10 +12417,6 @@ components:
         relationship:
           type: string
           example: CHILD
-          enum:
-            - CHILD
-            - SPOUSE
-            - DOMESTIC_PARTNER
           nullable: true
           description: The relationship of the dependent to the employee
         date_of_birth:
@@ -12632,12 +12428,6 @@ components:
         gender:
           type: string
           example: MALE
-          enum:
-            - MALE
-            - FEMALE
-            - NON-BINARY
-            - OTHER
-            - PREFER_NOT_TO_DISCLOSE
           nullable: true
           description: The gender of the dependent
         phone_number:
@@ -12883,7 +12673,7 @@ components:
       type: object
       properties:
         groups:
-          example: &ref_124
+          example: &ref_116
             - Group1
             - Group2
           nullable: true
@@ -12892,7 +12682,7 @@ components:
           items:
             type: string
         locations:
-          example: &ref_125
+          example: &ref_117
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: UUIDs of the of the Location associated with the company
@@ -12950,7 +12740,7 @@ components:
           nullable: true
           description: The mobile phone number of the employee
         employments:
-          example: &ref_126
+          example: &ref_118
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
@@ -12966,37 +12756,16 @@ components:
         gender:
           type: string
           example: MALE
-          enum: &ref_127
-            - MALE
-            - FEMALE
-            - NON-BINARY
-            - OTHER
-            - PREFER_NOT_TO_DISCLOSE
           nullable: true
           description: The gender of the employee
         ethnicity:
           type: string
           example: AMERICAN_INDIAN_OR_ALASKA_NATIVE
-          enum: &ref_128
-            - AMERICAN_INDIAN_OR_ALASKA_NATIVE
-            - ASIAN_OR_INDIAN_SUBCONTINENT
-            - BLACK_OR_AFRICAN_AMERICAN
-            - HISPANIC_OR_LATINO
-            - NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
-            - TWO_OR_MORE_RACES
-            - WHITE
-            - PREFER_NOT_TO_DISCLOSE
           nullable: true
           description: The ethnicity of the employee
         marital_status:
           type: string
           example: Married
-          enum: &ref_129
-            - SINGLE
-            - MARRIED_FILING_JOINTLY
-            - MARRIED_FILING_SEPARATELY
-            - HEAD_OF_HOUSEHOLD
-            - QUALIFYING_WIDOW_OR_WIDOWER_WITH_DEPENDENT_CHILD
           nullable: true
           description: The marital status of the employee
         date_of_birth:
@@ -13014,10 +12783,6 @@ components:
         employment_status:
           type: string
           example: ACTIVE
-          enum: &ref_130
-            - ACTIVE
-            - PENDING
-            - INACTIVE
           nullable: true
           description: The employment status of the employee
         termination_date:
@@ -13038,7 +12803,7 @@ components:
           description: UUID of the manager (employee) of the employee
         field_mappings:
           type: object
-          example: &ref_131
+          example: &ref_119
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -13089,14 +12854,14 @@ components:
       type: object
       properties:
         groups:
-          example: *ref_124
+          example: *ref_116
           nullable: true
           description: The groups the employee belongs to
           type: array
           items:
             type: string
         locations:
-          example: *ref_125
+          example: *ref_117
           nullable: true
           description: UUIDs of the of the Location associated with the company
           type: array
@@ -13153,7 +12918,7 @@ components:
           nullable: true
           description: The mobile phone number of the employee
         employments:
-          example: *ref_126
+          example: *ref_118
           nullable: true
           description: The employments of the employee
           type: array
@@ -13167,19 +12932,16 @@ components:
         gender:
           type: string
           example: MALE
-          enum: *ref_127
           nullable: true
           description: The gender of the employee
         ethnicity:
           type: string
           example: AMERICAN_INDIAN_OR_ALASKA_NATIVE
-          enum: *ref_128
           nullable: true
           description: The ethnicity of the employee
         marital_status:
           type: string
           example: Married
-          enum: *ref_129
           nullable: true
           description: The marital status of the employee
         date_of_birth:
@@ -13197,7 +12959,6 @@ components:
         employment_status:
           type: string
           example: ACTIVE
-          enum: *ref_130
           nullable: true
           description: The employment status of the employee
         termination_date:
@@ -13218,7 +12979,7 @@ components:
           description: UUID of the manager (employee) of the employee
         field_mappings:
           type: object
-          example: *ref_131
+          example: *ref_119
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -13229,12 +12990,6 @@ components:
         benefit_plan_type:
           type: string
           example: Health Insurance
-          enum:
-            - MEDICAL
-            - HEALTH_SAVINGS
-            - INSURANCE
-            - RETIREMENT
-            - OTHER
           nullable: true
           description: The type of the benefit plan
         name:
@@ -13323,209 +13078,21 @@ components:
         pay_period:
           type: string
           example: MONTHLY
-          enum:
-            - HOUR
-            - DAY
-            - WEEK
-            - EVERY_TWO_WEEKS
-            - SEMIMONTHLY
-            - MONTH
-            - QUARTER
-            - EVERY_SIX_MONTHS
-            - YEAR
           nullable: true
           description: The pay period of the employment
         pay_frequency:
           type: string
           example: WEEKLY
-          enum:
-            - WEEKLY
-            - BIWEEKLY
-            - MONTHLY
-            - QUARTERLY
-            - SEMIANNUALLY
-            - ANNUALLY
-            - THIRTEEN-MONTHLY
-            - PRO_RATA
-            - SEMIMONTHLY
           nullable: true
           description: The pay frequency of the employment
         pay_currency:
           type: string
           example: USD
-          enum:
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency of the pay
         flsa_status:
           type: string
           example: EXEMPT
-          enum:
-            - EXEMPT
-            - SALARIED_NONEXEMPT
-            - NONEXEMPT
-            - OWNER
           nullable: true
           description: The FLSA status of the employment
         effective_date:
@@ -13537,12 +13104,6 @@ components:
         employment_type:
           type: string
           example: FULL_TIME
-          enum:
-            - FULL_TIME
-            - PART_TIME
-            - INTERN
-            - CONTRACTOR
-            - FREELANCE
           nullable: true
           description: The type of employment
         pay_group_id:
@@ -13620,12 +13181,6 @@ components:
         type:
           type: string
           example: DEPARTMENT
-          enum:
-            - TEAM
-            - DEPARTMENT
-            - COST_CENTER
-            - BUSINESS_UNIT
-            - GROUP
           nullable: true
           description: The type of the group
         field_mappings:
@@ -13723,9 +13278,6 @@ components:
         location_type:
           type: string
           example: WORK
-          enum:
-            - WORK
-            - HOME
           nullable: true
           description: The type of the location
         company_id:
@@ -13850,23 +13402,11 @@ components:
         run_state:
           type: string
           example: PAID
-          enum:
-            - PAID
-            - DRAFT
-            - APPROVED
-            - FAILED
-            - CLOSE
           nullable: true
           description: The state of the payroll run
         run_type:
           type: string
           example: REGULAR
-          enum:
-            - REGULAR
-            - OFF_CYCLE
-            - CORRECTION
-            - TERMINATION
-            - SIGN_ON_BONUS
           nullable: true
           description: The type of the payroll run
         start_date:
@@ -13962,12 +13502,6 @@ components:
         status:
           type: string
           example: REQUESTED
-          enum: &ref_132
-            - REQUESTED
-            - APPROVED
-            - DECLINED
-            - CANCELLED
-            - DELETED
           nullable: true
           description: The status of the time off request
         employee_note:
@@ -13978,9 +13512,6 @@ components:
         units:
           type: string
           example: DAYS
-          enum: &ref_133
-            - HOURS
-            - DAYS
           nullable: true
           description: The units used for the time off (e.g., Days, Hours)
         amount:
@@ -13991,13 +13522,6 @@ components:
         request_type:
           type: string
           example: VACATION
-          enum: &ref_134
-            - VACATION
-            - SICK
-            - PERSONAL
-            - JURY_DUTY
-            - VOLUNTEER
-            - BEREAVEMENT
           nullable: true
           description: The type of time off request
         start_time:
@@ -14014,7 +13538,7 @@ components:
           description: The end time of the time off
         field_mappings:
           type: object
-          example: &ref_135
+          example: &ref_120
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -14077,7 +13601,6 @@ components:
         status:
           type: string
           example: REQUESTED
-          enum: *ref_132
           nullable: true
           description: The status of the time off request
         employee_note:
@@ -14088,7 +13611,6 @@ components:
         units:
           type: string
           example: DAYS
-          enum: *ref_133
           nullable: true
           description: The units used for the time off (e.g., Days, Hours)
         amount:
@@ -14099,7 +13621,6 @@ components:
         request_type:
           type: string
           example: VACATION
-          enum: *ref_134
           nullable: true
           description: The type of time off request
         start_time:
@@ -14116,7 +13637,7 @@ components:
           description: The end time of the time off
         field_mappings:
           type: object
-          example: *ref_135
+          example: *ref_120
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -14142,13 +13663,6 @@ components:
         policy_type:
           type: string
           example: VACATION
-          enum:
-            - VACATION
-            - SICK
-            - PERSONAL
-            - JURY_DUTY
-            - VOLUNTEER
-            - BEREAVEMENT
           nullable: true
           description: The type of time off policy
         field_mappings:
@@ -14234,7 +13748,7 @@ components:
           description: Indicates if the timesheet entry was deleted in the remote system
         field_mappings:
           type: object
-          example: &ref_136
+          example: &ref_121
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -14307,7 +13821,7 @@ components:
           description: Indicates if the timesheet entry was deleted in the remote system
         field_mappings:
           type: object
-          example: *ref_136
+          example: *ref_121
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -14365,13 +13879,9 @@ components:
       properties:
         activity_type:
           type: string
-          enum: &ref_137
-            - NOTE
-            - EMAIL
-            - OTHER
           example: NOTE
           nullable: true
-          description: The type of activity
+          description: The type of activity. NOTE, EMAIL or OTHER
         subject:
           type: string
           example: Email subject
@@ -14384,13 +13894,9 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: &ref_138
-            - ADMIN_ONLY
-            - PUBLIC
-            - PRIVATE
           example: PUBLIC
           nullable: true
-          description: The visibility of the activity
+          description: The visibility of the activity. ADMIN_ONLY, PUBLIC or PRIVATE
         candidate_id:
           type: string
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
@@ -14404,7 +13910,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: &ref_139
+          example: &ref_122
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -14447,10 +13953,9 @@ components:
       properties:
         activity_type:
           type: string
-          enum: *ref_137
           example: NOTE
           nullable: true
-          description: The type of activity
+          description: The type of activity. NOTE, EMAIL or OTHER
         subject:
           type: string
           example: Email subject
@@ -14463,10 +13968,9 @@ components:
           description: The body of the activity
         visibility:
           type: string
-          enum: *ref_138
           example: PUBLIC
           nullable: true
-          description: The visibility of the activity
+          description: The visibility of the activity. ADMIN_ONLY, PUBLIC or PRIVATE
         candidate_id:
           type: string
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
@@ -14480,7 +13984,7 @@ components:
           description: The remote creation date of the activity
         field_mappings:
           type: object
-          example: *ref_139
+          example: *ref_122
           additionalProperties: true
           nullable: true
           description: >-
@@ -14504,7 +14008,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: &ref_140
+          example: &ref_123
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
             - 12345678-1234-1234-1234-123456789012
           type: array
@@ -14541,7 +14045,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: &ref_141
+          example: &ref_124
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -14607,7 +14111,7 @@ components:
         offers:
           nullable: true
           description: The offers UUIDs for the application
-          example: *ref_140
+          example: *ref_123
           type: array
           items:
             type: string
@@ -14642,7 +14146,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: *ref_141
+          example: *ref_124
           additionalProperties: true
           nullable: true
           description: >-
@@ -14664,11 +14168,6 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: &ref_142
-            - RESUME
-            - COVER_LETTER
-            - OFFER_LETTER
-            - OTHER
           nullable: true
           description: The type of the file
         remote_created_at:
@@ -14690,7 +14189,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: &ref_143
+          example: &ref_125
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -14744,7 +14243,6 @@ components:
         attachment_type:
           type: string
           example: RESUME
-          enum: *ref_142
           nullable: true
           description: The type of the file
         remote_created_at:
@@ -14766,7 +14264,7 @@ components:
           description: The UUID of the candidate
         field_mappings:
           type: object
-          example: *ref_143
+          example: *ref_125
           additionalProperties: true
           nullable: true
           description: >-
@@ -14844,37 +14342,37 @@ components:
           description: The last interaction date with the candidate
         attachments:
           type: array
-          items: &ref_144
+          items: &ref_126
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedAtsAttachmentOutput'
-          example: &ref_145
+          example: &ref_127
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The attachments UUIDs of the candidate
         applications:
           type: array
-          items: &ref_146
+          items: &ref_128
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedAtsApplicationOutput'
-          example: &ref_147
+          example: &ref_129
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The applications UUIDs of the candidate
         tags:
           type: array
-          items: &ref_148
+          items: &ref_130
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedAtsTagOutput'
-          example: &ref_149
+          example: &ref_131
             - tag_1
             - tag_2
           nullable: true
           description: The tags of the candidate
         urls:
-          example: &ref_150
+          example: &ref_132
             - url: mywebsite.com
               url_type: WEBSITE
           nullable: true
@@ -14885,7 +14383,7 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: &ref_151
+          example: &ref_133
             - phone_number: '+33660688899'
               phone_type: WORK
           nullable: true
@@ -14894,7 +14392,7 @@ components:
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: &ref_152
+          example: &ref_134
             - email_address: joedoe@gmail.com
               email_address_type: WORK
           nullable: true
@@ -14904,7 +14402,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: &ref_153
+          example: &ref_135
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -15000,24 +14498,24 @@ components:
           description: The last interaction date with the candidate
         attachments:
           type: array
-          items: *ref_144
-          example: *ref_145
+          items: *ref_126
+          example: *ref_127
           nullable: true
           description: The attachments UUIDs of the candidate
         applications:
           type: array
-          items: *ref_146
-          example: *ref_147
+          items: *ref_128
+          example: *ref_129
           nullable: true
           description: The applications UUIDs of the candidate
         tags:
           type: array
-          items: *ref_148
-          example: *ref_149
+          items: *ref_130
+          example: *ref_131
           nullable: true
           description: The tags of the candidate
         urls:
-          example: *ref_150
+          example: *ref_132
           nullable: true
           description: >-
             The urls of the candidate, possible values for Url type are WEBSITE,
@@ -15026,14 +14524,14 @@ components:
           items:
             $ref: '#/components/schemas/Url'
         phone_numbers:
-          example: *ref_151
+          example: *ref_133
           nullable: true
           description: The phone numbers of the candidate
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         email_addresses:
-          example: *ref_152
+          example: *ref_134
           nullable: true
           description: The email addresses of the candidate
           type: array
@@ -15041,7 +14539,7 @@ components:
             $ref: '#/components/schemas/Email'
         field_mappings:
           type: object
-          example: *ref_153
+          example: *ref_135
           additionalProperties: true
           nullable: true
           description: >-
@@ -15101,10 +14599,6 @@ components:
       properties:
         status:
           type: string
-          enum: &ref_154
-            - SCHEDULED
-            - AWAITING_FEEDBACK
-            - COMPLETED
           example: SCHEDULED
           nullable: true
           description: The status of the interview
@@ -15124,7 +14618,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: &ref_155
+          example: &ref_136
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the interviewers
@@ -15162,7 +14656,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: &ref_156
+          example: &ref_137
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -15205,7 +14699,6 @@ components:
       properties:
         status:
           type: string
-          enum: *ref_154
           example: SCHEDULED
           nullable: true
           description: The status of the interview
@@ -15225,7 +14718,7 @@ components:
           nullable: true
           description: The UUID of the organizer
         interviewers:
-          example: *ref_155
+          example: *ref_136
           nullable: true
           description: The UUIDs of the interviewers
           type: array
@@ -15262,7 +14755,7 @@ components:
           description: The remote modification date of the interview
         field_mappings:
           type: object
-          example: *ref_156
+          example: *ref_137
           additionalProperties: true
           nullable: true
           description: >-
@@ -15350,22 +14843,12 @@ components:
           description: The code of the job
         status:
           type: string
-          enum:
-            - OPEN
-            - CLOSED
-            - DRAFT
-            - ARCHIVED
-            - PENDING
           example: OPEN
           nullable: true
           description: The status of the job
         type:
           type: string
           example: POSTING
-          enum:
-            - POSTING
-            - REQUISITION
-            - PROFILE
           nullable: true
           description: The type of the job
         confidential:
@@ -15493,16 +14976,6 @@ components:
         status:
           type: string
           example: DRAFT
-          enum:
-            - DRAFT
-            - APPROVAL_SENT
-            - APPROVED
-            - SENT
-            - SENT_MANUALLY
-            - OPENED
-            - DENIED
-            - SIGNED
-            - DEPRECATED
           description: The status of the offer
           nullable: true
         application_id:
@@ -15653,12 +15126,6 @@ components:
       properties:
         overall_recommendation:
           type: string
-          enum:
-            - DEFINITELY_NO
-            - 'NO'
-            - 'YES'
-            - STRONG_YES
-            - NO_DECISION
           example: 'YES'
           nullable: true
           description: The overall recommendation
@@ -15802,12 +15269,6 @@ components:
         access_role:
           type: string
           example: ADMIN
-          enum:
-            - SUPER_ADMIN
-            - ADMIN
-            - TEAM_MEMBER
-            - LIMITED_TEAM_MEMBER
-            - INTERVIEWER
           description: The access role of the user
           nullable: true
         remote_created_at:
@@ -15878,45 +15339,21 @@ components:
           description: The submission date of the EEOC
         race:
           type: string
-          enum:
-            - AMERICAN_INDIAN_OR_ALASKAN_NATIVE
-            - ASIAN
-            - BLACK_OR_AFRICAN_AMERICAN
-            - HISPANIC_OR_LATINO
-            - WHITE
-            - NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
-            - TWO_OR_MORE_RACES
-            - DECLINE_TO_SELF_IDENTIFY
           example: AMERICAN_INDIAN_OR_ALASKAN_NATIVE
           nullable: true
           description: The race of the candidate
         gender:
           type: string
           example: MALE
-          enum:
-            - MALE
-            - FEMALE
-            - NON_BINARY
-            - OTHER
-            - DECLINE_TO_SELF_IDENTIFY
           nullable: true
           description: The gender of the candidate
         veteran_status:
           type: string
           example: I_AM_NOT_A_PROTECTED_VETERAN
-          enum:
-            - I_AM_NOT_A_PROTECTED_VETERAN
-            - >-
-              I_IDENTIFY_AS_ONE_OR_MORE_OF_THE_CLASSIFICATIONS_OF_A_PROTECTED_VETERAN
-            - I_DONT_WISH_TO_ANSWER
           nullable: true
           description: The veteran status of the candidate
         disability_status:
           type: string
-          enum:
-            - YES_I_HAVE_A_DISABILITY_OR_PREVIOUSLY_HAD_A_DISABILITY
-            - NO_I_DONT_HAVE_A_DISABILITY
-            - I_DONT_WISH_TO_ANSWER
           example: YES_I_HAVE_A_DISABILITY_OR_PREVIOUSLY_HAD_A_DISABILITY
           nullable: true
           description: The disability status of the candidate
@@ -15996,169 +15433,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_157
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency of the account
         account_number:
@@ -16178,7 +15452,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: &ref_158
+          example: &ref_138
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -16250,7 +15524,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_157
           nullable: true
           description: The currency of the account
         account_number:
@@ -16270,7 +15543,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: *ref_158
+          example: *ref_138
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -16386,7 +15659,7 @@ components:
           description: The UUID of the associated account
         field_mappings:
           type: object
-          example: &ref_159
+          example: &ref_139
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -16442,7 +15715,7 @@ components:
           description: The UUID of the associated account
         field_mappings:
           type: object
-          example: *ref_159
+          example: *ref_139
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -16507,169 +15780,6 @@ components:
         currency:
           type: string
           example: USD
-          enum:
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency used in the balance sheet
         company_info_id:
@@ -16776,169 +15886,6 @@ components:
         currency:
           type: string
           example: USD
-          enum:
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency used in the cash flow statement
         company_id:
@@ -17054,169 +16001,6 @@ components:
         currency:
           type: string
           example: USD
-          enum:
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency used by the company
         urls:
@@ -17318,169 +16102,6 @@ components:
           type: string
           example: USD
           nullable: true
-          enum: &ref_160
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           description: The currency associated with the contact
         remote_updated_at:
           type: string
@@ -17494,7 +16115,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: &ref_161
+          example: &ref_140
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -17567,7 +16188,6 @@ components:
           type: string
           example: USD
           nullable: true
-          enum: *ref_160
           description: The currency associated with the contact
         remote_updated_at:
           type: string
@@ -17581,7 +16201,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: *ref_161
+          example: *ref_140
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -17641,169 +16261,6 @@ components:
         currency:
           type: string
           example: USD
-          enum:
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency of the credit note
         payments:
@@ -17906,169 +16363,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_162
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency of the expense
         exchange_rate:
@@ -18097,7 +16391,7 @@ components:
           nullable: true
           description: The UUID of the associated company info
         tracking_categories:
-          example: &ref_163
+          example: &ref_141
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the tracking categories associated with the expense
@@ -18111,7 +16405,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_164
+          example: &ref_142
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -18180,7 +16474,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_162
           nullable: true
           description: The currency of the expense
         exchange_rate:
@@ -18209,7 +16502,7 @@ components:
           nullable: true
           description: The UUID of the associated company info
         tracking_categories:
-          example: *ref_163
+          example: *ref_141
           nullable: true
           description: The UUIDs of the tracking categories associated with the expense
           type: array
@@ -18222,7 +16515,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_164
+          example: *ref_142
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -18238,169 +16531,6 @@ components:
         currency:
           type: string
           example: USD
-          enum:
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency used in the income statement
         start_period:
@@ -18511,169 +16641,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_165
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency of the invoice
         exchange_rate:
@@ -18722,7 +16689,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: &ref_166
+          example: &ref_143
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
@@ -18737,7 +16704,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_167
+          example: &ref_144
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -18818,7 +16785,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_165
           nullable: true
           description: The currency of the invoice
         exchange_rate:
@@ -18867,7 +16833,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: *ref_166
+          example: *ref_143
           nullable: true
           description: The UUIDs of the tracking categories associated with the invoice
           type: array
@@ -18880,7 +16846,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_167
+          example: *ref_144
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -18977,7 +16943,7 @@ components:
           nullable: true
           description: The date of the transaction
         payments:
-          example: &ref_168
+          example: &ref_145
             - payment1
             - payment2
           nullable: true
@@ -18986,7 +16952,7 @@ components:
           items:
             type: string
         applied_payments:
-          example: &ref_169
+          example: &ref_146
             - appliedPayment1
             - appliedPayment2
           nullable: true
@@ -19002,169 +16968,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_170
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency of the journal entry
         exchange_rate:
@@ -19183,7 +16986,7 @@ components:
           nullable: true
           description: The journal number
         tracking_categories:
-          example: &ref_171
+          example: &ref_147
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: >-
@@ -19209,7 +17012,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_172
+          example: &ref_148
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -19269,14 +17072,14 @@ components:
           nullable: true
           description: The date of the transaction
         payments:
-          example: *ref_168
+          example: *ref_145
           nullable: true
           description: The payments associated with the journal entry
           type: array
           items:
             type: string
         applied_payments:
-          example: *ref_169
+          example: *ref_146
           nullable: true
           description: The applied payments for the journal entry
           type: array
@@ -19290,7 +17093,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_170
           nullable: true
           description: The currency of the journal entry
         exchange_rate:
@@ -19309,7 +17111,7 @@ components:
           nullable: true
           description: The journal number
         tracking_categories:
-          example: *ref_171
+          example: *ref_147
           nullable: true
           description: >-
             The UUIDs of the tracking categories associated with the journal
@@ -19334,7 +17136,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_172
+          example: *ref_148
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -19366,169 +17168,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_173
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency of the payment
         exchange_rate:
@@ -19557,7 +17196,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: &ref_174
+          example: &ref_149
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the tracking categories associated with the payment
@@ -19571,7 +17210,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_175
+          example: &ref_150
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -19640,7 +17279,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_173
           nullable: true
           description: The currency of the payment
         exchange_rate:
@@ -19669,7 +17307,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: *ref_174
+          example: *ref_149
           nullable: true
           description: The UUIDs of the tracking categories associated with the payment
           type: array
@@ -19682,7 +17320,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_175
+          example: *ref_150
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -19806,169 +17444,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: &ref_176
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency of the purchase order
         exchange_rate:
@@ -19977,7 +17452,7 @@ components:
           nullable: true
           description: The exchange rate applied to the purchase order
         tracking_categories:
-          example: &ref_177
+          example: &ref_151
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: >-
@@ -19998,7 +17473,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_178
+          example: &ref_152
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -20108,7 +17583,6 @@ components:
         currency:
           type: string
           example: USD
-          enum: *ref_176
           nullable: true
           description: The currency of the purchase order
         exchange_rate:
@@ -20117,7 +17591,7 @@ components:
           nullable: true
           description: The exchange rate applied to the purchase order
         tracking_categories:
-          example: *ref_177
+          example: *ref_151
           nullable: true
           description: >-
             The UUIDs of the tracking categories associated with the purchase
@@ -20137,7 +17611,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_178
+          example: *ref_152
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -20300,169 +17774,6 @@ components:
         currency:
           type: string
           example: USD
-          enum:
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           nullable: true
           description: The currency of the transaction
         tracking_categories:
@@ -20572,169 +17883,6 @@ components:
           type: string
           example: USD
           nullable: true
-          enum:
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           description: The currency of the vendor credit
         exchange_rate:
           type: string
@@ -20914,7 +18062,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_179
+          example: &ref_153
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -21000,7 +18148,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_179
+          example: *ref_153
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -21058,7 +18206,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: &ref_180
+          example: &ref_154
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -21149,7 +18297,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: *ref_180
+          example: *ref_154
           additionalProperties: true
           nullable: true
           description: >-
@@ -21314,13 +18462,9 @@ components:
           type: string
           example: ACTIVE
           nullable: true
-          enum: &ref_181
-            - ARCHIVED
-            - ACTIVE
-            - DRAFT
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
-          example: &ref_182
+          example: &ref_155
             - https://myproduct/image
           nullable: true
           description: The URLs of the product images
@@ -21338,7 +18482,7 @@ components:
           nullable: true
           description: The vendor of the product
         variants:
-          example: &ref_183
+          example: &ref_156
             - title: teeshirt
               price: 20
               sku: '3'
@@ -21350,7 +18494,7 @@ components:
           items:
             $ref: '#/components/schemas/Variant'
         tags:
-          example: &ref_184
+          example: &ref_157
             - tag_1
           nullable: true
           description: The tags associated with the product
@@ -21359,7 +18503,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: &ref_185
+          example: &ref_158
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -21410,10 +18554,9 @@ components:
           type: string
           example: ACTIVE
           nullable: true
-          enum: *ref_181
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
-          example: *ref_182
+          example: *ref_155
           nullable: true
           description: The URLs of the product images
           type: array
@@ -21430,13 +18573,13 @@ components:
           nullable: true
           description: The vendor of the product
         variants:
-          example: *ref_183
+          example: *ref_156
           description: The variants of the product
           type: array
           items:
             $ref: '#/components/schemas/Variant'
         tags:
-          example: *ref_184
+          example: *ref_157
           nullable: true
           description: The tags associated with the product
           type: array
@@ -21444,7 +18587,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: *ref_185
+          example: *ref_158
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -21455,11 +18598,6 @@ components:
         order_status:
           type: string
           example: UNSHIPPED
-          enum: &ref_186
-            - PENDING
-            - UNSHIPPED
-            - SHIPPED
-            - CANCELED
           nullable: true
           description: The status of the order
         order_number:
@@ -21470,178 +18608,12 @@ components:
         payment_status:
           type: string
           example: SUCCESS
-          enum: &ref_187
-            - SUCCESS
-            - FAIL
           nullable: true
           description: The payment status of the order
         currency:
           type: string
           nullable: true
           example: AUD
-          enum: &ref_188
-            - AED
-            - AFN
-            - ALL
-            - AMD
-            - ANG
-            - AOA
-            - ARS
-            - AUD
-            - AWG
-            - AZN
-            - BAM
-            - BBD
-            - BDT
-            - BGN
-            - BHD
-            - BIF
-            - BMD
-            - BND
-            - BOB
-            - BRL
-            - BSD
-            - BTN
-            - BWP
-            - BYN
-            - BZD
-            - CAD
-            - CDF
-            - CHF
-            - CLP
-            - CNY
-            - COP
-            - CRC
-            - CUP
-            - CVE
-            - CZK
-            - DJF
-            - DKK
-            - DOP
-            - DZD
-            - EGP
-            - ERN
-            - ETB
-            - EUR
-            - FJD
-            - FKP
-            - FOK
-            - GBP
-            - GEL
-            - GGP
-            - GHS
-            - GIP
-            - GMD
-            - GNF
-            - GTQ
-            - GYD
-            - HKD
-            - HNL
-            - HRK
-            - HTG
-            - HUF
-            - IDR
-            - ILS
-            - IMP
-            - INR
-            - IQD
-            - IRR
-            - ISK
-            - JEP
-            - JMD
-            - JOD
-            - JPY
-            - KES
-            - KGS
-            - KHR
-            - KID
-            - KMF
-            - KRW
-            - KWD
-            - KYD
-            - KZT
-            - LAK
-            - LBP
-            - LKR
-            - LRD
-            - LSL
-            - LYD
-            - MAD
-            - MDL
-            - MGA
-            - MKD
-            - MMK
-            - MNT
-            - MOP
-            - MRU
-            - MUR
-            - MVR
-            - MWK
-            - MXN
-            - MYR
-            - MZN
-            - NAD
-            - NGN
-            - NIO
-            - NOK
-            - NPR
-            - NZD
-            - OMR
-            - PAB
-            - PEN
-            - PGK
-            - PHP
-            - PKR
-            - PLN
-            - PYG
-            - QAR
-            - RON
-            - RSD
-            - RUB
-            - RWF
-            - SAR
-            - SBD
-            - SCR
-            - SDG
-            - SEK
-            - SGD
-            - SHP
-            - SLE
-            - SLL
-            - SOS
-            - SRD
-            - SSP
-            - STN
-            - SYP
-            - SZL
-            - THB
-            - TJS
-            - TMT
-            - TND
-            - TOP
-            - TRY
-            - TTD
-            - TVD
-            - TWD
-            - TZS
-            - UAH
-            - UGX
-            - USD
-            - UYU
-            - UZS
-            - VES
-            - VND
-            - VUV
-            - WST
-            - XAF
-            - XCD
-            - XDR
-            - XOF
-            - XPF
-            - YER
-            - ZAR
-            - ZMW
-            - ZWL
           description: >-
             The currency of the order. Authorized value must be of type
             CurrencyCode (ISO 4217)
@@ -21669,10 +18641,6 @@ components:
           type: string
           nullable: true
           example: PENDING
-          enum: &ref_189
-            - PENDING
-            - FULFILLED
-            - CANCELED
           description: The fulfillment status of the order
         customer_id:
           type: string
@@ -21681,7 +18649,7 @@ components:
           description: The UUID of the customer associated with the order
         items:
           nullable: true
-          example: &ref_190
+          example: &ref_159
             - remote_id: '12345'
               product_id: prod_001
               variant_id: var_001
@@ -21712,7 +18680,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_191
+          example: &ref_160
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -21752,7 +18720,6 @@ components:
         order_status:
           type: string
           example: UNSHIPPED
-          enum: *ref_186
           nullable: true
           description: The status of the order
         order_number:
@@ -21763,14 +18730,12 @@ components:
         payment_status:
           type: string
           example: SUCCESS
-          enum: *ref_187
           nullable: true
           description: The payment status of the order
         currency:
           type: string
           nullable: true
           example: AUD
-          enum: *ref_188
           description: >-
             The currency of the order. Authorized value must be of type
             CurrencyCode (ISO 4217)
@@ -21798,7 +18763,6 @@ components:
           type: string
           nullable: true
           example: PENDING
-          enum: *ref_189
           description: The fulfillment status of the order
         customer_id:
           type: string
@@ -21807,14 +18771,14 @@ components:
           description: The UUID of the customer associated with the order
         items:
           nullable: true
-          example: *ref_190
+          example: *ref_159
           description: The items in the order
           type: array
           items:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_191
+          example: *ref_160
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -21991,7 +18955,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_192
+          example: &ref_161
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -22063,7 +19027,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_192
+          example: *ref_161
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora

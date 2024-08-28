@@ -24,14 +24,14 @@ export class UnifiedCrmTaskInput {
   @ApiProperty({
     type: String,
     example: 'PENDING',
-    enum: ['PENDING', 'COMPLETED'],
+    // enum: ['PENDING', 'COMPLETED'],
     description:
       'The status of the task. Authorized values are PENDING, COMPLETED.',
     nullable: true,
   })
-  @IsIn(['PENDING', 'COMPLETED'], {
+  /*@IsIn(['PENDING', 'COMPLETED'], {
     message: 'Type must be either PENDING or COMPLETED',
-  })
+  })*/
   status: TaskStatus | string;
 
   @ApiPropertyOptional({

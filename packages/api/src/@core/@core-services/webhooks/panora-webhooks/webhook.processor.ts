@@ -6,6 +6,7 @@ import { Job } from 'bull';
 import { v4 as uuidv4 } from 'uuid';
 import { WebhookService } from './webhook.service';
 import { Queues } from '@@core/@core-services/queues/types';
+import { response } from 'express';
 
 @Processor(Queues.PANORA_WEBHOOKS_SENDER)
 export class WebhookProcessor {
@@ -60,19 +61,24 @@ export class WebhookProcessor {
           deliveryAttempt.webhooks_payloads.data,
           deliveryAttempt.webhook_endpoints.secret,
         );
-        const response = await axios.post(
-          deliveryAttempt.webhook_endpoints.url,
-          {
-            id_event: deliveryAttempt.id_event,
-            data: deliveryAttempt.webhooks_payloads.data,
-            type: event.type,
-          },
-          {
-            headers: {
-              'Panora-Signature': signature,
+        let response;
+        try {
+          response = await axios.post(
+            deliveryAttempt.webhook_endpoints.url,
+            {
+              id_event: deliveryAttempt.id_event,
+              data: deliveryAttempt.webhooks_payloads.data,
+              type: event.type,
             },
-          },
-        );
+            {
+              headers: {
+                'Panora-Signature': signature,
+              },
+            },
+          );
+        } catch (error) {
+          throw error;
+        }
 
         // Populate the webhooks_responses table
         await this.prisma.webhooks_reponses.create({
@@ -92,7 +98,7 @@ export class WebhookProcessor {
         this.logger.log('Webhook delivered !');
       } catch (error) {
         // If the POST request fails, set a next retry time and reinsert the job in the queue
-        const nextRetry = new Date();
+        /*const nextRetry = new Date();
         nextRetry.setSeconds(nextRetry.getSeconds() + 60); // Retry after 60 seconds
 
         await this.prisma.webhook_delivery_attempts.update({
@@ -104,10 +110,10 @@ export class WebhookProcessor {
         });
 
         //re-insert the webhook in the queue
-        await this.webhookService.dispatchFailedWebhook(id_webhook_delivery);
+        await this.webhookService.dispatchFailedWebhook(id_webhook_delivery);*/
 
         this.logger.log(
-          'Webhook delivery failed. Job reinserted in the queue for retry.',
+          `Webhook delivery failed. Job reinserted in the queue for retry : ${error}`,
         );
       }
     } else {
