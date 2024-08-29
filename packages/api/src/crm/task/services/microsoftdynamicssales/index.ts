@@ -36,7 +36,7 @@ export class MicrosoftdynamicssalesService implements ITaskService {
                     vertical: 'crm',
                 },
             });
-            const resp = await axios.post(
+            const respToPost = await axios.post(
                 `${connection.account_url}/api/data/v9.2/tasks`,
                 JSON.stringify(taskData),
                 {
@@ -49,8 +49,22 @@ export class MicrosoftdynamicssalesService implements ITaskService {
                 },
             );
 
+            const postTaskId = respToPost.headers['location'].split("/").pop();
+
+            const resp = await axios.get(
+                `${connection.account_url}/api/data/v9.2/${postTaskId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${this.cryptoService.decrypt(
+                        connection.access_token,
+                    )}`,
+                },
+            });
+
+
+
             return {
-                data: resp?.data?.value,
+                data: resp?.data,
                 message: 'Microsoftdynamicssales task created',
                 statusCode: 201,
             };

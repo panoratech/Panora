@@ -24,7 +24,7 @@ export class MicrosoftdynamicssalesDealMapper implements IDealMapper {
         const result: MicrosoftdynamicssalesDealInput = {
             name: source.name,
             description: source.description,
-            totalamount: source.amount
+            budgetamount: source.amount
         }
 
 
@@ -103,9 +103,9 @@ export class MicrosoftdynamicssalesDealMapper implements IDealMapper {
             }
         }
 
-        if (deal._accountid_value) {
+        if (deal._customerid_value) {
             const company_id = await this.utils.getCompanyUuidFromRemoteId(
-                deal._accountid_value,
+                deal._customerid_value,
                 connectionId
             );
             if (company_id) {

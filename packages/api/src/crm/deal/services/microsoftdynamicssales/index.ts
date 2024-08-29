@@ -37,11 +37,9 @@ export class MicrosoftdynamicssalesService implements IDealService {
                 },
             });
 
-            const resp = await axios.post(
+            const respToPost = await axios.post(
                 `${connection.account_url}/api/data/v9.2/opportunities`,
-                JSON.stringify({
-                    data: dealData,
-                }),
+                JSON.stringify(dealData),
                 {
                     headers: {
                         Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -51,8 +49,28 @@ export class MicrosoftdynamicssalesService implements IDealService {
                     },
                 },
             );
+
+            const postDealId = respToPost.headers['location'].split("/").pop();
+
+            const resp = await axios.get(
+                `${connection.account_url}/api/data/v9.2/${postDealId}`,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${this.cryptoService.decrypt(
+                            connection.access_token,
+                        )}`,
+                    },
+                },
+            );
+
+
+
+
+
             return {
-                data: resp.data.value,
+                data: resp.data,
                 message: 'Microsoftdynamicssales deal created',
                 statusCode: 201,
             };

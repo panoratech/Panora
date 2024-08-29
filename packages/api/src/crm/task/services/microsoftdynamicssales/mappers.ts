@@ -31,11 +31,11 @@ export class MicrosoftdynamicssalesTaskMapper implements ITaskMapper {
         }
 
         if (source.due_date) {
-            result.scheduledend = source.due_date.toUTCString();
+            result.scheduledend = new Date(source.due_date).toUTCString();
         }
 
         if (source.finished_date) {
-            result.actualend = source.finished_date.toUTCString();
+            result.actualend = new Date(source.finished_date).toUTCString();
         }
 
         // User have to provide either company_id or deal_id which will be associated with current task

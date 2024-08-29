@@ -39,11 +39,9 @@ export class MicrosoftdynamicssalesService implements ICompanyService {
                 },
             });
 
-            const resp = await axios.post(
+            const respToPost = await axios.post(
                 `${connection.account_url}/api/data/v9.2/accounts`,
-                JSON.stringify({
-                    data: companyData,
-                }),
+                JSON.stringify(companyData),
                 {
                     headers: {
                         Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -53,8 +51,24 @@ export class MicrosoftdynamicssalesService implements ICompanyService {
                     },
                 },
             );
+
+            const postCompanyId = respToPost.headers['location'].split("/").pop();
+            // console.log(res.headers['location'].split('(')[1].split(')')[0])
+
+            const resp = await axios.get(
+                `${connection.account_url}/api/data/v9.2/${postCompanyId}`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${this.cryptoService.decrypt(
+                            connection.access_token,
+                        )}`,
+                    },
+                },
+            );
+
             return {
-                data: resp.data.value,
+                data: resp.data,
                 message: 'Microsoftdynamicssales company created',
                 statusCode: 201,
             };

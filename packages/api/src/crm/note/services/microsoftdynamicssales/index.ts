@@ -36,7 +36,7 @@ export class MicrosoftdynamicssalesService implements INoteService {
                     vertical: 'crm',
                 },
             });
-            const resp = await axios.post(
+            const respToPost = await axios.post(
                 `${connection.account_url}/api/data/v9.2/annotations`,
                 JSON.stringify(noteData),
                 {
@@ -48,8 +48,24 @@ export class MicrosoftdynamicssalesService implements INoteService {
                     },
                 },
             );
+
+            const postNoteId = respToPost.headers['location'].split("/").pop();
+
+            const resp = await axios.get(
+                `${connection.account_url}/api/data/v9.2/${postNoteId}`
+                , {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${this.cryptoService.decrypt(
+                            connection.access_token,
+                        )}`,
+                    },
+                });
+
+
+
             return {
-                data: resp?.data.value,
+                data: resp?.data,
                 message: 'Microsoftdynamicssales note created',
                 statusCode: 201,
             };

@@ -38,11 +38,9 @@ export class MicrosoftdynamicssalesService implements IContactService {
                 },
             });
 
-            const resp = await axios.post(
+            const respToPost = await axios.post(
                 `${connection.account_url}/api/data/v9.2/contacts`,
-                JSON.stringify({
-                    data: contactData,
-                }),
+                JSON.stringify(contactData),
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -52,8 +50,23 @@ export class MicrosoftdynamicssalesService implements IContactService {
                     },
                 },
             );
+
+            const postContactId = respToPost.headers['location'].split("/").pop();
+
+            const resp = await axios.get(
+                `${connection.account_url}/api/data/v9.2/${postContactId}`,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${this.cryptoService.decrypt(
+                            connection.access_token,
+                        )}`,
+                    },
+                },
+            );
             return {
-                data: resp.data.value,
+                data: resp.data,
                 message: 'microsoftdynamicssales contact created',
                 statusCode: 201,
             };
