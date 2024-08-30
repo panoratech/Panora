@@ -8,6 +8,8 @@ import {
   Param,
   Headers,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
@@ -57,6 +59,12 @@ export class UserController {
   @ApiPaginatedResponse(UnifiedAtsUserOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  )
   async getUsers(
     @Headers('x-connection-token') connection_token: string,
     @Query() query: QueryDto,
