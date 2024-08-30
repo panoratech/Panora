@@ -3,6 +3,10 @@
 // import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 // import { Injectable } from '@nestjs/common';
 // import { ServiceRegistry } from '../registry.service';
+// import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
+// import { OriginalContactOutput } from '@@core/utils/types/original/original.accounting';
+// import { ApiResponse } from '@@core/utils/types';
+// import { AccountingObject } from '@lib/@types/index'
 
 // export interface IContactService {
 //   addContact(
@@ -40,7 +44,7 @@
 //   }
 
 // @Injectable()
-// export class My3rdPartyService implements IContactService {
+// export class WaveFinancial implements IContactService {
 //   constructor(
 //     private prisma: PrismaService,
 //     private logger: LoggerService,
@@ -48,7 +52,7 @@
 //     private registry: ServiceRegistry,
 //   ) {
 //     this.logger.setContext(
-//       CrmObject.contact.toUpperCase() + ':' + My3rdPartyService.name,
+//         AccountingObject.contact.toUpperCase() + ':' + WaveFinancial.name,
 //     );
 //     this.registry.registerService('my3rdParty', this);
 //   }
