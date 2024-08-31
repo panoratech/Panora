@@ -1,0 +1,83 @@
+// reference: https://docs.developers.webflow.com/data/reference/list-products
+
+export interface WebflowProductInput {
+  product: ProductData;
+  skus: SkuData[];
+  publishStatus: 'staging' | 'live';
+}
+
+export interface ProductData {
+  id: string;
+  cmsLocaleId: string;
+  lastPublished: string;
+  lastUpdated: string;
+  createdOn: string;
+  isArchived: boolean;
+  isDraft: boolean;
+  fieldData: ProductFieldData;
+}
+
+export interface ProductFieldData {
+  name: string; // required
+  slug: string; // required
+  description?: string;
+  shippable: boolean;
+  skuProperties?: SkuProperty[];
+  categories?: string[];
+  taxCategory?: string;
+  defaultSku: string;
+  ecProductType?: string;
+  [key: string]: any; // for custom fields
+}
+
+export interface SkuProperty {
+  id: string; // required
+  name: string; // required
+  enum: VariantOption[];
+}
+
+export interface VariantOption {
+  id: string; // required
+  name: string; // required
+  slug: string; // required
+}
+
+export interface SkuData {
+  id: string;
+  cmsLocaleId: string;
+  lastPublished: string;
+  lastUpdated: string;
+  createdOn: string;
+  fieldData: SkuFieldData;
+}
+
+export interface SkuFieldData {
+  skuValues: { [key: string]: string }; // maps SKU property ID to SKU value ID
+  name: string; // required
+  slug: string; // required
+  price: Price; // required
+  compareAtPrice?: Price;
+  ecSkuBillingMethod?: 'one-time' | 'subscription';
+  ecSkuSubscriptionPlan?: SubscriptionPlan;
+  trackInventory?: boolean; // Defaults to false
+  quantity?: number;
+  [key: string]: any; // for custom
+}
+
+export interface Price {
+  value: number; // required
+  unit: string; // required
+}
+
+export interface SubscriptionPlan {
+  interval: 'day' | 'week' | 'month' | 'year'; // required
+  frequency: number; // required
+  trial?: number;
+  plans?: {
+    id: string;
+    platform: string;
+    status: string;
+  }[];
+}
+
+export type WebflowProductOutput = Partial<WebflowProductInput>;
