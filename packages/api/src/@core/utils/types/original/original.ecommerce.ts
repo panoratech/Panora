@@ -1,3 +1,5 @@
+import { WebflowProductInput, WebflowProductOutput } from '@ecommerce/product/services/webflow/types';
+
 import {
   WebflowCustomerInput,
   WebflowCustomerOutput,
@@ -59,7 +61,7 @@ import {
 export type OriginalProductInput =
   | ShopifyProductInput
   | WoocommerceProductInput
-  | SquarespaceProductInput;
+  | SquarespaceProductInput | WebflowProductInput;
 
 /* order */
 export type OriginalOrderInput =
@@ -94,7 +96,7 @@ export type EcommerceObjectInput =
 export type OriginalProductOutput =
   | ShopifyProductOutput
   | WoocommerceProductOutput
-  | SquarespaceProductOutput;
+  | SquarespaceProductOutput | WebflowProductOutput;
 
 /* order */
 export type OriginalOrderOutput =

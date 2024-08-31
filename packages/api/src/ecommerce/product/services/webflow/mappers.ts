@@ -38,20 +38,19 @@ export class WebflowProductMapper implements IProductMapper {
           slug: source.product_url?.split('/').pop() || '',
           description: source.description,
           shippable: true,
-          skuProperties: [],
         },
       },
-      skus: source.variants?.map((item) => ({
+      sku: {
         fieldData: {
-          name: item.title,
-          slug: item.sku,
-          sku: item.sku,
+          name: source.variants?.[0]?.title,
+          slug: source.variants?.[0]?.sku,
+          sku: source.variants?.[0]?.sku,
           price: {
-            value: item.price,
+            value: parseInt(source.variants?.[0]?.price.toString(), 10),
             unit: 'USD',
           },
         },
-      })),
+      },
     };
 
     customFieldMappings?.forEach((mapping) => {
@@ -101,7 +100,9 @@ export class WebflowProductMapper implements IProductMapper {
       remote_id: data.product.id,
       remote_data: data,
       images_urls:
-        data.skus?.map((sku) => sku?.fieldData?.mainImage?.url) || [],
+        data.skus
+          ?.map((sku) => sku?.fieldData?.mainImage?.url)
+          .filter((url) => Boolean(url)) || [],
       description: data.product.fieldData?.description,
       tags: data.product.fieldData?.categories,
       created_at: data.product?.createdOn,

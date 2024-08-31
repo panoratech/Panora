@@ -1,9 +1,8 @@
 // reference: https://docs.developers.webflow.com/data/reference/list-products
 
-export interface WebflowProductInput {
+export interface WebflowProductOutput {
   product: ProductData;
   skus: SkuData[];
-  publishStatus: 'staging' | 'live';
 }
 
 export interface ProductData {
@@ -101,4 +100,8 @@ export interface DownloadFile {
   id: string;
 }
 
-export type WebflowProductOutput = Partial<WebflowProductInput>;
+export interface WebflowProductInput {
+  product: ProductData;
+  sku: SkuData;
+  publishStatus: 'staging' | 'live';
+}
