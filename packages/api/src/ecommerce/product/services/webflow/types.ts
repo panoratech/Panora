@@ -7,13 +7,13 @@ export interface WebflowProductInput {
 }
 
 export interface ProductData {
-  id: string;
-  cmsLocaleId: string;
-  lastPublished: string;
-  lastUpdated: string;
-  createdOn: string;
-  isArchived: boolean;
-  isDraft: boolean;
+  id?: string;
+  cmsLocaleId?: string;
+  lastPublished?: string;
+  lastUpdated?: string;
+  createdOn?: string;
+  isArchived?: boolean;
+  isDraft?: boolean;
   fieldData: ProductFieldData;
 }
 
@@ -25,7 +25,7 @@ export interface ProductFieldData {
   skuProperties?: SkuProperty[];
   categories?: string[];
   taxCategory?: string;
-  defaultSku: string;
+  defaultSku?: string;
   ecProductType?: string;
   [key: string]: any; // for custom fields
 }
@@ -43,19 +43,28 @@ export interface VariantOption {
 }
 
 export interface SkuData {
-  id: string;
-  cmsLocaleId: string;
-  lastPublished: string;
-  lastUpdated: string;
-  createdOn: string;
+  id?: string;
+  cmsLocaleId?: string;
+  lastPublished?: string;
+  lastUpdated?: string;
+  createdOn?: string;
   fieldData: SkuFieldData;
 }
 
 export interface SkuFieldData {
-  skuValues: { [key: string]: string }; // maps SKU property ID to SKU value ID
+  skuValues?: { [key: string]: string }; // maps SKU property ID to SKU value ID
   name: string; // required
   slug: string; // required
   price: Price; // required
+  product?: string;
+  width?: number;
+  length?: number;
+  height?: number;
+  weight?: number;
+  sku: string;
+  mainImage?: Image | null;
+  moreImages?: Image[];
+  downloadFiles?: DownloadFile[];
   compareAtPrice?: Price;
   ecSkuBillingMethod?: 'one-time' | 'subscription';
   ecSkuSubscriptionPlan?: SubscriptionPlan;
@@ -78,6 +87,18 @@ export interface SubscriptionPlan {
     platform: string;
     status: string;
   }[];
+}
+
+export interface Image {
+  fileId: string;
+  url: string;
+  alt?: string | null;
+}
+
+export interface DownloadFile {
+  name: string;
+  url: string;
+  id: string;
 }
 
 export type WebflowProductOutput = Partial<WebflowProductInput>;
