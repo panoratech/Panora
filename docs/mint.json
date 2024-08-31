@@ -1,5 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
+  "layout": "topnav",
   "analytics": {
     "hotjar": {
       "hjid": "5154921",
@@ -53,7 +54,6 @@
     {
       "group": "Documentation",
       "pages": [
-        "welcome",
         "quick-start",
         "catalog"
       ]
