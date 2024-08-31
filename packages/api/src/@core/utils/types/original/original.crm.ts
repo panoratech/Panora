@@ -1,3 +1,5 @@
+import { MicrosoftdynamicssalesEngagementInput, MicrosoftdynamicssalesEngagementOutput } from '@crm/engagement/services/microsoftdynamicssales/types';
+
 import { MicrosoftdynamicssalesTaskInput, MicrosoftdynamicssalesTaskOutput } from '@crm/task/services/microsoftdynamicssales/types';
 
 import { MicrosoftdynamicssalesNoteInput, MicrosoftdynamicssalesNoteOutput } from '@crm/note/services/microsoftdynamicssales/types';
@@ -186,7 +188,7 @@ export type OriginalEngagementInput =
   | ZohoEngagementInput
   | ZendeskEngagementInput
   | PipedriveEngagementInput
-  | CloseEngagementInput;
+  | CloseEngagementInput | MicrosoftdynamicssalesEngagementInput;
 
 /* note */
 export type OriginalNoteInput =
@@ -268,7 +270,7 @@ export type OriginalEngagementOutput =
   | ZohoEngagementOutput
   | ZendeskEngagementOutput
   | PipedriveEngagementOutput
-  | CloseEngagementOutput;
+  | CloseEngagementOutput | MicrosoftdynamicssalesEngagementOutput;
 
 /* note */
 export type OriginalNoteOutput =
