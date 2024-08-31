@@ -38,7 +38,7 @@
  3. Start
 
 ```
-  docker compose up
+  docker compose -f docker-compose.source.yml up
  ```
 
 Panora is now running!  Follow our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product !
