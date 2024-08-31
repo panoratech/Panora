@@ -11,7 +11,8 @@ export enum EcommerceConnectors {
     SHOPIFY = 'shopify',
     WOOCOMMERCE = 'woocommerce',
     SQUARESPACE = 'squarespace',
-    AMAZON = 'amazon'
+    AMAZON = 'amazon',
+    WEBFLOW = 'webflow'
 }
 
 export enum TicketingConnectors {

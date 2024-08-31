@@ -1,3 +1,5 @@
+import { WebflowCustomerMapper } from './services/webflow/mappers';
+import { WebflowService } from './services/webflow';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -30,6 +32,8 @@ import { AmazonCustomerMapper } from './services/amazon/mappers';
     /* PROVIDERS SERVICES */
     ShopifyService,
     WoocommerceService,
+    WebflowService,
+    WebflowCustomerMapper,
   ],
   exports: [SyncService],
 })

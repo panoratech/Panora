@@ -1,3 +1,8 @@
+import {
+  WebflowCustomerInput,
+  WebflowCustomerOutput,
+} from '@ecommerce/customer/services/webflow/types';
+
 /* INPUT */
 
 import { AmazonCustomerOutput } from '@ecommerce/customer/services/amazon/types';
@@ -70,7 +75,8 @@ export type OriginalFulfillmentOrdersInput = ShopifyFulfillmentOrdersInput;
 export type OriginalCustomerInput =
   | ShopifyCustomerInput
   | WoocommerceCustomerInput
-  | SquarespaceCustomerInput;
+  | SquarespaceCustomerInput
+  | WebflowCustomerInput;
 
 /* fulfillment */
 export type OriginalFulfillmentInput = ShopifyFulfillmentInput;
@@ -105,7 +111,8 @@ export type OriginalCustomerOutput =
   | ShopifyCustomerOutput
   | WoocommerceCustomerOutput
   | SquarespaceCustomerOutput
-  | AmazonCustomerOutput;
+  | AmazonCustomerOutput
+  | WebflowCustomerOutput;
 
 /* fulfillment */
 export type OriginalFulfillmentOutput = ShopifyFulfillmentOutput;
