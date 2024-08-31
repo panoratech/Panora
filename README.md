@@ -161,6 +161,7 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
 - [ ] Google Drive
 - [ ] Dropbox
 - [ ] Sharepoint
+- [ ] One Drive
   
 #### Productivity
 
@@ -192,9 +193,20 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
 - [ ] Lever
 - [ ] Avature
 
+#### Cybersecurity
+
+- [ ] Snyk
+- [ ] Qualys
+- [ ] Crowdstrike
+- [ ] Semgrep
+- [ ] Rapids7InsightVm
+- [ ] Tenable
+- [ ] SentinelOne
+- [ ] Microsoft Defender
+
 #### Legacy Softwares
 
-- [ ] Netsuite
+- [ ] Netsuite (Accounting)
 - [ ] SAP (ERP)
 - [ ] Ariba
 - [ ] Concur
