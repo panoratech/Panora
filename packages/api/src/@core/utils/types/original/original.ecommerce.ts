@@ -1,10 +1,3 @@
-import { WebflowProductInput, WebflowProductOutput } from '@ecommerce/product/services/webflow/types';
-
-import {
-  WebflowCustomerInput,
-  WebflowCustomerOutput,
-} from '@ecommerce/customer/services/webflow/types';
-
 /* INPUT */
 
 import { AmazonCustomerOutput } from '@ecommerce/customer/services/amazon/types';
@@ -56,19 +49,33 @@ import {
   WoocommerceProductInput,
   WoocommerceProductOutput,
 } from '@ecommerce/product/services/woocommerce/types';
+import {
+  WebflowOrderInput,
+  WebflowOrderOutput,
+} from '@ecommerce/order/services/webflow/types';
+import {
+  WebflowProductInput,
+  WebflowProductOutput,
+} from '@ecommerce/product/services/webflow/types';
+import {
+  WebflowCustomerInput,
+  WebflowCustomerOutput,
+} from '@ecommerce/customer/services/webflow/types';
 
 /* product */
 export type OriginalProductInput =
   | ShopifyProductInput
   | WoocommerceProductInput
-  | SquarespaceProductInput | WebflowProductInput;
+  | SquarespaceProductInput
+  | WebflowProductInput;
 
 /* order */
 export type OriginalOrderInput =
   | ShopifyOrderInput
   | WoocommerceOrderInput
   | SquarespaceOrderInput
-  | AmazonOrderInput;
+  | AmazonOrderInput
+  | WebflowOrderInput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersInput = ShopifyFulfillmentOrdersInput;
@@ -96,14 +103,16 @@ export type EcommerceObjectInput =
 export type OriginalProductOutput =
   | ShopifyProductOutput
   | WoocommerceProductOutput
-  | SquarespaceProductOutput | WebflowProductOutput;
+  | SquarespaceProductOutput
+  | WebflowProductOutput;
 
 /* order */
 export type OriginalOrderOutput =
   | ShopifyOrderOutput
   | WoocommerceOrderOutput
   | SquarespaceOrderOutput
-  | AmazonOrderOutput;
+  | AmazonOrderOutput
+  | WebflowOrderOutput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersOutput = ShopifyFulfillmentOrdersOutput;

@@ -1,5 +1,3 @@
-import { WebflowCustomerMapper } from './services/webflow/mappers';
-import { WebflowService } from './services/webflow';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -15,6 +13,8 @@ import { WoocommerceCustomerMapper } from './services/woocommerce/mappers';
 import { SyncService } from './sync/sync.service';
 import { SquarespaceCustomerMapper } from './services/squarespace/mappers';
 import { AmazonCustomerMapper } from './services/amazon/mappers';
+import { WebflowService } from './services/webflow';
+import { WebflowCustomerMapper } from './services/webflow/mappers';
 @Module({
   controllers: [CustomerController],
   providers: [
