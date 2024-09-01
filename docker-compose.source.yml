@@ -11,7 +11,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
+    ports: 
       - '5432:5432'
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}']
@@ -188,7 +188,10 @@ services:
       SNYK_CYBERSECURITY_CLOUD_CLIENT_SECRET: ${SNYK_CYBERSECURITY_CLOUD_CLIENT_SECRET}
       CROWDSTRIKE_CYBERSECURITY_CLOUD_CLIENT_ID: ${CROWDSTRIKE_CYBERSECURITY_CLOUD_CLIENT_ID}
       CROWDSTRIKE_CYBERSECURITY_CLOUD_CLIENT_SECRET: ${CROWDSTRIKE_CYBERSECURITY_CLOUD_CLIENT_SECRET}
-      
+      POSTHOG_HOST: "https://us.i.posthog.com"
+      POSTHOG_KEY:  "phc_WhWJfNPOHAuWVdyTacGxrPa9JW54scnofA9KVEjFcFw"
+      PH_TELEMETRY: "TRUE"
+
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -199,12 +202,12 @@ services:
         condition: service_healthy
     networks:
       - backend
-    healthcheck:
-      test: ["CMD-SHELL", "curl", "-f", "http://localhost:3000/health"]
-      start_period: 60s
-      interval: 10s
-      timeout: 1s
-      retries: 50
+    #healthcheck:
+      #test: ["CMD-SHELL", "curl", "-f", "http://localhost:3000/health"]
+      #start_period: 60s
+      #interval: 10s
+      #timeout: 1s
+      #retries: 50
 
   redis:
     image: valkey/valkey:7.2-alpine
@@ -230,15 +233,15 @@ services:
       args:
         NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
         NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
-        NEXT_PUBLIC_FRONTEND_DOMAIN: ${NEXT_PUBLIC_FRONTEND_DOMAIN}
+        NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
         NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
-        NEXT_PUBLIC_REDIRECT_WEBHOOK_INGRESS: ${REDIRECT_TUNNEL_INGRESS} 
+        NEXT_PUBLIC_REDIRECT_WEBHOOK_INGRESS: ${REDIRECT_TUNNEL_INGRESS}  
     restart: unless-stopped
     ports:
       - 80:8090
-    depends_on:
-      api:
-        condition: service_healthy
+    #depends_on:
+      #api:
+        #condition: service_healthy
     networks:
       - backend
       - frontend
@@ -247,14 +250,12 @@ services:
     build:
       dockerfile: ./apps/magic-link/Dockerfile
       context: ./
-      args:
-        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
-    restart: always
+    restart: always 
     ports:
       - 81:80
-    depends_on:
-      api:
-        condition: service_healthy
+    #depends_on:
+      #api:
+        #condition: service_healthy
     networks:
       - backend
       - frontend
@@ -271,9 +272,9 @@ services:
       - ./ngrok.yml:/etc/ngrok.yml
     ports:
     - 4040:4040
-    depends_on:
-      api:
-        condition: service_healthy
+    #depends_on:
+      #api:
+        #condition: service_healthy
     network_mode: "host"
     
 networks:
