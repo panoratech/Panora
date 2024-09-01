@@ -1,3 +1,5 @@
+// ref: https://docs.developers.webflow.com/data/reference/list-users
+
 export interface WebflowCustomerInput {
   id: string;
   isEmailVerified: boolean;
@@ -5,21 +7,26 @@ export interface WebflowCustomerInput {
   invitedOn: string;
   createdOn: string;
   lastLogin: string;
-  status: string;
+  status: 'invited' | 'verified' | 'unverified';
   accessGroups: AccessGroup[];
   data: UserData;
 }
 
 type AccessGroup = {
   slug: string;
-  type: string;
+  type: AccessGroupType;
 };
+
+enum AccessGroupType {
+  ADMIN = 'admin', // Assigned to the user via API or in the designer
+  ECOMMERCE = 'ecommerce', // Assigned to the user via an ecommerce purchase
+}
 
 type UserData = {
   name: string;
   email: string;
-  'accept-privacy': boolean;
-  'accept-communications': boolean;
+  acceptPrivacy: boolean;
+  acceptCommunications: boolean;
   [key: string]: any;
 };
 
