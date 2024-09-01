@@ -1,3 +1,5 @@
+import { CurrencyCode } from '@@core/utils/types';
+
 export interface WebflowOrderOutput {
   orderId: string;
   status:
@@ -52,9 +54,9 @@ export interface WebflowOrderOutput {
 }
 
 interface Money {
-  unit: string; // The three-letter ISO currency code
+  unit: CurrencyCode; // The three-letter ISO currency code
   value: number;
-  string: string;
+  string: string; // example: "$ 109.05 USD"
 }
 
 interface Address {
