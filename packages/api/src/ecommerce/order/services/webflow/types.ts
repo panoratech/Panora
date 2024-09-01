@@ -1,7 +1,7 @@
 import { CurrencyCode } from '@@core/utils/types';
 
-export interface WebflowOrderOutput {
-  orderId: string;
+export interface WebflowOrderInput {
+  readonly orderId: string;
   status:
     | 'pending'
     | 'unfulfilled'
@@ -172,4 +172,4 @@ enum StripeCardBrands {
   UNKNOWN = 'Unknown',
 }
 
-export type WebflowOrderInput = Partial<WebflowOrderOutput>;
+export type WebflowOrderOutput = Partial<WebflowOrderInput>;
