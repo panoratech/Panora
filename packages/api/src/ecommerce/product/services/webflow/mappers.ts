@@ -99,10 +99,9 @@ export class WebflowProductMapper implements IProductMapper {
     return {
       remote_id: data.product.id,
       remote_data: data,
-      images_urls:
-        data.skus
-          ?.map((sku) => sku?.fieldData?.mainImage?.url)
-          .filter((url) => Boolean(url)) || [],
+      images_urls: (data.skus || [])
+        .map(({ fieldData: { mainImage } }) => mainImage?.url)
+        .filter(Boolean),
       description: data.product.fieldData?.description,
       tags: data.product.fieldData?.categories,
       created_at: data.product?.createdOn,

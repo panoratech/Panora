@@ -19,7 +19,7 @@ export class WebflowService implements ICustomerService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      EcommerceObject.customer.toUpperCase() + ':' + WebflowService.name,
+      `${EcommerceObject.customer.toUpperCase()}:${WebflowService.name}`,
     );
     this.registry.registerService('webflow', this);
   }

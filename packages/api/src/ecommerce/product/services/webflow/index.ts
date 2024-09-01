@@ -21,7 +21,7 @@ export class WebflowService implements IProductService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      EcommerceObject.product.toUpperCase() + ':' + WebflowService.name,
+      `${EcommerceObject.product.toUpperCase()}:${WebflowService.name}`,
     );
     this.registry.registerService('webflow', this);
   }
@@ -51,6 +51,7 @@ export class WebflowService implements IProductService {
           },
         },
       );
+
       return {
         data: resp.data,
         message: 'Webflow product created',

@@ -5,6 +5,12 @@ export interface WebflowProductOutput {
   skus: SkuData[];
 }
 
+export interface WebflowProductInput {
+  product: ProductData;
+  sku: SkuData;
+  publishStatus?: 'staging' | 'live';
+}
+
 export interface ProductData {
   id?: string;
   cmsLocaleId?: string;
@@ -98,10 +104,4 @@ export interface DownloadFile {
   name: string;
   url: string;
   id: string;
-}
-
-export interface WebflowProductInput {
-  product: ProductData;
-  sku: SkuData;
-  publishStatus: 'staging' | 'live';
 }

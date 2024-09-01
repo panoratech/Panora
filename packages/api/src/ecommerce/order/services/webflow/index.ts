@@ -19,7 +19,7 @@ export class WebflowService implements IOrderService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      EcommerceObject.order.toUpperCase() + ':' + WebflowService.name,
+      `${EcommerceObject.order.toUpperCase()}:${WebflowService.name}`,
     );
     this.registry.registerService('webflow', this);
   }

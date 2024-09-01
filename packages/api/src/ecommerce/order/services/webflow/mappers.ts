@@ -59,7 +59,7 @@ export class WebflowOrderMapper implements IOrderMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedEcommerceOrderOutput> {
-    const result: Partial<UnifiedEcommerceOrderOutput> = {
+    const result: UnifiedEcommerceOrderOutput = {
       remote_id: source.orderId,
       remote_data: source,
       created_at: source.acceptedOn,
