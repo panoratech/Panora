@@ -181,7 +181,7 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
 
 - [ ] Ebay
 - [ ] Faire
-- [ ] Webflow
+- [x] Webflow
 - [ ] Mercado Libre
 - [ ] Prestashop
 - [ ] Magento
