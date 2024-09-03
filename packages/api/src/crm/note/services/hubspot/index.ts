@@ -40,7 +40,7 @@ export class HubspotService implements INoteService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/v3/objects/notes`,
+        `${connection.account_url}/crm/v3/objects/notes`,
         JSON.stringify(noteData),
         {
           headers: {
@@ -53,7 +53,7 @@ export class HubspotService implements INoteService {
       );
 
       const final_resp = await axios.get(
-        `${connection.account_url}/v3/objects/notes/${resp.data.id}?properties=hs_note_body&associations=deal,contact,company`,
+        `${connection.account_url}/crm/v3/objects/notes/${resp.data.id}?properties=hs_note_body&associations=deal,contact,company`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export class HubspotService implements INoteService {
 
       const commonPropertyNames = Object.keys(commonNoteHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/v3/objects/notes`;
+      const baseURL = `${connection.account_url}/crm/v3/objects/notes`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

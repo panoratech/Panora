@@ -14,3 +14,4 @@ redis_data
 .npmrc
 .vscode
 docs/objects
+.magicodeignore

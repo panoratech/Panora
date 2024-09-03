@@ -1,19 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { IDealService } from '@crm/deal/types';
-import { CrmObject } from '@crm/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IDealService } from '@crm/deal/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import {
   HubspotDealInput,
   HubspotDealOutput,
   commonDealHubspotProperties,
 } from './types';
-import { SyncParam } from '@@core/utils/types/interface';
 @Injectable()
 export class HubspotService implements IDealService {
   constructor(
@@ -43,7 +42,7 @@ export class HubspotService implements IDealService {
         properties: dealData,
       };
       const resp = await axios.post(
-        `${connection.account_url}/v3/objects/deals`,
+        `${connection.account_url}/crm/v3/objects/deals`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -82,7 +81,7 @@ export class HubspotService implements IDealService {
 
       const commonPropertyNames = Object.keys(commonDealHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/v3/objects/deals`;
+      const baseURL = `${connection.account_url}/crm/v3/objects/deals`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

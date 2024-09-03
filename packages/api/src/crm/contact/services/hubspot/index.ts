@@ -1,19 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { IContactService } from '@crm/contact/types';
-import { CrmObject } from '@crm/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IContactService } from '@crm/contact/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import {
   commonHubspotProperties,
   HubspotContactInput,
   HubspotContactOutput,
 } from './types';
-import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class HubspotService implements IContactService {
@@ -45,7 +44,7 @@ export class HubspotService implements IContactService {
         properties: contactData,
       };
       const resp = await axios.post(
-        `${connection.account_url}/v3/objects/contacts`,
+        `${connection.account_url}/crm/v3/objects/contacts`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -80,7 +79,7 @@ export class HubspotService implements IContactService {
 
       const commonPropertyNames = Object.keys(commonHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/v3/objects/contacts`;
+      const baseURL = `${connection.account_url}/crm/v3/objects/contacts`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
