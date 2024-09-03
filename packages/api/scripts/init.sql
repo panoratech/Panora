@@ -549,7 +549,8 @@ CREATE TABLE connector_sets
  ecom_amazon      boolean NULL,
  ecom_squarespace boolean NULL,
  ats_ashby        boolean NULL,
- CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
+  crm_microsoftdynamicssales boolean NULL,
+CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
 

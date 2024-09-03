@@ -1,3 +1,5 @@
+import { MicrosoftdynamicssalesTaskMapper } from './services/microsoftdynamicssales/mappers';
+import { MicrosoftdynamicssalesService } from './services/microsoftdynamicssales';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -43,6 +45,8 @@ import { TaskController } from './task.controller';
     HubspotTaskMapper,
     CloseTaskMapper,
     AttioTaskMapper,
+    MicrosoftdynamicssalesService,
+    MicrosoftdynamicssalesTaskMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
