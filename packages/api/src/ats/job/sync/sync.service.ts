@@ -1,33 +1,28 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { Cron } from '@nestjs/schedule';
-import { v4 as uuidv4 } from 'uuid';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from '../services/registry.service';
-import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { ApiResponse } from '@@core/utils/types';
-import { IJobService } from '../types';
-import { OriginalJobOutput } from '@@core/utils/types/original/original.ats';
-import { UnifiedAtsJobOutput } from '../types/model.unified';
-import { ats_jobs as AtsJob } from '@prisma/client';
-import { ATS_PROVIDERS } from '@panora/shared';
-import { AtsObject } from '@ats/@lib/@types';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
-import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { OriginalJobOutput } from '@@core/utils/types/original/original.ats';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+import { ATS_PROVIDERS } from '@panora/shared';
+import { ats_jobs as AtsJob } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../services/registry.service';
+import { IJobService } from '../types';
+import { UnifiedAtsJobOutput } from '../types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private webhook: WebhookService,
-    private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
-    private coreUnification: CoreUnification,
     private registry: CoreSyncRegistry,
     private bullQueueService: BullQueueService,
     private ingestService: IngestDataService,
@@ -50,12 +45,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
       this.logger.log('Syncing jobs...');
       const users = user_id
         ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
+            await this.prisma.users.findUnique({
+              where: {
+                id_user: user_id,
+              },
+            }),
+          ]
         : await this.prisma.users.findMany();
       if (users && users.length > 0) {
         for (const user of users) {
@@ -102,7 +97,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
       const service: IJobService =
         this.serviceRegistry.getService(integrationId);
       if (!service) {
-        this.logger.log(`No service found in {vertical:ats, commonObject: job} for integration ID: ${integrationId}`);
+        this.logger.log(
+          `No service found in {vertical:ats, commonObject: job} for integration ID: ${integrationId}`,
+        );
         return;
       }
 
@@ -133,7 +130,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const existingJob = await this.prisma.ats_jobs.findFirst({
           where: {
             remote_id: originId,
-            
           },
         });
 
@@ -144,8 +140,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
           status: job.status ?? null,
           type: job.type ?? null,
           confidential: job.confidential ?? null,
-          departments: job.departments ?? null,
-          offices: job.offices ?? null,
+          ats_departments: job.departments ?? null,
+          ats_offices: job.offices ?? null,
           managers: job.managers ?? null,
           recruiters: job.recruiters ?? null,
           remote_created_at: job.remote_created_at ?? null,
@@ -167,7 +163,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_job: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              
             },
           });
         }
