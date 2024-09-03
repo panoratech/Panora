@@ -1321,29 +1321,32 @@ model connections {
 }
 
 model connector_sets {
-  id_connector_set String     @id(map: "pk_project_connector") @db.Uuid
-  crm_hubspot      Boolean?
-  crm_zoho         Boolean?
-  crm_attio        Boolean?
-  crm_pipedrive    Boolean?
-  tcg_zendesk      Boolean?
-  tcg_jira         Boolean?
-  tcg_gorgias      Boolean?
-  tcg_gitlab       Boolean?
-  tcg_front        Boolean?
-  crm_zendesk      Boolean?
-  crm_close        Boolean?
-  fs_box           Boolean?
-  tcg_github       Boolean?
-  hris_gusto       Boolean?
-  hris_deel        Boolean?
-  hris_sage        Boolean?
-  ecom_woocommerce Boolean?
-  ecom_shopify     Boolean?
-  ecom_amazon      Boolean?
-  ecom_squarespace Boolean?
-  ats_ashby        Boolean?
-  projects         projects[]
+  id_connector_set           String     @id(map: "pk_project_connector") @db.Uuid
+  crm_hubspot                Boolean?
+  crm_zoho                   Boolean?
+  crm_attio                  Boolean?
+  crm_pipedrive              Boolean?
+  tcg_zendesk                Boolean?
+  tcg_jira                   Boolean?
+  tcg_gorgias                Boolean?
+  tcg_gitlab                 Boolean?
+  tcg_front                  Boolean?
+  crm_zendesk                Boolean?
+  crm_close                  Boolean?
+  fs_box                     Boolean?
+  tcg_github                 Boolean?
+  hris_gusto                 Boolean?
+  hris_deel                  Boolean?
+  hris_sage                  Boolean?
+  ecom_woocommerce           Boolean?
+  ecom_shopify               Boolean?
+  ecom_amazon                Boolean?
+  ecom_squarespace           Boolean?
+  tcg_linear                 Boolean?
+  ats_ashby                  Boolean?
+  ecom_webflow               Boolean?
+  crm_microsoftdynamicssales Boolean?
+  projects                   projects[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments

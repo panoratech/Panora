@@ -539,7 +539,7 @@ CREATE TABLE connector_sets
  tcg_front        boolean NULL,
  crm_zendesk      boolean NULL,
  crm_close        boolean NULL,
- fs_box           boolean NULL,
+ fs_box           boolean NULL, 
  tcg_github       boolean NULL,
  hris_gusto       boolean NULL,
  hris_deel        boolean NULL,

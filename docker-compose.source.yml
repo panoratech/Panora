@@ -231,6 +231,8 @@ services:
       dockerfile: ./apps/webapp/Dockerfile
       context: ./
       args:
+        NEXT_PUBLIC_POSTHOG_KEY: "phc_WhWJfNPOHAuWVdyTacGxrPa9JW54scnofA9KVEjFcFw"
+        NEXT_PUBLIC_POSTHOG_HOST: "https://us.i.posthog.com"
         NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
         NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
         NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}

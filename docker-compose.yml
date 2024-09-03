@@ -233,6 +233,8 @@ services:
   webapp-next:
     image: panora.docker.scarf.sh/panoradotdev/frontend-webapp:selfhosted
     environment:
+      NEXT_PUBLIC_POSTHOG_KEY: "phc_WhWJfNPOHAuWVdyTacGxrPa9JW54scnofA9KVEjFcFw"
+      NEXT_PUBLIC_POSTHOG_HOST: "https://us.i.posthog.com"
       NEXT_PUBLIC_DISTRIBUTION: "selfhost"
       NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
       NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
