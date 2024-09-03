@@ -14,17 +14,27 @@ import { ConflictException } from '@nestjs/common';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 import * as nodemailer from 'nodemailer';
+import { PostHog } from 'posthog-node'
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 
 @Injectable()
 export class AuthService {
+  private postHogClient: PostHog;
+
   constructor(
     private prisma: PrismaService,
     private projectService: ProjectsService,
+    private env: EnvironmentService,    
     private jwtService: JwtService,
     private logger: LoggerService,
   ) {
     this.logger.setContext(AuthService.name);
+    this.postHogClient = new PostHog(
+      this.env.getPosthogKey(),
+      { host: this.env.getPosthogHost() }
+    );
   }
+  
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
     const { email, new_password, reset_token } = resetPasswordDto;
@@ -179,10 +189,10 @@ export class AuthService {
   async createUser(user: CreateUserDto, id_user?: string) {
     try {
       const hashedPassword = await bcrypt.hash(user.password_hash, 10);
+      const uuid_user = id_user || uuidv4();
       const user_ = await this.prisma.users.create({
         data: {
-          // ...user,
-          id_user: id_user || uuidv4(),
+          id_user: uuid_user,
           password_hash: hashedPassword,
           identification_strategy: 'b2c',
           first_name: user.first_name,
@@ -195,6 +205,17 @@ export class AuthService {
         name: 'My Project',
         id_user: user_.id_user,
       });
+      // send posthog event
+      if(this.env.getPhTelemetry() == "TRUE"){
+        this.postHogClient.capture({
+          distinctId: uuid_user,
+          event: 'user signed up',
+          properties: {
+              login_type: 'email',
+              email: user.email,
+          },
+      })
+      }
       return user_;
     } catch (error) {
       throw error;
