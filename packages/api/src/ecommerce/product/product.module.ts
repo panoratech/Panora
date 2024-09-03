@@ -12,6 +12,8 @@ import { SquarespaceService } from './services/squarespace';
 import { SquarespaceProductMapper } from './services/squarespace/mappers';
 import { WoocommerceService } from './services/woocommerce';
 import { WoocommerceProductMapper } from './services/woocommerce/mappers';
+import { WebflowService } from './services/webflow';
+import { WebflowProductMapper } from './services/webflow/mappers';
 import { SyncService } from './sync/sync.service';
 
 @Module({
@@ -31,6 +33,8 @@ import { SyncService } from './sync/sync.service';
     ShopifyService,
     WoocommerceService,
     SquarespaceService,
+    WebflowService,
+    WebflowProductMapper,
   ],
   exports: [SyncService],
 })

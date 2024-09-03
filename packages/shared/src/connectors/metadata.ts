@@ -2920,7 +2920,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://dailybrand.co.zw/wp-content/uploads/2023/10/webflow-2.png',
         description: 'Sync & Create orders, fulfillments, fulfillment orders, customers and products',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         },

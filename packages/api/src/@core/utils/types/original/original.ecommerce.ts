@@ -49,19 +49,33 @@ import {
   WoocommerceProductInput,
   WoocommerceProductOutput,
 } from '@ecommerce/product/services/woocommerce/types';
+import {
+  WebflowOrderInput,
+  WebflowOrderOutput,
+} from '@ecommerce/order/services/webflow/types';
+import {
+  WebflowProductInput,
+  WebflowProductOutput,
+} from '@ecommerce/product/services/webflow/types';
+import {
+  WebflowCustomerInput,
+  WebflowCustomerOutput,
+} from '@ecommerce/customer/services/webflow/types';
 
 /* product */
 export type OriginalProductInput =
   | ShopifyProductInput
   | WoocommerceProductInput
-  | SquarespaceProductInput;
+  | SquarespaceProductInput
+  | WebflowProductInput;
 
 /* order */
 export type OriginalOrderInput =
   | ShopifyOrderInput
   | WoocommerceOrderInput
   | SquarespaceOrderInput
-  | AmazonOrderInput;
+  | AmazonOrderInput
+  | WebflowOrderInput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersInput = ShopifyFulfillmentOrdersInput;
@@ -70,7 +84,8 @@ export type OriginalFulfillmentOrdersInput = ShopifyFulfillmentOrdersInput;
 export type OriginalCustomerInput =
   | ShopifyCustomerInput
   | WoocommerceCustomerInput
-  | SquarespaceCustomerInput;
+  | SquarespaceCustomerInput
+  | WebflowCustomerInput;
 
 /* fulfillment */
 export type OriginalFulfillmentInput = ShopifyFulfillmentInput;
@@ -88,14 +103,16 @@ export type EcommerceObjectInput =
 export type OriginalProductOutput =
   | ShopifyProductOutput
   | WoocommerceProductOutput
-  | SquarespaceProductOutput;
+  | SquarespaceProductOutput
+  | WebflowProductOutput;
 
 /* order */
 export type OriginalOrderOutput =
   | ShopifyOrderOutput
   | WoocommerceOrderOutput
   | SquarespaceOrderOutput
-  | AmazonOrderOutput;
+  | AmazonOrderOutput
+  | WebflowOrderOutput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersOutput = ShopifyFulfillmentOrdersOutput;
@@ -105,7 +122,8 @@ export type OriginalCustomerOutput =
   | ShopifyCustomerOutput
   | WoocommerceCustomerOutput
   | SquarespaceCustomerOutput
-  | AmazonCustomerOutput;
+  | AmazonCustomerOutput
+  | WebflowCustomerOutput;
 
 /* fulfillment */
 export type OriginalFulfillmentOutput = ShopifyFulfillmentOutput;
