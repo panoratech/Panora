@@ -5,7 +5,7 @@ import * as fs from 'fs';
 
 @Injectable()
 export class Utils {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async fetchFileStreamFromURL(file_url: string) {
     return fs.createReadStream(file_url);
@@ -22,6 +22,20 @@ export class Utils {
       if (!res) return undefined;
 
       return res.id_tcg_team;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTeamRemoteIdFromUuid(uuid: string) {
+    try {
+      const res = await this.prisma.tcg_teams.findFirst({
+        where: {
+          id_tcg_team: uuid,
+        },
+      });
+      if (!res) return undefined;
+      return res.remote_id;
     } catch (error) {
       throw error;
     }

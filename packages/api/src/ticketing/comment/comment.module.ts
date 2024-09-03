@@ -1,3 +1,5 @@
+import { LinearCommentMapper } from './services/linear/mappers';
+import { LinearService } from './services/linear';
 import { GithubCommentMapper } from './services/github/mappers';
 import { GithubService } from './services/github';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
@@ -45,7 +47,9 @@ import { SyncService } from './sync/sync.service';
     GitlabCommentMapper,
     GithubService,
     GithubCommentMapper,
+    LinearService,
+    LinearCommentMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
-export class CommentModule {}
+export class CommentModule { }

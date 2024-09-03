@@ -21,7 +21,8 @@ export enum TicketingConnectors {
     FRONT = 'front',
     JIRA = 'jira',
     GITHUB = 'github',
-    GITLAB = 'gitlab'
+    GITLAB = 'gitlab',
+    LINEAR = 'linear'
 }
 
 export enum FilestorageConnectors {

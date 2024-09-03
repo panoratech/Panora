@@ -1,3 +1,5 @@
+import { LinearUserMapper } from './services/linear/mappers';
+import { LinearService } from './services/linear';
 import { GithubUserMapper } from './services/github/mappers';
 import { GithubService } from './services/github';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -42,7 +44,9 @@ import { ZendeskUserMapper } from './services/zendesk/mappers';
     GitlabUserMapper,
     GithubService,
     GithubUserMapper,
+    LinearService,
+    LinearUserMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService, IngestDataService],
 })
-export class UserModule {}
+export class UserModule { }

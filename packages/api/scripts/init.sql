@@ -548,6 +548,7 @@ CREATE TABLE connector_sets
  ecom_shopify     boolean NULL,
  ecom_amazon      boolean NULL,
  ecom_squarespace boolean NULL,
+ tcg_linear       boolean NULL,
  ats_ashby        boolean NULL,
  ecom_webflow boolean NULL,
  crm_microsoftdynamicssales boolean NULL,
