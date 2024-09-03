@@ -541,12 +541,18 @@ CREATE TABLE connector_sets
  crm_close        boolean NULL,
  fs_box           boolean NULL,
  tcg_github       boolean NULL,
+ hris_gusto       boolean NULL,
+ hris_deel        boolean NULL,
+ hris_sage        boolean NULL,
  ecom_woocommerce boolean NULL,
  ecom_shopify     boolean NULL,
  ecom_amazon      boolean NULL,
  ecom_squarespace boolean NULL,
  tcg_linear       boolean NULL,
- CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
+ ats_ashby        boolean NULL,
+ ecom_webflow boolean NULL,
+ crm_microsoftdynamicssales boolean NULL,
+CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
 

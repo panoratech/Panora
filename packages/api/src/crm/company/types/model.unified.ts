@@ -21,7 +21,7 @@ export class UnifiedCrmCompanyInput {
   @ApiPropertyOptional({
     type: String,
     example: 'ACCOUNTING',
-    enum: Industry,
+    // enum: Industry,
     description:
       'The industry of the company. Authorized values can be found in the Industry enum.',
     nullable: true,

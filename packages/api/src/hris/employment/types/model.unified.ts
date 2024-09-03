@@ -68,7 +68,7 @@ export class UnifiedHrisEmploymentInput {
   @ApiPropertyOptional({
     type: String,
     example: 'MONTHLY',
-    enum: [
+    /* enum: [
       'HOUR',
       'DAY',
       'WEEK',
@@ -78,7 +78,7 @@ export class UnifiedHrisEmploymentInput {
       'QUARTER',
       'EVERY_SIX_MONTHS',
       'YEAR',
-    ],
+    ],*/
     nullable: true,
     description: 'The pay period of the employment',
   })
@@ -89,7 +89,7 @@ export class UnifiedHrisEmploymentInput {
   @ApiPropertyOptional({
     type: String,
     example: 'WEEKLY',
-    enum: [
+    /* enum: [
       'WEEKLY',
       'BIWEEKLY',
       'MONTHLY',
@@ -99,7 +99,7 @@ export class UnifiedHrisEmploymentInput {
       'THIRTEEN-MONTHLY',
       'PRO_RATA',
       'SEMIMONTHLY',
-    ],
+    ],*/
     nullable: true,
     description: 'The pay frequency of the employment',
   })
@@ -110,7 +110,7 @@ export class UnifiedHrisEmploymentInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
-    enum: CurrencyCode,
+    // enum: CurrencyCode,
     nullable: true,
     description: 'The currency of the pay',
   })
@@ -121,7 +121,7 @@ export class UnifiedHrisEmploymentInput {
   @ApiPropertyOptional({
     type: String,
     example: 'EXEMPT',
-    enum: ['EXEMPT', 'SALARIED_NONEXEMPT', 'NONEXEMPT', 'OWNER'],
+    // enum: ['EXEMPT', 'SALARIED_NONEXEMPT', 'NONEXEMPT', 'OWNER'],
     nullable: true,
     description: 'The FLSA status of the employment',
   })
@@ -142,7 +142,7 @@ export class UnifiedHrisEmploymentInput {
   @ApiPropertyOptional({
     type: String,
     example: 'FULL_TIME',
-    enum: ['FULL_TIME', 'PART_TIME', 'INTERN', 'CONTRACTOR', 'FREELANCE'],
+    // enum: ['FULL_TIME', 'PART_TIME', 'INTERN', 'CONTRACTOR', 'FREELANCE'],
     nullable: true,
     description: 'The type of employment',
   })

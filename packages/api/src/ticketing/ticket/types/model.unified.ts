@@ -26,14 +26,14 @@ export class UnifiedTicketingTicketInput {
   @ApiPropertyOptional({
     type: String,
     example: 'OPEN',
-    enum: ['OPEN', 'CLOSED'],
+    // enum: ['OPEN', 'CLOSED'],
     nullable: true,
     description:
       'The status of the ticket. Authorized values are OPEN or CLOSED.',
   })
-  @IsIn(['OPEN', 'CLOSED'], {
+  /*@IsIn(['OPEN', 'CLOSED'], {
     message: 'Type must be either OPEN or CLOSED',
-  })
+  })*/
   @IsOptional()
   status?: TicketStatus | string;
 
@@ -58,14 +58,14 @@ export class UnifiedTicketingTicketInput {
   @ApiPropertyOptional({
     type: String,
     example: 'BUG',
-    enum: ['BUG', 'SUBTASK', 'TASK', 'TO-DO'],
+    // enum: ['BUG', 'SUBTASK', 'TASK', 'TO-DO'],
     nullable: true,
     description:
       'The type of the ticket. Authorized values are PROBLEM, QUESTION, or TASK',
   })
-  @IsIn(['BUG', 'SUBTASK', 'TASK', 'TO-DO'], {
+  /*@IsIn(['BUG', 'SUBTASK', 'TASK', 'TO-DO'], {
     message: 'Type must be either BUG, SUBTASK, TASK or TO-DO',
-  })
+  })*/
   @IsOptional()
   type?: TicketType | string;
 
@@ -122,14 +122,14 @@ export class UnifiedTicketingTicketInput {
   @ApiPropertyOptional({
     type: String,
     example: 'HIGH',
-    enum: ['HIGH', 'MEDIUM', 'LOW'],
+    // enum: ['HIGH', 'MEDIUM', 'LOW'],
     nullable: true,
     description:
       'The priority of the ticket. Authorized values are HIGH, MEDIUM or LOW.',
   })
-  @IsIn(['HIGH', 'MEDIUM', 'LOW'], {
+  /*@IsIn(['HIGH', 'MEDIUM', 'LOW'], {
     message: 'Type must be either HIGH, MEDIUM or LOW',
-  })
+  })*/
   @IsOptional()
   priority?: TicketPriority | string;
 

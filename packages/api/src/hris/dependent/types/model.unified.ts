@@ -50,7 +50,7 @@ export class UnifiedHrisDependentInput {
   @ApiPropertyOptional({
     type: String,
     example: 'CHILD',
-    enum: ['CHILD', 'SPOUSE', 'DOMESTIC_PARTNER'],
+    // enum: ['CHILD', 'SPOUSE', 'DOMESTIC_PARTNER'],
     nullable: true,
     description: 'The relationship of the dependent to the employee',
   })
@@ -71,7 +71,7 @@ export class UnifiedHrisDependentInput {
   @ApiPropertyOptional({
     type: String,
     example: 'MALE',
-    enum: ['MALE', 'FEMALE', 'NON-BINARY', 'OTHER', 'PREFER_NOT_TO_DISCLOSE'],
+    // enum: ['MALE', 'FEMALE', 'NON-BINARY', 'OTHER', 'PREFER_NOT_TO_DISCLOSE'],
     nullable: true,
     description: 'The gender of the dependent',
   })

@@ -44,11 +44,11 @@ export class UnifiedEcommerceOrderInput {
   @ApiPropertyOptional({
     type: String,
     example: 'UNSHIPPED',
-    enum: ['PENDING', 'UNSHIPPED', 'SHIPPED', 'CANCELED'],
+    // enum: ['PENDING', 'UNSHIPPED', 'SHIPPED', 'CANCELED'],
     nullable: true,
     description: 'The status of the order',
   })
-  @IsIn(['PENDING', 'UNSHIPPED', 'SHIPPED', 'CANCELED'])
+  //@IsIn(['PENDING', 'UNSHIPPED', 'SHIPPED', 'CANCELED'])
   @IsOptional()
   order_status?: OrderStatus | string;
 
@@ -65,11 +65,11 @@ export class UnifiedEcommerceOrderInput {
   @ApiPropertyOptional({
     type: String,
     example: 'SUCCESS',
-    enum: ['SUCCESS', 'FAIL'],
+    // enum: ['SUCCESS', 'FAIL'],
     nullable: true,
     description: 'The payment status of the order',
   })
-  @IsIn(['SUCCESS', 'FAIL'])
+  //@IsIn(['SUCCESS', 'FAIL'])
   @IsOptional()
   payment_status?: 'SUCCESS' | 'FAIL' | string;
 
@@ -77,7 +77,7 @@ export class UnifiedEcommerceOrderInput {
     type: String,
     nullable: true,
     example: 'AUD',
-    enum: CurrencyCode,
+    // enum: CurrencyCode,
     description:
       'The currency of the order. Authorized value must be of type CurrencyCode (ISO 4217)',
   })
@@ -91,7 +91,7 @@ export class UnifiedEcommerceOrderInput {
     nullable: true,
     description: 'The total price of the order',
   })
-  @IsInt()
+  //@IsInt()
   @IsOptional()
   total_price?: number;
 
@@ -101,7 +101,7 @@ export class UnifiedEcommerceOrderInput {
     nullable: true,
     description: 'The total discount on the order',
   })
-  @IsInt()
+  //@IsInt()
   @IsOptional()
   total_discount?: number;
 
@@ -111,7 +111,7 @@ export class UnifiedEcommerceOrderInput {
     nullable: true,
     description: 'The total shipping cost of the order',
   })
-  @IsInt()
+  //@IsInt()
   @IsOptional()
   total_shipping?: number;
 
@@ -121,7 +121,7 @@ export class UnifiedEcommerceOrderInput {
     nullable: true,
     description: 'The total tax on the order',
   })
-  @IsInt()
+  //@IsInt()
   @IsOptional()
   total_tax?: number;
 
@@ -129,10 +129,10 @@ export class UnifiedEcommerceOrderInput {
     type: String,
     nullable: true,
     example: 'PENDING',
-    enum: ['PENDING', 'FULFILLED', 'CANCELED'],
+    // enum: ['PENDING', 'FULFILLED', 'CANCELED'],
     description: 'The fulfillment status of the order',
   })
-  @IsIn(['PENDING', 'FULFILLED', 'CANCELED'])
+  //@IsIn(['PENDING', 'FULFILLED', 'CANCELED'])
   @IsOptional()
   fulfillment_status?: FulfillmentStatus | string;
 

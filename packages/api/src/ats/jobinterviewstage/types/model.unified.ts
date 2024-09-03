@@ -24,7 +24,7 @@ export class UnifiedAtsJobinterviewstageInput {
     nullable: true,
     description: 'The order of the stage',
   })
-  @IsInt()
+  //@IsInt()
   @IsOptional()
   stage_order?: number;
 

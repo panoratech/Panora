@@ -1,4 +1,3 @@
-import * as crypto from 'crypto';
 import { CONNECTORS_METADATA } from './connectors/metadata';
 import {
   needsEndUserSubdomain,
@@ -31,22 +30,6 @@ interface AuthParams {
   }
 }
 
-function generateCodes() {
-  const base64URLEncode = (str: Buffer): string => {
-    return str.toString('base64')
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=/g, '');
-  }
-
-  const verifier = base64URLEncode(crypto.randomBytes(32));
-  const challenge = base64URLEncode(
-    crypto.createHash('sha256').update(Buffer.from(verifier)).digest()
-  );
-
-  return { codeVerifier: verifier, codeChallenge: challenge };
-}
-
 export const constructAuthUrl = async ({
   projectId,
   linkedUserId,
@@ -65,7 +48,7 @@ export const constructAuthUrl = async ({
   let baseRedirectURL = apiUrl;
   if (config.options?.local_redirect_uri_in_https && redirectUriIngress?.status) {
     baseRedirectURL = redirectUriIngress.value!;
-  }
+  } 
 
   const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`);
   let state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
@@ -84,6 +67,17 @@ export const constructAuthUrl = async ({
       resource: additionalParams!.end_user_domain!
     })).toString('base64'));
   }
+  const opts: any = {};
+  if (['snyk', 'klaviyo'].includes(providerName)) {
+    const response = await fetch(`${apiUrl}/auth/s256Codes`);
+    const data = await response.json();
+    const { codeChallenge, codeVerifier } = data;
+    state = encodeURIComponent(JSON.stringify({
+      projectId, linkedUserId, providerName, vertical, returnUrl, code_verifier: codeVerifier
+    }));
+    opts.codeVerifier = codeVerifier;
+    opts.codeChallenge = codeChallenge;
+  }
 
   if (vertical === null) {
     throw new ReferenceError('vertical is null');
@@ -95,7 +89,7 @@ export const constructAuthUrl = async ({
     case AuthStrategy.oauth2:
       return handleOAuth2Url({
         providerName, vertical, authStrategy, projectId, config,
-        encodedRedirectUrl, state, apiUrl, additionalParams
+        encodedRedirectUrl, state, apiUrl, additionalParams, ...opts
       });
     case AuthStrategy.api_key:
       return handleApiKeyUrl();
@@ -115,7 +109,8 @@ interface HandleOAuth2Url {
   apiUrl: string;
   additionalParams?: {
     end_user_domain: string;
-  }
+  };
+  [key: string]: any;
 }
 
 const handleOAuth2Url = async ({
@@ -128,15 +123,16 @@ const handleOAuth2Url = async ({
   state,
   apiUrl,
   additionalParams,
+  ...dyn
 }: HandleOAuth2Url) => {
   const type = providerToType(providerName, vertical, authStrategy);
-  
+
   const response = await fetch(`${apiUrl}/connection_strategies/getCredentials?projectId=${projectId}&type=${type}`);
   const data = await response.json() as OAuth2AuthData;
 
   const clientId = data.CLIENT_ID;
   if (!clientId) throw new ReferenceError(`No client id for type ${type}`);
-  
+
   const scopes = data.SCOPE;
   const { urls: { authBaseUrl: baseUrl } } = config;
   if (!baseUrl) throw new ReferenceError(`No authBaseUrl found for type ${type}`);
@@ -225,9 +221,9 @@ const handleOAuth2Url = async ({
     case 'notion':
       params += '&owner=user';
       break;
+    case 'snyk':
     case 'klaviyo':
-      const { codeChallenge, codeVerifier } = generateCodes();
-      params += `&code_challenge_method=S256&code_challenge=${codeChallenge}`;
+      params += `&code_challenge_method=S256&code_challenge=${dyn.codeChallenge}`;
       break;
   }
 

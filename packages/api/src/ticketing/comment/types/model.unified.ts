@@ -42,13 +42,13 @@ export class UnifiedTicketingCommentInput {
     type: String,
     nullable: true,
     example: 'USER',
-    enum: ['USER', 'CONTACT'],
+    // enum: ['USER', 'CONTACT'],
     description:
       'The creator type of the comment. Authorized values are either USER or CONTACT',
   })
-  @IsIn(['USER', 'CONTACT'], {
+  /*@IsIn(['USER', 'CONTACT'], {
     message: 'Type must be either USER or CONTACT',
-  })
+  })*/
   @IsOptional()
   creator_type?: CommentCreatorType | string;
 

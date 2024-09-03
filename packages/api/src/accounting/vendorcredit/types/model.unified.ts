@@ -154,7 +154,7 @@ export class UnifiedAccountingVendorcreditInput {
     type: String,
     example: 'USD',
     nullable: true,
-    enum: CurrencyCode,
+    // enum: CurrencyCode,
     description: 'The currency of the vendor credit',
   })
   @IsString()

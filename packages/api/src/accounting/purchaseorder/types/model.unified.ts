@@ -76,7 +76,7 @@ export class LineItem {
     type: String,
     example: 'USD',
     nullable: true,
-    enum: CurrencyCode,
+    // enum: CurrencyCode,
     description: 'The currency of the line item',
   })
   @IsString()
@@ -246,7 +246,7 @@ export class UnifiedAccountingPurchaseorderInput {
   @ApiPropertyOptional({
     type: String,
     example: 'USD',
-    enum: CurrencyCode,
+    // enum: CurrencyCode,
     nullable: true,
     description: 'The currency of the purchase order',
   })

@@ -82,7 +82,7 @@ export class HubspotService implements IDealService {
 
       const commonPropertyNames = Object.keys(commonDealHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/crm/v3/objects/deals`;
+      const baseURL = `${connection.account_url}/v3/objects/deals`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)

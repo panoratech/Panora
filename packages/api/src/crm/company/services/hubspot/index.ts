@@ -44,7 +44,7 @@ export class HubspotService implements ICompanyService {
         properties: companyData,
       };
       const resp = await axios.post(
-        `${connection.account_url}/crm/v3/objects/companies`,
+        `${connection.account_url}/v3/objects/companies`,
         JSON.stringify(dataBody),
         {
           headers: {

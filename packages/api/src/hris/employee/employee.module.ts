@@ -9,6 +9,10 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { GustoEmployeeMapper } from './services/gusto/mappers';
 import { GustoService } from './services/gusto';
 import { Utils } from '@hris/@lib/@utils';
+import { SageEmployeeMapper } from './services/sage/mappers';
+import { SageService } from './services/sage';
+import { DeelService } from './services/deel';
+import { DeelEmployeeMapper } from './services/deel/mappers';
 @Module({
   controllers: [EmployeeController],
   providers: [
@@ -20,8 +24,12 @@ import { Utils } from '@hris/@lib/@utils';
     ServiceRegistry,
     IngestDataService,
     GustoEmployeeMapper,
+    SageEmployeeMapper,
+    DeelEmployeeMapper,
     /* PROVIDERS SERVICES */
     GustoService,
+    SageService,
+    DeelService,
   ],
   exports: [SyncService],
 })

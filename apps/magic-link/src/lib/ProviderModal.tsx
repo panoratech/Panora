@@ -22,7 +22,7 @@ interface IBasicAuthFormData {
 }
 
 const domainFormats: { [key: string]: string } = {
-  microsoftdynamicssales: 'YOURORGNAME.api.crm12.dynamics.com',
+  microsoftdynamicssales: 'YOURORGNAME.api.crm3.dynamics.com',
   bigcommerce: 'If your api domain is https://api.bigcommerce.com/stores/eubckcvkzg/v3 then store_hash is eubckcvkzg',
 };
 

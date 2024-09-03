@@ -19,7 +19,6 @@
   </p>
 </div>
 
-
 # 🕹️ Try
 
 - Prerequisite: You should have Git and Docker installed
@@ -39,13 +38,12 @@
  3. Start
 
 ```
-  docker compose up
+  docker compose -f docker-compose.source.yml up
  ```
 
 Panora is now running!  Follow our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product !
 
 See also [our selfhost guide here !](https://docs.panora.dev/open-source/selfhost/self-host-guide)
-
 
 # ✨ Core Features  
 
@@ -64,13 +62,14 @@ Panora supports integration with the following objects across multiple platforms
 
 ### CRM Unified API
 
-|                                               | Contacts | Deals | Notes | Engagements | Tasks | Users | Companies |
-|-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|:-----:|:---------:|
-| Hubspot           |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
-| Pipedrive       |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
-| Zoho CRM          |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
-| Zendesk Sell |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
-| Attio                   |    ✔️    |       |       |             |       |       |     ✔️    |
+|                                               | Contacts | Deals | Notes | Engagements | Tasks | Users | Companies | Stage |
+|-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|:-----:|:---------:|:---------:|
+| Hubspot           |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           | ✔️ |
+| Pipedrive       |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |✔️ |
+| Zoho CRM          |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           | |
+| Zendesk Sell |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           | ✔️|
+| Attio                   |    ✔️    |      ✔️   |    ✔️    |             |   ✔️     |     ✔️   |     ✔️    |  ✔️ |
+| Close                   |    ✔️    |    ✔️    |  ✔️      |    ✔️          |   ✔️    |   ✔️     |     ✔️    |✔️ |
 
 ### Ticketing Unified API
 
@@ -80,26 +79,139 @@ Panora supports integration with the following objects across multiple platforms
 | Front       | ✔        | ✔     | ✔    | ✔          | ✔    | ✔    | ✔ |  |
 | Jira        | ✔        | ✔     | ✔    |            |      | ✔    | ✔ | ✔ |
 | Gitlab     | ✔        | ✔     | ✔    |           |      |     |  |  ✔|
- 
+| Github     | ✔        | ✔     | ✔    |       ✔    |   ✔   |  ✔   |  ✔|  |
+
 ### ATS Unified API (New!)
 
-|             | Activities | Applications | Candidates | Departments | Interviews | Jobs | Offers | Offices | Scorecard | Users |
-|-------------|:----------:|:------------:|:----------:|:-----------:|:----------:|:----:|:------:|:-------:|:---------:|:-----:|
-| Ashby       | ✔          | ✔            | ✔          | ✔           | ✔          | ✔    | ✔      | ✔       | ✔         | ✔     |
+|             | Activities | Applications | Candidates | Departments | Interviews | Jobs | Offers | Offices | Scorecard | Users | Eeocs | Job Interview Stage | Tags | Reject Reasons |
+|-------------|:----------:|:------------:|:----------:|:-----------:|:----------:|:----:|:------:|:-------:|:---------:|:-----:|:-------:|:-------:|:-------:|:-------:|
+| Ashby       | ✔          | ✔            | ✔          | ✔           | ✔          | ✔    | ✔      | ✔       |         | ✔     | | ✔| ✔| |
 
+### HRIS Unified API (New!)
+
+|             | Bankinfos | Benefits | Companies | Dependents | Employee | Employee Payroll Runs | Employer Benefits | Employments | Groups | Locations | Paygroups | Payrollrun | Timeoff | Timeoff Balances | Timesheet Entries |
+|-------------|:----------:|:------------:|:----------:|:-----------:|:----------:|:----:|:------:|:-------:|:---------:|:-----:|:-----:|:-----:|:-----:|:-----:| :-----:|
+| Gusto       |           | ✔            | ✔          |            | ✔          |    | ✔      | ✔       | ✔         | ✔     | | | | | |
 
 ### File Storage Unified API
 
-| File Storage                                           | Drives | Files | Folders | Groups | Users | Permissions | Shared Links |
+|                                           | Drives | Files | Folders | Groups | Users | Permissions | Shared Links |
 |-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|:-----:|:---------:|
-| [Google Drive]()            |       ✔️ |  ✔️   |   ✔️  |        ✔️   | ✔️    |     |           |
-| [Box]()        |        |   ✔️   |   ✔️   |      ✔️     |  ✔️    |  ✔️   |           |
-| [Dropbox]()          |       |  ✔️   |   ✔️  | ✔️          |   ✔️  |   ✔️  |           |
-| [OneDrive]() |      ✔️ | ✔️   |    ✔️|      ✔️  |   ✔️  |     |           |
+| Google Drive            |       ✔️ |  ✔️   |   ✔️  |        ✔️   | ✔️    |     |           |
+| Box        |        |   ✔️   |   ✔️   |      ✔️     |  ✔️    |  ✔️   |           |
+| Dropbox          |       |  ✔️   |   ✔️  | ✔️          |   ✔️  |   ✔️  |           |
+| OneDrive |      ✔️ | ✔️   |    ✔️|      ✔️  |   ✔️  |     |           |
 
+### Ecommerce Unified API
 
+|                                           | Customers | Orders | Fulfillments | Fulfillment Orders | Products |
+|-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|
+| Amazon            |       ✔️ |  ✔️   |     |          |    |
+| Shopify        |     ✔️   |   ✔️   |   ✔️   |      ✔️     |  ✔️    |
+| Squarespace          |    ✔️   |  ✔️   |     |          |   ✔️  |
+| Woocommerce |      ✔️ | ✔️   |    |        |   ✔️  |
 
 Your favourite software is missing? [Ask the community to build a connector!](https://github.com/panoratech/Panora/issues/new)
+
+# 🚢 Roadmap
+
+## 🧠 Retrieval Engine for RAG
+
+- [ ] Access and manage data from any source, including documents, chunk & vectors
+- [ ] Semantic, keyword and hybrid search against a vector database
+  
+## 🪄 Integrations Coming Soon
+
+#### CRM
+
+- [x] Microsoft Dynamics 365
+- [x] Linear
+- [x] Redtail CRM
+- [x] Wealthbox
+- [x] Leadsquared
+- [ ] Salesforce
+- [ ] Affinity CRM
+- [ ] Odoo
+- [ ] Intelliflow
+- [ ] Xplan
+- [ ] Plannr
+- [ ] ACT!
+- [ ] Jungo
+- [ ] Surefire
+- [ ] Velocity
+
+#### Ticketing
+
+- [ ] Service Now
+- [ ] Wrike
+- [ ] Dixa
+- [ ] Service Now
+- [ ] Asana
+- [ ] Aha
+- [ ] Clickup
+
+#### Accounting
+
+- [ ] Wave Financial
+- [ ] Xero
+- [ ] Quickbooks
+
+#### File Storage
+
+- [ ] Google Drive
+- [ ] Dropbox
+- [ ] Sharepoint
+- [ ] One Drive
+  
+#### Productivity
+
+- [ ] Slack
+- [ ] Notion
+
+#### HRIS
+
+- [ ] Workday
+- [ ] ADP Workforce
+- [x] Sage
+- [x] Deel
+- [ ] BambooHR
+- [ ] Rippling
+
+#### Ecommerce
+
+- [ ] Ebay
+- [ ] Faire
+- [x] Webflow
+- [ ] Mercado Libre
+- [ ] Prestashop
+- [ ] Magento
+- [ ] BigCommerce
+
+#### ATS
+
+- [ ] Greenhouse
+- [ ] Lever
+- [ ] Avature
+
+#### Cybersecurity
+
+- [ ] Snyk
+- [ ] Qualys
+- [ ] Crowdstrike
+- [ ] Semgrep
+- [ ] Rapids7InsightVm
+- [ ] Tenable
+- [ ] SentinelOne
+- [ ] Microsoft Defender
+
+#### Legacy Softwares
+
+- [ ] Netsuite (Accounting)
+- [ ] SAP (ERP)
+- [ ] Ariba
+- [ ] Concur
+- [ ] Magaya (TMS)
+- [ ] Cargowise (TMS)
 
 # 👾 Join the community
 

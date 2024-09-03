@@ -17,7 +17,7 @@ export class UnifiedHrisEmployerbenefitInput {
   @ApiPropertyOptional({
     type: String,
     example: 'Health Insurance',
-    enum: ['MEDICAL', 'HEALTH_SAVINGS', 'INSURANCE', 'RETIREMENT', 'OTHER'],
+    // enum: ['MEDICAL', 'HEALTH_SAVINGS', 'INSURANCE', 'RETIREMENT', 'OTHER'],
     nullable: true,
     description: 'The type of the benefit plan',
   })

@@ -17,12 +17,12 @@ export type ScoreCardRecommendation =
 export class UnifiedAtsScorecardInput {
   @ApiPropertyOptional({
     type: String,
-    enum: ['DEFINITELY_NO', 'NO', 'YES', 'STRONG_YES', 'NO_DECISION'],
+    // enum: ['DEFINITELY_NO', 'NO', 'YES', 'STRONG_YES', 'NO_DECISION'],
     example: 'YES',
     nullable: true,
     description: 'The overall recommendation',
   })
-  @IsIn(['DEFINITELY_NO', 'NO', 'YES', 'STRONG_YES', 'NO_DECISION'])
+  //@IsIn(['DEFINITELY_NO', 'NO', 'YES', 'STRONG_YES', 'NO_DECISION'])
   @IsOptional()
   overall_recommendation?: ScoreCardRecommendation | string;
 

@@ -46,4 +46,21 @@ export class EncryptionService {
       throw error;
     }
   }
+
+  generateCodes(): { codeVerifier: string; codeChallenge: string } {
+    const base64URLEncode = (str: Buffer): string => {
+      return str
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+    };
+
+    const verifier = base64URLEncode(Buffer.from(crypto.randomBytes(32)));
+    const challenge = base64URLEncode(
+      crypto.createHash('sha256').update(Buffer.from(verifier)).digest(),
+    );
+
+    return { codeVerifier: verifier, codeChallenge: challenge };
+  }
 }

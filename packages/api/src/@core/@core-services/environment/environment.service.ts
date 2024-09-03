@@ -46,6 +46,18 @@ export class EnvironmentService {
     return this.configService.get<string>('ENCRYPT_CRYPTO_SECRET_KEY');
   }
 
+  getPosthogHost(): string {
+    return this.configService.get<string>('POSTHOG_HOST');
+  }
+
+  getPosthogKey(): string {
+    return this.configService.get<string>('POSTHOG_KEY');
+  }
+
+  getPhTelemetry(): string {
+    return this.configService.get<string>('PH_TELEMETRY');
+  }
+
   getThrottleConfig(): RateLimit {
     return {
       ttl: this.configService.get<string>('THROTTLER_TTL'),

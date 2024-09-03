@@ -10,6 +10,8 @@ import { ShopifyService } from './services/shopify';
 import { ShopifyOrderMapper } from './services/shopify/mappers';
 import { WoocommerceService } from './services/woocommerce';
 import { WoocommerceOrderMapper } from './services/woocommerce/mappers';
+import { WebflowService } from './services/webflow';
+import { WebflowOrderMapper } from './services/webflow/mappers';
 import { SyncService } from './sync/sync.service';
 import { SquarespaceService } from './services/squarespace';
 import { SquarespaceOrderMapper } from './services/squarespace/mappers';
@@ -35,6 +37,8 @@ import { AmazonService } from './services/amazon';
     WoocommerceService,
     SquarespaceService,
     AmazonService,
+    WebflowService,
+    WebflowOrderMapper,
   ],
   exports: [SyncService],
 })

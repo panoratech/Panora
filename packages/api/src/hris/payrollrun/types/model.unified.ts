@@ -18,7 +18,7 @@ export class UnifiedHrisPayrollrunInput {
   @ApiPropertyOptional({
     type: String,
     example: 'PAID',
-    enum: ['PAID', 'DRAFT', 'APPROVED', 'FAILED', 'CLOSE'],
+    // enum: ['PAID', 'DRAFT', 'APPROVED', 'FAILED', 'CLOSE'],
     nullable: true,
     description: 'The state of the payroll run',
   })
@@ -29,13 +29,13 @@ export class UnifiedHrisPayrollrunInput {
   @ApiPropertyOptional({
     type: String,
     example: 'REGULAR',
-    enum: [
+    /* enum: [
       'REGULAR',
       'OFF_CYCLE',
       'CORRECTION',
       'TERMINATION',
       'SIGN_ON_BONUS',
-    ],
+    ],*/
     nullable: true,
     description: 'The type of the payroll run',
   })
