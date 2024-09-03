@@ -40,7 +40,7 @@ export class HubspotService implements ITaskService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/v3/objects/tasks`,
+        `${connection.account_url}/crm/v3/objects/tasks`,
         JSON.stringify(taskData),
         {
           headers: {
@@ -52,7 +52,7 @@ export class HubspotService implements ITaskService {
         },
       );
       const final_resp = await axios.get(
-        `${connection.account_url}/v3/objects/tasks/${resp.data.id}?properties=hs_task_body&associations=deal,company`,
+        `${connection.account_url}/crm/v3/objects/tasks/${resp.data.id}?properties=hs_task_body&associations=deal,company`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export class HubspotService implements ITaskService {
 
       const commonPropertyNames = Object.keys(commonTaskHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/v3/objects/tasks`;
+      const baseURL = `${connection.account_url}/crm/v3/objects/tasks`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
