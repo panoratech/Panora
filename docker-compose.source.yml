@@ -36,7 +36,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?ssl=false
       DISTRIBUTION: ${DISTRIBUTION}
       WEBHOOK_INGRESS: ${WEBHOOK_INGRESS}
-      REDIRECT_TUNNEL_INGRESS: ${REDIRECT_TUNNEL_INGRESS}
+      REDIRECT_TUNNEL_INGRESS: "https://panora-contributors-redirect.rachid-7e5.workers.dev/http://localhost:3000"
       JWT_SECRET: ${JWT_SECRET}
       SENTRY_ENABLED: ${SENTRY_ENABLED}
       SENTRY_DSN: ${SENTRY_DSN}
