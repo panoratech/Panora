@@ -8,10 +8,8 @@ import { TicketingObject } from '@ticketing/@lib/@types';
 import { Utils } from '@ticketing/@lib/@utils';
 import { ICommentService } from '@ticketing/comment/types';
 import axios from 'axios';
-import * as fs from 'fs';
 import { ServiceRegistry } from '../registry.service';
 import { LinearCommentInput, LinearCommentOutput } from './types';
-import { LinearTicketOutput } from '@ticketing/ticket/services/linear/types';
 
 @Injectable()
 export class LinearService implements ICommentService {
@@ -45,19 +43,21 @@ export class LinearService implements ICommentService {
       // Skipping Storing the attachment in unified object as Linear stores attachment as link in Markdown Format
 
       const createCommentMutation = {
-        "query": `mutation { commentCreate( input: { body: \"${commentData.body}\" issueId: \"${remoteIdTicket}\" } ) { comment { body issue { id } user { id } } }}`
+        query: `mutation { commentCreate( input: { body: \"${commentData.body}\" issueId: \"${remoteIdTicket}\" } ) { comment { body issue { id } user { id } } }}`,
       };
 
-      let resp = await axios.post(
+      const resp = await axios.post(
         `${connection.account_url}`,
-        createCommentMutation, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+        createCommentMutation,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
       this.logger.log(`Created linear comment !`);
 
       return {
@@ -91,12 +91,10 @@ export class LinearService implements ICommentService {
       });
 
       const commentQuery = {
-        "query": `query { issue(id: \"${ticket.remote_id}\") { comments { nodes { id body user { id } issue { id } } } }}`
+        query: `query { issue(id: \"${ticket.remote_id}\") { comments { nodes { id body user { id } issue { id } } } }}`,
       };
 
-      let resp = await axios.post(
-        `${connection.account_url}`,
-        commentQuery, {
+      const resp = await axios.post(`${connection.account_url}`, commentQuery, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

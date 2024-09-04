@@ -252,6 +252,8 @@ services:
     build:
       dockerfile: ./apps/magic-link/Dockerfile
       context: ./
+      args:
+        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
     restart: always 
     ports:
       - 81:80
@@ -262,7 +264,6 @@ services:
       - backend
       - frontend
   
-    
 networks:
   frontend:
   backend:
