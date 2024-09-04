@@ -1061,7 +1061,6 @@ CREATE TABLE projects_pull_frequency
  crm                        bigint NULL,
  ats                        bigint NULL,
  hris                       bigint NULL,
- ats                        bigint NULL,
  accounting                 bigint NULL,
  file_storage               bigint NULL,
  ecommerce                  bigint NULL,
@@ -1069,7 +1068,7 @@ CREATE TABLE projects_pull_frequency
  created_at                 timestamp with time zone NOT NULL DEFAULT NOW(),
  modified_at                timestamp with time zone NOT NULL DEFAULT NOW(),
  id_project                 uuid NOT NULL,
-CONSTRAINT PK_projects_pull_frequency PRIMARY KEY ( id_projects_pull_frequency )
+CONSTRAINT PK_projects_pull_frequency PRIMARY KEY ( id_projects_pull_frequency ),
 CONSTRAINT FK_projects_pull_frequency_project FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
 
 );
