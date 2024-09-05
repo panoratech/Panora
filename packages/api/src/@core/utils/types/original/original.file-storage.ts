@@ -1,3 +1,5 @@
+import { OnedriveDriveInput, OnedriveDriveOutput } from '@filestorage/drive/services/onedrive/types';
+
 /* INPUT */
 
 import {
@@ -30,7 +32,7 @@ export type OriginalPermissionInput = any;
 export type OriginalSharedLinkInput = any;
 
 /* drive */
-export type OriginalDriveInput = any;
+export type OriginalDriveInput = any | OnedriveDriveInput;
 
 /* group */
 export type OriginalGroupInput = BoxGroupInput;
@@ -62,7 +64,7 @@ export type OriginalPermissionOutput = any;
 export type OriginalSharedLinkOutput = any;
 
 /* drive */
-export type OriginalDriveOutput = any;
+export type OriginalDriveOutput = any | OnedriveDriveOutput;
 
 /* group */
 export type OriginalGroupOutput = BoxGroupOutput;
