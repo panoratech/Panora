@@ -1068,8 +1068,10 @@ CREATE TABLE projects_pull_frequency
  created_at                 timestamp with time zone NOT NULL DEFAULT NOW(),
  modified_at                timestamp with time zone NOT NULL DEFAULT NOW(),
  id_project                 uuid NOT NULL,
-CONSTRAINT PK_projects_pull_frequency PRIMARY KEY ( id_projects_pull_frequency ),
-CONSTRAINT FK_projects_pull_frequency_project FOREIGN KEY ( id_project ) REFERENCES projects ( id_project )
+ CONSTRAINT PK_projects_pull_frequency PRIMARY KEY ( id_projects_pull_frequency ),
+ CONSTRAINT FK_projects_pull_frequency_project FOREIGN KEY ( id_project ) REFERENCES projects ( id_project ),
+ CONSTRAINT UQ_projects_pull_frequency_project UNIQUE ( id_project )
+
 );
 
 
