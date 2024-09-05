@@ -124,3 +124,60 @@ export const standardObjects = [
     ...prependPrefixToEnumValues('ats', AtsObject),
     ...prependPrefixToEnumValues('ecommerce', EcommerceObject),
 ];
+
+
+export function getCrmCommonObjects(): string[] {
+    return Object.values(CrmObject);
+  }
+  
+  export function getHrisCommonObjects(): string[] {
+    return Object.values(HrisObject);
+  }
+  
+  export function getAtsCommonObjects(): string[] {
+    return Object.values(AtsObject);
+  }
+  
+  export function getAccountingCommonObjects(): string[] {
+    return Object.values(AccountingObject);
+  }
+  
+  export function getEcommerceCommonObjects(): string[] {
+    return Object.values(EcommerceObject);
+  }
+  
+  export function getFileStorageCommonObjects(): string[] {
+    return Object.values(FileStorageObject);
+  }
+  
+  export function getMarketingAutomationCommonObjects(): string[] {
+    return Object.values(MarketingAutomationObject);
+  }
+  
+  export function getTicketingCommonObjects(): string[] {
+    return Object.values(TicketingObject);
+  }
+  
+  // A utility function to get common objects for any vertical
+  export function getCommonObjectsForVertical(vertical: string): string[] {
+    switch (vertical.toLowerCase()) {
+      case 'crm':
+        return getCrmCommonObjects();
+      case 'hris':
+        return getHrisCommonObjects();
+      case 'ats':
+        return getAtsCommonObjects();
+      case 'accounting':
+        return getAccountingCommonObjects();
+      case 'ecommerce':
+        return getEcommerceCommonObjects();
+      case 'filestorage':
+        return getFileStorageCommonObjects();
+      case 'marketingautomation':
+        return getMarketingAutomationCommonObjects();
+      case 'ticketing':
+        return getTicketingCommonObjects();
+      default:
+        throw new Error(`Unknown vertical: ${vertical}`);
+    }
+  }
