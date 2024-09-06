@@ -3,7 +3,17 @@ export enum AuthStrategy {
     api_key = 'API Key',
     basic = 'Basic Auth'
 }
-  
+
+export type AuthType = {
+    strategy: AuthStrategy;
+    properties?: string[]; // for api key it is needed to know what is asked e.g apikey, usertoken etc
+    authStructure?: { // if its not speicfied we assume there is only 1 row in the arrray with headerParamName = Authorization & prefix = Bearer
+        headerParamName: string;
+        prefix?: string; // some dont have any prefix 
+        valueName?: string;
+        reqFormat?: 'MUTLIPART'; // if specified it means we are informing about the structure to send multiform data
+    }[];
+}
 export enum SoftwareMode {
     cloud = 'CLOUD',
 }
@@ -19,7 +29,8 @@ export type ProviderConfig = {
     description: string;
     active?: boolean;
     customPropertiesUrl?: string;
-    authStrategy?: AuthStrategy;
+    authStrategy: AuthType;
+    primaryColor?: string;
     urls: {
         docsUrl: string;
         apiUrl: StaticApiUrl | DynamicApiUrl;
@@ -30,7 +41,8 @@ export type ProviderConfig = {
         // the Oauth flow is tricky sometimes, either end_user_domain or company_subdomain can be asked
         end_user_domain?: boolean; // subdomain of the end-user connecting his account for the integration
         company_subdomain?: boolean; // subdomain of the company that embeds the integration for its end-users
-        local_redirect_uri_in_https?: boolean; // true if an https url is needed when creating oauth2 app in local for testing
+        local_redirect_uri_in_https?: boolean; // true if an https url is needed when creating oauth2 app in local for testing,
+        oauth_attributes?: string[];
     };
     realTimeWebhookMetadata?: {
         method?: 'API' | 'MANUAL';

@@ -7,8 +7,11 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,17 +19,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { CreditNoteService } from './services/creditnote.service';
 import {
-  UnifiedCreditNoteInput,
-  UnifiedCreditNoteOutput,
+  UnifiedAccountingCreditnoteInput,
+  UnifiedAccountingCreditnoteOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/creditnote')
-@Controller('accounting/creditnote')
+@ApiTags('accounting/creditnotes')
+@Controller('accounting/creditnotes')
 export class CreditNoteController {
   constructor(
     private readonly creditnoteService: CreditNoteService,
@@ -37,8 +47,8 @@ export class CreditNoteController {
   }
 
   @ApiOperation({
-    operationId: 'getCreditNotes',
-    summary: 'List a batch of CreditNotes',
+    operationId: 'listAccountingCreditNote',
+    summary: 'List  CreditNotes',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,29 +56,28 @@ export class CreditNoteController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiCustomResponse(UnifiedCreditNoteOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedAccountingCreditnoteOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getCreditNotes(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.creditnoteService.getCreditNotes(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -76,115 +85,50 @@ export class CreditNoteController {
   }
 
   @ApiOperation({
-    operationId: 'getCreditNote',
-    summary: 'Retrieve a CreditNote',
-    description: 'Retrieve a creditnote from any connected Accounting software',
+    operationId: 'retrieveAccountingCreditNote',
+    summary: 'Retrieve Credit Notes',
+    description: 'Retrieve Credit Notes from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the creditnote you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedCreditNoteOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedAccountingCreditnoteOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getCreditNote(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.creditnoteService.getCreditNote(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addCreditNote',
-    summary: 'Create a CreditNote',
-    description: 'Create a creditnote in any supported Accounting software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedCreditNoteInput })
-  @ApiCustomResponse(UnifiedCreditNoteOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addCreditNote(
-    @Body() unifiedCreditNoteData: UnifiedCreditNoteInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.creditnoteService.addCreditNote(
-        unifiedCreditNoteData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addCreditNotes',
-    summary: 'Add a batch of CreditNotes',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedCreditNoteInput, isArray: true })
-  @ApiCustomResponse(UnifiedCreditNoteOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addCreditNotes(
-    @Body() unfiedCreditNoteData: UnifiedCreditNoteInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.creditnoteService.batchAddCreditNotes(
-        unfiedCreditNoteData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.creditnoteService.getCreditNote(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

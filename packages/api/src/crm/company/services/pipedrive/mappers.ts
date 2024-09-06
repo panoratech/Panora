@@ -1,12 +1,12 @@
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { PipedriveCompanyInput, PipedriveCompanyOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 
 @Injectable()
 export class PipedriveCompanyMapper implements ICompanyMapper {
@@ -15,7 +15,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
   }
 
   async desunify(
-    source: UnifiedCompanyInput,
+    source: UnifiedCrmCompanyInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,10 +26,7 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
     };
 
     if (source.addresses && source.addresses[0]) {
-      result.address = source.addresses[0].street_1;
-      result.address_locality = source.addresses[0].city;
-      result.address_country = source.addresses[0].country;
-      result.address_postal_code = source.addresses[0].postal_code;
+      result.address = `${source.addresses[0].street_1}, ${source.addresses[0].postal_code} ${source.addresses[0].city}, ${source.addresses[0].country}`;
     }
 
     if (source.user_id) {
@@ -39,10 +36,10 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
           id: Number(owner.remote_id),
           name: owner.name,
           email: owner.email,
-          has_pic: 0,
-          pic_hash: '',
+          has_pic: null,
+          pic_hash: null,
           active_flag: false,
-          value: 0,
+          value: null,
         };
       }
     }
@@ -62,29 +59,39 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: PipedriveCompanyOutput | PipedriveCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
+  ): Promise<UnifiedCrmCompanyOutput | UnifiedCrmCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return await this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: PipedriveCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -92,21 +99,11 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       }
     }
 
-    const res = {
-      name: company.name,
-      industry: '', // Pipedrive may not directly provide this, need custom mapping
-      number_of_employees: 0, // Placeholder, as there's no direct mapping provided
-      email_addresses: [],
-      phone_numbers: [],
-      addresses: [],
-      field_mappings,
-    };
-
     let opts: any = {};
     if (company.owner_id.id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(company.owner_id.id),
-        'pipedrive',
+        connectionId,
       );
       if (user_id) {
         opts = {
@@ -115,16 +112,35 @@ export class PipedriveCompanyMapper implements ICompanyMapper {
       }
     }
     if (company.address) {
-      res.addresses[0] = {
-        street_1: company.address,
-        city: company.address_locality,
-        country: company.address_country,
-        postal_code: company.address_postal_code,
-      };
+      const addressRegex = /^(.*?), (\d{5}) (.*?), (.*)$/;
+      const match = company.address.match(addressRegex);
+
+      const [, street, postalCode, city, country] = match;
+      opts.addresses = [
+        {
+          street_1: street,
+          city: city,
+          country: country,
+          postal_code: postalCode,
+        },
+      ];
+    }
+    if (company.cc_email) {
+      opts.email_adresses = [
+        {
+          owner_type: 'COMPANY',
+          email_address: company.cc_email,
+          email_address_type: 'WORK',
+        },
+      ];
     }
     return {
-      remote_id: company.id,
-      ...res,
+      name: company.name,
+      remote_data: company,
+      industry: null,
+      number_of_employees: company.people_count ?? null,
+      field_mappings,
+      remote_id: String(company.id),
       ...opts,
     };
   }

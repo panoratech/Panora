@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { ITaskService } from '@crm/task/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { ZohoTaskInput, ZohoTaskOutput } from './types';
-import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { ITaskService } from '@crm/task/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
+import { ZohoTaskInput, ZohoTaskOutput } from './types';
 
 @Injectable()
 export class ZohoService implements ITaskService {
@@ -24,51 +24,10 @@ export class ZohoService implements ITaskService {
     this.registry.registerService('zoho', this);
   }
 
-  async addTask(
-    taskData: ZohoTaskInput,
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoTaskOutput>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoTaskOutput[]>> {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
-          vertical: 'crm',
-        },
-      });
-      const resp = await axios.post(
-        `${connection.account_url}/Tasks`,
-        { data: [taskData] },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
-      //this.logger.log('zoho resp is ' + JSON.stringify(resp));
-      return {
-        data: resp.data.data,
-        message: 'Zoho task created',
-        statusCode: 201,
-      };
-    } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.task,
-        ActionType.POST,
-      );
-    }
-  }
+      const { linkedUserId } = data;
 
-  async syncTasks(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoTaskOutput[]>> {
-    try {
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -79,7 +38,7 @@ export class ZohoService implements ITaskService {
       const fields =
         'Status,Owner,Description,Due_Date,Priority,Closed_Time,Subject,What_Id';
       const resp = await axios.get(
-        `${connection.account_url}/Tasks?fields=${fields}`,
+        `${connection.account_url}/v5/Tasks?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -97,13 +56,7 @@ export class ZohoService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.task,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

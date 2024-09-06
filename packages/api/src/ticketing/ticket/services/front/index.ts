@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { FrontTicketInput, FrontTicketOutput } from './types';
 import { Utils } from '@ticketing/@lib/@utils';
+import { SyncParam } from '@@core/utils/types/interface';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class FrontService implements ITicketService {
@@ -70,7 +71,7 @@ export class FrontService implements ITicketService {
       if (uploads.length > 0) {
         const dataBody = {
           ...restOfTicketData,
-          comment: { ...restOfTicketData.comment, attachments: uploads },
+          comment: { ...restOfTicketData.comment },
         };
         const formData = new FormData();
 
@@ -143,9 +144,6 @@ export class FrontService implements ITicketService {
           },
         );
       }
-
-      //now we can insert
-
       return {
         data: resp.data,
         message: 'Front ticket created',
@@ -153,20 +151,13 @@ export class FrontService implements ITicketService {
       };
     } catch (error) {
       throw error;
-      /*handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );*/
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-  ): Promise<ApiResponse<FrontTicketOutput[]>> {
+
+  async sync(data: SyncParam): Promise<ApiResponse<FrontTicketOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -191,13 +182,6 @@ export class FrontService implements ITicketService {
       };
     } catch (error) {
       throw error;
-      /*handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );*/
     }
   }
 }

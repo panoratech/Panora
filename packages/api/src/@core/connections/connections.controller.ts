@@ -1,35 +1,33 @@
 import {
   Controller,
   Get,
+  Post,
   Query,
+  Request,
   Res,
   UseGuards,
-  Request,
-  Post,
   Body,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { CrmConnectionsService } from './crm/services/crm.connection.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
-import { PrismaService } from '@@core/prisma/prisma.service';
 import {
-  ApiBody,
+  ApiTags,
   ApiOperation,
   ApiQuery,
   ApiResponse,
-  ApiTags,
+  ApiBody,
+  ApiExcludeEndpoint,
 } from '@nestjs/swagger';
-import { TicketingConnectionsService } from './ticketing/services/ticketing.connection.service';
-import { ConnectorCategory } from '@panora/shared';
-import { AccountingConnectionsService } from './accounting/services/accounting.connection.service';
-import { MarketingAutomationConnectionsService } from './marketingautomation/services/marketingautomation.connection.service';
+import { Response } from 'express';
+
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 import { CoreSyncService } from '@@core/sync/sync.service';
-import { HrisConnectionsService } from './hris/services/hris.connection.service';
-import { FilestorageConnectionsService } from './filestorage/services/filestorage.connection.service';
-import { AtsConnectionsService } from './ats/services/ats.connection.service';
-import { ManagementConnectionsService } from './management/services/management.connection.service';
+import { ApiGetArrayCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import { ConnectionsError } from '@@core/utils/errors';
+import { AuthStrategy, CONNECTORS_METADATA } from '@panora/shared';
+import { Connection } from './@utils/types';
 
 export type StateDataType = {
   projectId: string;
@@ -37,6 +35,7 @@ export type StateDataType = {
   linkedUserId: string;
   providerName: string;
   returnUrl?: string;
+  [key: string]: any;
 };
 
 export class BodyDataType {
@@ -48,17 +47,10 @@ export class BodyDataType {
 @Controller('connections')
 export class ConnectionsController {
   constructor(
-    private readonly crmConnectionsService: CrmConnectionsService,
-    private readonly ticketingConnectionsService: TicketingConnectionsService,
-    private readonly accountingConnectionsService: AccountingConnectionsService,
-    private readonly marketingautomationConnectionsService: MarketingAutomationConnectionsService,
-    private readonly filestorageConnectionsService: FilestorageConnectionsService,
-    private readonly hrisConnectionsService: HrisConnectionsService,
-    private readonly atsConnectionsService: AtsConnectionsService,
-    private readonly managementConnectionsService: ManagementConnectionsService,
+    private categoryConnectionRegistry: CategoryConnectionRegistry,
+    private coreSync: CoreSyncService,
     private logger: LoggerService,
     private prisma: PrismaService,
-    private coreSync: CoreSyncService,
   ) {
     this.logger.setContext(ConnectionsController.name);
   }
@@ -70,14 +62,18 @@ export class ConnectionsController {
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiQuery({ name: 'code', required: true, type: String })
   @ApiResponse({ status: 200 })
+  @ApiExcludeEndpoint()
   @Get('oauth/callback')
   async handleOAuthCallback(@Res() res: Response, @Query() query: any) {
     try {
-      const { state, code } = query;
-      if (!code) {
+      const { state, code, spapi_oauth_code, ...otherQueryParams } = query;
+
+      if (!code && !spapi_oauth_code) {
         throw new ConnectionsError({
           name: 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR',
-          message: `No Callback Params found for code, found ${code}`,
+          message: `No Callback Params found for code, found ${
+            code || spapi_oauth_code
+          }`,
         });
       }
 
@@ -88,127 +84,54 @@ export class ConnectionsController {
         });
       }
 
-      const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
-      const { projectId, vertical, linkedUserId, providerName, returnUrl } =
-        stateData;
+      const stateData: StateDataType = this.parseStateData(state);
 
-      switch (vertical.toLowerCase()) {
-        case ConnectorCategory.Crm:
-          const { location } = query;
-          await this.crmConnectionsService.handleCrmCallBack(
-            providerName,
-            { linkedUserId, projectId, code, location },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Ats:
-          await this.atsConnectionsService.handleAtsCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Accounting:
-          await this.accountingConnectionsService.handleAccountingCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.FileStorage:
-          await this.filestorageConnectionsService.handleFilestorageCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Hris:
-          await this.hrisConnectionsService.handleHrisCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.MarketingAutomation:
-          await this.marketingautomationConnectionsService.handleMarketingAutomationCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Ticketing:
-          await this.ticketingConnectionsService.handleTicketingCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-        case ConnectorCategory.Management:
-          await this.managementConnectionsService.handleManagementCallBack(
-            providerName,
-            { linkedUserId, projectId, code },
-            'oauth',
-          );
-          break;
-      }
+      const {
+        projectId,
+        vertical,
+        linkedUserId,
+        providerName,
+        returnUrl,
+        ...dynamicStateParams
+      } = stateData;
 
-      res.redirect(returnUrl);
-
-      /*if (
-        CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
-          .active !== false
-      ) {
-        this.logger.log('triggering initial core sync for all objects...;');
-        // Performing Core Sync Service for active connectors
-        await this.coreSync.initialSync(
-          vertical.toLowerCase(),
-          providerName,
+      const service = this.categoryConnectionRegistry.getService(
+        vertical.toLowerCase(),
+      );
+      await service.handleCallBack(
+        providerName,
+        {
           linkedUserId,
           projectId,
-        );
-      }*/
+          code,
+          spapi_oauth_code,
+          ...otherQueryParams,
+          ...dynamicStateParams,
+        },
+        'oauth2',
+      );
+
+      if (providerName === 'shopify') {
+        service.redirectUponConnection(res, ...otherQueryParams);
+      } else {
+        res.redirect(returnUrl);
+      }
+
+      await this.triggerInitialCoreSync(vertical, providerName, linkedUserId);
     } catch (error) {
       throw error;
     }
   }
 
-  /*@Get('/gorgias/oauth/install')
-  handleGorgiasAuthUrl(
-    @Res() res: Response,
-    @Query('account') account: string,
-    @Query('response_type') response_type: string,
-    @Query('nonce') nonce: string,
-    @Query('scope') scope: string,
-    @Query('client_id') client_id: string,
-    @Query('redirect_uri') redirect_uri: string,
-    @Query('state') state: string,
-  ) {
-    try {
-      console.log(client_id)
-      if (!account) throw new ReferenceError('account prop not found');
-      const params = `?client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}&state=${state}&nonce=${nonce}&scope=${scope}`;
-      res.redirect(`https://${account}.gorgias.com/oauth/authorize${params}`);
-    } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'OAUTH_CALLBACK_ERROR',
-          message: 'ConnectionsController.handleGorgiasAuthUrl() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
-    }
-  }*/
-
   @ApiOperation({
     operationId: 'handleApiKeyCallback',
-    summary: 'Capture api key callback',
+    summary: 'Capture api key or basic auth callback',
   })
+  @ApiExcludeEndpoint()
   @ApiQuery({ name: 'state', required: true, type: String })
   @ApiBody({ type: BodyDataType })
-  @UseGuards(JwtAuthGuard)
   @ApiResponse({ status: 201 })
-  @Post('apikey/callback')
+  @Post('basicorapikey/callback')
   async handleApiKeyCallback(
     @Res() res: Response,
     @Query() query: any,
@@ -222,141 +145,94 @@ export class ConnectionsController {
           message: `No Callback Params found for state, found ${state}`,
         });
       }
+
       const stateData: StateDataType = JSON.parse(decodeURIComponent(state));
-      const { projectId, vertical, linkedUserId, providerName, returnUrl } =
-        stateData;
-      const { apikey, ...body_data } = body;
-      switch (vertical.toLowerCase()) {
-        case ConnectorCategory.Crm:
-          await this.crmConnectionsService.handleCrmCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.Ats:
-          await this.atsConnectionsService.handleAtsCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.Accounting:
-          await this.accountingConnectionsService.handleAccountingCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.FileStorage:
-          await this.filestorageConnectionsService.handleFilestorageCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.Hris:
-          await this.hrisConnectionsService.handleHrisCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.MarketingAutomation:
-          await this.marketingautomationConnectionsService.handleMarketingAutomationCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-        case ConnectorCategory.Ticketing:
-          await this.ticketingConnectionsService.handleTicketingCallBack(
-            providerName,
-            {
-              projectId,
-              linkedUserId,
-              apikey,
-              body_data,
-            },
-            'apikey',
-          );
-          break;
-      }
+      const { projectId, vertical, linkedUserId, providerName } = stateData;
 
-      res.redirect(returnUrl);
-
-      /*if (
+      const strategy =
         CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
-          .active !== false
-      ) {
-        this.logger.log('triggering initial core sync for all objects...;');
-        // Performing Core Sync Service for active connectors
-        await this.coreSync.initialSync(
-          vertical.toLowerCase(),
-          providerName,
-          linkedUserId,
-          projectId,
-        );
-      }*/
+          .authStrategy.strategy;
+      const strategy_type =
+        strategy === AuthStrategy.api_key ? 'apikey' : 'basic';
+
+      const service = this.categoryConnectionRegistry.getService(
+        vertical.toLowerCase(),
+      );
+      await service.handleCallBack(
+        providerName,
+        { projectId, linkedUserId, body },
+        strategy_type,
+      );
+
+      res.redirect('/');
     } catch (error) {
       throw error;
     }
   }
 
-  @ApiOperation({
-    operationId: 'getConnections',
-    summary: 'List Connections',
-  })
+  @ApiOperation({ operationId: 'getConnections', summary: 'List Connections' })
+  @ApiExcludeEndpoint()
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
-  @Get()
-  async getConnections(@Request() req: any) {
+  @Get('internal')
+  async list_internal(@Request() req: any) {
     try {
       const { id_project } = req.user;
-      console.log('Req data is:', req.user);
       return await this.prisma.connections.findMany({
-        where: {
-          id_project: id_project,
-        },
+        where: { id_project },
       });
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'GET_CONNECTIONS_ERROR',
-          message: 'ConnectionsController.getConnections() call failed',
-          cause: error,
-        }),
-        this.logger,
+      throw error;
+    }
+  }
+
+  @ApiOperation({ operationId: 'getConnections', summary: 'List Connections' })
+  @ApiGetArrayCustomResponse(Connection)
+  @UseGuards(ApiKeyAuthGuard)
+  @Get()
+  async list(@Request() req: any) {
+    try {
+      const { id_project } = req.user;
+      return await this.prisma.connections.findMany({
+        where: { id_project },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private parseStateData(state: string): StateDataType {
+    if (state.includes('&quot;') || state.includes('&amp;')) {
+      const decodedState = state.replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+      return JSON.parse(decodedState);
+    } else if (
+      state.includes('deel_delimiter') ||
+      state.includes('squarespace_delimiter')
+    ) {
+      const [, base64Part] = decodeURIComponent(state).split(
+        /deel_delimiter|squarespace_delimiter/,
+      );
+      const jsonString = Buffer.from(base64Part, 'base64').toString('utf-8');
+      return JSON.parse(jsonString);
+    } else {
+      return JSON.parse(state);
+    }
+  }
+
+  private async triggerInitialCoreSync(
+    vertical: string,
+    providerName: string,
+    linkedUserId: string,
+  ) {
+    const isActive =
+      CONNECTORS_METADATA[vertical.toLowerCase()][providerName.toLowerCase()]
+        .active !== false;
+    if (isActive) {
+      this.logger.log('Triggering initial core sync for all objects...');
+      await this.coreSync.initialSync(
+        vertical.toLowerCase(),
+        providerName,
+        linkedUserId,
       );
     }
   }

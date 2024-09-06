@@ -1,30 +1,34 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+
 import {
   Controller,
-  Query,
   Get,
-  Param,
   Headers,
+  Param,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
 import {
+  //ApiKeyAuth,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
-  ApiHeader,
   ApiTags,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ContactService } from './services/contact.service';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { UnifiedContactOutput } from './types/model.unified';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { UnifiedTicketingContactOutput } from './types/model.unified';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+
 @ApiTags('ticketing/contacts')
 @Controller('ticketing/contacts')
 export class ContactController {
@@ -37,8 +41,8 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingContacts',
-    summary: 'List all Contacts',
+    operationId: 'listTicketingContacts',
+    summary: 'List Contacts',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,24 +50,26 @@ export class ContactController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiPaginatedResponse(UnifiedTicketingContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getContacts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, pageSize, cursor } = query;
+      const { remote_data, limit, cursor } = query;
       return this.contactService.getContacts(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
-        pageSize,
+        limit,
         remote_data,
         cursor,
       );
@@ -73,9 +79,9 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingContact',
-    summary: 'Retrieve a Contact',
-    description: 'Retrieve a contact from any connected Ticketing software',
+    operationId: 'retrieveTicketingContact',
+    summary: 'Retrieve Contact',
+    description: 'Retrieve a Contact from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
@@ -90,13 +96,31 @@ export class ContactController {
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiPaginatedResponse(UnifiedTicketingContactOutput)
   @Get(':id')
   @UseGuards(ApiKeyAuthGuard)
-  getContact(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.getContact(id, remote_data);
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.contactService.getContact(
+      id,
+      linkedUserId,
+      connectionId,
+      projectId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

@@ -1,10 +1,10 @@
 import { IContactMapper } from '@ticketing/contact/types';
 import { FrontContactInput, FrontContactOutput } from './types';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedTicketingContactInput,
+  UnifiedTicketingContactOutput,
 } from '@ticketing/contact/types/model.unified';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -14,7 +14,7 @@ export class FrontContactMapper implements IContactMapper {
     this.mappersRegistry.registerService('ticketing', 'contact', 'front', this);
   }
   desunify(
-    source: UnifiedContactInput,
+    source: UnifiedTicketingContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,26 +25,32 @@ export class FrontContactMapper implements IContactMapper {
 
   unify(
     source: FrontContactOutput | FrontContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[] {
+  ): UnifiedTicketingContactOutput | UnifiedTicketingContactOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(
+        contact,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 
   private mapSingleContactToUnified(
     contact: FrontContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput {
+  ): UnifiedTicketingContactOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -58,11 +64,12 @@ export class FrontContactMapper implements IContactMapper {
       (handle) => handle.source === 'phone',
     );
 
-    const unifiedContact: UnifiedContactOutput = {
+    const unifiedContact: UnifiedTicketingContactOutput = {
       remote_id: contact.id,
+      remote_data: contact,
       name: contact.name,
-      email_address: emailHandle.handle || '',
-      phone_number: phoneHandle.handle || '',
+      email_address: emailHandle.handle || null,
+      phone_number: phoneHandle.handle || null,
       field_mappings: field_mappings,
     };
 

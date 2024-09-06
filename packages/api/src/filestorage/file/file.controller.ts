@@ -6,8 +6,11 @@ import {
   Get,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -15,14 +18,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { FileService } from './services/file.service';
-import { UnifiedFileInput, UnifiedFileOutput } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('filestorage/file')
-@Controller('filestorage/file')
+import { FileService } from './services/file.service';
+import {
+  UnifiedFilestorageFileInput,
+  UnifiedFilestorageFileOutput,
+} from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+
+@ApiTags('filestorage/files')
+@Controller('filestorage/files')
 export class FileController {
   constructor(
     private readonly fileService: FileService,
@@ -33,8 +47,8 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'getFiles',
-    summary: 'List a batch of Files',
+    operationId: 'listFilestorageFile',
+    summary: 'List  Files',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -42,96 +56,29 @@ export class FileController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
-  @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedFilestorageFileOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getFiles(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.fileService.getFiles(remoteSource, linkedUserId, remote_data);
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
+      const { remote_data, limit, cursor } = query;
 
-  @ApiOperation({
-    operationId: 'getFile',
-    summary: 'Retrieve a File',
-    description: 'Retrieve a file from any connected Filestorage software',
-  })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    type: String,
-    description: 'id of the file you want to retrieve.',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
-  @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
-  getFile(
-    @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    return this.fileService.getFile(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addFile',
-    summary: 'Create a File',
-    description: 'Create a file in any supported Filestorage software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Filestorage software.',
-  })
-  @ApiBody({ type: UnifiedFileInput })
-  @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addFile(
-    @Body() unifiedFileData: UnifiedFileInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.fileService.addFile(
-        unifiedFileData,
+      return this.fileService.getFiles(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -139,8 +86,57 @@ export class FileController {
   }
 
   @ApiOperation({
-    operationId: 'addFiles',
-    summary: 'Add a batch of Files',
+    operationId: 'retrieveFilestorageFile',
+    summary: 'Retrieve Files',
+    description: 'Retrieve Files from any connected Filestorage software',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'id of the file you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original File Storage software.',
+    example: false,
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedFilestorageFileOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
+    @Param('id') id: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.fileService.getFile(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
+  }
+
+  @ApiOperation({
+    operationId: 'createFilestorageFile',
+    summary: 'Create Files',
+    description: 'Create Files in any supported Filestorage software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -150,27 +146,30 @@ export class FileController {
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
-      'Set to true to include data from the original Filestorage software.',
+      'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedFileInput, isArray: true })
-  @ApiCustomResponse(UnifiedFileOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addFiles(
-    @Body() unfiedFileData: UnifiedFileInput[],
-    @Headers('connection_token') connection_token: string,
+  @ApiBody({ type: UnifiedFilestorageFileInput })
+  @ApiPostCustomResponse(UnifiedFilestorageFileOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @Post()
+  async addFile(
+    @Body() unifiedFileData: UnifiedFilestorageFileInput,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.fileService.batchAddFiles(
-        unfiedFileData,
+      return this.fileService.addFile(
+        unifiedFileData,
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

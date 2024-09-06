@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,14 +17,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { EventService } from './services/event.service';
-import { UnifiedEventInput, UnifiedEventOutput } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('marketingautomation/event')
-@Controller('marketingautomation/event')
+import { EventService } from './services/event.service';
+import {
+  UnifiedMarketingautomationEventInput,
+  UnifiedMarketingautomationEventOutput,
+} from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+
+@ApiTags('marketingautomation/events')
+@Controller('marketingautomation/events')
 export class EventController {
   constructor(
     private readonly eventService: EventService,
@@ -34,8 +45,8 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'getMarketingAutomationEvents',
-    summary: 'List a batch of Events',
+    operationId: 'listMarketingAutomationEvents',
+    summary: 'List Events',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -43,29 +54,27 @@ export class EventController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiCustomResponse(UnifiedEventOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedMarketingautomationEventOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEvents(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.eventService.getEvents(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -73,16 +82,17 @@ export class EventController {
   }
 
   @ApiOperation({
-    operationId: 'getEvent',
-    summary: 'Retrieve a Event',
+    operationId: 'retrieveMarketingautomationEvent',
+    summary: 'Retrieve Event',
     description:
-      'Retrieve a event from any connected Marketingautomation software',
+      'Retrieve an Event from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the event you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -90,99 +100,33 @@ export class EventController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedEventOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedMarketingautomationEventOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getEvent(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.eventService.getEvent(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addEvent',
-    summary: 'Create a Event',
-    description: 'Create a event in any supported Marketingautomation software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedEventInput })
-  @ApiCustomResponse(UnifiedEventOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addEvent(
-    @Body() unifiedEventData: UnifiedEventInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.eventService.addEvent(
-        unifiedEventData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addEvents',
-    summary: 'Add a batch of Events',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedEventInput, isArray: true })
-  @ApiCustomResponse(UnifiedEventOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addEvents(
-    @Body() unfiedEventData: UnifiedEventInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.eventService.batchAddEvents(
-        unfiedEventData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.eventService.getEvent(
+      id,
+      connectionId,
+      projectId,
+      linkedUserId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

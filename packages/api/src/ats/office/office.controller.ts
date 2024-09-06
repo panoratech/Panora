@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,14 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { OfficeService } from './services/office.service';
-import { UnifiedOfficeInput, UnifiedOfficeOutput } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('ats/office')
-@Controller('ats/office')
+import { OfficeService } from './services/office.service';
+import {
+  UnifiedAtsOfficeInput,
+  UnifiedAtsOfficeOutput,
+} from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+
+
+@ApiTags('ats/offices')
+@Controller('ats/offices')
 export class OfficeController {
   constructor(
     private readonly officeService: OfficeService,
@@ -34,8 +46,8 @@ export class OfficeController {
   }
 
   @ApiOperation({
-    operationId: 'getOffices',
-    summary: 'List a batch of Offices',
+    operationId: 'listAtsOffice',
+    summary: 'List Offices',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -43,28 +55,27 @@ export class OfficeController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiCustomResponse(UnifiedOfficeOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedAtsOfficeOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getOffices(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.officeService.getOffices(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -72,112 +83,49 @@ export class OfficeController {
   }
 
   @ApiOperation({
-    operationId: 'getOffice',
-    summary: 'Retrieve a Office',
-    description: 'Retrieve a office from any connected Ats software',
+    operationId: 'retrieveAtsOffice',
+    summary: 'Retrieve Offices',
+    description: 'Retrieve Offices from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the office you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedOfficeOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedAtsOfficeOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getOffice(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.officeService.getOffice(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addOffice',
-    summary: 'Create a Office',
-    description: 'Create a office in any supported Ats software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedOfficeInput })
-  @ApiCustomResponse(UnifiedOfficeOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addOffice(
-    @Body() unifiedOfficeData: UnifiedOfficeInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.officeService.addOffice(
-        unifiedOfficeData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addOffices',
-    summary: 'Add a batch of Offices',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedOfficeInput, isArray: true })
-  @ApiCustomResponse(UnifiedOfficeOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addOffices(
-    @Body() unfiedOfficeData: UnifiedOfficeInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.officeService.batchAddOffices(
-        unfiedOfficeData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.officeService.getOffice(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

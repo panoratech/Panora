@@ -1,44 +1,44 @@
 import { ICompanyService } from '@crm/company/types';
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { IContactService } from '@crm/contact/types';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedCrmContactInput,
+  UnifiedCrmContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IDealService } from '@crm/deal/types';
 import {
-  UnifiedDealInput,
-  UnifiedDealOutput,
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IEngagementService } from '@crm/engagement/types';
 import {
-  UnifiedEngagementInput,
-  UnifiedEngagementOutput,
+  UnifiedCrmEngagementInput,
+  UnifiedCrmEngagementOutput,
 } from '@crm/engagement/types/model.unified';
 
 import { INoteService } from '@crm/note/types';
 import {
-  UnifiedNoteInput,
-  UnifiedNoteOutput,
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
 } from '@crm/note/types/model.unified';
 import { IStageService } from '@crm/stage/types';
 import {
-  UnifiedStageInput,
-  UnifiedStageOutput,
+  UnifiedCrmStageInput,
+  UnifiedCrmStageOutput,
 } from '@crm/stage/types/model.unified';
 import { ITaskService } from '@crm/task/types';
 import {
-  UnifiedTaskInput,
-  UnifiedTaskOutput,
+  UnifiedCrmTaskInput,
+  UnifiedCrmTaskOutput,
 } from '@crm/task/types/model.unified';
 import { IUserService } from '@crm/user/types/';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedCrmUserInput,
+  UnifiedCrmUserOutput,
 } from '@crm/user/types/model.unified';
 import { IsIn, IsOptional, IsString } from 'class-validator';
 
@@ -50,41 +50,27 @@ export enum CrmObject {
   note = 'note',
   task = 'task',
   engagement = 'engagement',
-  engagement_call = 'engagement_call',
-  engagement_meeting = 'engagement_meeting',
-  engagement_email = 'engagement_email',
   stage = 'stage',
   user = 'user',
 }
 
 export type UnifiedCrm =
-  | UnifiedContactInput
-  | UnifiedContactOutput
-  | UnifiedCompanyInput
-  | UnifiedCompanyOutput
-  | UnifiedDealInput
-  | UnifiedDealOutput
-  | UnifiedEngagementInput
-  | UnifiedEngagementOutput
-  | UnifiedNoteInput
-  | UnifiedNoteOutput
-  | UnifiedStageInput
-  | UnifiedStageOutput
-  | UnifiedTaskInput
-  | UnifiedTaskOutput
-  | UnifiedUserInput
-  | UnifiedUserOutput;
-
-/*export const unificationMapping = {
-  [CrmObject.contact]: contactUnificationMapping,
-  [CrmObject.deal]: dealUnificationMapping,
-  [CrmObject.company]: companyUnificationMapping,
-  [CrmObject.engagement]: engagementUnificationMapping,
-  [CrmObject.note]: noteUnificationMapping,
-  [CrmObject.stage]: stageUnificationMapping,
-  [CrmObject.task]: taskUnificationMapping,
-  [CrmObject.user]: userUnificationMapping,
-};*/
+  | UnifiedCrmContactInput
+  | UnifiedCrmContactOutput
+  | UnifiedCrmCompanyInput
+  | UnifiedCrmCompanyOutput
+  | UnifiedCrmDealInput
+  | UnifiedCrmDealOutput
+  | UnifiedCrmEngagementInput
+  | UnifiedCrmEngagementOutput
+  | UnifiedCrmNoteInput
+  | UnifiedCrmNoteOutput
+  | UnifiedCrmStageInput
+  | UnifiedCrmStageOutput
+  | UnifiedCrmTaskInput
+  | UnifiedCrmTaskOutput
+  | UnifiedCrmUserInput
+  | UnifiedCrmUserOutput;
 
 export type ICrmService =
   | IContactService
@@ -320,6 +306,7 @@ export const countryPhoneFormats: { [countryCode: string]: string } = {
 export class Email {
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The email address',
   })
   @IsString()
@@ -327,25 +314,31 @@ export class Email {
 
   @ApiProperty({
     type: String,
+    //enum: ['PERSONAL', 'WORK'],
+    nullable: true,
     description:
       'The email address type. Authorized values are either PERSONAL or WORK.',
   })
-  @IsIn(['PERSONAL', 'WORK'])
+  ////@IsIn(['PERSONAL', 'WORK'])
   @IsString()
   email_address_type: string;
 
   @ApiPropertyOptional({
     type: String,
+    enum: ['COMPANY', 'CONTACT'],
+    nullable: true,
     description: 'The owner type of an email',
   })
   @IsString()
   @IsOptional()
+  //@IsIn(['COMPANY', 'CONTACT'])
   owner_type?: string;
 }
 
 export class Phone {
   @ApiProperty({
     type: String,
+    nullable: true,
     description:
       'The phone number starting with a plus (+) followed by the country code (e.g +336676778890 for France)',
   })
@@ -354,14 +347,15 @@ export class Phone {
 
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The phone type. Authorized values are either MOBILE or WORK',
   })
-  @IsIn(['MOBILE', 'WORK'])
   @IsString()
   phone_type: string;
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
     description: 'The owner type of a phone number',
   })
   @IsString()
@@ -371,6 +365,8 @@ export class Phone {
 export class Address {
   @ApiProperty({
     type: String,
+    nullable: true,
+    example: '5th Avenue',
     description: 'The street',
   })
   @IsString()
@@ -378,6 +374,8 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    nullable: true,
+    example: 'Street 2',
     description: 'More information about the street ',
   })
   @IsString()
@@ -386,6 +384,8 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    nullable: true,
+    example: 'New York',
     description: 'The city',
   })
   @IsString()
@@ -393,6 +393,8 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: 'New York',
+    nullable: true,
     description: 'The state',
   })
   @IsString()
@@ -400,6 +402,8 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: '10001',
+    nullable: true,
     description: 'The postal code',
   })
   @IsString()
@@ -407,6 +411,8 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    example: 'United States of America',
+    nullable: true,
     description: 'The country',
   })
   @IsString()
@@ -414,16 +420,18 @@ export class Address {
 
   @ApiProperty({
     type: String,
+    nullable: true,
+    example: 'PERSONAL',
     description:
       'The address type. Authorized values are either PERSONAL or WORK.',
   })
-  @IsIn(['PERSONAL', 'WORK'])
   @IsOptional()
   @IsString()
   address_type?: string;
 
   @ApiProperty({
     type: String,
+    nullable: true,
     description: 'The owner type of the address',
   })
   @IsOptional()

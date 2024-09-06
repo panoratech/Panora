@@ -14,14 +14,14 @@ interface Owner {
 }
 
 interface Module {
-  api_name: string;
-  id: string;
+  api_name?: string;
+  id?: string;
 }
 
 interface ParentId {
-  module: Module;
+  module?: Module;
   name?: string;
-  id: string;
+  id?: string;
 }
 
 export type ZohoNoteInput = Partial<ZohoNote>;

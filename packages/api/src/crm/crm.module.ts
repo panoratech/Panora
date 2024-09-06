@@ -8,7 +8,7 @@ import { TaskModule } from './task/task.module';
 import { UserModule } from './user/user.module';
 import { CompanyModule } from './company/company.module';
 import { CrmWebhookHandlerModule } from './@webhook/handler.module';
-
+import { CrmUnificationService } from './@lib/@unification';
 @Module({
   imports: [
     ContactModule,
@@ -21,7 +21,7 @@ import { CrmWebhookHandlerModule } from './@webhook/handler.module';
     UserModule,
     CrmWebhookHandlerModule,
   ],
-  providers: [],
+  providers: [CrmUnificationService],
   exports: [
     ContactModule,
     DealModule,

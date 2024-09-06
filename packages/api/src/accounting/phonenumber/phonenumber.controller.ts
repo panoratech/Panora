@@ -7,8 +7,11 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,17 +19,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { PhoneNumberService } from './services/phonenumber.service';
 import {
-  UnifiedPhoneNumberInput,
-  UnifiedPhoneNumberOutput,
+  UnifiedAccountingPhonenumberInput,
+  UnifiedAccountingPhonenumberOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/phonenumber')
-@Controller('accounting/phonenumber')
+@ApiTags('accounting/phonenumbers')
+@Controller('accounting/phonenumbers')
 export class PhoneNumberController {
   constructor(
     private readonly phonenumberService: PhoneNumberService,
@@ -37,8 +47,8 @@ export class PhoneNumberController {
   }
 
   @ApiOperation({
-    operationId: 'getPhoneNumbers',
-    summary: 'List a batch of PhoneNumbers',
+    operationId: 'listAccountingPhonenumber',
+    summary: 'List  PhoneNumbers',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,29 +56,28 @@ export class PhoneNumberController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiCustomResponse(UnifiedPhoneNumberOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
+  @ApiPaginatedResponse(UnifiedAccountingPhonenumberOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getPhoneNumbers(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.phonenumberService.getPhoneNumbers(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -76,116 +85,51 @@ export class PhoneNumberController {
   }
 
   @ApiOperation({
-    operationId: 'getPhoneNumber',
-    summary: 'Retrieve a PhoneNumber',
+    operationId: 'retrieveAccountingPhonenumber',
+    summary: 'Retrieve Phone Numbers',
     description:
-      'Retrieve a phonenumber from any connected Accounting software',
+      'Retrieve Phone Numbers from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the phonenumber you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedPhoneNumberOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedAccountingPhonenumberOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getPhoneNumber(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.phonenumberService.getPhoneNumber(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addPhoneNumber',
-    summary: 'Create a PhoneNumber',
-    description: 'Create a phonenumber in any supported Accounting software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedPhoneNumberInput })
-  @ApiCustomResponse(UnifiedPhoneNumberOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addPhoneNumber(
-    @Body() unifiedPhoneNumberData: UnifiedPhoneNumberInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.phonenumberService.addPhoneNumber(
-        unifiedPhoneNumberData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addPhoneNumbers',
-    summary: 'Add a batch of PhoneNumbers',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedPhoneNumberInput, isArray: true })
-  @ApiCustomResponse(UnifiedPhoneNumberOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addPhoneNumbers(
-    @Body() unfiedPhoneNumberData: UnifiedPhoneNumberInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.phonenumberService.batchAddPhoneNumbers(
-        unfiedPhoneNumberData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.phonenumberService.getPhoneNumber(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

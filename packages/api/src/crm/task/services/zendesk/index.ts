@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { ITaskService } from '@crm/task/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { ZendeskTaskInput, ZendeskTaskOutput } from './types';
-import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { ITaskService } from '@crm/task/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
+import { ZendeskTaskInput, ZendeskTaskOutput } from './types';
 @Injectable()
 export class ZendeskService implements ITaskService {
   constructor(
@@ -37,7 +37,7 @@ export class ZendeskService implements ITaskService {
       });
 
       const resp = await axios.post(
-        `${connection.account_url}/tasks`,
+        `${connection.account_url}/v2/tasks`,
         {
           data: taskData,
           meta: {
@@ -60,20 +60,14 @@ export class ZendeskService implements ITaskService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.task,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncTasks(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZendeskTaskOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskTaskOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -81,7 +75,7 @@ export class ZendeskService implements ITaskService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/tasks`, {
+      const resp = await axios.get(`${connection.account_url}/v2/tasks`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -100,13 +94,7 @@ export class ZendeskService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.task,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

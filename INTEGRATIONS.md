@@ -197,6 +197,7 @@ export interface IContactMapper {
 
   unify(
     source: OriginalContactOutput | OriginalContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -217,6 +218,7 @@ export class My3rdPartyMapper implements IContactMapper {
 
   unify(
     source: 3rdPartyContactOutput | 3rdPartyContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -273,11 +275,7 @@ Don't forget to add your service you've defined at step 1 inside the module unde
 
 ```ts
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
-  ],
+  
   controllers: [ContactController],
   providers: [
     ContactService,

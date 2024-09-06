@@ -1,3 +1,3 @@
-export class UnifiedEventInput {}
+export class UnifiedMarketingautomationEventInput {}
 
-export class UnifiedEventOutput extends UnifiedEventInput {}
+export class UnifiedMarketingautomationEventOutput extends UnifiedMarketingautomationEventInput {}

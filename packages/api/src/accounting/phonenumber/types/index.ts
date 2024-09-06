@@ -1,10 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedPhoneNumberInput,
-  UnifiedPhoneNumberOutput,
+  UnifiedAccountingPhonenumberInput,
+  UnifiedAccountingPhonenumberOutput,
 } from './model.unified';
 import { OriginalPhoneNumberOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IPhoneNumberService {
   addPhoneNumber(
@@ -12,15 +13,12 @@ export interface IPhoneNumberService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalPhoneNumberOutput>>;
 
-  syncPhoneNumbers(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalPhoneNumberOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalPhoneNumberOutput[]>>;
 }
 
 export interface IPhoneNumberMapper {
   desunify(
-    source: UnifiedPhoneNumberInput,
+    source: UnifiedAccountingPhonenumberInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,9 +27,12 @@ export interface IPhoneNumberMapper {
 
   unify(
     source: OriginalPhoneNumberOutput | OriginalPhoneNumberOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedPhoneNumberOutput | UnifiedPhoneNumberOutput[];
+  ): Promise<
+    UnifiedAccountingPhonenumberOutput | UnifiedAccountingPhonenumberOutput[]
+  >;
 }

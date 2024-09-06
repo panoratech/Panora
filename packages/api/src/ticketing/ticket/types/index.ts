@@ -1,36 +1,38 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTicketInput, UnifiedTicketOutput } from './model.unified';
+import {
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
+} from './model.unified';
 import { ApiResponse } from '@@core/utils/types';
 import { OriginalTicketOutput } from '@@core/utils/types/original/original.ticketing';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface ITicketService {
+export interface ITicketService extends IBaseObjectService {
   addTicket(
     ticketData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalTicketOutput>>;
 
-  syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTicketOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalTicketOutput[]>>;
 }
 export interface ITicketMapper {
   desunify(
-    source: UnifiedTicketInput,
+    source: UnifiedTicketingTicketInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
+    connection_id?: string,
   ): DesunifyReturnType;
 
   unify(
     source: OriginalTicketOutput | OriginalTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]>;
+  ): Promise<UnifiedTicketingTicketOutput | UnifiedTicketingTicketOutput[]>;
 }
 
 export type Comment = {

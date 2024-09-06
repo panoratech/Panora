@@ -11,8 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -20,18 +19,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EngagementService } from './services/engagement.service';
 import {
-  UnifiedEngagementInput,
-  UnifiedEngagementOutput,
+  UnifiedCrmEngagementInput,
+  UnifiedCrmEngagementOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+
 @ApiTags('crm/engagements')
 @Controller('crm/engagements')
 export class EngagementController {
@@ -44,8 +49,8 @@ export class EngagementController {
   }
 
   @ApiOperation({
-    operationId: 'getEngagements',
-    summary: 'List a batch of Engagements',
+    operationId: 'listCrmEngagements',
+    summary: 'List Engagements',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -53,25 +58,27 @@ export class EngagementController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedEngagementOutput)
+  @ApiPaginatedResponse(UnifiedCrmEngagementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getEngagements(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, pageSize, cursor } = query;
+      const { remote_data, limit, cursor } = query;
 
       return this.engagementService.getEngagements(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
-        pageSize,
+        limit,
         remote_data,
         cursor,
       );
@@ -81,36 +88,56 @@ export class EngagementController {
   }
 
   @ApiOperation({
-    operationId: 'getEngagement',
-    summary: 'Retrieve a Engagement',
-    description: 'Retrieve a engagement from any connected Crm software',
+    operationId: 'retrieveCrmEngagement',
+    summary: 'Retrieve Engagements',
+    description: 'Retrieve Engagements from any connected Crm software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the engagement you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedEngagementOutput)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedCrmEngagementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getEngagement(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.engagementService.getEngagement(id, remote_data);
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.engagementService.getEngagement(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 
   @ApiOperation({
-    operationId: 'addEngagement',
-    summary: 'Create a Engagement',
-    description: 'Create a engagement in any supported Crm software',
+    operationId: 'createCrmEngagement',
+    summary: 'Create Engagements',
+    description: 'Create Engagements in any supported Crm software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -123,23 +150,26 @@ export class EngagementController {
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Crm software.',
+    example: false,
   })
-  @ApiBody({ type: UnifiedEngagementInput })
-  @ApiCustomResponse(UnifiedEngagementOutput)
+  @ApiBody({ type: UnifiedCrmEngagementInput })
+  @ApiPostCustomResponse(UnifiedCrmEngagementOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addEngagement(
-    @Body() unifiedEngagementData: UnifiedEngagementInput,
+    @Body() unifiedEngagementData: UnifiedCrmEngagementInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.engagementService.addEngagement(
         unifiedEngagementData,
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,
@@ -147,60 +177,5 @@ export class EngagementController {
     } catch (error) {
       throw new Error(error);
     }
-  }
-
-  @ApiOperation({
-    operationId: 'addEngagements',
-    summary: 'Add a batch of Engagements',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Crm software.',
-  })
-  @ApiBody({ type: UnifiedEngagementInput, isArray: true })
-  @ApiCustomResponse(UnifiedEngagementOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addEngagements(
-    @Body() unfiedEngagementData: UnifiedEngagementInput[],
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.engagementService.batchAddEngagements(
-        unfiedEngagementData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'updateEngagement',
-    summary: 'Update a Engagement',
-  })
-  @ApiCustomResponse(UnifiedEngagementOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateEngagement(
-    @Query('id') id: string,
-    @Body() updateEngagementData: Partial<UnifiedEngagementInput>,
-  ) {
-    return this.engagementService.updateEngagement(id, updateEngagementData);
   }
 }

@@ -1,10 +1,10 @@
 import { ZendeskUserInput, ZendeskUserOutput } from './types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedCrmUserInput,
+  UnifiedCrmUserOutput,
 } from '@crm/user/types/model.unified';
 import { IUserMapper } from '@crm/user/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
 
@@ -14,7 +14,7 @@ export class ZendeskUserMapper implements IUserMapper {
     this.mappersRegistry.registerService('crm', 'user', 'zendesk', this);
   }
   desunify(
-    source: UnifiedUserInput,
+    source: UnifiedCrmUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -39,30 +39,38 @@ export class ZendeskUserMapper implements IUserMapper {
     return result;
   }
 
-  unify(
+  async unify(
     source: ZendeskUserOutput | ZendeskUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedCrmUserOutput | UnifiedCrmUserOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleUserToUnified(source, customFieldMappings);
+      return this.mapSingleUserToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of ZendeskUserOutput
-    return source.map((user) =>
-      this.mapSingleUserToUnified(user, customFieldMappings),
+    return Promise.all(
+      source.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 
   private mapSingleUserToUnified(
     user: ZendeskUserOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput {
+  ): UnifiedCrmUserOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -72,6 +80,7 @@ export class ZendeskUserMapper implements IUserMapper {
 
     return {
       remote_id: String(user.id),
+      remote_data: user,
       name: user.name,
       email: user.email,
       field_mappings,

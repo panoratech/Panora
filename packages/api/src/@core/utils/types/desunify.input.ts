@@ -1,6 +1,7 @@
 import { AccountingObjectInput } from './original/original.accounting';
 import { AtsObjectInput } from './original/original.ats';
 import { CrmObjectInput } from './original/original.crm';
+import { EcommerceObjectInput } from './original/original.ecommerce';
 import { FileStorageObjectInput } from './original/original.file-storage';
 import { HrisObjectInput } from './original/original.hris';
 import { MarketingAutomationObjectInput } from './original/original.marketing-automation';
@@ -13,4 +14,5 @@ export type DesunifyReturnType =
   | MarketingAutomationObjectInput
   | AccountingObjectInput
   | FileStorageObjectInput
-  | HrisObjectInput;
+  | HrisObjectInput
+  | EcommerceObjectInput;

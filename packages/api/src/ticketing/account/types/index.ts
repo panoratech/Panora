@@ -1,19 +1,16 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedAccountInput, UnifiedAccountOutput } from './model.unified';
+import { UnifiedTicketingAccountInput, UnifiedTicketingAccountOutput } from './model.unified';
 import { OriginalAccountOutput } from '@@core/utils/types/original/original.ticketing';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IAccountService {
-  syncAccounts(
-    linkedUserId: string,
-    remote_account_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalAccountOutput[]>>;
+export interface IAccountService extends IBaseObjectService {
+  sync(data: SyncParam): Promise<ApiResponse<OriginalAccountOutput[]>>;
 }
 
 export interface IAccountMapper {
   desunify(
-    source: UnifiedAccountInput,
+    source: UnifiedTicketingAccountInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -22,9 +19,10 @@ export interface IAccountMapper {
 
   unify(
     source: OriginalAccountOutput | OriginalAccountOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAccountOutput | UnifiedAccountOutput[];
+  ): UnifiedTicketingAccountOutput | UnifiedTicketingAccountOutput[];
 }

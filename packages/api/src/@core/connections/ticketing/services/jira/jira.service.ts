@@ -1,27 +1,28 @@
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  Action,
-  ActionType,
-  ConnectionsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ITicketingConnectionService } from '../../types';
-import { ServiceRegistry } from '../registry.service';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
-import { AuthStrategy } from '@panora/shared';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import {
+  AbstractBaseConnectionService,
   OAuthCallbackParams,
+  PassthroughInput,
   RefreshParams,
 } from '@@core/connections/@utils/types';
+import { PassthroughResponse } from '@@core/passthrough/types';
+import { Injectable } from '@nestjs/common';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  DynamicApiUrl,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../registry.service';
 
 export type JiraCloudIdInformation = {
   id: string;
@@ -39,21 +40,63 @@ export type JiraOAuthResponse = {
 };
 
 @Injectable()
-export class JiraConnectionService implements ITicketingConnectionService {
+export class JiraConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
-    private prisma: PrismaService,
+    protected prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
-    private cryptoService: EncryptionService,
+    protected cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
     private connectionUtils: ConnectionUtils,
+    private retryService: RetryHandler,
   ) {
+    super(prisma, cryptoService);
     this.logger.setContext(JiraConnectionService.name);
     this.registry.registerService('jira', this);
     this.type = providerToType('jira', 'ticketing', AuthStrategy.oauth2);
+  }
+  async passthrough(
+    input: PassthroughInput,
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
+    try {
+      const { headers, req_type } = input;
+      const config = await this.constructPassthrough(input, connectionId);
+
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: connectionId,
+        },
+      });
+      if (req_type == 'MULTIPART') {
+        config.headers['Authorization'] = `Bearer ${this.cryptoService.decrypt(
+          connection.access_token,
+        )}`;
+        config.headers['Content-Type'] = 'application/json';
+        config.headers['X-Atlassian-Token'] = 'no-check';
+      }
+
+      config.headers = {
+        ...config.headers,
+        ...headers,
+      };
+
+      return await this.retryService.makeRequest(
+        {
+          method: config.method,
+          url: config.url,
+          data: config.data,
+          headers: config.headers,
+        },
+        'ticketing.jira.passthrough',
+        config.linkedUserId,
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 
   async handleCallback(opts: OAuthCallbackParams) {
@@ -68,7 +111,11 @@ export class JiraConnectionService implements ITicketingConnectionService {
       });
 
       //reconstruct the redirect URI that was passed in the githubend it must be the same
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
+      const REDIRECT_URI = `${
+        this.env.getDistributionMode() == 'selfhost'
+          ? this.env.getTunnelIngress()
+          : this.env.getPanoraBaseUrl()
+      }/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
@@ -108,12 +155,15 @@ export class JiraConnectionService implements ITicketingConnectionService {
       );
       const sites_scopes: JiraCloudIdInformation[] = res_.data;
 
-      const cloud_id: string = sites_scopes[0].id; //todo
+      const cloud_id: string = sites_scopes[0].id;
       let db_res;
       const connection_token = uuidv4();
 
       const access_token = this.cryptoService.encrypt(data.access_token);
       const refresh_token = this.cryptoService.encrypt(data.refresh_token);
+      const BASE_API_URL = (
+        CONNECTORS_METADATA['ticketing']['jira'].urls.apiUrl as DynamicApiUrl
+      )(cloud_id);
 
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
@@ -123,7 +173,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
           data: {
             access_token: access_token,
             refresh_token: refresh_token,
-            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
+            account_url: BASE_API_URL,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -138,8 +188,8 @@ export class JiraConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'jira',
             vertical: 'ticketing',
-            token_type: 'oauth',
-            account_url: `https://api.atlassian.com/ex/jira/${cloud_id}`,
+            token_type: 'oauth2',
+            account_url: BASE_API_URL,
             access_token: access_token,
             refresh_token: refresh_token,
             expiration_timestamp: new Date(
@@ -163,18 +213,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `JiraConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'jira',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -218,18 +257,7 @@ export class JiraConnectionService implements ITicketingConnectionService {
       });
       this.logger.log('OAuth credentials updated : jira ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_TICKETING',
-          message: `JiraConnectionService.handleTokenRefresh() call failed ---> ${format3rdPartyError(
-            'jira',
-            Action.oauthRefresh,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

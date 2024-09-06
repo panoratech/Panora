@@ -1,12 +1,11 @@
+import { ValidateUserService } from '@@core/utils/services/validate-user.service';
 import { Module } from '@nestjs/common';
-import { LinkedUsersService } from './linked-users.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { LinkedUsersController } from './linked-users.controller';
-import { LoggerService } from '../logger/logger.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { ValidateUserService } from '@@core/utils/services/validateUser.service';
+import { LinkedUsersService } from './linked-users.service';
 
 @Module({
-  providers: [LinkedUsersService, LoggerService, ValidateUserService],
+  providers: [LinkedUsersService, ValidateUserService],
   controllers: [LinkedUsersController],
 })
 export class LinkedUsersModule {}

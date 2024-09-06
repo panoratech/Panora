@@ -1,20 +1,18 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
 import { Injectable } from '@nestjs/common';
-import { PassThroughRequestDto } from './dto/passthrough.dto';
-import { PassThroughResponse } from './types';
-import axios, { AxiosResponse } from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { AxiosResponse } from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { LoggerService } from '@@core/logger/logger.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { CONNECTORS_METADATA } from '@panora/shared';
-import { PassthroughRequestError, throwTypedError } from '@@core/utils/errors';
+import { PassThroughRequestDto } from './dto/passthrough.dto';
+import { PassthroughResponse } from './types';
 
 @Injectable()
 export class PassthroughService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
-    private cryptoService: EncryptionService,
+    private categoryConnectionRegistry: CategoryConnectionRegistry,
   ) {
     this.logger.setContext(PassthroughService.name);
   }
@@ -24,17 +22,26 @@ export class PassthroughService {
     integrationId: string,
     linkedUserId: string,
     vertical: string,
-  ): Promise<PassThroughResponse> {
-    // TODO
-    return;
-    /*try {
-      const { method, path, data, headers } = requestParams;
+    connectionId: string,
+    projectId: string,
+  ): Promise<PassthroughResponse> {
+    try {
+      const {
+        method,
+        path,
+        data,
+        request_format = 'JSON',
+        overrideBaseUrl,
+        headers,
+      } = requestParams;
 
       const job_resp_create = await this.prisma.events.create({
         data: {
+          id_connection: connectionId,
+          id_project: projectId,
           id_event: uuidv4(),
           status: 'initialized', // Use whatever status is appropriate
-          type: 'pull', 
+          type: 'pull',
           method: method,
           url: '/pasthrough',
           provider: integrationId,
@@ -43,66 +50,38 @@ export class PassthroughService {
           id_linked_user: linkedUserId,
         },
       });
-      const intId = integrationId.toLowerCase();
-      const providerUrl =
-        CONNECTORS_METADATA[vertical.toLowerCase()][intId].urls.apiUrl;
-      const BASE_URL = `${providerUrl}${path}`;
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
+
+      const service = this.categoryConnectionRegistry.getService(
+        vertical.toLowerCase(),
+      );
+      const response = await service.passthrough(
+        {
+          method,
+          path,
+          headers,
+          req_type: request_format,
+          overrideBaseUrl: overrideBaseUrl,
+          data: data,
         },
-      });
-      const URL = connection.account_url
-        ? connection.account_url + BASE_URL
-        : BASE_URL;
-
-      const response: AxiosResponse = await axios({
-        method,
-        url: URL,
-        data,
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
-        },
-      });
-
-      const status_resp =
-        method == 'GET'
-          ? response.status === 200
-            ? 'success'
-            : 'fail'
-          : 'POST'
-          ? response.status === 200
-            ? 'success'
-            : 'fail'
-          : 'success';
-
+        connectionId,
+      );
+      let status;
+      if ('retryId' in response) {
+        //failed
+        status = 429;
+      }
       await this.prisma.events.update({
         where: {
           id_event: job_resp_create.id_event,
         },
         data: {
-          status: status_resp,
+          status: String(status) || String((response as AxiosResponse).status),
         },
       });
 
-      return {
-        url: URL,
-        status: response.status,
-        data: response.data,
-      };
+      return response;
     } catch (error) {
-      throwTypedError(
-        new PassthroughRequestError({
-          name: 'PASSTHROUGH_REMOTE_API_CALL_ERROR',
-          message: 'WebhookService.sendPassthroughRequest() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
-    }*/
+      throw error;
+    }
   }
 }

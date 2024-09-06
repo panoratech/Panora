@@ -1,18 +1,16 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTeamInput, UnifiedTeamOutput } from './model.unified';
+import { UnifiedTicketingTeamInput, UnifiedTicketingTeamOutput } from './model.unified';
 import { OriginalTeamOutput } from '@@core/utils/types/original/original.ticketing';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface ITeamService {
-  syncTeams(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTeamOutput[]>>;
+export interface ITeamService extends IBaseObjectService {
+  sync(data: SyncParam): Promise<ApiResponse<OriginalTeamOutput[]>>;
 }
 
 export interface ITeamMapper {
   desunify(
-    source: UnifiedTeamInput,
+    source: UnifiedTicketingTeamInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -21,9 +19,10 @@ export interface ITeamMapper {
 
   unify(
     source: OriginalTeamOutput | OriginalTeamOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTeamOutput | UnifiedTeamOutput[];
+  ): UnifiedTicketingTeamOutput | UnifiedTicketingTeamOutput[];
 }

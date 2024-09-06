@@ -20,6 +20,7 @@
       "@marketingautomation/*": ["src/marketingautomation/*"],
       "@ats/*": ["src/ats/*"],
       "@accounting/*": ["src/accounting/*"],
+      "@ecommerce/*": ["src/ecommerce/*"]
     },
     "incremental": true,
     "skipLibCheck": true,

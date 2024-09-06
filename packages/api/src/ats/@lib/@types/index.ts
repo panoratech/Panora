@@ -1,99 +1,80 @@
 import { IActivityService } from '@ats/activity/types';
-import { activityUnificationMapping } from '@ats/activity/types/mappingsTypes';
 import {
-  UnifiedActivityInput,
-  UnifiedActivityOutput,
+  UnifiedAtsActivityInput,
+  UnifiedAtsActivityOutput,
 } from '@ats/activity/types/model.unified';
 import { IApplicationService } from '@ats/application/types';
-import { applicationUnificationMapping } from '@ats/application/types/mappingsTypes';
 import {
-  UnifiedApplicationInput,
-  UnifiedApplicationOutput,
+  UnifiedAtsApplicationInput,
+  UnifiedAtsApplicationOutput,
 } from '@ats/application/types/model.unified';
 import { IAttachmentService } from '@ats/attachment/types';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAtsAttachmentInput,
+  UnifiedAtsAttachmentOutput,
 } from '@ats/attachment/types/model.unified';
 import { ICandidateService } from '@ats/candidate/types';
-import { candidateUnificationMapping } from '@ats/candidate/types/mappingsTypes';
 import {
-  UnifiedCandidateInput,
-  UnifiedCandidateOutput,
+  UnifiedAtsCandidateInput,
+  UnifiedAtsCandidateOutput,
 } from '@ats/candidate/types/model.unified';
 import { IDepartmentService } from '@ats/department/types';
-import { departmentUnificationMapping } from '@ats/department/types/mappingsTypes';
 import {
-  UnifiedDepartmentInput,
-  UnifiedDepartmentOutput,
+  UnifiedAtsDepartmentInput,
+  UnifiedAtsDepartmentOutput,
 } from '@ats/department/types/model.unified';
 import { IEeocsService } from '@ats/eeocs/types';
-import { eeocsUnificationMapping } from '@ats/eeocs/types/mappingsTypes';
 import {
-  UnifiedEeocsInput,
-  UnifiedEeocsOutput,
+  UnifiedAtsEeocsInput,
+  UnifiedAtsEeocsOutput,
 } from '@ats/eeocs/types/model.unified';
 import { IInterviewService } from '@ats/interview/types';
-import { interviewUnificationMapping } from '@ats/interview/types/mappingsTypes';
 import {
-  UnifiedInterviewInput,
-  UnifiedInterviewOutput,
+  UnifiedAtsInterviewInput,
+  UnifiedAtsInterviewOutput,
 } from '@ats/interview/types/model.unified';
 import { IJobService } from '@ats/job/types';
-import { jobUnificationMapping } from '@ats/job/types/mappingsTypes';
 import {
-  UnifiedJobInput,
-  UnifiedJobOutput,
+  UnifiedAtsJobInput,
+  UnifiedAtsJobOutput,
 } from '@ats/job/types/model.unified';
-import { IOfferService } from '@ats/offer/types';
-import { offerUnificationMapping } from '@ats/offer/types/mappingsTypes';
-import {
-  UnifiedOfferInput,
-  UnifiedOfferOutput,
-} from '@ats/offer/types/model.unified';
-import { IOfficeService } from '@ats/office/types';
-import { officeUnificationMapping } from '@ats/office/types/mappingsTypes';
-import {
-  UnifiedOfficeInput,
-  UnifiedOfficeOutput,
-} from '@ats/office/types/model.unified';
-import { scorecardUnificationMapping } from '@ats/scorecard/types/mappingsTypes';
-import { attachmentUnificationMapping } from '@ats/attachment/types/mappingsTypes';
-import { ITagService } from '@ats/tag/types';
-import { tagUnificationMapping } from '@ats/tag/types/mappingsTypes';
-import {
-  UnifiedTagInput,
-  UnifiedTagOutput,
-} from '@ats/tag/types/model.unified';
-import { IUserService } from '@ats/user/types';
-import { userUnificationMapping } from '@ats/user/types/mappingsTypes';
-import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
-} from '@ats/user/types/model.unified';
-import { jobinterviewstageUnificationMapping } from '@ats/jobinterviewstage/types/mappingsTypes';
-import { rejectreasonUnificationMapping } from '@ats/rejectreason/types/mappingsTypes';
-import { screeningquestionUnificationMapping } from '@ats/screeningquestion/types/mappingsTypes';
 import { IJobInterviewStageService } from '@ats/jobinterviewstage/types';
 import {
-  UnifiedJobInterviewStageInput,
-  UnifiedJobInterviewStageOutput,
+  UnifiedAtsJobinterviewstageInput,
+  UnifiedAtsJobinterviewstageOutput,
 } from '@ats/jobinterviewstage/types/model.unified';
+import { IOfferService } from '@ats/offer/types';
+import {
+  UnifiedAtsOfferInput,
+  UnifiedAtsOfferOutput,
+} from '@ats/offer/types/model.unified';
+import { IOfficeService } from '@ats/office/types';
+import {
+  UnifiedAtsOfficeInput,
+  UnifiedAtsOfficeOutput,
+} from '@ats/office/types/model.unified';
 import { IRejectReasonService } from '@ats/rejectreason/types';
 import {
-  UnifiedRejectReasonInput,
-  UnifiedRejectReasonOutput,
+  UnifiedAtsRejectreasonInput,
+  UnifiedAtsRejectreasonOutput,
 } from '@ats/rejectreason/types/model.unified';
 import { IScoreCardService } from '@ats/scorecard/types';
 import {
-  UnifiedScoreCardInput,
-  UnifiedScoreCardOutput,
+  UnifiedAtsScorecardInput,
+  UnifiedAtsScorecardOutput,
 } from '@ats/scorecard/types/model.unified';
-import { IScreeningQuestionService } from '@ats/screeningquestion/types';
+import { ITagService } from '@ats/tag/types';
 import {
-  UnifiedScreeningQuestionInput,
-  UnifiedScreeningQuestionOutput,
-} from '@ats/screeningquestion/types/model.unified';
+  UnifiedAtsTagInput,
+  UnifiedAtsTagOutput,
+} from '@ats/tag/types/model.unified';
+import { IUserService } from '@ats/user/types';
+import {
+  UnifiedAtsUserInput,
+  UnifiedAtsUserOutput,
+} from '@ats/user/types/model.unified';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsIn, IsString } from 'class-validator';
 
 export enum AtsObject {
   activity = 'activity',
@@ -108,64 +89,42 @@ export enum AtsObject {
   office = 'office',
   rejectreason = 'rejectreason',
   scorecard = 'scorecard',
-  screeningquestion = 'screeningquestion',
   tag = 'tag',
   user = 'user',
   eeocs = 'eeocs',
 }
 
 export type UnifiedAts =
-  | UnifiedActivityInput
-  | UnifiedActivityOutput
-  | UnifiedApplicationInput
-  | UnifiedApplicationOutput
-  | UnifiedAttachmentInput
-  | UnifiedAttachmentOutput
-  | UnifiedCandidateInput
-  | UnifiedCandidateOutput
-  | UnifiedDepartmentInput
-  | UnifiedDepartmentOutput
-  | UnifiedInterviewInput
-  | UnifiedInterviewOutput
-  | UnifiedJobInterviewStageInput
-  | UnifiedJobInterviewStageOutput
-  | UnifiedJobInput
-  | UnifiedJobOutput
-  | UnifiedOfferInput
-  | UnifiedOfferOutput
-  | UnifiedOfficeInput
-  | UnifiedOfficeOutput
-  | UnifiedRejectReasonInput
-  | UnifiedRejectReasonOutput
-  | UnifiedScoreCardInput
-  | UnifiedScoreCardOutput
-  | UnifiedScreeningQuestionInput
-  | UnifiedScreeningQuestionOutput
-  | UnifiedTagInput
-  | UnifiedTagOutput
-  | UnifiedUserInput
-  | UnifiedUserOutput
-  | UnifiedEeocsInput
-  | UnifiedEeocsOutput;
-
-/*export const unificationMapping = {
-  [AtsObject.activity]: activityUnificationMapping,
-  [AtsObject.application]: applicationUnificationMapping,
-  [AtsObject.attachment]: attachmentUnificationMapping,
-  [AtsObject.candidate]: candidateUnificationMapping,
-  [AtsObject.department]: departmentUnificationMapping,
-  [AtsObject.interview]: interviewUnificationMapping,
-  [AtsObject.jobinterviewstage]: jobinterviewstageUnificationMapping,
-  [AtsObject.job]: jobUnificationMapping,
-  [AtsObject.offer]: offerUnificationMapping,
-  [AtsObject.office]: officeUnificationMapping,
-  [AtsObject.rejectreason]: rejectreasonUnificationMapping,
-  [AtsObject.scorecard]: scorecardUnificationMapping,
-  [AtsObject.screeningquestion]: screeningquestionUnificationMapping,
-  [AtsObject.tag]: tagUnificationMapping,
-  [AtsObject.user]: userUnificationMapping,
-  [AtsObject.eeocs]: eeocsUnificationMapping,
-};*/
+  | UnifiedAtsActivityInput
+  | UnifiedAtsActivityOutput
+  | UnifiedAtsApplicationInput
+  | UnifiedAtsApplicationOutput
+  | UnifiedAtsAttachmentInput
+  | UnifiedAtsAttachmentOutput
+  | UnifiedAtsCandidateInput
+  | UnifiedAtsCandidateOutput
+  | UnifiedAtsDepartmentInput
+  | UnifiedAtsDepartmentOutput
+  | UnifiedAtsInterviewInput
+  | UnifiedAtsInterviewOutput
+  | UnifiedAtsJobinterviewstageInput
+  | UnifiedAtsJobinterviewstageOutput
+  | UnifiedAtsJobInput
+  | UnifiedAtsJobOutput
+  | UnifiedAtsOfferInput
+  | UnifiedAtsOfferOutput
+  | UnifiedAtsOfficeInput
+  | UnifiedAtsOfficeOutput
+  | UnifiedAtsRejectreasonInput
+  | UnifiedAtsRejectreasonOutput
+  | UnifiedAtsScorecardInput
+  | UnifiedAtsScorecardOutput
+  | UnifiedAtsTagInput
+  | UnifiedAtsTagOutput
+  | UnifiedAtsUserInput
+  | UnifiedAtsUserOutput
+  | UnifiedAtsEeocsInput
+  | UnifiedAtsEeocsOutput;
 
 export type IAtsService =
   | IActivityService
@@ -180,7 +139,67 @@ export type IAtsService =
   | IOfficeService
   | IRejectReasonService
   | IScoreCardService
-  | IScreeningQuestionService
   | ITagService
   | IUserService
   | IEeocsService;
+
+export class Email {
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'The email address',
+  })
+  @IsString()
+  email_address: string;
+
+  @ApiProperty({
+    type: String,
+    //enum: ['PERSONAL', 'WORK'],
+    nullable: true,
+    description:
+      'The email address type. Authorized values are either PERSONAL or WORK.',
+  })
+  ////@IsIn(['PERSONAL', 'WORK'])
+  @IsString()
+  email_address_type: string;
+}
+
+export class Phone {
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description:
+      'The phone number starting with a plus (+) followed by the country code (e.g +336676778890 for France)',
+  })
+  @IsString()
+  phone_number: string;
+
+  @ApiProperty({
+    type: String,
+    //enum: ['MOBILE', 'WORK'],
+    nullable: true,
+    description: 'The phone type. Authorized values are either MOBILE or WORK',
+  })
+  ////@IsIn(['MOBILE', 'WORK'])
+  @IsString()
+  phone_type: string;
+}
+
+export class Url {
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description: 'The url.',
+  })
+  @IsString()
+  url: string;
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    description:
+      'The url type. It takes [WEBSITE | BLOG | LINKEDIN | GITHUB | OTHER]',
+  })
+  @IsString()
+  url_type: 'WEBSITE' | 'BLOG' | 'LINKEDIN' | 'GITHUB' | 'OTHER' | string;
+}

@@ -1,11 +1,11 @@
 import { PipedriveDealInput, PipedriveDealOutput } from './types';
 import {
-  UnifiedDealInput,
-  UnifiedDealOutput,
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class PipedriveDealMapper implements IDealMapper {
   }
 
   async desunify(
-    source: UnifiedDealInput,
+    source: UnifiedCrmDealInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,9 +29,18 @@ export class PipedriveDealMapper implements IDealMapper {
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {
-        result.creator_user_id.id = Number(owner_id);
+        result.user_id = Number(owner_id);
       }
     }
+    if (source.company_id) {
+      const company_id = await this.utils.getRemoteIdFromCompanyUuid(
+        source.company_id,
+      );
+      if (company_id) {
+        result.org_id = Number(company_id);
+      }
+    }
+
     if (source.stage_id) {
       const stage_id = await this.utils.getStageIdFromStageUuid(
         source.stage_id,
@@ -57,30 +66,36 @@ export class PipedriveDealMapper implements IDealMapper {
 
   async unify(
     source: PipedriveDealOutput | PipedriveDealOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
+  ): Promise<UnifiedCrmDealOutput | UnifiedCrmDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, customFieldMappings);
+      return await this.mapSingleDealToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotDealOutput
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleDealToUnified(deal, customFieldMappings),
+        this.mapSingleDealToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleDealToUnified(
     deal: PipedriveDealOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -89,13 +104,14 @@ export class PipedriveDealMapper implements IDealMapper {
     }
 
     let opts: any = {};
-    if (deal.creator_user_id.id) {
+    if (deal.creator_user_id && deal.creator_user_id.id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         String(deal.creator_user_id.id),
-        'pipedrive',
+        connectionId,
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -103,10 +119,11 @@ export class PipedriveDealMapper implements IDealMapper {
     if (deal.stage_id) {
       const stage_id = await this.utils.getStageUuidFromRemoteId(
         String(deal.stage_id),
-        'pipedrive',
+        connectionId,
       );
       if (stage_id) {
         opts = {
+          ...opts,
           stage_id: stage_id,
         };
       }
@@ -114,9 +131,10 @@ export class PipedriveDealMapper implements IDealMapper {
 
     return {
       remote_id: String(deal.id),
+      remote_data: deal,
       name: deal.title,
       amount: deal.value,
-      description: '',
+      description: '', //todo null
       field_mappings,
       ...opts,
     };

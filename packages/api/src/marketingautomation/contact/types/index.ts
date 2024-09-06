@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
+import { UnifiedMarketingautomationContactInput, UnifiedMarketingautomationContactOutput } from './model.unified';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IContactService {
 
 export interface IContactMapper {
   desunify(
-    source: UnifiedContactInput,
+    source: UnifiedMarketingautomationContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +26,10 @@ export interface IContactMapper {
 
   unify(
     source: OriginalContactOutput | OriginalContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[];
+  ): Promise<UnifiedMarketingautomationContactOutput | UnifiedMarketingautomationContactOutput[]>;
 }

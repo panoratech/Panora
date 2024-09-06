@@ -1,11 +1,11 @@
 import { ZendeskDealInput, ZendeskDealOutput } from './types';
 import {
-  UnifiedDealInput,
-  UnifiedDealOutput,
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class ZendeskDealMapper implements IDealMapper {
   }
 
   async desunify(
-    source: UnifiedDealInput,
+    source: UnifiedCrmDealInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -35,7 +35,7 @@ export class ZendeskDealMapper implements IDealMapper {
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {
-        result.creator_id = Number(owner_id);
+        result.owner_id = Number(owner_id);
       }
     }
     if (source.stage_id) {
@@ -63,29 +63,35 @@ export class ZendeskDealMapper implements IDealMapper {
 
   async unify(
     source: ZendeskDealOutput | ZendeskDealOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
+  ): Promise<UnifiedCrmDealOutput | UnifiedCrmDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, customFieldMappings);
+      return await this.mapSingleDealToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleDealToUnified(deal, customFieldMappings),
+        this.mapSingleDealToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleDealToUnified(
     deal: ZendeskDealOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -94,13 +100,14 @@ export class ZendeskDealMapper implements IDealMapper {
     }
 
     let opts: any = {};
-    if (deal.creator_id) {
+    if (deal.owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
-        String(deal.creator_id),
-        'zendesk',
+        String(deal.owner_id),
+        connectionId,
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -108,10 +115,11 @@ export class ZendeskDealMapper implements IDealMapper {
     if (deal.stage_id) {
       const stage_id = await this.utils.getStageUuidFromRemoteId(
         String(deal.stage_id),
-        'zendesk',
+        connectionId,
       );
       if (stage_id) {
         opts = {
+          ...opts,
           stage_id: stage_id,
         };
       }
@@ -120,10 +128,11 @@ export class ZendeskDealMapper implements IDealMapper {
     if (deal.contact_id) {
       const contact_id = await this.utils.getCompanyUuidFromRemoteId(
         String(deal.contact_id),
-        'zendesk',
+        connectionId,
       );
       if (contact_id) {
         opts = {
+          ...opts,
           company_id: contact_id,
         };
       }
@@ -131,11 +140,12 @@ export class ZendeskDealMapper implements IDealMapper {
 
     return {
       remote_id: String(deal.id),
+      remote_data: deal,
       name: deal.name,
       amount:
         typeof deal.value === 'string' ? parseFloat(deal.value) : deal.value,
       field_mappings,
-      description: '',
+      description: '', //todo null
       ...opts,
     };
   }

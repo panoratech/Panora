@@ -1,34 +1,60 @@
-import { ITicketMapper } from '@ticketing/ticket/types';
-import { FrontTicketInput, FrontTicketOutput } from './types';
-import {
-  UnifiedTicketInput,
-  UnifiedTicketOutput,
-} from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+import { UnifiedTicketingTagOutput } from '@ticketing/tag/types/model.unified';
 import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ITicketMapper } from '@ticketing/ticket/types';
+import {
+  TicketStatus,
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
+} from '@ticketing/ticket/types/model.unified';
+import { FrontTicketInput, FrontTicketOutput } from './types';
 
 @Injectable()
 export class FrontTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private coreUnificationService: CoreUnification,
+  ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'front', this);
   }
+
+  mapToTicketStatus(
+    data: 'assigned' | 'archived' | 'unassigned' | 'deleted',
+  ): TicketStatus | string {
+    switch (data) {
+      case 'assigned':
+        return 'OPEN';
+      case 'archived':
+        return 'CLOSED';
+      case 'unassigned':
+        return 'unassigned';
+      case 'deleted':
+        return 'CLOSED';
+    }
+  }
+
   async desunify(
-    source: UnifiedTicketInput,
+    source: UnifiedTicketingTicketInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
+    connection_id?: string,
   ): Promise<FrontTicketInput> {
     const body_: any = {};
 
-    if (source.comment.creator_type === 'user') {
+    if (source.comment.creator_type === 'USER') {
       body_.author_id = await this.utils.getAsigneeRemoteIdFromUserUuid(
         source.comment.user_id,
       );
     }
-    if (source.comment.attachments) {
-      body_.attachments = source.comment.attachments;
+    if (source.attachments) {
+      body_.attachments = source.attachments as string[];
     }
     const result: FrontTicketInput = {
       type: 'discussion',
@@ -51,7 +77,14 @@ export class FrontTicketMapper implements ITicketMapper {
     }
 
     if (source.tags) {
-      result.tags = source.tags;
+      result.tags = [];
+      for (const tag of source.tags) {
+        const id = await this.utils.getRemoteIdFromTagName(
+          tag as string,
+          connection_id,
+        );
+        result.tags.push(id);
+      }
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -70,28 +103,34 @@ export class FrontTicketMapper implements ITicketMapper {
 
   async unify(
     source: FrontTicketOutput | FrontTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
+  ): Promise<UnifiedTicketingTicketOutput | UnifiedTicketingTicketOutput[]> {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return Promise.all(
       sourcesArray.map((ticket) =>
-        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleTicketToUnified(
     ticket: FrontTicketOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTicketOutput> {
+  ): Promise<UnifiedTicketingTicketOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -99,26 +138,44 @@ export class FrontTicketMapper implements ITicketMapper {
       }
     }
 
-    let opts: any;
+    let opts: any = {};
 
     if (ticket.assignee) {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(ticket.assignee.id),
-        'front',
+        connectionId,
       );
       if (user_id) {
-        opts = { assigned_to: [user_id] };
+        opts = {
+          ...opts,
+          assigned_to: [user_id],
+        };
       }
     }
-
-    const unifiedTicket: UnifiedTicketOutput = {
+    if (ticket.tags) {
+      const tags = (await this.coreUnificationService.unify<
+        OriginalTagOutput[]
+      >({
+        sourceObject: ticket.tags,
+        targetType: TicketingObject.tag,
+        providerName: 'front',
+        vertical: 'ticketing',
+        connectionId: connectionId,
+        customFieldMappings: [],
+      })) as UnifiedTicketingTagOutput[];
+      opts = {
+        ...opts,
+        tags: tags,
+      };
+    }
+    const unifiedTicket: UnifiedTicketingTicketOutput = {
       remote_id: ticket.id,
+      remote_data: ticket,
       name: ticket.subject,
-      status: ticket.status,
-      description: ticket.subject, // todo: ?
-      due_date: new Date(ticket.created_at), // todo ?
-      tags: ticket.tags?.map((tag) => tag.name),
+      status: this.mapToTicketStatus(ticket.status as any),
+      description: ticket.subject,
+      due_date: null,
       field_mappings: field_mappings,
       ...opts,
     };

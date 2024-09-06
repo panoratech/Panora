@@ -1,10 +1,10 @@
 import { IAttachmentMapper } from '@ticketing/attachment/types';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedTicketingAttachmentInput,
+  UnifiedTicketingAttachmentOutput,
 } from '@ticketing/attachment/types/model.unified';
 import { FrontAttachmentOutput } from './types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -19,7 +19,7 @@ export class FrontAttachmentMapper implements IAttachmentMapper {
     );
   }
   async desunify(
-    source: UnifiedAttachmentInput,
+    source: UnifiedTicketingAttachmentInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -28,30 +28,43 @@ export class FrontAttachmentMapper implements IAttachmentMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: FrontAttachmentOutput | FrontAttachmentOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAttachmentOutput | UnifiedAttachmentOutput[] {
+  ): Promise<UnifiedTicketingAttachmentOutput | UnifiedTicketingAttachmentOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleAttachmentToUnified(source, customFieldMappings);
+      return this.mapSingleAttachmentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
-    return source.map((attachment) =>
-      this.mapSingleAttachmentToUnified(attachment, customFieldMappings),
+    return Promise.all(
+      source.map((attachment) =>
+        this.mapSingleAttachmentToUnified(
+          attachment,
+          connectionId,
+          customFieldMappings,
+        ),
+      ),
     );
   }
 
-  private mapSingleAttachmentToUnified(
+  private async mapSingleAttachmentToUnified(
     attachment: FrontAttachmentOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAttachmentOutput {
+  ): Promise<UnifiedTicketingAttachmentOutput> {
     return {
       remote_id: attachment.id,
+      remote_data: attachment,
       file_name: attachment.filename,
       file_url: attachment.url,
     };

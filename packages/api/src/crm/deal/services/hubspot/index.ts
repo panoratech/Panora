@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { IDealService } from '@crm/deal/types';
-import { CrmObject } from '@crm/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IDealService } from '@crm/deal/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import {
   HubspotDealInput,
@@ -42,7 +42,7 @@ export class HubspotService implements IDealService {
         properties: dealData,
       };
       const resp = await axios.post(
-        `${connection.account_url}/objects/deals`,
+        `${connection.account_url}/crm/v3/objects/deals`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -57,26 +57,19 @@ export class HubspotService implements IDealService {
       this.logger.log(`Synced hubspot deals !`);
 
       return {
-        data: resp.data.results,
+        data: resp.data,
         message: 'Hubspot deal created',
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.deal,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncDeals(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotDealOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotDealOutput[]>> {
     try {
+      const { linkedUserId, custom_properties } = data;
+
       //crm.schemas.deals.read","crm.objects.deals.read
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -88,7 +81,7 @@ export class HubspotService implements IDealService {
 
       const commonPropertyNames = Object.keys(commonDealHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/objects/deals`;
+      const baseURL = `${connection.account_url}/crm/v3/objects/deals`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
@@ -112,13 +105,7 @@ export class HubspotService implements IDealService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.deal,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

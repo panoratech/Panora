@@ -1,5 +1,5 @@
-export type ZendeskTagInput = {
-  _: string;
-};
+export type ZendeskTagInput = null;
 
-export type ZendeskTagOutput = string[];
+export type ZendeskTagOutput = {
+  name: string;
+};

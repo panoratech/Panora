@@ -1,11 +1,11 @@
 import { CloseTaskInput, CloseTaskOutput } from './types';
 import {
-  UnifiedTaskInput,
-  UnifiedTaskOutput,
+  UnifiedCrmTaskInput,
+  UnifiedCrmTaskOutput,
 } from '@crm/task/types/model.unified';
 import { ITaskMapper } from '@crm/task/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -14,19 +14,19 @@ export class CloseTaskMapper implements ITaskMapper {
     this.mappersRegistry.registerService('crm', 'task', 'close', this);
   }
   async desunify(
-    source: UnifiedTaskInput,
+    source: UnifiedCrmTaskInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<CloseTaskInput> {
     const result: CloseTaskInput = {
-      text: source?.content ?? '',
+      text: source?.content ?? null,
       is_complete: source.status === 'COMPLETED',
       _type: 'lead',
-      lead_id: '',
-      assigned_to: '',
-      date: '',
+      lead_id: null,
+      assigned_to: null,
+      date: null,
     };
 
     if (source.user_id) {
@@ -60,29 +60,35 @@ export class CloseTaskMapper implements ITaskMapper {
 
   async unify(
     source: CloseTaskOutput | CloseTaskOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTaskOutput | UnifiedTaskOutput[]> {
+  ): Promise<UnifiedCrmTaskOutput | UnifiedCrmTaskOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleTaskToUnified(source, customFieldMappings);
+      return await this.mapSingleTaskToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((task) =>
-        this.mapSingleTaskToUnified(task, customFieldMappings),
+        this.mapSingleTaskToUnified(task, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleTaskToUnified(
     task: CloseTaskOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTaskOutput> {
+  ): Promise<UnifiedCrmTaskOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -93,10 +99,11 @@ export class CloseTaskMapper implements ITaskMapper {
     if (task.assigned_to) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         task.assigned_to,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -104,7 +111,7 @@ export class CloseTaskMapper implements ITaskMapper {
     if (task.contact_id) {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         task.contact_id,
-        'close',
+        connectionId,
       );
       if (contact_id) {
         opts = {
@@ -116,7 +123,7 @@ export class CloseTaskMapper implements ITaskMapper {
     if (task.lead_id) {
       const lead_id = await this.utils.getCompanyUuidFromRemoteId(
         task.lead_id,
-        'close',
+        connectionId,
       );
       if (lead_id) {
         opts = {
@@ -128,14 +135,15 @@ export class CloseTaskMapper implements ITaskMapper {
 
     return {
       remote_id: task.id,
-      subject: '',
+      remote_data: task,
+      subject: null,
       content: task.text,
       status: task?.is_complete ? 'COMPLETED' : 'PENDING',
       due_date: new Date(task.due_date),
-      finished_date: task.finished_date ? new Date(task.finished_date) : '',
+      finished_date: task.finished_date ? new Date(task.finished_date) : null,
       field_mappings,
       ...opts,
-      // Additional fields mapping based on UnifiedTaskOutput structure
+      // Additional fields mapping based on UnifiedCrmTaskOutput structure
     };
   }
 }

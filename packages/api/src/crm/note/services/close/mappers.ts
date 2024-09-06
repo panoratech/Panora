@@ -1,11 +1,11 @@
 import { CloseNoteInput, CloseNoteOutput } from './types';
 import {
-  UnifiedNoteInput,
-  UnifiedNoteOutput,
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -14,14 +14,14 @@ export class CloseNoteMapper implements INoteMapper {
     this.mappersRegistry.registerService('crm', 'note', 'close', this);
   }
   async desunify(
-    source: UnifiedNoteInput,
+    source: UnifiedCrmNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<CloseNoteInput> {
     const result: CloseNoteInput = {
-      note_html: source.content,
+      note: source.content,
     };
 
     if (source.company_id) {
@@ -49,29 +49,35 @@ export class CloseNoteMapper implements INoteMapper {
 
   async unify(
     source: CloseNoteOutput | CloseNoteOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
+  ): Promise<UnifiedCrmNoteOutput | UnifiedCrmNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleNoteToUnified(source, customFieldMappings);
+      return await this.mapSingleNoteToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((note) =>
-        this.mapSingleNoteToUnified(note, customFieldMappings),
+        this.mapSingleNoteToUnified(note, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleNoteToUnified(
     note: CloseNoteOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput> {
+  ): Promise<UnifiedCrmNoteOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -83,10 +89,11 @@ export class CloseNoteMapper implements INoteMapper {
     if (note.created_by || note.user_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         note.created_by || note.user_id,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
       }
@@ -94,7 +101,7 @@ export class CloseNoteMapper implements INoteMapper {
     if (note.contact_id) {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         note.contact_id,
-        'close',
+        connectionId,
       );
       if (contact_id) {
         opts = {
@@ -106,7 +113,7 @@ export class CloseNoteMapper implements INoteMapper {
     if (note.lead_id) {
       const lead_id = await this.utils.getCompanyUuidFromRemoteId(
         note.lead_id,
-        'close',
+        connectionId,
       );
       if (lead_id) {
         opts = {
@@ -117,6 +124,7 @@ export class CloseNoteMapper implements INoteMapper {
     }
     return {
       remote_id: note.id,
+      remote_data: note,
       content: note.note_html,
       field_mappings,
       ...opts,

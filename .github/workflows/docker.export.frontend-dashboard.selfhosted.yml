@@ -29,14 +29,12 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: ./apps/client-ts/Dockerfile
+          file: ./apps/webapp/Dockerfile
           push: true
           tags: panoradotdev/frontend-webapp:selfhosted
           build-args: |
             NEXT_PUBLIC_BACKEND_DOMAIN=${{ secrets.NEXT_PUBLIC_BACKEND_DOMAIN }}
             NEXT_PUBLIC_MAGIC_LINK_DOMAIN=${{ secrets.NEXT_PUBLIC_MAGIC_LINK_DOMAIN }}
-            NEXT_PUBLIC_STYTCH_PROJECT_ID=${{ secrets.NEXT_PUBLIC_STYTCH_PROJECT_ID }}
-            NEXT_PUBLIC_STYTCH_SECRET=${{ secrets.NEXT_PUBLIC_STYTCH_SECRET }}
-            NEXT_PUBLIC_STYTCH_PROJECT_ENV=${{ secrets.NEXT_PUBLIC_STYTCH_PROJECT_ENV }}
-            NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN=${{ secrets.NEXT_PUBLIC_STYTCH_PUBLIC_TOKEN }}
             NEXT_PUBLIC_DISTRIBUTION=${{ env.DISTRIBUTION }}
+            NEXT_PUBLIC_REDIRECT_WEBHOOK_INGRESS=${{ env.NEXT_PUBLIC_REDIRECT_WEBHOOK_INGRESS }}
+            NEXT_PUBLIC_WEBAPP_DOMAIN= ${{env.NEXT_PUBLIC_WEBAPP_DOMAIN}}

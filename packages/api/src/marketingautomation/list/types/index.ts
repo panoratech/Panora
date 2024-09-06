@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedListInput, UnifiedListOutput } from './model.unified';
+import { UnifiedMarketingautomationListInput, UnifiedMarketingautomationListOutput } from './model.unified';
 import { OriginalListOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IListService {
 
 export interface IListMapper {
   desunify(
-    source: UnifiedListInput,
+    source: UnifiedMarketingautomationListInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +26,10 @@ export interface IListMapper {
 
   unify(
     source: OriginalListOutput | OriginalListOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedListOutput | UnifiedListOutput[];
+  ): Promise<UnifiedMarketingautomationListOutput | UnifiedMarketingautomationListOutput[]>;
 }

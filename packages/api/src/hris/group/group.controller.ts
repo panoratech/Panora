@@ -7,8 +7,11 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,14 +19,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { GroupService } from './services/group.service';
-import { UnifiedGroupInput, UnifiedGroupOutput } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('hris/group')
-@Controller('hris/group')
+import { GroupService } from './services/group.service';
+import {
+  UnifiedHrisGroupInput,
+  UnifiedHrisGroupOutput,
+} from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+
+@ApiTags('hris/groups')
+@Controller('hris/groups')
 export class GroupController {
   constructor(
     private readonly groupService: GroupService,
@@ -34,8 +47,8 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getGroups',
-    summary: 'List a batch of Groups',
+    operationId: 'listHrisGroups',
+    summary: 'List Groups',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -43,28 +56,28 @@ export class GroupController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiCustomResponse(UnifiedGroupOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedHrisGroupOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getGroups(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.groupService.getGroups(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -72,112 +85,49 @@ export class GroupController {
   }
 
   @ApiOperation({
-    operationId: 'getGroup',
-    summary: 'Retrieve a Group',
-    description: 'Retrieve a group from any connected Hris software',
+    operationId: 'retrieveHrisGroup',
+    summary: 'Retrieve Group',
+    description: 'Retrieve a Group from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the group you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedGroupOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedHrisGroupOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getGroup(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.groupService.getGroup(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addGroup',
-    summary: 'Create a Group',
-    description: 'Create a group in any supported Hris software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedGroupInput })
-  @ApiCustomResponse(UnifiedGroupOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addGroup(
-    @Body() unifiedGroupData: UnifiedGroupInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.groupService.addGroup(
-        unifiedGroupData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addGroups',
-    summary: 'Add a batch of Groups',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedGroupInput, isArray: true })
-  @ApiCustomResponse(UnifiedGroupOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addGroups(
-    @Body() unfiedGroupData: UnifiedGroupInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.groupService.batchAddGroups(
-        unfiedGroupData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.groupService.getGroup(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

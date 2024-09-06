@@ -1,11 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
-
-export class PassThroughResponse {
-  @ApiProperty()
-  url: string;
-  @ApiProperty()
+type BaseResponse = {
   status: number;
-  @ApiProperty()
+  statusText: string;
+  headers: any;
   data: any;
-  // Define the properties here
-}
+};
+
+export type PassthroughResponse =
+  | BaseResponse
+  | { statusCode: number; retryId: string };

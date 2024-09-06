@@ -1,7 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedInvoiceInput, UnifiedInvoiceOutput } from './model.unified';
+import {
+  UnifiedAccountingInvoiceInput,
+  UnifiedAccountingInvoiceOutput,
+} from './model.unified';
 import { OriginalInvoiceOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IInvoiceService {
   addInvoice(
@@ -9,15 +13,12 @@ export interface IInvoiceService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalInvoiceOutput>>;
 
-  syncInvoices(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalInvoiceOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalInvoiceOutput[]>>;
 }
 
 export interface IInvoiceMapper {
   desunify(
-    source: UnifiedInvoiceInput,
+    source: UnifiedAccountingInvoiceInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +27,10 @@ export interface IInvoiceMapper {
 
   unify(
     source: OriginalInvoiceOutput | OriginalInvoiceOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedInvoiceOutput | UnifiedInvoiceOutput[];
+  ): Promise<UnifiedAccountingInvoiceOutput | UnifiedAccountingInvoiceOutput[]>;
 }

@@ -9,6 +9,7 @@ import { TagModule } from './tag/tag.module';
 import { TeamModule } from './team/team.module';
 import { CollectionModule } from './collection/collection.module';
 import { TicketingWebhookHandlerModule } from './@webhook/handler.module';
+import { TicketingUnificationService } from './@lib/@unification';
 
 @Module({
   imports: [
@@ -23,8 +24,7 @@ import { TicketingWebhookHandlerModule } from './@webhook/handler.module';
     CollectionModule,
     TicketingWebhookHandlerModule,
   ],
-  providers: [],
-  controllers: [],
+  providers: [TicketingUnificationService],
   exports: [
     TicketModule,
     CommentModule,

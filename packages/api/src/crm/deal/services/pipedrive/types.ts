@@ -9,15 +9,17 @@ export interface PipedriveDeal {
     active_flag: boolean;
     value: number;
   };
-  user_id: {
-    id: number;
-    name: string;
-    email: string;
-    has_pic: boolean;
-    pic_hash: null | string;
-    active_flag: boolean;
-    value: number;
-  };
+  user_id:
+    | {
+        id: number;
+        name: string;
+        email: string;
+        has_pic: boolean;
+        pic_hash: null | string;
+        active_flag: boolean;
+        value: number;
+      }
+    | number;
   person_id: {
     active_flag: boolean;
     name: string;
@@ -25,15 +27,17 @@ export interface PipedriveDeal {
     phone: { label: string; value: string; primary: boolean }[];
     value: number;
   };
-  org_id: {
-    name: string;
-    people_count: number;
-    owner_id: number;
-    address: string;
-    active_flag: boolean;
-    cc_email: string;
-    value: number;
-  };
+  org_id:
+    | {
+        name: string;
+        people_count: number;
+        owner_id: number;
+        address: string;
+        active_flag: boolean;
+        cc_email: string;
+        value: number;
+      }
+    | number;
   stage_id: number;
   title: string;
   value: number;

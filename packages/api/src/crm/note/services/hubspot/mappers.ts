@@ -1,36 +1,82 @@
-import { HubspotNoteInput, HubspotNoteOutput } from './types';
-import {
-  UnifiedNoteInput,
-  UnifiedNoteOutput,
-} from '@crm/note/types/model.unified';
-import { INoteMapper } from '@crm/note/types';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { INoteMapper } from '@crm/note/types';
+import {
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
+} from '@crm/note/types/model.unified';
 import { Injectable } from '@nestjs/common';
+import { HubspotNoteInput, HubspotNoteOutput } from './types';
 
 @Injectable()
 export class HubspotNoteMapper implements INoteMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
     this.mappersRegistry.registerService('crm', 'note', 'hubspot', this);
   }
-
   async desunify(
-    source: UnifiedNoteInput,
+    source: UnifiedCrmNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<HubspotNoteInput> {
-    const result: HubspotNoteInput = {
-      hs_note_body: source.content,
-      hs_timestamp: new Date().toISOString(), // Placeholder for timestamp
+    const result: any = {
+      properties: {
+        hs_note_body: source.content,
+        hs_timestamp: new Date().toISOString(),
+      },
     };
 
     if (source.user_id) {
       const owner_id = await this.utils.getRemoteIdFromUserUuid(source.user_id);
       if (owner_id) {
-        result.hubspot_owner_id = owner_id;
+        result.properties.hubspot_owner_id = owner_id;
       }
+    }
+    if (source.deal_id) {
+      result.associations = result.associations ? [...result.associations] : [];
+      const id = await this.utils.getRemoteIdFromDealUuid(source.deal_id);
+      result.associations.push({
+        to: {
+          id: id,
+        },
+        types: [
+          {
+            associationCategory: 'HUBSPOT_DEFINED',
+            associationTypeId: 214,
+          },
+        ],
+      });
+    }
+    if (source.contact_id) {
+      result.associations = result.associations ? [...result.associations] : [];
+      const id = await this.utils.getRemoteIdFromContactUuid(source.contact_id);
+      result.associations.push({
+        to: {
+          id: id,
+        },
+        types: [
+          {
+            associationCategory: 'HUBSPOT_DEFINED',
+            associationTypeId: 202,
+          },
+        ],
+      });
+    }
+    if (source.company_id) {
+      result.associations = result.associations ? [...result.associations] : [];
+      const id = await this.utils.getRemoteIdFromCompanyUuid(source.company_id);
+      result.associations.push({
+        to: {
+          id: id,
+        },
+        types: [
+          {
+            associationCategory: 'HUBSPOT_DEFINED',
+            associationTypeId: 190,
+          },
+        ],
+      });
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -49,29 +95,35 @@ export class HubspotNoteMapper implements INoteMapper {
 
   async unify(
     source: HubspotNoteOutput | HubspotNoteOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
+  ): Promise<UnifiedCrmNoteOutput | UnifiedCrmNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleNoteToUnified(source, customFieldMappings);
+      return await this.mapSingleNoteToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((note) =>
-        this.mapSingleNoteToUnified(note, customFieldMappings),
+        this.mapSingleNoteToUnified(note, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleNoteToUnified(
     note: HubspotNoteOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput> {
+  ): Promise<UnifiedCrmNoteOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -83,17 +135,42 @@ export class HubspotNoteMapper implements INoteMapper {
     if (note.properties.hubspot_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         note.properties.hubspot_owner_id,
-        'hubspot',
+        connectionId,
       );
       if (owner_id) {
         opts = {
+          ...opts,
           user_id: owner_id,
         };
+      }
+    }
+    if (note.associations) {
+      if (note.associations.deals) {
+        const remote_id = note.associations.deals.results[0].id;
+        opts.deal_id = await this.utils.getDealUuidFromRemoteId(
+          remote_id,
+          connectionId,
+        );
+      }
+      if (note.associations.companies) {
+        const remote_id = note.associations.companies.results[0].id;
+        opts.company_id = await this.utils.getCompanyUuidFromRemoteId(
+          remote_id,
+          connectionId,
+        );
+      }
+      if (note.associations.contacts) {
+        const remote_id = note.associations.contacts.results[0].id;
+        opts.contact_id = await this.utils.getContactUuidFromRemoteId(
+          remote_id,
+          connectionId,
+        );
       }
     }
 
     return {
       remote_id: note.id,
+      remote_data: note,
       content: note.properties.hs_note_body,
       field_mappings,
       ...opts,

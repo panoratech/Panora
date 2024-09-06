@@ -7,8 +7,11 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,17 +19,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EmployeePayrollRunService } from './services/employeepayrollrun.service';
 import {
-  UnifiedEmployeePayrollRunInput,
-  UnifiedEmployeePayrollRunOutput,
+  UnifiedHrisEmployeepayrollrunInput,
+  UnifiedHrisEmployeepayrollrunOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('hris/employeepayrollrun')
-@Controller('hris/employeepayrollrun')
+@ApiTags('hris/employeepayrollruns')
+@Controller('hris/employeepayrollruns')
 export class EmployeePayrollRunController {
   constructor(
     private readonly employeepayrollrunService: EmployeePayrollRunService,
@@ -37,8 +47,8 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployeePayrollRuns',
-    summary: 'List a batch of EmployeePayrollRuns',
+    operationId: 'listHrisEmployeePayrollRun',
+    summary: 'List Employee Payroll Runs',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,28 +56,28 @@ export class EmployeePayrollRunController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedHrisEmployeepayrollrunOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getEmployeePayrollRuns(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.employeepayrollrunService.getEmployeePayrollRuns(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -75,116 +85,50 @@ export class EmployeePayrollRunController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployeePayrollRun',
-    summary: 'Retrieve a EmployeePayrollRun',
+    operationId: 'retrieveHrisEmployeePayrollRun',
+    summary: 'Retrieve Employee Payroll Run',
     description:
-      'Retrieve a employeepayrollrun from any connected Hris software',
+      'Retrieve Employee Payroll Run from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the employeepayrollrun you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedHrisEmployeepayrollrunOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getEmployeePayrollRun(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
     return this.employeepayrollrunService.getEmployeePayrollRun(
       id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
       remote_data,
     );
-  }
-
-  @ApiOperation({
-    operationId: 'addEmployeePayrollRun',
-    summary: 'Create a EmployeePayrollRun',
-    description: 'Create a employeepayrollrun in any supported Hris software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedEmployeePayrollRunInput })
-  @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addEmployeePayrollRun(
-    @Body() unifiedEmployeePayrollRunData: UnifiedEmployeePayrollRunInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.employeepayrollrunService.addEmployeePayrollRun(
-        unifiedEmployeePayrollRunData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addEmployeePayrollRuns',
-    summary: 'Add a batch of EmployeePayrollRuns',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedEmployeePayrollRunInput, isArray: true })
-  @ApiCustomResponse(UnifiedEmployeePayrollRunOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addEmployeePayrollRuns(
-    @Body() unfiedEmployeePayrollRunData: UnifiedEmployeePayrollRunInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.employeepayrollrunService.batchAddEmployeePayrollRuns(
-        unfiedEmployeePayrollRunData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
   }
 }

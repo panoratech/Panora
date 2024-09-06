@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,17 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { MessageService } from './services/message.service';
 import {
-  UnifiedMessageInput,
-  UnifiedMessageOutput,
+  UnifiedMarketingautomationMessageInput,
+  UnifiedMarketingautomationMessageOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('marketingautomation/message')
-@Controller('marketingautomation/message')
+
+@ApiTags('marketingautomation/messages')
+@Controller('marketingautomation/messages')
 export class MessageController {
   constructor(
     private readonly messageService: MessageService,
@@ -37,8 +46,8 @@ export class MessageController {
   }
 
   @ApiOperation({
-    operationId: 'getMessages',
-    summary: 'List a batch of Messages',
+    operationId: 'listMarketingautomationMessages',
+    summary: 'List Messages',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,29 +55,27 @@ export class MessageController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiCustomResponse(UnifiedMessageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedMarketingautomationMessageOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getMessages(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.messageService.getMessages(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -76,16 +83,17 @@ export class MessageController {
   }
 
   @ApiOperation({
-    operationId: 'getMessage',
-    summary: 'Retrieve a Message',
+    operationId: 'retrieveMarketingautomationMessage',
+    summary: 'Retrieve Messages',
     description:
-      'Retrieve a message from any connected Marketingautomation software',
+      'Retrieve Messages from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the message you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -93,100 +101,33 @@ export class MessageController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedMessageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedMarketingautomationMessageOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getMessage(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.messageService.getMessage(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addMessage',
-    summary: 'Create a Message',
-    description:
-      'Create a message in any supported Marketingautomation software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedMessageInput })
-  @ApiCustomResponse(UnifiedMessageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addMessage(
-    @Body() unifiedMessageData: UnifiedMessageInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.messageService.addMessage(
-        unifiedMessageData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addMessages',
-    summary: 'Add a batch of Messages',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedMessageInput, isArray: true })
-  @ApiCustomResponse(UnifiedMessageOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addMessages(
-    @Body() unfiedMessageData: UnifiedMessageInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.messageService.batchAddMessages(
-        unfiedMessageData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.messageService.getMessage(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

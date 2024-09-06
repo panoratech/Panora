@@ -1,16 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { ICommentService } from '@ticketing/comment/types';
-import { TicketingObject } from '@ticketing/@lib/@types';
+import { SyncParam } from '@@core/utils/types/interface';
 import { OriginalCommentOutput } from '@@core/utils/types/original/original.ticketing';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ICommentService } from '@ticketing/comment/types';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskCommentInput, ZendeskCommentOutput } from './types';
-import { EnvironmentService } from '@@core/environment/environment.service';
 @Injectable()
 export class ZendeskService implements ICommentService {
   constructor(
@@ -19,6 +20,7 @@ export class ZendeskService implements ICommentService {
     private env: EnvironmentService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.comment.toUpperCase() + ':' + ZendeskService.name,
@@ -66,13 +68,13 @@ export class ZendeskService implements ICommentService {
                 `tcg_attachment not found for uuid ${uuid}`,
               );
 
-            //TODO:; fetch the right file from AWS s3
+            //TODO: fetch the right file from AWS s3
             const s3File = '';
-            const url = `${connection.account_url}/uploads.json?filename=${res.file_name}`;
+            const url = `${connection.account_url}/v2/uploads.json?filename=${res.file_name}`;
 
             const resp = await axios.get(url, {
               headers: {
-                'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
+                'Content-Type': this.utils.getMimeType(res.file_name),
                 Authorization: `Bearer ${this.cryptoService.decrypt(
                   connection.access_token,
                 )}`,
@@ -94,7 +96,7 @@ export class ZendeskService implements ICommentService {
 
       //to add a comment on Zendesk you must update a ticket using the Ticket API
       const resp = await axios.put(
-        `${connection.account_url}/tickets/${remoteIdTicket}.json`,
+        `${connection.account_url}/v2/tickets/${remoteIdTicket}.json`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -114,20 +116,13 @@ export class ZendeskService implements ICommentService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.comment,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
-  async syncComments(
-    linkedUserId: string,
-    id_ticket: string,
-  ): Promise<ApiResponse<OriginalCommentOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<OriginalCommentOutput[]>> {
     try {
+      const { linkedUserId, id_ticket } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -138,7 +133,7 @@ export class ZendeskService implements ICommentService {
       //retrieve ticket remote id so we can retrieve the comments in the original software
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
-          id_tcg_ticket: id_ticket,
+          id_tcg_ticket: id_ticket as string,
         },
         select: {
           remote_id: true,
@@ -146,7 +141,7 @@ export class ZendeskService implements ICommentService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/tickets/${ticket.remote_id}/comments.json`,
+        `${connection.account_url}/v2/tickets/${ticket.remote_id}/comments.json`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -164,13 +159,7 @@ export class ZendeskService implements ICommentService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.comment,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

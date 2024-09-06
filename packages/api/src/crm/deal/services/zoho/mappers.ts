@@ -1,20 +1,29 @@
 import { ZohoDealInput, ZohoDealOutput } from './types';
 import {
-  UnifiedDealInput,
-  UnifiedDealOutput,
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { CrmObject } from '@crm/@lib/@types';
+import { UnifiedCrmStageOutput } from '@crm/stage/types/model.unified';
+import { ZohoStageOutput } from '@crm/stage/services/zoho/types';
+import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class ZohoDealMapper implements IDealMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService('crm', 'deal', 'zoho', this);
   }
   async desunify(
-    source: UnifiedDealInput,
+    source: UnifiedCrmDealInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,24 +35,20 @@ export class ZohoDealMapper implements IDealMapper {
       Amount: source.amount,
     };
     if (source.company_id) {
-      result.Account_Name.id = await this.utils.getRemoteIdFromCompanyUuid(
-        source.company_id,
-      );
-      result.Account_Name.name = await this.utils.getCompanyNameFromUuid(
-        source.company_id,
-        'zoho',
-      );
+      result.Account_Name = {
+        id: await this.utils.getRemoteIdFromCompanyUuid(source.company_id),
+        name: await this.utils.getCompanyNameFromUuid(source.company_id),
+      };
     }
     if (source.stage_id) {
       result.Stage = await this.utils.getStageNameFromStageUuid(
         source.stage_id,
-        'zoho',
       );
     }
     if (source.user_id) {
-      result.Owner.id = await this.utils.getRemoteIdFromUserUuid(
-        source.user_id,
-      );
+      result.Owner = {
+        id: await this.utils.getRemoteIdFromUserUuid(source.user_id),
+      } as any;
     }
 
     if (customFieldMappings && source.field_mappings) {
@@ -62,52 +67,80 @@ export class ZohoDealMapper implements IDealMapper {
 
   async unify(
     source: ZohoDealOutput | ZohoDealOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
+  ): Promise<UnifiedCrmDealOutput | UnifiedCrmDealOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleDealToUnified(source, customFieldMappings);
+      return await this.mapSingleDealToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((deal) =>
-        this.mapSingleDealToUnified(deal, customFieldMappings),
+        this.mapSingleDealToUnified(deal, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleDealToUnified(
     deal: ZohoDealOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedDealOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
         field_mappings[mapping.slug] = deal[mapping.remote_id];
       }
     }
-    const res: UnifiedDealOutput = {
+    const res: UnifiedCrmDealOutput = {
       remote_id: deal.id,
+      remote_data: deal,
       name: deal.Deal_Name,
-      description: deal.Description,
+      description: deal.Description ?? '', // todo null
       amount: deal.Amount,
       field_mappings,
     };
-    if (deal.Owner.id) {
+
+    if (deal.Stage) {
+      // we insert right way inside our db as there are no endpoint to do so in the Zoho api
+      const stage = await this.ingestService.ingestData<
+        UnifiedCrmStageOutput,
+        ZohoStageOutput
+      >(
+        [
+          {
+            Stage_Name: deal.Stage,
+          },
+        ],
+        'zoho',
+        connectionId,
+        'crm',
+        CrmObject.stage,
+        [],
+      );
+      res.stage_id = stage[0].id_crm_deals_stage;
+    }
+
+    if (deal.Owner && deal.Owner.id) {
       res.user_id = await this.utils.getUserUuidFromRemoteId(
         deal.Owner.id,
-        'zoho',
+        connectionId,
       );
     }
-    if (deal.Account_Name.id) {
+    if (deal.Account_Name && deal.Account_Name.id) {
       res.company_id = await this.utils.getCompanyUuidFromRemoteId(
         deal.Account_Name.id,
-        'zoho',
+        connectionId,
       );
     }
     return res;

@@ -1,12 +1,13 @@
 import { CloseCompanyInput, CloseCompanyOutput } from './types';
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { getCountryCode, getCountryName } from '@@core/utils/types';
 
 @Injectable()
 export class CloseCompanyMapper implements ICompanyMapper {
@@ -15,7 +16,7 @@ export class CloseCompanyMapper implements ICompanyMapper {
   }
 
   async desunify(
-    source: UnifiedCompanyInput,
+    source: UnifiedCrmCompanyInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -28,6 +29,7 @@ export class CloseCompanyMapper implements ICompanyMapper {
         address_2: address.street_2,
         city: address.city,
         state: address.state,
+        country: getCountryCode(address.country),
         zipcode: address.postal_code,
         label: address.address_type,
       })) as CloseCompanyInput['addresses'],
@@ -48,40 +50,50 @@ export class CloseCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: CloseCompanyOutput | CloseCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
+  ): Promise<UnifiedCrmCompanyOutput | UnifiedCrmCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of CloseCompanyOutput
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: CloseCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
-        field_mappings[mapping.slug] = company[mapping.remote_id];
+        field_mappings[mapping.slug] = company[`custom.${mapping.remote_id}`];
       }
     }
     let opts: any = {};
     if (company?.created_by || company?.custom?.close_owner_id) {
       const owner_id = await this.utils.getUserUuidFromRemoteId(
         (company?.created_by || company?.custom?.close_owner_id) as string,
-        'close',
+        connectionId,
       );
       if (owner_id) {
         opts = {
@@ -91,20 +103,19 @@ export class CloseCompanyMapper implements ICompanyMapper {
     }
     return {
       remote_id: company.id,
+      remote_data: company,
       name: company.name,
-      industry: company?.custom?.Industry || '',
-      number_of_employees: company?.custom?.employees || 0, // Placeholder, as there's no direct mapping provided
+      number_of_employees: company?.custom?.employees || null,
       addresses: company?.addresses?.map((address) => ({
         street_1: address.address_1,
         street_2: address.address_2,
         city: address.city,
         state: address.state,
         postal_code: address.zipcode,
-        country: address.country,
+        country: getCountryName(address.country) || address.country,
         address_type: address.label,
-        owner_type: 'company',
-      })), // Assuming 'street', 'city', 'state', 'postal_code', 'country' are properties in company.properties
-      phone_numbers: [],
+        owner_type: 'COMPANY',
+      })),
       field_mappings,
       ...opts,
     };

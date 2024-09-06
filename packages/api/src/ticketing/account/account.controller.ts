@@ -8,23 +8,27 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { AccountService } from './services/account.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { UnifiedAccountOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { UnifiedTicketingAccountOutput } from './types/model.unified';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
+
 @ApiTags('ticketing/accounts')
 @Controller('ticketing/accounts')
 export class AccountController {
@@ -37,8 +41,8 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAccounts',
-    summary: 'List a batch of Accounts',
+    operationId: 'listTicketingAccount',
+    summary: 'List  Accounts',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,24 +50,26 @@ export class AccountController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedAccountOutput)
+  @ApiPaginatedResponse(UnifiedTicketingAccountOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getAccounts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, pageSize, cursor } = query;
+      const { remote_data, limit, cursor } = query;
       return this.accountService.getAccounts(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
-        pageSize,
+        limit,
         remote_data,
         cursor,
       );
@@ -73,9 +79,9 @@ export class AccountController {
   }
 
   @ApiOperation({
-    operationId: 'getTicketingAccount',
-    summary: 'Retrieve an Account',
-    description: 'Retrieve an account from any connected Ticketing software',
+    operationId: 'retrieveTicketingAccount',
+    summary: 'Retrieve Accounts',
+    description: 'Retrieve Accounts from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
@@ -90,13 +96,31 @@ export class AccountController {
     description:
       'Set to true to include data from the original Ticketing software.',
   })
-  @ApiCustomResponse(UnifiedAccountOutput)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedTicketingAccountOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getAccount(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.accountService.getAccount(id, remote_data);
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.accountService.getAccount(
+      id,
+      remoteSource,
+      linkedUserId,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

@@ -3,12 +3,13 @@ import { IUserService } from '@crm/user/types';
 import { CrmObject } from '@crm/@lib/@types';
 import { ZohoUserOutput } from './types';
 import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZohoService implements IUserService {
@@ -24,10 +25,10 @@ export class ZohoService implements IUserService {
     this.registry.registerService('zoho', this);
   }
 
-  async syncUsers(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoUserOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoUserOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -36,7 +37,7 @@ export class ZohoService implements IUserService {
         },
       });
       const resp = await axios.get(
-        `${connection.account_url}/users?type=AllUsers`,
+        `${connection.account_url}/v5/users?type=AllUsers`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -46,21 +47,14 @@ export class ZohoService implements IUserService {
           },
         },
       );
-      //this.logger.log('CONTACTS ZOHO ' + JSON.stringify(resp.data.data));
       this.logger.log(`Synced zoho users !`);
       return {
-        data: resp.data.data,
+        data: resp.data.users,
         message: 'Zoho users retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.user,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

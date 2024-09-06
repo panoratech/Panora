@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IEngagementService } from '@crm/engagement/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { ZendeskEngagementInput, ZendeskEngagementOutput } from './types';
-import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IEngagementService } from '@crm/engagement/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
+import { ZendeskEngagementInput, ZendeskEngagementOutput } from './types';
 @Injectable()
 export class ZendeskService implements IEngagementService {
   constructor(
@@ -41,13 +41,7 @@ export class ZendeskService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.engagement,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
   private async addCall(
@@ -63,7 +57,7 @@ export class ZendeskService implements IEngagementService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/engagements`,
+        `${connection.account_url}/v2/calls`,
         {
           data: engagementData,
         },
@@ -83,22 +77,15 @@ export class ZendeskService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.engagement_call,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncEngagements(
-    linkedUserId: string,
-    engagement_type: string,
-  ): Promise<ApiResponse<ZendeskEngagementOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskEngagementOutput[]>> {
     try {
-      switch (engagement_type) {
+      const { linkedUserId, engagement_type } = data;
+
+      switch (engagement_type as string) {
         case 'CALL':
           return this.syncCalls(linkedUserId);
         case 'MEETING':
@@ -109,13 +96,7 @@ export class ZendeskService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.engagement,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -129,7 +110,7 @@ export class ZendeskService implements IEngagementService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/calls`, {
+      const resp = await axios.get(`${connection.account_url}/v2/calls`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -148,13 +129,7 @@ export class ZendeskService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.engagement_call,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

@@ -1,11 +1,15 @@
 workflowVersion: 1.0.0
+speakeasyVersion: latest
 sources:
-    OpenAPI-Github-Main:
+    merge-code-samples-into-spec:
         inputs:
-            - location: https://raw.githubusercontent.com/panoratech/Panora/main/packages/api/swagger/swagger-spec.json
+            - location: registry.speakeasyapi.dev/panora/panora/panora-open-api-swagger
+        overlays:
+            - location: registry.speakeasyapi.dev/panora/panora/code-samples-typescript-my-first-target:main
+            - location: registry.speakeasyapi.dev/panora/panora/code-samples-python:main
+            - location: registry.speakeasyapi.dev/panora/panora/go-sdk:main
+            - location: registry.speakeasyapi.dev/panora/panora/code-samples-ruby:main
+        output: packages/api/swagger/openapi-with-code-samples.yaml
         registry:
-            location: registry.speakeasyapi.dev/panora/panora/open-api-github-main
-targets:
-    my-first-target:
-        target: typescript
-        source: OpenAPI-Github-Main
+            location: registry.speakeasyapi.dev/panora/panora/merge-code-samples-into-spec
+targets: {}

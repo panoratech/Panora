@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { ServiceRegistry } from '../registry.service';
+import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
 import { IContactService } from '@ticketing/contact/types';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
 import { FrontContactOutput } from './types';
 
 @Injectable()
@@ -24,13 +24,9 @@ export class FrontService implements IContactService {
     this.registry.registerService('front', this);
   }
 
-  async syncContacts(
-    linkedUserId: string,
-    remote_account_id: string,
-  ): Promise<ApiResponse<FrontContactOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<FrontContactOutput[]>> {
     try {
-      if (!remote_account_id)
-        throw new ReferenceError('remote account id not found');
+      const { linkedUserId, account_id, webhook_remote_identifier } = data;
 
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -39,17 +35,27 @@ export class FrontService implements IContactService {
           vertical: 'ticketing',
         },
       });
-
-      const resp = await axios.get(
-        `${connection.account_url}/accounts/${remote_account_id}/contacts`,
-        {
-          headers: {
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
+      /*let remote_account_id;
+      if (account_id) {
+        // account_id can either be the remote or the panora id
+        // if the call is made from real time webhook trigger then it is a remote id
+        const res = await this.prisma.tcg_accounts.findFirst({
+          where: {
+            id_tcg_account: account_id,
           },
+        });
+        if (res) {
+          remote_account_id = res.remote_id;
+        }
+      }*/
+
+      const resp = await axios.get(`${connection.account_url}/contacts`, {
+        headers: {
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
-      );
+      });
       this.logger.log(`Synced front contacts !`);
 
       return {
@@ -59,13 +65,6 @@ export class FrontService implements IContactService {
       };
     } catch (error) {
       throw error;
-      /*handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'front',
-        TicketingObject.contact,
-        ActionType.GET,
-      );*/
     }
   }
 }

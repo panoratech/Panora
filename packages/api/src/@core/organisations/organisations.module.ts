@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { OrganisationsService } from './organisations.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { OrganisationsController } from './organisations.controller';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
+import { OrganisationsService } from './organisations.service';
 
 @Module({
   providers: [OrganisationsService, LoggerService],

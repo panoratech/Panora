@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedEventInput, UnifiedEventOutput } from './model.unified';
+import { UnifiedMarketingautomationEventInput, UnifiedMarketingautomationEventOutput } from './model.unified';
 import { OriginalEventOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IEventService {
 
 export interface IEventMapper {
   desunify(
-    source: UnifiedEventInput,
+    source: UnifiedMarketingautomationEventInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +26,10 @@ export interface IEventMapper {
 
   unify(
     source: OriginalEventOutput | OriginalEventOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEventOutput | UnifiedEventOutput[];
+  ): Promise<UnifiedMarketingautomationEventOutput | UnifiedMarketingautomationEventOutput[]>;
 }

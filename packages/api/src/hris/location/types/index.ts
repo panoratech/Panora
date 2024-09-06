@@ -1,23 +1,19 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedLocationInput, UnifiedLocationOutput } from './model.unified';
+import {
+  UnifiedHrisLocationInput,
+  UnifiedHrisLocationOutput,
+} from './model.unified';
 import { OriginalLocationOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ILocationService {
-  addLocation(
-    locationData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalLocationOutput>>;
-
-  syncLocations(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalLocationOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalLocationOutput[]>>;
 }
 
 export interface ILocationMapper {
   desunify(
-    source: UnifiedLocationInput,
+    source: UnifiedHrisLocationInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +22,10 @@ export interface ILocationMapper {
 
   unify(
     source: OriginalLocationOutput | OriginalLocationOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedLocationOutput | UnifiedLocationOutput[];
+  ): Promise<UnifiedHrisLocationOutput | UnifiedHrisLocationOutput[]>;
 }

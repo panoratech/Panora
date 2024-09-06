@@ -1,11 +1,50 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiProperty,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { CoreSyncService } from './sync.service';
-import { LoggerService } from '../logger/logger.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('syncs')
-@Controller('syncs')
+export class ResyncStatusDto {
+  @ApiProperty({ type: Date, example: '', nullable: true })
+  timestamp: Date;
+
+  @ApiProperty({
+    type: String,
+    example: 'ticketing',
+    enum: [
+      'ticketing',
+      'ats',
+      'accounting',
+      'hris',
+      'crm',
+      'filestorage',
+      'ecommerce',
+      'marketingautomation',
+    ],
+    nullable: true,
+  })
+  vertical: string;
+
+  @ApiProperty({ type: String, example: 'gitlab', nullable: true })
+  provider: string;
+
+  @ApiProperty({
+    type: String,
+    example: 'success',
+    enum: ['success', 'fail'],
+    nullable: true,
+  })
+  status: string;
+}
+@ApiTags('sync')
+@Controller('sync')
 export class SyncController {
   constructor(
     private readonly syncService: CoreSyncService,
@@ -15,8 +54,23 @@ export class SyncController {
   }
 
   @ApiOperation({
-    operationId: 'getSyncStatus',
+    operationId: 'status',
     summary: 'Retrieve sync status of a certain vertical',
+  })
+  @ApiParam({
+    name: 'vertical',
+    type: String,
+    example: 'ticketing',
+    enum: [
+      'ticketing',
+      'marketingautomation',
+      'crm',
+      'filestorage',
+      'ats',
+      'hris',
+      'accounting',
+      'ecommerce',
+    ],
   })
   @ApiResponse({ status: 200 })
   @Get('status/:vertical')
@@ -29,12 +83,13 @@ export class SyncController {
     operationId: 'resync',
     summary: 'Resync common objects across a vertical',
   })
-  @ApiResponse({ status: 200 })
-  @UseGuards(ApiKeyAuthGuard)
-  @Get('resyncs/:vertical')
-  resync(@Param('vertical') vertical: string) {
-    // TODO: get the right user_id of the premium user using the api key
-    const user_id = '';
-    return this.syncService.resync(vertical, user_id);
+  @ApiPostCustomResponse(ResyncStatusDto)
+  @UseGuards(JwtAuthGuard)
+  @Post('resync')
+  async resync(
+    @Body() data: { vertical: string; provider: string; linkedUserId: string },
+  ) {
+    const { vertical, provider, linkedUserId } = data;
+    return await this.syncService.resync(vertical, provider, linkedUserId);
   }
 }

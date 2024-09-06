@@ -1,10 +1,10 @@
 import { ITagMapper } from '@ticketing/tag/types';
 import { ZendeskTagInput, ZendeskTagOutput } from './types';
 import {
-  UnifiedTagInput,
-  UnifiedTagOutput,
+  UnifiedTicketingTagInput,
+  UnifiedTicketingTagOutput,
 } from '@ticketing/tag/types/model.unified';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -14,7 +14,7 @@ export class ZendeskTagMapper implements ITagMapper {
     this.mappersRegistry.registerService('ticketing', 'tag', 'zendesk', this);
   }
   desunify(
-    source: UnifiedTagInput,
+    source: UnifiedTicketingTagInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -24,33 +24,32 @@ export class ZendeskTagMapper implements ITagMapper {
   }
 
   unify(
-    source: ZendeskTagOutput,
+    source: ZendeskTagOutput | ZendeskTagOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTagOutput | UnifiedTagOutput[] {
-    if (!source) return [];
+  ): UnifiedTicketingTagOutput | UnifiedTicketingTagOutput[] {
+    const sourcesArray = Array.isArray(source) ? source : [source];
 
-    return source.map((tag) =>
-      this.mapSingleTagToUnified(tag, customFieldMappings),
+    return sourcesArray.map((tag) =>
+      this.mapSingleTagToUnified(tag, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTagToUnified(
-    tag: string,
+    tag: ZendeskTagOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTagOutput {
-    const unifiedTag: UnifiedTagOutput = {
-      id: `zendesk_tag_uuid_${tag}`,
-      remote_id: `zendesk_tag_uuid_${tag}`,
-      // this is used so we can have a remote_id inside our Tag table
-      //this id is a fake id put in place as Zendesk does not store any uuid for it,it must not be onsidered the same as the uuid from panora which is stored also in this id field
-      // actually this fake id would be just used inside the sync function SHORT TERM and would be replaced in its final form by the real uuid inside Panora db
-      name: tag,
+  ): UnifiedTicketingTagOutput {
+    const unifiedTag: UnifiedTicketingTagOutput = {
+      remote_id: null,
+      remote_data: tag,
+      name: tag.name,
     };
 
     return unifiedTag;

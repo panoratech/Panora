@@ -1,10 +1,10 @@
 import { ZohoStageOutput, ZohoStageInput } from './types';
 import {
-  UnifiedStageInput,
-  UnifiedStageOutput,
+  UnifiedCrmStageInput,
+  UnifiedCrmStageOutput,
 } from '@crm/stage/types/model.unified';
 import { IStageMapper } from '@crm/stage/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
 
@@ -14,7 +14,7 @@ export class ZohoStageMapper implements IStageMapper {
     this.mappersRegistry.registerService('crm', 'stage', 'zoho', this);
   }
   desunify(
-    source: UnifiedStageInput,
+    source: UnifiedCrmStageInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,28 +25,38 @@ export class ZohoStageMapper implements IStageMapper {
 
   unify(
     source: ZohoStageOutput | ZohoStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedStageOutput | UnifiedStageOutput[] {
+  ): UnifiedCrmStageOutput | UnifiedCrmStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, customFieldMappings);
+      return this.mapSingleStageToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotStageOutput
     return source.map((stage) =>
-      this.mapSingleStageToUnified(stage, customFieldMappings),
+      this.mapSingleStageToUnified(stage, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleStageToUnified(
     stage: ZohoStageOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedStageOutput {
-    return;
+  ): UnifiedCrmStageOutput {
+    return {
+      remote_id: null,
+      remote_data: stage,
+      stage_name: stage.Stage_Name,
+    };
   }
 }

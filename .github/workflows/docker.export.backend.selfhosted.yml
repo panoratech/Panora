@@ -35,7 +35,7 @@ jobs:
           build-args: |
             PANORA_BASE_API_URL=${{ env.PANORA_BASE_API_URL }}
             DISTRIBUTION=${{ env.DISTRIBUTION }}
-            ENV=${{ ENV }}
+            ENV=${{ env.ENV }}
             DATABASE_URL=postgresql://${{env.POSTGRES_USER}}:${{secrets.POSTGRES_PASSWORD}}@${{env.POSTGRES_HOST}}:5432/${{env.POSTGRES_DB}}?ssl=false
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             REDIS_HOST=redis
@@ -50,3 +50,4 @@ jobs:
             ZENDESK_CLIENT_SECRET=${{ secrets.ZENDESK_CLIENT_SECRET }}
             ZENDESK_TICKETING_CLIENT_ID=${{ secrets.ZENDESK_TICKETING_CLIENT_ID }}
             ZENDESK_TICKETING_CLIENT_SECRET=${{ secrets.ZENDESK_TICKETING_CLIENT_SECRET }}
+            REDIRECT_TUNNEL_INGRESS=${{ env.REDIRECT_TUNNEL_INGRESS}}

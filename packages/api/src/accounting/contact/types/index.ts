@@ -1,7 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedContactInput, UnifiedContactOutput } from './model.unified';
+import {
+  UnifiedAccountingContactInput,
+  UnifiedAccountingContactOutput,
+} from './model.unified';
 import { OriginalContactOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IContactService {
   addContact(
@@ -9,15 +13,12 @@ export interface IContactService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalContactOutput>>;
 
-  syncContacts(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalContactOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalContactOutput[]>>;
 }
 
 export interface IContactMapper {
   desunify(
-    source: UnifiedContactInput,
+    source: UnifiedAccountingContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +27,10 @@ export interface IContactMapper {
 
   unify(
     source: OriginalContactOutput | OriginalContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput | UnifiedContactOutput[];
+  ): Promise<UnifiedAccountingContactOutput | UnifiedAccountingContactOutput[]>;
 }

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiResponse } from '@@core/utils/types';
 import { throwTypedError } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedAutomationInput,
-  UnifiedAutomationOutput,
+  UnifiedMarketingautomationAutomationInput,
+  UnifiedMarketingautomationAutomationOutput,
 } from '../types/model.unified';
 
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
@@ -27,36 +27,37 @@ export class AutomationService {
     this.logger.setContext(AutomationService.name);
   }
 
-  async batchAddAutomations(
-    unifiedAutomationData: UnifiedAutomationInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedAutomationOutput[]> {
-    return;
-  }
-
   async addAutomation(
-    unifiedAutomationData: UnifiedAutomationInput,
+    unifiedAutomationData: UnifiedMarketingautomationAutomationInput,
+    connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAutomationOutput> {
+  ): Promise<UnifiedMarketingautomationAutomationOutput> {
     return;
   }
 
   async getAutomation(
     id_automationing_automation: string,
+    linkedUserId: string,
+    integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAutomationOutput> {
+  ): Promise<UnifiedMarketingautomationAutomationOutput> {
     return;
   }
 
   async getAutomations(
+    connectionId: string,
+    projectId: string,
     integrationId: string,
     linkedUserId: string,
+    limit: number,
     remote_data?: boolean,
-  ): Promise<UnifiedAutomationOutput[]> {
+    cursor?: string,
+  ): Promise<UnifiedMarketingautomationAutomationOutput[]> {
     return;
   }
 }

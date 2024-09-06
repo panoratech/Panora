@@ -1,7 +1,7 @@
 import { Address, countryPhoneFormats, Email, Phone } from '@crm/@lib/@types';
 import { v4 as uuidv4 } from 'uuid';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 
 @Injectable()
 export class Utils {
@@ -14,6 +14,7 @@ export class Utils {
     if (email_addresses) {
       normalizedEmails = email_addresses.map((email) => ({
         ...email,
+        email_address: email.email_address ?? '',
         owner_type: email.owner_type ? email.owner_type : '',
         created_at: new Date(),
         modified_at: new Date(),
@@ -62,16 +63,18 @@ export class Utils {
   }
 
   normalizeAddresses(addresses: Address[]) {
-    const normalizedAddresses = addresses.map((addy) => ({
-      ...addy,
-      created_at: new Date(),
-      modified_at: new Date(),
-      id_crm_address: uuidv4(),
-      owner_type: addy.owner_type ? addy.owner_type : '',
-      address_type: addy.address_type === '' ? 'primary' : addy.address_type,
-    }));
-
-    return normalizedAddresses;
+    if (addresses) {
+      const normalizedAddresses = addresses.map((addy) => ({
+        ...addy,
+        created_at: new Date(),
+        modified_at: new Date(),
+        id_crm_address: uuidv4(),
+        owner_type: addy.owner_type ? addy.owner_type : '',
+        address_type: addy.address_type === '' ? 'primary' : addy.address_type,
+      }));
+      return normalizedAddresses;
+    }
+    return [];
   }
 
   async getRemoteIdFromUserUuid(uuid: string) {
@@ -84,6 +87,21 @@ export class Utils {
       // if (!res) throw new Error(`crm_user not found for uuid ${uuid}`);
       if (!res) return;
       return res.remote_id;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getEmailFromUserUuid(uuid: string) {
+    try {
+      const res = await this.prisma.crm_users.findFirst({
+        where: {
+          id_crm_user: uuid,
+        },
+      });
+      // if (!res) throw new Error(`crm_user not found for uuid ${uuid}`);
+      if (!res) return;
+      return res.email;
     } catch (error) {
       throw error;
     }
@@ -104,12 +122,12 @@ export class Utils {
     }
   }
 
-  async getUserUuidFromRemoteId(remote_id: string, remote_platform: string) {
+  async getUserUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.crm_users.findFirst({
         where: {
           remote_id: remote_id,
-          remote_platform: remote_platform,
+          id_connection: connection_id,
         },
       });
       if (!res) {
@@ -120,13 +138,28 @@ export class Utils {
       throw error;
     }
   }
+  async getStageUuidFromStageName(stage_name: string, connection_id: string) {
+    try {
+      const res = await this.prisma.crm_deals_stages.findFirst({
+        where: {
+          stage_name: stage_name,
+          id_connection: connection_id,
+        },
+      });
+      if (!res) {
+        return undefined;
+      }
+      return res.id_crm_deals_stage;
+    } catch (error) {
+      throw error;
+    }
+  }
 
-  async getCompanyNameFromUuid(id: string, remote_platform: string) {
+  async getCompanyNameFromUuid(id: string) {
     try {
       const res = await this.prisma.crm_companies.findFirst({
         where: {
           id_crm_company: id,
-          remote_platform: remote_platform,
         },
       });
 
@@ -139,12 +172,11 @@ export class Utils {
     }
   }
 
-  async getStageNameFromStageUuid(id: string, remote_platform: string) {
+  async getStageNameFromStageUuid(id: string) {
     try {
       const res = await this.prisma.crm_deals_stages.findFirst({
         where: {
           id_crm_deals_stage: id,
-          remote_platform: remote_platform,
         },
       });
       if (!res) return undefined;
@@ -171,12 +203,12 @@ export class Utils {
     }
   }
 
-  async getCompanyUuidFromRemoteId(remote_id: string, remote_platform: string) {
+  async getCompanyUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.crm_companies.findFirst({
         where: {
           remote_id: remote_id,
-          remote_platform: remote_platform,
+          id_connection: connection_id,
         },
       });
       if (!res) {
@@ -202,12 +234,12 @@ export class Utils {
     }
   }
 
-  async getStageUuidFromRemoteId(remote_id: string, remote_platform: string) {
+  async getStageUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.crm_deals_stages.findFirst({
         where: {
           remote_id: remote_id,
-          remote_platform: remote_platform,
+          id_connection: connection_id,
         },
       });
       if (!res) {
@@ -233,12 +265,12 @@ export class Utils {
     }
   }
 
-  async getContactUuidFromRemoteId(remote_id: string, remote_platform: string) {
+  async getContactUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.crm_contacts.findFirst({
         where: {
           remote_id: remote_id,
-          remote_platform: remote_platform,
+          id_connection: connection_id,
         },
       });
       if (!res) return undefined;
@@ -262,12 +294,12 @@ export class Utils {
     }
   }
 
-  async getDealUuidFromRemoteId(remote_id: string, remote_platform: string) {
+  async getDealUuidFromRemoteId(remote_id: string, connection_id: string) {
     try {
       const res = await this.prisma.crm_deals.findFirst({
         where: {
           remote_id: remote_id,
-          remote_platform: remote_platform,
+          id_connection: connection_id,
         },
       });
       if (!res) return undefined;

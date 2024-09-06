@@ -1,13 +1,13 @@
 import { Address } from '@crm/@lib/@types';
 import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
+  UnifiedCrmCompanyInput,
+  UnifiedCrmCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { ZendeskCompanyInput, ZendeskCompanyOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 
 @Injectable()
 export class ZendeskCompanyMapper implements ICompanyMapper {
@@ -16,7 +16,7 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
   }
 
   async desunify(
-    source: UnifiedCompanyInput,
+    source: UnifiedCrmCompanyInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -69,29 +69,39 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
 
   async unify(
     source: ZendeskCompanyOutput | ZendeskCompanyOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
+  ): Promise<UnifiedCrmCompanyOutput | UnifiedCrmCompanyOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleCompanyToUnified(source, customFieldMappings);
+      return this.mapSingleCompanyToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((company) =>
-        this.mapSingleCompanyToUnified(company, customFieldMappings),
+        this.mapSingleCompanyToUnified(
+          company,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleCompanyToUnified(
     company: ZendeskCompanyOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedCompanyOutput> {
+  ): Promise<UnifiedCrmCompanyOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -101,17 +111,17 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
 
     // Constructing the email and phone details
     const email_addresses = company.email
-      ? [{ email_address: company.email, email_address_type: 'primary' }]
-      : [];
+      ? [{ email_address: company.email, email_address_type: 'WORK' }]
+      : null;
     const phone_numbers = [];
 
     if (company.phone) {
-      phone_numbers.push({ phone_number: company.phone, phone_type: 'work' });
+      phone_numbers.push({ phone_number: company.phone, phone_type: 'WORK' });
     }
     if (company.mobile) {
       phone_numbers.push({
         phone_number: company.mobile,
-        phone_type: 'mobile',
+        phone_type: 'MOBILE',
       });
     }
 
@@ -119,10 +129,11 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
     if (company.owner_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(company.owner_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
         opts = {
+          ...opts,
           user_id: user_id,
         };
       }
@@ -138,12 +149,14 @@ export class ZendeskCompanyMapper implements ICompanyMapper {
 
     if (company.industry) {
       opts = {
+        ...opts,
         industry: company.industry,
       };
     }
 
     return {
       remote_id: String(company.id),
+      remote_data: company,
       name: company.name,
       email_addresses,
       phone_numbers,

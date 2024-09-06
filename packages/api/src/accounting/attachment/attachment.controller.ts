@@ -7,8 +7,11 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,17 +19,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { AttachmentService } from './services/attachment.service';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedAccountingAttachmentInput,
+  UnifiedAccountingAttachmentOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('accounting/attachment')
-@Controller('accounting/attachment')
+@ApiTags('accounting/attachments')
+@Controller('accounting/attachments')
 export class AttachmentController {
   constructor(
     private readonly attachmentService: AttachmentService,
@@ -37,8 +48,8 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAttachments',
-    summary: 'List a batch of Attachments',
+    operationId: 'listAccountingAttachments',
+    summary: 'List  Attachments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,29 +57,27 @@ export class AttachmentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedAccountingAttachmentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getAttachments(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.attachmentService.getAttachments(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -76,37 +85,58 @@ export class AttachmentController {
   }
 
   @ApiOperation({
-    operationId: 'getAccountingAttachment',
-    summary: 'Retrieve a Attachment',
-    description: 'Retrieve a attachment from any connected Accounting software',
+    operationId: 'retrieveAccountingAttachment',
+    summary: 'Retrieve Attachments',
+    description: 'Retrieve attachments from any connected Accounting software',
   })
   @ApiParam({
     name: 'id',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     required: true,
     type: String,
     description: 'id of the attachment you want to retrieve.',
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedAccountingAttachmentOutput)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getAttachment(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.attachmentService.getAttachment(id, remote_data);
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.attachmentService.getAttachment(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 
   @ApiOperation({
-    operationId: 'addAccountingAttachment',
-    summary: 'Create a Attachment',
-    description: 'Create a attachment in any supported Accounting software',
+    operationId: 'createAccountingAttachment',
+    summary: 'Create Attachments',
+    description: 'Create attachments in any supported Accounting software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -116,69 +146,30 @@ export class AttachmentController {
   })
   @ApiQuery({
     name: 'remote_data',
+    example: false,
     required: false,
     type: Boolean,
     description:
       'Set to true to include data from the original Accounting software.',
   })
-  @ApiBody({ type: UnifiedAttachmentInput })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiBody({ type: UnifiedAccountingAttachmentInput })
+  @ApiPostCustomResponse(UnifiedAccountingAttachmentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addAttachment(
-    @Body() unifiedAttachmentData: UnifiedAttachmentInput,
+    @Body() unifiedAttachmentData: UnifiedAccountingAttachmentInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.attachmentService.addAttachment(
         unifiedAttachmentData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addAccountingAttachments',
-    summary: 'Add a batch of Attachments',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Accounting software.',
-  })
-  @ApiBody({ type: UnifiedAttachmentInput, isArray: true })
-  @ApiCustomResponse(UnifiedAttachmentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addAttachments(
-    @Body() unfiedAttachmentData: UnifiedAttachmentInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.attachmentService.batchAddAttachments(
-        unfiedAttachmentData,
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

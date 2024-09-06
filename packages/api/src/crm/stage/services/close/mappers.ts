@@ -1,10 +1,10 @@
 import { CloseStageOutput, CloseStageInput } from './types';
 import {
-  UnifiedStageInput,
-  UnifiedStageOutput,
+  UnifiedCrmStageInput,
+  UnifiedCrmStageOutput,
 } from '@crm/stage/types/model.unified';
 import { IStageMapper } from '@crm/stage/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
 
@@ -14,7 +14,7 @@ export class CloseStageMapper implements IStageMapper {
     this.mappersRegistry.registerService('crm', 'stage', 'close', this);
   }
   desunify(
-    source: UnifiedStageInput,
+    source: UnifiedCrmStageInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,27 +25,33 @@ export class CloseStageMapper implements IStageMapper {
 
   unify(
     source: CloseStageOutput | CloseStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedStageOutput | UnifiedStageOutput[] {
+  ): UnifiedCrmStageOutput | UnifiedCrmStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, customFieldMappings);
+      return this.mapSingleStageToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of CloseStageOutput
     return source.map((stage) =>
-      this.mapSingleStageToUnified(stage, customFieldMappings),
+      this.mapSingleStageToUnified(stage, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleStageToUnified(
     stage: CloseStageOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedStageOutput {
+  ): UnifiedCrmStageOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -54,6 +60,7 @@ export class CloseStageMapper implements IStageMapper {
     }
     return {
       remote_id: stage.id,
+      remote_data: stage,
       stage_name: stage.new_status_label,
       field_mappings,
     };

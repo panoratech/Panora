@@ -1,7 +1,7 @@
 // validate-user.guard.ts
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { ValidateUserService } from '../services/validateUser.service';
+import { ValidateUserService } from '../services/validate-user.service';
 
 @Injectable()
 export class ValidateUserGuard implements CanActivate {

@@ -8,23 +8,26 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
   ApiHeader,
-  ApiBearerAuth,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { TeamService } from './services/team.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { UnifiedTeamOutput } from './types/model.unified';
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { UnifiedTicketingTeamOutput } from './types/model.unified';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
 @ApiTags('ticketing/teams')
 @Controller('ticketing/teams')
 export class TeamController {
@@ -37,8 +40,8 @@ export class TeamController {
   }
 
   @ApiOperation({
-    operationId: 'getTeams',
-    summary: 'List a batch of Teams',
+    operationId: 'listTicketingTeams',
+    summary: 'List  Teams',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,24 +49,26 @@ export class TeamController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedTeamOutput)
+  @ApiPaginatedResponse(UnifiedTicketingTeamOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async getTeams(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, pageSize, cursor } = query;
+      const { remote_data, limit, cursor } = query;
       return this.teamService.getTeams(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
-        pageSize,
+        limit,
         remote_data,
         cursor,
       );
@@ -73,15 +78,16 @@ export class TeamController {
   }
 
   @ApiOperation({
-    operationId: 'getTeam',
-    summary: 'Retrieve a Team',
-    description: 'Retrieve a team from any connected Ticketing software',
+    operationId: 'retrieveTicketingTeam',
+    summary: 'Retrieve Teams',
+    description: 'Retrieve Teams from any connected Ticketing software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the team you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -89,14 +95,33 @@ export class TeamController {
     type: Boolean,
     description:
       'Set to true to include data from the original Ticketing software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedTeamOutput)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedTicketingTeamOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getTeam(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.teamService.getTeam(id, remote_data);
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.teamService.getTeam(
+      id,
+      linkedUserId,
+      connectionId,
+      projectId,
+      remoteSource,
+      remote_data,
+    );
   }
 }

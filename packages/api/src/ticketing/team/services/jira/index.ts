@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ITeamService } from '@ticketing/team/types';
 import { JiraTeamOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class JiraService implements ITeamService {
@@ -24,10 +25,10 @@ export class JiraService implements ITeamService {
     this.registry.registerService('jira', this);
   }
 
-  async syncTeams(
-    linkedUserId: string,
-  ): Promise<ApiResponse<JiraTeamOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<JiraTeamOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -36,29 +37,26 @@ export class JiraService implements ITeamService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/user/groups`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const resp = await axios.get(
+        `${connection.account_url}/3/groups/picker`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
       this.logger.log(`Synced jira teams !`);
 
       return {
-        data: resp.data._results,
+        data: resp.data.groups,
         message: 'Jira teams retrieved',
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'jira',
-        TicketingObject.team,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

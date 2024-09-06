@@ -25,12 +25,20 @@ export interface HubspotContactOutput {
 }
 
 type HubspotPropertiesOuput = {
-  createdate: string;
-  email: string;
-  firstname: string;
-  hs_object_id: string;
-  lastmodifieddate: string;
-  lastname: string;
+  email?: string;
+  firstname?: string;
+  phone?: string;
+  lastname?: string;
+  city?: string;
+  country?: string;
+  zip?: string;
+  state?: string;
+  address?: string;
+  mobilephone?: string;
+  hubspot_owner_id?: string;
+  associatedcompanyid?: string;
+  fax?: string;
+  jobtitle?: string;
   [key: string]: string;
 };
 
@@ -42,4 +50,10 @@ export const commonHubspotProperties = {
   lastmodifieddate: '',
   lastname: '',
   hubspot_owner_id: '',
+  country: '',
+  zip: '',
+  state: '',
+  address: '',
+  city: '',
+  mobilephone: '',
 };

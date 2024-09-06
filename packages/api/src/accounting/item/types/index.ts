@@ -1,7 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedItemInput, UnifiedItemOutput } from './model.unified';
+import {
+  UnifiedAccountingItemInput,
+  UnifiedAccountingItemOutput,
+} from './model.unified';
 import { OriginalItemOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IItemService {
   addItem(
@@ -9,15 +13,12 @@ export interface IItemService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalItemOutput>>;
 
-  syncItems(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalItemOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalItemOutput[]>>;
 }
 
 export interface IItemMapper {
   desunify(
-    source: UnifiedItemInput,
+    source: UnifiedAccountingItemInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +27,10 @@ export interface IItemMapper {
 
   unify(
     source: OriginalItemOutput | OriginalItemOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedItemOutput | UnifiedItemOutput[];
+  ): Promise<UnifiedAccountingItemOutput | UnifiedAccountingItemOutput[]>;
 }

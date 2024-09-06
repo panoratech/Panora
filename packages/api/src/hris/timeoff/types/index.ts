@@ -1,7 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTimeoffInput, UnifiedTimeoffOutput } from './model.unified';
+import {
+  UnifiedHrisTimeoffInput,
+  UnifiedHrisTimeoffOutput,
+} from './model.unified';
 import { OriginalTimeoffOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ITimeoffService {
   addTimeoff(
@@ -9,15 +13,12 @@ export interface ITimeoffService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalTimeoffOutput>>;
 
-  syncTimeoffs(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTimeoffOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalTimeoffOutput[]>>;
 }
 
 export interface ITimeoffMapper {
   desunify(
-    source: UnifiedTimeoffInput,
+    source: UnifiedHrisTimeoffInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +27,10 @@ export interface ITimeoffMapper {
 
   unify(
     source: OriginalTimeoffOutput | OriginalTimeoffOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTimeoffOutput | UnifiedTimeoffOutput[];
+  ): Promise<UnifiedHrisTimeoffOutput | UnifiedHrisTimeoffOutput[]>;
 }

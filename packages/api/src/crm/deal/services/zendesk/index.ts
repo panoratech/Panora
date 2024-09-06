@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IDealService } from '@crm/deal/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { ZendeskDealInput, ZendeskDealOutput } from './types';
-import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IDealService } from '@crm/deal/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
+import { ZendeskDealInput, ZendeskDealOutput } from './types';
 @Injectable()
 export class ZendeskService implements IDealService {
   constructor(
@@ -35,8 +35,9 @@ export class ZendeskService implements IDealService {
           vertical: 'crm',
         },
       });
+
       const resp = await axios.post(
-        `${connection.account_url}/deals`,
+        `${connection.account_url}/v2/deals`,
         {
           data: dealData,
         },
@@ -56,20 +57,14 @@ export class ZendeskService implements IDealService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.deal,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncDeals(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZendeskDealOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskDealOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -77,7 +72,7 @@ export class ZendeskService implements IDealService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/deals`, {
+      const resp = await axios.get(`${connection.account_url}/v2/deals`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -96,13 +91,7 @@ export class ZendeskService implements IDealService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.deal,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

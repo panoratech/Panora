@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
 import { CreateMagicLinkDto } from './dto/create-magic-link.dto';
-import { MagicLinksError, throwTypedError } from '@@core/utils/errors';
 
 @Injectable()
 export class MagicLinkService {
@@ -15,14 +14,7 @@ export class MagicLinkService {
     try {
       return await this.prisma.invite_links.findMany();
     } catch (error) {
-      throwTypedError(
-        new MagicLinksError({
-          name: 'GET_MAGIC_LINKS_ERROR',
-          message: 'MagicLinkService.getMagicLinks() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -45,14 +37,7 @@ export class MagicLinkService {
         id_project: linkedUser.id_project,
       };
     } catch (error) {
-      throwTypedError(
-        new MagicLinksError({
-          name: 'GET_MAGIC_LINK_ERROR',
-          message: 'MagicLinkService.getMagicLink() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -61,6 +46,7 @@ export class MagicLinkService {
       const checkDup = await this.prisma.linked_users.findFirst({
         where: {
           linked_user_origin_id: data.linked_user_origin_id,
+          id_project: data.id_project,
         },
       });
       let linked_user_id: string;
@@ -77,6 +63,7 @@ export class MagicLinkService {
         });
         linked_user_id = res.id_linked_user;
       }
+      //todo : handle status of links
       const res = await this.prisma.invite_links.create({
         data: {
           id_invite_link: uuidv4(),
@@ -87,14 +74,7 @@ export class MagicLinkService {
       });
       return res;
     } catch (error) {
-      throwTypedError(
-        new MagicLinksError({
-          name: 'CREATE_MAGIC_LINK_ERROR',
-          message: 'MagicLinkService.createUniqueLink() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

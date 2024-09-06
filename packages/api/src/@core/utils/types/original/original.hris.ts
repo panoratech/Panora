@@ -1,46 +1,66 @@
 /* INPUT */
 
+import { GustoBenefitOutput } from '@hris/benefit/services/gusto/types';
+import { DeelCompanyOutput } from '@hris/company/services/deel/types';
+import { GustoCompanyOutput } from '@hris/company/services/gusto/types';
+import { DeelEmployeeOutput } from '@hris/employee/services/deel/types';
+import { GustoEmployeeOutput } from '@hris/employee/services/gusto/types';
+import { SageEmployeeOutput } from '@hris/employee/services/sage/types';
+import { GustoEmployerbenefitOutput } from '@hris/employerbenefit/services/gusto/types';
+import { DeelEmploymentOutput } from '@hris/employment/services/deel/types';
+import { GustoEmploymentOutput } from '@hris/employment/services/gusto/types';
+import { DeelGroupOutput } from '@hris/group/services/deel/types';
+import { GustoGroupOutput } from '@hris/group/services/gusto/types';
+import { SageGroupOutput } from '@hris/group/services/sage/types';
+import { DeelLocationOutput } from '@hris/location/services/deel/types';
+import { GustoLocationOutput } from '@hris/location/services/gusto/types';
+import { SageTimeoffOutput } from '@hris/timeoff/services/sage/types';
+import { SageTimeoffbalanceOutput } from '@hris/timeoffbalance/services/sage/types';
+
 /* bankinfo */
-export type OriginalBankInfoInput = '';
+export type OriginalBankInfoInput = any;
 
 /* benefit */
-export type OriginalBenefitInput = '';
+export type OriginalBenefitInput = any;
 
 /* company */
-export type OriginalCompanyInput = '';
+export type OriginalCompanyInput = any;
 
 /* dependent */
-export type OriginalDependentInput = '';
+export type OriginalDependentInput = any;
 
 /* employee */
-export type OriginalEmployeeInput = '';
+export type OriginalEmployeeInput = any;
 
 /* employeepayrollrun */
-export type OriginalEmployeePayrollRunInput = '';
+export type OriginalEmployeePayrollRunInput = any;
 
 /* employerbenefit */
-export type OriginalEmployerBenefitInput = '';
+export type OriginalEmployerBenefitInput = any;
 
 /* employment */
-export type OriginalEmploymentInput = '';
+export type OriginalEmploymentInput = any;
 
 /* group */
-export type OriginalGroupInput = '';
+export type OriginalGroupInput = any;
 
 /* location */
-export type OriginalLocationInput = '';
+export type OriginalLocationInput = any;
 
 /* paygroup */
-export type OriginalPayGroupInput = '';
+export type OriginalPayGroupInput = any;
 
 /* payrollrun */
-export type OriginalPayrollRunInput = '';
+export type OriginalPayrollRunInput = any;
 
 /* timeoff */
-export type OriginalTimeoffInput = '';
+export type OriginalTimeoffInput = any;
 
 /* timeoffbalance */
-export type OriginalTimeoffBalanceInput = '';
+export type OriginalTimeoffBalanceInput = any;
+
+/* timesheetentry */
+export type OriginalTimesheetentryInput = any;
 
 export type HrisObjectInput =
   | OriginalBankInfoInput
@@ -56,51 +76,63 @@ export type HrisObjectInput =
   | OriginalPayGroupInput
   | OriginalPayrollRunInput
   | OriginalTimeoffInput
-  | OriginalTimeoffBalanceInput;
+  | OriginalTimeoffBalanceInput
+  | OriginalTimesheetentryInput;
 
 /* OUTPUT */
 
 /* bankinfo */
-export type OriginalBankInfoOutput = '';
+export type OriginalBankInfoOutput = any;
 
 /* benefit */
-export type OriginalBenefitOutput = '';
+export type OriginalBenefitOutput = GustoBenefitOutput;
 
 /* company */
-export type OriginalCompanyOutput = '';
+export type OriginalCompanyOutput = GustoCompanyOutput | DeelCompanyOutput;
 
 /* dependent */
-export type OriginalDependentOutput = '';
+export type OriginalDependentOutput = any;
 
 /* employee */
-export type OriginalEmployeeOutput = '';
+export type OriginalEmployeeOutput =
+  | GustoEmployeeOutput
+  | SageEmployeeOutput
+  | DeelEmployeeOutput;
 
 /* employeepayrollrun */
-export type OriginalEmployeePayrollRunOutput = '';
+export type OriginalEmployeePayrollRunOutput = any;
 
 /* employerbenefit */
-export type OriginalEmployerBenefitOutput = '';
+export type OriginalEmployerBenefitOutput = GustoEmployerbenefitOutput;
 
 /* employment */
-export type OriginalEmploymentOutput = '';
+export type OriginalEmploymentOutput =
+  | GustoEmploymentOutput
+  | DeelEmploymentOutput;
 
 /* group */
-export type OriginalGroupOutput = '';
+export type OriginalGroupOutput =
+  | GustoGroupOutput
+  | DeelGroupOutput
+  | SageGroupOutput;
 
 /* location */
-export type OriginalLocationOutput = '';
+export type OriginalLocationOutput = GustoLocationOutput | DeelLocationOutput;
 
 /* paygroup */
-export type OriginalPayGroupOutput = '';
+export type OriginalPayGroupOutput = any;
 
 /* payrollrun */
-export type OriginalPayrollRunOutput = '';
+export type OriginalPayrollRunOutput = any;
 
 /* timeoff */
-export type OriginalTimeoffOutput = '';
+export type OriginalTimeoffOutput = SageTimeoffOutput;
 
 /* timeoffbalance */
-export type OriginalTimeoffBalanceOutput = '';
+export type OriginalTimeoffBalanceOutput = SageTimeoffbalanceOutput;
+
+/* timesheetentry */
+export type OriginalTimesheetentryOutput = any;
 
 export type HrisObjectOutput =
   | OriginalBankInfoOutput
@@ -116,4 +148,5 @@ export type HrisObjectOutput =
   | OriginalPayGroupOutput
   | OriginalPayrollRunOutput
   | OriginalTimeoffOutput
-  | OriginalTimeoffBalanceOutput;
+  | OriginalTimeoffBalanceOutput
+  | OriginalTimesheetentryOutput;

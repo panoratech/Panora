@@ -1,33 +1,38 @@
 import { IDriveService } from '@filestorage/drive/types';
-import { driveUnificationMapping } from '@filestorage/drive/types/mappingsTypes';
 import {
-  UnifiedDriveInput,
-  UnifiedDriveOutput,
+  UnifiedFilestorageDriveInput,
+  UnifiedFilestorageDriveOutput,
 } from '@filestorage/drive/types/model.unified';
 import { IFileService } from '@filestorage/file/types';
-import { fileUnificationMapping } from '@filestorage/file/types/mappingsTypes';
 import {
-  UnifiedFileInput,
-  UnifiedFileOutput,
+  UnifiedFilestorageFileInput,
+  UnifiedFilestorageFileOutput,
 } from '@filestorage/file/types/model.unified';
 import { IFolderService } from '@filestorage/folder/types';
-import { folderUnificationMapping } from '@filestorage/folder/types/mappingsTypes';
 import {
-  UnifiedFolderInput,
-  UnifiedFolderOutput,
+  UnifiedFilestorageFolderInput,
+  UnifiedFilestorageFolderOutput,
 } from '@filestorage/folder/types/model.unified';
-import { IPermissionService } from '@filestorage/permission/types';
-import { permissionUnificationMapping } from '@filestorage/permission/types/mappingsTypes';
+import { IGroupService } from '@filestorage/group/types';
 import {
-  UnifiedPermissionInput,
-  UnifiedPermissionOutput,
+  UnifiedFilestorageGroupInput,
+  UnifiedFilestorageGroupOutput,
+} from '@filestorage/group/types/model.unified';
+import { IPermissionService } from '@filestorage/permission/types';
+import {
+  UnifiedFilestoragePermissionInput,
+  UnifiedFilestoragePermissionOutput,
 } from '@filestorage/permission/types/model.unified';
 import { ISharedLinkService } from '@filestorage/sharedlink/types';
-import { sharedlinkUnificationMapping } from '@filestorage/sharedlink/types/mappingsTypes';
 import {
-  UnifiedSharedLinkInput,
-  UnifiedSharedLinkOutput,
+  UnifiedFilestorageSharedlinkInput,
+  UnifiedFilestorageSharedlinkOutput,
 } from '@filestorage/sharedlink/types/model.unified';
+import { IUserService } from '@filestorage/user/types';
+import {
+  UnifiedFilestorageUserInput,
+  UnifiedFilestorageUserOutput,
+} from '@filestorage/user/types/model.unified';
 
 export enum FileStorageObject {
   file = 'file',
@@ -35,31 +40,31 @@ export enum FileStorageObject {
   permission = 'permission',
   drive = 'drive',
   sharedlink = 'sharedlink',
+  group = 'group',
+  user = 'user',
 }
 
 export type UnifiedFileStorage =
-  | UnifiedFileInput
-  | UnifiedFileOutput
-  | UnifiedFolderInput
-  | UnifiedFolderOutput
-  | UnifiedPermissionInput
-  | UnifiedPermissionOutput
-  | UnifiedDriveInput
-  | UnifiedDriveOutput
-  | UnifiedSharedLinkInput
-  | UnifiedSharedLinkOutput;
-
-/*export const unificationMapping = {
-  [FileStorageObject.drive]: driveUnificationMapping,
-  [FileStorageObject.file]: fileUnificationMapping,
-  [FileStorageObject.folder]: folderUnificationMapping,
-  [FileStorageObject.permission]: permissionUnificationMapping,
-  [FileStorageObject.sharedlink]: sharedlinkUnificationMapping,
-};*/
+  | UnifiedFilestorageFileInput
+  | UnifiedFilestorageFileOutput
+  | UnifiedFilestorageFolderInput
+  | UnifiedFilestorageFolderOutput
+  | UnifiedFilestoragePermissionInput
+  | UnifiedFilestoragePermissionOutput
+  | UnifiedFilestorageDriveInput
+  | UnifiedFilestorageDriveOutput
+  | UnifiedFilestorageGroupInput
+  | UnifiedFilestorageGroupOutput
+  | UnifiedFilestorageUserInput
+  | UnifiedFilestorageUserOutput
+  | UnifiedFilestorageSharedlinkInput
+  | UnifiedFilestorageSharedlinkOutput;
 
 export type IFileStorageService =
   | IFileService
   | IFolderService
   | IDriveService
+  | IGroupService
+  | IUserService
   | IPermissionService
   | ISharedLinkService;

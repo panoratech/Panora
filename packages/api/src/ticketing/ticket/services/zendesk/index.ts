@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { ITicketService } from '@ticketing/ticket/types';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ITicketService } from '@ticketing/ticket/types';
 import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EnvironmentService } from '@@core/environment/environment.service';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskTicketInput, ZendeskTicketOutput } from './types';
 
@@ -19,6 +20,7 @@ export class ZendeskService implements ITicketService {
     private cryptoService: EncryptionService,
     private env: EnvironmentService,
     private registry: ServiceRegistry,
+    private utils: Utils,
   ) {
     this.logger.setContext(
       TicketingObject.ticket.toUpperCase() + ':' + ZendeskService.name,
@@ -58,11 +60,11 @@ export class ZendeskService implements ITicketService {
 
             //TODO:; fetch the right file from AWS s3
             const s3File = '';
-            const url = `${connection.account_url}/uploads.json?filename=${res.file_name}`;
+            const url = `${connection.account_url}/v2/uploads.json?filename=${res.file_name}`;
 
             const resp = await axios.get(url, {
               headers: {
-                'Content-Type': 'image/png', //TODO: get the right content-type given a file name extension
+                'Content-Type': this.utils.getMimeType(res.file_name),
                 Authorization: `Bearer ${this.cryptoService.decrypt(
                   connection.access_token,
                 )}`,
@@ -88,7 +90,7 @@ export class ZendeskService implements ITicketService {
       );
 
       const resp = await axios.post(
-        `${connection.account_url}/tickets.json`,
+        `${connection.account_url}/v2/tickets.json`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -105,22 +107,13 @@ export class ZendeskService implements ITicketService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<ZendeskTicketOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskTicketOutput[]>> {
     try {
+      const { linkedUserId, webhook_remote_identifier } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -128,10 +121,11 @@ export class ZendeskService implements ITicketService {
           vertical: 'ticketing',
         },
       });
+      const remote_ticket_id = webhook_remote_identifier as string;
 
       const request_url = remote_ticket_id
-        ? `${connection.account_url}/tickets/${remote_ticket_id}.json`
-        : `${connection.account_url}/tickets.json`;
+        ? `${connection.account_url}/v2/tickets/${remote_ticket_id}.json`
+        : `${connection.account_url}/v2/tickets.json`;
 
       const resp = await axios.get(request_url, {
         headers: {
@@ -151,13 +145,7 @@ export class ZendeskService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'zendesk',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

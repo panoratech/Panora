@@ -7,8 +7,14 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import {
+  ApiBody,
+  ApiExcludeController,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ConnectionsStrategiesService } from './connections-strategies.service';
 import { CreateConnectionStrategyDto } from './dto/create-connections-strategies.dto';
 import { ToggleStrategyDto } from './dto/toggle.dto';
@@ -17,8 +23,9 @@ import { UpdateCSDto } from './dto/update-cs.dto';
 import { ConnectionStrategyCredentials } from './dto/get-connection-cs-credentials.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
 
-@ApiTags('connections-strategies')
-@Controller('connections-strategies')
+@ApiTags('connection_strategies')
+@ApiExcludeController()
+@Controller('connection_strategies')
 export class ConnectionsStrategiesController {
   constructor(
     private logger: LoggerService,
@@ -116,19 +123,17 @@ export class ConnectionsStrategiesController {
     );
   }
 
-  //todo: ADMIN
   @ApiOperation({
     operationId: 'getCredentials',
     summary: 'Fetch credentials info needed for connections',
   })
   @ApiResponse({ status: 200 })
-  //@UseGuards(JwtAuthGuard)
   @Get('getCredentials')
   async getCredentials(
     @Query('projectId') projectId: string,
     @Query('type') type: string,
   ) {
-    return await this.connectionsStrategiesService.getCredentials(
+    return await this.connectionsStrategiesService.getSafeCredentials(
       projectId,
       type,
     );

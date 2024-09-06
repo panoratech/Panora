@@ -1,10 +1,10 @@
 import { PipedriveStageInput, PipedriveStageOutput } from './types';
 import {
-  UnifiedStageInput,
-  UnifiedStageOutput,
+  UnifiedCrmStageInput,
+  UnifiedCrmStageOutput,
 } from '@crm/stage/types/model.unified';
 import { IStageMapper } from '@crm/stage/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
 
@@ -14,7 +14,7 @@ export class PipedriveStageMapper implements IStageMapper {
     this.mappersRegistry.registerService('crm', 'stage', 'pipedrive', this);
   }
   desunify(
-    source: UnifiedStageInput,
+    source: UnifiedCrmStageInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,28 +25,34 @@ export class PipedriveStageMapper implements IStageMapper {
 
   unify(
     source: PipedriveStageOutput | PipedriveStageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedStageOutput | UnifiedStageOutput[] {
+  ): UnifiedCrmStageOutput | UnifiedCrmStageOutput[] {
     if (!Array.isArray(source)) {
-      return this.mapSingleStageToUnified(source, customFieldMappings);
+      return this.mapSingleStageToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of PipedriveStageOutput
     return source.map((stage) =>
-      this.mapSingleStageToUnified(stage, customFieldMappings),
+      this.mapSingleStageToUnified(stage, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleStageToUnified(
     stage: PipedriveStageOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedStageOutput {
+  ): UnifiedCrmStageOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -56,6 +62,7 @@ export class PipedriveStageMapper implements IStageMapper {
 
     return {
       remote_id: String(stage.id),
+      remote_data: stage,
       stage_name: stage.name,
       field_mappings,
     };

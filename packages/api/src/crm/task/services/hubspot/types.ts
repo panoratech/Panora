@@ -6,6 +6,13 @@ export interface HubspotTaskInput {
   hs_task_priority: string;
   hubspot_owner_id?: string;
   [key: string]: any;
+  associations?: {
+    to: { id: string };
+    type: {
+      associationCategory: string;
+      associationTypeId: number;
+    }[];
+  }[];
 }
 
 export interface HubspotTaskOutput {
@@ -20,6 +27,16 @@ export interface HubspotTaskOutput {
     hs_timestamp: string;
     hubspot_owner_id: string;
     [key: string]: any;
+  };
+  associations?: {
+    [key: string]: {
+      results: [
+        {
+          id: string;
+          type: string;
+        },
+      ];
+    };
   };
   createdAt: string;
   updatedAt: string;

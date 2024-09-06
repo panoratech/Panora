@@ -9,5 +9,3 @@ Panora supports integration with the following objects across multiple platforms
 | [Freshsales](https://www.freshworks.com/crm/sales/) |    ✔️    |   ✔️  |   ✔️  |      ✔️     |   ✔️  |   ✔️  |           |
 | [Attio](https://attio.com)                    |    ✔️    |       |       |             |       |       |     ✔️    |
 Your favourite software is missing? [Ask the community to build a connector!](https://github.com/panoratech/Panora/issues/new) 
-
-Thanks to our contributors: [mit-27](https://github.com/mit-27)

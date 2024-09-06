@@ -1,7 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedAddressInput, UnifiedAddressOutput } from './model.unified';
+import {
+  UnifiedAccountingAddressInput,
+  UnifiedAccountingAddressOutput,
+} from './model.unified';
 import { OriginalAddressOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IAddressService {
   addAddress(
@@ -9,15 +13,12 @@ export interface IAddressService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalAddressOutput>>;
 
-  syncAddresss(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalAddressOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalAddressOutput[]>>;
 }
 
 export interface IAddressMapper {
   desunify(
-    source: UnifiedAddressInput,
+    source: UnifiedAccountingAddressInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +27,10 @@ export interface IAddressMapper {
 
   unify(
     source: OriginalAddressOutput | OriginalAddressOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAddressOutput | UnifiedAddressOutput[];
+  ): Promise<UnifiedAccountingAddressOutput | UnifiedAccountingAddressOutput[]>;
 }

@@ -7,8 +7,11 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,14 +19,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { UserService } from './services/user.service';
-import { UnifiedUserInput, UnifiedUserOutput } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('ats/user')
-@Controller('ats/user')
+import { UserService } from './services/user.service';
+import {
+  UnifiedAtsUserInput,
+  UnifiedAtsUserOutput,
+} from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+
+@ApiTags('ats/users')
+@Controller('ats/users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
@@ -34,8 +47,8 @@ export class UserController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsUsers',
-    summary: 'List a batch of Users',
+    operationId: 'listAtsUsers',
+    summary: 'List  Users',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -43,137 +56,83 @@ export class UserController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedAtsUserOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  )
   async getUsers(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.userService.getUsers(remoteSource, linkedUserId, remote_data);
+      const { remote_data, limit, cursor } = query;
+      return this.userService.getUsers(
+        connectionId,
+        projectId,
+        remoteSource,
+        linkedUserId,
+        limit,
+        remote_data,
+        cursor,
+      );
     } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'getAtsUser',
-    summary: 'Retrieve a User',
-    description: 'Retrieve a user from any connected Ats software',
+    operationId: 'retrieveAtsUser',
+    summary: 'Retrieve Users',
+    description: 'Retrieve Users from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the user you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedAtsUserOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getUser(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.userService.getUser(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addAtsUser',
-    summary: 'Create a User',
-    description: 'Create a user in any supported Ats software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedUserInput })
-  @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addUser(
-    @Body() unifiedUserData: UnifiedUserInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.userService.addUser(
-        unifiedUserData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addAtsUsers',
-    summary: 'Add a batch of Users',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedUserInput, isArray: true })
-  @ApiCustomResponse(UnifiedUserOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addUsers(
-    @Body() unfiedUserData: UnifiedUserInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.userService.batchAddUsers(
-        unfiedUserData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.userService.getUser(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

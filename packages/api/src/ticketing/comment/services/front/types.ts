@@ -47,4 +47,6 @@ type Attachment = {
   content_type: string;
   size: number;
   metadata: AttachmentMetadata;
+} & {
+  [key: string]: any;
 };

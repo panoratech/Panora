@@ -1,12 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedUserOutput } from '../types/model.unified';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import { UnifiedCrmUserOutput } from '../types/model.unified';
 import { ServiceRegistry } from './registry.service';
-import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
 
 @Injectable()
 export class UserService {
@@ -22,8 +21,12 @@ export class UserService {
 
   async getUser(
     id_user: string,
+    linkedUserId: string,
+    integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedUserOutput> {
+  ): Promise<UnifiedCrmUserOutput> {
     try {
       const user = await this.prisma.crm_users.findUnique({
         where: {
@@ -50,19 +53,20 @@ export class UserService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedUserOutput format
-      const unifiedUser: UnifiedUserOutput = {
+      // Transform to UnifiedCrmUserOutput format
+      const unifiedUser: UnifiedCrmUserOutput = {
         id: user.id_crm_user,
         name: user.name,
         email: user.email,
         field_mappings: field_mappings,
+        remote_id: user.remote_id,
+        created_at: user.created_at,
+        modified_at: user.modified_at,
       };
 
-      let res: UnifiedUserOutput = {
+      let res: UnifiedCrmUserOutput = {
         ...unifiedUser,
       };
 
@@ -79,27 +83,38 @@ export class UserService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_connection: connectionId,
+          id_project: projectId,
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'crm.user.pull',
+          method: 'GET',
+          url: '/crm/user',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_USER_ERROR',
-          message: 'UserService.getUser() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getUsers(
+    connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedUserOutput[];
+    data: UnifiedCrmUserOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -110,8 +125,7 @@ export class UserService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_users.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_user: cursor,
           },
         });
@@ -121,7 +135,7 @@ export class UserService {
       }
 
       const users = await this.prisma.crm_users.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_user: cursor,
@@ -131,12 +145,11 @@ export class UserService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
-      if (users.length === pageSize + 1) {
+      if (users.length === limit + 1) {
         next_cursor = Buffer.from(users[users.length - 1].id_crm_user).toString(
           'base64',
         );
@@ -147,7 +160,7 @@ export class UserService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedUsers: UnifiedUserOutput[] = await Promise.all(
+      const unifiedUsers: UnifiedCrmUserOutput[] = await Promise.all(
         users.map(async (user) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -168,25 +181,26 @@ export class UserService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedUserOutput format
+          // Transform to UnifiedCrmUserOutput format
           return {
             id: user.id_crm_user,
             name: user.name,
             email: user.email,
             field_mappings: field_mappings,
+            remote_id: user.remote_id,
+            created_at: user.created_at,
+            modified_at: user.modified_at,
           };
         }),
       );
 
-      let res: UnifiedUserOutput[] = unifiedUsers;
+      let res: UnifiedCrmUserOutput[] = unifiedUsers;
 
       if (remote_data) {
-        const remote_array_data: UnifiedUserOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmUserOutput[] = await Promise.all(
           res.map(async (user) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -200,8 +214,10 @@ export class UserService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.user.pulled',
@@ -220,13 +236,7 @@ export class UserService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_USERS_ERROR',
-          message: 'UserService.getUsers() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

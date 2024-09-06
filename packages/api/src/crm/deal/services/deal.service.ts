@@ -1,17 +1,20 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { ApiResponse } from '@@core/utils/types';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { UnifiedDealInput, UnifiedDealOutput } from '../types/model.unified';
-import { CrmObject } from '@crm/@lib/@types';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ServiceRegistry } from './registry.service';
+import { ApiResponse } from '@@core/utils/types';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
+import { CrmObject } from '@crm/@lib/@types';
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { IDealService } from '../types';
-import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
-import { CoreUnification } from '@@core/utils/services/core.service';
+import {
+  UnifiedCrmDealInput,
+  UnifiedCrmDealOutput,
+} from '../types/model.unified';
+import { ServiceRegistry } from './registry.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class DealService {
@@ -22,87 +25,26 @@ export class DealService {
     private fieldMappingService: FieldMappingService,
     private serviceRegistry: ServiceRegistry,
     private coreUnification: CoreUnification,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(DealService.name);
   }
 
-  async batchAddDeals(
-    unifiedDealData: UnifiedDealInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedDealOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedDealData.map((unifiedData) =>
-          this.addDeal(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_DEALS_ERROR',
-          message: 'DealService.batchAddDeals() call failed',
-          cause: error,
-        }),
-      );
-    }
-  }
-
   async addDeal(
-    unifiedDealData: UnifiedDealInput,
+    unifiedDealData: UnifiedCrmDealInput,
+    connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedDealOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     try {
-      const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
-      });
+      const linkedUser = await this.validateLinkedUser(linkedUserId);
+      await this.validateStageId(unifiedDealData.stage_id);
+      await this.validateUserId(unifiedDealData.user_id);
 
-      //CHECKS
-      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
-
-      const stage = unifiedDealData.stage_id;
-      //check if contact_id and account_id refer to real uuids
-      if (stage) {
-        const search = await this.prisma.crm_deals_stages.findUnique({
-          where: {
-            id_crm_deals_stage: stage,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a stage_id which does not exist',
-          );
-      }
-
-      const user = unifiedDealData.user_id;
-      //check if contact_id and account_id refer to real uuids
-      if (user) {
-        const search = await this.prisma.crm_users.findUnique({
-          where: {
-            id_crm_user: user,
-          },
-        });
-        if (!search)
-          throw new ReferenceError(
-            'You inserted a user_id which does not exist',
-          );
-      }
-
-      //desunify the data according to the target obj wanted
       const desunifiedObject =
-        await this.coreUnification.desunify<UnifiedDealInput>({
+        await this.coreUnification.desunify<UnifiedCrmDealInput>({
           sourceObject: unifiedDealData,
           targetType: CrmObject.deal,
           providerName: integrationId,
@@ -117,7 +59,6 @@ export class DealService {
         linkedUserId,
       );
 
-      //unify the data according to the target obj wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalDealOutput[]
       >({
@@ -125,120 +66,40 @@ export class DealService {
         targetType: CrmObject.deal,
         providerName: integrationId,
         vertical: 'crm',
+        connectionId: connection_id,
         customFieldMappings: [],
-      })) as UnifiedDealOutput[];
+      })) as UnifiedCrmDealOutput[];
 
-      // add the deal inside our db
       const source_deal = resp.data;
       const target_deal = unifiedObject[0];
 
-      const existingDeal = await this.prisma.crm_deals.findFirst({
-        where: {
-          remote_id: target_deal.remote_id,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
-        },
-      });
+      const unique_crm_deal_id = await this.saveOrUpdateDeal(
+        target_deal,
+        connection_id,
+      );
 
-      let unique_crm_deal_id: string;
+      await this.ingestService.processRemoteData(
+        unique_crm_deal_id,
+        source_deal,
+      );
 
-      if (existingDeal) {
-        // Update the existing deal
-        let data: any = {
-          amount: target_deal.amount,
-          modified_at: new Date(),
-        };
-        if (target_deal.name) {
-          data = { ...data, name: target_deal.name };
-        }
-        if (target_deal.description) {
-          data = { ...data, description: target_deal.description };
-        }
-        if (target_deal.amount) {
-          data = { ...data, amount: target_deal.amount };
-        }
-        if (target_deal.user_id) {
-          data = { ...data, id_crm_user: target_deal.user_id };
-        }
-        if (target_deal.stage_id) {
-          data = { ...data, id_crm_deals_stage: target_deal.stage_id };
-        }
-        if (target_deal.company_id) {
-          data = { ...data, id_crm_company: target_deal.company_id };
-        }
-
-        const res = await this.prisma.crm_deals.update({
-          where: {
-            id_crm_deal: existingDeal.id_crm_deal,
-          },
-          data: data,
-        });
-        unique_crm_deal_id = res.id_crm_deal;
-      } else {
-        // Create a new deal
-        this.logger.log('deal not exists');
-        let data: any = {
-          id_crm_deal: uuidv4(),
-          amount: target_deal.amount,
-          created_at: new Date(),
-          modified_at: new Date(),
-          id_linked_user: linkedUserId,
-          remote_id: target_deal.remote_id,
-          remote_platform: integrationId,
-          description: '',
-        };
-
-        if (target_deal.name) {
-          data = { ...data, name: target_deal.name };
-        }
-        if (target_deal.description) {
-          data = { ...data, description: target_deal.description };
-        }
-        if (target_deal.amount) {
-          data = { ...data, amount: target_deal.amount };
-        }
-        if (target_deal.user_id) {
-          data = { ...data, id_crm_user: target_deal.user_id };
-        }
-        if (target_deal.stage_id) {
-          data = { ...data, id_crm_deals_stage: target_deal.stage_id };
-        }
-        if (target_deal.company_id) {
-          data = { ...data, id_crm_company: target_deal.company_id };
-        }
-        const res = await this.prisma.crm_deals.create({
-          data: data,
-        });
-        unique_crm_deal_id = res.id_crm_deal;
-      }
-
-      //insert remote_data in db
-      await this.prisma.remote_data.upsert({
-        where: {
-          ressource_owner_id: unique_crm_deal_id,
-        },
-        create: {
-          id_remote_data: uuidv4(),
-          ressource_owner_id: unique_crm_deal_id,
-          format: 'json',
-          data: JSON.stringify(source_deal),
-          created_at: new Date(),
-        },
-        update: {
-          data: JSON.stringify(source_deal),
-          created_at: new Date(),
-        },
-      });
-
-      const result_deal = await this.getDeal(unique_crm_deal_id, remote_data);
+      const result_deal = await this.getDeal(
+        unique_crm_deal_id,
+        undefined,
+        undefined,
+        connection_id,
+        project_id,
+        remote_data,
+      );
 
       const status_resp = resp.statusCode === 201 ? 'success' : 'fail';
-
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
-          type: 'crm.deal.push', //sync, push or pull
+          type: 'crm.deal.push', // sync, push or pull
           method: 'POST',
           url: '/crm/deals',
           provider: integrationId,
@@ -247,28 +108,93 @@ export class DealService {
           id_linked_user: linkedUserId,
         },
       });
-      await this.webhook.handleWebhook(
+
+      await this.webhook.dispatchWebhook(
         result_deal,
         'crm.deal.created',
         linkedUser.id_project,
         event.id_event,
       );
+
       return result_deal;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'CREATE_DEAL_ERROR',
-          message: 'DealService.addDeal() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
+    }
+  }
+
+  async validateLinkedUser(linkedUserId: string) {
+    const linkedUser = await this.prisma.linked_users.findUnique({
+      where: { id_linked_user: linkedUserId },
+    });
+    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    return linkedUser;
+  }
+
+  async validateStageId(stageId?: string) {
+    if (stageId) {
+      const stage = await this.prisma.crm_deals_stages.findUnique({
+        where: { id_crm_deals_stage: stageId },
+      });
+      if (!stage)
+        throw new ReferenceError(
+          'You inserted a stage_id which does not exist',
+        );
+    }
+  }
+
+  async validateUserId(userId?: string) {
+    if (userId) {
+      const user = await this.prisma.crm_users.findUnique({
+        where: { id_crm_user: userId },
+      });
+      if (!user)
+        throw new ReferenceError('You inserted a user_id which does not exist');
+    }
+  }
+
+  async saveOrUpdateDeal(
+    deal: UnifiedCrmDealOutput,
+    connection_id: string,
+  ): Promise<string> {
+    const existingDeal = await this.prisma.crm_deals.findFirst({
+      where: { remote_id: deal.remote_id, id_connection: connection_id },
+    });
+
+    const data: any = {
+      name: deal.name,
+      description: deal.description,
+      amount: deal.amount,
+      id_crm_user: deal.user_id,
+      id_crm_deals_stage: deal.stage_id,
+      id_crm_company: deal.company_id,
+      modified_at: new Date(),
+    };
+
+    if (existingDeal) {
+      const res = await this.prisma.crm_deals.update({
+        where: { id_crm_deal: existingDeal.id_crm_deal },
+        data: data,
+      });
+      return res.id_crm_deal;
+    } else {
+      data.created_at = new Date();
+      data.remote_id = deal.remote_id;
+      data.id_connection = connection_id;
+      data.id_crm_deal = uuidv4();
+
+      const newDeal = await this.prisma.crm_deals.create({ data: data });
+      return newDeal.id_crm_deal;
     }
   }
 
   async getDeal(
     id_dealing_deal: string,
+    linkedUserId: string,
+    integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedDealOutput> {
+  ): Promise<UnifiedCrmDealOutput> {
     try {
       const deal = await this.prisma.crm_deals.findUnique({
         where: {
@@ -295,22 +221,24 @@ export class DealService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedDealOutput format
-      const unifiedDeal: UnifiedDealOutput = {
+      // Transform to UnifiedCrmDealOutput format
+      const unifiedDeal: UnifiedCrmDealOutput = {
         id: deal.id_crm_deal,
         name: deal.name,
         description: deal.description,
         amount: Number(deal.amount),
         stage_id: deal.id_crm_deals_stage, // uuid of Stage object
         user_id: deal.id_crm_user, // uuid of User object
+        company_id: deal.id_crm_company,
         field_mappings: field_mappings,
+        remote_id: deal.remote_id,
+        created_at: deal.created_at,
+        modified_at: deal.modified_at,
       };
 
-      let res: UnifiedDealOutput = {
+      let res: UnifiedCrmDealOutput = {
         ...unifiedDeal,
       };
 
@@ -327,27 +255,40 @@ export class DealService {
           remote_data: remote_data,
         };
       }
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_connection: connectionId,
+            id_project: projectId,
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'crm.deal.pull',
+            method: 'GET',
+            url: '/crm/deal',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_DEAL_ERROR',
-          message: 'DealService.getDeal() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getDeals(
+    connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedDealOutput[];
+    data: UnifiedCrmDealOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -358,8 +299,7 @@ export class DealService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_deals.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_deal: cursor,
           },
         });
@@ -369,7 +309,7 @@ export class DealService {
       }
 
       const deals = await this.prisma.crm_deals.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_deal: cursor,
@@ -379,12 +319,11 @@ export class DealService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
-      if (deals.length === pageSize + 1) {
+      if (deals.length === limit + 1) {
         next_cursor = Buffer.from(deals[deals.length - 1].id_crm_deal).toString(
           'base64',
         );
@@ -395,7 +334,7 @@ export class DealService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedDeals: UnifiedDealOutput[] = await Promise.all(
+      const unifiedDeals: UnifiedCrmDealOutput[] = await Promise.all(
         deals.map(async (deal) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -416,12 +355,10 @@ export class DealService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedDealOutput format
+          // Transform to UnifiedCrmDealOutput format
           return {
             id: deal.id_crm_deal,
             name: deal.name,
@@ -429,15 +366,19 @@ export class DealService {
             amount: Number(deal.amount),
             stage_id: deal.id_crm_deals_stage, // uuid of Stage object
             user_id: deal.id_crm_user, // uuid of User object
+            company_id: deal.id_crm_company,
             field_mappings: field_mappings,
+            remote_id: deal.remote_id,
+            created_at: deal.created_at,
+            modified_at: deal.modified_at,
           };
         }),
       );
 
-      let res: UnifiedDealOutput[] = unifiedDeals;
+      let res: UnifiedCrmDealOutput[] = unifiedDeals;
 
       if (remote_data) {
-        const remote_array_data: UnifiedDealOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmDealOutput[] = await Promise.all(
           res.map(async (deal) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -451,8 +392,10 @@ export class DealService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.deal.pulled',
@@ -471,20 +414,7 @@ export class DealService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_DEALS_ERROR',
-          message: 'DealService.getDeals() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
-  }
-
-  async updateDeal(
-    id_dealing_deal: string,
-    data?: Partial<UnifiedDealInput>,
-  ): Promise<UnifiedDealOutput> {
-    return;
   }
 }

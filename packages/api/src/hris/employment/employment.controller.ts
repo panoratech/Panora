@@ -7,8 +7,11 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,17 +19,24 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
+
 import { EmploymentService } from './services/employment.service';
 import {
-  UnifiedEmploymentInput,
-  UnifiedEmploymentOutput,
+  UnifiedHrisEmploymentInput,
+  UnifiedHrisEmploymentOutput,
 } from './types/model.unified';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiTags('hris/employment')
-@Controller('hris/employment')
+@ApiTags('hris/employments')
+@Controller('hris/employments')
 export class EmploymentController {
   constructor(
     private readonly employmentService: EmploymentService,
@@ -37,8 +47,8 @@ export class EmploymentController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployments',
-    summary: 'List a batch of Employments',
+    operationId: 'listHrisEmployments',
+    summary: 'List Employments',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,28 +56,28 @@ export class EmploymentController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiCustomResponse(UnifiedEmploymentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedHrisEmploymentOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
   async getEmployments(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.employmentService.getEmployments(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -75,112 +85,49 @@ export class EmploymentController {
   }
 
   @ApiOperation({
-    operationId: 'getEmployment',
-    summary: 'Retrieve a Employment',
-    description: 'Retrieve a employment from any connected Hris software',
+    operationId: 'retrieveHrisEmployment',
+    summary: 'Retrieve Employment',
+    description: 'Retrieve an Employment from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the employment you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedEmploymentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedHrisEmploymentOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getEmployment(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.employmentService.getEmployment(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addEmployment',
-    summary: 'Create a Employment',
-    description: 'Create a employment in any supported Hris software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedEmploymentInput })
-  @ApiCustomResponse(UnifiedEmploymentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addEmployment(
-    @Body() unifiedEmploymentData: UnifiedEmploymentInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.employmentService.addEmployment(
-        unifiedEmploymentData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addEmployments',
-    summary: 'Add a batch of Employments',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedEmploymentInput, isArray: true })
-  @ApiCustomResponse(UnifiedEmploymentOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addEmployments(
-    @Body() unfiedEmploymentData: UnifiedEmploymentInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.employmentService.batchAddEmployments(
-        unfiedEmploymentData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.employmentService.getEmployment(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

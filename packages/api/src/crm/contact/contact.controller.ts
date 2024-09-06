@@ -1,39 +1,45 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+
 import {
-  Controller,
-  Post,
   Body,
-  Query,
+  Controller,
   Get,
-  Patch,
-  Param,
-  UseGuards,
   Headers,
+  Param,
+  Post,
+  Query,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ContactService } from './services/contact.service';
-import { LoggerService } from '@@core/logger/logger.service';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
-} from './types/model.unified';
-import {
+  //ApiKeyAuth,
   ApiBody,
+  ApiExtraModels,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiHeader,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { FetchObjectsQueryDto } from '@@core/utils/dtos/fetch-objects-query.dto';
+import { ContactService } from './services/contact.service';
+import {
+  UnifiedCrmContactInput,
+  UnifiedCrmContactOutput,
+} from './types/model.unified';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+  PaginatedDto,
+} from '@@core/utils/dtos/openapi.respone.dto';
 
-@ApiBearerAuth('JWT')
 @ApiTags('crm/contacts')
 @Controller('crm/contacts')
+@ApiExtraModels(PaginatedDto, UnifiedCrmContactOutput)
 export class ContactController {
   constructor(
     private readonly contactService: ContactService,
@@ -44,8 +50,8 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmContacts',
-    summary: 'List a batch of CRM Contacts',
+    operationId: 'listCrmContacts',
+    summary: 'List CRM Contacts',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -53,24 +59,30 @@ export class ContactController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiPaginatedResponse(UnifiedCrmContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
-  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
+  @UsePipes(
+    new ValidationPipe({ transform: true, disableErrorMessages: false }),
+  )
   async getContacts(
     @Headers('x-connection-token') connection_token: string,
-    @Query() query: FetchObjectsQueryDto,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      console.log('Received connection_token:', connection_token);
+      console.log('Received query:', JSON.stringify(query));
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      const { remote_data, pageSize, cursor } = query;
-      return this.contactService.getContacts(
+      const { remote_data, limit, cursor } = query;
+      return await this.contactService.getContacts(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
-        pageSize,
+        limit,
         remote_data,
         cursor,
       );
@@ -80,36 +92,56 @@ export class ContactController {
   }
 
   @ApiOperation({
-    operationId: 'getCrmContact',
-    summary: 'Retrieve a CRM Contact',
-    description: 'Retrieve a contact from any connected CRM',
+    operationId: 'retrieveCrmContact',
+    summary: 'Retrieve Contacts',
+    description: 'Retrieve Contacts from any connected CRM',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the `contact` you want to retrive.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedCrmContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getContact(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.contactService.getContact(id, remote_data);
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.contactService.getContact(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 
   @ApiOperation({
-    operationId: 'addCrmContact',
-    summary: 'Create CRM Contact',
-    description: 'Create a contact in any supported CRM',
+    operationId: 'createCrmContact',
+    summary: 'Create Contacts',
+    description: 'Create Contacts in any supported CRM',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -122,24 +154,26 @@ export class ContactController {
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original CRM software.',
+    example: false,
   })
-  @ApiBody({ type: UnifiedContactInput })
-  @ApiCustomResponse(UnifiedContactOutput)
+  @ApiBody({ type: UnifiedCrmContactInput })
+  @ApiPostCustomResponse(UnifiedCrmContactOutput)
   @UseGuards(ApiKeyAuthGuard)
   @Post()
   async addContact(
-    @Body() unfiedContactData: UnifiedContactInput,
+    @Body() unifiedContactData: UnifiedCrmContactInput,
     @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      // this.logger.log('x-connection-token is ' + connection_token);
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
       return this.contactService.addContact(
-        unfiedContactData,
+        unifiedContactData,
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,
@@ -147,59 +181,5 @@ export class ContactController {
     } catch (error) {
       throw new Error(error);
     }
-  }
-
-  @ApiOperation({
-    operationId: 'addCrmContacts',
-    summary: 'Add a batch of CRM Contacts',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original CRM software.',
-  })
-  @ApiBody({ type: UnifiedContactInput, isArray: true })
-  @ApiCustomResponse(UnifiedContactOutput)
-  @UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addContacts(
-    @Body() unfiedContactData: UnifiedContactInput[],
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.contactService.batchAddContacts(
-        unfiedContactData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'updateContact',
-    summary: 'Update a CRM Contact',
-  })
-  @UseGuards(ApiKeyAuthGuard)
-  @Patch()
-  updateContact(
-    @Query('id') id: string,
-    @Body() updateContactData: Partial<UnifiedContactInput>,
-  ) {
-    return this.contactService.updateContact(id, updateContactData);
   }
 }

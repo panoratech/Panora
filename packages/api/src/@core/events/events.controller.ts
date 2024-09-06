@@ -8,10 +8,19 @@ import {
   Request,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PaginationDto } from '@@core/utils/dtos/pagination.dto';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import {
+  ApiExcludeController,
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { PaginationDto } from '@@core/utils/dtos/webapp.event.pagination.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { ApiGetArrayCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import { EventResponse } from './dto/index.dto';
 
 @ApiTags('events')
 @Controller('events')
@@ -25,7 +34,7 @@ export class EventsController {
 
   @ApiOperation({
     operationId: 'getPanoraCoreEvents',
-    summary: 'Retrieve Events',
+    summary: 'List Events',
   })
   @ApiResponse({ status: 200 })
   @UsePipes(
@@ -37,7 +46,29 @@ export class EventsController {
       },
     }),
   )
+  @ApiExcludeEndpoint()
   @UseGuards(JwtAuthGuard)
+  @Get('internal')
+  async getInternalEvents(@Query() dto: PaginationDto, @Request() req: any) {
+    const { id_project } = req.user;
+    return await this.eventsService.findEvents(dto, id_project);
+  }
+
+  @ApiOperation({
+    operationId: 'getPanoraCoreEvents',
+    summary: 'List Events',
+  })
+  @ApiGetArrayCustomResponse(EventResponse)
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    }),
+  )
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEvents(@Query() dto: PaginationDto, @Request() req: any) {
     const { id_project } = req.user;
@@ -49,6 +80,7 @@ export class EventsController {
     summary: 'Retrieve Events Count',
   })
   @Get('count')
+  @ApiExcludeEndpoint()
   @UseGuards(JwtAuthGuard)
   async getEventsCount(@Request() req: any) {
     const { id_project } = req.user;

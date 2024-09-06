@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
 import {
   CreateBatchLinkedUserDto,
   CreateLinkedUserDto,
 } from './dto/create-linked-user.dto';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { LinkedUserError, throwTypedError } from '@@core/utils/errors';
 
 @Injectable()
 export class LinkedUsersService {
@@ -21,14 +20,7 @@ export class LinkedUsersService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new LinkedUserError({
-          name: 'GET_LINKED_USERS_ERROR',
-          message: 'LinkedUsersService.getLinkedUsers() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async getLinkedUser(id: string) {
@@ -39,14 +31,7 @@ export class LinkedUsersService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new LinkedUserError({
-          name: 'GET_LINKED_USER_ERROR',
-          message: 'LinkedUsersService.getLinkedUser() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
   async getLinkedUserV2(originId: string) {
@@ -57,41 +42,29 @@ export class LinkedUsersService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new LinkedUserError({
-          name: 'GET_LINKED_USER_FROM_REMOTE_ID_ERROR',
-          message: 'LinkedUsersService.getLinkedUserV2() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
-  async addLinkedUser(data: CreateLinkedUserDto) {
+  async addLinkedUser(data: CreateLinkedUserDto, id_project: string) {
     try {
-      const { id_project, ...rest } = data;
       const res = await this.prisma.linked_users.create({
         data: {
-          ...rest,
+          ...data,
           id_linked_user: uuidv4(),
           id_project: id_project,
         },
       });
       return res;
     } catch (error) {
-      throwTypedError(
-        new LinkedUserError({
-          name: 'CREATE_LINKED_USER_ERROR',
-          message: 'LinkedUsersService.addlinkedUser() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
-  async addBatchLinkedUsers(data: CreateBatchLinkedUserDto) {
+  async addBatchLinkedUsers(
+    data: CreateBatchLinkedUserDto,
+    id_project: string,
+  ) {
     try {
-      const { linked_user_origin_ids, alias, id_project } = data;
+      const { linked_user_origin_ids, alias } = data;
 
       const linkedUsersData = linked_user_origin_ids.map((id) => ({
         id_linked_user: uuidv4(), // Ensure each user gets a unique ID
@@ -107,14 +80,7 @@ export class LinkedUsersService {
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new LinkedUserError({
-          name: 'CREATE_BATCH_LINKED_USER_ERROR',
-          message: 'LinkedUsersService.addBatchLinkedUsers() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

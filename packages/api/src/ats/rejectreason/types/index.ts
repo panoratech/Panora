@@ -1,26 +1,19 @@
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import {
-  UnifiedRejectReasonInput,
-  UnifiedRejectReasonOutput,
-} from './model.unified';
-import { OriginalRejectReasonOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
+import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
+import { OriginalRejectReasonOutput } from '@@core/utils/types/original/original.ats';
+import {
+  UnifiedAtsRejectreasonInput,
+  UnifiedAtsRejectreasonOutput,
+} from './model.unified';
 
-export interface IRejectReasonService {
-  addRejectReason(
-    rejectreasonData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalRejectReasonOutput>>;
-
-  syncRejectReasons(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalRejectReasonOutput[]>>;
+export interface IRejectReasonService extends IBaseObjectService {
+  sync(data: SyncParam): Promise<ApiResponse<OriginalRejectReasonOutput[]>>;
 }
 
 export interface IRejectReasonMapper {
   desunify(
-    source: UnifiedRejectReasonInput,
+    source: UnifiedAtsRejectreasonInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,9 +22,10 @@ export interface IRejectReasonMapper {
 
   unify(
     source: OriginalRejectReasonOutput | OriginalRejectReasonOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedRejectReasonOutput | UnifiedRejectReasonOutput[];
+  ): Promise<UnifiedAtsRejectreasonOutput | UnifiedAtsRejectreasonOutput[]>;
 }

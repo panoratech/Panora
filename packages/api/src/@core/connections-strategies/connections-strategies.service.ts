@@ -1,22 +1,21 @@
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import {
-  ConnectionStrategiesError,
-  throwTypedError,
-} from '@@core/utils/errors';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { ConnectionStrategiesError } from '@@core/utils/errors';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   AuthData,
   AuthStrategy,
+  CONNECTORS_METADATA,
   extractAuthMode,
   extractProvider,
   extractVertical,
   needsSubdomain,
-  CONNECTORS_METADATA,
+  needsScope,
+  OAuth2AuthData,
+  SoftwareMode,
 } from '@panora/shared';
-import { SoftwareMode } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 
 export type OAuth = {
@@ -47,18 +46,11 @@ export class ConnectionsStrategiesService {
           status: true,
         },
       });
+      this.logger.log(JSON.stringify(res));
       if (!res) return false;
       return res.status;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'CUSTOM_CREDENTIALS_ERROR',
-          message:
-            'ConnectionsStrategiesService.isCustomCredentials() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -100,6 +92,7 @@ export class ConnectionsStrategiesService {
         const attribute_slug = attributes[i];
         const value = values[i];
         //create all attributes (for oauth =>  client_id, client_secret)
+        //console.log(`Attribute : ${attribute_slug}, value: ${value}`);
         const attribute_ = await this.prisma.cs_attributes.create({
           data: {
             id_cs_attribute: uuidv4(),
@@ -119,15 +112,7 @@ export class ConnectionsStrategiesService {
 
       return cs;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'CREATE_CONNECTION_STRATEGY_ERROR',
-          message:
-            'ConnectionsStrategiesService.createConnectionStrategy() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -151,14 +136,7 @@ export class ConnectionsStrategiesService {
 
       return updatedCs;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'TOGGLE_CONNECTION_STRATEGY_ERROR',
-          message: 'ConnectionsStrategiesService.toggle() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -218,14 +196,22 @@ export class ConnectionsStrategiesService {
     let attributes: string[] = [];
     switch (authStrategy) {
       case AuthStrategy.oauth2:
-        attributes = ['client_id', 'client_secret', 'scope'];
+        const dynamic_attributes =
+          CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()]
+            ?.options?.oauth_attributes || [];
+        attributes = ['client_id', 'client_secret', ...dynamic_attributes];
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
+        }
+        if (needsScope(provider.toLowerCase(), vertical.toLowerCase())) {
+          attributes.push('scope');
         }
         break;
       case AuthStrategy.api_key:
         attributes = ['api_key'];
-
+        if (needsScope(provider.toLowerCase(), vertical.toLowerCase())) {
+          attributes.push('scope');
+        }
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
         }
@@ -234,6 +220,9 @@ export class ConnectionsStrategiesService {
         attributes = ['username', 'secret'];
         if (needsSubdomain(provider.toLowerCase(), vertical.toLowerCase())) {
           attributes.push('subdomain');
+        }
+        if (needsScope(provider.toLowerCase(), vertical.toLowerCase())) {
+          attributes.push('scope');
         }
         break;
       default:
@@ -294,6 +283,19 @@ export class ConnectionsStrategiesService {
             ),
           };
         }
+        const object =
+          CONNECTORS_METADATA[vertical.toLowerCase()][provider.toLowerCase()];
+        if (object.options && object.options.oauth_attributes) {
+          const dynamic_attributes = object.options.oauth_attributes;
+          for (const attr of dynamic_attributes) {
+            data = {
+              ...data,
+              [attr.toUpperCase()]: this.configService.get<string>(
+                `${provider.toUpperCase()}_${vertical.toUpperCase()}_${softwareMode.toUpperCase()}_${attr.toUpperCase()}`,
+              ),
+            };
+          }
+        }
         return data;
       case AuthStrategy.api_key:
         data = {
@@ -331,10 +333,31 @@ export class ConnectionsStrategiesService {
     }
   }
 
-  async getCredentials(projectId: string, type: string) {
+  isOAuth2AuthData(data: AuthData): data is OAuth2AuthData {
+    return (
+      (data as OAuth2AuthData).CLIENT_ID !== undefined &&
+      (data as OAuth2AuthData).CLIENT_SECRET !== undefined
+    );
+  }
+
+  async getSafeCredentials(projectId: string, type: string) {
+    try {
+      const res = await this.getCredentials(projectId, type);
+
+      if (this.isOAuth2AuthData(res)) {
+        const { CLIENT_SECRET, ...safeData } = res;
+        return safeData;
+      }
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCredentials(projectId: string, type: string): Promise<AuthData> {
     try {
       const isCustomCred = await this.isCustomCredentials(projectId, type);
-      console.log('inside get credentials...');
       const provider = extractProvider(type);
       const vertical = extractVertical(type);
       //TODO: extract sofwtaremode
@@ -364,7 +387,6 @@ export class ConnectionsStrategiesService {
           authStrategy,
           SoftwareMode.cloud,
         );
-        console.log('CONNECTION STRATEGY result is' + JSON.stringify(res));
         return res;
       }
     } catch (error) {
@@ -380,15 +402,7 @@ export class ConnectionsStrategiesService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'GET_CONNECTION_STRATEGIES_BY_PROJECT_ERROR',
-          message:
-            'ConnectionsStrategiesService.getConnectionStrategiesForProject() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -447,15 +461,7 @@ export class ConnectionsStrategiesService {
       }
       return cs;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'UPDATE_CONNECTION_STRATEGY_ERROR',
-          message:
-            'ConnectionsStrategiesService.updateConnectionStrategy() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -515,15 +521,7 @@ export class ConnectionsStrategiesService {
 
       return deleteCS;
     } catch (error) {
-      throwTypedError(
-        new ConnectionStrategiesError({
-          name: 'DELETE_CONNECTION_STRATEGY_ERROR',
-          message:
-            'ConnectionsStrategiesService.deleteConnectionStrategy() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

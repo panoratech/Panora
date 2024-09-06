@@ -1,10 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedTransactionInput,
-  UnifiedTransactionOutput,
+  UnifiedAccountingTransactionInput,
+  UnifiedAccountingTransactionOutput,
 } from './model.unified';
 import { OriginalTransactionOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ITransactionService {
   addTransaction(
@@ -12,15 +13,12 @@ export interface ITransactionService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalTransactionOutput>>;
 
-  syncTransactions(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTransactionOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalTransactionOutput[]>>;
 }
 
 export interface ITransactionMapper {
   desunify(
-    source: UnifiedTransactionInput,
+    source: UnifiedAccountingTransactionInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,9 +27,12 @@ export interface ITransactionMapper {
 
   unify(
     source: OriginalTransactionOutput | OriginalTransactionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTransactionOutput | UnifiedTransactionOutput[];
+  ): Promise<
+    UnifiedAccountingTransactionOutput | UnifiedAccountingTransactionOutput[]
+  >;
 }

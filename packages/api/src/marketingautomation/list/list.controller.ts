@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,14 +17,26 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { ListService } from './services/list.service';
-import { UnifiedListInput, UnifiedListOutput } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('marketingautomation/list')
-@Controller('marketingautomation/list')
+import { ListService } from './services/list.service';
+import {
+  UnifiedMarketingautomationListInput,
+  UnifiedMarketingautomationListOutput,
+} from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+  ApiPostCustomResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+
+
+@ApiTags('marketingautomation/lists')
+@Controller('marketingautomation/lists')
 export class ListController {
   constructor(
     private readonly listService: ListService,
@@ -34,8 +47,8 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'getLists',
-    summary: 'List a batch of Lists',
+    operationId: 'listMarketingautomationLists',
+    summary: 'List Lists',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -43,97 +56,27 @@ export class ListController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiCustomResponse(UnifiedListOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedMarketingautomationListOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getLists(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.listService.getLists(remoteSource, linkedUserId, remote_data);
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'getList',
-    summary: 'Retrieve a List',
-    description:
-      'Retrieve a list from any connected Marketingautomation software',
-  })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    type: String,
-    description: 'id of the list you want to retrieve.',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiCustomResponse(UnifiedListOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Get(':id')
-  getList(
-    @Param('id') id: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    return this.listService.getList(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addList',
-    summary: 'Create a List',
-    description: 'Create a list in any supported Marketingautomation software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedListInput })
-  @ApiCustomResponse(UnifiedListOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addList(
-    @Body() unifiedListData: UnifiedListInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.listService.addList(
-        unifiedListData,
+      const { remote_data, limit, cursor } = query;
+      return this.listService.getLists(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -141,8 +84,58 @@ export class ListController {
   }
 
   @ApiOperation({
-    operationId: 'addLists',
-    summary: 'Add a batch of Lists',
+    operationId: 'retrieveMarketingautomationList',
+    summary: 'Retrieve List',
+    description:
+      'Retrieve a List from any connected Marketingautomation software',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+    description: 'id of the list you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+  })
+  @ApiQuery({
+    name: 'remote_data',
+    required: false,
+    type: Boolean,
+    description:
+      'Set to true to include data from the original Marketingautomation software.',
+    example: false,
+  })
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedMarketingautomationListOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @Get(':id')
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
+    @Param('id') id: string,
+    @Query('remote_data') remote_data?: boolean,
+  ) {
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
+      );
+    return this.listService.getList(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
+  }
+
+  @ApiOperation({
+    operationId: 'createMarketingautomationList',
+    summary: 'Create Lists',
+    description: 'Create Lists in any supported Marketingautomation software',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -157,22 +150,24 @@ export class ListController {
     description:
       'Set to true to include data from the original Marketingautomation software.',
   })
-  @ApiBody({ type: UnifiedListInput, isArray: true })
-  @ApiCustomResponse(UnifiedListOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addLists(
-    @Body() unfiedListData: UnifiedListInput[],
-    @Headers('connection_token') connection_token: string,
+  @ApiBody({ type: UnifiedMarketingautomationListInput })
+  @ApiPostCustomResponse(UnifiedMarketingautomationListOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @Post()
+  async addList(
+    @Body() unifiedListData: UnifiedMarketingautomationListInput,
+    @Headers('x-connection-token') connection_token: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.listService.batchAddLists(
-        unfiedListData,
+      return this.listService.addList(
+        unifiedListData,
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
         remote_data,

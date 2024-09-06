@@ -1,28 +1,28 @@
-import { Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
+import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
 import {
-  Action,
-  ActionType,
-  ConnectionsError,
-  format3rdPartyError,
-  throwTypedError,
-} from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ITicketingConnectionService } from '../../types';
-import { ServiceRegistry } from '../registry.service';
+  AbstractBaseConnectionService,
+  OAuthCallbackParams,
+  PassthroughInput,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
+import { PassthroughResponse } from '@@core/passthrough/types';
+import { Injectable } from '@nestjs/common';
 import {
   AuthStrategy,
   CONNECTORS_METADATA,
   DynamicApiUrl,
+  OAuth2AuthData,
+  providerToType,
 } from '@panora/shared';
-import { OAuth2AuthData, providerToType } from '@panora/shared';
-import { ConnectionsStrategiesService } from '@@core/connections-strategies/connections-strategies.service';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { OAuthCallbackParams } from '@@core/connections/@utils/types';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { ServiceRegistry } from '../registry.service';
 
 export type AhaOAuthResponse = {
   access_token: string;
@@ -30,21 +30,65 @@ export type AhaOAuthResponse = {
 };
 
 @Injectable()
-export class AhaConnectionService implements ITicketingConnectionService {
+export class AhaConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
-    private prisma: PrismaService,
+    protected prisma: PrismaService,
     private logger: LoggerService,
     private env: EnvironmentService,
-    private cryptoService: EncryptionService,
+    protected cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private cService: ConnectionsStrategiesService,
     private connectionUtils: ConnectionUtils,
+    private retryService: RetryHandler,
   ) {
+    super(prisma, cryptoService);
     this.logger.setContext(AhaConnectionService.name);
     this.registry.registerService('aha', this);
     this.type = providerToType('aha', 'ticketing', AuthStrategy.oauth2);
+  }
+
+  async passthrough(
+    input: PassthroughInput,
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
+    try {
+      const { headers } = input;
+      const config = await this.constructPassthrough(input, connectionId);
+
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: connectionId,
+        },
+      });
+
+      config.headers['Authorization'] = `Basic ${Buffer.from(
+        `${this.cryptoService.decrypt(connection.access_token)}:`,
+      ).toString('base64')}`;
+
+      config.headers = {
+        ...config.headers,
+        ...headers,
+      };
+
+      return await this.retryService.makeRequest(
+        {
+          method: config.method,
+          url: config.url,
+          data: config.data,
+          headers: config.headers,
+        },
+        'ticketing.aha.passthrough',
+        config.linkedUserId,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  handleTokenRefresh?(opts: RefreshParams): Promise<any> {
+    return Promise.resolve();
   }
 
   async handleCallback(opts: OAuthCallbackParams) {
@@ -58,10 +102,9 @@ export class AhaConnectionService implements ITicketingConnectionService {
         },
       });
 
-      //reconstruct the redirect URI that was passed in the githubend it must be the same
       const REDIRECT_URI = `${
         this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getWebhookIngress()
+          ? this.env.getTunnelIngress()
           : this.env.getPanoraBaseUrl()
       }/connections/oauth/callback`;
 
@@ -117,7 +160,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
             connection_token: connection_token,
             provider_slug: 'aha',
             vertical: 'ticketing',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: BASE_API_URL,
             access_token: this.cryptoService.encrypt(data.access_token),
             status: 'valid',
@@ -138,18 +181,7 @@ export class AhaConnectionService implements ITicketingConnectionService {
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_TICKETING',
-          message: `AhaConnectionService.handleCallback() call failed ---> ${format3rdPartyError(
-            'aha',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}`,
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

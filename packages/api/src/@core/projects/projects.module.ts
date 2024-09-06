@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ProjectsService } from './projects.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { ProjectsController } from './projects.controller';
-import { LoggerService } from '../logger/logger.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { ProjectsService } from './projects.service';
 
 @Module({
   providers: [ProjectsService, LoggerService],

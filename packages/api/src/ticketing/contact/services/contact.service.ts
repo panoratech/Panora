@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
-import { UnifiedContactOutput } from '../types/model.unified';
+import { UnifiedTicketingContactOutput } from '../types/model.unified';
 
 @Injectable()
 export class ContactService {
@@ -13,8 +13,12 @@ export class ContactService {
 
   async getContact(
     id_ticketing_contact: string,
+    linkedUserId: string,
+    integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedTicketingContactOutput> {
     try {
       const contact = await this.prisma.tcg_contacts.findUnique({
         where: {
@@ -42,21 +46,20 @@ export class ContactService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedContactOutput format
-      const unifiedContact: UnifiedContactOutput = {
+      // Transform to UnifiedTicketingContactOutput format
+      const unifiedContact: UnifiedTicketingContactOutput = {
         id: contact.id_tcg_contact,
         email_address: contact.email_address,
         name: contact.name,
         details: contact.details,
         phone_number: contact.phone_number,
         field_mappings: field_mappings,
+        remote_id: contact.remote_id,
+        created_at: contact.created_at,
+        modified_at: contact.modified_at,
       };
-
-      let res: UnifiedContactOutput = unifiedContact;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -65,33 +68,40 @@ export class ContactService {
           },
         });
         const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        unifiedContact.remote_data = remote_data;
       }
+      await this.prisma.events.create({
+        data: {
+          id_connection: connection_id,
+          id_project: project_id, 
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'ticketing.contact.pull',
+          method: 'GET',
+          url: '/ticketing/contact',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
-      return res;
+      return unifiedContact;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_CONTACT_ERROR',
-          message: 'ContactService.getContact() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getContacts(
+   connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedContactOutput[];
+    data: UnifiedTicketingContactOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -103,8 +113,7 @@ export class ContactService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_contacts.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_contact: cursor,
           },
         });
@@ -114,7 +123,7 @@ export class ContactService {
       }
 
       const contacts = await this.prisma.tcg_contacts.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_contact: cursor,
@@ -124,12 +133,11 @@ export class ContactService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
-      if (contacts.length === pageSize + 1) {
+      if (contacts.length === limit + 1) {
         next_cursor = Buffer.from(
           contacts[contacts.length - 1].id_tcg_contact,
         ).toString('base64');
@@ -140,7 +148,7 @@ export class ContactService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedContacts: UnifiedContactOutput[] = await Promise.all(
+      const unifiedContacts: UnifiedTicketingContactOutput[] = await Promise.all(
         contacts.map(async (contact) => {
           // Fetch field mappings for the contact
           const values = await this.prisma.value.findMany({
@@ -161,12 +169,10 @@ export class ContactService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedContactOutput format
+          // Transform to UnifiedTicketingContactOutput format
           return {
             id: contact.id_tcg_contact,
             email_address: contact.email_address,
@@ -174,14 +180,17 @@ export class ContactService {
             details: contact.details,
             phone_number: contact.phone_number,
             field_mappings: field_mappings,
+            remote_id: contact.remote_id,
+            created_at: contact.created_at,
+            modified_at: contact.modified_at,
           };
         }),
       );
 
-      let res: UnifiedContactOutput[] = unifiedContacts;
+      let res: UnifiedTicketingContactOutput[] = unifiedContacts;
 
       if (remote_data) {
-        const remote_array_data: UnifiedContactOutput[] = await Promise.all(
+        const remote_array_data: UnifiedTicketingContactOutput[] = await Promise.all(
           res.map(async (contact) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -195,8 +204,10 @@ export class ContactService {
 
         res = remote_array_data;
       }
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id, 
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.contact.pull',
@@ -215,13 +226,7 @@ export class ContactService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_CONTACTS_ERROR',
-          message: 'ContactService.getContacts() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

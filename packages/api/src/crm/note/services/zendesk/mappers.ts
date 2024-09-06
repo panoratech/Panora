@@ -1,11 +1,11 @@
 import { ZendeskNoteInput, ZendeskNoteOutput } from './types';
 import {
-  UnifiedNoteInput,
-  UnifiedNoteOutput,
+  UnifiedCrmNoteInput,
+  UnifiedCrmNoteOutput,
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class ZendeskNoteMapper implements INoteMapper {
     this.mappersRegistry.registerService('crm', 'note', 'zendesk', this);
   }
   async desunify(
-    source: UnifiedNoteInput,
+    source: UnifiedCrmNoteInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -60,29 +60,35 @@ export class ZendeskNoteMapper implements INoteMapper {
 
   async unify(
     source: ZendeskNoteOutput | ZendeskNoteOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
+  ): Promise<UnifiedCrmNoteOutput | UnifiedCrmNoteOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleNoteToUnified(source, customFieldMappings);
+      return await this.mapSingleNoteToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     return Promise.all(
       source.map((note) =>
-        this.mapSingleNoteToUnified(note, customFieldMappings),
+        this.mapSingleNoteToUnified(note, connectionId, customFieldMappings),
       ),
     );
   }
 
   private async mapSingleNoteToUnified(
     note: ZendeskNoteOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedNoteOutput> {
+  ): Promise<UnifiedCrmNoteOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -96,10 +102,11 @@ export class ZendeskNoteMapper implements INoteMapper {
     if (type == 'contact') {
       const contact_id = await this.utils.getContactUuidFromRemoteId(
         String(note.resource_id),
-        'zendesk',
+        connectionId,
       );
       if (contact_id) {
         opts = {
+          ...opts,
           contact_id: contact_id,
         };
       }
@@ -108,10 +115,11 @@ export class ZendeskNoteMapper implements INoteMapper {
     if (type == 'deal') {
       const deal_id = await this.utils.getDealUuidFromRemoteId(
         String(note.resource_id),
-        'zendesk',
+        connectionId,
       );
       if (deal_id) {
         opts = {
+          ...opts,
           deal_id: deal_id,
         };
       }
@@ -119,6 +127,7 @@ export class ZendeskNoteMapper implements INoteMapper {
 
     return {
       remote_id: String(note.id),
+      remote_data: note,
       content: note.content,
       field_mappings,
       ...opts,

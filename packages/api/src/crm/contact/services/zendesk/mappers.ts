@@ -1,12 +1,12 @@
 import { Address } from '@crm/@lib/@types';
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedCrmContactInput,
+  UnifiedCrmContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
 import { ZendeskContactInput, ZendeskContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class ZendeskContactMapper implements IContactMapper {
   }
 
   async desunify(
-    source: UnifiedContactInput,
+    source: UnifiedCrmContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -71,30 +71,40 @@ export class ZendeskContactMapper implements IContactMapper {
 
   async unify(
     source: ZendeskContactOutput | ZendeskContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
+  ): Promise<UnifiedCrmContactOutput | UnifiedCrmContactOutput[]> {
     if (!Array.isArray(source)) {
-      return await this.mapSingleContactToUnified(source, customFieldMappings);
+      return await this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotContactOutput
     return Promise.all(
       source.map((contact) =>
-        this.mapSingleContactToUnified(contact, customFieldMappings),
+        this.mapSingleContactToUnified(
+          contact,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleContactToUnified(
     contact: ZendeskContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedContactOutput> {
+  ): Promise<UnifiedCrmContactOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -103,17 +113,17 @@ export class ZendeskContactMapper implements IContactMapper {
     }
     // Constructing the email and phone details
     const email_addresses = contact.email
-      ? [{ email_address: contact.email, email_address_type: 'primary' }]
+      ? [{ email_address: contact.email, email_address_type: 'PERSONAL' }]
       : [];
     const phone_numbers = [];
 
     if (contact.phone) {
-      phone_numbers.push({ phone_number: contact.phone, phone_type: 'work' });
+      phone_numbers.push({ phone_number: contact.phone, phone_type: 'WORK' });
     }
     if (contact.mobile) {
       phone_numbers.push({
         phone_number: contact.mobile,
-        phone_type: 'mobile',
+        phone_type: 'MOBILE',
       });
     }
 
@@ -121,7 +131,7 @@ export class ZendeskContactMapper implements IContactMapper {
     if (contact.owner_id) {
       const user_id = await this.utils.getUserUuidFromRemoteId(
         String(contact.owner_id),
-        'zendesk',
+        connectionId,
       );
       if (user_id) {
         opts = {
@@ -140,6 +150,7 @@ export class ZendeskContactMapper implements IContactMapper {
 
     return {
       remote_id: String(contact.id),
+      remote_data: contact,
       first_name: contact.first_name,
       last_name: contact.last_name,
       email_addresses,

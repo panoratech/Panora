@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -17,13 +18,20 @@ import {
   ApiTags,
   ApiHeader,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { TagService } from './services/tag.service';
-import { UnifiedTagInput, UnifiedTagOutput } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('ats/tag')
-@Controller('ats/tag')
+import { TagService } from './services/tag.service';
+import { UnifiedAtsTagInput, UnifiedAtsTagOutput } from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+
+
+@ApiTags('ats/tags')
+@Controller('ats/tags')
 export class TagController {
   constructor(
     private readonly tagService: TagService,
@@ -34,8 +42,8 @@ export class TagController {
   }
 
   @ApiOperation({
-    operationId: 'getAtsTags',
-    summary: 'List a batch of Tags',
+    operationId: 'listAtsTags',
+    summary: 'List  Tags',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -43,134 +51,77 @@ export class TagController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiCustomResponse(UnifiedTagOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedAtsTagOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getTags(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.tagService.getTags(remoteSource, linkedUserId, remote_data);
+      const { remote_data, limit, cursor } = query;
+      return this.tagService.getTags(
+        connectionId,
+        projectId,
+        remoteSource,
+        linkedUserId,
+        limit,
+        remote_data,
+        cursor,
+      );
     } catch (error) {
       throw new Error(error);
     }
   }
 
   @ApiOperation({
-    operationId: 'getAtsTag',
-    summary: 'Retrieve a Tag',
-    description: 'Retrieve a tag from any connected Ats software',
+    operationId: 'retrieveAtsTag',
+    summary: 'Retrieve Tags',
+    description: 'Retrieve Tags from any connected Ats software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the tag you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Ats software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedTagOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedAtsTagOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getTag(@Param('id') id: string, @Query('remote_data') remote_data?: boolean) {
-    return this.tagService.getTag(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addTag',
-    summary: 'Create a Tag',
-    description: 'Create a tag in any supported Ats software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedTagInput })
-  @ApiCustomResponse(UnifiedTagOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addTag(
-    @Body() unifiedTagData: UnifiedTagInput,
+  async retrieve(
     @Headers('x-connection-token') connection_token: string,
+    @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.tagService.addTag(
-        unifiedTagData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addTags',
-    summary: 'Add a batch of Tags',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Ats software.',
-  })
-  @ApiBody({ type: UnifiedTagInput, isArray: true })
-  @ApiCustomResponse(UnifiedTagOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addTags(
-    @Body() unfiedTagData: UnifiedTagInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.tagService.batchAddTags(
-        unfiedTagData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.tagService.getTag(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

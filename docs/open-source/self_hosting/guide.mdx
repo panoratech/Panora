@@ -1,0 +1,70 @@
+---
+title: "Quickstart"
+description: "Try Panora in no time with full control."
+---
+
+<Info>**Prerequisite:** You should have Git and Docker installed</Info>
+
+<Steps>
+  <Step title="Open a terminal and type this to download Panora:">
+    ```bash 
+git clone https://github.com/panoratech/Panora.git
+```
+  </Step>
+
+<Step title="Prepare the installation:">
+<Note> Check [here](/open-source/self_hosting/envVariables) to fill the right env variables ! </Note>
+  ```bash 
+  cd Panora && cp .env.example .env 
+  ```
+</Step>
+
+  <Step title="Start Panora:">
+    ```bash
+    docker compose -f docker-compose.source.yml up -d
+    ```
+<AccordionGroup>
+  <Accordion title="If you want to build Panora from sources, check">
+    Update to the latest version. Run `docker version` to check.
+  </Accordion>
+
+</AccordionGroup>
+
+  </Step>
+
+  <Step title="Check Panora is Running">
+
+<Check>
+  Use the following command to check progress. Look at services "Panora-api" and  "Panora-webapp" and check in column STATUS both are "UP"
+  ```bash
+  docker ps
+  ```
+After a few minutes Panora's dashboard will be available at `http://localhost:80`.
+The backend runs on `http://localhost:3000`
+
+**Congrats, Panora is now ready 🍾🔥**
+
+</Check>
+  </Step>
+
+  <Step title="Next? Get started with our quickstart !">
+
+Visit our [guide here](/quick-start) for more details.
+
+  </Step>
+</Steps>
+## Troubleshooting
+
+Here's how to solve some common problems when working with the CLI.
+
+<AccordionGroup>
+  <Accordion title="Docker is not working">
+    Update to the latest version. Run `docker version` to check.
+  </Accordion>
+
+  <Accordion title="Getting another error">
+   [Come chat on Discord!](https://discord.gg/G7fr4HNyTb)
+  </Accordion>
+</AccordionGroup>
+
+Need help? [Come chat on Discord!](https://discord.gg/G7fr4HNyTb)

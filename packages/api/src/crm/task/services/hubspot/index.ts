@@ -1,18 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { ITaskService } from '@crm/task/types';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 import { CrmObject } from '@crm/@lib/@types';
+import { ITaskService } from '@crm/task/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
 import {
   HubspotTaskInput,
   HubspotTaskOutput,
   commonTaskHubspotProperties,
 } from './types';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
 
 @Injectable()
 export class HubspotService implements ITaskService {
@@ -39,12 +39,20 @@ export class HubspotService implements ITaskService {
           vertical: 'crm',
         },
       });
-      const dataBody = {
-        properties: taskData,
-      };
       const resp = await axios.post(
-        `${connection.account_url}/objects/tasks`,
-        JSON.stringify(dataBody),
+        `${connection.account_url}/crm/v3/objects/tasks`,
+        JSON.stringify(taskData),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+      const final_resp = await axios.get(
+        `${connection.account_url}/crm/v3/objects/tasks/${resp.data.id}?properties=hs_task_body&associations=deal,company`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -55,26 +63,19 @@ export class HubspotService implements ITaskService {
         },
       );
       return {
-        data: resp.data,
+        data: final_resp.data,
         message: 'Hubspot task created',
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.task,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncTasks(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotTaskOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotTaskOutput[]>> {
     try {
+      const { linkedUserId, custom_properties } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -85,13 +86,13 @@ export class HubspotService implements ITaskService {
 
       const commonPropertyNames = Object.keys(commonTaskHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/objects/tasks`;
+      const baseURL = `${connection.account_url}/crm/v3/objects/tasks`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
         .join('&');
 
-      const url = `${baseURL}?${queryString}`;
+      const url = `${baseURL}?${queryString}&associations=deal,company`;
 
       const resp = await axios.get(url, {
         headers: {
@@ -109,13 +110,7 @@ export class HubspotService implements ITaskService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.task,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

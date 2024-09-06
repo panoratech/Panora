@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedTemplateInput, UnifiedTemplateOutput } from './model.unified';
+import { UnifiedMarketingautomationTemplateInput, UnifiedMarketingautomationTemplateOutput } from './model.unified';
 import { OriginalTemplateOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface ITemplateService {
 
 export interface ITemplateMapper {
   desunify(
-    source: UnifiedTemplateInput,
+    source: UnifiedMarketingautomationTemplateInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +26,10 @@ export interface ITemplateMapper {
 
   unify(
     source: OriginalTemplateOutput | OriginalTemplateOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTemplateOutput | UnifiedTemplateOutput[];
+  ): Promise<UnifiedMarketingautomationTemplateOutput | UnifiedMarketingautomationTemplateOutput[]>;
 }

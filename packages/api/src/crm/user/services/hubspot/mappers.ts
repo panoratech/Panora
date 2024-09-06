@@ -1,10 +1,10 @@
 import { HubspotUserInput, HubspotUserOutput } from './types';
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedCrmUserInput,
+  UnifiedCrmUserOutput,
 } from '@crm/user/types/model.unified';
 import { IUserMapper } from '@crm/user/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
 
@@ -14,7 +14,7 @@ export class HubspotUserMapper implements IUserMapper {
     this.mappersRegistry.registerService('crm', 'user', 'hubspot', this);
   }
   desunify(
-    source: UnifiedUserInput,
+    source: UnifiedCrmUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -23,29 +23,37 @@ export class HubspotUserMapper implements IUserMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: HubspotUserOutput | HubspotUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedCrmUserOutput | UnifiedCrmUserOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleUserToUnified(source, customFieldMappings);
+      return this.mapSingleUserToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotUserOutput
-    return source.map((user) =>
-      this.mapSingleUserToUnified(user, customFieldMappings),
+    return Promise.all(
+      source.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 
   private mapSingleUserToUnified(
     user: HubspotUserOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput {
+  ): UnifiedCrmUserOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -55,6 +63,7 @@ export class HubspotUserMapper implements IUserMapper {
 
     return {
       remote_id: user.id,
+      remote_data: user,
       name: `${user.firstName} ${user.lastName}`,
       email: user.email,
       field_mappings,

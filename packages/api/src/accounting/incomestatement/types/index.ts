@@ -1,10 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedIncomeStatementInput,
-  UnifiedIncomeStatementOutput,
+  UnifiedAccountingIncomestatementInput,
+  UnifiedAccountingIncomestatementOutput,
 } from './model.unified';
 import { OriginalIncomeStatementOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IIncomeStatementService {
   addIncomeStatement(
@@ -12,15 +13,12 @@ export interface IIncomeStatementService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalIncomeStatementOutput>>;
 
-  syncIncomeStatements(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalIncomeStatementOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalIncomeStatementOutput[]>>;
 }
 
 export interface IIncomeStatementMapper {
   desunify(
-    source: UnifiedIncomeStatementInput,
+    source: UnifiedAccountingIncomestatementInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,9 +27,13 @@ export interface IIncomeStatementMapper {
 
   unify(
     source: OriginalIncomeStatementOutput | OriginalIncomeStatementOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedIncomeStatementOutput | UnifiedIncomeStatementOutput[];
+  ): Promise<
+    | UnifiedAccountingIncomestatementOutput
+    | UnifiedAccountingIncomestatementOutput[]
+  >;
 }

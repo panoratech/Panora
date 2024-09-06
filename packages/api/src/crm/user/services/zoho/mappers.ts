@@ -1,11 +1,11 @@
 import { ZohoUserInput, ZohoUserOutput } from './types';
 
 import {
-  UnifiedUserInput,
-  UnifiedUserOutput,
+  UnifiedCrmUserInput,
+  UnifiedCrmUserOutput,
 } from '@crm/user/types/model.unified';
 import { IUserMapper } from '@crm/user/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
 
@@ -15,7 +15,7 @@ export class ZohoUserMapper implements IUserMapper {
     this.mappersRegistry.registerService('crm', 'user', 'zoho', this);
   }
   desunify(
-    source: UnifiedUserInput,
+    source: UnifiedCrmUserInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -24,30 +24,43 @@ export class ZohoUserMapper implements IUserMapper {
     return;
   }
 
-  unify(
+  async unify(
     source: ZohoUserOutput | ZohoUserOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput | UnifiedUserOutput[] {
+  ): Promise<UnifiedCrmUserOutput | UnifiedCrmUserOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleUserToUnified(source, customFieldMappings);
+      return this.mapSingleUserToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
 
     // Handling array of HubspotUserOutput
-    return source.map((user) =>
-      this.mapSingleUserToUnified(user, customFieldMappings),
+    return Promise.all(
+      source.map((user) =>
+        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+      ),
     );
   }
 
   private mapSingleUserToUnified(
     user: ZohoUserOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedUserOutput {
-    return;
+  ): UnifiedCrmUserOutput {
+    return {
+      remote_id: user.id,
+      name: user.full_name,
+      email: user.email,
+      remote_data: user,
+    };
   }
 }

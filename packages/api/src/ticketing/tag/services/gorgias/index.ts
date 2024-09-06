@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { ITagService } from '@ticketing/tag/types';
 import { GorgiasTagOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GorgiasService implements ITagService {
@@ -24,11 +25,9 @@ export class GorgiasService implements ITagService {
     this.registry.registerService('gorgias', this);
   }
 
-  async syncTags(
-    linkedUserId: string,
-    id_ticket: string,
-  ): Promise<ApiResponse<GorgiasTagOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GorgiasTagOutput[]>> {
     try {
+      const { linkedUserId, id_ticket } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -39,7 +38,7 @@ export class GorgiasService implements ITagService {
 
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {
-          id_tcg_ticket: id_ticket,
+          id_tcg_ticket: id_ticket as string,
         },
         select: {
           remote_id: true,
@@ -66,13 +65,7 @@ export class GorgiasService implements ITagService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gorgias',
-        TicketingObject.tag,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

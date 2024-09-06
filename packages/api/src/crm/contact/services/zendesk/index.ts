@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { IContactService } from '@crm/contact/types';
 import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskContactInput, ZendeskContactOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalContactOutput } from '@@core/utils/types/original/original.crm';
 @Injectable()
 export class ZendeskService implements IContactService {
   constructor(
@@ -36,7 +38,7 @@ export class ZendeskService implements IContactService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/contacts`,
+        `${connection.account_url}/v2/contacts`,
         {
           data: contactData,
         },
@@ -56,20 +58,14 @@ export class ZendeskService implements IContactService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.contact,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncContacts(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZendeskContactOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -77,7 +73,7 @@ export class ZendeskService implements IContactService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/contacts`, {
+      const resp = await axios.get(`${connection.account_url}/v2/contacts`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -101,13 +97,7 @@ export class ZendeskService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zendesk',
-        CrmObject.contact,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

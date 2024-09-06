@@ -1,9 +1,8 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { UnifiedStageOutput } from '../types/model.unified';
-import { throwTypedError, UnifiedCrmError } from '@@core/utils/errors';
+import { UnifiedCrmStageOutput } from '../types/model.unified';
 
 @Injectable()
 export class StageService {
@@ -13,8 +12,12 @@ export class StageService {
 
   async getStage(
     id_stage: string,
+    linkedUserId: string,
+    integrationId: string,
+    connectionId: string,
+    projectId: string,
     remote_data?: boolean,
-  ): Promise<UnifiedStageOutput> {
+  ): Promise<UnifiedCrmStageOutput> {
     try {
       const stage = await this.prisma.crm_deals_stages.findUnique({
         where: {
@@ -41,18 +44,19 @@ export class StageService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedStageOutput format
-      const unifiedStage: UnifiedStageOutput = {
+      // Transform to UnifiedCrmStageOutput format
+      const unifiedStage: UnifiedCrmStageOutput = {
         id: stage.id_crm_deals_stage,
         stage_name: stage.stage_name,
         field_mappings: field_mappings,
+        remote_id: stage.remote_id,
+        created_at: stage.created_at,
+        modified_at: stage.modified_at,
       };
 
-      let res: UnifiedStageOutput = {
+      let res: UnifiedCrmStageOutput = {
         ...unifiedStage,
       };
 
@@ -69,27 +73,38 @@ export class StageService {
           remote_data: remote_data,
         };
       }
+      await this.prisma.events.create({
+        data: {
+          id_connection: connectionId,
+          id_project: projectId,
+          id_event: uuidv4(),
+          status: 'success',
+          type: 'crm.stage.pull',
+          method: 'GET',
+          url: '/crm/stage',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+        },
+      });
 
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_STAGE_ERROR',
-          message: 'StageService.getStage() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getStages(
+    connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedStageOutput[];
+    data: UnifiedCrmStageOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -100,8 +115,7 @@ export class StageService {
       if (cursor) {
         const isCursorPresent = await this.prisma.crm_deals_stages.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_crm_deals_stage: cursor,
           },
         });
@@ -111,7 +125,7 @@ export class StageService {
       }
 
       const stages = await this.prisma.crm_deals_stages.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_crm_deals_stage: cursor,
@@ -121,12 +135,11 @@ export class StageService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
-      if (stages.length === pageSize + 1) {
+      if (stages.length === limit + 1) {
         next_cursor = Buffer.from(
           stages[stages.length - 1].id_crm_deals_stage,
         ).toString('base64');
@@ -137,7 +150,7 @@ export class StageService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedStages: UnifiedStageOutput[] = await Promise.all(
+      const unifiedStages: UnifiedCrmStageOutput[] = await Promise.all(
         stages.map(async (stage) => {
           // Fetch field mappings for the ticket
           const values = await this.prisma.value.findMany({
@@ -158,24 +171,25 @@ export class StageService {
           });
 
           // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
+          // Convert the map to an object
+const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedStageOutput format
+          // Transform to UnifiedCrmStageOutput format
           return {
             id: stage.id_crm_deals_stage,
             stage_name: stage.stage_name,
             field_mappings: field_mappings,
+            remote_id: stage.remote_id,
+            created_at: stage.created_at,
+            modified_at: stage.modified_at,
           };
         }),
       );
 
-      let res: UnifiedStageOutput[] = unifiedStages;
+      let res: UnifiedCrmStageOutput[] = unifiedStages;
 
       if (remote_data) {
-        const remote_array_data: UnifiedStageOutput[] = await Promise.all(
+        const remote_array_data: UnifiedCrmStageOutput[] = await Promise.all(
           res.map(async (stage) => {
             const resp = await this.prisma.remote_data.findFirst({
               where: {
@@ -189,8 +203,10 @@ export class StageService {
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'crm.stage.pulled',
@@ -209,13 +225,7 @@ export class StageService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedCrmError({
-          name: 'GET_STAGES_ERROR',
-          message: 'StageService.getStages() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 }

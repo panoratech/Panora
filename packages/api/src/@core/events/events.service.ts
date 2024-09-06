@@ -1,7 +1,6 @@
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { PaginationDto } from '@@core/utils/dtos/pagination.dto';
-import { EventsError, throwTypedError } from '@@core/utils/errors';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { PaginationDto } from '@@core/utils/dtos/webapp.event.pagination.dto';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -27,8 +26,8 @@ export class EventsService {
       // Then, use those ids to filter the events
       return await this.prisma.events.findMany({
         orderBy: { timestamp: 'desc' },
-        skip: (dto.page - 1) * dto.pageSize,
-        take: dto.pageSize,
+        skip: (dto.page - 1) * dto.limit,
+        take: dto.limit,
         where: {
           id_linked_user: {
             in: linkedUserIds,
@@ -36,14 +35,7 @@ export class EventsService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new EventsError({
-          name: 'GET_EVENTS_ERROR',
-          message: 'EventsService.findEvents() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -69,14 +61,7 @@ export class EventsService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new EventsError({
-          name: 'GET_EVENTS_COUNT_ERROR',
-          message: 'EventsService.getEventsCount() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

@@ -1,30 +1,31 @@
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { Module } from '@nestjs/common';
-import { TicketingWebhookHandlerService } from './handler.service';
-import { ZendeskHandlerService } from './zendesk/handler';
-import { EnvironmentService } from '@@core/environment/environment.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { TicketModule } from '@ticketing/ticket/ticket.module';
-import { UserModule } from '@ticketing/user/user.module';
 import { AccountModule } from '@ticketing/account/account.module';
 import { ContactModule } from '@ticketing/contact/contact.module';
+import { TicketModule } from '@ticketing/ticket/ticket.module';
+import { UserModule } from '@ticketing/user/user.module';
+import { TicketingWebhookHandlerService } from './handler.service';
+import { ZendeskHandlerService } from './zendesk/handler';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 
 @Module({
-  imports: [TicketModule, UserModule, AccountModule, ContactModule],
+  imports: [
+    TicketModule,
+    UserModule,
+    AccountModule,
+    ContactModule,
+    BullQueueModule,
+  ],
   providers: [
-    LoggerService,
-    EncryptionService,
     EnvironmentService,
     TicketingWebhookHandlerService,
+    IngestDataService,
+    WebhookService,
     /* PROVIDERS SERVICES */
     ZendeskHandlerService,
   ],
-  exports: [
-    LoggerService,
-
-    ZendeskHandlerService,
-    TicketingWebhookHandlerService,
-  ],
+  exports: [ZendeskHandlerService, TicketingWebhookHandlerService],
 })
 export class TicketingWebhookHandlerModule {}

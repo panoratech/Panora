@@ -11,7 +11,7 @@ export type FrontTicketInput = {
 export type Comment = {
   author_id?: string;
   body: string;
-  attachments?: string[]; //TODO: maybe wrong type
+  attachments?: string[];
 };
 
 export type FrontTicketOutput = Partial<Conversation>;

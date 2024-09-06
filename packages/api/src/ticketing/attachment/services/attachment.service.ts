@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { throwTypedError, UnifiedTicketingError } from '@@core/utils/errors';
-import { WebhookService } from '@@core/webhook/webhook.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import {
-  UnifiedAttachmentInput,
-  UnifiedAttachmentOutput,
+  UnifiedTicketingAttachmentInput,
+  UnifiedTicketingAttachmentOutput,
 } from '../types/model.unified';
 
 @Injectable()
@@ -19,42 +18,14 @@ export class AttachmentService {
     this.logger.setContext(AttachmentService.name);
   }
 
-  async batchAddAttachments(
-    unifiedAttachmentData: UnifiedAttachmentInput[],
-    integrationId: string,
-    linkedUserId: string,
-    remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput[]> {
-    try {
-      const responses = await Promise.all(
-        unifiedAttachmentData.map((unifiedData) =>
-          this.addAttachment(
-            unifiedData,
-            integrationId.toLowerCase(),
-            linkedUserId,
-            remote_data,
-          ),
-        ),
-      );
-
-      return responses;
-    } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_ATTACHMENTS_ERROR',
-          message: 'AttachmentService.batchAddAttachments() call failed',
-          cause: error,
-        }),
-      );
-    }
-  }
-
   async addAttachment(
-    unifiedAttachmentData: UnifiedAttachmentInput,
+    unifiedAttachmentData: UnifiedTicketingAttachmentInput,
+    connection_id: string,
     integrationId: string,
     linkedUserId: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedTicketingAttachmentOutput> {
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
         where: {
@@ -71,8 +42,7 @@ export class AttachmentService {
       const existingAttachment = await this.prisma.tcg_attachments.findFirst({
         where: {
           file_name: unifiedAttachmentData.file_name,
-          remote_platform: integrationId,
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
@@ -100,8 +70,7 @@ export class AttachmentService {
           uploader: linkedUserId,
           created_at: new Date(),
           modified_at: new Date(),
-          id_linked_user: linkedUserId,
-          remote_platform: integrationId,
+          id_connection: connection_id,
         };
 
         const res = await this.prisma.tcg_attachments.create({
@@ -112,11 +81,17 @@ export class AttachmentService {
 
       const result_attachment = await this.getAttachment(
         unique_ticketing_attachment_id,
+        undefined,
+        undefined,
+        connection_id,
+        project_id,
         remote_data,
       );
 
       const event = await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.attachment.push', //sync, push or pull
@@ -129,7 +104,7 @@ export class AttachmentService {
         },
       });
 
-      await this.webhook.handleWebhook(
+      await this.webhook.dispatchWebhook(
         result_attachment,
         'ticketing.attachment.created',
         linkedUser.id_project,
@@ -137,20 +112,18 @@ export class AttachmentService {
       );
       return result_attachment;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'CREATE_ATTACHMENT_ERROR',
-          message: 'AttachmentService.addAttachment() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getAttachment(
     id_ticketing_attachment: string,
+    linkedUserId: string,
+    integrationId: string,
+    connection_id: string,
+    project_id: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedTicketingAttachmentOutput> {
     try {
       const attachment = await this.prisma.tcg_attachments.findUnique({
         where: {
@@ -178,20 +151,33 @@ export class AttachmentService {
       });
 
       // Convert the map to an array of objects
-      const field_mappings = Array.from(fieldMappingsMap, ([key, value]) => ({
-        [key]: value,
-      }));
+      const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedAttachmentOutput format
-      const unifiedAttachment: UnifiedAttachmentOutput = {
+      // Transform to UnifiedTicketingAttachmentOutput format
+      let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
         id: attachment.id_tcg_attachment,
         file_name: attachment.file_name,
         file_url: attachment.file_url,
         uploader: attachment.uploader,
         field_mappings: field_mappings,
+        remote_id: attachment.remote_id,
+        created_at: attachment.created_at,
+        modified_at: attachment.modified_at,
       };
+      if (attachment.id_tcg_comment) {
+        unifiedAttachment = {
+          ...unifiedAttachment,
+          comment_id: attachment.id_tcg_comment,
+        };
+      }
+      if (attachment.id_tcg_ticket) {
+        unifiedAttachment = {
+          ...unifiedAttachment,
+          ticket_id: attachment.id_tcg_ticket,
+        };
+      }
 
-      let res: UnifiedAttachmentOutput = unifiedAttachment;
+      let res: UnifiedTicketingAttachmentOutput = unifiedAttachment;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
@@ -206,27 +192,39 @@ export class AttachmentService {
           remote_data: remote_data,
         };
       }
-
+      if (linkedUserId && integrationId) {
+        await this.prisma.events.create({
+          data: {
+            id_connection: connection_id,
+            id_project: project_id,
+            id_event: uuidv4(),
+            status: 'success',
+            type: 'ticketing.attachment.pull',
+            method: 'GET',
+            url: '/ticketing/attachment',
+            provider: integrationId,
+            direction: '0',
+            timestamp: new Date(),
+            id_linked_user: linkedUserId,
+          },
+        });
+      }
       return res;
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_ATTACHMENT_ERROR',
-          message: 'AttachmentService.getAttachment() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
   async getAttachments(
+    connection_id: string,
+    project_id: string,
     integrationId: string,
     linkedUserId: string,
-    pageSize: number,
+    limit: number,
     remote_data?: boolean,
     cursor?: string,
   ): Promise<{
-    data: UnifiedAttachmentOutput[];
+    data: UnifiedTicketingAttachmentOutput[];
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
@@ -238,8 +236,7 @@ export class AttachmentService {
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_attachments.findFirst({
           where: {
-            remote_platform: integrationId.toLowerCase(),
-            id_linked_user: linkedUserId,
+            id_connection: connection_id,
             id_tcg_attachment: cursor,
           },
         });
@@ -248,7 +245,7 @@ export class AttachmentService {
         }
       }
       const attachments = await this.prisma.tcg_attachments.findMany({
-        take: pageSize + 1,
+        take: limit + 1,
         cursor: cursor
           ? {
               id_tcg_attachment: cursor,
@@ -258,12 +255,11 @@ export class AttachmentService {
           created_at: 'asc',
         },
         where: {
-          remote_platform: integrationId.toLowerCase(),
-          id_linked_user: linkedUserId,
+          id_connection: connection_id,
         },
       });
 
-      if (attachments.length === pageSize + 1) {
+      if (attachments.length === limit + 1) {
         next_cursor = Buffer.from(
           attachments[attachments.length - 1].id_tcg_attachment,
         ).toString('base64');
@@ -274,63 +270,83 @@ export class AttachmentService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedAttachments: UnifiedAttachmentOutput[] = await Promise.all(
-        attachments.map(async (attachment) => {
-          // Fetch field mappings for the attachment
-          const values = await this.prisma.value.findMany({
-            where: {
-              entity: {
-                ressource_owner_id: attachment.id_tcg_attachment,
-              },
-            },
-            include: {
-              attribute: true,
-            },
-          });
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
-
-          values.forEach((value) => {
-            fieldMappingsMap.set(value.attribute.slug, value.data);
-          });
-
-          // Convert the map to an array of objects
-          const field_mappings = Array.from(
-            fieldMappingsMap,
-            ([key, value]) => ({ [key]: value }),
-          );
-
-          // Transform to UnifiedAttachmentOutput format
-          return {
-            id: attachment.id_tcg_attachment,
-            file_name: attachment.file_name,
-            file_url: attachment.file_url,
-            uploader: attachment.uploader, //TODO
-            field_mappings: field_mappings,
-          };
-        }),
-      );
-
-      let res: UnifiedAttachmentOutput[] = unifiedAttachments;
-
-      if (remote_data) {
-        const remote_array_data: UnifiedAttachmentOutput[] = await Promise.all(
-          res.map(async (attachment) => {
-            const resp = await this.prisma.remote_data.findFirst({
+      const unifiedAttachments: UnifiedTicketingAttachmentOutput[] =
+        await Promise.all(
+          attachments.map(async (attachment) => {
+            // Fetch field mappings for the attachment
+            const values = await this.prisma.value.findMany({
               where: {
-                ressource_owner_id: attachment.id,
+                entity: {
+                  ressource_owner_id: attachment.id_tcg_attachment,
+                },
+              },
+              include: {
+                attribute: true,
               },
             });
-            const remote_data = JSON.parse(resp.data);
-            return { ...attachment, remote_data };
+            // Create a map to store unique field mappings
+            const fieldMappingsMap = new Map();
+
+            values.forEach((value) => {
+              fieldMappingsMap.set(value.attribute.slug, value.data);
+            });
+
+            // Convert the map to an array of objects
+            const field_mappings = Array.from(
+              fieldMappingsMap,
+              ([key, value]) => ({ [key]: value }),
+            );
+            let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
+              id: attachment.id_tcg_attachment,
+              file_name: attachment.file_name,
+              file_url: attachment.file_url,
+              uploader: attachment.uploader,
+              field_mappings: field_mappings,
+              remote_id: attachment.remote_id,
+              created_at: attachment.created_at,
+              modified_at: attachment.modified_at,
+            };
+            if (attachment.id_tcg_comment) {
+              unifiedAttachment = {
+                ...unifiedAttachment,
+                comment_id: attachment.id_tcg_comment,
+              };
+            }
+            if (attachment.id_tcg_ticket) {
+              unifiedAttachment = {
+                ...unifiedAttachment,
+                ticket_id: attachment.id_tcg_ticket,
+              };
+            }
+
+            // Transform to UnifiedTicketingAttachmentOutput format
+            return unifiedAttachment;
           }),
         );
+
+      let res: UnifiedTicketingAttachmentOutput[] = unifiedAttachments;
+
+      if (remote_data) {
+        const remote_array_data: UnifiedTicketingAttachmentOutput[] =
+          await Promise.all(
+            res.map(async (attachment) => {
+              const resp = await this.prisma.remote_data.findFirst({
+                where: {
+                  ressource_owner_id: attachment.id,
+                },
+              });
+              const remote_data = JSON.parse(resp.data);
+              return { ...attachment, remote_data };
+            }),
+          );
 
         res = remote_array_data;
       }
 
-      const event = await this.prisma.events.create({
+      await this.prisma.events.create({
         data: {
+          id_connection: connection_id,
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.attachment.pull',
@@ -349,13 +365,7 @@ export class AttachmentService {
         next_cursor,
       };
     } catch (error) {
-      throwTypedError(
-        new UnifiedTicketingError({
-          name: 'GET_ATTACHMENTS_ERROR',
-          message: 'AttachmentService.getAttachments() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
   }
 
@@ -363,7 +373,7 @@ export class AttachmentService {
   async downloadAttachment(
     id_ticketing_attachment: string,
     remote_data?: boolean,
-  ): Promise<UnifiedAttachmentOutput> {
+  ): Promise<UnifiedTicketingAttachmentOutput> {
     return;
   }
 }

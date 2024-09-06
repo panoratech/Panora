@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GitlabTicketInput, GitlabTicketOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GitlabService implements ITicketService {
@@ -35,11 +36,14 @@ export class GitlabService implements ITicketService {
           vertical: 'ticketing',
         },
       });
-      const dataBody = ticketData;
+      const { comment, ...ticketD } = ticketData;
+      const DATA = {
+        ...ticketD,
+      };
 
       const resp = await axios.post(
-        `${connection.account_url}/projects/${ticketData.project_id}/issues`,
-        JSON.stringify(dataBody),
+        `${connection.account_url}/v4/projects/${ticketData.project_id}/issues`,
+        JSON.stringify(DATA),
         {
           headers: {
             'Content-Type': 'application/json',
@@ -49,27 +53,34 @@ export class GitlabService implements ITicketService {
           },
         },
       );
+      //insert comment
+      if (comment) {
+        const resp_ = await axios.post(
+          `${connection.account_url}/v4/projects/${ticketData.project_id}/issues/${resp.data.iid}/notes`,
+          JSON.stringify(comment),
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          },
+        );
+      }
       return {
         data: resp.data,
         message: 'Gitlab ticket created',
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.ticket,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
-  async syncTickets(
-    linkedUserId: string,
-    remote_ticket_id?: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<GitlabTicketOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<GitlabTicketOutput[]>> {
     try {
+      const { linkedUserId } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -79,7 +90,7 @@ export class GitlabService implements ITicketService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/issues?scope=created_by_me&scope=assigned_to_me`,
+        `${connection.account_url}/v4/issues?scope=created_by_me&scope=assigned_to_me`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -97,13 +108,7 @@ export class GitlabService implements ITicketService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'gitlab',
-        TicketingObject.ticket,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

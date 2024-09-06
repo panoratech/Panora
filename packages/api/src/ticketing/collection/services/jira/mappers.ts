@@ -1,10 +1,10 @@
 import { ICollectionMapper } from '@ticketing/collection/types';
 import { JiraCollectionInput, JiraCollectionOutput } from './types';
 import {
-  UnifiedCollectionInput,
-  UnifiedCollectionOutput,
+  UnifiedTicketingCollectionInput,
+  UnifiedTicketingCollectionOutput,
 } from '@ticketing/collection/types/model.unified';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -19,7 +19,7 @@ export class JiraCollectionMapper implements ICollectionMapper {
     );
   }
   desunify(
-    source: UnifiedCollectionInput,
+    source: UnifiedTicketingCollectionInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -30,29 +30,36 @@ export class JiraCollectionMapper implements ICollectionMapper {
 
   unify(
     source: JiraCollectionOutput | JiraCollectionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCollectionOutput | UnifiedCollectionOutput[] {
+  ): UnifiedTicketingCollectionOutput | UnifiedTicketingCollectionOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((collection) =>
-      this.mapSingleCollectionToUnified(collection, customFieldMappings),
+      this.mapSingleCollectionToUnified(
+        collection,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 
   private mapSingleCollectionToUnified(
     collection: JiraCollectionOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCollectionOutput {
-    const unifiedCollection: UnifiedCollectionOutput = {
+  ): UnifiedTicketingCollectionOutput {
+    const unifiedCollection: UnifiedTicketingCollectionOutput = {
       remote_id: collection.id,
-      name: collection.name,
+      remote_data: collection,
+      name: collection.key,
       description: collection.name,
       collection_type: 'PROJECT',
     };

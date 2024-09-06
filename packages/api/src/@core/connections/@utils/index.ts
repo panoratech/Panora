@@ -1,11 +1,13 @@
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
 export type ConnectionMetadata = {
   linkedUserId: string;
   remoteSource: string;
+  connectionId: string;
+  projectId: string;
+  vertical: string;
 };
 
 @Injectable()
@@ -26,17 +28,27 @@ export class ConnectionUtils {
       return {
         linkedUserId: res.id_linked_user,
         remoteSource: res.provider_slug,
+        connectionId: res.id_connection,
+        vertical: res.vertical,
+        projectId: res.id_project,
       };
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'GET_CONNECTION_FROM_CONNECTION_TOKEN_ERROR',
-          message:
-            'ConnectionUtils.getConnectionMetadataFromConnectionToken() call failed',
-          cause: error,
-        }),
-      );
+      throw error;
     }
+  }
+
+  async getConnectionMetadataFromConnectionId(uuid: string) {
+    try {
+      const conn = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: uuid,
+        },
+      });
+      return {
+        linkedUserId: conn.id_linked_user,
+        projectId: conn.id_project,
+      };
+    } catch (error) {}
   }
 
   async getLinkedUserId(

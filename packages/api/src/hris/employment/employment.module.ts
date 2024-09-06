@@ -1,33 +1,26 @@
 import { Module } from '@nestjs/common';
 import { EmploymentController } from './employment.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
 import { EmploymentService } from './services/employment.service';
 import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-
+import { SyncService } from './sync/sync.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { GustoEmploymentMapper } from './services/gusto/mappers';
+import { Utils } from '@hris/@lib/@utils';
+import { DeelEmploymentMapper } from './services/deel/mappers';
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
-  ],
   controllers: [EmploymentController],
   providers: [
     EmploymentService,
-
-    LoggerService,
+    CoreUnification,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
+    IngestDataService,
+    Utils,
+    GustoEmploymentMapper,
+    DeelEmploymentMapper,
     /* PROVIDERS SERVICES */
   ],
   exports: [SyncService],

@@ -1,11 +1,11 @@
 import {
-  UnifiedContactInput,
-  UnifiedContactOutput,
+  UnifiedCrmContactInput,
+  UnifiedCrmContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
 import { HubspotContactInput, HubspotContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -15,13 +15,12 @@ export class HubspotContactMapper implements IContactMapper {
   }
 
   async desunify(
-    source: UnifiedContactInput,
+    source: UnifiedCrmContactInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<HubspotContactInput> {
-    // Assuming 'email_addresses' array contains at least one email and 'phone_numbers' array contains at least one phone number
     const primaryEmail = source.email_addresses?.[0]?.email_address;
     const primaryPhone = source.phone_numbers?.[0]?.phone_number;
 
@@ -35,6 +34,22 @@ export class HubspotContactMapper implements IContactMapper {
     }
     if (primaryPhone) {
       result.phone = primaryPhone;
+    }
+
+    if (source.addresses && source.addresses.length > 0) {
+      result.address = source.addresses[0].street_1;
+      if (source.addresses[0].city) {
+        result.city = source.addresses[0].city;
+      }
+      if (source.addresses[0].state) {
+        result.state = source.addresses[0].state;
+      }
+      if (source.addresses[0].country) {
+        result.country = source.addresses[0].country;
+      }
+      if (source.addresses[0].postal_code) {
+        result.zip = source.addresses[0].postal_code;
+      }
     }
 
     if (source.user_id) {
@@ -60,27 +75,37 @@ export class HubspotContactMapper implements IContactMapper {
 
   async unify(
     source: HubspotContactOutput | HubspotContactOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
+  ): Promise<UnifiedCrmContactOutput | UnifiedCrmContactOutput[]> {
     if (!Array.isArray(source)) {
-      return this.mapSingleContactToUnified(source, customFieldMappings);
+      return this.mapSingleContactToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
     }
     // Handling array of HubspotContactOutput
     return source.map((contact) =>
-      this.mapSingleContactToUnified(contact, customFieldMappings),
+      this.mapSingleContactToUnified(
+        contact,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 
   private mapSingleContactToUnified(
     contact: HubspotContactOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedContactOutput {
+  ): UnifiedCrmContactOutput {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -88,34 +113,49 @@ export class HubspotContactMapper implements IContactMapper {
       }
     }
 
-    /*todo: const address: Address = {
-      street_1: '',
-      city: '',
-      state: '',
-      postal_code: '',
-      country: '',
-    };*/
+    const opts: any = {
+      addresses: [],
+    };
+
+    const address: any = {};
+    if (contact.properties.address) {
+      address.street_1 = contact.properties.address;
+    }
+    if (contact.properties.city) {
+      address.city = contact.properties.city;
+    }
+    if (contact.properties.state) {
+      address.state = contact.properties.state;
+    }
+    if (contact.properties.zip) {
+      address.postal_code = contact.properties.zip;
+    }
+    if (contact.properties.country) {
+      address.country = contact.properties.country;
+    }
+    opts.addresses[0] = address;
 
     return {
       remote_id: contact.id,
+      remote_data: contact,
       first_name: contact.properties.firstname,
       last_name: contact.properties.lastname,
       email_addresses: [
         {
           email_address: contact.properties.email,
-          email_address_type: 'primary',
+          email_address_type: 'PERSONAL',
           owner_type: 'contact',
         },
       ],
       phone_numbers: [
         {
           phone_number: contact.properties.phone,
-          phone_type: 'primary',
+          phone_type: 'PERSONAL',
           owner_type: 'contact',
         },
       ],
+      ...opts,
       field_mappings,
-      addresses: [],
     };
   }
 }

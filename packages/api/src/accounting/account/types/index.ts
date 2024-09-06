@@ -1,7 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedAccountInput, UnifiedAccountOutput } from './model.unified';
+import {
+  UnifiedAccountingAccountInput,
+  UnifiedAccountingAccountOutput,
+} from './model.unified';
 import { OriginalAccountOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IAccountService {
   addAccount(
@@ -9,15 +13,12 @@ export interface IAccountService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalAccountOutput>>;
 
-  syncAccounts(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalAccountOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalAccountOutput[]>>;
 }
 
 export interface IAccountMapper {
   desunify(
-    source: UnifiedAccountInput,
+    source: UnifiedAccountingAccountInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +27,10 @@ export interface IAccountMapper {
 
   unify(
     source: OriginalAccountOutput | OriginalAccountOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedAccountOutput | UnifiedAccountOutput[];
+  ): Promise<UnifiedAccountingAccountOutput | UnifiedAccountingAccountOutput[]>;
 }

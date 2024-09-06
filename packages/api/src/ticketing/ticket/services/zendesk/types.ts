@@ -56,7 +56,7 @@ export type Base = {
   macro_ids?: number[]; // POST requests only
   metadata?: Metadata; // Write only
   organization_id?: number;
-  priority?: 'urgent' | 'high' | 'normal' | 'low';
+  priority?: string;
   problem_id?: number;
   raw_subject?: string;
   recipient?: string;
@@ -65,12 +65,12 @@ export type Base = {
   safe_update?: boolean; // Write only
   satisfaction_rating?: SatisfactionRating;
   sharing_agreement_ids?: number[];
-  status?: 'new' | 'open' | 'pending' | 'hold' | 'solved' | 'closed';
+  status?: string;
   subject?: string;
   submitter_id?: number;
   tags?: string[];
   ticket_form_id?: number; // Enterprise only
-  type?: 'problem' | 'incident' | 'question' | 'task';
+  type?: string;
   updated_at: string;
   updated_stamp?: string; // Write only
   url: string;

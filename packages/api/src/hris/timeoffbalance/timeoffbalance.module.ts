@@ -1,34 +1,27 @@
 import { Module } from '@nestjs/common';
-import { TimeoffBalanceController } from './timeoffbalance.controller';
-import { SyncService } from './sync/sync.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { TimeoffBalanceService } from './services/timeoffbalance.service';
 import { ServiceRegistry } from './services/registry.service';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
-import { BullModule } from '@nestjs/bull';
-import { ConnectionUtils } from '@@core/connections/@utils';
-
+import { TimeoffBalanceService } from './services/timeoffbalance.service';
+import { SyncService } from './sync/sync.service';
+import { TimeoffBalanceController } from './timeoffbalance.controller';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { Utils } from '@hris/@lib/@utils';
+import { SageTimeoffbalanceMapper } from './services/sage/mappers';
+import { SageService } from './services/sage';
 @Module({
-  imports: [
-    BullModule.registerQueue({
-      name: 'webhookDelivery',
-    }),
-  ],
   controllers: [TimeoffBalanceController],
   providers: [
     TimeoffBalanceService,
-
-    LoggerService,
+    CoreUnification,
+    Utils,
     SyncService,
     WebhookService,
-    EncryptionService,
-    FieldMappingService,
     ServiceRegistry,
-    ConnectionUtils,
+    IngestDataService,
+    SageTimeoffbalanceMapper,
     /* PROVIDERS SERVICES */
+    SageService,
   ],
   exports: [SyncService],
 })

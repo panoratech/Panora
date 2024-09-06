@@ -1,26 +1,19 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedPayrollRunInput,
-  UnifiedPayrollRunOutput,
+  UnifiedHrisPayrollrunInput,
+  UnifiedHrisPayrollrunOutput,
 } from './model.unified';
 import { OriginalPayrollRunOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IPayrollRunService {
-  addPayrollRun(
-    payrollrunData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalPayrollRunOutput>>;
-
-  syncPayrollRuns(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalPayrollRunOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalPayrollRunOutput[]>>;
 }
 
 export interface IPayrollRunMapper {
   desunify(
-    source: UnifiedPayrollRunInput,
+    source: UnifiedHrisPayrollrunInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,9 +22,10 @@ export interface IPayrollRunMapper {
 
   unify(
     source: OriginalPayrollRunOutput | OriginalPayrollRunOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedPayrollRunOutput | UnifiedPayrollRunOutput[];
+  ): Promise<UnifiedHrisPayrollrunOutput | UnifiedHrisPayrollrunOutput[]>;
 }

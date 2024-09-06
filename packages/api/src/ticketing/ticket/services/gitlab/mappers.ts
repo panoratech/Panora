@@ -1,38 +1,52 @@
-import { ITicketMapper } from '@ticketing/ticket/types';
-import { GitlabTicketOutput, GitlabTicketInput } from './types';
-import {
-  UnifiedTicketInput,
-  UnifiedTicketOutput,
-} from '@ticketing/ticket/types/model.unified';
-import { Utils } from '@ticketing/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
+import { UnifiedTicketingTagOutput } from '@ticketing/tag/types/model.unified';
 import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ITicketMapper } from '@ticketing/ticket/types';
+import {
+  UnifiedTicketingTicketInput,
+  UnifiedTicketingTicketOutput,
+} from '@ticketing/ticket/types/model.unified';
+import { GitlabTicketInput, GitlabTicketOutput } from './types';
+import { GitlabTagOutput } from '@ticketing/tag/services/gitlab/types';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
+import { UnifiedTicketingCommentOutput } from '@ticketing/comment/types/model.unified';
+import { GitlabCommentInput } from '@ticketing/comment/services/gitlab/types';
 
 @Injectable()
 export class GitlabTicketMapper implements ITicketMapper {
-  constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private coreUnificationService: CoreUnification,
+    private ingestService: IngestDataService,
+  ) {
     this.mappersRegistry.registerService('ticketing', 'ticket', 'gitlab', this);
   }
 
   async desunify(
-    source: UnifiedTicketInput,
+    source: UnifiedTicketingTicketInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
+    connectionId?: string,
   ): Promise<GitlabTicketInput> {
-    // TODO - Project_id should be mandatory field for gitlab provider
-
     const remote_project_id = await this.utils.getCollectionRemoteIdFromUuid(
-      source.project_id,
+      source.collections[0] as string,
     );
 
     const result: GitlabTicketInput = {
       title: source.name,
-      description: source.description ? source.description : '',
+      description: source.description ? source.description : null,
       project_id: Number(remote_project_id),
     };
-
+    if (source.due_date) {
+      result.due_date = source.due_date;
+    }
     if (source.status) {
       result.type = source.status === 'OPEN' ? 'opened' : 'closed';
     }
@@ -45,9 +59,22 @@ export class GitlabTicketMapper implements ITicketMapper {
         id: Number(data),
       };
     }
+    const tags = source.tags as string[];
+    if (tags) {
+      result.labels = tags;
+    }
 
-    if (source.tags) {
-      result.labels = source.tags ? source.tags : [];
+    if (source.comment) {
+      const comment =
+        (await this.coreUnificationService.desunify<UnifiedTicketingCommentOutput>({
+          sourceObject: source.comment,
+          targetType: TicketingObject.comment,
+          providerName: 'gitlab',
+          vertical: 'ticketing',
+          connectionId: connectionId,
+          customFieldMappings: [],
+        })) as GitlabCommentInput;
+      result.comment = comment;
     }
 
     // TODO - Custom fields mapping
@@ -68,26 +95,32 @@ export class GitlabTicketMapper implements ITicketMapper {
 
   async unify(
     source: GitlabTicketOutput | GitlabTicketOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTicketOutput | UnifiedTicketOutput[]> {
+  ): Promise<UnifiedTicketingTicketOutput | UnifiedTicketingTicketOutput[]> {
     const sourcesArray = Array.isArray(source) ? source : [source];
     return Promise.all(
       sourcesArray.map(async (ticket) =>
-        this.mapSingleTicketToUnified(ticket, customFieldMappings),
+        this.mapSingleTicketToUnified(
+          ticket,
+          connectionId,
+          customFieldMappings,
+        ),
       ),
     );
   }
 
   private async mapSingleTicketToUnified(
     ticket: GitlabTicketOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedTicketOutput> {
+  ): Promise<UnifiedTicketingTicketOutput> {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -95,38 +128,61 @@ export class GitlabTicketMapper implements ITicketMapper {
       }
     }
 
-    let opts: any;
+    let opts: any = {};
     if (ticket.type) {
       opts = { ...opts, type: ticket.type === 'opened' ? 'OPEN' : 'CLOSED' };
     }
 
-    if (ticket.assignee) {
+    if (ticket.assignee && ticket.assignee[0]) {
       //fetch the right assignee uuid from remote id
       const user_id = await this.utils.getUserUuidFromRemoteId(
-        String(ticket.assignee),
-        'gitlab',
+        String(ticket.assignee[0].id),
+        connectionId,
       );
       if (user_id) {
         opts = { ...opts, assigned_to: [user_id] };
       }
     }
 
+    if (ticket.labels) {
+      const tags = await this.ingestService.ingestData<
+        UnifiedTicketingTagOutput,
+        GitlabTagOutput
+      >(
+        ticket.labels.map(
+          (label) =>
+            ({
+              name: label,
+            } as GitlabTagOutput),
+        ),
+        'gitlab',
+        connectionId,
+        'ticketing',
+        TicketingObject.tag,
+        [],
+      );
+      opts = {
+        ...opts,
+        tags: tags.map((tag) => tag.id_tcg_tag),
+      };
+    }
+
     if (ticket.project_id) {
       const tcg_collection_id = await this.utils.getCollectionUuidFromRemoteId(
         String(ticket.project_id),
-        'gitlab',
+        connectionId,
       );
       if (tcg_collection_id) {
-        opts = { ...opts, project_id: tcg_collection_id };
+        opts = { ...opts, collections: [tcg_collection_id] };
       }
     }
 
-    const unifiedTicket: UnifiedTicketOutput = {
+    const unifiedTicket: UnifiedTicketingTicketOutput = {
       remote_id: String(ticket.id),
+      remote_data: ticket,
       name: ticket.title,
-      description: ticket.description ? ticket.description : '',
-      due_date: new Date(ticket.created_at),
-      tags: ticket.labels ? ticket.labels : [],
+      description: ticket.description || null,
+      due_date: new Date(ticket.due_date),
       field_mappings,
       ...opts,
     };

@@ -1,4 +1,4 @@
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { AxiosError } from 'axios';
 import { TargetObject } from './types';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -97,11 +97,10 @@ export class CustomFieldsError extends ErrorBase<
 export class ConnectionsError extends ErrorBase<
   | 'GET_CONNECTION_FROM_CONNECTION_TOKEN_ERROR'
   | 'GET_CONNECTIONS_ERROR'
-  | 'API_CALLBACK_STATE_NOT_FOUND_ERROR'
   | 'OAUTH_CALLBACK_STATE_NOT_FOUND_ERROR'
+  | 'API_CALLBACK_STATE_NOT_FOUND_ERROR'
   | 'OAUTH_CALLBACK_CODE_NOT_FOUND_ERROR'
   | 'OAUTH_CALLBACK_ERROR'
-  | 'HANDLE_APIKEY_CALLBACK_CRM'
   | 'HANDLE_OAUTH_CALLBACK_TICKETING'
   | 'HANDLE_OAUTH_CALLBACK_CRM'
   | 'HANDLE_OAUTH_CALLBACK_MARKETINGAUTOMATION'

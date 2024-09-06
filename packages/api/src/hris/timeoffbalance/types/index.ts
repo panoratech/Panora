@@ -1,26 +1,19 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedTimeoffBalanceInput,
-  UnifiedTimeoffBalanceOutput,
+  UnifiedHrisTimeoffbalanceInput,
+  UnifiedHrisTimeoffbalanceOutput,
 } from './model.unified';
 import { OriginalTimeoffBalanceOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface ITimeoffBalanceService {
-  addTimeoffBalance(
-    timeoffbalanceData: DesunifyReturnType,
-    linkedUserId: string,
-  ): Promise<ApiResponse<OriginalTimeoffBalanceOutput>>;
-
-  syncTimeoffBalances(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalTimeoffBalanceOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalTimeoffBalanceOutput[]>>;
 }
 
 export interface ITimeoffBalanceMapper {
   desunify(
-    source: UnifiedTimeoffBalanceInput,
+    source: UnifiedHrisTimeoffbalanceInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,9 +22,12 @@ export interface ITimeoffBalanceMapper {
 
   unify(
     source: OriginalTimeoffBalanceOutput | OriginalTimeoffBalanceOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTimeoffBalanceOutput | UnifiedTimeoffBalanceOutput[];
+  ): Promise<
+    UnifiedHrisTimeoffbalanceOutput | UnifiedHrisTimeoffbalanceOutput[]
+  >;
 }

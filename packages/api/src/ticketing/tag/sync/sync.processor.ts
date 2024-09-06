@@ -1,15 +1,16 @@
 import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
 import { SyncService } from './sync.service';
+import { Queues } from '@@core/@core-services/queues/types';
 
-@Processor('syncTasks')
+@Processor(Queues.SYNC_JOBS_WORKER)
 export class SyncProcessor {
   constructor(private syncService: SyncService) {}
   @Process('ticketing-sync-tags')
   async handleSyncTags(job: Job) {
     try {
       console.log(`Processing queue -> ticketing-sync-tags ${job.id}`);
-      await this.syncService.syncTags();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing ticketing tags', error);
     }

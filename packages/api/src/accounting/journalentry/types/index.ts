@@ -1,10 +1,11 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
 import {
-  UnifiedJournalEntryInput,
-  UnifiedJournalEntryOutput,
+  UnifiedAccountingJournalentryInput,
+  UnifiedAccountingJournalentryOutput,
 } from './model.unified';
 import { OriginalJournalEntryOutput } from '@@core/utils/types/original/original.accounting';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IJournalEntryService {
   addJournalEntry(
@@ -12,15 +13,12 @@ export interface IJournalEntryService {
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalJournalEntryOutput>>;
 
-  syncJournalEntrys(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalJournalEntryOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalJournalEntryOutput[]>>;
 }
 
 export interface IJournalEntryMapper {
   desunify(
-    source: UnifiedJournalEntryInput,
+    source: UnifiedAccountingJournalentryInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -29,9 +27,12 @@ export interface IJournalEntryMapper {
 
   unify(
     source: OriginalJournalEntryOutput | OriginalJournalEntryOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedJournalEntryOutput | UnifiedJournalEntryOutput[];
+  ): Promise<
+    UnifiedAccountingJournalentryOutput | UnifiedAccountingJournalentryOutput[]
+  >;
 }

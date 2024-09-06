@@ -1,6 +1,6 @@
 import { CONNECTORS_METADATA } from './connectors/metadata';
-import { ACCOUNTING_PROVIDERS, ATS_PROVIDERS, CRM_PROVIDERS, FILESTORAGE_PROVIDERS, HRIS_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, TICKETING_PROVIDERS } from './connectors';
-import { AuthStrategy, DynamicApiUrl, DynamicAuthorization, StaticApiUrl, StringAuthorization, VerticalConfig } from './types';
+import { ACCOUNTING_PROVIDERS, ATS_PROVIDERS, CRM_PROVIDERS, ECOMMERCE_PROVIDERS, FILESTORAGE_PROVIDERS, HRIS_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, TICKETING_PROVIDERS } from './connectors';
+import { AuthStrategy, AuthType, DynamicApiUrl, DynamicAuthorization, StaticApiUrl, StringAuthorization, VerticalConfig } from './types';
 import { categoriesVerticals, ConnectorCategory } from './categories';
 
 export const randomString = () => {
@@ -12,7 +12,6 @@ export const randomString = () => {
   }
   return result;
 }
-
 function getActiveProvidersForVertical(vertical: string): VerticalConfig {
   const verticalConfig = CONNECTORS_METADATA[vertical.toLowerCase()];
   if (!verticalConfig) {
@@ -50,7 +49,7 @@ export interface Provider {
   scopes?: string; 
   logoPath: string;
   description?: string;
-  authStrategy?: AuthStrategy;
+  authStrategy: AuthType;
 }; 
 
 export function providersArray(vertical?: string): Provider[] {
@@ -68,7 +67,10 @@ export function providersArray(vertical?: string): Provider[] {
       scopes: config.scopes,
       logoPath: config.logoPath,
       description: config.description,
-      authStrategy: config.authStrategy,
+      authStrategy: {
+        strategy: config.authStrategy.strategy,
+        properties: config.authStrategy.properties ? config.authStrategy.properties : [],
+      }
     }));
   } else {
     // If no vertical is provided, return providers for all verticals
@@ -86,7 +88,10 @@ export function providersArray(vertical?: string): Provider[] {
         scopes: config.scopes,
         logoPath: config.logoPath,
         description: config.description,
-        authStrategy: config.authStrategy,
+        authStrategy: {
+          strategy: config.authStrategy.strategy,
+          properties: config.authStrategy.properties ? config.authStrategy.properties : [],
+        }
       }));
       allProviders = allProviders.concat(providersForVertical);
     });
@@ -132,7 +137,7 @@ export function getLogoURL(providerName: string): string {
 export function mergeAllProviders(...arrays: string[][]): { vertical: string, value: string }[] {
   const result: { vertical: string, value: string }[] = [];
   arrays.forEach((arr, index) => {
-    const arrayName = Object.keys({ CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, FILESTORAGE_PROVIDERS })[index];
+    const arrayName = Object.keys({ CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, FILESTORAGE_PROVIDERS, ECOMMERCE_PROVIDERS})[index];
     arr.forEach(item => {
       if (item !== '') {
         result.push({ vertical: arrayName.split('_')[0], value: item });
@@ -142,7 +147,7 @@ export function mergeAllProviders(...arrays: string[][]): { vertical: string, va
   return result;
 }
 
-export const ALL_PROVIDERS: { vertical: string, value: string }[] = mergeAllProviders(CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, FILESTORAGE_PROVIDERS)
+export const ALL_PROVIDERS: { vertical: string, value: string }[] = mergeAllProviders(CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, FILESTORAGE_PROVIDERS, ECOMMERCE_PROVIDERS)
 
 export function slugFromCategory(category: ConnectorCategory) {
   switch(category) {
@@ -157,9 +162,11 @@ export function slugFromCategory(category: ConnectorCategory) {
     case ConnectorCategory.MarketingAutomation:
       return 'mktg';
     case ConnectorCategory.FileStorage:
-      return 'fstg';
+      return 'fs';
     case ConnectorCategory.Accounting:
       return 'actng';
+    case ConnectorCategory.Ecommerce:
+      return 'ecom';
     default: 
       return null;
   }
@@ -177,10 +184,12 @@ export function categoryFromSlug(slug: string): ConnectorCategory | null {
       return ConnectorCategory.Ticketing;
     case 'mktg':
       return ConnectorCategory.MarketingAutomation;
-    case 'fstg':
+    case 'fs':
       return ConnectorCategory.FileStorage;
     case 'actng':
       return ConnectorCategory.Accounting;
+    case 'ecom':
+      return ConnectorCategory.Ecommerce;
     default:
       return null;
   }

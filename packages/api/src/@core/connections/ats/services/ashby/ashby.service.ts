@@ -1,30 +1,81 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { EncryptionService } from '@@core/encryption/encryption.service';
-import { IAtsConnectionService } from '../../types';
-import { CONNECTORS_METADATA } from '@panora/shared';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { RetryHandler } from '@@core/@core-services/request-retry/retry.handler';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { APIKeyCallbackParams } from '@@core/connections/@utils/types';
+import {
+  AbstractBaseConnectionService,
+  BasicAuthCallbackParams,
+  PassthroughInput,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
+import { PassthroughResponse } from '@@core/passthrough/types';
+import { Injectable } from '@nestjs/common';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  providerToType,
+} from '@panora/shared';
+import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../registry.service';
-
 @Injectable()
-export class AshbyConnectionService implements IAtsConnectionService {
+export class AshbyConnectionService extends AbstractBaseConnectionService {
+  private readonly type: string;
+
   constructor(
-    private prisma: PrismaService,
+    protected prisma: PrismaService,
     private logger: LoggerService,
-    private cryptoService: EncryptionService,
+    protected cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private connectionUtils: ConnectionUtils,
+    private retryService: RetryHandler,
   ) {
+    super(prisma, cryptoService);
     this.logger.setContext(AshbyConnectionService.name);
     this.registry.registerService('ashby', this);
+    this.type = providerToType('ashby', 'ats', AuthStrategy.basic);
   }
 
-  async handleCallback(opts: APIKeyCallbackParams) {
+  async passthrough(
+    input: PassthroughInput,
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
     try {
-      const { linkedUserId, projectId } = opts;
+      const { headers } = input;
+      const config = await this.constructPassthrough(input, connectionId);
+
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: connectionId,
+        },
+      });
+
+      config.headers['Authorization'] = `Basic ${Buffer.from(
+        `${this.cryptoService.decrypt(connection.access_token)}:`,
+      ).toString('base64')}`;
+
+      config.headers = {
+        ...config.headers,
+        ...headers,
+      };
+      return await this.retryService.makeRequest(
+        {
+          method: config.method,
+          url: config.url,
+          data: config.data,
+          headers: config.headers,
+        },
+        'ats.ashby.passthrough',
+        config.linkedUserId,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async handleCallback(opts: BasicAuthCallbackParams) {
+    try {
+      const { linkedUserId, projectId, body } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -42,7 +93,7 @@ export class AshbyConnectionService implements IAtsConnectionService {
             id_connection: isNotUnique.id_connection,
           },
           data: {
-            access_token: this.cryptoService.encrypt(opts.apikey),
+            access_token: this.cryptoService.encrypt(body.api_key),
             account_url: CONNECTORS_METADATA['ats']['ashby'].urls
               .apiUrl as string,
             status: 'valid',
@@ -56,10 +107,10 @@ export class AshbyConnectionService implements IAtsConnectionService {
             connection_token: connection_token,
             provider_slug: 'ashby',
             vertical: 'ats',
-            token_type: 'api_key',
+            token_type: 'basic',
             account_url: CONNECTORS_METADATA['ats']['ashby'].urls
               .apiUrl as string,
-            access_token: this.cryptoService.encrypt(opts.apikey),
+            access_token: this.cryptoService.encrypt(body.api_key),
             status: 'valid',
             created_at: new Date(),
             projects: {
@@ -80,5 +131,9 @@ export class AshbyConnectionService implements IAtsConnectionService {
     } catch (error) {
       throw error;
     }
+  }
+  // Provide a blank implementation for handleTokenRefresh
+  async handleTokenRefresh(params: RefreshParams): Promise<void> {
+    return Promise.resolve();
   }
 }

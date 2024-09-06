@@ -1,23 +1,24 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedEmployeeInput, UnifiedEmployeeOutput } from './model.unified';
+import {
+  UnifiedHrisEmployeeInput,
+  UnifiedHrisEmployeeOutput,
+} from './model.unified';
 import { OriginalEmployeeOutput } from '@@core/utils/types/original/original.hris';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 export interface IEmployeeService {
-  addEmployee(
+  addEmployee?(
     employeeData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalEmployeeOutput>>;
 
-  syncEmployees(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalEmployeeOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalEmployeeOutput[]>>;
 }
 
 export interface IEmployeeMapper {
   desunify(
-    source: UnifiedEmployeeInput,
+    source: UnifiedHrisEmployeeInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +27,10 @@ export interface IEmployeeMapper {
 
   unify(
     source: OriginalEmployeeOutput | OriginalEmployeeOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedEmployeeOutput | UnifiedEmployeeOutput[];
+  ): Promise<UnifiedHrisEmployeeOutput | UnifiedHrisEmployeeOutput[]>;
 }

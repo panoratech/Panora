@@ -1,10 +1,10 @@
 import { ITagMapper } from '@ticketing/tag/types';
 import { GorgiasTagInput, GorgiasTagOutput } from './types';
 import {
-  UnifiedTagInput,
-  UnifiedTagOutput,
+  UnifiedTicketingTagInput,
+  UnifiedTicketingTagOutput,
 } from '@ticketing/tag/types/model.unified';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -14,7 +14,7 @@ export class GorgiasTagMapper implements ITagMapper {
     this.mappersRegistry.registerService('ticketing', 'tag', 'gorgias', this);
   }
   desunify(
-    source: UnifiedTagInput,
+    source: UnifiedTicketingTagInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -25,28 +25,31 @@ export class GorgiasTagMapper implements ITagMapper {
 
   unify(
     source: GorgiasTagOutput | GorgiasTagOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTagOutput | UnifiedTagOutput[] {
+  ): UnifiedTicketingTagOutput | UnifiedTicketingTagOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((tag) =>
-      this.mapSingleTagToUnified(tag, customFieldMappings),
+      this.mapSingleTagToUnified(tag, connectionId, customFieldMappings),
     );
   }
 
   private mapSingleTagToUnified(
     tag: GorgiasTagOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedTagOutput {
-    const unifiedTag: UnifiedTagOutput = {
+  ): UnifiedTicketingTagOutput {
+    const unifiedTag: UnifiedTicketingTagOutput = {
       remote_id: String(tag.id),
+      remote_data: tag,
       name: tag.name,
     };
 

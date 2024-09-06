@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { ICompanyService } from '@crm/company/types';
-import { CrmObject } from '@crm/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { ICompanyService } from '@crm/company/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import {
-  commonCompanyCloseProperties,
   CloseCompanyInput,
   CloseCompanyOutput,
+  commonCompanyCloseProperties,
 } from './types';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class CloseService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/lead`,
+        `${connection.account_url}/v1/lead`,
         JSON.stringify(companyData),
         {
           headers: {
@@ -57,21 +57,14 @@ export class CloseService implements ICompanyService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.company,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncCompanies(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<CloseCompanyOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<CloseCompanyOutput[]>> {
     try {
+      const { linkedUserId, custom_properties } = data;
+
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -82,7 +75,7 @@ export class CloseService implements ICompanyService {
 
       const commonPropertyNames = Object.keys(commonCompanyCloseProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = `${connection.account_url}/lead/`;
+      const baseURL = `${connection.account_url}/v1/lead`;
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
         .join('&');
@@ -105,13 +98,7 @@ export class CloseService implements ICompanyService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Close',
-        CrmObject.company,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

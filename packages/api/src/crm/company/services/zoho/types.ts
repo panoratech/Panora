@@ -1,5 +1,5 @@
 interface ZohoCompany {
-  Owner: PersonDetail;
+  Owner: Partial<PersonDetail>;
   $currency_symbol: string;
   Account_Type: string;
   SIC_Code: string | null;

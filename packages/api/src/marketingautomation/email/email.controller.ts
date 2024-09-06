@@ -7,8 +7,9 @@ import {
   Patch,
   Param,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   ApiBody,
   ApiOperation,
@@ -16,14 +17,25 @@ import {
   ApiQuery,
   ApiTags,
   ApiHeader,
+  //ApiKeyAuth,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import { EmailService } from './services/email.service';
-import { UnifiedEmailInput, UnifiedEmailOutput } from './types/model.unified';
-import { ConnectionUtils } from '@@core/connections/@utils';
 
-@ApiTags('marketingautomation/email')
-@Controller('marketingautomation/email')
+import { EmailService } from './services/email.service';
+import {
+  UnifiedMarketingautomationEmailInput,
+  UnifiedMarketingautomationEmailOutput,
+} from './types/model.unified';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+
+
+@ApiTags('marketingautomation/emails')
+@Controller('marketingautomation/emails')
 export class EmailController {
   constructor(
     private readonly emailService: EmailService,
@@ -34,8 +46,8 @@ export class EmailController {
   }
 
   @ApiOperation({
-    operationId: 'getEmails',
-    summary: 'List a batch of Emails',
+    operationId: 'listMarketingautomationEmails',
+    summary: 'List Emails',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -43,29 +55,27 @@ export class EmailController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiCustomResponse(UnifiedEmailOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedMarketingautomationEmailOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get()
   async getEmails(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
+      const { remote_data, limit, cursor } = query;
       return this.emailService.getEmails(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -73,16 +83,17 @@ export class EmailController {
   }
 
   @ApiOperation({
-    operationId: 'getEmail',
-    summary: 'Retrieve a Email',
+    operationId: 'retrieveMarketingautomationEmail',
+    summary: 'Retrieve Email',
     description:
-      'Retrieve a email from any connected Marketingautomation software',
+      'Retrieve an Email from any connected Marketingautomation software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the email you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
@@ -90,99 +101,33 @@ export class EmailController {
     type: Boolean,
     description:
       'Set to true to include data from the original Marketingautomation software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedEmailOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedMarketingautomationEmailOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getEmail(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.emailService.getEmail(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addEmail',
-    summary: 'Create a Email',
-    description: 'Create a email in any supported Marketingautomation software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedEmailInput })
-  @ApiCustomResponse(UnifiedEmailOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addEmail(
-    @Body() unifiedEmailData: UnifiedEmailInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.emailService.addEmail(
-        unifiedEmailData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
+    const { linkedUserId, remoteSource, connectionId, projectId } =
+      await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+        connection_token,
       );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addEmails',
-    summary: 'Add a batch of Emails',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description:
-      'Set to true to include data from the original Marketingautomation software.',
-  })
-  @ApiBody({ type: UnifiedEmailInput, isArray: true })
-  @ApiCustomResponse(UnifiedEmailOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addEmails(
-    @Body() unfiedEmailData: UnifiedEmailInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.emailService.batchAddEmails(
-        unfiedEmailData,
-        remoteSource,
-        linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
+    return this.emailService.getEmail(
+      id,
+      linkedUserId,
+      remoteSource,
+      connectionId,
+      projectId,
+      remote_data,
+    );
   }
 }

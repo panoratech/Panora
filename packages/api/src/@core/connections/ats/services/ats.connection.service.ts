@@ -1,22 +1,30 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import {
+  CallbackParams,
+  IConnectionCategory,
+  PassthroughInput,
+  RefreshParams,
+} from '@@core/connections/@utils/types';
 import { Injectable } from '@nestjs/common';
-import { ConnectionsError, throwTypedError } from '@@core/utils/errors';
-import { LoggerService } from '@@core/logger/logger.service';
-import { WebhookService } from '@@core/webhook/webhook.service';
 import { connections as Connection } from '@prisma/client';
-import { PrismaService } from '@@core/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from './registry.service';
-import { CallbackParams, RefreshParams } from '@@core/connections/@utils/types';
+import { CategoryConnectionRegistry } from '@@core/@core-services/registries/connections-categories.registry';
+import { PassthroughResponse } from '@@core/passthrough/types';
 
 @Injectable()
-export class AtsConnectionsService {
+export class AtsConnectionsService implements IConnectionCategory {
   constructor(
     private serviceRegistry: ServiceRegistry,
+    private connectionCategoryRegistry: CategoryConnectionRegistry,
     private webhook: WebhookService,
     private logger: LoggerService,
     private prisma: PrismaService,
   ) {
     this.logger.setContext(AtsConnectionsService.name);
+    this.connectionCategoryRegistry.registerService('ats', this);
   }
   //STEP 1:[FRONTEND STEP]
   //create a frontend SDK snippet in which an authorization embedded link is set up  so when users click
@@ -32,10 +40,10 @@ export class AtsConnectionsService {
   // we catch the tmp token and swap it against oauth2 server for access/refresh tokens
   // to perform actions on his behalf
   // this call pass 1. integrationID 2. CustomerId 3. Panora Api Key
-  async handleAtsCallBack(
+  async handleCallBack(
     providerName: string,
     callbackOpts: CallbackParams,
-    type_strategy: 'oauth' | 'apikey' | 'basic',
+    type_strategy: 'oauth2' | 'apikey' | 'basic',
   ) {
     try {
       const serviceName = providerName.toLowerCase();
@@ -48,6 +56,8 @@ export class AtsConnectionsService {
       const data: Connection = await service.handleCallback(callbackOpts);
       const event = await this.prisma.events.create({
         data: {
+          id_connection: data.id_connection,
+          id_project: data.id_project,
           id_event: uuidv4(),
           status: 'success',
           type: 'connection.created',
@@ -60,25 +70,18 @@ export class AtsConnectionsService {
         },
       });
       //directly send the webhook
-      await this.webhook.handlePriorityWebhook(
+      await this.webhook.dispatchWebhook(
         data,
         'connection.created',
         callbackOpts.projectId,
         event.id_event,
       );
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_CRM',
-          message: 'AtsConnectionsService.handleAtsOAuthCallBack() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
-  async handleAtsTokensRefresh(
+  async handleTokensRefresh(
     connectionId: string,
     providerName: string,
     refresh_token: string,
@@ -97,16 +100,30 @@ export class AtsConnectionsService {
         account_url: account_url,
         projectId: id_project,
       };
-      const data = await service.handleTokenRefresh(refreshOpts);
+      await service.handleTokenRefresh(refreshOpts);
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_ACCOUNTING',
-          message: 'AtsConnectionsService.handleAtsTokensRefresh() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
+    }
+  }
+
+  async passthrough(
+    input: PassthroughInput,
+    connectionId: string,
+  ): Promise<PassthroughResponse> {
+    try {
+      const connection = await this.prisma.connections.findUnique({
+        where: {
+          id_connection: connectionId,
+        },
+      });
+      const serviceName = connection.provider_slug.toLowerCase();
+      const service = this.serviceRegistry.getService(serviceName);
+      if (!service) {
+        throw new ReferenceError(`Unknown provider, found ${serviceName}`);
+      }
+      return await service.passthrough(input, connectionId);
+    } catch (error) {
+      throw error;
     }
   }
 }

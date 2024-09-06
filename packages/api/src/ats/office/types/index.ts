@@ -1,23 +1,21 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedOfficeInput, UnifiedOfficeOutput } from './model.unified';
+import { UnifiedAtsOfficeInput, UnifiedAtsOfficeOutput } from './model.unified';
 import { OriginalOfficeOutput } from '@@core/utils/types/original/original.ats';
 import { ApiResponse } from '@@core/utils/types';
+import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 
-export interface IOfficeService {
-  addOffice(
+export interface IOfficeService extends IBaseObjectService {
+  addOffice?(
     officeData: DesunifyReturnType,
     linkedUserId: string,
   ): Promise<ApiResponse<OriginalOfficeOutput>>;
 
-  syncOffices(
-    linkedUserId: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<OriginalOfficeOutput[]>>;
+  sync(data: SyncParam): Promise<ApiResponse<OriginalOfficeOutput[]>>;
 }
 
 export interface IOfficeMapper {
   desunify(
-    source: UnifiedOfficeInput,
+    source: UnifiedAtsOfficeInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +24,10 @@ export interface IOfficeMapper {
 
   unify(
     source: OriginalOfficeOutput | OriginalOfficeOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedOfficeOutput | UnifiedOfficeOutput[];
+  ): Promise<UnifiedAtsOfficeOutput | UnifiedAtsOfficeOutput[]>;
 }

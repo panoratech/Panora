@@ -1,14 +1,27 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { UnifiedAttachmentOutput } from '@ticketing/attachment/types/model.unified';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger';
+import { UnifiedTicketingAttachmentOutput } from '@ticketing/attachment/types/model.unified';
 import { IsBoolean, IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class UnifiedCommentInput {
-  @ApiProperty({ type: String, description: 'The body of the comment' })
+export type CommentCreatorType = 'USER' | 'CONTACT';
+
+export class UnifiedTicketingCommentInput {
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    example: 'Assigned to Eric !',
+    description: 'The body of the comment',
+  })
   @IsString()
   body: string;
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
+    example: '<p>Assigned to Eric !</p>',
     description: 'The html body of the comment',
   })
   @IsString()
@@ -17,6 +30,8 @@ export class UnifiedCommentInput {
 
   @ApiPropertyOptional({
     type: Boolean,
+    nullable: true,
+    example: false,
     description: 'The public status of the comment',
   })
   @IsOptional()
@@ -25,57 +40,81 @@ export class UnifiedCommentInput {
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
+    example: 'USER',
+    // enum: ['USER', 'CONTACT'],
     description:
       'The creator type of the comment. Authorized values are either USER or CONTACT',
   })
-  @IsIn(['USER', 'CONTACT'], {
+  /*@IsIn(['USER', 'CONTACT'], {
     message: 'Type must be either USER or CONTACT',
-  })
+  })*/
   @IsOptional()
-  creator_type?: string;
+  creator_type?: CommentCreatorType | string;
 
   @ApiPropertyOptional({
     type: String,
-    description: 'The uuid of the ticket the comment is tied to',
+    nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the ticket the comment is tied to',
   })
   @IsUUID()
   @IsOptional()
-  ticket_id?: string; // uuid of Ticket object
+  ticket_id?: string; // UUID of Ticket object
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description:
-      'The uuid of the contact which the comment belongs to (if no user_id specified)',
+      'The UUID of the contact which the comment belongs to (if no user_id specified)',
   })
   @IsUUID()
   @IsOptional()
-  contact_id?: string; // uuid of Contact object
+  contact_id?: string; // UUID of Contact object
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description:
-      'The uuid of the user which the comment belongs to (if no contact_id specified)',
+      'The UUID of the user which the comment belongs to (if no contact_id specified)',
   })
   @IsUUID()
   @IsOptional()
-  user_id?: string; // uuid of User object
+  user_id?: string; // UUID of User object
 
   @ApiPropertyOptional({
-    type: [String],
-    description: 'The attachements uuids tied to the comment',
+    type: 'array',
+    items: {
+      oneOf: [
+        { type: 'string' },
+        { $ref: getSchemaPath(UnifiedTicketingAttachmentOutput) },
+      ],
+    },
+    nullable: true,
+    example: ['801f9ede-c698-4e66-a7fc-48d19eebaa4f'],
+    description: 'The attachements UUIDs tied to the comment',
   })
   @IsOptional()
-  attachments?: any[]; //uuids of Attachments objects
+  attachments?: (string | UnifiedTicketingAttachmentOutput)[]; //UUIDs of Attachments objects
 }
 
-export class UnifiedCommentOutput extends UnifiedCommentInput {
-  @ApiPropertyOptional({ type: String, description: 'The uuid of the comment' })
+export class UnifiedTicketingCommentOutput extends UnifiedTicketingCommentInput {
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the comment',
+  })
   @IsUUID()
   @IsOptional()
   id?: string;
 
   @ApiPropertyOptional({
     type: String,
+    nullable: true,
+    example: 'id_1',
     description: 'The id of the comment in the context of the 3rd Party',
   })
   @IsString()
@@ -83,7 +122,13 @@ export class UnifiedCommentOutput extends UnifiedCommentInput {
   remote_id?: string;
 
   @ApiPropertyOptional({
-    type: {},
+    type: Object,
+    nullable: true,
+    example: {
+      fav_dish: 'broccoli',
+      fav_color: 'red',
+    },
+    additionalProperties: true,
     description:
       'The remote data of the comment in the context of the 3rd Party',
   })
@@ -91,9 +136,20 @@ export class UnifiedCommentOutput extends UnifiedCommentInput {
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
-    type: [UnifiedAttachmentOutput],
-    description: 'The attachemnets tied to the comment',
+    type: Date,
+    nullable: true,
+    example: '2024-10-01T12:00:00Z',
+    description: 'The created date of the object',
   })
   @IsOptional()
-  attachments?: UnifiedAttachmentOutput[]; // Attachments objects
+  created_at?: Date;
+
+  @ApiPropertyOptional({
+    type: Date,
+    nullable: true,
+    example: '2024-10-01T12:00:00Z',
+    description: 'The modified date of the object',
+  })
+  @IsOptional()
+  modified_at?: Date;
 }

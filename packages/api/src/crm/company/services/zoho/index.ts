@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { ICompanyService } from '@crm/company/types';
 import { CrmObject } from '@crm/@lib/@types';
 import axios from 'axios';
-import { LoggerService } from '@@core/logger/logger.service';
-import { PrismaService } from '@@core/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import { ZohoCompanyInput, ZohoCompanyOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class ZohoService implements ICompanyService {
@@ -37,7 +38,7 @@ export class ZohoService implements ICompanyService {
         },
       });
       const resp = await axios.post(
-        `${connection.account_url}/Accounts`,
+        `${connection.account_url}/v5/Accounts`,
         { data: [companyData] },
         {
           headers: {
@@ -48,27 +49,30 @@ export class ZohoService implements ICompanyService {
           },
         },
       );
-      //this.logger.log('zoho resp is ' + JSON.stringify(resp));
+      const final_res = await axios.get(
+        `${connection.account_url}/v5/Accounts/${resp.data.data[0].details.id}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Zoho-oauthtoken ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
       return {
-        data: resp.data.data,
+        data: final_res.data.data[0],
         message: 'Zoho company created',
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.company,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncCompanies(
-    linkedUserId: string,
-  ): Promise<ApiResponse<ZohoCompanyOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<ZohoCompanyOutput[]>> {
     try {
+      const { linkedUserId } = data;
       const connection = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -79,7 +83,7 @@ export class ZohoService implements ICompanyService {
       const fields =
         'Owner,Industry,Billing_Street,Billing_Code,Billing_City,Billing_State,Employees,Phone,Description,Account_Name';
       const resp = await axios.get(
-        `${connection.account_url}/Accounts?fields=${fields}`,
+        `${connection.account_url}/v5/Accounts?fields=${fields}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -96,13 +100,7 @@ export class ZohoService implements ICompanyService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Zoho',
-        CrmObject.company,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

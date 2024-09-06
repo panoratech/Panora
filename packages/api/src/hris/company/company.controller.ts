@@ -1,32 +1,33 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
   Controller,
-  Post,
-  Body,
-  Query,
   Get,
-  Patch,
-  Param,
   Headers,
+  Param,
+  Query,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
-import { LoggerService } from '@@core/logger/logger.service';
 import {
-  ApiBody,
+  ApiHeader,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
-  ApiHeader,
 } from '@nestjs/swagger';
-import { ApiCustomResponse } from '@@core/utils/types';
-import {
-  UnifiedCompanyInput,
-  UnifiedCompanyOutput,
-} from './types/model.unified';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import {
+  ApiGetCustomResponse,
+  ApiPaginatedResponse,
+} from '@@core/utils/dtos/openapi.respone.dto';
+import { QueryDto } from '@@core/utils/dtos/query.dto';
 import { CompanyService } from './services/company.service';
+import { UnifiedHrisCompanyOutput } from './types/model.unified';
 
-@ApiTags('hris/company')
-@Controller('hris/company')
+@ApiTags('hris/companies')
+@Controller('hris/companies')
 export class CompanyController {
   constructor(
     private readonly companyService: CompanyService,
@@ -37,8 +38,8 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getCompanys',
-    summary: 'List a batch of Companys',
+    operationId: 'listHrisCompanies',
+    summary: 'List Companies',
   })
   @ApiHeader({
     name: 'x-connection-token',
@@ -46,28 +47,28 @@ export class CompanyController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiCustomResponse(UnifiedCompanyOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiPaginatedResponse(UnifiedHrisCompanyOutput)
+  @UseGuards(ApiKeyAuthGuard)
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   @Get()
-  async getCompanys(
+  async getCompanies(
     @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
+    @Query() query: QueryDto,
   ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.companyService.getCompanys(
+      const { remote_data, limit, cursor } = query;
+      return this.companyService.getCompanies(
+        connectionId,
+        projectId,
         remoteSource,
         linkedUserId,
+        limit,
         remote_data,
+        cursor,
       );
     } catch (error) {
       throw new Error(error);
@@ -75,108 +76,49 @@ export class CompanyController {
   }
 
   @ApiOperation({
-    operationId: 'getHrisCompany',
-    summary: 'Retrieve a Company',
-    description: 'Retrieve a company from any connected Hris software',
+    operationId: 'retrieveHrisCompany',
+    summary: 'Retrieve Company',
+    description: 'Retrieve a Company from any connected Hris software',
   })
   @ApiParam({
     name: 'id',
     required: true,
     type: String,
     description: 'id of the company you want to retrieve.',
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
   })
   @ApiQuery({
     name: 'remote_data',
     required: false,
     type: Boolean,
     description: 'Set to true to include data from the original Hris software.',
+    example: false,
   })
-  @ApiCustomResponse(UnifiedCompanyOutput)
-  //@UseGuards(ApiKeyAuthGuard)
+  @ApiHeader({
+    name: 'x-connection-token',
+    required: true,
+    description: 'The connection token',
+    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
+  })
+  @ApiGetCustomResponse(UnifiedHrisCompanyOutput)
+  @UseGuards(ApiKeyAuthGuard)
   @Get(':id')
-  getCompany(
+  async retrieve(
+    @Headers('x-connection-token') connection_token: string,
     @Param('id') id: string,
     @Query('remote_data') remote_data?: boolean,
   ) {
-    return this.companyService.getCompany(id, remote_data);
-  }
-
-  @ApiOperation({
-    operationId: 'addHrisCompany',
-    summary: 'Create a Company',
-    description: 'Create a company in any supported Hris software',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedCompanyInput })
-  @ApiCustomResponse(UnifiedCompanyOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post()
-  async addCompany(
-    @Body() unifiedCompanyData: UnifiedCompanyInput,
-    @Headers('x-connection-token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
     try {
-      const { linkedUserId, remoteSource } =
+      const { linkedUserId, remoteSource, connectionId, projectId } =
         await this.connectionUtils.getConnectionMetadataFromConnectionToken(
           connection_token,
         );
-      return this.companyService.addCompany(
-        unifiedCompanyData,
-        remoteSource,
+      return this.companyService.getCompany(
+        id,
         linkedUserId,
-        remote_data,
-      );
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
-
-  @ApiOperation({
-    operationId: 'addCompanys',
-    summary: 'Add a batch of Companys',
-  })
-  @ApiHeader({
-    name: 'x-connection-token',
-    required: true,
-    description: 'The connection token',
-    example: 'b008e199-eda9-4629-bd41-a01b6195864a',
-  })
-  @ApiQuery({
-    name: 'remote_data',
-    required: false,
-    type: Boolean,
-    description: 'Set to true to include data from the original Hris software.',
-  })
-  @ApiBody({ type: UnifiedCompanyInput, isArray: true })
-  @ApiCustomResponse(UnifiedCompanyOutput)
-  //@UseGuards(ApiKeyAuthGuard)
-  @Post('batch')
-  async addCompanys(
-    @Body() unfiedCompanyData: UnifiedCompanyInput[],
-    @Headers('connection_token') connection_token: string,
-    @Query('remote_data') remote_data?: boolean,
-  ) {
-    try {
-      const { linkedUserId, remoteSource } =
-        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
-          connection_token,
-        );
-      return this.companyService.batchAddCompanys(
-        unfiedCompanyData,
         remoteSource,
-        linkedUserId,
+        connectionId,
+        projectId,
         remote_data,
       );
     } catch (error) {

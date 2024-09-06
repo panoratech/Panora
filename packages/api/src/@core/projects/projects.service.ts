@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { LoggerService } from '../logger/logger.service';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { v4 as uuidv4 } from 'uuid';
-import { ProjectError, throwTypedError } from '@@core/utils/errors';
 import {
   ConnectorCategory,
   providersArray,
   slugFromCategory,
 } from '@panora/shared';
+import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../@core-services/logger/logger.service';
+import { PrismaService } from '../@core-services/prisma/prisma.service';
+import { CreateProjectDto } from './dto/create-project.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -20,14 +19,7 @@ export class ProjectsService {
     try {
       return await this.prisma.projects.findMany();
     } catch (error) {
-      throwTypedError(
-        new ProjectError({
-          name: 'GET_PROJECTS_ERROR',
-          message: 'ProjectsService.getProjects() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -39,14 +31,7 @@ export class ProjectsService {
         },
       });
     } catch (error) {
-      throwTypedError(
-        new ProjectError({
-          name: 'GET_PROJECT_FOR_USER_ERROR',
-          message: 'ProjectsService.getProjectsByUser() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 
@@ -81,7 +66,7 @@ export class ProjectsService {
       const res = await this.prisma.projects.create({
         data: {
           name: data.name,
-          sync_mode: 'pool',
+          sync_mode: 'pull',
           id_project: uuidv4(),
           id_user: data.id_user,
           id_connector_set: cSet.id_connector_set,
@@ -89,14 +74,7 @@ export class ProjectsService {
       });
       return res;
     } catch (error) {
-      throwTypedError(
-        new ProjectError({
-          name: 'CREATE_PROJECT_ERROR',
-          message: 'ProjectsService.createProject() call failed',
-          cause: error,
-        }),
-        this.logger,
-      );
+      throw error;
     }
   }
 }

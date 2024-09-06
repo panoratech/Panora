@@ -1,15 +1,16 @@
 import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
 import { SyncService } from './sync.service';
+import { Queues } from '@@core/@core-services/queues/types';
 
-@Processor('syncTasks')
+@Processor(Queues.SYNC_JOBS_WORKER)
 export class SyncProcessor {
   constructor(private syncService: SyncService) {}
   @Process('crm-sync-stages')
   async handleSyncStages(job: Job) {
     try {
       console.log(`Processing queue -> crm-sync-stages ${job.id}`);
-      await this.syncService.syncStages();
+      await this.syncService.kickstartSync();
     } catch (error) {
       console.error('Error syncing crm stages', error);
     }

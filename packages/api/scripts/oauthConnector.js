@@ -83,8 +83,7 @@ private cService: ConnectionsStrategiesService,
     this.type = providerToType('${provider.toLowerCase()}', '${vertical.toLowerCase()}', AuthStrategy.oauth2);
   }
 
-  async handleCallback(opts: OAuthCallbackParams) {
-
+  async handleCallback(opts: CallbackParams) {
     try {
       const { linkedUserId, projectId, code } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
@@ -147,7 +146,7 @@ private cService: ConnectionsStrategiesService,
             connection_token: connection_token,
             provider_slug: '${provider.toLowerCase()}',
             vertical: '${vertical.toLowerCase()}',
-            token_type: 'oauth',
+            token_type: 'oauth2',
             account_url: "",
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
@@ -167,18 +166,8 @@ private cService: ConnectionsStrategiesService,
       }
       return db_res;
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_CALLBACK_${verticalUpper}',
-          message: \`${providerUpper}ConnectionService.handleCallback() call failed ---> \${format3rdPartyError(
-            '${provider}',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}\`,
-          cause: error,
-        }),
-        this.logger,
-      );
+            throw error;
+
     }
   }
     
@@ -220,18 +209,8 @@ private cService: ConnectionsStrategiesService,
       });
       this.logger.log('OAuth credentials updated : ${provider} ');
     } catch (error) {
-      throwTypedError(
-        new ConnectionsError({
-          name: 'HANDLE_OAUTH_REFRESH_${verticalUpper}',
-          message: \`${providerUpper}ConnectionService.handleTokenRefresh() call failed ---> \${format3rdPartyError(
-            '${provider}',
-            Action.oauthCallback,
-            ActionType.POST,
-          )}\`,
-          cause: error,
-        }),
-        this.logger,
-      );    
+            throw error;
+  
     }
   }
 } 

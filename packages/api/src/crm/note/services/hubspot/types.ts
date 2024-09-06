@@ -1,8 +1,17 @@
 export interface HubspotNoteInput {
-  hs_note_body: string;
-  hs_timestamp: string;
-  hubspot_owner_id?: string;
-  [key: string]: any;
+  properties: {
+    hs_note_body: string;
+    hs_timestamp: string;
+    hubspot_owner_id?: string;
+    [key: string]: any;
+  };
+  associations?: {
+    to: { id: string };
+    type: {
+      associationCategory: string;
+      associationTypeId: number;
+    }[];
+  }[];
 }
 
 export interface HubspotNoteOutput {
@@ -18,6 +27,16 @@ export interface HubspotNoteOutput {
   createdAt: string;
   updatedAt: string;
   archived: boolean;
+  associations?: {
+    [key: string]: {
+      results: [
+        {
+          id: string;
+          type: string;
+        },
+      ];
+    };
+  };
 }
 
 export const commonNoteHubspotProperties = {

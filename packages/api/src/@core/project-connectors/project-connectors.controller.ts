@@ -7,9 +7,10 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { LoggerService } from '../logger/logger.service';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import {
   ApiBody,
+  ApiExcludeController,
   ApiOperation,
   ApiQuery,
   ApiResponse,
@@ -18,8 +19,9 @@ import {
 import { ProjectConnectorsService } from './project-connectors.service';
 import { ProjectConnectorsDto } from './dto/project-connectors.dto';
 import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-@ApiTags('project-connectors')
-@Controller('project-connectors')
+@ApiTags('project_connectors')
+@ApiExcludeController()
+@Controller('project_connectors')
 export class ProjectConnectorsController {
   constructor(
     private readonly projectConnectorsService: ProjectConnectorsService,

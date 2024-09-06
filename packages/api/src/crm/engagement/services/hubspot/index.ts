@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { IEngagementService } from '@crm/engagement/types';
-import { CrmObject } from '@crm/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IEngagementService } from '@crm/engagement/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import {
   HubspotEngagementCallInput,
@@ -18,6 +18,7 @@ import {
   HubspotEngagementMeetingOutput,
   HubspotEngagementOutput,
   commonCallHubspotProperties,
+  commonEmailHubspotProperties,
   commonMeetingHubspotProperties,
 } from './types';
 
@@ -60,13 +61,7 @@ export class HubspotService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -86,7 +81,7 @@ export class HubspotService implements IEngagementService {
         properties: engagementData,
       };
       const resp = await axios.post(
-        `${connection.account_url}/objects/calls`,
+        `${connection.account_url}/crm/v3/objects/calls`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -103,13 +98,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_call,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -129,7 +118,7 @@ export class HubspotService implements IEngagementService {
         properties: engagementData,
       };
       const resp = await axios.post(
-        `${connection.account_url}/objects/calls`,
+        `${connection.account_url}/crm/v3/objects/meetings`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -146,13 +135,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_meeting,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
@@ -172,7 +155,7 @@ export class HubspotService implements IEngagementService {
         properties: engagementData,
       };
       const resp = await axios.post(
-        `https://api.hubapi.com/crm/v3/objects/emails`,
+        `${connection.account_url}/crm/v3/objects/emails`,
         JSON.stringify(dataBody),
         {
           headers: {
@@ -189,23 +172,15 @@ export class HubspotService implements IEngagementService {
         statusCode: 201,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_email,
-        ActionType.POST,
-      );
+      throw error;
     }
   }
 
-  async syncEngagements(
-    linkedUserId: string,
-    engagement_type: string,
-    custom_properties?: string[],
-  ): Promise<ApiResponse<HubspotEngagementOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<HubspotEngagementOutput[]>> {
     try {
-      switch (engagement_type) {
+      const { linkedUserId, custom_properties, engagement_type } = data;
+
+      switch (engagement_type as string) {
         case 'CALL':
           return this.syncCalls(linkedUserId, custom_properties);
         case 'MEETING':
@@ -216,13 +191,7 @@ export class HubspotService implements IEngagementService {
           break;
       }
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -238,7 +207,7 @@ export class HubspotService implements IEngagementService {
 
       const commonPropertyNames = Object.keys(commonCallHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/calls';
+      const baseURL = `${connection.account_url}/crm/v3/objects/call`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
@@ -262,13 +231,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_call,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -287,7 +250,7 @@ export class HubspotService implements IEngagementService {
 
       const commonPropertyNames = Object.keys(commonMeetingHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/meetings';
+      const baseURL = `${connection.account_url}/crm/v3/objects/meeting`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
@@ -311,13 +274,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_meeting,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 
@@ -331,9 +288,9 @@ export class HubspotService implements IEngagementService {
         },
       });
 
-      const commonPropertyNames = Object.keys(commonCallHubspotProperties);
+      const commonPropertyNames = Object.keys(commonEmailHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
-      const baseURL = 'https://api.hubapi.com/crm/v3/objects/emails';
+      const baseURL = `${connection.account_url}/crm/v3/objects/emails`;
 
       const queryString = allProperties
         .map((prop) => `properties=${encodeURIComponent(prop)}`)
@@ -357,13 +314,7 @@ export class HubspotService implements IEngagementService {
         statusCode: 200,
       };
     } catch (error) {
-      handle3rdPartyServiceError(
-        error,
-        this.logger,
-        'Hubspot',
-        CrmObject.engagement_email,
-        ActionType.GET,
-      );
+      throw error;
     }
   }
 }

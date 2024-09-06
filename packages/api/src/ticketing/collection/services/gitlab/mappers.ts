@@ -1,10 +1,10 @@
 import { ICollectionMapper } from '@ticketing/collection/types';
 import { GitlabCollectionInput, GitlabCollectionOutput } from './types';
 import {
-  UnifiedCollectionInput,
-  UnifiedCollectionOutput,
+  UnifiedTicketingCollectionInput,
+  UnifiedTicketingCollectionOutput,
 } from '@ticketing/collection/types/model.unified';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@ticketing/@lib/@utils';
 
@@ -19,7 +19,7 @@ export class GitlabCollectionMapper implements ICollectionMapper {
     );
   }
   desunify(
-    source: UnifiedCollectionInput,
+    source: UnifiedTicketingCollectionInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -27,7 +27,7 @@ export class GitlabCollectionMapper implements ICollectionMapper {
   ): GitlabCollectionInput {
     const result: GitlabCollectionInput = {
       name: source.name,
-      description: source.description ? source.description : '',
+      description: source.description ? source.description : null,
       path: source.name,
     };
 
@@ -36,28 +36,35 @@ export class GitlabCollectionMapper implements ICollectionMapper {
 
   unify(
     source: GitlabCollectionOutput | GitlabCollectionOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCollectionOutput | UnifiedCollectionOutput[] {
+  ): UnifiedTicketingCollectionOutput | UnifiedTicketingCollectionOutput[] {
     // If the source is not an array, convert it to an array for mapping
     const sourcesArray = Array.isArray(source) ? source : [source];
 
     return sourcesArray.map((collection) =>
-      this.mapSingleCollectionToUnified(collection, customFieldMappings),
+      this.mapSingleCollectionToUnified(
+        collection,
+        connectionId,
+        customFieldMappings,
+      ),
     );
   }
 
   private mapSingleCollectionToUnified(
     collection: GitlabCollectionOutput,
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedCollectionOutput {
-    const unifiedCollection: UnifiedCollectionOutput = {
+  ): UnifiedTicketingCollectionOutput {
+    const unifiedCollection: UnifiedTicketingCollectionOutput = {
       remote_id: String(collection.id),
+      remote_data: collection,
       name: collection.name,
       description: collection.name,
       collection_type: 'PROJECT',

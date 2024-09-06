@@ -5,21 +5,26 @@ export enum CrmConnectors {
     PIPEDRIVE = 'pipedrive',
     ATTIO = 'attio',
     CLOSE = 'close',
-    AFFINITY = 'affinity'
+    MICROSOFTDYNAMICSSALES = 'microsoftdynamicssales'
+}
+
+export enum EcommerceConnectors {
+    SHOPIFY = 'shopify',
+    WOOCOMMERCE = 'woocommerce',
+    SQUARESPACE = 'squarespace',
+    AMAZON = 'amazon',
+    WEBFLOW = 'webflow'
 }
 
 export enum TicketingConnectors {
     ZENDESK = 'zendesk',
     FRONT = 'front',
     JIRA = 'jira',
-    GORGIAS = 'gorgias',
-    GITLAB = 'gitlab'
+    GITHUB = 'github',
+    GITLAB = 'gitlab',
+    LINEAR = 'linear'
 }
 
-export enum AccountingConnectors {
-    PENNYLANE = 'pennylane',
-    FRESHBOOKS = 'freshbooks',
-    CLEARBOOKS = 'clearbooks',
-    FREEAGENT = 'freeagent',
-    SAGE = 'sage',
+export enum FilestorageConnectors {
+    BOX = 'box'
 }

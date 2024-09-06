@@ -1,5 +1,5 @@
 import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { UnifiedMessageInput, UnifiedMessageOutput } from './model.unified';
+import { UnifiedMarketingautomationMessageInput, UnifiedMarketingautomationMessageOutput } from './model.unified';
 import { OriginalMessageOutput } from '@@core/utils/types/original/original.marketing-automation';
 import { ApiResponse } from '@@core/utils/types';
 
@@ -17,7 +17,7 @@ export interface IMessageService {
 
 export interface IMessageMapper {
   desunify(
-    source: UnifiedMessageInput,
+    source: UnifiedMarketingautomationMessageInput,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
@@ -26,9 +26,10 @@ export interface IMessageMapper {
 
   unify(
     source: OriginalMessageOutput | OriginalMessageOutput[],
+    connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): UnifiedMessageOutput | UnifiedMessageOutput[];
+  ): Promise<UnifiedMarketingautomationMessageOutput | UnifiedMarketingautomationMessageOutput[]>;
 }
