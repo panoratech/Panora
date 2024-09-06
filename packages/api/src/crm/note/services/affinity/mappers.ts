@@ -1,11 +1,11 @@
 import { AffinityNoteInput, AffinityNoteOutput } from './types';
 import {
-    UnifiedNoteInput,
-    UnifiedNoteOutput,
+    UnifiedCrmNoteInput,
+    UnifiedCrmNoteOutput,
 } from '@crm/note/types/model.unified';
 import { INoteMapper } from '@crm/note/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -13,16 +13,13 @@ export class AffinityNoteMapper implements INoteMapper {
     constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
         this.mappersRegistry.registerService('crm', 'note', 'affinity', this);
     }
-
     async desunify(
-        source: UnifiedNoteInput,
+        source: UnifiedCrmNoteInput,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
     ): Promise<AffinityNoteInput> {
-
-
         let opts: any = {};
 
         if (source.user_id) {
@@ -86,29 +83,35 @@ export class AffinityNoteMapper implements INoteMapper {
 
     async unify(
         source: AffinityNoteOutput | AffinityNoteOutput[],
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): Promise<UnifiedNoteOutput | UnifiedNoteOutput[]> {
+    ): Promise<UnifiedCrmNoteOutput | UnifiedCrmNoteOutput[]> {
         if (!Array.isArray(source)) {
-            return await this.mapSingleNoteToUnified(source, customFieldMappings);
+            return await this.mapSingleNoteToUnified(
+                source,
+                connectionId,
+                customFieldMappings,
+            );
         }
 
         return Promise.all(
             source.map((note) =>
-                this.mapSingleNoteToUnified(note, customFieldMappings),
+                this.mapSingleNoteToUnified(note, connectionId, customFieldMappings),
             ),
         );
     }
 
     private async mapSingleNoteToUnified(
         note: AffinityNoteOutput,
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): Promise<UnifiedNoteOutput> {
+    ): Promise<UnifiedCrmNoteOutput> {
         const field_mappings: { [key: string]: any } = {};
         if (customFieldMappings) {
             for (const mapping of customFieldMappings) {

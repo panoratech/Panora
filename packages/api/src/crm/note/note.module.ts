@@ -1,3 +1,5 @@
+import { AffinityNoteMapper } from './services/affinity/mappers';
+import { AffinityService } from './services/affinity';
 
 import { MicrosoftdynamicssalesNoteMapper } from './services/microsoftdynamicssales/mappers';
 import { MicrosoftdynamicssalesService } from './services/microsoftdynamicssales';
@@ -47,6 +49,8 @@ import { SyncService } from './sync/sync.service';
     CloseNoteMapper,
     MicrosoftdynamicssalesService,
     MicrosoftdynamicssalesNoteMapper,
+    AffinityService,
+    AffinityNoteMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

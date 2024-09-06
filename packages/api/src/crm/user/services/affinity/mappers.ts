@@ -1,51 +1,59 @@
-import { AffinityUserInput, AffinityUserOutput } from './types';
+import { AffinityUserOutput } from './types';
 import {
-    UnifiedUserInput,
-    UnifiedUserOutput,
+    UnifiedCrmUserInput,
+    UnifiedCrmUserOutput,
 } from '@crm/user/types/model.unified';
 import { IUserMapper } from '@crm/user/types';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { Utils } from '@crm/@lib/@utils';
-export class AffinityUserMapper implements IUserMapper {
 
+@Injectable()
+export class AffinityUserMapper implements IUserMapper {
     constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
         this.mappersRegistry.registerService('crm', 'user', 'affinity', this);
     }
-
     desunify(
-        source: UnifiedUserInput,
+        source: UnifiedCrmUserInput,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): AffinityUserInput {
+    ) {
         return;
     }
 
     unify(
         source: AffinityUserOutput | AffinityUserOutput[],
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): UnifiedUserOutput | UnifiedUserOutput[] {
+    ): Promise<UnifiedCrmUserOutput | UnifiedCrmUserOutput[]> {
         if (!Array.isArray(source)) {
-            return this.mapSingleUserToUnified(source, customFieldMappings);
+            return this.mapSingleUserToUnified(
+                source,
+                connectionId,
+                customFieldMappings,
+            );
         }
         // Handling array of AffinityUserOutput
-        return source.map((user) =>
-            this.mapSingleUserToUnified(user, customFieldMappings),
+        return Promise.all(
+            source.map((user) =>
+                this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
+            ),
         );
     }
 
-    private mapSingleUserToUnified(
+    private async mapSingleUserToUnified(
         user: AffinityUserOutput,
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): UnifiedUserOutput {
+    ): Promise<UnifiedCrmUserOutput> {
         const field_mappings: { [key: string]: any } = {};
         if (customFieldMappings) {
             for (const mapping of customFieldMappings) {

@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IUserService } from '@crm/user/types';
-import { CrmObject } from '@crm/@lib/@types';
-import { AffinityUserOutput } from './types';
-import axios from 'axios';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { IUserService } from '@crm/user/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
+import { AffinityUserOutput } from './types';
 
 @Injectable()
 export class AffinityService implements IUserService {
@@ -21,18 +21,17 @@ export class AffinityService implements IUserService {
         this.logger.setContext(
             CrmObject.user.toUpperCase() + ':' + AffinityService.name,
         );
-        this.registry.registerService('close', this);
+        this.registry.registerService('affinity', this);
     }
 
-    async syncUsers(
-        linkedUserId: string,
-        custom_properties?: string[],
-    ): Promise<ApiResponse<AffinityUserOutput[]>> {
+    async sync(data: SyncParam): Promise<ApiResponse<AffinityUserOutput[]>> {
         try {
+            const { linkedUserId } = data;
+
             const connection = await this.prisma.connections.findFirst({
                 where: {
                     id_linked_user: linkedUserId,
-                    provider_slug: 'close',
+                    provider_slug: 'affinity',
                     vertical: 'crm',
                 },
             });
@@ -56,13 +55,7 @@ export class AffinityService implements IUserService {
                 statusCode: 200,
             };
         } catch (error) {
-            handle3rdPartyServiceError(
-                error,
-                this.logger,
-                'Affinity',
-                CrmObject.user,
-                ActionType.GET,
-            );
+            throw error;
         }
     }
 }

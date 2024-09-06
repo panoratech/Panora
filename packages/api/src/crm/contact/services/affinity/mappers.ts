@@ -1,14 +1,13 @@
-import { Address } from '@crm/@lib/@types';
 import {
-    UnifiedContactInput,
-    UnifiedContactOutput,
+    UnifiedCrmContactInput,
+    UnifiedCrmContactOutput,
 } from '@crm/contact/types/model.unified';
 import { IContactMapper } from '@crm/contact/types';
 import { AffinityContactInput, AffinityContactOutput } from './types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { getCountryCode, getCountryName } from '@@core/utils/types';
 
 @Injectable()
 export class AffinityContactMapper implements IContactMapper {
@@ -17,7 +16,7 @@ export class AffinityContactMapper implements IContactMapper {
     }
 
     async desunify(
-        source: UnifiedContactInput,
+        source: UnifiedCrmContactInput,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
@@ -30,10 +29,7 @@ export class AffinityContactMapper implements IContactMapper {
             first_name: source.first_name,
             last_name: source.last_name,
             emails: source.email_addresses?.map((e) => e.email_address),
-
         };
-
-
 
         if (customFieldMappings && source.field_mappings) {
             for (const [k, v] of Object.entries(source.field_mappings)) {
@@ -50,43 +46,47 @@ export class AffinityContactMapper implements IContactMapper {
 
     async unify(
         source: AffinityContactOutput | AffinityContactOutput[],
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): Promise<UnifiedContactOutput | UnifiedContactOutput[]> {
+    ): Promise<UnifiedCrmContactOutput | UnifiedCrmContactOutput[]> {
         if (!Array.isArray(source)) {
-            return await this.mapSingleContactToUnified(source, customFieldMappings);
+            return await this.mapSingleContactToUnified(
+                source,
+                connectionId,
+                customFieldMappings,
+            );
         }
 
         // Handling array of HubspotContactOutput
         return Promise.all(
             source.map((contact) =>
-                this.mapSingleContactToUnified(contact, customFieldMappings),
+                this.mapSingleContactToUnified(
+                    contact,
+                    connectionId,
+                    customFieldMappings,
+                ),
             ),
         );
     }
 
     private async mapSingleContactToUnified(
         contact: AffinityContactOutput,
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): Promise<UnifiedContactOutput> {
+    ): Promise<UnifiedCrmContactOutput> {
         const field_mappings: { [key: string]: any } = {};
         if (customFieldMappings) {
             for (const mapping of customFieldMappings) {
                 field_mappings[mapping.slug] = contact[mapping.remote_id];
             }
         }
-        // const address: Address = {
-        //   street_1: '',
-        //   city: '',
-        //   state: '',
-        //   postal_code: '',
-        //   country: '',
-        // };
+
         const opts: any = {};
 
         return {

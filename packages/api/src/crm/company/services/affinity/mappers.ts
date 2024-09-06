@@ -1,21 +1,21 @@
 import { AffinityCompanyInput, AffinityCompanyOutput } from './types';
 import {
-    UnifiedCompanyInput,
-    UnifiedCompanyOutput,
+    UnifiedCrmCompanyInput,
+    UnifiedCrmCompanyOutput,
 } from '@crm/company/types/model.unified';
 import { ICompanyMapper } from '@crm/company/types';
 import { Utils } from '@crm/@lib/@utils';
 import { Injectable } from '@nestjs/common';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { getCountryCode, getCountryName } from '@@core/utils/types';
 
 @Injectable()
 export class AffinityCompanyMapper implements ICompanyMapper {
     constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
         this.mappersRegistry.registerService('crm', 'company', 'affinity', this);
     }
-
     async desunify(
-        source: UnifiedCompanyInput,
+        source: UnifiedCrmCompanyInput,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
@@ -44,29 +44,39 @@ export class AffinityCompanyMapper implements ICompanyMapper {
 
     async unify(
         source: AffinityCompanyOutput | AffinityCompanyOutput[],
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): Promise<UnifiedCompanyOutput | UnifiedCompanyOutput[]> {
+    ): Promise<UnifiedCrmCompanyOutput | UnifiedCrmCompanyOutput[]> {
         if (!Array.isArray(source)) {
-            return this.mapSingleCompanyToUnified(source, customFieldMappings);
+            return this.mapSingleCompanyToUnified(
+                source,
+                connectionId,
+                customFieldMappings,
+            );
         }
         // Handling array of AffinityCompanyOutput
         return Promise.all(
             source.map((company) =>
-                this.mapSingleCompanyToUnified(company, customFieldMappings),
+                this.mapSingleCompanyToUnified(
+                    company,
+                    connectionId,
+                    customFieldMappings,
+                ),
             ),
         );
     }
 
     private async mapSingleCompanyToUnified(
         company: AffinityCompanyOutput,
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): Promise<UnifiedCompanyOutput> {
+    ): Promise<UnifiedCrmCompanyOutput> {
         const field_mappings: { [key: string]: any } = {};
         if (customFieldMappings) {
             for (const mapping of customFieldMappings) {
@@ -75,8 +85,6 @@ export class AffinityCompanyMapper implements ICompanyMapper {
         }
 
         let opts: any = {};
-
-
 
         return {
             remote_id: company.id,

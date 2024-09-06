@@ -5,6 +5,7 @@ export enum CrmConnectors {
     PIPEDRIVE = 'pipedrive',
     ATTIO = 'attio',
     CLOSE = 'close',
+    AFFINITY = 'affinity',
     MICROSOFTDYNAMICSSALES = 'microsoftdynamicssales'
 }
 

@@ -1,4 +1,5 @@
 
+
 import { MicrosoftdynamicssalesEngagementInput, MicrosoftdynamicssalesEngagementOutput } from '@crm/engagement/services/microsoftdynamicssales/types';
 
 import { MicrosoftdynamicssalesTaskInput, MicrosoftdynamicssalesTaskOutput } from '@crm/task/services/microsoftdynamicssales/types';
@@ -153,12 +154,17 @@ import {
   ZendeskUserInput,
   ZendeskUserOutput,
 } from '@ticketing/user/services/zendesk/types';
+import { AffinityCompanyInput, AffinityCompanyOutput } from '@crm/company/services/affinity/types';
+import { AffinityDealInput, AffinityDealOutput } from '@crm/deal/services/affinity/types';
+import { AffinityNoteInput, AffinityNoteOutput } from '@crm/note/services/affinity/types';
+import { AffinityUserInput, AffinityUserOutput } from '@crm/user/services/affinity/types';
+import { AffinityContactInput, AffinityContactOutput } from '@crm/contact/services/affinity/types';
 
 /* INPUT */
 
 /* contact */
 export type OriginalContactInput =
-  | AffinityContactInput
+  | AffinityCompanyInput
   | HubspotContactInput
   | ZohoContactInput
   | ZendeskContactInput
@@ -245,7 +251,7 @@ export type CrmObjectInput =
 /* OUTPUT */
 
 export type OriginalContactOutput =
-  | AffinityContactOutput
+  | AffinityContactInput
   | HubspotContactOutput
   | ZohoContactOutput
   | ZendeskContactOutput

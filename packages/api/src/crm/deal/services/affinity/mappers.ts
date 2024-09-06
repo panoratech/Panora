@@ -1,20 +1,21 @@
-import { AffinityDealInput, AffinityDealOutput } from './types';
+import { Injectable } from '@nestjs/common';
 import {
-    UnifiedDealInput,
-    UnifiedDealOutput,
+    UnifiedCrmDealInput,
+    UnifiedCrmDealOutput,
 } from '@crm/deal/types/model.unified';
 import { IDealMapper } from '@crm/deal/types';
 import { Utils } from '@crm/@lib/@utils';
-import { MappersRegistry } from '@@core/utils/registry/mappings.registry';
-import { Injectable } from '@nestjs/common';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { AffinityDealInput, AffinityDealOutput } from './types';
 
+@Injectable()
 export class AffinityDealMapper implements IDealMapper {
     constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
         this.mappersRegistry.registerService('crm', 'deal', 'affinity', this);
     }
 
     async desunify(
-        source: UnifiedDealInput,
+        source: UnifiedCrmDealInput,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
@@ -37,7 +38,6 @@ export class AffinityDealMapper implements IDealMapper {
             name: source.name,
             list_id: 21,
             ...opts
-
         };
 
         if (customFieldMappings && source.field_mappings) {
@@ -50,34 +50,41 @@ export class AffinityDealMapper implements IDealMapper {
                 }
             }
         }
+
         return result;
     }
 
     async unify(
         source: AffinityDealOutput | AffinityDealOutput[],
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): Promise<UnifiedDealOutput | UnifiedDealOutput[]> {
+    ): Promise<UnifiedCrmDealOutput | UnifiedCrmDealOutput[]> {
         if (!Array.isArray(source)) {
-            return await this.mapSingleDealToUnified(source, customFieldMappings);
+            return await this.mapSingleDealToUnified(
+                source,
+                connectionId,
+                customFieldMappings,
+            );
         }
         // Handling array of AffinityDealOutput
         return Promise.all(
             source.map((deal) =>
-                this.mapSingleDealToUnified(deal, customFieldMappings),
+                this.mapSingleDealToUnified(deal, connectionId, customFieldMappings),
             ),
         );
     }
 
     private async mapSingleDealToUnified(
         deal: AffinityDealOutput,
+        connectionId: string,
         customFieldMappings?: {
             slug: string;
             remote_id: string;
         }[],
-    ): Promise<UnifiedDealOutput> {
+    ): Promise<UnifiedCrmDealOutput> {
         const field_mappings: { [key: string]: any } = {};
         if (customFieldMappings) {
             for (const mapping of customFieldMappings) {
@@ -113,9 +120,6 @@ export class AffinityDealMapper implements IDealMapper {
                 }
             }
         }
-
-
-
 
         return {
             remote_id: String(deal.id),

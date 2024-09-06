@@ -1,3 +1,5 @@
+import { AffinityCompanyMapper } from './services/affinity/mappers';
+import { AffinityService } from './services/affinity';
 import { MicrosoftdynamicssalesCompanyMapper } from './services/microsoftdynamicssales/mappers';
 import { MicrosoftdynamicssalesService } from './services/microsoftdynamicssales';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
@@ -57,6 +59,8 @@ import { SyncService } from './sync/sync.service';
     ZohoCompanyMapper,
     MicrosoftdynamicssalesService,
     MicrosoftdynamicssalesCompanyMapper,
+    AffinityService,
+    AffinityCompanyMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

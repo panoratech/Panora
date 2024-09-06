@@ -2,14 +2,16 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { CrmObject } from '@crm/@lib/@types';
-import { PrismaService } from '@@core/prisma/prisma.service';
-import { LoggerService } from '@@core/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EncryptionService } from '@@core/encryption/encryption.service';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { ApiResponse } from '@@core/utils/types';
 import { ICompanyService } from '@crm/company/types';
 import { ServiceRegistry } from '../registry.service';
 import { AffinityCompanyInput, AffinityCompanyOutput } from './types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { OriginalCompanyOutput } from '@@core/utils/types/original/original.crm';
 
 @Injectable()
 export class AffinityService implements ICompanyService {
@@ -24,7 +26,6 @@ export class AffinityService implements ICompanyService {
         );
         this.registry.registerService('affinity', this);
     }
-
     async addCompany(
         companyData: AffinityCompanyInput,
         linkedUserId: string,
@@ -58,20 +59,14 @@ export class AffinityService implements ICompanyService {
                 statusCode: 201,
             };
         } catch (error) {
-            handle3rdPartyServiceError(
-                error,
-                this.logger,
-                'Affinity',
-                CrmObject.company,
-                ActionType.POST,
-            );
+            throw error;
         }
     }
 
-    async syncCompanies(
-        linkedUserId: string,
-    ): Promise<ApiResponse<AffinityCompanyOutput[]>> {
+    async sync(data: SyncParam): Promise<ApiResponse<AffinityCompanyOutput[]>> {
         try {
+            const { linkedUserId } = data;
+
             const connection = await this.prisma.connections.findFirst({
                 where: {
                     id_linked_user: linkedUserId,
@@ -96,13 +91,7 @@ export class AffinityService implements ICompanyService {
                 statusCode: 200,
             };
         } catch (error) {
-            handle3rdPartyServiceError(
-                error,
-                this.logger,
-                'Affinity',
-                CrmObject.company,
-                ActionType.GET,
-            );
+            throw error;
         }
     }
 }

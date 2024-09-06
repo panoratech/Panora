@@ -1,3 +1,5 @@
+import { AffinityDealMapper } from './services/affinity/mappers';
+import { AffinityService } from './services/affinity';
 
 import { MicrosoftdynamicssalesDealMapper } from './services/microsoftdynamicssales/mappers';
 import { MicrosoftdynamicssalesService } from './services/microsoftdynamicssales';
@@ -48,6 +50,8 @@ import { SyncService } from './sync/sync.service';
     CloseDealMapper,
     MicrosoftdynamicssalesService,
     MicrosoftdynamicssalesDealMapper,
+    AffinityService,
+    AffinityDealMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

@@ -1,3 +1,5 @@
+import { AffinityContactMapper } from './services/affinity/mappers';
+import { AffinityService } from './services/affinity';
 
 import { MicrosoftdynamicssalesContactMapper } from './services/microsoftdynamicssales/mappers';
 import { MicrosoftdynamicssalesService } from './services/microsoftdynamicssales';
@@ -50,6 +52,8 @@ import { SyncService } from './sync/sync.service';
     ZohoContactMapper,
     MicrosoftdynamicssalesService,
     MicrosoftdynamicssalesContactMapper,
+    AffinityService,
+    AffinityContactMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })

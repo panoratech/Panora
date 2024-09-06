@@ -1,3 +1,5 @@
+import { AffinityUserMapper } from './services/affinity/mappers';
+import { AffinityService } from './services/affinity';
 
 import { MicrosoftdynamicssalesUserMapper } from './services/microsoftdynamicssales/mappers';
 import { MicrosoftdynamicssalesService } from './services/microsoftdynamicssales';
@@ -47,6 +49,8 @@ import { UserController } from './user.controller';
     CloseUserMapper,
     MicrosoftdynamicssalesService,
     MicrosoftdynamicssalesUserMapper,
+    AffinityService,
+    AffinityUserMapper,
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
