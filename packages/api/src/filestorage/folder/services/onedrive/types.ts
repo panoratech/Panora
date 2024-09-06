@@ -47,6 +47,8 @@ export interface OnedriveFolderInput {
   permissions?: Permission[];
   /** Date and time the item was last modified. Read-only. */
   readonly lastModifiedDateTime?: string;
+  /** Date and time of item creation. Read-only. */
+  readonly createdDateTime?: string;
   /** Size of the item in bytes. Read-only. */
   readonly size?: number;
   /** Identity of the user, device, and application that created the item. Read-only. */
