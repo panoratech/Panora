@@ -106,8 +106,8 @@ export class OnedriveFolderMapper implements IFolderMapper {
         folder.parentReference?.id,
         connectionId,
       ),
-      permission: folder.permissions?.[0].id,
-      size: null,
+      permission: null,
+      size: folder.size.toString(), // Folders have 0 size in onedrive
       shared_link: null,
       field_mappings,
     };

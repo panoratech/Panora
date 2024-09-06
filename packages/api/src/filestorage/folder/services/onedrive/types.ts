@@ -45,6 +45,14 @@ export interface OnedriveFolderInput {
   readonly lastModifiedByUser?: IdentitySet;
   /** Permissions associated with the folder. */
   permissions?: Permission[];
+  /** Date and time the item was last modified. Read-only. */
+  readonly lastModifiedDateTime?: string;
+  /** Size of the item in bytes. Read-only. */
+  readonly size?: number;
+  /** Identity of the user, device, and application that created the item. Read-only. */
+  readonly createdBy?: IdentitySet;
+  /** Identity of the user, device, and application that last modified the item. Read-only. */
+  readonly lastModifiedBy?: IdentitySet;
 }
 
 /**
