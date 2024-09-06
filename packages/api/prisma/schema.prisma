@@ -1321,29 +1321,32 @@ model connections {
 }
 
 model connector_sets {
-  id_connector_set String     @id(map: "pk_project_connector") @db.Uuid
-  crm_hubspot      Boolean?
-  crm_zoho         Boolean?
-  crm_attio        Boolean?
-  crm_pipedrive    Boolean?
-  tcg_zendesk      Boolean?
-  tcg_jira         Boolean?
-  tcg_gorgias      Boolean?
-  tcg_gitlab       Boolean?
-  tcg_front        Boolean?
-  crm_zendesk      Boolean?
-  crm_close        Boolean?
-  fs_box           Boolean?
-  tcg_github       Boolean?
-  hris_gusto       Boolean?
-  hris_deel        Boolean?
-  hris_sage        Boolean?
-  ecom_woocommerce Boolean?
-  ecom_shopify     Boolean?
-  ecom_amazon      Boolean?
-  ecom_squarespace Boolean?
-  ats_ashby        Boolean?
-  projects         projects[]
+  id_connector_set           String     @id(map: "pk_project_connector") @db.Uuid
+  crm_hubspot                Boolean?
+  crm_zoho                   Boolean?
+  crm_attio                  Boolean?
+  crm_pipedrive              Boolean?
+  tcg_zendesk                Boolean?
+  tcg_jira                   Boolean?
+  tcg_gorgias                Boolean?
+  tcg_gitlab                 Boolean?
+  tcg_front                  Boolean?
+  crm_zendesk                Boolean?
+  crm_close                  Boolean?
+  fs_box                     Boolean?
+  tcg_github                 Boolean?
+  hris_gusto                 Boolean?
+  hris_deel                  Boolean?
+  hris_sage                  Boolean?
+  ecom_woocommerce           Boolean?
+  ecom_shopify               Boolean?
+  ecom_amazon                Boolean?
+  ecom_squarespace           Boolean?
+  tcg_linear                 Boolean?
+  ats_ashby                  Boolean?
+  ecom_webflow               Boolean?
+  crm_microsoftdynamicssales Boolean?
+  projects                   projects[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -1962,18 +1965,19 @@ model linked_users {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model projects {
-  id_project       String         @id(map: "pk_projects") @db.Uuid
-  name             String
-  sync_mode        String
-  pull_frequency   BigInt?
-  redirect_url     String?
-  id_user          String         @db.Uuid
-  id_connector_set String         @db.Uuid
-  api_keys         api_keys[]
-  connections      connections[]
-  linked_users     linked_users[]
-  users            users          @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
-  connector_sets   connector_sets @relation(fields: [id_connector_set], references: [id_connector_set], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectorsetid")
+  id_project              String                   @id(map: "pk_projects") @db.Uuid
+  name                    String
+  sync_mode               String
+  pull_frequency          BigInt?
+  redirect_url            String?
+  id_user                 String                   @db.Uuid
+  id_connector_set        String                   @db.Uuid
+  api_keys                api_keys[]
+  connections             connections[]
+  linked_users            linked_users[]
+  users                   users                    @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_46_1")
+  connector_sets          connector_sets           @relation(fields: [id_connector_set], references: [id_connector_set], onDelete: NoAction, onUpdate: NoAction, map: "fk_project_connectorsetid")
+  projects_pull_frequency projects_pull_frequency?
 
   @@index([id_connector_set], map: "fk_connectors_sets")
 }
@@ -2124,4 +2128,19 @@ model webhook_delivery_attempts {
   @@index([id_webhook_endpoint], map: "fk_we_webhookendpointid")
   @@index([id_event], map: "fk_webhook_delivery_attempt_eventid")
   @@index([id_webhooks_reponse], map: "fk_webhook_delivery_attempt_webhook_responseid")
+}
+
+model projects_pull_frequency {
+  id_projects_pull_frequency String   @id(map: "pk_projects_pull_frequency") @db.Uuid
+  crm                        BigInt?
+  ats                        BigInt?
+  hris                       BigInt?
+  accounting                 BigInt?
+  filestorage                BigInt?
+  ecommerce                  BigInt?
+  ticketing                  BigInt?
+  created_at                 DateTime @default(now()) @db.Timestamptz(6)
+  modified_at                DateTime @default(now()) @db.Timestamptz(6)
+  id_project                 String   @unique(map: "uq_projects_pull_frequency_project") @db.Uuid
+  projects                   projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_projects_pull_frequency_project")
 }

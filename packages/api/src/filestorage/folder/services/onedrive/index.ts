@@ -40,9 +40,10 @@ export class OnedriveService implements IFolderService {
           vertical: 'filestorage',
         },
       });
+
       // Currently adding in root folder, might need to change
       const resp = await axios.post(
-        `${connection.account_url}/drive/root/children`,
+        `${connection.account_url}/v1.0/drive/root/children`,
         JSON.stringify({
           name: folderData.name,
           folder: {},
