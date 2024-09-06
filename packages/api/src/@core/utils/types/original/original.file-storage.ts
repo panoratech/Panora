@@ -1,3 +1,5 @@
+import { OnedriveUserInput, OnedriveUserOutput } from '@filestorage/user/services/onedrive/types';
+
 import { OnedriveFileInput, OnedriveFileOutput } from '@filestorage/file/services/onedrive/types';
 
 import { OnedriveFolderInput, OnedriveFolderOutput } from '@filestorage/folder/services/onedrive/types';
@@ -42,7 +44,7 @@ export type OriginalDriveInput = any | OnedriveDriveInput;
 export type OriginalGroupInput = BoxGroupInput;
 
 /* user */
-export type OriginalUserInput = BoxUserInput;
+export type OriginalUserInput = BoxUserInput | OnedriveUserInput;
 
 export type FileStorageObjectInput =
   | OriginalFileInput
@@ -74,7 +76,7 @@ export type OriginalDriveOutput = any | OnedriveDriveOutput;
 export type OriginalGroupOutput = BoxGroupOutput;
 
 /* user */
-export type OriginalUserOutput = BoxUserOutput;
+export type OriginalUserOutput = BoxUserOutput | OnedriveUserOutput;
 
 export type FileStorageObjectOutput =
   | OriginalFileOutput

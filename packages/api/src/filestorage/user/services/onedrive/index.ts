@@ -4,14 +4,14 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 import { FileStorageObject } from '@filestorage/@lib/@types';
-import { IFileService } from '@filestorage/file/types';
+import { IUserService } from '@filestorage/user/types';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
-import { OnedriveFileOutput } from './types';
+import { OnedriveUserOutput } from './types';
 
 @Injectable()
-export class OnedriveService implements IFileService {
+export class OnedriveService implements IUserService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -19,17 +19,14 @@ export class OnedriveService implements IFileService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      `${FileStorageObject.file.toUpperCase()}:${OnedriveService.name}`,
+      `${FileStorageObject.user.toUpperCase()}:${OnedriveService.name}`,
     );
     this.registry.registerService('onedrive', this);
   }
 
-  // todo: add addFile method
-
-  async sync(data: SyncParam): Promise<ApiResponse<OnedriveFileOutput[]>> {
+  async sync(data: SyncParam): Promise<ApiResponse<OnedriveUserOutput[]>> {
     try {
-      const { linkedUserId, id_folder } = data;
-      if (!id_folder) return;
+      const { linkedUserId } = data;
 
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -39,35 +36,27 @@ export class OnedriveService implements IFileService {
         },
       });
 
-      const folder = await this.prisma.fs_folders.findUnique({
-        where: {
-          id_fs_folder: id_folder as string,
+      const resp = await axios.get(`${connection.account_url}/v1.0/users`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
         },
       });
 
-      const resp = await axios.get(
-        `${connection.account_url}/v1.0/drive/items/${folder.remote_id}/children`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
-        },
-      );
+      this.logger.log(`Synced onedrive users !`);
 
-      const files: OnedriveFileOutput[] = resp.data.value.filter(
-        (elem) => !elem.folder, // files don't have a folder property
-      );
-
-      this.logger.log(`Synced onedrive files !`);
       return {
-        data: files,
-        message: "One Drive's files retrieved",
+        data: resp.data.value,
+        message: 'Onedrive users retrieved',
         statusCode: 200,
       };
     } catch (error) {
+      this.logger.error(
+        `Error syncing onedrive users !`,
+        error.message || 'Unknown',
+      );
       throw error;
     }
   }
