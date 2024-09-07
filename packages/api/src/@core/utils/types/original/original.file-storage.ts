@@ -1,3 +1,5 @@
+import { OnedriveGroupInput, OnedriveGroupOutput } from '@filestorage/group/services/onedrive/types';
+
 import { OnedriveUserInput, OnedriveUserOutput } from '@filestorage/user/services/onedrive/types';
 
 import { OnedriveFileInput, OnedriveFileOutput } from '@filestorage/file/services/onedrive/types';
@@ -41,7 +43,7 @@ export type OriginalSharedLinkInput = any;
 export type OriginalDriveInput = any | OnedriveDriveInput;
 
 /* group */
-export type OriginalGroupInput = BoxGroupInput;
+export type OriginalGroupInput = BoxGroupInput | OnedriveGroupInput;
 
 /* user */
 export type OriginalUserInput = BoxUserInput | OnedriveUserInput;
@@ -73,7 +75,7 @@ export type OriginalSharedLinkOutput = any;
 export type OriginalDriveOutput = any | OnedriveDriveOutput;
 
 /* group */
-export type OriginalGroupOutput = BoxGroupOutput;
+export type OriginalGroupOutput = BoxGroupOutput | OnedriveGroupOutput;
 
 /* user */
 export type OriginalUserOutput = BoxUserOutput | OnedriveUserOutput;
