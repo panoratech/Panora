@@ -1,3 +1,5 @@
+import { OnedrivePermissionInput, OnedrivePermissionOutput } from '@filestorage/permission/services/onedrive/types';
+
 import { OnedriveGroupInput, OnedriveGroupOutput } from '@filestorage/group/services/onedrive/types';
 
 import { OnedriveUserInput, OnedriveUserOutput } from '@filestorage/user/services/onedrive/types';
@@ -34,7 +36,7 @@ export type OriginalFileInput = BoxFileInput | OnedriveFileInput;
 export type OriginalFolderInput = BoxFolderInput | OnedriveFolderInput;
 
 /* permission */
-export type OriginalPermissionInput = any;
+export type OriginalPermissionInput = any | OnedrivePermissionInput;
 
 /* shared link */
 export type OriginalSharedLinkInput = any;
@@ -66,7 +68,7 @@ export type OriginalFileOutput = BoxFileOutput | OnedriveFileOutput;
 export type OriginalFolderOutput = BoxFolderOutput | OnedriveFolderOutput;
 
 /* permission */
-export type OriginalPermissionOutput = any;
+export type OriginalPermissionOutput = any | OnedrivePermissionOutput;
 
 /* shared link */
 export type OriginalSharedLinkOutput = any;
