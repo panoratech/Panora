@@ -1,3 +1,6 @@
+import { BoxSharedlinkInput, BoxSharedlinkOutput } from '@filestorage/sharedlink/services/box/types';
+import { OnedriveSharedlinkInput, OnedriveSharedlinkOutput } from '@filestorage/sharedlink/services/onedrive/types';
+
 import { OnedrivePermissionInput, OnedrivePermissionOutput } from '@filestorage/permission/services/onedrive/types';
 
 import { OnedriveGroupInput, OnedriveGroupOutput } from '@filestorage/group/services/onedrive/types';
@@ -90,3 +93,7 @@ export type FileStorageObjectOutput =
   | OriginalDriveOutput
   | OriginalGroupOutput
   | OriginalUserOutput;
+
+export type OriginalSharedlinkInput = BoxSharedlinkInput | OnedriveSharedlinkInput;
+
+export type OriginalSharedlinkOutput = BoxSharedlinkOutput | OnedriveSharedlinkOutput;

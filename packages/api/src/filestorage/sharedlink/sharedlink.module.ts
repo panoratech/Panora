@@ -1,3 +1,7 @@
+import { OnedriveSharedlinkMapper } from './services/onedrive/mappers';
+import { BoxSharedlinkMapper } from './services/box/mappers';
+import { OnedriveService } from './services/onedrive';
+import { BoxService } from './services/box';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -31,6 +35,10 @@ import { Utils } from '@filestorage/@lib/@utils';
     Utils,
     /* PROVIDERS SERVICES */
     BoxSharedLinkMapper,
+    BoxService,
+    OnedriveService,
+    BoxSharedlinkMapper,
+    OnedriveSharedlinkMapper,
   ],
   exports: [SyncService],
 })
