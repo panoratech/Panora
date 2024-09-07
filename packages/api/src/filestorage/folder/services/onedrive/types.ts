@@ -1,8 +1,8 @@
 import {
-  Identity,
   IdentitySet,
   SharepointIds,
 } from '@filestorage/drive/services/onedrive/types';
+import { OnedrivePermissionOutput } from '@filestorage/permission/services/onedrive/types';
 
 /**
  * Represents the input for a folder item in OneDrive.
@@ -44,7 +44,7 @@ export interface OnedriveFolderInput {
   /** Identity of the user who last modified the folder. */
   readonly lastModifiedByUser?: IdentitySet;
   /** Permissions associated with the folder. */
-  permissions?: Permission[];
+  permissions?: OnedrivePermissionOutput[];
   /** Date and time the item was last modified. Read-only. */
   readonly lastModifiedDateTime?: string;
   /** Date and time of item creation. Read-only. */
@@ -150,68 +150,6 @@ export interface SpecialFolder {
 export interface Deleted {
   /** Represents the state of the deleted item. */
   state?: string;
-}
-
-/**
- * Represents a permission associated with a folder item.
- */
-export interface Permission {
-  /** The unique identifier of the permission among all permissions on the item. */
-  id?: string;
-  /** Indicates whether the password is set for this permission. */
-  hasPassword?: boolean;
-  /** For link type permissions, the details of the users to whom permission was granted. */
-  grantedToV2?: SharePointIdentitySet;
-  /** Provides a reference to the ancestor of the current permission, if it's inherited from an ancestor. */
-  inheritedFrom?: ItemReference;
-  /** Details of any associated sharing invitation for this permission. */
-  invitation?: SharingInvitation;
-  /** Provides the link details of the current permission, if it's a link type permission. */
-  link?: SharingLink;
-  /** The type of permission, for example, read. */
-  roles?: ('read' | 'write' | 'owner')[];
-  /** A unique token that can be used to access this shared item via the shares API. */
-  shareId?: string;
-}
-
-/**
- * Represents the sharing invitation details for a permission.
- */
-export interface SharingInvitation {
-  /** The email address of the recipient. */
-  readonly email?: string;
-  /**  Provides information about who sent the invitation that created this permission, if that information is available. Read-only. */
-  readonly readonlyinvitedBy?: IdentitySet;
-  /** If true the recipient of the invitation needs to sign in in order to access the shared item. Read-only. */
-  readonly signInRequired?: boolean;
-}
-
-/**
- * Represents the sharing link details for a permission.
- */
-export interface SharingLink {
-  /** The URL that opens the item in the browser on the OneDrive website. */
-  webUrl?: string;
-  /** The type of sharing link. */
-  type?: 'view' | 'edit' | 'embed';
-  /** The scope of the link represented by this permission. */
-  scope?: 'anonymous' | 'organization' | 'existingAccess' | 'users';
-  /** If true, then the user can only use this link to view the item on the web, and cannot use it to download the contents of the item. */
-  preventsDownload?: boolean;
-  /** For embed links, this property contains the HTML code for an <iframe> element that will embed the item in a webpage. */
-  webHtml?: string;
-  /** The app the link is associated with. */
-  application?: Identity;
-}
-
-/**
- * Represents the identity set in SharePoint.
- */
-export interface SharePointIdentitySet extends IdentitySet {
-  /** TThe SharePoint group associated with this action. Optional. */
-  siteGroup?: Identity;
-  /** The SharePoint user associated with this action. Optional. */
-  siteUser?: Identity;
 }
 
 export type OnedriveFolderOutput = OnedriveFolderInput;

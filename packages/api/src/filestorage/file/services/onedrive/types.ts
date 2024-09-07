@@ -3,8 +3,8 @@ import {
   Deleted,
   FileSystemInfo,
   ItemReference,
-  Permission,
 } from '@filestorage/folder/services/onedrive/types';
+import { OnedrivePermissionOutput } from '@filestorage/permission/services/onedrive/types';
 
 /**
  * Represents the input for a folder item in OneDrive.
@@ -30,7 +30,7 @@ export interface OnedriveFileOutput {
   /** Description of the item. */
   description?: string;
   /** Permissions associated with the folder. */
-  permissions?: Permission[];
+  permissions?: OnedrivePermissionOutput[];
   /** Date and time the item was last modified. Read-only. */
   readonly lastModifiedDateTime?: string;
   /** Size of the item in bytes. Read-only. */
