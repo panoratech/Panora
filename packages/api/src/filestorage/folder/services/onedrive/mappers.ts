@@ -95,7 +95,7 @@ export class OnedriveFolderMapper implements IFolderMapper {
     }
 
     const opts: any = {};
-    if (folder.permissions.length) {
+    if (folder.permissions?.length) {
       const permissions = await this.coreUnificationService.unify<
         OriginalPermissionOutput[]
       >({

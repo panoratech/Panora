@@ -89,7 +89,7 @@ export class OnedriveFileMapper implements IFileMapper {
     }
 
     const opts: any = {};
-    if (file.permissions.length) {
+    if (file.permissions?.length) {
       const permissions = await this.coreUnificationService.unify<
         OriginalPermissionOutput[]
       >({
