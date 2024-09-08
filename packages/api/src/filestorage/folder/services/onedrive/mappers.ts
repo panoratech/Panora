@@ -11,6 +11,7 @@ import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/type
 import { Injectable } from '@nestjs/common';
 import { OnedriveFolderInput, OnedriveFolderOutput } from './types';
 import { FileStorageObject } from '@filestorage/@lib/@types';
+import { OriginalPermissionOutput } from '@@core/utils/types/original/original.file-storage';
 
 @Injectable()
 export class OnedriveFolderMapper implements IFolderMapper {
@@ -93,7 +94,34 @@ export class OnedriveFolderMapper implements IFolderMapper {
       }
     }
 
-    // todo: add support for shared link
+    const opts: any = {};
+    if (folder.permissions.length) {
+      const permissions = await this.coreUnificationService.unify<
+        OriginalPermissionOutput[]
+      >({
+        sourceObject: folder.permissions,
+        targetType: FileStorageObject.permission,
+        providerName: 'onedrive',
+        vertical: 'filestorage',
+        connectionId,
+        customFieldMappings: [],
+      });
+      opts.permissions = permissions;
+
+      // shared link
+      if (folder.permissions.some((p) => p.link)) {
+        const sharedLinks =
+          await this.coreUnificationService.unify<OriginalSharedLinkOutput>({
+            sourceObject: folder.permissions.find((p) => p.link),
+            targetType: FileStorageObject.sharedlink,
+            providerName: 'onedrive',
+            vertical: 'filestorage',
+            connectionId,
+            customFieldMappings: [],
+          });
+        opts.shared_links = sharedLinks;
+      }
+    }
 
     const result = {
       remote_id: folder.id,
@@ -106,9 +134,10 @@ export class OnedriveFolderMapper implements IFolderMapper {
         folder.parentReference?.id,
         connectionId,
       ),
+      // permission: opts.permissions?.[0] || null,
       permission: null,
-      size: folder.size.toString(), // Folders have 0 size in onedrive
-      shared_link: null,
+      size: folder.size.toString(),
+      shared_link: opts.shared_links?.[0] || null,
       field_mappings,
     };
 

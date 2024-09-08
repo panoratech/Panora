@@ -1,17 +1,41 @@
-import { BoxSharedlinkInput, BoxSharedlinkOutput } from '@filestorage/sharedlink/services/box/types';
-import { OnedriveSharedlinkInput, OnedriveSharedlinkOutput } from '@filestorage/sharedlink/services/onedrive/types';
+import {
+  BoxSharedLinkInput,
+  BoxSharedLinkOutput,
+} from '@filestorage/sharedlink/services/box/types';
+import {
+  OnedriveSharedLinkInput,
+  OnedriveSharedLinkOutput,
+} from '@filestorage/sharedlink/services/onedrive/types';
 
-import { OnedrivePermissionInput, OnedrivePermissionOutput } from '@filestorage/permission/services/onedrive/types';
+import {
+  OnedrivePermissionInput,
+  OnedrivePermissionOutput,
+} from '@filestorage/permission/services/onedrive/types';
 
-import { OnedriveGroupInput, OnedriveGroupOutput } from '@filestorage/group/services/onedrive/types';
+import {
+  OnedriveGroupInput,
+  OnedriveGroupOutput,
+} from '@filestorage/group/services/onedrive/types';
 
-import { OnedriveUserInput, OnedriveUserOutput } from '@filestorage/user/services/onedrive/types';
+import {
+  OnedriveUserInput,
+  OnedriveUserOutput,
+} from '@filestorage/user/services/onedrive/types';
 
-import { OnedriveFileInput, OnedriveFileOutput } from '@filestorage/file/services/onedrive/types';
+import {
+  OnedriveFileInput,
+  OnedriveFileOutput,
+} from '@filestorage/file/services/onedrive/types';
 
-import { OnedriveFolderInput, OnedriveFolderOutput } from '@filestorage/folder/services/onedrive/types';
+import {
+  OnedriveFolderInput,
+  OnedriveFolderOutput,
+} from '@filestorage/folder/services/onedrive/types';
 
-import { OnedriveDriveInput, OnedriveDriveOutput } from '@filestorage/drive/services/onedrive/types';
+import {
+  OnedriveDriveInput,
+  OnedriveDriveOutput,
+} from '@filestorage/drive/services/onedrive/types';
 
 /* INPUT */
 
@@ -94,6 +118,10 @@ export type FileStorageObjectOutput =
   | OriginalGroupOutput
   | OriginalUserOutput;
 
-export type OriginalSharedlinkInput = BoxSharedlinkInput | OnedriveSharedlinkInput;
+export type OriginalSharedlinkInput =
+  | BoxSharedLinkInput
+  | OnedriveSharedLinkInput;
 
-export type OriginalSharedlinkOutput = BoxSharedlinkOutput | OnedriveSharedlinkOutput;
+export type OriginalSharedlinkOutput =
+  | BoxSharedLinkOutput
+  | OnedriveSharedLinkOutput;

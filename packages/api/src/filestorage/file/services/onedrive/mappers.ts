@@ -1,6 +1,9 @@
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { OriginalSharedLinkOutput } from '@@core/utils/types/original/original.file-storage';
+import {
+  OriginalPermissionOutput,
+  OriginalSharedLinkOutput,
+} from '@@core/utils/types/original/original.file-storage';
 import { FileStorageObject } from '@filestorage/@lib/@types';
 import { Utils } from '@filestorage/@lib/@utils';
 import { IFileMapper } from '@filestorage/file/types';
@@ -85,8 +88,35 @@ export class OnedriveFileMapper implements IFileMapper {
       }
     }
 
-    // todo: handle shared link
-    // todo: handle permission
+    const opts: any = {};
+    if (file.permissions.length) {
+      const permissions = await this.coreUnificationService.unify<
+        OriginalPermissionOutput[]
+      >({
+        sourceObject: file.permissions,
+        targetType: FileStorageObject.permission,
+        providerName: 'onedrive',
+        vertical: 'filestorage',
+        connectionId,
+        customFieldMappings: [],
+      });
+      opts.permissions = permissions;
+
+      // shared link
+      if (file.permissions.some((p) => p.link)) {
+        const sharedLinks =
+          await this.coreUnificationService.unify<OriginalSharedLinkOutput>({
+            sourceObject: file.permissions.find((p) => p.link),
+            targetType: FileStorageObject.sharedlink,
+            providerName: 'onedrive',
+            vertical: 'filestorage',
+            connectionId,
+            customFieldMappings: [],
+          });
+        opts.shared_links = sharedLinks;
+      }
+    }
+
     // todo: handle folder
 
     return {
@@ -97,8 +127,9 @@ export class OnedriveFileMapper implements IFileMapper {
       mime_type: file.file.mimeType,
       size: file.size.toString(),
       folder_id: null,
+      // permission: opts.permissions?.[0] || null,
       permission: null,
-      shared_link: null,
+      shared_link: opts.shared_links?.[0] || null,
       field_mappings,
     };
   }

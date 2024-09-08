@@ -12,6 +12,7 @@ import { OnedriveFolderInput, OnedriveFolderOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { UnifiedFilestorageFileOutput } from '@filestorage/file/types/model.unified';
+import { OnedriveFileOutput } from '@filestorage/file/services/onedrive/types';
 
 @Injectable()
 export class OnedriveService implements IFolderService {
@@ -87,7 +88,7 @@ export class OnedriveService implements IFolderService {
         batch = [remote_folder_id];
 
       while (batch.length > 0) {
-        if (depth > 2) {
+        if (depth > 5) {
           // todo: handle this better
           break;
         }
@@ -106,15 +107,42 @@ export class OnedriveService implements IFolderService {
               },
             );
 
+            // Add permissions (shared link is also included in permissions in one-drive)
+            await Promise.all(
+              resp.data.value.map(async (driveItem) => {
+                const resp = await axios.get(
+                  `${connection.account_url}/v1.0/drive/items/${driveItem.id}/permissions`,
+                  {
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${this.cryptoService.decrypt(
+                        connection.access_token,
+                      )}`,
+                    },
+                  },
+                );
+                driveItem.permissions = resp.data.value;
+              }),
+            );
+
             const folders = resp.data.value.filter(
               (driveItem) => driveItem.folder,
             );
 
-            const files = resp.data.value.filter(
-              (driveItem) => !driveItem.folder,
-            );
+            // const files = resp.data.value.filter(
+            //   (driveItem) => !driveItem.folder,
+            // );
 
-            // todo: send files to ingest
+            // await this.ingestService.ingestData<
+            //   UnifiedFilestorageFileOutput,
+            //   OnedriveFileOutput
+            // >(
+            //   files,
+            //   'onedrive',
+            //   connection.id_connection,
+            //   'filestorage',
+            //   FileStorageObject.file,
+            // );
 
             return folders;
           }),

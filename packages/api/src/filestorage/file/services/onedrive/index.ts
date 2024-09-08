@@ -61,6 +61,24 @@ export class OnedriveService implements IFileService {
         (elem) => !elem.folder, // files don't have a folder property
       );
 
+      // Add permission shared link is also included in permissions in one-drive)
+      await Promise.all(
+        files.map(async (driveItem) => {
+          const resp = await axios.get(
+            `${connection.account_url}/v1.0/drive/items/${driveItem.id}/permissions`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${this.cryptoService.decrypt(
+                  connection.access_token,
+                )}`,
+              },
+            },
+          );
+          driveItem.permissions = resp.data.value;
+        }),
+      );
+
       this.logger.log(`Synced onedrive files !`);
       return {
         data: files,

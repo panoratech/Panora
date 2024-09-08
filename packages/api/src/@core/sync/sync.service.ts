@@ -425,6 +425,7 @@ export class CoreSyncService {
       try {
         await task();
       } catch (error) {
+        console.log(error);
         this.logger.error(`File Task failed: ${error.message}`, error);
       }
     }

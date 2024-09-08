@@ -60,7 +60,7 @@ export class OnedriveService implements IDriveService {
 
       return {
         data: drives,
-        message: 'Onedrive drive retrived',
+        message: 'Onedrive drives retrived',
         statusCode: 200,
       };
     } catch (error) {

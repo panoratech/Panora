@@ -1,5 +1,4 @@
-import { OnedriveSharedlinkMapper } from './services/onedrive/mappers';
-import { BoxSharedlinkMapper } from './services/box/mappers';
+import { OnedriveSharedLinkMapper } from './services/onedrive/mappers';
 import { OnedriveService } from './services/onedrive';
 import { BoxService } from './services/box';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
@@ -37,8 +36,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     BoxSharedLinkMapper,
     BoxService,
     OnedriveService,
-    BoxSharedlinkMapper,
-    OnedriveSharedlinkMapper,
+    BoxSharedLinkMapper,
+    OnedriveSharedLinkMapper,
   ],
   exports: [SyncService],
 })
