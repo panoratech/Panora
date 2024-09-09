@@ -1,3 +1,5 @@
+import { OnedrivePermissionMapper } from './services/onedrive/mappers';
+import { OnedriveService } from './services/onedrive';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -29,6 +31,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     IngestDataService,
 
     /* PROVIDERS SERVICES */
+    OnedriveService,
+    OnedrivePermissionMapper,
   ],
   exports: [SyncService],
 })
