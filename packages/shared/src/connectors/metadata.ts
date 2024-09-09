@@ -2760,7 +2760,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'sharepoint': {
-        scopes: 'Files.Read.All offline_access openid User.Read',
+        scopes: 'Files.Read.All offline_access openid User.Read Sites.Read.All, Sites.ReadWrite.All',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
           apiUrl: 'https://graph.microsoft.com/v1.0',
