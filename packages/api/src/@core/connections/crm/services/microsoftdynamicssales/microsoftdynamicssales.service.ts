@@ -91,7 +91,7 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
 
   async handleCallback(opts: OAuthCallbackParams) {
     try {
-      const { linkedUserId, projectId, code, resource } = opts;
+      const { linkedUserId, projectId, code, organization_name } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -112,7 +112,7 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
         code: code,
-        scope: `https://${resource}/.default offline_access`,
+        scope: `https://${organization_name}/.default offline_access`,
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
@@ -141,7 +141,7 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: `https://${resource}`,
+            account_url: `https://${organization_name}`,
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -157,7 +157,7 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
             provider_slug: 'microsoftdynamicssales',
             vertical: 'crm',
             token_type: 'oauth2',
-            account_url: `https://${resource}`,
+            account_url: `https://${organization_name}`,
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

@@ -25,9 +25,7 @@ interface AuthParams {
     status: boolean;
     value: string | null;
   };
-  additionalParams?: {
-    end_user_domain: string;
-  }
+  [key: string]: any;
 }
 
 export const constructAuthUrl = async ({
@@ -51,20 +49,12 @@ export const constructAuthUrl = async ({
   } 
 
   const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`);
-  let state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
-
-  if (['salesforce', 'microsoftdynamicssales'].includes(providerName)) {
-    state = encodeURIComponent(JSON.stringify({
-      projectId, linkedUserId, providerName, vertical, returnUrl,
-      resource: additionalParams!.end_user_domain
-    }));
-  }
+  let state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, ...additionalParams, returnUrl }));
 
   if (['deel', 'squarespace'].includes(providerName)) {
     const randomState = randomString();
     state = encodeURIComponent(randomState + `${providerName}_delimiter` + Buffer.from(JSON.stringify({
-      projectId, linkedUserId, providerName, vertical, returnUrl,
-      resource: additionalParams!.end_user_domain!
+      projectId, linkedUserId, providerName, vertical, returnUrl, ...Object.values(additionalParams || {})
     })).toString('base64'));
   }
   const opts: any = {};
@@ -89,7 +79,7 @@ export const constructAuthUrl = async ({
     case AuthStrategy.oauth2:
       return handleOAuth2Url({
         providerName, vertical, authStrategy, projectId, config,
-        encodedRedirectUrl, state, apiUrl, additionalParams, ...opts
+        encodedRedirectUrl, state, apiUrl, ...Object.values(additionalParams || {}), ...opts
       });
     case AuthStrategy.api_key:
       return handleApiKeyUrl();
@@ -107,9 +97,6 @@ interface HandleOAuth2Url {
   encodedRedirectUrl: string;
   state: string;
   apiUrl: string;
-  additionalParams?: {
-    end_user_domain: string;
-  };
   [key: string]: any;
 }
 
@@ -122,7 +109,6 @@ const handleOAuth2Url = async ({
   encodedRedirectUrl,
   state,
   apiUrl,
-  additionalParams,
   ...dyn
 }: HandleOAuth2Url) => {
   const type = providerToType(providerName, vertical, authStrategy);
@@ -141,7 +127,7 @@ const handleOAuth2Url = async ({
   if (needsSubdomain(providerName, vertical)) {
     BASE_URL = typeof baseUrl === 'string' ? baseUrl : (baseUrl as DynamicAuthorization)(data.SUBDOMAIN as string);
   } else if (needsEndUserSubdomain(providerName, vertical)) {
-    BASE_URL = typeof baseUrl === 'string' ? baseUrl : (baseUrl as DynamicAuthorization)(additionalParams!.end_user_domain);
+    BASE_URL = typeof baseUrl === 'string' ? baseUrl : (baseUrl as DynamicAuthorization)(...Object.values(dyn || {}));
   } else {
     BASE_URL = baseUrl as StringAuthorization;
   }

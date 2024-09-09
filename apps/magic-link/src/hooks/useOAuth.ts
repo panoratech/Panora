@@ -14,9 +14,7 @@ type UseOAuthProps = {
     value: string | null;
   },
   onSuccess: () => void;
-  additionalParams?: {
-    end_user_domain: string;
-  }
+  additionalParams?: {[key: string]: any}
 };
 
 const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, additionalParams, redirectIngressUri, onSuccess }: UseOAuthProps) => {

@@ -22,8 +22,10 @@ interface IBasicAuthFormData {
 }
 
 const domainFormats: { [key: string]: string } = {
-  microsoftdynamicssales: '{YOUR_DOMAIN}.api.crm3.dynamics.com',
-  bigcommerce: 'If your api domain is https://api.bigcommerce.com/stores/eubckcvkzg/v3 then store_hash is eubckcvkzg',
+  salesforce: 'If your Salesforce site URL is https://acme-dev.lightning.force.com, acme-dev is your domain',
+  sharepoint: 'If the SharePoint site URL is https://joedoe.sharepoint.com/sites/acme-dev, joedoe is the tenant and acme-dev is the site name.',
+  microsoftdynamicssales: 'If your Microsoft Dynamics URL is acme-dev.api.crm3.dynamics.com then acme-dev is the organization name.',
+  bigcommerce: 'If your api domain is https://api.bigcommerce.com/stores/joehash123/v3 then store_hash is joehash123.',
 };
 
 const ProviderModal = () => {
@@ -35,18 +37,16 @@ const ProviderModal = () => {
   const [startFlow, setStartFlow] = useState<boolean>(false);
   const [preStartFlow, setPreStartFlow] = useState<boolean>(false);
   const [openBasicAuthDialog,setOpenBasicAuthDialog] = useState<boolean>(false);
-  const [openDomainDialog, setOpenDomainDialog] = useState<boolean>(false);
   const [projectId, setProjectId] = useState<string>("");
   const [data, setData] = useState<Provider[]>([]);
   const [isProjectIdReady, setIsProjectIdReady] = useState(false);
   const [errorResponse,setErrorResponse] = useState<{
     errorPresent: boolean; errorMessage : string
   }>({errorPresent:false,errorMessage:''})
-  const [endUserDomain, setEndUserDomain] = useState<string>('');
   const [loading, setLoading] = useState<{
     status: boolean; provider: string
   }>({status: false, provider: ''});
-
+  const [additionalParams, setAdditionalParams] = useState<{[key: string]: string}>({});
   const [uniqueMagicLinkId, setUniqueMagicLinkId] = useState<string | null>(null);
   const [openSuccessDialog,setOpenSuccessDialog] = useState<boolean>(false);
   const [currentProviderLogoURL,setCurrentProviderLogoURL] = useState<string>('')
@@ -121,9 +121,7 @@ const ProviderModal = () => {
       console.log('OAuth successful');
       setOpenSuccessDialog(true);
     },
-    additionalParams: {
-      end_user_domain: endUserDomain
-    }
+    additionalParams
   });
 
   const onWindowClose = () => {
@@ -196,50 +194,49 @@ const ProviderModal = () => {
     setLoading({status: true, provider: selectedProvider?.provider!});
     setPreStartFlow(false);
     // Creating Basic Auth Connection
-    createApiKeyConnection({
-      query : {
-        linkedUserId: magicLink?.id_linked_user as string,
-        projectId: projectId,
-        providerName: selectedProvider?.provider!,
-        vertical: selectedProvider?.category!
+    const providerMetadata = CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider];
+
+    if (providerMetadata.authStrategy.strategy === AuthStrategy.oauth2) {
+      console.log("values are "+ JSON.stringify(values))
+      setAdditionalParams(values);
+      setStartFlow(true);
+    }else{
+      createApiKeyConnection({
+        query : {
+          linkedUserId: magicLink?.id_linked_user as string,
+          projectId: projectId,
+          providerName: selectedProvider?.provider!,
+          vertical: selectedProvider?.category!
+        },
+        data: values  
       },
-      data: values  
-    },
-    {
-      onSuccess: () => {
-        setSelectedProvider({
-          provider: '',
-          category: ''
-        });   
-        
-        setLoading({
+      {
+        onSuccess: () => {
+          setSelectedProvider({
+            provider: '',
+            category: ''
+          });   
+          
+          setLoading({
+              status: false,
+              provider: ''
+          });
+          setOpenSuccessDialog(true);
+        },
+        onError: (error) => {
+          setErrorResponse({errorPresent:true,errorMessage: error.message});
+          setLoading({
             status: false,
             provider: ''
-        });
-        setOpenSuccessDialog(true);
-      },
-      onError: (error) => {
-        setErrorResponse({errorPresent:true,errorMessage: error.message});
-        setLoading({
-          status: false,
-          provider: ''
-        });
-        setSelectedProvider({
-          provider: '',
-          category: ''
-        });  
-      }
-    });
-  }
-
-  const onCloseDomainDialog = (dialogState: boolean) => {
-    setOpenDomainDialog(dialogState);
-  }
-
-  const onDomainSubmit = () => {
-    setOpenDomainDialog(false);
-    setLoading({ status: true, provider: selectedProvider?.provider! });
-    setStartFlow(true);
+          });
+          setSelectedProvider({
+            provider: '',
+            category: ''
+          });  
+        }
+      });
+    }
+    
   }
 
   const filteredProviders = data.filter(provider =>
@@ -254,10 +251,8 @@ const ProviderModal = () => {
     setCurrentProvider(provider.name.toLowerCase())
 
     const providerMetadata = CONNECTORS_METADATA[provider.vertical!.toLowerCase()][provider.name.toLowerCase()];
-    if (providerMetadata.authStrategy.strategy === AuthStrategy.api_key || providerMetadata.authStrategy.strategy === AuthStrategy.basic) {
+    if (providerMetadata.authStrategy.strategy === AuthStrategy.api_key || providerMetadata.authStrategy.strategy === AuthStrategy.basic || (providerMetadata.authStrategy.strategy === AuthStrategy.oauth2 && providerMetadata.authStrategy.properties)) {
       setOpenBasicAuthDialog(true);
-    } else if (providerMetadata?.options?.end_user_domain) {
-      setOpenDomainDialog(true);
     } else {
       setLoading({ status: true, provider: provider.name.toLowerCase() });
       setStartFlow(true);
@@ -382,67 +377,11 @@ const ProviderModal = () => {
                   {errors2[fieldName] && <p className='text-sm font-medium text-red-500'>{errors2[fieldName]?.message}</p>}
                 </div>
               ))}
-              
-              <p className="text-sm text-gray-500 text-center mt-2">
-                A third-party accountant will be added.
-              </p>
-              
-              <Button 
-                type='submit' 
-                className="w-full p-2 rounded-md text-white font-semibold mt-4"
-                style={{backgroundColor: selectedProvider.provider !== '' && selectedProvider.category !== '' ? CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].primaryColor : "#00000000"}}
-              >
-                Connect
-              </Button>
-            </form>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Domain Dialog */}
-      <Dialog open={openDomainDialog} onOpenChange={onCloseDomainDialog}>
-        <DialogContent className="bg-white text-black rounded-lg shadow-lg max-w-md w-full p-0 overflow-hidden">
-          <div className="flex justify-between items-center p-4">
-            <button onClick={() => onCloseDomainDialog(false)} className="text-gray-500 hover:text-gray-700">
-              <ArrowLeft size={20} />
-            </button>
-          </div>
-          
-          <div className="flex flex-col items-center px-6 pb-6">
-            {selectedProvider?.category && selectedProvider?.provider && CONNECTORS_METADATA[selectedProvider.category]?.[selectedProvider.provider] && (
-              <>
-                <div className="w-16 h-16 mr-3 mb-3 rounded-md shadow-md overflow-hidden flex items-center justify-center bg-white">
-                  <img 
-                    src={CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider].logoPath} 
-                    alt={selectedProvider.provider} 
-                    className="w-full h-full object-contain" 
-                  />
-                </div>
-                <h2 className="text-xl font-semibold mb-6 text-center">
-                  Connect your {selectedProvider.provider.charAt(0).toUpperCase() + selectedProvider.provider.slice(1)} Account
-                </h2>
-              </>
-            )}
-            
-            <form onSubmit={(e) => { e.preventDefault(); onDomainSubmit(); }} className="w-full space-y-4">
-              <div className="space-y-1">
-                <Input
-                  placeholder="Your domain"
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  onChange={(e) => setEndUserDomain(e.target.value)}
-                />
-                {errors2.end_user_domain && <p className='text-sm font-medium text-red-500'>{errors2.end_user_domain.message}</p>}
-              </div>
-              
-              {domainFormats[selectedProvider?.provider?.toLowerCase()] && (
-                <p className="text-sm text-gray-500 text-center">
-                  e.g., {domainFormats[selectedProvider.provider.toLowerCase()]}
+              {domainFormats[selectedProvider.provider] && (
+                <p className="text-sm text-gray-500 mt-1 font-bold">
+                  {domainFormats[selectedProvider.provider]}
                 </p>
               )}
-              
-              <p className="text-sm text-gray-500 text-center mt-2">
-                A third-party accountant will be added.
-              </p>
               
               <Button 
                 type='submit' 
