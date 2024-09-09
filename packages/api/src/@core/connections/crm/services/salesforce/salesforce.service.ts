@@ -13,22 +13,31 @@ import {
 } from '@@core/connections/@utils/types';
 import { PassthroughResponse } from '@@core/passthrough/types';
 import { Injectable } from '@nestjs/common';
-import { AuthStrategy, OAuth2AuthData, providerToType } from '@panora/shared';
+import {
+  AuthStrategy,
+  CONNECTORS_METADATA,
+  DynamicApiUrl,
+  OAuth2AuthData,
+  providerToType,
+} from '@panora/shared';
 import axios from 'axios';
-import { URLSearchParams } from 'url';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../registry.service';
 
-export type MicrosoftDynamicsSalesOAuthResponse = {
+export type SalesforceAuthResponse = {
   access_token: string;
-  refresh_token: string;
-  token_type: string;
-  expires_in: number;
+  signature: string;
   scope: string;
+  id_token: string;
+  instance_url: string;
+  id: string;
+  token_type: string;
+  issued_at: string;
+  refresh_token: string;
 };
 
 @Injectable()
-export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnectionService {
+export class SalesforceConnectionService extends AbstractBaseConnectionService {
   private readonly type: string;
 
   constructor(
@@ -42,13 +51,9 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
     private retryService: RetryHandler,
   ) {
     super(prisma, cryptoService);
-    this.logger.setContext(MicrosoftDynamicsSalesConnectionService.name);
-    this.registry.registerService('microsoftdynamicssales', this);
-    this.type = providerToType(
-      'microsoftdynamicssales',
-      'crm',
-      AuthStrategy.oauth2,
-    );
+    this.logger.setContext(SalesforceConnectionService.name);
+    this.registry.registerService('salesforce', this);
+    this.type = providerToType('salesforce', 'crm', AuthStrategy.oauth2);
   }
 
   async passthrough(
@@ -65,7 +70,7 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
         },
       });
 
-      config.headers['Authorization'] = `Basic ${Buffer.from(
+      config.headers['Authorization'] = `Bearer ${Buffer.from(
         `${this.cryptoService.decrypt(connection.access_token)}:`,
       ).toString('base64')}`;
 
@@ -81,7 +86,7 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
           data: config.data,
           headers: config.headers,
         },
-        'crm.microsoftdynamicssales.passthrough',
+        'crm.salesforce.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -91,15 +96,15 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
 
   async handleCallback(opts: OAuthCallbackParams) {
     try {
-      const { linkedUserId, projectId, code, resource } = opts;
+      const { linkedUserId, projectId, code, resource: subdomain } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
-          provider_slug: 'microsoftdynamicssales',
+          provider_slug: 'salesforce',
           vertical: 'crm',
         },
       });
-
+      //reconstruct the redirect URI that was passed in the frontend it must be the same
       const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
@@ -108,15 +113,14 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
       )) as OAuth2AuthData;
 
       const formData = new URLSearchParams({
-        redirect_uri: REDIRECT_URI,
+        grant_type: 'authorization_code',
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
+        redirect_uri: REDIRECT_URI,
         code: code,
-        scope: `https://${resource}/.default offline_access`,
-        grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
+        `https://${subdomain}.my.salesforce.com/services/oauth2/token`,
         formData.toString(),
         {
           headers: {
@@ -124,16 +128,13 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
           },
         },
       );
-      const data: MicrosoftDynamicsSalesOAuthResponse = res.data;
-      this.logger.log(
-        'OAuth credentials : microsoftdynamicssales crm ' +
-          JSON.stringify(data),
-      );
-
+      const data: SalesforceAuthResponse = res.data;
+      // save tokens for this customer inside our db
       let db_res;
       const connection_token = uuidv4();
 
       if (isNotUnique) {
+        // Update existing connection
         db_res = await this.prisma.connections.update({
           where: {
             id_connection: isNotUnique.id_connection,
@@ -141,27 +142,30 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: `https://${resource}`,
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
+              new Date().getTime() + 90 * 60 * 1000, // 90 minutes in milliseconds
             ),
             status: 'valid',
             created_at: new Date(),
           },
         });
       } else {
+        // Create new connection
         db_res = await this.prisma.connections.create({
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'microsoftdynamicssales',
+            provider_slug: 'salesforce',
             vertical: 'crm',
             token_type: 'oauth2',
-            account_url: `https://${resource}`,
+            account_url: (
+              CONNECTORS_METADATA['crm']['salesforce'].urls
+                .apiUrl as DynamicApiUrl
+            )(subdomain),
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
-              new Date().getTime() + Number(data.expires_in) * 1000,
+              new Date().getTime() + 90 * 60 * 1000, // 90 minutes in milliseconds
             ),
             status: 'valid',
             created_at: new Date(),
@@ -179,46 +183,42 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
           },
         });
       }
+      this.logger.log('Successfully added tokens inside DB ' + db_res);
       return db_res;
     } catch (error) {
       throw error;
     }
   }
+
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
 
-      const conn = await this.prisma.connections.findUnique({
+      const params = {
+        grant_type: 'refresh_token',
+        client_id: CREDENTIALS.CLIENT_ID,
+        client_secret: CREDENTIALS.CLIENT_SECRET,
+        refresh_token: this.cryptoService.decrypt(refreshToken),
+      };
+      const connection = await this.prisma.connections.findUnique({
         where: {
           id_connection: connectionId,
         },
       });
 
-      const formData = new URLSearchParams({
-        grant_type: 'refresh_token',
-        scope: `${conn.account_url}/.default offline_access`,
-        client_id: CREDENTIALS.CLIENT_ID,
-        client_secret: CREDENTIALS.CLIENT_SECRET,
-        refresh_token: this.cryptoService.decrypt(refreshToken),
-        redirect_uri: REDIRECT_URI,
-      });
-
-      const res = await axios.post(
-        `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
-        formData.toString(),
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
+      const queryString = new URLSearchParams(params).toString();
+      const url = `${connection.account_url}/services/oauth2/token`;
+      const res = await axios.post(url, queryString, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
         },
-      );
-      const data: MicrosoftDynamicsSalesOAuthResponse = res.data;
-      await this.prisma.connections.update({
+      });
+      const data: SalesforceAuthResponse = res.data;
+      const res_ = await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
         },
@@ -226,11 +226,11 @@ export class MicrosoftDynamicsSalesConnectionService extends AbstractBaseConnect
           access_token: this.cryptoService.encrypt(data.access_token),
           refresh_token: this.cryptoService.encrypt(data.refresh_token),
           expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_in) * 1000,
+            new Date().getTime() + 90 * 60 * 1000, // 90 minutes in milliseconds
           ),
         },
       });
-      this.logger.log('OAuth credentials updated : microsoftdynamicssales ');
+      this.logger.log('OAuth credentials updated : salesforce');
     } catch (error) {
       throw error;
     }

@@ -55,17 +55,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
     return;
   }
 
-  /*async onModuleInit() {
-    try {
-      await this.bullQueueService.queueSyncJob(
-        'ecommerce-sync-fulfillmentorderss',
-        '0 0 * * *',
-      );
-    } catch (error) {
-      throw error;
-    }
-  }*/
-
   //@Cron('0 */8 * * *') // every 8 hours
   /*async kickstartSync(user_id?: string) {
     try {

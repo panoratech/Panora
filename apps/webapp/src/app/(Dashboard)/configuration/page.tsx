@@ -18,7 +18,7 @@ import FieldMappingsTable from "@/components/Configuration/FieldMappings/FieldMa
 import AddLinkedAccount from "@/components/Configuration/LinkedUsers/AddLinkedAccount";
 import useLinkedUsers from "@/hooks/get/useLinkedUsers";
 import useFieldMappings from "@/hooks/get/useFieldMappings";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddWebhook from "@/components/Configuration/Webhooks/AddWebhook";
 import { WebhooksPage } from "@/components/Configuration/Webhooks/WebhooksPage";
 import useWebhooks from "@/hooks/get/useWebhooks";
@@ -30,9 +30,26 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { CatalogWidget } from "@/components/Configuration/Catalog/CatalogWidget";
+import { CatalogWidget, verticals } from "@/components/Configuration/Catalog/CatalogWidget";
 import { CopySnippet } from "@/components/Configuration/Catalog/CopySnippet";
 import {Button as Button2} from "@/components/ui/button2"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import usePullFrequencies from "@/hooks/get/useGetPullFrequencies";
+import useUpdatePullFrequency from "@/hooks/create/useCreatePullFrequency";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
+import { Loader2 } from "lucide-react";
+
+const frequencyOptions = [
+  { label: '5 min', value: 300 },
+  { label: '30 min', value: 1800 },
+  { label: '1 hour', value: 3600 },
+  { label: '2 hours', value: 7200 },
+  { label: '6 hours', value: 21600 },
+  { label: '12 hours', value: 43200 },
+  { label: '24 hours', value: 86400 },
+];
 
 export default function Page() {
 
@@ -40,8 +57,16 @@ export default function Page() {
   const { data: webhooks, isLoading: isWebhooksLoading, error: isWebhooksError } = useWebhooks();
   const { data: connectionStrategies, isLoading: isConnectionStrategiesLoading, error: isConnectionStategiesError} = useConnectionStrategies()
   const { data: mappings, isLoading: isFieldMappingsLoading, error: isFieldMappingsError } = useFieldMappings();
+  const { data: pullFrequencies, isLoading: isPullFrequenciesLoading, error: isPullFrequennciesError} = usePullFrequencies();
+
+  const { createPullFrequencyPromise } = useUpdatePullFrequency();
 
   const [open, setOpen] = useState(false);
+  const [localFrequencies, setLocalFrequencies] = useState<Record<string, string>>({});
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
+
+  const queryClient = useQueryClient();
 
   if(error){
     console.log("error linked users..");
@@ -66,6 +91,9 @@ export default function Page() {
   if(isConnectionStrategiesLoading){
     console.log("loading Connection Strategies...");
   }
+  if(isPullFrequenciesLoading){
+    console.log("loading Pull Frequencies...");
+  }
 
   if(isConnectionStategiesError){
     console.log("error Fetching connection Strategies!")
@@ -80,6 +108,53 @@ export default function Page() {
     destination_field: mapping.slug,
     data_type: mapping.data_type,
   }))
+
+  const VERTICALS = verticals.filter((vertical) => !["marketingautomation", "cybersecurity", "productivity"].includes(vertical));
+
+  useEffect(() => {
+    if (pullFrequencies) {
+      const initialFrequencies = VERTICALS.reduce((acc, vertical) => {
+        const value = pullFrequencies[vertical as keyof typeof pullFrequencies];
+        acc[vertical] = typeof value === 'string' ? value : '0';
+        return acc;
+      }, {} as Record<string, string>);
+      setLocalFrequencies(initialFrequencies);
+    }
+  }, [pullFrequencies]);
+
+  const handleFrequencyChange = (vertical: string, value: string) => {
+    setLocalFrequencies(prev => ({ ...prev, [vertical]: value }));
+  };
+  
+
+
+  const saveFrequency = async (vertical: string) => {
+    setLoadingStates(prev => ({ ...prev, [vertical]: true }));
+    try {
+      const updateData = { [vertical]: parseInt(localFrequencies[vertical] || '0', 10) };
+      
+      await toast.promise(
+        createPullFrequencyPromise(updateData),
+        {
+          loading: 'Updating...',
+          success: (data: any) => {
+            queryClient.setQueryData<any>(['pull-frequencies'], (oldData: any) => ({
+              ...oldData,
+              [vertical]: localFrequencies[vertical],
+            }));
+            return `Frequency saved`;
+          },
+          error: (err: any) => err.message || 'Error updating frequency',
+        }
+      );
+    } catch (error) {
+      console.error(`Error updating ${vertical} pull frequency:`, error);
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [vertical]: false }));
+    }
+  };
+
+  
  
   return (
     
@@ -99,6 +174,9 @@ export default function Page() {
               </TabsTrigger>
               <TabsTrigger value="webhooks">
                 Webhooks
+              </TabsTrigger>
+              <TabsTrigger value="pull-frequency">
+                Sync Frequency
               </TabsTrigger>
               <TabsTrigger value="catalog">
                 Manage Catalog Widget
@@ -148,6 +226,52 @@ export default function Page() {
                     <LinkedUsersPage linkedUsers={linkedUsers} isLoading={isLoading} />
                   </CardContent>
                 </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="pull-frequency" className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
+              <Card className="col-span-12">
+      <CardHeader>
+        <CardTitle>Pull Frequency Settings</CardTitle>
+        <CardDescription>Set the sync frequency for each vertical</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {VERTICALS.map(vertical => (
+          <div key={vertical} className="mb-4">
+            <label className="block text-sm font-medium text-white mb-1">
+              {vertical.toUpperCase()}
+            </label>
+            <div className="flex items-center space-x-2">
+              <Select
+                value={localFrequencies[vertical] || '0'}
+                onValueChange={(value: string) => handleFrequencyChange(vertical, value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select frequency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {frequencyOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value.toString()}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button 
+                onClick={() => saveFrequency(vertical)}
+                disabled={loadingStates[vertical]}
+              >
+                {loadingStates[vertical] ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                {loadingStates[vertical] ? 'Saving...' : 'Save'}
+              </Button>            
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
               </div>
             </TabsContent>
 

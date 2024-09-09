@@ -185,6 +185,9 @@ services:
       POSTHOG_HOST: "https://us.i.posthog.com"
       POSTHOG_KEY:  "phc_WhWJfNPOHAuWVdyTacGxrPa9JW54scnofA9KVEjFcFw"
       PH_TELEMETRY: "TRUE"
+      SALESFORCE_CRM_CLOUD_CLIENT_ID: ${SALESFORCE_CRM_CLOUD_CLIENT_ID}
+      SALESFORCE_CRM_CLOUD_CLIENT_SECRET: ${SALESFORCE_CRM_CLOUD_CLIENT_SECRET}
+      
     restart: unless-stopped
     ports:
       - 3000:3000

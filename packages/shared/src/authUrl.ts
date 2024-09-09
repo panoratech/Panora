@@ -53,7 +53,7 @@ export const constructAuthUrl = async ({
   const encodedRedirectUrl = encodeURIComponent(`${baseRedirectURL}/connections/oauth/callback`);
   let state = encodeURIComponent(JSON.stringify({ projectId, linkedUserId, providerName, vertical, returnUrl }));
 
-  if (providerName === 'microsoftdynamicssales') {
+  if (['salesforce', 'microsoftdynamicssales'].includes(providerName)) {
     state = encodeURIComponent(JSON.stringify({
       projectId, linkedUserId, providerName, vertical, returnUrl,
       resource: additionalParams!.end_user_domain

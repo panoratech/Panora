@@ -31,22 +31,20 @@ export class BullQueueService {
     return this.failedPassthroughRequestsQueue;
   }
 
-  // setters
-  async queueSyncJob(jobName: string, cron: string) {
+  async queueSyncJob(jobName: string, jobData: any, cron: string) {
     const jobs = await this.syncJobsQueue.getRepeatableJobs();
     for (const job of jobs) {
       if (job.name === jobName) {
         await this.syncJobsQueue.removeRepeatableByKey(job.key);
       }
     }
-    // Add new job with the job name
-    await this.syncJobsQueue.add(
-      jobName,
-      {},
-      {
-        repeat: { cron },
-        jobId: jobName, // Using jobId to identify repeatable jobs
-      },
-    );
+    //await this.syncJobsQueue.add('health-check', {}, { attempts: 1 });
+
+    // Add new job with the job name and data
+    const res = await this.syncJobsQueue.add(jobName, jobData, {
+      repeat: { cron },
+      jobId: jobName, // Using jobId to identify repeatable jobs
+    });
+    console.log('job is ' + JSON.stringify(res));
   }
 }

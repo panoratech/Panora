@@ -35,16 +35,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ats', 'attachment', this);
   }
-
-  async onModuleInit() {
-    try {
-      await this.bullQueueService.queueSyncJob(
-        'ats-sync-attachments',
-        '0 0 * * *',
-      );
-    } catch (error) {
-      throw error;
-    }
+  onModuleInit() {
+//
   }
 
   // it is synced within candidate sync
@@ -71,7 +63,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
               where: {
                 file_name: attachment.file_name ?? null,
                 file_url: attachment.file_url ?? null,
-                
               },
             });
         } else {
@@ -79,7 +70,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
             await this.prisma.ats_candidate_attachments.findFirst({
               where: {
                 remote_id: originId,
-                
               },
             });
         }
@@ -110,7 +100,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_attachment: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
-              
             },
           });
         }

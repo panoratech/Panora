@@ -21,6 +21,7 @@ import { ZohoConnectionService } from './services/zoho/zoho.service';
 import { WealthboxConnectionService } from './services/wealthbox/wealthbox.service';
 import { AcceloConnectionService } from './services/accelo/accelo.service';
 import { MicrosoftDynamicsSalesConnectionService } from './services/microsoftdynamicssales/microsoftdynamicssales.service';
+import { SalesforceConnectionService } from './services/salesforce/salesforce.service';
 
 @Module({
   imports: [WebhookModule, BullQueueModule],
@@ -46,6 +47,7 @@ import { MicrosoftDynamicsSalesConnectionService } from './services/microsoftdyn
     WealthboxConnectionService,
     AcceloConnectionService,
     MicrosoftDynamicsSalesConnectionService,
+    SalesforceConnectionService,
   ],
   exports: [CrmConnectionsService],
 })

@@ -1639,7 +1639,7 @@ model ecom_product_variants {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model events {
   id_event                  String                      @id(map: "pk_jobs") @db.Uuid
-  id_connection             String                      @db.Uuid
+  id_connection             String?                     @db.Uuid
   id_project                String                      @db.Uuid
   type                      String
   status                    String
@@ -1648,8 +1648,8 @@ model events {
   url                       String
   provider                  String
   timestamp                 DateTime                    @default(now()) @db.Timestamptz(6)
-  id_linked_user            String                      @db.Uuid
-  linked_users              linked_users                @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
+  id_linked_user            String?                     @db.Uuid
+  linked_users              linked_users?               @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_12")
   jobs_status_history       jobs_status_history[]
   webhook_delivery_attempts webhook_delivery_attempts[]
 
