@@ -2760,7 +2760,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'sharepoint': {
-        scopes: 'Files.Read.All offline_access openid User.Read Sites.Read.All, Sites.ReadWrite.All',
+        scopes: 'Files.Read.All offline_access openid User.Read Sites.Read.All Sites.ReadWrite.All',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
           apiUrl: 'https://graph.microsoft.com/v1.0',
@@ -2771,7 +2771,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: true,
         primaryColor: '',
         options: {
-          local_redirect_uri_in_https: true
+          local_redirect_uri_in_https: true,
+          end_user_domain: true
         },
         authStrategy: {
           strategy: AuthStrategy.oauth2
