@@ -36,7 +36,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.registry.registerService('ats', 'attachment', this);
   }
   onModuleInit() {
-    //
+//
   }
 
   // it is synced within candidate sync

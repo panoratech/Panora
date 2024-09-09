@@ -36,7 +36,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.registry.registerService('ats', 'activity', this);
   }
   onModuleInit() {
-    //
+//
   }
 
   //function used by sync worker which populate our ats_activities table

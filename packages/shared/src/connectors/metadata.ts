@@ -263,18 +263,22 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'salesforce': {
-        scopes: '',
+        scopes: 'offline_access refresh_token full',
         urls: {
-          docsUrl: '',
-          authBaseUrl: '',
-          apiUrl: '',
+          docsUrl: 'https://help.salesforce.com',
+          authBaseUrl: (domain) => `https://${domain}.my.salesforce.com/services/oauth2/authorize`,
+          apiUrl: (domain) => `https://${domain}.my.salesforce.com`,
         },
-        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgL4FJb-GptGfxDDkWbIX2CjIM77t5q-d7eCFY6sGsHA&s',
+        logoPath: 'https://logos-world.net/wp-content/uploads/2020/10/Salesforce-Logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.oauth2
-        }
+          strategy: AuthStrategy.oauth2,
+        },
+        primaryColor: '#01A2E0',
+        options: {
+          end_user_domain: true
+        }, 
       },
       'sugarcrm': {
         scopes: '',

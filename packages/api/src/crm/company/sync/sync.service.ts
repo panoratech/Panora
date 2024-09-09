@@ -32,7 +32,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.registry.registerService('crm', 'company', this);
   }
   onModuleInit() {
-    //
+//
   }
 
   //function used by sync worker which populate our crm_companies table

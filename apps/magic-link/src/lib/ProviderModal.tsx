@@ -127,7 +127,6 @@ const ProviderModal = () => {
   });
 
   const onWindowClose = () => {
-  
     setSelectedProvider({
       provider: '',
       category: ''
@@ -163,38 +162,6 @@ const ProviderModal = () => {
     }
   }, [startFlow, isReady]);
 
-  
-  
-  const handleWalletClick = (walletName: string, category: string) => {
-    setSelectedProvider({provider: walletName.toLowerCase(), category: category.toLowerCase()});
-    const logoPath = CONNECTORS_METADATA[category.toLowerCase()][walletName.toLowerCase()].logoPath;
-    setCurrentProviderLogoURL(logoPath);
-    setCurrentProvider(walletName.toLowerCase())
-    setPreStartFlow(true);
-  };
-
-  const handleStartFlow = () => {
-    const providerMetadata = CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider];
-    if (providerMetadata.authStrategy.strategy === AuthStrategy.api_key || providerMetadata.authStrategy.strategy === AuthStrategy.basic) {
-      setOpenBasicAuthDialog(true);
-    } else if (providerMetadata?.options?.end_user_domain) {
-      setOpenDomainDialog(true);
-    } else {
-      // OAUTH2 WITHOUT EXTRA PARAMS
-      setLoading({ status: true, provider: selectedProvider?.provider! });
-      setStartFlow(true);
-    }
-  }
-
-  const handleCategoryClick = (category: string) => {  
-    setPreStartFlow(false);  
-    setSelectedProvider({
-      provider: '',
-      category: ''
-    });
-    setSelectedCategory(category);
-  };
-
   const CloseSuccessDialog = (close : boolean) => {
     if(!close)
       {
@@ -228,7 +195,6 @@ const ProviderModal = () => {
     onCloseBasicAuthDialog(false);
     setLoading({status: true, provider: selectedProvider?.provider!});
     setPreStartFlow(false);
-
     // Creating Basic Auth Connection
     createApiKeyConnection({
       query : {

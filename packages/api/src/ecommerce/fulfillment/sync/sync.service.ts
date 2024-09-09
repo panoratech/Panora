@@ -33,8 +33,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ecommerce', 'fulfillment', this);
   }
+
   onModuleInit() {
-    throw new Error('Method not implemented.');
+    //
   }
 
   @Cron('0 */8 * * *') // every 8 hours

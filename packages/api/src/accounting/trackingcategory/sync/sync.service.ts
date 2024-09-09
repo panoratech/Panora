@@ -30,7 +30,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     private ingestService: IngestDataService,
   ) {
     this.logger.setContext(SyncService.name);
-    this.registry.registerService('accounting', 'tracking_category', this);
+    this.registry.registerService('accounting', 'trackingcategory', this);
   }
   onModuleInit() {
     //

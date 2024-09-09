@@ -35,7 +35,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.registry.registerService('ticketing', 'tag', this);
   }
   onModuleInit() {
-    //
+//
   }
 
   //function used by sync worker which populate our tcg_tags table

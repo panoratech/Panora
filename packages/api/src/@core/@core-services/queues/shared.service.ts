@@ -38,10 +38,13 @@ export class BullQueueService {
         await this.syncJobsQueue.removeRepeatableByKey(job.key);
       }
     }
+    //await this.syncJobsQueue.add('health-check', {}, { attempts: 1 });
+
     // Add new job with the job name and data
-    await this.syncJobsQueue.add(jobName, jobData, {
+    const res = await this.syncJobsQueue.add(jobName, jobData, {
       repeat: { cron },
       jobId: jobName, // Using jobId to identify repeatable jobs
     });
+    console.log('job is ' + JSON.stringify(res));
   }
 }

@@ -170,7 +170,16 @@ export class SyncController {
     @Body() data: UpdatePullFrequencyDto,
   ) {
     const projectId = req.user.id_project;
-    return await this.syncService.updatePullFrequency(data, projectId);
+    const result = await this.syncService.updatePullFrequency(data, projectId);
+
+    // Convert BigInt values to numbers or strings
+    const serializedResult = JSON.parse(
+      JSON.stringify(result, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
+
+    return serializedResult;
   }
 
   @ApiOperation({
@@ -188,7 +197,16 @@ export class SyncController {
     @Body() data: UpdatePullFrequencyDto,
   ) {
     const projectId = req.user.id_project;
-    return await this.syncService.updatePullFrequency(data, projectId);
+    const result = await this.syncService.updatePullFrequency(data, projectId);
+
+    // Convert BigInt values to numbers or strings
+    const serializedResult = JSON.parse(
+      JSON.stringify(result, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
+
+    return serializedResult;
   }
 
   @ApiOperation({
@@ -201,7 +219,15 @@ export class SyncController {
   @Get('internal/pull-frequencies')
   async getInternalPullFrequency(@Request() req: any) {
     const projectId = req.user.id_project;
-    return await this.syncService.getPullFrequency(projectId);
+    const result = await this.syncService.getPullFrequency(projectId);
+    // Convert BigInt values to numbers or strings
+    const serializedResult = JSON.parse(
+      JSON.stringify(result, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
+
+    return serializedResult;
   }
 
   @ApiOperation({
@@ -213,6 +239,14 @@ export class SyncController {
   @Get('pull-frequencies')
   async getPullFrequency(@Request() req: any) {
     const projectId = req.user.id_project;
-    return await this.syncService.getPullFrequency(projectId);
+    const result = await this.syncService.getPullFrequency(projectId);
+    // Convert BigInt values to numbers or strings
+    const serializedResult = JSON.parse(
+      JSON.stringify(result, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+      ),
+    );
+
+    return serializedResult;
   }
 }

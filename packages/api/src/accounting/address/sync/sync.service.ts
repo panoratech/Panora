@@ -33,7 +33,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.registry.registerService('accounting', 'address', this);
   }
   onModuleInit() {
-    //
+//
   }
 
   @Cron('0 */8 * * *') // every 8 hours

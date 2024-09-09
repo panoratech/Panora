@@ -107,8 +107,6 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ''
         '201':
           description: ''
           content:
@@ -129,8 +127,6 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: ''
         '201':
           description: ''
           content:
@@ -602,6 +598,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResyncStatusDto'
+      tags: *ref_5
+      x-speakeasy-group: sync
+  /sync/pull-frequencies:
+    post:
+      operationId: updatePullFrequency
+      summary: Update pull frequency for verticals
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePullFrequencyDto'
+      responses:
+        '200':
+          description: Pull frequency updated successfully
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+      tags: *ref_5
+      x-speakeasy-group: sync
+    get:
+      operationId: getPullFrequency
+      summary: Get pull frequency for verticals
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatePullFrequencyDto'
       tags: *ref_5
       x-speakeasy-group: sync
   /crm/companies:
@@ -2212,12 +2243,6 @@ paths:
               $ref: '#/components/schemas/PassThroughRequestDto'
       responses:
         '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-        '201':
           description: ''
           content:
             application/json:
@@ -10388,6 +10413,45 @@ components:
         - vertical
         - provider
         - status
+    UpdatePullFrequencyDto:
+      type: object
+      properties:
+        crm:
+          type: number
+          example: 1800
+          description: Frequency in seconds
+        ats:
+          type: number
+          example: 3600
+          description: Frequency in seconds
+        hris:
+          type: number
+          example: 7200
+          description: Frequency in seconds
+        accounting:
+          type: number
+          example: 14400
+          description: Frequency in seconds
+        filestorage:
+          type: number
+          example: 28800
+          description: Frequency in seconds
+        ecommerce:
+          type: number
+          example: 43200
+          description: Frequency in seconds
+        ticketing:
+          type: number
+          example: 86400
+          description: Frequency in seconds
+      required:
+        - crm
+        - ats
+        - hris
+        - accounting
+        - filestorage
+        - ecommerce
+        - ticketing
     Email:
       type: object
       properties:

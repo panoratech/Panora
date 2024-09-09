@@ -18,7 +18,7 @@ import FieldMappingsTable from "@/components/Configuration/FieldMappings/FieldMa
 import AddLinkedAccount from "@/components/Configuration/LinkedUsers/AddLinkedAccount";
 import useLinkedUsers from "@/hooks/get/useLinkedUsers";
 import useFieldMappings from "@/hooks/get/useFieldMappings";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddWebhook from "@/components/Configuration/Webhooks/AddWebhook";
 import { WebhooksPage } from "@/components/Configuration/Webhooks/WebhooksPage";
 import useWebhooks from "@/hooks/get/useWebhooks";
@@ -33,27 +33,13 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { CatalogWidget, verticals } from "@/components/Configuration/Catalog/CatalogWidget";
 import { CopySnippet } from "@/components/Configuration/Catalog/CopySnippet";
 import {Button as Button2} from "@/components/ui/button2"
-import { SelectTrigger, SelectValue, SelectContent, SelectItem } from "@radix-ui/react-select";
-import { Select } from "antd";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import usePullFrequencies from "@/hooks/get/useGetPullFrequencies";
 import useUpdatePullFrequency from "@/hooks/create/useCreatePullFrequency";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
-
-type PullFrequency = {
-  id_projects_pull_frequency: string;
-  crm: bigint | null;
-  ats: bigint | null;
-  hris: bigint | null;
-  accounting: bigint | null;
-  filestorage: bigint | null;
-  ecommerce: bigint | null;
-  ticketing: bigint | null;
-  created_at: Date;
-  modified_at: Date;
-  id_project: string;
-};
+import { Loader2 } from "lucide-react";
 
 const frequencyOptions = [
   { label: '5 min', value: 300 },
@@ -76,7 +62,10 @@ export default function Page() {
   const { createPullFrequencyPromise } = useUpdatePullFrequency();
 
   const [open, setOpen] = useState(false);
-  const [localFrequencies, setLocalFrequencies] = useState<Record<string, number>>({});
+  const [localFrequencies, setLocalFrequencies] = useState<Record<string, string>>({});
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
+
   const queryClient = useQueryClient();
 
   if(error){
@@ -120,54 +109,51 @@ export default function Page() {
     data_type: mapping.data_type,
   }))
 
-  const handleFrequencyChange = (vertical: string, value: number) => {
+  const VERTICALS = verticals.filter((vertical) => !["marketingautomation", "cybersecurity", "productivity"].includes(vertical));
+
+  useEffect(() => {
+    if (pullFrequencies) {
+      const initialFrequencies = VERTICALS.reduce((acc, vertical) => {
+        const value = pullFrequencies[vertical as keyof typeof pullFrequencies];
+        acc[vertical] = typeof value === 'string' ? value : '0';
+        return acc;
+      }, {} as Record<string, string>);
+      setLocalFrequencies(initialFrequencies);
+    }
+  }, [pullFrequencies]);
+
+  const handleFrequencyChange = (vertical: string, value: string) => {
     setLocalFrequencies(prev => ({ ...prev, [vertical]: value }));
   };
   
-  // In your component, add this function:
-  const getFrequencyValue = (pullFrequencies: PullFrequency[] | undefined, vertical: string): number => {
-    if (!pullFrequencies || pullFrequencies.length === 0) return 0;
-    const frequency = pullFrequencies[0][vertical as keyof PullFrequency];
-    return frequency ? Number(frequency) : 0;
-  };
 
-  const saveFrequencies = async () => {
+
+  const saveFrequency = async (vertical: string) => {
+    setLoadingStates(prev => ({ ...prev, [vertical]: true }));
     try {
-      const updateData = verticals.reduce((acc, vertical) => {
-        const pullFrequencyValue = pullFrequencies && pullFrequencies[0]?.[vertical as keyof PullFrequency];
-        acc[vertical] = localFrequencies[vertical] || 
-          (typeof pullFrequencyValue === 'bigint' ? Number(pullFrequencyValue) : 
-          (typeof pullFrequencyValue === 'number' ? pullFrequencyValue : 0));
-        return acc;
-      }, {} as Record<string, number>);
+      const updateData = { [vertical]: parseInt(localFrequencies[vertical] || '0', 10) };
       
-      toast.promise(
-        createPullFrequencyPromise(updateData), 
+      await toast.promise(
+        createPullFrequencyPromise(updateData),
         {
-        loading: 'Loading...',
-        success: (data: any) => {
-          queryClient.setQueryData<any[]>(['pull-frequencies'], (oldQueryData = []) => {
-            return [...oldQueryData, data];
-          });
-          return (
-            <div className="flex flex-row items-center">
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.877045C3.84222 0.877045 0.877075 3.84219 0.877075 7.49988C0.877075 11.1575 3.84222 14.1227 7.49991 14.1227C11.1576 14.1227 14.1227 11.1575 14.1227 7.49988C14.1227 3.84219 11.1576 0.877045 7.49991 0.877045ZM1.82708 7.49988C1.82708 4.36686 4.36689 1.82704 7.49991 1.82704C10.6329 1.82704 13.1727 4.36686 13.1727 7.49988C13.1727 10.6329 10.6329 13.1727 7.49991 13.1727C4.36689 13.1727 1.82708 10.6329 1.82708 7.49988ZM10.1589 5.53774C10.3178 5.31191 10.2636 5.00001 10.0378 4.84109C9.81194 4.68217 9.50004 4.73642 9.34112 4.96225L6.51977 8.97154L5.35681 7.78706C5.16334 7.59002 4.84677 7.58711 4.64973 7.78058C4.45268 7.97404 4.44978 8.29061 4.64325 8.48765L6.22658 10.1003C6.33054 10.2062 6.47617 10.2604 6.62407 10.2483C6.77197 10.2363 6.90686 10.1591 6.99226 10.0377L10.1589 5.53774Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-              <div className="ml-2">
-                Pull frequencies
-                <Badge variant="secondary" className="rounded-sm px-1 mx-2 font-normal">{`${data.linked_user_origin_id}`}</Badge>
-                have been updated
-              </div>
-            </div>
-          )
-          ;
-        },
-        error: (err: any) => err.message || 'Error'
-      });
-      console.log("Frequencies updated successfully!");
+          loading: 'Updating...',
+          success: (data: any) => {
+            queryClient.setQueryData<any>(['pull-frequencies'], (oldData: any) => ({
+              ...oldData,
+              [vertical]: localFrequencies[vertical],
+            }));
+            return `Frequency saved`;
+          },
+          error: (err: any) => err.message || 'Error updating frequency',
+        }
+      );
     } catch (error) {
-      console.error("Error updating pull frequencies:", error);
+      console.error(`Error updating ${vertical} pull frequency:`, error);
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [vertical]: false }));
     }
   };
+
   
  
   return (
@@ -246,37 +232,46 @@ export default function Page() {
             <TabsContent value="pull-frequency" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-12">
               <Card className="col-span-12">
-                <CardHeader>
-                  <CardTitle>Pull Frequency Settings</CardTitle>
-                  <CardDescription>Set the sync frequency for each vertical</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {verticals.map(vertical => (
-                    <div key={vertical} className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        {vertical.toUpperCase()}
-                      </label>
-                      <Select
-                        value={(localFrequencies[vertical] || getFrequencyValue(pullFrequencies, vertical))}
-                        onChange={(value: number) => handleFrequencyChange(vertical, value)}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select frequency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {frequencyOptions.map(option => (
-                            <SelectItem key={option.value} value={option.value.toString()}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+      <CardHeader>
+        <CardTitle>Pull Frequency Settings</CardTitle>
+        <CardDescription>Set the sync frequency for each vertical</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {VERTICALS.map(vertical => (
+          <div key={vertical} className="mb-4">
+            <label className="block text-sm font-medium text-white mb-1">
+              {vertical.toUpperCase()}
+            </label>
+            <div className="flex items-center space-x-2">
+              <Select
+                value={localFrequencies[vertical] || '0'}
+                onValueChange={(value: string) => handleFrequencyChange(vertical, value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select frequency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {frequencyOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value.toString()}>
+                      {option.label}
+                    </SelectItem>
                   ))}
-                  <Separator className="my-4" />
-                  <Button onClick={saveFrequencies} className="w-full">Save Frequencies</Button>
-                </CardContent>
-              </Card>
+                </SelectContent>
+              </Select>
+              <Button 
+                onClick={() => saveFrequency(vertical)}
+                disabled={loadingStates[vertical]}
+              >
+                {loadingStates[vertical] ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                {loadingStates[vertical] ? 'Saving...' : 'Save'}
+              </Button>            
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
               </div>
             </TabsContent>
 

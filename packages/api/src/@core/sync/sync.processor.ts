@@ -1,24 +1,47 @@
 import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Queues } from '@@core/@core-services/queues/types';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 
 @Injectable()
 @Processor(Queues.SYNC_JOBS_WORKER)
 export class SyncProcessor {
+  private readonly logger = new Logger(SyncProcessor.name);
+
   constructor(private registry: CoreSyncRegistry) {}
 
   @Process('*')
   async handleSyncJob(job: Job) {
     const { projectId, vertical, commonObject } = job.data;
+    this.logger.log(
+      `Starting to process job ${job.id} for ${vertical} ${commonObject} (Project: ${projectId})`,
+    );
+
     try {
-      console.log(`Processing queue -> ${job.name} for project ${projectId}`);
-      await this.registry
-        .getService(vertical, commonObject)
-        .kickstartSync(projectId);
+      const service = this.registry.getService(vertical, commonObject);
+      if (!service) {
+        throw new Error(
+          `No service found for vertical ${vertical} and common object ${commonObject}`,
+        );
+      }
+
+      await service.kickstartSync(projectId);
+      this.logger.log(
+        `Successfully processed job ${job.id} for ${vertical} ${commonObject} (Project: ${projectId})`,
+      );
     } catch (error) {
-      console.error(`Error syncing ${vertical} ${commonObject}`, error);
+      this.logger.error(
+        `Error processing job ${job.id} for ${vertical} ${commonObject} (Project: ${projectId})`,
+        error.stack,
+      );
+      throw error; // Re-throw the error to mark the job as failed
     }
+  }
+
+  @Process('health-check')
+  async healthCheck(job: Job) {
+    this.logger.log(`Health check job ${job.id} received`);
+    return { status: 'OK', timestamp: new Date() };
   }
 }

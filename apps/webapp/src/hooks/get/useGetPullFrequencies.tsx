@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 const usePullFrequencies = () => {
   return useQuery({
     queryKey: ['pull-frequencies'], 
-    queryFn: async (): Promise<PullFrequency[]> => {
+    queryFn: async (): Promise<PullFrequency> => {
       const response = await fetch(`${config.API_URL}/sync/internal/pull-frequencies`,{
         method: 'GET',
         headers: {

@@ -20,7 +20,7 @@ export class CoreSyncService {
     this.logger.setContext(CoreSyncService.name);
   }
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_30_SECONDS)
   async checkAndKickstartSync(user_id?: string) {
     const users = user_id
       ? [
@@ -76,6 +76,19 @@ export class CoreSyncService {
               const hoursSinceLastSync =
                 (now.getTime() - lastSyncTime.getTime()) / (1000 * 60 * 60);
               if (interval && hoursSinceLastSync >= interval) {
+                await this.prisma.events.create({
+                  data: {
+                    id_project: project.id_project,
+                    id_event: uuidv4(),
+                    status: 'success',
+                    type: `${vertical}.batchSyncStart`,
+                    method: 'GET',
+                    url: '',
+                    provider: '',
+                    direction: '0',
+                    timestamp: new Date(),
+                  },
+                });
                 const commonObjects = getCommonObjectsForVertical(vertical);
                 for (const commonObject of commonObjects) {
                   const service = this.registry.getService(
