@@ -2767,7 +2767,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           authBaseUrl:`https://login.microsoftonline.com/common/oauth2/v2.0/authorize`
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
-        description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
+        description: '',
         active: false,
         primaryColor: '',
         options: {
