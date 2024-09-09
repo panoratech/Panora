@@ -4,5 +4,5 @@ export const ATS_PROVIDERS = ['ashby'];
 export const ACCOUNTING_PROVIDERS = [];
 export const TICKETING_PROVIDERS = ['zendesk', 'front', 'jira', 'gorgias', 'gitlab', 'github', 'linear'];
 export const MARKETINGAUTOMATION_PROVIDERS = [];
-export const FILESTORAGE_PROVIDERS = ['box'];
+export const FILESTORAGE_PROVIDERS = ['box', 'sharepoint'];
 export const ECOMMERCE_PROVIDERS = ['shopify', 'woocommerce', 'squarespace', 'amazon', 'webflow']; 

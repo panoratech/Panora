@@ -122,7 +122,8 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        `https://app.sharepoint.com/oauth2/tokens`,
+        // `https://app.sharepoint.com/oauth2/tokens`,
+        `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
         formData.toString(),
         {
           headers: {
@@ -214,7 +215,8 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
       )) as OAuth2AuthData;
 
       const res = await axios.post(
-        `https://app.sharepoint.com/oauth2/tokens`,
+        // `https://app.sharepoint.com/oauth2/tokens`,
+        `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
         formData.toString(),
         {
           headers: {

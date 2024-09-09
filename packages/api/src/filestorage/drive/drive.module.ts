@@ -1,3 +1,5 @@
+import { SharepointDriveMapper } from './services/sharepoint/mappers';
+import { SharepointService } from './services/sharepoint';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
@@ -17,6 +19,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     ServiceRegistry,
     Utils,
     /* PROVIDERS SERVICES */
+    SharepointService,
+    SharepointDriveMapper,
   ],
   exports: [SyncService],
 })
