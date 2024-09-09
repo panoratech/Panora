@@ -1,3 +1,5 @@
+import { SharepointUserMapper } from './services/sharepoint/mappers';
+import { SharepointService } from './services/sharepoint';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -23,6 +25,8 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
     Utils,
     /* PROVIDERS SERVICES */
     BoxService,
+    SharepointService,
+    SharepointUserMapper,
   ],
   exports: [SyncService],
 })

@@ -1,3 +1,5 @@
+import { SharepointPermissionMapper } from './services/sharepoint/mappers';
+import { SharepointService } from './services/sharepoint';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -29,6 +31,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     IngestDataService,
 
     /* PROVIDERS SERVICES */
+    SharepointService,
+    SharepointPermissionMapper,
   ],
   exports: [SyncService],
 })

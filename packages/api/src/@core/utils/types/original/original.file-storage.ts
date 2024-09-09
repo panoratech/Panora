@@ -1,4 +1,41 @@
-import { SharepointDriveInput, SharepointDriveOutput } from '@filestorage/drive/services/sharepoint/types';
+import {
+  BoxSharedLinkInput,
+  BoxSharedLinkOutput,
+} from '@filestorage/sharedlink/services/box/types';
+import {
+  SharepointSharedLinkInput,
+  SharepointSharedLinkOutput,
+} from '@filestorage/sharedlink/services/sharepoint/types';
+
+import {
+  SharepointPermissionInput,
+  SharepointPermissionOutput,
+} from '@filestorage/permission/services/sharepoint/types';
+
+import {
+  SharepointGroupInput,
+  SharepointGroupOutput,
+} from '@filestorage/group/services/sharepoint/types';
+
+import {
+  SharepointUserInput,
+  SharepointUserOutput,
+} from '@filestorage/user/services/sharepoint/types';
+
+import {
+  SharepointFolderInput,
+  SharepointFolderOutput,
+} from '@filestorage/folder/services/sharepoint/types';
+
+import {
+  SharepointFileInput,
+  SharepointFileOutput,
+} from '@filestorage/file/services/sharepoint/types';
+
+import {
+  SharepointDriveInput,
+  SharepointDriveOutput,
+} from '@filestorage/drive/services/sharepoint/types';
 
 /* INPUT */
 
@@ -20,13 +57,13 @@ import {
 } from '@filestorage/user/services/box/types';
 
 /* file */
-export type OriginalFileInput = BoxFileInput;
+export type OriginalFileInput = BoxFileInput | SharepointFileInput;
 
 /* folder */
-export type OriginalFolderInput = BoxFolderInput;
+export type OriginalFolderInput = BoxFolderInput | SharepointFolderInput;
 
 /* permission */
-export type OriginalPermissionInput = any;
+export type OriginalPermissionInput = any | SharepointPermissionInput;
 
 /* shared link */
 export type OriginalSharedLinkInput = any;
@@ -35,10 +72,10 @@ export type OriginalSharedLinkInput = any;
 export type OriginalDriveInput = any | SharepointDriveInput;
 
 /* group */
-export type OriginalGroupInput = BoxGroupInput;
+export type OriginalGroupInput = BoxGroupInput | SharepointGroupInput;
 
 /* user */
-export type OriginalUserInput = BoxUserInput;
+export type OriginalUserInput = BoxUserInput | SharepointUserInput;
 
 export type FileStorageObjectInput =
   | OriginalFileInput
@@ -52,13 +89,13 @@ export type FileStorageObjectInput =
 /* OUTPUT */
 
 /* file */
-export type OriginalFileOutput = BoxFileOutput;
+export type OriginalFileOutput = BoxFileOutput | SharepointFileOutput;
 
 /* folder */
-export type OriginalFolderOutput = BoxFolderOutput;
+export type OriginalFolderOutput = BoxFolderOutput | SharepointFolderOutput;
 
 /* permission */
-export type OriginalPermissionOutput = any;
+export type OriginalPermissionOutput = any | SharepointPermissionOutput;
 
 /* shared link */
 export type OriginalSharedLinkOutput = any;
@@ -67,10 +104,10 @@ export type OriginalSharedLinkOutput = any;
 export type OriginalDriveOutput = any | SharepointDriveOutput;
 
 /* group */
-export type OriginalGroupOutput = BoxGroupOutput;
+export type OriginalGroupOutput = BoxGroupOutput | SharepointGroupOutput;
 
 /* user */
-export type OriginalUserOutput = BoxUserOutput;
+export type OriginalUserOutput = BoxUserOutput | SharepointUserOutput;
 
 export type FileStorageObjectOutput =
   | OriginalFileOutput
@@ -80,3 +117,11 @@ export type FileStorageObjectOutput =
   | OriginalDriveOutput
   | OriginalGroupOutput
   | OriginalUserOutput;
+
+export type OriginalSharedlinkInput =
+  | BoxSharedLinkInput
+  | SharepointSharedLinkInput;
+
+export type OriginalSharedlinkOutput =
+  | BoxSharedLinkOutput
+  | SharepointSharedLinkOutput;

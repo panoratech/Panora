@@ -2764,7 +2764,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         primaryColor: '',
         options: {
           local_redirect_uri_in_https: true

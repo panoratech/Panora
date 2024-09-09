@@ -1,3 +1,7 @@
+import { SharepointSharedLinkMapper } from './services/sharepoint/mappers';
+import { BoxSharedLinkMapper } from './services/box/mappers';
+import { SharepointService } from './services/sharepoint';
+import { BoxService } from './services/box';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -12,7 +16,6 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { BoxSharedLinkMapper } from './services/box/mappers';
 import { Utils } from '@filestorage/@lib/@utils';
 
 @Module({
@@ -31,6 +34,10 @@ import { Utils } from '@filestorage/@lib/@utils';
     Utils,
     /* PROVIDERS SERVICES */
     BoxSharedLinkMapper,
+    BoxService,
+    SharepointService,
+    BoxSharedLinkMapper,
+    SharepointSharedLinkMapper,
   ],
   exports: [SyncService],
 })
