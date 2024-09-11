@@ -1,5 +1,7 @@
 import { SharepointPermissionMapper } from './services/sharepoint/mappers';
 import { SharepointService } from './services/sharepoint';
+import { OnedrivePermissionMapper } from './services/onedrive/mappers';
+import { OnedriveService } from './services/onedrive';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -33,6 +35,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     /* PROVIDERS SERVICES */
     SharepointService,
     SharepointPermissionMapper,
+    OnedriveService,
+    OnedrivePermissionMapper,
   ],
   exports: [SyncService],
 })

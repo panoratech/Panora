@@ -96,7 +96,7 @@ export class SalesforceConnectionService extends AbstractBaseConnectionService {
 
   async handleCallback(opts: OAuthCallbackParams) {
     try {
-      const { linkedUserId, projectId, code, resource: subdomain } = opts;
+      const { linkedUserId, projectId, code, domain } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -120,7 +120,7 @@ export class SalesforceConnectionService extends AbstractBaseConnectionService {
         code: code,
       });
       const res = await axios.post(
-        `https://${subdomain}.my.salesforce.com/services/oauth2/token`,
+        `https://${domain}.my.salesforce.com/services/oauth2/token`,
         formData.toString(),
         {
           headers: {
@@ -161,7 +161,7 @@ export class SalesforceConnectionService extends AbstractBaseConnectionService {
             account_url: (
               CONNECTORS_METADATA['crm']['salesforce'].urls
                 .apiUrl as DynamicApiUrl
-            )(subdomain),
+            )(domain),
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(

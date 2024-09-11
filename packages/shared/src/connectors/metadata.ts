@@ -220,7 +220,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           end_user_domain: true
         },
         authStrategy: {
-          strategy: AuthStrategy.oauth2
+          strategy: AuthStrategy.oauth2,
+          properties: ['organization_name']
         }
       },
       'nutshell': {
@@ -274,6 +275,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         active: false,
         authStrategy: {
           strategy: AuthStrategy.oauth2,
+          properties: ['domain']
         },
         primaryColor: '#01A2E0',
         options: {
@@ -1928,23 +1930,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.api_key
         }
       },
-      'bamboohr': {
-        scopes: 'openid+email',
-        urls: {
-          docsUrl: 'https://documentation.bamboohr.com/docs/getting-started',
-          apiUrl: '',
-          authBaseUrl: (END_USER_DOMAIN) => `https://${END_USER_DOMAIN}.bamboohr.com/authorize.php`
-        },
-        options: {
-          end_user_domain: true
-        },
-        logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
-        description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
-        authStrategy: {
-          strategy: AuthStrategy.api_key
-        }
-      },
       'breathe': {
         scopes: '',
         urls: {
@@ -2741,7 +2726,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://logowik.com/content/uploads/images/4964-microsoft-onedrive-new.jpg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
@@ -2763,19 +2748,20 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'Files.Read.All offline_access openid User.Read Sites.Read.All Sites.ReadWrite.All',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
-          apiUrl: 'https://graph.microsoft.com/v1.0',
-          authBaseUrl:`https://login.microsoftonline.com/common/oauth2/v2.0/authorize`
+          apiUrl: (site) => `https://graph.microsoft.com/v1.0/sites/${site}`,
+          authBaseUrl: (site, tenant) => `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/authorize`
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: true,
-        primaryColor: '',
+        active: false,
+        primaryColor: '#6EA5A8', 
         options: {
           local_redirect_uri_in_https: true,
           end_user_domain: true
         },
         authStrategy: {
-          strategy: AuthStrategy.oauth2
+          strategy: AuthStrategy.oauth2,
+          properties: ['site', 'tenant']
         }
       },
       'box': {

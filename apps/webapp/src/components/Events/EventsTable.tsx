@@ -44,7 +44,7 @@ export default function EventsTable() {
   return (
     <>
       {transformedEvents && (
-        <ApiDataTable data={transformedEvents} columns={columns} {...pagination} isLoading={isFetching} />
+        <ApiDataTable data={transformedEvents} columns={columns as any} {...pagination} isLoading={isFetching} />
       )}
     </>
   );

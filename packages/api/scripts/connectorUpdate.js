@@ -433,10 +433,15 @@ function updateSeedSQLFile(seedSQLFile, newServiceDirs, vertical) {
 function updateObjectTypes(baseDir, objectType, vertical) {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const servicesDir = path.join(__dirname, baseDir);
-  const targetFilename = vertical == 'filestorage' ? 'file-storage' : vertical;
+  const targetFileName =
+    vertical === 'filestorage'
+      ? 'file-storage'
+      : vertical === 'marketingautomation'
+      ? 'marketing-automation'
+      : vertical;
   const targetFile = path.join(
     __dirname,
-    `../src/@core/utils/types/original/original.${targetFilename}.ts`,
+    `../src/@core/utils/types/original/original.${targetFileName}.ts`,
   );
 
   const newServiceDirs = scanDirectory(servicesDir);

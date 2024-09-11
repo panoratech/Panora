@@ -1,5 +1,7 @@
 import { SharepointFileMapper } from './services/sharepoint/mappers';
 import { SharepointService } from './services/sharepoint';
+import { OnedriveFileMapper } from './services/onedrive/mappers';
+import { OnedriveService } from './services/onedrive';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
@@ -28,6 +30,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     BoxService,
     SharepointService,
     SharepointFileMapper,
+    OnedriveService,
+    OnedriveFileMapper,
   ],
   exports: [SyncService],
 })

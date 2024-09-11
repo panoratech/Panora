@@ -26,6 +26,7 @@ export enum TicketingConnectors {
 }
 
 export enum FilestorageConnectors {
-    BOX = 'box',
-    SHAREPOINT = 'sharepoint'
+  BOX = 'box',
+  SHAREPOINT = 'sharepoint',
+  ONEDRIVE = 'onedrive',
 }

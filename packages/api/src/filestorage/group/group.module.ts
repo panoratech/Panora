@@ -1,5 +1,7 @@
 import { SharepointGroupMapper } from './services/sharepoint/mappers';
 import { SharepointService } from './services/sharepoint';
+import { OnedriveGroupMapper } from './services/onedrive/mappers';
+import { OnedriveService } from './services/onedrive';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
@@ -28,6 +30,8 @@ import { SyncService } from './sync/sync.service';
     BoxService,
     SharepointService,
     SharepointGroupMapper,
+    OnedriveService,
+    OnedriveGroupMapper,
   ],
   exports: [SyncService],
 })

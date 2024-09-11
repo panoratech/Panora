@@ -1,3 +1,5 @@
+import { OnedriveDriveMapper } from './services/onedrive/mappers';
+import { OnedriveService } from './services/onedrive';
 import { SharepointDriveMapper } from './services/sharepoint/mappers';
 import { SharepointService } from './services/sharepoint';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
@@ -19,6 +21,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     ServiceRegistry,
     Utils,
     /* PROVIDERS SERVICES */
+    OnedriveService,
+    OnedriveDriveMapper,
     SharepointService,
     SharepointDriveMapper,
   ],
