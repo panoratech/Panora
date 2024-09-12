@@ -552,6 +552,7 @@ CREATE TABLE connector_sets
  ats_ashby        boolean NULL,
  ecom_webflow boolean NULL,
  crm_microsoftdynamicssales boolean NULL,
+ fs_dropbox boolean NULL,
 CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 

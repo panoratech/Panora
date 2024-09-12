@@ -27,5 +27,6 @@ export enum TicketingConnectors {
 
 export enum FilestorageConnectors {
     BOX = 'box',
+    DROPBOX = 'dropbox',
     ONEDRIVE = 'onedrive'
 }
