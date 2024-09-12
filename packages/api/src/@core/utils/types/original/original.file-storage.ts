@@ -1,3 +1,5 @@
+import { DropboxFileInput, DropboxFileOutput } from '@filestorage/file/services/dropbox/types';
+
 import { DropboxFolderInput, DropboxFolderOutput } from '@filestorage/folder/services/dropbox/types';
 
 import {
@@ -59,7 +61,7 @@ import {
 } from '@filestorage/user/services/box/types';
 
 /* file */
-export type OriginalFileInput = BoxFileInput | OnedriveFileInput;
+export type OriginalFileInput = BoxFileInput | OnedriveFileInput | DropboxFileInput;
 
 /* folder */
 export type OriginalFolderInput = BoxFolderInput | OnedriveFolderInput | DropboxFolderInput;
@@ -91,7 +93,7 @@ export type FileStorageObjectInput =
 /* OUTPUT */
 
 /* file */
-export type OriginalFileOutput = BoxFileOutput | OnedriveFileOutput;
+export type OriginalFileOutput = BoxFileOutput | OnedriveFileOutput | DropboxFileOutput;
 
 /* folder */
 export type OriginalFolderOutput = BoxFolderOutput | OnedriveFolderOutput | DropboxFolderOutput;

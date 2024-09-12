@@ -89,7 +89,7 @@ export class DropboxFolderMapper implements IFolderMapper {
     const result: UnifiedFilestorageFolderOutput = {
       remote_id: folder.id,
       remote_data: folder,
-      name: folder.path_display.split('/').pop(),
+      name: folder.name,
       size: null,
       folder_url: null,
       description: null,
@@ -97,6 +97,7 @@ export class DropboxFolderMapper implements IFolderMapper {
       parent_folder_id: null,
       shared_link: null,
       permission: null,
+      field_mappings: {},
     };
 
     if (customFieldMappings) {
