@@ -1,23 +1,22 @@
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { BUCKET_NAME } from '@@core/s3/constants';
 import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
+import { S3Client } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import { FileStorageObject } from '@filestorage/@lib/@types';
 import { IFileService } from '@filestorage/file/types';
 import { Injectable } from '@nestjs/common';
-import { ServiceRegistry } from '../registry.service';
-import { GoogleDriveFileOutput } from './types';
-import { S3Client } from '@aws-sdk/client-s3';
-import { Readable } from 'stream';
-import { Upload } from '@aws-sdk/lib-storage';
-import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
-import { BUCKET_NAME } from '@@core/s3/constants';
-import * as XLSX from 'xlsx';
-import * as csv from 'csv-parse';
+import { google } from 'googleapis';
 import * as mammoth from 'mammoth';
 import * as marked from 'marked';
+import { Readable } from 'stream';
+import * as XLSX from 'xlsx';
+import { ServiceRegistry } from '../registry.service';
+import { GoogleDriveFileOutput } from './types';
 
 @Injectable()
 export class GoogleDriveService implements IFileService {

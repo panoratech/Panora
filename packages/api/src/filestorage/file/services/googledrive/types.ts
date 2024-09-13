@@ -1,8 +1,4 @@
-export interface GoogleDriveFileInput {
-  name: string;
-  mimeType?: string;
-  parents?: string[];
-}
+export type GoogleDriveFileInput = Partial<GoogleDriveFileOutput>
 
 export interface GoogleDriveFileOutput {
   kind?: string;

@@ -2749,7 +2749,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         scopes: 'Files.Read.All offline_access openid User.Read.All Group.Read.All Sites.Read.All Sites.ReadWrite.All',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
-          apiUrl: (site_id) => `https://graph.microsoft.com/v1.0/sites/${site_id}`,
+          apiUrl: (siteId) => `https://graph.microsoft.com/v1.0/sites/${siteId}`,
           authBaseUrl: `https://login.microsoftonline.com/common/oauth2/v2.0/authorize`
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',

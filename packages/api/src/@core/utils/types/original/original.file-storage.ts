@@ -43,7 +43,7 @@ import {
   OnedriveFolderOutput,
 } from '@filestorage/folder/services/onedrive/types';
 
-import {
+import { 
   OnedriveDriveInput,
   OnedriveDriveOutput,
 } from '@filestorage/drive/services/onedrive/types';
@@ -103,17 +103,13 @@ import {
   BoxSharedLinkInput,
   BoxSharedLinkOutput,
 } from '@filestorage/sharedlink/services/box/types';
-  GoogleDriveFileInput,
-  GoogleDriveFileOutput,
-} from '@filestorage/file/services/googledrive/types';
-import {
-  GoogleDriveFolderInput,
-  GoogleDriveFolderOutput,
-} from '@filestorage/folder/services/googledrive/types';
+
 import {
   GoogleDriveDriveInput,
   GoogleDriveDriveOutput,
 } from '@filestorage/drive/services/googledrive/types';
+import { GoogleDriveFolderInput, GoogleDriveFolderOutput } from '@filestorage/folder/services/googledrive/types';
+import { GoogleDriveFileInput, GoogleDriveFileOutput } from '@filestorage/file/services/googledrive/types';
 
 /* file */
 
@@ -122,16 +118,18 @@ export type OriginalFileInput =
   | BoxFileInput
   | OnedriveFileInput
   | SharepointFileInput;
-  | GoogleDriveFileInput
   | DropboxFileInput;
+  | SharepointFileInput
+  | GoogleDriveFileInput;
 
 /* folder */
 export type OriginalFolderInput =
   | BoxFolderInput
   | OnedriveFolderInput
   | SharepointFolderInput;
-  | GoogleDriveFolderInput
   | DropboxFolderInput;
+  | SharepointFolderInput
+  | GoogleDriveFolderInput;
 
 /* permission */
 export type OriginalPermissionInput =
@@ -179,16 +177,18 @@ export type OriginalFileOutput =
   | BoxFileOutput
   | OnedriveFileOutput
   | SharepointFileOutput;
-  | GoogleDriveFileOutput
   | DropboxFileOutput;
+  | SharepointFileOutput
+  | GoogleDriveFileOutput;
 
 /* folder */
 export type OriginalFolderOutput =
   | BoxFolderOutput
   | OnedriveFolderOutput
   | SharepointFolderOutput;
-  | GoogleDriveFolderOutput
   | DropboxFolderOutput;
+  | SharepointFolderOutput
+  | GoogleDriveFolderOutput;
 
 /* permission */
 export type OriginalPermissionOutput =
