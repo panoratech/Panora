@@ -2712,7 +2712,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }

@@ -14,6 +14,8 @@ export class BullQueueService {
     public readonly syncJobsQueue: Queue,
     @InjectQueue(Queues.FAILED_PASSTHROUGH_REQUESTS_HANDLER)
     public readonly failedPassthroughRequestsQueue: Queue,
+    @InjectQueue(Queues.RAG_DOCUMENT_PROCESSING)
+    private ragDocumentQueue: Queue,
   ) {}
 
   // getters
@@ -29,6 +31,9 @@ export class BullQueueService {
   }
   getFailedPassthroughRequestsQueue() {
     return this.failedPassthroughRequestsQueue;
+  }
+  getRagDocumentQueue() {
+    return this.ragDocumentQueue;
   }
 
   async queueSyncJob(jobName: string, jobData: any, cron: string) {

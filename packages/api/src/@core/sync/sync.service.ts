@@ -534,6 +534,14 @@ export class CoreSyncService {
           linkedUserId: linkedUserId,
         }),
     ];
+    if (provider == 'googledrive') {
+      tasks.push(() =>
+        this.registry.getService('filestorage', 'file').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      );
+    }
     for (const task of tasks) {
       try {
         await task();
@@ -554,21 +562,23 @@ export class CoreSyncService {
         id_connection: connection.id_connection,
       },
     });
-    const filesTasks = folders.map(
-      (folder) => async () =>
-        this.registry.getService('filestorage', 'file').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-          id_folder: folder.id_fs_folder,
-        }),
-    );
+    if (provider !== 'googledrive') {
+      const filesTasks = folders.map(
+        (folder) => async () =>
+          this.registry.getService('filestorage', 'file').syncForLinkedUser({
+            integrationId: provider,
+            linkedUserId: linkedUserId,
+            id_folder: folder.id_fs_folder,
+          }),
+      );
 
-    for (const task of filesTasks) {
-      try {
-        await task();
-      } catch (error) {
-        console.log(error);
-        this.logger.error(`File Task failed: ${error.message}`, error);
+      for (const task of filesTasks) {
+        try {
+          await task();
+        } catch (error) {
+          console.log(error);
+          this.logger.error(`File Task failed: ${error.message}`, error);
+        }
       }
     }
   }

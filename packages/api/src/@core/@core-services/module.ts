@@ -1,20 +1,22 @@
+import { RagModule } from '@@core/rag/rag.module';
 import { Global, Module } from '@nestjs/common';
+import { ConnectionUtils } from '../connections/@utils/index';
+import { FieldMappingService } from './../field-mapping/field-mapping.service';
+import { EncryptionService } from './encryption/encryption.service';
+import { LoggerService } from './logger/logger.service';
+import { PrismaService } from './prisma/prisma.service';
+import { BullQueueModule } from './queues/queue.module';
+import { CategoryConnectionRegistry } from './registries/connections-categories.registry';
+import { CoreSyncRegistry } from './registries/core-sync.registry';
 import { MappersRegistry } from './registries/mappers.registry';
 import { UnificationRegistry } from './registries/unification.registry';
-import { CoreSyncRegistry } from './registries/core-sync.registry';
-import { EncryptionService } from './encryption/encryption.service';
-import { CoreUnification } from './unification/core-unification.service';
-import { LoggerService } from './logger/logger.service';
-import { ConnectionUtils } from '../connections/@utils/index';
-import { CategoryConnectionRegistry } from './registries/connections-categories.registry';
-import { PrismaService } from './prisma/prisma.service';
-import { FieldMappingService } from './../field-mapping/field-mapping.service';
-import { BullQueueModule } from './queues/queue.module';
 import { RetryModule } from './request-retry/module';
+import { CoreUnification } from './unification/core-unification.service';
+import { RagService } from '@@core/rag/rag.service';
 
 @Global()
 @Module({
-  imports: [BullQueueModule, RetryModule],
+  imports: [BullQueueModule, RetryModule, RagModule],
   providers: [
     PrismaService,
     MappersRegistry,
@@ -26,6 +28,7 @@ import { RetryModule } from './request-retry/module';
     LoggerService,
     ConnectionUtils,
     FieldMappingService,
+    RagService,
   ],
   exports: [
     PrismaService,
@@ -40,6 +43,7 @@ import { RetryModule } from './request-retry/module';
     FieldMappingService,
     BullQueueModule,
     RetryModule,
+    RagService,
   ],
 })
 export class CoreSharedModule {}
