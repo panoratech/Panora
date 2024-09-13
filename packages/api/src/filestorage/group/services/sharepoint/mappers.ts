@@ -76,7 +76,7 @@ export class SharepointGroupMapper implements IGroupMapper {
       name: group.mailNickname,
       remote_was_deleted: group.deletedDateTime !== null,
       field_mappings,
-      users: null,
+      users: [],
     };
   }
 }

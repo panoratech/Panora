@@ -19,7 +19,7 @@ export class SharepointService implements IGroupService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      FileStorageObject.group.toUpperCase() + ':' + SharepointService.name,
+      `${FileStorageObject.group.toUpperCase()}:${SharepointService.name}`,
     );
     this.registry.registerService('sharepoint', this);
   }
@@ -34,7 +34,11 @@ export class SharepointService implements IGroupService {
           vertical: 'filestorage',
         },
       });
-      const resp = await axios.get(`${connection.account_url}/groups`, {
+      // remove /sites/site_id from account_url
+      const url = connection.account_url.replace(/\/sites\/.+$/, '');
+
+      // ref: https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http
+      const resp = await axios.get(`${url}/groups`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

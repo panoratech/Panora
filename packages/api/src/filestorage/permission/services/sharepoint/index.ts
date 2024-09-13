@@ -19,7 +19,7 @@ export class SharepointService implements IPermissionService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      FileStorageObject.permission.toUpperCase() + ':' + SharepointService.name,
+      `${FileStorageObject.permission.toUpperCase()}:${SharepointService.name}`,
     );
     this.registry.registerService('sharepoint', this);
   }

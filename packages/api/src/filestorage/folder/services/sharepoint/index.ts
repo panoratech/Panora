@@ -66,6 +66,7 @@ export class SharepointService implements IFolderService {
         statusCode: 201,
       };
     } catch (error) {
+      console.log(error.response?.data);
       throw error;
     }
   }

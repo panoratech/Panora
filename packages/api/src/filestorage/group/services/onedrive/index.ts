@@ -19,7 +19,7 @@ export class OnedriveService implements IGroupService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      `${FileStorageObject.group.toUpperCase()}:${OnedriveService.name}`,
+      FileStorageObject.group.toUpperCase() + ':' + OnedriveService.name,
     );
     this.registry.registerService('onedrive', this);
   }
@@ -34,12 +34,7 @@ export class OnedriveService implements IGroupService {
           vertical: 'filestorage',
         },
       });
-
-      // remove /sites/site_id from account_url
-      const url = connection.account_url.replace(/\/sites\/.+$/, '');
-
-      // ref: https://learn.microsoft.com/en-us/graph/api/group-list?view=graph-rest-1.0&tabs=http
-      const resp = await axios.get(`${url}/groups`, {
+      const resp = await axios.get(`${connection.account_url}/v1.0/groups`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

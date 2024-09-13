@@ -20,7 +20,7 @@ export class SharepointService implements ISharedLinkService {
     private registry: ServiceRegistry,
   ) {
     this.logger.setContext(
-      FileStorageObject.sharedlink.toUpperCase() + ':' + SharepointService.name,
+      `${FileStorageObject.sharedlink.toUpperCase()}:${SharepointService.name}`,
     );
     this.registry.registerService('sharepoint', this);
   }
