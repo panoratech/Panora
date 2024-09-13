@@ -1,3 +1,5 @@
+import { DropboxUserMapper } from './services/dropbox/mappers';
+import { DropboxService } from './services/dropbox';
 import { OnedriveUserMapper } from './services/onedrive/mappers';
 import { OnedriveService } from './services/onedrive';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
@@ -27,6 +29,8 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
     BoxService,
     OnedriveService,
     OnedriveUserMapper,
+    DropboxService,
+    DropboxUserMapper,
   ],
   exports: [SyncService],
 })

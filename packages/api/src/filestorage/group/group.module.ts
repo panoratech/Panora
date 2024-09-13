@@ -1,3 +1,5 @@
+import { DropboxGroupMapper } from './services/dropbox/mappers';
+import { DropboxService } from './services/dropbox';
 import { OnedriveGroupMapper } from './services/onedrive/mappers';
 import { OnedriveService } from './services/onedrive';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
@@ -28,6 +30,8 @@ import { SyncService } from './sync/sync.service';
     BoxService,
     OnedriveService,
     OnedriveGroupMapper,
+    DropboxService,
+    DropboxGroupMapper,
   ],
   exports: [SyncService],
 })

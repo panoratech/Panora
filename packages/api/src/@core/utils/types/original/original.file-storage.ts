@@ -1,3 +1,7 @@
+import { DropboxGroupInput, DropboxGroupOutput } from '@filestorage/group/services/dropbox/types';
+
+import { DropboxUserInput, DropboxUserOutput } from '@filestorage/user/services/dropbox/types';
+
 import { DropboxFileInput, DropboxFileOutput } from '@filestorage/file/services/dropbox/types';
 
 import { DropboxFolderInput, DropboxFolderOutput } from '@filestorage/folder/services/dropbox/types';
@@ -76,10 +80,10 @@ export type OriginalSharedLinkInput = any;
 export type OriginalDriveInput = any | OnedriveDriveInput;
 
 /* group */
-export type OriginalGroupInput = BoxGroupInput | OnedriveGroupInput;
+export type OriginalGroupInput = BoxGroupInput | OnedriveGroupInput | DropboxGroupInput;
 
 /* user */
-export type OriginalUserInput = BoxUserInput | OnedriveUserInput;
+export type OriginalUserInput = BoxUserInput | OnedriveUserInput | DropboxUserInput;
 
 export type FileStorageObjectInput =
   | OriginalFileInput
@@ -108,10 +112,10 @@ export type OriginalSharedLinkOutput = any;
 export type OriginalDriveOutput = any | OnedriveDriveOutput;
 
 /* group */
-export type OriginalGroupOutput = BoxGroupOutput | OnedriveGroupOutput;
+export type OriginalGroupOutput = BoxGroupOutput | OnedriveGroupOutput | DropboxGroupOutput;
 
 /* user */
-export type OriginalUserOutput = BoxUserOutput | OnedriveUserOutput;
+export type OriginalUserOutput = BoxUserOutput | OnedriveUserOutput | DropboxUserOutput;
 
 export type FileStorageObjectOutput =
   | OriginalFileOutput

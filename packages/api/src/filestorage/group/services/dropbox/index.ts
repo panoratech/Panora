@@ -36,14 +36,17 @@ export class DropboxService implements IGroupService {
       });
 
       // ref: https://www.dropbox.com/developers/documentation/http/teams#team-groups-list
-      const resp = await axios.post(`${connection.account_url}/groups/list`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const resp = await axios.post(
+        `${connection.account_url}/team/groups/list`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
         },
-      });
+      );
 
       this.logger.log(`Synced dropbox groups !`);
 
