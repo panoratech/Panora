@@ -3,13 +3,20 @@ import { CoreSyncRegistry } from '../registries/core-sync.registry';
 import { CoreUnification } from './core-unification.service';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from '../prisma/prisma.service';
-import { ApiResponse, TargetObject } from '@@core/utils/types';
+import {
+  ApiResponse,
+  getFileExtensionFromMimeType,
+  TargetObject,
+} from '@@core/utils/types';
 import { UnifySourceType } from '@@core/utils/types/unify.output';
 import { WebhookService } from '../webhooks/panora-webhooks/webhook.service';
 import { ConnectionUtils } from '@@core/connections/@utils';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { LoggerService } from '../logger/logger.service';
+import { RagService } from '@@core/rag/rag.service';
+import { FileInfo } from '@@core/rag/types';
+import { fs_files as FileStorageFile } from '@prisma/client';
 
 @Injectable()
 export class IngestDataService {
@@ -21,6 +28,7 @@ export class IngestDataService {
     private connectionUtils: ConnectionUtils,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
+    private ragService: RagService,
   ) {}
 
   async syncForLinkedUser<T, U, V extends IBaseObjectService>(
@@ -168,6 +176,30 @@ export class IngestDataService {
         sourceObject,
         ...Object.values(extraParams || {}),
       );
+
+    // insert the files in our s3 bucket so we can process them for our RAG
+    if (vertical === 'filestorage' && commonObject === 'file') {
+      const filesInfo: FileInfo[] = data
+        .filter((file: FileStorageFile) => file.file_url && file.mime_type)
+        .map((file: FileStorageFile) => ({
+          id: file.id_fs_file,
+          url: file.file_url,
+          provider: integrationId,
+          s3Key: `${projectId}/${linkedUserId}/${
+            file.id_fs_file
+          }.${getFileExtensionFromMimeType(file.mime_type)}`,
+          fileType: getFileExtensionFromMimeType(file.mime_type),
+        }));
+
+      if (filesInfo.length > 0) {
+        console.log('During sync, found files to process for RAG...');
+        await this.ragService.queueDocumentProcessing(
+          filesInfo,
+          projectId,
+          linkedUserId,
+        );
+      }
+    }
 
     const event = await this.prisma.events.create({
       data: {

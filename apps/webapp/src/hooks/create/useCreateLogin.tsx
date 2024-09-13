@@ -14,15 +14,12 @@ interface ILoginInputDto {
     password_hash:string
 }
 
-interface ILoginOutputDto {
-    user: IUserDto,
-    access_token: string
-}
-
 const useCreateLogin = () => {
     const add = async (userData: ILoginInputDto) => {
         // Fetch the token
-        const response = await fetch(`${config.API_URL}/auth/login`, {
+        console.log("API_URL: ", config.API_URL); // Add this line
+        const apiUrl = new URL('/auth/login', config.API_URL).toString();
+        const response = await fetch(apiUrl, {
             method: 'POST',
             body: JSON.stringify(userData),
             headers: {
@@ -31,7 +28,7 @@ const useCreateLogin = () => {
         });
 
         if (!response.ok) {
-            throw new Error("Login Failed!!")
+            throw new Error("Login Failed!! ")
         }
         
         return response.json();

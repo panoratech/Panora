@@ -6,9 +6,10 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ApiResponse } from '@@core/utils/types';
 import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalFileOutput } from '@@core/utils/types/original/original.file-storage';
+import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
+import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/types/model.unified';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { FILESTORAGE_PROVIDERS } from '@panora/shared';
@@ -17,8 +18,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFileService } from '../types';
 import { UnifiedFilestorageFileOutput } from '../types/model.unified';
-import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/types/model.unified';
-import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -37,7 +36,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.registry.registerService('filestorage', 'file', this);
   }
   onModuleInit() {
-//
+    //
   }
 
   @Cron('0 */8 * * *') // every 8 hours
