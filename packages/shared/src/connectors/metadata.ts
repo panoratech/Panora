@@ -2712,13 +2712,13 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
       },
       'onedrive': {
-        scopes: 'Files.Read.All offline_access openid User.Read',
+        scopes: 'Files.Read.All offline_access openid User.Read.All Group.Read.All',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
           apiUrl: 'https://graph.microsoft.com',
@@ -2746,15 +2746,15 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'sharepoint': {
-        scopes: 'Files.Read.All offline_access openid User.Read Sites.Read.All Sites.ReadWrite.All',
+        scopes: 'Files.Read.All offline_access openid User.Read.All Group.Read.All Sites.Read.All Sites.ReadWrite.All',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
-          apiUrl: (site) => `https://graph.microsoft.com/v1.0/sites/${site}`,
-          authBaseUrl: (site, tenant) => `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/authorize`
+          apiUrl: (site_id) => `https://graph.microsoft.com/v1.0/sites/${site_id}`,
+          authBaseUrl: `https://login.microsoftonline.com/common/oauth2/v2.0/authorize`
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         primaryColor: '#6EA5A8', 
         options: {
           local_redirect_uri_in_https: true,

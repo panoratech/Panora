@@ -1,5 +1,7 @@
 import { DropboxUserMapper } from './services/dropbox/mappers';
 import { DropboxService } from './services/dropbox';
+import { SharepointUserMapper } from './services/sharepoint/mappers';
+import { SharepointService } from './services/sharepoint';
 import { OnedriveUserMapper } from './services/onedrive/mappers';
 import { OnedriveService } from './services/onedrive';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
@@ -27,6 +29,8 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
     Utils,
     /* PROVIDERS SERVICES */
     BoxService,
+    SharepointService,
+    SharepointUserMapper,
     OnedriveService,
     OnedriveUserMapper,
     DropboxService,

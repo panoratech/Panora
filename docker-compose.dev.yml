@@ -193,6 +193,23 @@ services:
       PH_TELEMETRY: ${PH_TELEMETRY}
       SALESFORCE_CRM_CLOUD_CLIENT_ID: ${SALESFORCE_CRM_CLOUD_CLIENT_ID}
       SALESFORCE_CRM_CLOUD_CLIENT_SECRET: ${SALESFORCE_CRM_CLOUD_CLIENT_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      JINA_API_KEY: ${JINA_API_KEY}
+      COHERE_API_KEY: ${COHERE_API_KEY}
+      AWS_S3_REGION: ${AWS_S3_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      UNSTRUCTURED_API_KEY: ${UNSTRUCTURED_API_KEY}
+      UNSTRUCTURED_API_URL: ${UNSTRUCTURED_API_URL} 
+      PINECONE_API_KEY: ${PINECONE_API_KEY}
+      PINECONE_INDEX_NAME: ${PINECONE_INDEX_NAME}
+      QDRANT_BASE_URL: ${QDRANT_BASE_URL}
+      QDRANT_API_KEY: ${QDRANT_API_KEY}
+      CHROMADB_URL: ${CHROMADB_URL}
+      WEAVIATE_URL: ${WEAVIATE_URL}
+      WEAVIATE_API_KEY: ${WEAVIATE_API_KEY}
+      TURBOPUFFER_API_KEY: ${TURBOPUFFER_API_KEY}
+      MILVUS_ADDRESS: ${MILVUS_ADDRESS}
 
     restart: unless-stopped
     ports:
@@ -232,12 +249,12 @@ services:
       dockerfile: ./apps/webapp/Dockerfile.dev
       context: ./
       args:
-        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+        VITE_BACKEND_DOMAIN: http://localhost:3000
     environment:
       NEXT_PUBLIC_POSTHOG_KEY: ${POSTHOG_KEY}
       NEXT_PUBLIC_POSTHOG_HOST: ${POSTHOG_HOST}
       NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
-      NEXT_PUBLIC_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+      NEXT_PUBLIC_BACKEND_DOMAIN: http://localhost:3000
       NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
       NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
       NEXT_PUBLIC_REDIRECT_WEBHOOK_INGRESS: ${REDIRECT_TUNNEL_INGRESS} 
@@ -258,7 +275,7 @@ services:
       dockerfile: ./apps/magic-link/Dockerfile.dev
       context: ./
       args:
-        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
+        VITE_BACKEND_DOMAIN: http://localhost:3000
     restart: always
     ports:
       - 81:5173
@@ -314,9 +331,29 @@ services:
     volumes:
       - ./docs/:/app
 
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_storage:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server --console-address ":9001" /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - backend
+
 volumes:
   local_pgdata:
   pgadmin-data:
+  minio_storage:
 
 networks:
   frontend:

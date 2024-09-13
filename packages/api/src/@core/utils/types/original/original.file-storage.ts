@@ -10,6 +10,9 @@ import {
   BoxSharedLinkInput,
   BoxSharedLinkOutput,
 } from '@filestorage/sharedlink/services/box/types';
+
+/* INPUT */
+
 import {
   OnedriveSharedLinkInput,
   OnedriveSharedLinkOutput,
@@ -45,7 +48,40 @@ import {
   OnedriveDriveOutput,
 } from '@filestorage/drive/services/onedrive/types';
 
-/* INPUT */
+import {
+  SharepointSharedLinkInput,
+  SharepointSharedLinkOutput,
+} from '@filestorage/sharedlink/services/sharepoint/types';
+
+import {
+  SharepointPermissionInput,
+  SharepointPermissionOutput,
+} from '@filestorage/permission/services/sharepoint/types';
+
+import {
+  SharepointGroupInput,
+  SharepointGroupOutput,
+} from '@filestorage/group/services/sharepoint/types';
+
+import {
+  SharepointUserInput,
+  SharepointUserOutput,
+} from '@filestorage/user/services/sharepoint/types';
+
+import {
+  SharepointFolderInput,
+  SharepointFolderOutput,
+} from '@filestorage/folder/services/sharepoint/types';
+
+import {
+  SharepointFileInput,
+  SharepointFileOutput,
+} from '@filestorage/file/services/sharepoint/types';
+
+import {
+  SharepointDriveInput,
+  SharepointDriveOutput,
+} from '@filestorage/drive/services/sharepoint/types';
 
 import {
   BoxFileInput,
@@ -63,27 +99,67 @@ import {
   BoxUserInput,
   BoxUserOutput,
 } from '@filestorage/user/services/box/types';
+import {
+  BoxSharedLinkInput,
+  BoxSharedLinkOutput,
+} from '@filestorage/sharedlink/services/box/types';
+  GoogleDriveFileInput,
+  GoogleDriveFileOutput,
+} from '@filestorage/file/services/googledrive/types';
+import {
+  GoogleDriveFolderInput,
+  GoogleDriveFolderOutput,
+} from '@filestorage/folder/services/googledrive/types';
+import {
+  GoogleDriveDriveInput,
+  GoogleDriveDriveOutput,
+} from '@filestorage/drive/services/googledrive/types';
 
 /* file */
-export type OriginalFileInput = BoxFileInput | OnedriveFileInput | DropboxFileInput;
 
 /* folder */
-export type OriginalFolderInput = BoxFolderInput | OnedriveFolderInput | DropboxFolderInput;
+export type OriginalFileInput =
+  | BoxFileInput
+  | OnedriveFileInput
+  | SharepointFileInput;
+  | GoogleDriveFileInput
+  | DropboxFileInput;
+
+/* folder */
+export type OriginalFolderInput =
+  | BoxFolderInput
+  | OnedriveFolderInput
+  | SharepointFolderInput;
+  | GoogleDriveFolderInput
+  | DropboxFolderInput;
 
 /* permission */
-export type OriginalPermissionInput = any | OnedrivePermissionInput;
+export type OriginalPermissionInput =
+  | any
+  | OnedrivePermissionInput
+  | SharepointPermissionInput;
 
 /* shared link */
 export type OriginalSharedLinkInput = any;
 
 /* drive */
-export type OriginalDriveInput = any | OnedriveDriveInput;
+export type OriginalDriveInput = GoogleDriveDriveInput | OnedriveDriveInput | SharepointDriveInput;
 
 /* group */
-export type OriginalGroupInput = BoxGroupInput | OnedriveGroupInput | DropboxGroupInput;
 
 /* user */
-export type OriginalUserInput = BoxUserInput | OnedriveUserInput | DropboxUserInput;
+export type OriginalGroupInput =
+  | BoxGroupInput
+  | OnedriveGroupInput
+  | SharepointGroupInput
+  | DropboxGroupInput;
+
+/* user */
+export type OriginalUserInput =
+  | BoxUserInput
+  | OnedriveUserInput
+  | SharepointUserInput
+  | DropboxUserInput;
 
 export type FileStorageObjectInput =
   | OriginalFileInput
@@ -97,25 +173,50 @@ export type FileStorageObjectInput =
 /* OUTPUT */
 
 /* file */
-export type OriginalFileOutput = BoxFileOutput | OnedriveFileOutput | DropboxFileOutput;
 
 /* folder */
-export type OriginalFolderOutput = BoxFolderOutput | OnedriveFolderOutput | DropboxFolderOutput;
+export type OriginalFileOutput =
+  | BoxFileOutput
+  | OnedriveFileOutput
+  | SharepointFileOutput;
+  | GoogleDriveFileOutput
+  | DropboxFileOutput;
+
+/* folder */
+export type OriginalFolderOutput =
+  | BoxFolderOutput
+  | OnedriveFolderOutput
+  | SharepointFolderOutput;
+  | GoogleDriveFolderOutput
+  | DropboxFolderOutput;
 
 /* permission */
-export type OriginalPermissionOutput = any | OnedrivePermissionOutput;
+export type OriginalPermissionOutput =
+  | any
+  | OnedrivePermissionOutput
+  | SharepointPermissionOutput;
 
 /* shared link */
 export type OriginalSharedLinkOutput = any;
 
 /* drive */
-export type OriginalDriveOutput = any | OnedriveDriveOutput;
+export type OriginalDriveOutput = GoogleDriveDriveOutput | OnedriveDriveOutput | SharepointDriveOutput;
 
 /* group */
-export type OriginalGroupOutput = BoxGroupOutput | OnedriveGroupOutput | DropboxGroupOutput;
 
 /* user */
-export type OriginalUserOutput = BoxUserOutput | OnedriveUserOutput | DropboxUserOutput;
+export type OriginalGroupOutput =
+  | BoxGroupOutput
+  | OnedriveGroupOutput
+  | SharepointGroupOutput
+  | DropboxGroupOutput;
+
+/* user */
+export type OriginalUserOutput =
+  | BoxUserOutput
+  | OnedriveUserOutput
+  | SharepointUserOutput
+  | DropboxUserOutput;
 
 export type FileStorageObjectOutput =
   | OriginalFileOutput
@@ -128,8 +229,10 @@ export type FileStorageObjectOutput =
 
 export type OriginalSharedlinkInput =
   | BoxSharedLinkInput
-  | OnedriveSharedLinkInput;
+  | OnedriveSharedLinkInput
+  | SharepointSharedLinkInput;
 
 export type OriginalSharedlinkOutput =
   | BoxSharedLinkOutput
-  | OnedriveSharedLinkOutput;
+  | OnedriveSharedLinkOutput
+  | SharepointSharedLinkOutput;

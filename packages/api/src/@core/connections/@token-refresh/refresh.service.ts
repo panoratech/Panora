@@ -49,7 +49,7 @@ export class OAuthTokenRefreshService implements OnModuleInit {
         }
       } catch (error) {
         this.logger.error(
-          `Failed to refresh token for connection: ${connection.id_connection}`,
+          `Failed to refresh token for connection: ${connection.id_connection} ${connection.provider_slug}`,
           error,
         );
       }
