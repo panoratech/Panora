@@ -5,7 +5,7 @@ import * as fs from 'fs';
 
 @Injectable()
 export class Utils {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async fetchFileStreamFromURL(file_url: string) {
     return fs.createReadStream(file_url);
@@ -247,6 +247,20 @@ export class Utils {
       const extension = getFileExtension(file_name);
       if (!extension) throw new Error('extension doesnt exist for your file');
       return MIME_TYPES[extension.toLowerCase()];
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  getFileExtensionFromMimeType(mimeType: string): string | undefined {
+    try {
+      const normalizedMimeType = mimeType.toLowerCase();
+      for (const [extension, mime] of Object.entries(MIME_TYPES)) {
+        if (mime.toLowerCase() === normalizedMimeType) {
+          return extension;
+        }
+      }
+      return undefined;
     } catch (error) {
       throw error;
     }

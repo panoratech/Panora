@@ -55,12 +55,30 @@ import {
   BoxUserInput,
   BoxUserOutput,
 } from '@filestorage/user/services/box/types';
+import {
+  GoogleDriveFileInput,
+  GoogleDriveFileOutput,
+} from '@filestorage/file/services/googledrive/types';
+import {
+  GoogleDriveFolderInput,
+  GoogleDriveFolderOutput,
+} from '@filestorage/folder/services/googledrive/types';
+import {
+  GoogleDriveDriveInput,
+  GoogleDriveDriveOutput,
+} from '@filestorage/drive/services/googledrive/types';
 
 /* file */
-export type OriginalFileInput = BoxFileInput | OnedriveFileInput;
+export type OriginalFileInput =
+  | BoxFileInput
+  | OnedriveFileInput
+  | GoogleDriveFileInput;
 
 /* folder */
-export type OriginalFolderInput = BoxFolderInput | OnedriveFolderInput;
+export type OriginalFolderInput =
+  | BoxFolderInput
+  | OnedriveFolderInput
+  | GoogleDriveFolderInput;
 
 /* permission */
 export type OriginalPermissionInput = any | OnedrivePermissionInput;
@@ -69,7 +87,7 @@ export type OriginalPermissionInput = any | OnedrivePermissionInput;
 export type OriginalSharedLinkInput = any;
 
 /* drive */
-export type OriginalDriveInput = any | OnedriveDriveInput;
+export type OriginalDriveInput = GoogleDriveDriveInput | OnedriveDriveInput;
 
 /* group */
 export type OriginalGroupInput = BoxGroupInput | OnedriveGroupInput;
@@ -89,10 +107,16 @@ export type FileStorageObjectInput =
 /* OUTPUT */
 
 /* file */
-export type OriginalFileOutput = BoxFileOutput | OnedriveFileOutput;
+export type OriginalFileOutput =
+  | BoxFileOutput
+  | OnedriveFileOutput
+  | GoogleDriveFileOutput;
 
 /* folder */
-export type OriginalFolderOutput = BoxFolderOutput | OnedriveFolderOutput;
+export type OriginalFolderOutput =
+  | BoxFolderOutput
+  | OnedriveFolderOutput
+  | GoogleDriveFolderOutput;
 
 /* permission */
 export type OriginalPermissionOutput = any | OnedrivePermissionOutput;
@@ -101,7 +125,7 @@ export type OriginalPermissionOutput = any | OnedrivePermissionOutput;
 export type OriginalSharedLinkOutput = any;
 
 /* drive */
-export type OriginalDriveOutput = any | OnedriveDriveOutput;
+export type OriginalDriveOutput = GoogleDriveDriveOutput | OnedriveDriveOutput;
 
 /* group */
 export type OriginalGroupOutput = BoxGroupOutput | OnedriveGroupOutput;

@@ -1,6 +1,3 @@
-import { OnedriveFolderMapper } from './services/onedrive/mappers';
-import { OnedriveService } from './services/onedrive';
-import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -10,6 +7,10 @@ import { FolderController } from './folder.controller';
 import { BoxService } from './services/box';
 import { BoxFolderMapper } from './services/box/mappers';
 import { FolderService } from './services/folder.service';
+import { GoogleDriveFolderService } from './services/googledrive';
+import { GoogleDriveFolderMapper } from './services/googledrive/mappers';
+import { OnedriveService } from './services/onedrive';
+import { OnedriveFolderMapper } from './services/onedrive/mappers';
 import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
 
@@ -22,12 +23,14 @@ import { SyncService } from './sync/sync.service';
     WebhookService,
     ServiceRegistry,
     IngestDataService,
-    BoxFolderMapper,
     Utils,
+    BoxFolderMapper,
+    OnedriveFolderMapper,
+    GoogleDriveFolderMapper,
     /* PROVIDERS SERVICES */
     BoxService,
     OnedriveService,
-    OnedriveFolderMapper,
+    GoogleDriveFolderService,
   ],
   exports: [SyncService],
 })

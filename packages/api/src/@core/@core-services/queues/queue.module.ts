@@ -18,6 +18,9 @@ import { Queues } from './types';
       {
         name: Queues.FAILED_PASSTHROUGH_REQUESTS_HANDLER,
       },
+      {
+        name: Queues.RAG_DOCUMENT_PROCESSING,
+      },
     ),
   ],
   providers: [BullQueueService],

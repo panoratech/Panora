@@ -19,6 +19,7 @@ import { UserModule as TUserModule } from '@ticketing/user/user.module';
 import { LoggerService } from '../@core-services/logger/logger.service';
 import { SyncController } from './sync.controller';
 import { CoreSyncService } from './sync.service';
+import { SyncProcessor } from './sync.processor';
 
 @Module({
   imports: [
@@ -59,8 +60,9 @@ import { CoreSyncService } from './sync.service';
     TicketModule,
     TUserModule,
     CoreSyncService,
+    SyncProcessor,
   ],
-  providers: [CoreSyncService, LoggerService],
+  providers: [CoreSyncService, LoggerService, SyncProcessor],
   controllers: [SyncController],
 })
 export class SyncModule {}

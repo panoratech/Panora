@@ -11,7 +11,7 @@ export type RateLimit = {
   limit: string;
 };
 
-//for providers secret it is of the form
+// for providers secret it is of the form
 // get{provider_name}{vertical_name}Secret
 @Injectable()
 export class EnvironmentService {
@@ -62,6 +62,73 @@ export class EnvironmentService {
     return {
       ttl: this.configService.get<string>('THROTTLER_TTL'),
       limit: this.configService.get<string>('THROTTLER_LIMIT'),
+    };
+  }
+
+  getChromaCreds(): string {
+    return this.configService.get<string>('CHROMADB_URL');
+  }
+
+  getMilvusCreds() {
+    return {
+      address: this.configService.get<string>('MILVUS_ADDRESS'),
+    };
+  }
+  getPineconeCreds() {
+    return {
+      apiKey: this.configService.get<string>('PINECONE_API_KEY'),
+      indexName: this.configService.get<string>('PINECONE_INDEX_NAME'),
+    };
+  }
+
+  getWeaviateCreds() {
+    return {
+      url: this.configService.get<string>('WEAVIATE_URL'),
+      apiKey: this.configService.get<string>('WEAVIATE_API_KEY'),
+    };
+  }
+
+  getTurboPufferApiKey(): string {
+    return this.configService.get<string>('TURBOPUFFER_API_KEY');
+  }
+
+  getQdrantCreds() {
+    return {
+      baseUrl: this.configService.get<string>('QDRANT_BASE_URL'),
+      apiKey: this.configService.get<string>('QDRANT_API_KEY'),
+    };
+  }
+
+  getAwsCredentials() {
+    return {
+      region: this.configService.get<string>('AWS_REGION'),
+      accessKeyId: this.configService.get<string>('AWS_ACCESS_KEY_ID'),
+      secretAccessKey: this.configService.get<string>('AWS_SECRET_ACCESS_KEY'),
+    };
+  }
+  getMinioCredentials() {
+    return {
+      accessKeyId: this.configService.get<string>('MINIO_ROOT_USER'),
+      secretAccessKey: this.configService.get<string>('MINIO_ROOT_PASSWORD'),
+    };
+  }
+
+  getOpenAIApiKey(): string {
+    return this.configService.get<string>('OPENAI_API_KEY');
+  }
+
+  getCohereApiKey(): string {
+    return this.configService.get<string>('COHERE_API_KEY');
+  }
+
+  getJinaApiKey(): string {
+    return this.configService.get<string>('JINA_API_KEY');
+  }
+
+  getUnstructuredCreds() {
+    return {
+      apiKey: this.configService.get<string>('UNSTRUCTURED_API_KEY'),
+      apiUrl: this.configService.get<string>('UNSTRUCTURED_API_URL'),
     };
   }
 }

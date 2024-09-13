@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export type TaskStatus = 'PENDING' | 'COMPLETED';
+export type TaskStatus = 'PENDING' | 'COMPLETED' | string;
 export class UnifiedCrmTaskInput {
   @ApiProperty({
     type: String,

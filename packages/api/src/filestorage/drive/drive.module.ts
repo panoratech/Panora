@@ -1,14 +1,15 @@
-import { OnedriveDriveMapper } from './services/onedrive/mappers';
-import { OnedriveService } from './services/onedrive';
-import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { Utils } from '@filestorage/@lib/@utils';
 import { Module } from '@nestjs/common';
 import { DriveController } from './drive.controller';
 import { DriveService } from './services/drive.service';
+import { GoogleDriveService } from './services/googledrive';
+import { GoogleDriveMapper } from './services/googledrive/mappers';
+import { OnedriveService } from './services/onedrive';
+import { OnedriveDriveMapper } from './services/onedrive/mappers';
 import { ServiceRegistry } from './services/registry.service';
 import { SyncService } from './sync/sync.service';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { Utils } from '@filestorage/@lib/@utils';
 @Module({
   controllers: [DriveController],
   providers: [
@@ -20,6 +21,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     Utils,
     /* PROVIDERS SERVICES */
     OnedriveService,
+    GoogleDriveService,
+    GoogleDriveMapper,
     OnedriveDriveMapper,
   ],
   exports: [SyncService],
