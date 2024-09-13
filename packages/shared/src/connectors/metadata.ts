@@ -2732,7 +2732,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'dropbox': {
-        scopes: 'files.metadata.read files.metadata.write files.content.read files.content.write',
+        scopes: 'files.metadata.read files.metadata.write files.content.read files.content.write team_data.member members.read groups.read' ,
         urls: {
           docsUrl: 'https://www.dropbox.com/developers/documentation/http/documentation',
           apiUrl: 'https://api.dropboxapi.com/2',
