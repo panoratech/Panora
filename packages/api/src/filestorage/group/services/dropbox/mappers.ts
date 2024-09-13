@@ -1,4 +1,3 @@
-import { BoxGroupInput, BoxGroupOutput } from './types';
 import {
   UnifiedFilestorageGroupInput,
   UnifiedFilestorageGroupOutput,
@@ -7,11 +6,17 @@ import { IGroupMapper } from '@filestorage/group/types';
 import { Utils } from '@filestorage/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
+import { DropboxGroupInput, DropboxGroupOutput } from './types';
 
 @Injectable()
-export class BoxGroupMapper implements IGroupMapper {
+export class DropboxGroupMapper implements IGroupMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
-    this.mappersRegistry.registerService('filestorage', 'group', 'box', this);
+    this.mappersRegistry.registerService(
+      'filestorage',
+      'group',
+      'dropbox',
+      this,
+    );
   }
 
   async desunify(
@@ -20,12 +25,12 @@ export class BoxGroupMapper implements IGroupMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<BoxGroupInput> {
+  ): Promise<DropboxGroupInput> {
     return;
   }
 
   async unify(
-    source: BoxGroupOutput | BoxGroupOutput[],
+    source: DropboxGroupOutput | DropboxGroupOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
@@ -39,7 +44,7 @@ export class BoxGroupMapper implements IGroupMapper {
         customFieldMappings,
       );
     }
-    // Handling array of BoxGroupOutput
+    // Handling array of DropboxGroupOutput
     return Promise.all(
       source.map((group) =>
         this.mapSingleGroupToUnified(group, connectionId, customFieldMappings),
@@ -48,7 +53,7 @@ export class BoxGroupMapper implements IGroupMapper {
   }
 
   private async mapSingleGroupToUnified(
-    group: BoxGroupOutput,
+    group: DropboxGroupOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
@@ -62,12 +67,12 @@ export class BoxGroupMapper implements IGroupMapper {
       }
     }
     return {
-      remote_id: group.id,
-      name: group.name || null,
+      remote_id: group.group_id,
+      remote_data: group,
+      name: group.group_name,
       users: [],
+      field_mappings,
       remote_was_deleted: null,
-      //created_at: group.created_at || null,
-      //modified_at: group.modified_at || null,
     };
   }
 }

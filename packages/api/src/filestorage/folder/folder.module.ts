@@ -1,3 +1,5 @@
+import { DropboxFolderMapper } from './services/dropbox/mappers';
+import { DropboxService } from './services/dropbox';
 import { SharepointFolderMapper } from './services/sharepoint/mappers';
 import { SharepointService } from './services/sharepoint';
 import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
@@ -35,6 +37,9 @@ import { SyncService } from './sync/sync.service';
     SharepointService,
     SharepointFolderMapper,
     OnedriveService,
+    OnedriveFolderMapper,
+    DropboxService,
+    DropboxFolderMapper,
     GoogleDriveFolderService,
   ],
   exports: [SyncService],

@@ -1,3 +1,5 @@
+import { DropboxGroupMapper } from './services/dropbox/mappers';
+import { DropboxService } from './services/dropbox';
 import { SharepointGroupMapper } from './services/sharepoint/mappers';
 import { SharepointService } from './services/sharepoint';
 import { OnedriveGroupMapper } from './services/onedrive/mappers';
@@ -32,6 +34,8 @@ import { SyncService } from './sync/sync.service';
     SharepointGroupMapper,
     OnedriveService,
     OnedriveGroupMapper,
+    DropboxService,
+    DropboxGroupMapper,
   ],
   exports: [SyncService],
 })

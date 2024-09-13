@@ -2732,14 +2732,15 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'dropbox': {
+        scopes: 'files.metadata.read files.metadata.write files.content.read files.content.write team_data.member members.read groups.read' ,
         urls: {
           docsUrl: 'https://www.dropbox.com/developers/documentation/http/documentation',
-          apiUrl: 'https://api.dropboxapi.com',
+          apiUrl: 'https://api.dropboxapi.com/2',
           authBaseUrl: 'https://www.dropbox.com/oauth2/authorize'
         },
         logoPath: 'https://cdn2.iconfinder.com/data/icons/metro-ui-dock/512/Dropbox.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
