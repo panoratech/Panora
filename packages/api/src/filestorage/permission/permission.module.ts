@@ -1,3 +1,5 @@
+import { SharepointPermissionMapper } from './services/sharepoint/mappers';
+import { SharepointService } from './services/sharepoint';
 import { OnedrivePermissionMapper } from './services/onedrive/mappers';
 import { OnedriveService } from './services/onedrive';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
@@ -31,6 +33,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     IngestDataService,
 
     /* PROVIDERS SERVICES */
+    SharepointService,
+    SharepointPermissionMapper,
     OnedriveService,
     OnedrivePermissionMapper,
   ],

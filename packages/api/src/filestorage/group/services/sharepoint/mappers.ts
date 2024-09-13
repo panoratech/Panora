@@ -6,15 +6,15 @@ import { IGroupMapper } from '@filestorage/group/types';
 import { Utils } from '@filestorage/@lib/@utils';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
-import { OnedriveGroupInput, OnedriveGroupOutput } from './types';
+import { SharepointGroupInput, SharepointGroupOutput } from './types';
 
 @Injectable()
-export class OnedriveGroupMapper implements IGroupMapper {
+export class SharepointGroupMapper implements IGroupMapper {
   constructor(private mappersRegistry: MappersRegistry, private utils: Utils) {
     this.mappersRegistry.registerService(
       'filestorage',
       'group',
-      'onedrive',
+      'sharepoint',
       this,
     );
   }
@@ -25,12 +25,12 @@ export class OnedriveGroupMapper implements IGroupMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<OnedriveGroupInput> {
+  ): Promise<SharepointGroupInput> {
     return;
   }
 
   async unify(
-    source: OnedriveGroupOutput | OnedriveGroupOutput[],
+    source: SharepointGroupOutput | SharepointGroupOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
@@ -44,7 +44,7 @@ export class OnedriveGroupMapper implements IGroupMapper {
         customFieldMappings,
       );
     }
-    // Handling array of OneDriveGroupOutput
+    // Handling array of SharepointGroupOutput
     return Promise.all(
       source.map((group) =>
         this.mapSingleGroupToUnified(group, connectionId, customFieldMappings),
@@ -53,7 +53,7 @@ export class OnedriveGroupMapper implements IGroupMapper {
   }
 
   private async mapSingleGroupToUnified(
-    group: OnedriveGroupOutput,
+    group: SharepointGroupOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
@@ -68,7 +68,7 @@ export class OnedriveGroupMapper implements IGroupMapper {
     }
 
     // todo: do something about users
-    // https://graph.microsoft.com/v1.0/groups/group-id/members
+    // https://graph.microsoft.com/groups/group-id/members
 
     return {
       remote_id: group.id,

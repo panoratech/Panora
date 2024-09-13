@@ -1,3 +1,8 @@
+import { SharepointFileMapper } from './services/sharepoint/mappers';
+import { SharepointService } from './services/sharepoint';
+import { OnedriveFileMapper } from './services/onedrive/mappers';
+import { OnedriveService } from './services/onedrive';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Module } from '@nestjs/common';
 import { FileController } from './file.controller';
@@ -28,6 +33,8 @@ import { GoogleDriveFileMapper } from './services/googledrive/mappers';
     GoogleDriveFileMapper,
     /* PROVIDERS SERVICES */
     BoxService,
+    SharepointService,
+    SharepointFileMapper,
     OnedriveService,
     GoogleDriveService,
   ],

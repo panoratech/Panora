@@ -1,3 +1,8 @@
+import { OnedriveDriveMapper } from './services/onedrive/mappers';
+import { OnedriveService } from './services/onedrive';
+import { SharepointDriveMapper } from './services/sharepoint/mappers';
+import { SharepointService } from './services/sharepoint';
+import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Utils } from '@filestorage/@lib/@utils';
@@ -24,6 +29,8 @@ import { SyncService } from './sync/sync.service';
     GoogleDriveService,
     GoogleDriveMapper,
     OnedriveDriveMapper,
+    SharepointService,
+    SharepointDriveMapper,
   ],
   exports: [SyncService],
 })

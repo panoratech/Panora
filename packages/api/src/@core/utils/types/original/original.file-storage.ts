@@ -1,7 +1,5 @@
-import {
-  BoxSharedLinkInput,
-  BoxSharedLinkOutput,
-} from '@filestorage/sharedlink/services/box/types';
+/* INPUT */
+
 import {
   OnedriveSharedLinkInput,
   OnedriveSharedLinkOutput,
@@ -37,7 +35,40 @@ import {
   OnedriveDriveOutput,
 } from '@filestorage/drive/services/onedrive/types';
 
-/* INPUT */
+import {
+  SharepointSharedLinkInput,
+  SharepointSharedLinkOutput,
+} from '@filestorage/sharedlink/services/sharepoint/types';
+
+import {
+  SharepointPermissionInput,
+  SharepointPermissionOutput,
+} from '@filestorage/permission/services/sharepoint/types';
+
+import {
+  SharepointGroupInput,
+  SharepointGroupOutput,
+} from '@filestorage/group/services/sharepoint/types';
+
+import {
+  SharepointUserInput,
+  SharepointUserOutput,
+} from '@filestorage/user/services/sharepoint/types';
+
+import {
+  SharepointFolderInput,
+  SharepointFolderOutput,
+} from '@filestorage/folder/services/sharepoint/types';
+
+import {
+  SharepointFileInput,
+  SharepointFileOutput,
+} from '@filestorage/file/services/sharepoint/types';
+
+import {
+  SharepointDriveInput,
+  SharepointDriveOutput,
+} from '@filestorage/drive/services/sharepoint/types';
 
 import {
   BoxFileInput,
@@ -56,6 +87,9 @@ import {
   BoxUserOutput,
 } from '@filestorage/user/services/box/types';
 import {
+  BoxSharedLinkInput,
+  BoxSharedLinkOutput,
+} from '@filestorage/sharedlink/services/box/types';
   GoogleDriveFileInput,
   GoogleDriveFileOutput,
 } from '@filestorage/file/services/googledrive/types';
@@ -72,28 +106,39 @@ import {
 export type OriginalFileInput =
   | BoxFileInput
   | OnedriveFileInput
+  | SharepointFileInput;
   | GoogleDriveFileInput;
 
 /* folder */
 export type OriginalFolderInput =
   | BoxFolderInput
   | OnedriveFolderInput
+  | SharepointFolderInput;
   | GoogleDriveFolderInput;
 
 /* permission */
-export type OriginalPermissionInput = any | OnedrivePermissionInput;
+export type OriginalPermissionInput =
+  | any
+  | OnedrivePermissionInput
+  | SharepointPermissionInput;
 
 /* shared link */
 export type OriginalSharedLinkInput = any;
 
 /* drive */
-export type OriginalDriveInput = GoogleDriveDriveInput | OnedriveDriveInput;
+export type OriginalDriveInput = GoogleDriveDriveInput | OnedriveDriveInput | SharepointDriveInput;
 
 /* group */
-export type OriginalGroupInput = BoxGroupInput | OnedriveGroupInput;
+export type OriginalGroupInput =
+  | BoxGroupInput
+  | OnedriveGroupInput
+  | SharepointGroupInput;
 
 /* user */
-export type OriginalUserInput = BoxUserInput | OnedriveUserInput;
+export type OriginalUserInput =
+  | BoxUserInput
+  | OnedriveUserInput
+  | SharepointUserInput;
 
 export type FileStorageObjectInput =
   | OriginalFileInput
@@ -110,28 +155,39 @@ export type FileStorageObjectInput =
 export type OriginalFileOutput =
   | BoxFileOutput
   | OnedriveFileOutput
+  | SharepointFileOutput;
   | GoogleDriveFileOutput;
 
 /* folder */
 export type OriginalFolderOutput =
   | BoxFolderOutput
   | OnedriveFolderOutput
+  | SharepointFolderOutput;
   | GoogleDriveFolderOutput;
 
 /* permission */
-export type OriginalPermissionOutput = any | OnedrivePermissionOutput;
+export type OriginalPermissionOutput =
+  | any
+  | OnedrivePermissionOutput
+  | SharepointPermissionOutput;
 
 /* shared link */
 export type OriginalSharedLinkOutput = any;
 
 /* drive */
-export type OriginalDriveOutput = GoogleDriveDriveOutput | OnedriveDriveOutput;
+export type OriginalDriveOutput = GoogleDriveDriveOutput | OnedriveDriveOutput | SharepointDriveOutput;
 
 /* group */
-export type OriginalGroupOutput = BoxGroupOutput | OnedriveGroupOutput;
+export type OriginalGroupOutput =
+  | BoxGroupOutput
+  | OnedriveGroupOutput
+  | SharepointGroupOutput;
 
 /* user */
-export type OriginalUserOutput = BoxUserOutput | OnedriveUserOutput;
+export type OriginalUserOutput =
+  | BoxUserOutput
+  | OnedriveUserOutput
+  | SharepointUserOutput;
 
 export type FileStorageObjectOutput =
   | OriginalFileOutput
@@ -144,8 +200,10 @@ export type FileStorageObjectOutput =
 
 export type OriginalSharedlinkInput =
   | BoxSharedLinkInput
-  | OnedriveSharedLinkInput;
+  | OnedriveSharedLinkInput
+  | SharepointSharedLinkInput;
 
 export type OriginalSharedlinkOutput =
   | BoxSharedLinkOutput
-  | OnedriveSharedLinkOutput;
+  | OnedriveSharedLinkOutput
+  | SharepointSharedLinkOutput;
