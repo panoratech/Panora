@@ -36,7 +36,11 @@ export class SharepointService implements IUserService {
         },
       });
 
-      const resp = await axios.get(`${connection.account_url}/users`, {
+      // remove /sites/site_id from account_url
+      const url = connection.account_url.replace(/\/sites\/.+$/, '');
+
+      // ref: https://learn.microsoft.com/en-us/graph/api/user-list?view=graph-rest-1.0&tabs=http
+      const resp = await axios.get(`${url}/users`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

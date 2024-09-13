@@ -123,7 +123,6 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        // `https://app.sharepoint.com/oauth2/tokens`,
         `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
         formData.toString(),
         {
@@ -140,6 +139,17 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
         'OAuth credentials : sharepoint filestorage ' + JSON.stringify(data),
       );
 
+      // get site_id from tenant and sitename
+      const site_details = await axios.get(
+        `https://graph.microsoft.com/v1.0/sites/${tenant}.sharepoint.com:/sites/${site}`,
+        {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+          },
+        },
+      );
+      const site_id = site_details.data.id;
+
       let db_res;
       const connection_token = uuidv4();
 
@@ -154,7 +164,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
             account_url: (
               CONNECTORS_METADATA['filestorage']['sharepoint'].urls
                 .apiUrl as DynamicApiUrl
-            )(site),
+            )(site_id),
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -173,7 +183,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
             account_url: (
               CONNECTORS_METADATA['filestorage']['sharepoint'].urls
                 .apiUrl as DynamicApiUrl
-            )(site),
+            )(site_id),
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -220,7 +230,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
       )) as OAuth2AuthData;
 
       const res = await axios.post(
-        `https://app.sharepoint.com/oauth2/tokens`,
+        `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
         formData.toString(),
         {
           headers: {
