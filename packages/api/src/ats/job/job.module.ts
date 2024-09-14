@@ -16,6 +16,8 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { AshbyJobMapper } from './services/ashby/mappers';
 import { Utils } from '@ats/@lib/@utils';
+import { BamboohrService } from './services/bamboohr';
+import { BamboohrJobMapper } from './services/bamboohr/mapper';
 
 @Module({
   controllers: [JobController],
@@ -35,6 +37,8 @@ import { Utils } from '@ats/@lib/@utils';
     Utils,
     /* PROVIDERS SERVICES */
     AshbyService,
+    BamboohrService,
+    BamboohrJobMapper,
   ],
   exports: [SyncService],
 })

@@ -1,0 +1,73 @@
+import { BamboohrDepartmentInput, BamboohrDepartmentOutput } from './types';
+import {
+  UnifiedAtsDepartmentInput,
+  UnifiedAtsDepartmentOutput,
+} from '@ats/department/types/model.unified';
+import { IDepartmentMapper } from '@ats/department/types';
+import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
+import { Injectable } from '@nestjs/common';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { Utils } from '@ats/@lib/@utils';
+
+@Injectable()
+export class BambooDepartmentMapper implements IDepartmentMapper {
+  constructor(
+    private mappersRegistry: MappersRegistry,
+    private utils: Utils,
+    private coreUnificationService: CoreUnification,
+  ) {
+    this.mappersRegistry.registerService('ats', 'department', 'bamboohr', this);
+  }
+
+  async desunify(
+    source: UnifiedAtsDepartmentInput,
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+  ): Promise<BamboohrDepartmentInput> {
+    return;
+  }
+
+  async unify(
+    source: BamboohrDepartmentOutput | BamboohrDepartmentOutput[],
+    connectionId: string,
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+  ): Promise<UnifiedAtsDepartmentOutput | UnifiedAtsDepartmentOutput[]> {
+    if (!Array.isArray(source)) {
+      return await this.mapSingleDepartmentToUnified(
+        source,
+        connectionId,
+        customFieldMappings,
+      );
+    }
+    // Handling array of BamboohrDepartmentOutput
+    return Promise.all(
+      source.map((department) =>
+        this.mapSingleDepartmentToUnified(
+          department,
+          connectionId,
+          customFieldMappings,
+        ),
+      ),
+    );
+  }
+
+  private async mapSingleDepartmentToUnified(
+    department: BamboohrDepartmentOutput,
+    connectionId: string,
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+  ): Promise<UnifiedAtsDepartmentOutput> {
+    return {
+      remote_id: department.id + "",
+      remote_data: department,
+      name: department.label || null,
+    };
+  }
+}

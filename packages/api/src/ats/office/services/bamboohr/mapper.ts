@@ -57,11 +57,19 @@ export class BamboohrMapper implements IOfficeMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedAtsOfficeOutput> {
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = office[mapping.remote_id];
+      }
+    }
+
     return {
       remote_id: office.id,
       remote_data: office,
       name: office.name || null,
       location: `${office.addressLine1}, ${office.addressLine2}, ${office.city}, ${office.state.name}, ${office.zipcode}, ${office.country}`,
+      ...field_mappings,
     };
   }
 }

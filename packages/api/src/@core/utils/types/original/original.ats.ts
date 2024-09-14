@@ -20,11 +20,13 @@ import {
   AshbyDepartmentInput,
   AshbyDepartmentOutput,
 } from '@ats/department/services/ashby/types';
+import { BamboohrDepartmentOutput } from '@ats/department/services/bamboohr/types';
 import {
   AshbyInterviewInput,
   AshbyInterviewOutput,
 } from '@ats/interview/services/ashby/types';
 import { AshbyJobInput, AshbyJobOutput } from '@ats/job/services/ashby/types';
+import { BamboohrJobOutput } from '@ats/job/services/bamboohr/types';
 import {
   AshbyJobInterviewStageInput,
   AshbyJobInterviewStageOutput,
@@ -124,7 +126,9 @@ export type OriginalAttachmentOutput = AshbyAttachmentOutput;
 export type OriginalCandidateOutput = AshbyCandidateOutput;
 
 /* department */
-export type OriginalDepartmentOutput = AshbyDepartmentOutput;
+export type OriginalDepartmentOutput =
+  | AshbyDepartmentOutput
+  | BamboohrDepartmentOutput;
 
 /* interview */
 export type OriginalInterviewOutput = AshbyInterviewOutput;
@@ -133,7 +137,7 @@ export type OriginalInterviewOutput = AshbyInterviewOutput;
 export type OriginalJobInterviewStageOutput = AshbyJobInterviewStageOutput;
 
 /* job */
-export type OriginalJobOutput = AshbyJobOutput;
+export type OriginalJobOutput = AshbyJobOutput | BamboohrJobOutput;
 
 /* offer */
 export type OriginalOfferOutput = AshbyOfferOutput;
