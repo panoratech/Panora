@@ -62,7 +62,7 @@ export class BamboohrUserMapper implements IUserMapper {
   }
 
   private mapSingleUserToUnified(
-    user: BambooUser,
+    user: Partial<BambooUser>,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
