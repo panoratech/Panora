@@ -181,7 +181,7 @@ paths:
       x-speakeasy-group: auth.login
   /connections:
     get:
-      operationId: getConnections
+      operationId: retrieveConnections
       summary: List Connections
       parameters: []
       responses:

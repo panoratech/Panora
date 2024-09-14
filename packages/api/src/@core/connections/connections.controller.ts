@@ -186,7 +186,10 @@ export class ConnectionsController {
     }
   }
 
-  @ApiOperation({ operationId: 'getConnections', summary: 'List Connections' })
+  @ApiOperation({
+    operationId: 'retrieveConnections',
+    summary: 'List Connections',
+  })
   @ApiGetArrayCustomResponse(Connection)
   @UseGuards(ApiKeyAuthGuard)
   @Get()
