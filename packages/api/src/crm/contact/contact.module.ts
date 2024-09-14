@@ -23,6 +23,8 @@ import { ZohoService } from './services/zoho';
 import { ZohoContactMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 import { SalesforceContactMapper } from './services/salesforce/mappers';
+import { AffinityContactMapper } from './services/affinity/mappers';
+import { AffinityService } from './services/affinity';
 
 @Module({
   controllers: [ContactController],
@@ -57,4 +59,4 @@ import { SalesforceContactMapper } from './services/salesforce/mappers';
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
-export class ContactModule {}
+export class ContactModule { }

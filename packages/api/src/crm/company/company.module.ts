@@ -22,6 +22,8 @@ import { ZohoService } from './services/zoho';
 import { ZohoCompanyMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 import { SalesforceCompanyMapper } from './services/salesforce/mappers';
+import { AffinityCompanyMapper } from './services/affinity/mappers';
+import { AffinityService } from './services/affinity';
 
 @Module({
   controllers: [CompanyController],
@@ -56,4 +58,4 @@ import { SalesforceCompanyMapper } from './services/salesforce/mappers';
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
-export class CompanyModule {}
+export class CompanyModule { }

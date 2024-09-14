@@ -22,6 +22,8 @@ import { ZohoService } from './services/zoho';
 import { ZohoDealMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 import { SalesforceDealMapper } from './services/salesforce/mappers';
+import { AffinityDealMapper } from './services/affinity/mappers';
+import { AffinityService } from './services/affinity';
 
 @Module({
   controllers: [DealController],
@@ -55,4 +57,4 @@ import { SalesforceDealMapper } from './services/salesforce/mappers';
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
-export class DealModule {}
+export class DealModule { }

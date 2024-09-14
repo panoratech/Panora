@@ -6,6 +6,7 @@ export enum CrmConnectors {
   ATTIO = 'attio',
   CLOSE = 'close',
   MICROSOFTDYNAMICSSALES = 'microsoftdynamicssales',
+  AFFINITY = 'affinity',
 }
 
 export enum EcommerceConnectors {

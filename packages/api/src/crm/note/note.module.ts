@@ -22,6 +22,8 @@ import { ZohoService } from './services/zoho';
 import { ZohoNoteMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 import { SalesforceNoteMapper } from './services/salesforce/mappers';
+import { AffinityNoteMapper } from './services/affinity/mappers';
+import { AffinityService } from './services/affinity';
 @Module({
   controllers: [NoteController],
   providers: [
@@ -54,4 +56,4 @@ import { SalesforceNoteMapper } from './services/salesforce/mappers';
   ],
   exports: [SyncService, ServiceRegistry, WebhookService],
 })
-export class NoteModule {}
+export class NoteModule { }
