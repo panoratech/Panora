@@ -1276,10 +1276,10 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         primaryColor: '#599D16',
         authStrategy: {
-          strategy: AuthStrategy.basic,
+          strategy: AuthStrategy.api_key,
           properties: ['subdomain', 'api_key']
         },
       },
