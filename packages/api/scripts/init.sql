@@ -556,6 +556,7 @@ CREATE TABLE connector_sets
  fs_googledrive boolean NULL,
  fs_sharepoint boolean NULL,
  fs_onedrive boolean NULL,
+ crm_salesforce boolean NULL,
 CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 

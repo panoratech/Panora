@@ -92,21 +92,28 @@ export class SalesforceService implements INoteService {
       });
 
       const instanceUrl = connection.account_url;
-      let pagingString = `${pageSize ? `ORDER BY Id DESC LIMIT ${pageSize} ` : ''}${
-        cursor ? `OFFSET ${cursor}` : ''
-      }`;
+      let pagingString = '';
+      if (pageSize) {
+        pagingString += `LIMIT ${pageSize} `;
+      }
+      if (cursor) {
+        pagingString += `OFFSET ${cursor}`;
+      }
       if (!pageSize && !cursor) {
         pagingString = 'LIMIT 200';
       }
 
-      const commonPropertyNames = Object.keys(commonNoteSalesforceProperties);
-      const allProperties = [...commonPropertyNames, ...custom_properties];
-      const fields = allProperties.join(',');
+      const fields =
+        custom_properties?.length > 0
+          ? custom_properties.join(',')
+          : 'Id,Title,Body,OwnerId,ParentId,CreatedDate,LastModifiedDate';
 
-      const query = `SELECT ${fields} FROM Note ${pagingString}`;
+      const query = `SELECT ${fields} FROM Note ${pagingString}`.trim();
 
       const resp = await axios.get(
-        `${instanceUrl}/services/data/v56.0/query/?q=${encodeURIComponent(query)}`,
+        `${instanceUrl}/services/data/v56.0/query/?q=${encodeURIComponent(
+          query,
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -124,6 +131,7 @@ export class SalesforceService implements INoteService {
         statusCode: 200,
       };
     } catch (error) {
+      this.logger.log(`Error syncing Salesforce notes: ${error.message}`);
       throw error;
     }
   }

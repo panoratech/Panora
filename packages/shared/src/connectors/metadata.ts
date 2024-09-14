@@ -272,7 +272,7 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://logos-world.net/wp-content/uploads/2020/10/Salesforce-Logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2,
           properties: ['domain']

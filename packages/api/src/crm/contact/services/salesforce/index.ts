@@ -8,10 +8,7 @@ import { IContactService } from '@crm/contact/types';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
-import {
-    SalesforceContactInput,
-    SalesforceContactOutput,
-  } from './types';
+import { SalesforceContactInput, SalesforceContactOutput } from './types';
 
 @Injectable()
 export class SalesforceService implements IContactService {
@@ -77,18 +74,28 @@ export class SalesforceService implements IContactService {
       });
 
       const instanceUrl = connection.account_url;
-      let pagingString = `${pageSize ? `ORDER BY Id DESC LIMIT ${pageSize} ` : ''}${
-        cursor ? `OFFSET ${cursor}` : ''
-      }`;
+      let pagingString = '';
+      if (pageSize) {
+        pagingString += `LIMIT ${pageSize} `;
+      }
+      if (cursor) {
+        pagingString += `OFFSET ${cursor}`;
+      }
       if (!pageSize && !cursor) {
         pagingString = 'LIMIT 200';
       }
 
-      const fields = custom_properties ? custom_properties.join(',') : 'Id,FirstName,LastName,Email,Phone';
-      const query = `SELECT ${fields} FROM Contact ${pagingString}`;
+      const fields =
+        custom_properties?.length > 0
+          ? custom_properties.join(',')
+          : 'Id,FirstName,LastName,Email,Phone';
+
+      const query = `SELECT ${fields} FROM Contact ${pagingString}`.trim();
 
       const resp = await axios.get(
-        `${instanceUrl}/services/data/v56.0/query/?q=${encodeURIComponent(query)}`,
+        `${instanceUrl}/services/data/v56.0/query/?q=${encodeURIComponent(
+          query,
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -106,6 +113,7 @@ export class SalesforceService implements IContactService {
         statusCode: 200,
       };
     } catch (error) {
+      this.logger.log(`Error syncing Salesforce contacts: ${error.message}`);
       throw error;
     }
   }

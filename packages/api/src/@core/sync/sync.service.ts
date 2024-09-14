@@ -73,9 +73,10 @@ export class CoreSyncService {
                 ? lastSyncEvent.timestamp
                 : new Date(0);
 
-              const hoursSinceLastSync =
-                (now.getTime() - lastSyncTime.getTime()) / (1000 * 60 * 60);
-              if (interval && hoursSinceLastSync >= interval) {
+              const secondsSinceLastSync =
+                Number(now.getTime() - lastSyncTime.getTime()) / 1000;
+
+              if (interval && secondsSinceLastSync >= interval) {
                 await this.prisma.events.create({
                   data: {
                     id_project: project.id_project,
