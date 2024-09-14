@@ -552,7 +552,10 @@ CREATE TABLE connector_sets
  ats_ashby        boolean NULL,
  ecom_webflow boolean NULL,
  crm_microsoftdynamicssales boolean NULL,
- crm_affinity boolean NULL,
+ fs_dropbox boolean NULL,
+ fs_googledrive boolean NULL,
+ fs_sharepoint boolean NULL,
+ fs_onedrive boolean NULL,
 CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
@@ -2755,7 +2758,7 @@ CREATE INDEX FKx_hris_employee_payroll_runs_deduction_hris_employee_payroll_Id O
 CREATE TABLE events
 (
  id_event       uuid NOT NULL,
- id_connection  uuid NOT NULL,
+ id_connection  uuid NULL,
  id_project     uuid NOT NULL,
  type           text NOT NULL,
  status         text NOT NULL,
@@ -2764,7 +2767,7 @@ CREATE TABLE events
  url            text NOT NULL,
  provider       text NOT NULL,
  "timestamp"    timestamp with time zone NOT NULL DEFAULT NOW(),
- id_linked_user uuid NOT NULL,
+ id_linked_user uuid NULL,
  CONSTRAINT PK_jobs PRIMARY KEY ( id_event ),
  CONSTRAINT FK_12 FOREIGN KEY ( id_linked_user ) REFERENCES linked_users ( id_linked_user )
 );

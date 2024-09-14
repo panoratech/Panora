@@ -14,12 +14,10 @@ type UseOAuthProps = {
     value: string | null;
   },
   onSuccess: () => void;
-  additionalParams?: {
-    end_user_domain: string;
-  }
+  additionalParams?: {[key: string]: any}
 };
 
-const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId,additionalParams, redirectIngressUri, onSuccess }: UseOAuthProps) => {
+const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId, additionalParams, redirectIngressUri, onSuccess }: UseOAuthProps) => {
   const [isReady, setIsReady] = useState(false);
   const intervalRef = useRef<number | ReturnType<typeof setInterval> | null>(null);
   const authWindowRef = useRef<Window | null>(null);  
@@ -51,7 +49,7 @@ const useOAuth = ({ providerName, vertical, returnUrl, projectId, linkedUserId,a
   const openModal = async (onWindowClose: () => void) => {
     const apiUrl = config.API_URL!;
     const authUrl = await constructAuthUrl({
-      projectId, linkedUserId, providerName, returnUrl, apiUrl , vertical,additionalParams, redirectUriIngress: redirectIngressUri 
+      projectId, linkedUserId, providerName, returnUrl, apiUrl , vertical, additionalParams, redirectUriIngress: redirectIngressUri 
     });
 
     if (!authUrl) {

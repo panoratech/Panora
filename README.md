@@ -101,6 +101,7 @@ Panora supports integration with the following objects across multiple platforms
 | Box        |        |   ✔️   |   ✔️   |      ✔️     |  ✔️    |  ✔️   |           |
 | Dropbox          |       |  ✔️   |   ✔️  | ✔️          |   ✔️  |   ✔️  |           |
 | OneDrive |      ✔️ | ✔️   |    ✔️|      ✔️  |   ✔️  |     |           |
+| Sharepoint |      ✔️ | ✔️   |    ✔️|      ✔️  |   ✔️  |     |           |
 
 ### Ecommerce Unified API
 
@@ -117,8 +118,8 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
 
 ## 🧠 Retrieval Engine for RAG
 
-- [ ] Access and manage data from any source, including documents, chunk & vectors
-- [ ] Semantic, keyword and hybrid search against a vector database
+- [x] Access and manage data from any source, including documents, chunk & vectors
+- [x] Semantic, keyword and hybrid search against a vector database
   
 ## 🪄 Integrations Coming Soon
 
@@ -129,7 +130,7 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
 - [x] Redtail CRM
 - [x] Wealthbox
 - [x] Leadsquared
-- [ ] Salesforce
+- [x] Salesforce
 - [ ] Affinity CRM
 - [ ] Odoo
 - [ ] Intelliflow
@@ -145,7 +146,6 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
 - [ ] Service Now
 - [ ] Wrike
 - [ ] Dixa
-- [ ] Service Now
 - [ ] Asana
 - [ ] Aha
 - [ ] Clickup
@@ -158,10 +158,10 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
 
 #### File Storage
 
-- [ ] Google Drive
-- [ ] Dropbox
-- [ ] Sharepoint
-- [ ] One Drive
+- [x] Google Drive
+- [x] Dropbox
+- [x] Sharepoint
+- [x] One Drive
   
 #### Productivity
 

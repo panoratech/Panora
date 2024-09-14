@@ -16,6 +16,7 @@ import { Injectable } from '@nestjs/common';
 import {
   AuthStrategy,
   CONNECTORS_METADATA,
+  DynamicApiUrl,
   OAuth2AuthData,
   providerToType,
 } from '@panora/shared';
@@ -96,7 +97,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
 
   async handleCallback(opts: OAuthCallbackParams) {
     try {
-      const { linkedUserId, projectId, code } = opts;
+      const { linkedUserId, projectId, code, site, tenant } = opts;
       const isNotUnique = await this.prisma.connections.findFirst({
         where: {
           id_linked_user: linkedUserId,
@@ -122,7 +123,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
         grant_type: 'authorization_code',
       });
       const res = await axios.post(
-        `https://app.sharepoint.com/oauth2/tokens`,
+        `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
         formData.toString(),
         {
           headers: {
@@ -138,6 +139,17 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
         'OAuth credentials : sharepoint filestorage ' + JSON.stringify(data),
       );
 
+      // get site_id from tenant and sitename
+      const site_details = await axios.get(
+        `https://graph.microsoft.com/v1.0/sites/${tenant}.sharepoint.com:/sites/${site}`,
+        {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+          },
+        },
+      );
+      const site_id = site_details.data.id;
+
       let db_res;
       const connection_token = uuidv4();
 
@@ -149,8 +161,10 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
           data: {
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
-            account_url: CONNECTORS_METADATA['filestorage']['sharepoint'].urls
-              .apiUrl as string,
+            account_url: (
+              CONNECTORS_METADATA['filestorage']['sharepoint'].urls
+                .apiUrl as DynamicApiUrl
+            )(site_id),
             expiration_timestamp: new Date(
               new Date().getTime() + Number(data.expires_in) * 1000,
             ),
@@ -166,8 +180,10 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
             provider_slug: 'sharepoint',
             vertical: 'filestorage',
             token_type: 'oauth2',
-            account_url: CONNECTORS_METADATA['filestorage']['sharepoint'].urls
-              .apiUrl as string,
+            account_url: (
+              CONNECTORS_METADATA['filestorage']['sharepoint'].urls
+                .apiUrl as DynamicApiUrl
+            )(site_id),
             access_token: this.cryptoService.encrypt(data.access_token),
             refresh_token: this.cryptoService.encrypt(data.refresh_token),
             expiration_timestamp: new Date(
@@ -214,7 +230,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
       )) as OAuth2AuthData;
 
       const res = await axios.post(
-        `https://app.sharepoint.com/oauth2/tokens`,
+        `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
         formData.toString(),
         {
           headers: {

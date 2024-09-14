@@ -56,6 +56,22 @@ export function getFileExtension(fileName: string): string | null {
   return null;
 }
 
+export function getFileExtensionFromMimeType(
+  mimeType: string,
+): string | undefined {
+  try {
+    const normalizedMimeType = mimeType.toLowerCase();
+    for (const [extension, mime] of Object.entries(MIME_TYPES)) {
+      if (mime.toLowerCase() === normalizedMimeType) {
+        return extension.startsWith('.') ? extension.slice(1) : extension;
+      }
+    }
+    return undefined;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export const MIME_TYPES: { [key: string]: string } = {
   '.aac': 'audio/aac',
   '.abw': 'application/x-abiword',
@@ -96,6 +112,7 @@ export const MIME_TYPES: { [key: string]: string } = {
   '.mp4': 'video/mp4',
   '.mpeg': 'video/mpeg',
   '.mpkg': 'application/vnd.apple.installer+xml',
+  '.md': 'text/markdown',
   '.odp': 'application/vnd.oasis.opendocument.presentation',
   '.ods': 'application/vnd.oasis.opendocument.spreadsheet',
   '.odt': 'application/vnd.oasis.opendocument.text',

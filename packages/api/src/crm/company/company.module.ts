@@ -1,15 +1,5 @@
-import { AffinityCompanyMapper } from './services/affinity/mappers';
-import { AffinityService } from './services/affinity';
-import { MicrosoftdynamicssalesCompanyMapper } from './services/microsoftdynamicssales/mappers';
-import { MicrosoftdynamicssalesService } from './services/microsoftdynamicssales';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
-import { ConnectionUtils } from '@@core/connections/@utils';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { Utils } from '@crm/@lib/@utils';
 import { Module } from '@nestjs/common';
 import { CompanyController } from './company.controller';
@@ -20,33 +10,34 @@ import { CloseCompanyMapper } from './services/close/mappers';
 import { CompanyService } from './services/company.service';
 import { HubspotService } from './services/hubspot';
 import { HubspotCompanyMapper } from './services/hubspot/mappers';
+import { MicrosoftdynamicssalesService } from './services/microsoftdynamicssales';
+import { MicrosoftdynamicssalesCompanyMapper } from './services/microsoftdynamicssales/mappers';
 import { PipedriveService } from './services/pipedrive';
 import { PipedriveCompanyMapper } from './services/pipedrive/mappers';
 import { ServiceRegistry } from './services/registry.service';
+import { SalesforceService } from './services/salesforce';
 import { ZendeskService } from './services/zendesk';
 import { ZendeskCompanyMapper } from './services/zendesk/mappers';
 import { ZohoService } from './services/zoho';
 import { ZohoCompanyMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
+import { SalesforceCompanyMapper } from './services/salesforce/mappers';
 
 @Module({
   controllers: [CompanyController],
   providers: [
     CompanyService,
-
     SyncService,
     WebhookService,
-
     ServiceRegistry,
-
     Utils,
     IngestDataService,
-
     /* PROVIDERS SERVICES */
     ZendeskService,
     ZohoService,
     PipedriveService,
     HubspotService,
+    SalesforceService,
     AttioService,
     CloseService,
 
@@ -55,6 +46,7 @@ import { SyncService } from './sync/sync.service';
     CloseCompanyMapper,
     HubspotCompanyMapper,
     PipedriveCompanyMapper,
+    SalesforceCompanyMapper,
     ZendeskCompanyMapper,
     ZohoCompanyMapper,
     MicrosoftdynamicssalesService,

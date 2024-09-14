@@ -64,7 +64,7 @@ export class BoxGroupMapper implements IGroupMapper {
     return {
       remote_id: group.id,
       name: group.name || null,
-      users: null,
+      users: [],
       remote_was_deleted: null,
       //created_at: group.created_at || null,
       //modified_at: group.modified_at || null,

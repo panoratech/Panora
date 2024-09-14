@@ -220,7 +220,8 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           end_user_domain: true
         },
         authStrategy: {
-          strategy: AuthStrategy.oauth2
+          strategy: AuthStrategy.oauth2,
+          properties: ['organization_name']
         }
       },
       'nutshell': {
@@ -263,18 +264,23 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         }
       },
       'salesforce': {
-        scopes: '',
+        scopes: 'offline_access refresh_token full',
         urls: {
-          docsUrl: '',
-          authBaseUrl: '',
-          apiUrl: '',
+          docsUrl: 'https://help.salesforce.com',
+          authBaseUrl: (domain) => `https://${domain}.my.salesforce.com/services/oauth2/authorize`,
+          apiUrl: (domain) => `https://${domain}.my.salesforce.com`,
         },
-        logoPath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgL4FJb-GptGfxDDkWbIX2CjIM77t5q-d7eCFY6sGsHA&s',
+        logoPath: 'https://logos-world.net/wp-content/uploads/2020/10/Salesforce-Logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
         active: false,
         authStrategy: {
-          strategy: AuthStrategy.oauth2
-        }
+          strategy: AuthStrategy.oauth2,
+          properties: ['domain']
+        },
+        primaryColor: '#01A2E0',
+        options: {
+          end_user_domain: true
+        }, 
       },
       'sugarcrm': {
         scopes: '',
@@ -1924,23 +1930,6 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
           strategy: AuthStrategy.api_key
         }
       },
-      'bamboohr': {
-        scopes: 'openid+email',
-        urls: {
-          docsUrl: 'https://documentation.bamboohr.com/docs/getting-started',
-          apiUrl: '',
-          authBaseUrl: (END_USER_DOMAIN) => `https://${END_USER_DOMAIN}.bamboohr.com/authorize.php`
-        },
-        options: {
-          end_user_domain: true
-        },
-        logoPath: 'https://play-lh.googleusercontent.com/c4BW9wr_QAiIeVBYHhP7rs06w99xJzxgLvmL5I1mkucC3_ATMyL1t7Doz0_LQ0X-qS0',
-        description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
-        authStrategy: {
-          strategy: AuthStrategy.api_key
-        }
-      },
       'breathe': {
         scopes: '',
         urls: {
@@ -2723,13 +2712,13 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://upload.wikimedia.org/wikipedia/commons/d/da/Google_Drive_logo.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
       },
       'onedrive': {
-        scopes: 'Files.Read.All offline_access openid User.Read',
+        scopes: 'Files.Read.All offline_access openid User.Read.All Group.Read.All',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
           apiUrl: 'https://graph.microsoft.com',
@@ -2737,40 +2726,43 @@ export const CONNECTORS_METADATA: ProvidersConfig = {
         },
         logoPath: 'https://logowik.com/content/uploads/images/4964-microsoft-onedrive-new.jpg',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
       },
       'dropbox': {
+        scopes: 'files.metadata.read files.metadata.write files.content.read files.content.write team_data.member members.read groups.read' ,
         urls: {
           docsUrl: 'https://www.dropbox.com/developers/documentation/http/documentation',
-          apiUrl: 'https://api.dropboxapi.com',
+          apiUrl: 'https://api.dropboxapi.com/2',
           authBaseUrl: 'https://www.dropbox.com/oauth2/authorize'
         },
         logoPath: 'https://cdn2.iconfinder.com/data/icons/metro-ui-dock/512/Dropbox.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
+        active: true,
         authStrategy: {
           strategy: AuthStrategy.oauth2
         }
       },
       'sharepoint': {
-        scopes: 'Files.Read.All offline_access openid User.Read',
+        scopes: 'Files.Read.All offline_access openid User.Read.All Group.Read.All Sites.Read.All Sites.ReadWrite.All',
         urls: {
           docsUrl: 'https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0',
-          apiUrl: 'https://graph.microsoft.com/v1.0',
-          authBaseUrl:`https://login.microsoftonline.com/common/oauth2/v2.0/authorize`
+          apiUrl: (siteId) => `https://graph.microsoft.com/v1.0/sites/${siteId}`,
+          authBaseUrl: `https://login.microsoftonline.com/common/oauth2/v2.0/authorize`
         },
         logoPath: 'https://pnghq.com/wp-content/uploads/pnghq.com-microsoft-sharepoint-logo-9.png',
         description: 'Sync & Create contacts, deals, companies, notes, engagements, stages, tasks and users',
-        active: false,
-        primaryColor: '',
+        active: true,
+        primaryColor: '#6EA5A8', 
         options: {
-          local_redirect_uri_in_https: true
+          local_redirect_uri_in_https: true,
+          end_user_domain: true
         },
         authStrategy: {
-          strategy: AuthStrategy.oauth2
+          strategy: AuthStrategy.oauth2,
+          properties: ['site', 'tenant']
         }
       },
       'box': {

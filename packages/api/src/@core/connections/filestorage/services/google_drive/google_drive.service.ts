@@ -85,7 +85,7 @@ export class GoogleDriveConnectionService extends AbstractBaseConnectionService 
           data: config.data,
           headers: config.headers,
         },
-        'filestorage.google_drive.passthrough',
+        'filestorage.googledrive.passthrough',
         config.linkedUserId,
       );
     } catch (error) {
@@ -134,7 +134,6 @@ export class GoogleDriveConnectionService extends AbstractBaseConnectionService 
 
       let db_res;
       const connection_token = uuidv4();
-
       if (isNotUnique) {
         db_res = await this.prisma.connections.update({
           where: {
@@ -157,7 +156,7 @@ export class GoogleDriveConnectionService extends AbstractBaseConnectionService 
           data: {
             id_connection: uuidv4(),
             connection_token: connection_token,
-            provider_slug: 'google_drive',
+            provider_slug: 'googledrive',
             vertical: 'filestorage',
             token_type: 'oauth2',
             account_url: CONNECTORS_METADATA['filestorage']['googledrive'].urls
@@ -191,19 +190,19 @@ export class GoogleDriveConnectionService extends AbstractBaseConnectionService 
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-
+  
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
         this.type,
       )) as OAuth2AuthData;
-
+  
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',
         refresh_token: this.cryptoService.decrypt(refreshToken),
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
       });
-
+  
       const res = await axios.post(
         `https://oauth2.googleapis.com/token`,
         formData.toString(),
@@ -217,20 +216,29 @@ export class GoogleDriveConnectionService extends AbstractBaseConnectionService 
         },
       );
       const data: GoogleDriveOAuthResponse = res.data;
+  
+      // Prepare the update data
+      const updateData: any = {
+        access_token: this.cryptoService.encrypt(data.access_token),
+        expiration_timestamp: new Date(
+          new Date().getTime() + Number(data.expires_in) * 1000,
+        ),
+      };
+  
+      // Only update the refresh token if a new one is provided
+      if (data.refresh_token) {
+        updateData.refresh_token = this.cryptoService.encrypt(data.refresh_token);
+      }
+  
       await this.prisma.connections.update({
         where: {
           id_connection: connectionId,
         },
-        data: {
-          access_token: this.cryptoService.encrypt(data.access_token),
-          refresh_token: this.cryptoService.encrypt(data.refresh_token),
-          expiration_timestamp: new Date(
-            new Date().getTime() + Number(data.expires_in) * 1000,
-          ),
-        },
+        data: updateData,
       });
       this.logger.log('OAuth credentials updated : google_drive ');
     } catch (error) {
+      this.logger.error('Error refreshing Google Drive token:', error);
       throw error;
     }
   }

@@ -3,4 +3,5 @@ export enum Queues {
   PANORA_WEBHOOKS_SENDER = 'PANORA_WEBHOOKS_SENDER', // Queue sends Panora webhooks to clients listening for important events
   SYNC_JOBS_WORKER = 'SYNC_JOBS_WORKER', // Queue which syncs data from remote 3rd parties
   FAILED_PASSTHROUGH_REQUESTS_HANDLER = 'FAILED_PASSTHROUGH_REQUESTS_HANDLER', // Queue which handles failed passthrough request due to rate limit and retries it with backOff
+  RAG_DOCUMENT_PROCESSING = 'RAG_DOCUMENT_PROCESSING',
 }

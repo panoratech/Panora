@@ -2,14 +2,14 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
 import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { tcg_attachments as TicketingAttachment } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { UnifiedTicketingAttachmentOutput } from '../types/model.unified';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
-export class SyncService implements IBaseSync {
+export class SyncService implements OnModuleInit, IBaseSync {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -18,6 +18,9 @@ export class SyncService implements IBaseSync {
   ) {
     this.logger.setContext(SyncService.name);
     this.registry.registerService('ticketing', 'attachment', this);
+  }
+  onModuleInit() {
+    //
   }
 
   // we don't sync here as it is done within the Comment & Ticket Sync services

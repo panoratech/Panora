@@ -24,6 +24,8 @@ import { ZohoService } from './services/zoho';
 import { ZohoUserMapper } from './services/zoho/mappers';
 import { SyncService } from './sync/sync.service';
 import { UserController } from './user.controller';
+import { SalesforceService } from './services/salesforce';
+import { SalesforceUserMapper } from './services/salesforce/mappers';
 @Module({
   controllers: [UserController],
   providers: [
@@ -40,6 +42,8 @@ import { UserController } from './user.controller';
     HubspotService,
     AttioService,
     CloseService,
+    SalesforceService,
+    MicrosoftdynamicssalesService,
     /* PROVIDERS MAPPERS */
     ZendeskUserMapper,
     ZohoUserMapper,
@@ -47,7 +51,7 @@ import { UserController } from './user.controller';
     HubspotUserMapper,
     AttioUserMapper,
     CloseUserMapper,
-    MicrosoftdynamicssalesService,
+    SalesforceUserMapper,
     MicrosoftdynamicssalesUserMapper,
     AffinityService,
     AffinityUserMapper,

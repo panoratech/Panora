@@ -1,17 +1,159 @@
-import { Injectable } from '@nestjs/common';
-import { LoggerService } from '../@core-services/logger/logger.service';
-import { ConnectorCategory } from '@panora/shared';
-import { ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { ENGAGEMENTS_TYPE } from '@crm/@lib/@types';
+import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { ConnectorCategory, getCommonObjectsForVertical } from '@panora/shared';
+import { LoggerService } from '../@core-services/logger/logger.service';
 import { CoreSyncRegistry } from '../@core-services/registries/core-sync.registry';
+import { UpdatePullFrequencyDto } from './sync.controller';
+import { v4 as uuidv4 } from 'uuid';
+
 @Injectable()
 export class CoreSyncService {
   constructor(
     private logger: LoggerService,
     private prisma: PrismaService,
     private registry: CoreSyncRegistry,
+    private bullQueueService: BullQueueService,
   ) {
     this.logger.setContext(CoreSyncService.name);
+  }
+
+  @Cron(CronExpression.EVERY_30_SECONDS)
+  async checkAndKickstartSync(user_id?: string) {
+    const users = user_id
+      ? [
+          await this.prisma.users.findUnique({
+            where: {
+              id_user: user_id,
+            },
+          }),
+        ]
+      : await this.prisma.users.findMany();
+    if (users && users.length > 0) {
+      for (const user of users) {
+        const projects = await this.prisma.projects.findMany({
+          where: {
+            id_user: user.id_user,
+          },
+        });
+        for (const project of projects) {
+          const projectSyncConfig =
+            await this.prisma.projects_pull_frequency.findFirst({
+              where: {
+                id_project: project.id_project,
+              },
+            });
+
+          if (projectSyncConfig) {
+            const syncIntervals = {
+              crm: projectSyncConfig.crm,
+              ats: projectSyncConfig.ats,
+              hris: projectSyncConfig.hris,
+              accounting: projectSyncConfig.accounting,
+              filestorage: projectSyncConfig.filestorage,
+              ecommerce: projectSyncConfig.ecommerce,
+              ticketing: projectSyncConfig.ticketing,
+            };
+
+            for (const [vertical, interval] of Object.entries(syncIntervals)) {
+              const now = new Date();
+              const lastSyncEvent = await this.prisma.events.findFirst({
+                where: {
+                  id_project: project.id_project,
+                  type: `${vertical}.batchSyncStart`,
+                },
+                orderBy: {
+                  timestamp: 'desc',
+                },
+              });
+
+              const lastSyncTime = lastSyncEvent
+                ? lastSyncEvent.timestamp
+                : new Date(0);
+
+              const hoursSinceLastSync =
+                (now.getTime() - lastSyncTime.getTime()) / (1000 * 60 * 60);
+              if (interval && hoursSinceLastSync >= interval) {
+                await this.prisma.events.create({
+                  data: {
+                    id_project: project.id_project,
+                    id_event: uuidv4(),
+                    status: 'success',
+                    type: `${vertical}.batchSyncStart`,
+                    method: 'GET',
+                    url: '',
+                    provider: '',
+                    direction: '0',
+                    timestamp: new Date(),
+                  },
+                });
+                const commonObjects = getCommonObjectsForVertical(vertical);
+                for (const commonObject of commonObjects) {
+                  const service = this.registry.getService(
+                    vertical,
+                    commonObject,
+                  );
+                  if (service) {
+                    try {
+                      const cronExpression = this.convertIntervalToCron(
+                        Number(interval),
+                      );
+
+                      await this.bullQueueService.queueSyncJob(
+                        `${vertical}-sync-${commonObject}s`,
+                        {
+                          projectId: project.id_project,
+                          vertical,
+                          commonObject,
+                        },
+                        cronExpression,
+                      );
+                      this.logger.log(
+                        `Synced ${vertical}.${commonObject} for project ${project.id_project}`,
+                      );
+                    } catch (error) {
+                      this.logger.error(
+                        `Error syncing ${vertical}.${commonObject} for project ${project.id_project}: ${error.message}`,
+                        error,
+                      );
+                    }
+                  } else {
+                    this.logger.warn(
+                      `No service found for ${vertical}.${commonObject}`,
+                    );
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private convertIntervalToCron(intervalSeconds: number): string {
+    // If the interval is less than 1 minute, we'll set it to run every minute
+    if (intervalSeconds < 60) {
+      return '* * * * *';
+    }
+
+    // If the interval is less than 1 hour, use minutes
+    if (intervalSeconds < 3600) {
+      const minutes = Math.floor(intervalSeconds / 60);
+      return `*/${minutes} * * * *`;
+    }
+
+    // If the interval is less than 1 day, use hours
+    if (intervalSeconds < 86400) {
+      const hours = Math.floor(intervalSeconds / 3600);
+      return `0 */${hours} * * *`;
+    }
+
+    // For intervals of 1 day or more, use days
+    const days = Math.floor(intervalSeconds / 86400);
+    return `0 0 */${days} * *`;
   }
 
   //Initial sync which will execute when connection is successfully established
@@ -392,10 +534,19 @@ export class CoreSyncService {
           linkedUserId: linkedUserId,
         }),
     ];
+    if (provider == 'googledrive') {
+      tasks.push(() =>
+        this.registry.getService('filestorage', 'file').syncForLinkedUser({
+          integrationId: provider,
+          linkedUserId: linkedUserId,
+        }),
+      );
+    }
     for (const task of tasks) {
       try {
         await task();
       } catch (error) {
+        console.log(error);
         this.logger.error(`File Storage Task failed: ${error.message}`, error);
       }
     }
@@ -412,20 +563,23 @@ export class CoreSyncService {
         id_connection: connection.id_connection,
       },
     });
-    const filesTasks = folders.map(
-      (folder) => async () =>
-        this.registry.getService('filestorage', 'file').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-          id_folder: folder.id_fs_folder,
-        }),
-    );
+    if (provider !== 'googledrive') {
+      const filesTasks = folders.map(
+        (folder) => async () =>
+          this.registry.getService('filestorage', 'file').syncForLinkedUser({
+            integrationId: provider,
+            linkedUserId: linkedUserId,
+            id_folder: folder.id_fs_folder,
+          }),
+      );
 
-    for (const task of filesTasks) {
-      try {
-        await task();
-      } catch (error) {
-        this.logger.error(`File Task failed: ${error.message}`, error);
+      for (const task of filesTasks) {
+        try {
+          await task();
+        } catch (error) {
+          console.log(error);
+          this.logger.error(`File Task failed: ${error.message}`, error);
+        }
       }
     }
   }
@@ -598,5 +752,26 @@ export class CoreSyncService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async updatePullFrequency(data: UpdatePullFrequencyDto, projectId: string) {
+    return await this.prisma.projects_pull_frequency.upsert({
+      where: { id_project: projectId },
+      update: {
+        ...data,
+        modified_at: new Date(),
+      },
+      create: {
+        id_projects_pull_frequency: uuidv4(),
+        id_project: projectId,
+        ...data,
+      },
+    });
+  }
+
+  async getPullFrequency(projectId: string) {
+    return await this.prisma.projects_pull_frequency.findFirst({
+      where: { id_project: projectId },
+    });
   }
 }

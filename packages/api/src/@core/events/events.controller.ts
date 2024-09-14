@@ -1,26 +1,25 @@
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
+import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
+import { ApiGetArrayCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import { PaginationDto } from '@@core/utils/dtos/webapp.event.pagination.dto';
 import {
   Controller,
   Get,
   Query,
+  Request,
   UseGuards,
   UsePipes,
   ValidationPipe,
-  Request,
 } from '@nestjs/common';
-import { EventsService } from './events.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import {
-  ApiExcludeController,
   ApiExcludeEndpoint,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { PaginationDto } from '@@core/utils/dtos/webapp.event.pagination.dto';
-import { JwtAuthGuard } from '@@core/auth/guards/jwt-auth.guard';
-import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
-import { ApiGetArrayCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 import { EventResponse } from './dto/index.dto';
+import { EventsService } from './events.service';
 
 @ApiTags('events')
 @Controller('events')
