@@ -35,7 +35,7 @@ export class SyncProcessor {
         `Error processing job ${job.id} for ${vertical} ${commonObject} (Project: ${projectId})`,
         error.stack,
       );
-      throw error; // Re-throw the error to mark the job as failed
+      return { status: 'failed', error: error.message };
     }
   }
 

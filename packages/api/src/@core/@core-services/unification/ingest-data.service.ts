@@ -97,40 +97,71 @@ export class IngestDataService {
       });
 
       let resp: ApiResponse<U[]>;
-      if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
-        switch (wh_real_time_trigger.action) {
-          case 'DELETE':
-            await this.syncRegistry
-              .getService(vertical, commonObject)
-              .removeInDb(
-                connection.id_connection,
-                wh_real_time_trigger.data.remote_id,
-              );
-          default:
-            syncParam.webhook_remote_identifier =
-              wh_real_time_trigger.data.remote_id;
-            resp = await service.sync(syncParam);
-            break;
+      try {
+        if (wh_real_time_trigger && wh_real_time_trigger.data.remote_id) {
+          switch (wh_real_time_trigger.action) {
+            case 'DELETE':
+              await this.syncRegistry
+                .getService(vertical, commonObject)
+                .removeInDb(
+                  connection.id_connection,
+                  wh_real_time_trigger.data.remote_id,
+                );
+            default:
+              syncParam.webhook_remote_identifier =
+                wh_real_time_trigger.data.remote_id;
+              resp = await service.sync(syncParam);
+              break;
+          }
+        } else {
+          resp = await service.sync(syncParam);
         }
-      } else {
-        resp = await service.sync(syncParam);
+
+        if (!resp || !resp.data) {
+          this.logger.warn(
+            `Sync operation for ${integrationId} ${commonObject} returned no data`,
+          );
+          return;
+        }
+
+        const sourceObject: U[] = resp.data;
+
+        const ingestParams = params
+          .filter((p) => p.shouldPassToIngest)
+          .reduce((acc, p) => ({ ...acc, [p.paramName]: p.param }), {});
+
+        await this.ingestData<T, U>(
+          sourceObject,
+          integrationId,
+          connection.id_connection,
+          vertical,
+          commonObject,
+          customFieldMappings,
+          ingestParams,
+        );
+      } catch (syncError) {
+        this.logger.error(
+          `Error syncing ${integrationId} ${commonObject}: ${syncError.message}`,
+          syncError,
+        );
+        // Optionally, you could create an event to log this error
+        /*await this.prisma.events.create({
+        data: {
+          id_connection: connection.id_connection,
+          id_project: connection.id_project,
+          id_event: uuidv4(),
+          status: 'error',
+          type: `${vertical}.${commonObject}.sync_failed`,
+          method: 'SYNC',
+          url: '/sync',
+          provider: integrationId,
+          direction: '0',
+          timestamp: new Date(),
+          id_linked_user: linkedUserId,
+          error: syncError.message,
+        },
+      });*/
       }
-
-      const sourceObject: U[] = resp.data;
-
-      const ingestParams = params
-        .filter((p) => p.shouldPassToIngest)
-        .reduce((acc, p) => ({ ...acc, [p.paramName]: p.param }), {});
-
-      await this.ingestData<T, U>(
-        sourceObject,
-        integrationId,
-        connection.id_connection,
-        vertical,
-        commonObject,
-        customFieldMappings,
-        ingestParams,
-      );
     } catch (error) {
       throw error;
     }

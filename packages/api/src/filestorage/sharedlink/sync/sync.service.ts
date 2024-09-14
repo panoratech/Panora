@@ -6,7 +6,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
+import { IBaseSync } from '@@core/utils/types/interface';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { fs_shared_links as FileStorageSharedLink } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
@@ -31,6 +31,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
   }
   // syncs are performed within File/Folder objects so its not useful to do it here
   onModuleInit() {
+    return;
+  }
+
+  async kickstartSync(id_project?: string) {
     return;
   }
 

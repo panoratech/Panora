@@ -34,6 +34,10 @@ export class SyncService implements OnModuleInit, IBaseSync {
     return;
   }
 
+  async kickstartSync(id_project?: string) {
+    return;
+  }
+
   // permissions are synced within file, folders, users, groups
 
   async saveToDb(

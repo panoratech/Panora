@@ -22,115 +22,146 @@ export class CoreSyncService {
 
   @Cron(CronExpression.EVERY_30_SECONDS)
   async checkAndKickstartSync(user_id?: string) {
-    const users = user_id
-      ? [
-          await this.prisma.users.findUnique({
-            where: {
-              id_user: user_id,
-            },
-          }),
-        ]
-      : await this.prisma.users.findMany();
-    if (users && users.length > 0) {
-      for (const user of users) {
-        const projects = await this.prisma.projects.findMany({
-          where: {
-            id_user: user.id_user,
-          },
-        });
-        for (const project of projects) {
-          const projectSyncConfig =
-            await this.prisma.projects_pull_frequency.findFirst({
+    try {
+      const users = user_id
+        ? [
+            await this.prisma.users.findUnique({
               where: {
-                id_project: project.id_project,
+                id_user: user_id,
+              },
+            }),
+          ]
+        : await this.prisma.users.findMany();
+      if (users && users.length > 0) {
+        for (const user of users) {
+          try {
+            const projects = await this.prisma.projects.findMany({
+              where: {
+                id_user: user.id_user,
               },
             });
+            for (const project of projects) {
+              try {
+                const projectSyncConfig =
+                  await this.prisma.projects_pull_frequency.findFirst({
+                    where: {
+                      id_project: project.id_project,
+                    },
+                  });
 
-          if (projectSyncConfig) {
-            const syncIntervals = {
-              crm: projectSyncConfig.crm,
-              ats: projectSyncConfig.ats,
-              hris: projectSyncConfig.hris,
-              accounting: projectSyncConfig.accounting,
-              filestorage: projectSyncConfig.filestorage,
-              ecommerce: projectSyncConfig.ecommerce,
-              ticketing: projectSyncConfig.ticketing,
-            };
+                if (projectSyncConfig) {
+                  const syncIntervals = {
+                    crm: projectSyncConfig.crm,
+                    ats: projectSyncConfig.ats,
+                    hris: projectSyncConfig.hris,
+                    accounting: projectSyncConfig.accounting,
+                    filestorage: projectSyncConfig.filestorage,
+                    ecommerce: projectSyncConfig.ecommerce,
+                    ticketing: projectSyncConfig.ticketing,
+                  };
 
-            for (const [vertical, interval] of Object.entries(syncIntervals)) {
-              const now = new Date();
-              const lastSyncEvent = await this.prisma.events.findFirst({
-                where: {
-                  id_project: project.id_project,
-                  type: `${vertical}.batchSyncStart`,
-                },
-                orderBy: {
-                  timestamp: 'desc',
-                },
-              });
+                  for (const [vertical, interval] of Object.entries(
+                    syncIntervals,
+                  )) {
+                    const now = new Date();
+                    const lastSyncEvent = await this.prisma.events.findFirst({
+                      where: {
+                        id_project: project.id_project,
+                        type: `${vertical}.batchSyncStart`,
+                      },
+                      orderBy: {
+                        timestamp: 'desc',
+                      },
+                    });
 
-              const lastSyncTime = lastSyncEvent
-                ? lastSyncEvent.timestamp
-                : new Date(0);
+                    const lastSyncTime = lastSyncEvent
+                      ? lastSyncEvent.timestamp
+                      : new Date(0);
 
-              const secondsSinceLastSync =
-                Number(now.getTime() - lastSyncTime.getTime()) / 1000;
+                    const secondsSinceLastSync =
+                      Number(now.getTime() - lastSyncTime.getTime()) / 1000;
 
-              if (interval && secondsSinceLastSync >= interval) {
-                await this.prisma.events.create({
-                  data: {
-                    id_project: project.id_project,
-                    id_event: uuidv4(),
-                    status: 'success',
-                    type: `${vertical}.batchSyncStart`,
-                    method: 'GET',
-                    url: '',
-                    provider: '',
-                    direction: '0',
-                    timestamp: new Date(),
-                  },
-                });
-                const commonObjects = getCommonObjectsForVertical(vertical);
-                for (const commonObject of commonObjects) {
-                  const service = this.registry.getService(
-                    vertical,
-                    commonObject,
-                  );
-                  if (service) {
-                    try {
-                      const cronExpression = this.convertIntervalToCron(
-                        Number(interval),
-                      );
-
-                      await this.bullQueueService.queueSyncJob(
-                        `${vertical}-sync-${commonObject}s`,
-                        {
-                          projectId: project.id_project,
-                          vertical,
-                          commonObject,
+                    if (interval && secondsSinceLastSync >= interval) {
+                      await this.prisma.events.create({
+                        data: {
+                          id_project: project.id_project,
+                          id_event: uuidv4(),
+                          status: 'success',
+                          type: `${vertical}.batchSyncStart`,
+                          method: 'GET',
+                          url: '',
+                          provider: '',
+                          direction: '0',
+                          timestamp: new Date(),
                         },
-                        cronExpression,
-                      );
-                      this.logger.log(
-                        `Synced ${vertical}.${commonObject} for project ${project.id_project}`,
-                      );
-                    } catch (error) {
-                      this.logger.error(
-                        `Error syncing ${vertical}.${commonObject} for project ${project.id_project}: ${error.message}`,
-                        error,
-                      );
+                      });
+                      const commonObjects =
+                        getCommonObjectsForVertical(vertical);
+                      for (const commonObject of commonObjects) {
+                        try {
+                          const service = this.registry.getService(
+                            vertical,
+                            commonObject,
+                          );
+                          if (service) {
+                            try {
+                              const cronExpression = this.convertIntervalToCron(
+                                Number(interval),
+                              );
+
+                              await this.bullQueueService.queueSyncJob(
+                                `${vertical}-sync-${commonObject}s`,
+                                {
+                                  projectId: project.id_project,
+                                  vertical,
+                                  commonObject,
+                                },
+                                cronExpression,
+                              );
+                              this.logger.log(
+                                `Synced ${vertical}.${commonObject} for project ${project.id_project}`,
+                              );
+                            } catch (error) {
+                              this.logger.error(
+                                `Error syncing ${vertical}.${commonObject} for project ${project.id_project}: ${error.message}`,
+                                error,
+                              );
+                            }
+                          } else {
+                            this.logger.warn(
+                              `No service found for ${vertical}.${commonObject}`,
+                            );
+                          }
+                        } catch (error) {
+                          this.logger.error(
+                            `Error processing ${vertical}.${commonObject} for project ${project.id_project}: ${error.message}`,
+                            error,
+                          );
+                        }
+                      }
                     }
-                  } else {
-                    this.logger.warn(
-                      `No service found for ${vertical}.${commonObject}`,
-                    );
                   }
                 }
+              } catch (projectError) {
+                this.logger.error(
+                  `Error processing project: ${projectError.message}`,
+                  projectError,
+                );
               }
             }
+          } catch (userError) {
+            this.logger.error(
+              `Error processing user: ${userError.message}`,
+              userError,
+            );
           }
         }
       }
+    } catch (error) {
+      this.logger.error(
+        `Error in checkAndKickstartSync: ${error.message}`,
+        error,
+      );
     }
   }
 
@@ -182,8 +213,11 @@ export class CoreSyncService {
         case ConnectorCategory.Ecommerce:
           await this.handleEcommerceSync(provider, linkedUserId);
           break;
+        default:
+          this.logger.warn(`Unsupported vertical: ${vertical}`);
       }
     } catch (error) {
+      this.logger.error(`Error in initialSync: ${error.message}`, error);
       throw error;
     }
   }
