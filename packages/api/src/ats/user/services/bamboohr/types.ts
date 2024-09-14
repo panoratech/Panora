@@ -8,5 +8,5 @@ export interface BambooUser {
   lastLogin: string;
 }
 export interface BamboohrUserOutput {
-  [index: string]: BambooUser;
+  [index: string]: Partial<BambooUser>;
 }
