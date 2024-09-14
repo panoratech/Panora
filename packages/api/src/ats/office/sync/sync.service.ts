@@ -140,6 +140,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               id_ats_office: uuidv4(),
               created_at: new Date(),
               remote_id: originId,
+              id_connection: connection_id,
             },
           });
         }
