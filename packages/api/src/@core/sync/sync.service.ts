@@ -665,7 +665,7 @@ export class CoreSyncService {
           linkedUserId: linkedUserId,
         }),
       () =>
-        this.registry.getService('ats', 'jobs').syncForLinkedUser({
+        this.registry.getService('ats', 'job').syncForLinkedUser({
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),
