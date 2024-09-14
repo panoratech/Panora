@@ -40,7 +40,7 @@ export class BamboohrJobMapper implements IJobMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedAtsJobOutput | UnifiedAtsJobOutput[]> {
-    this.logger.log('UNIFY A');
+    
 
     return Promise.all(
       source.map((job) =>
@@ -57,7 +57,7 @@ export class BamboohrJobMapper implements IJobMapper {
       remote_id: string;
     }[],
   ): Promise<UnifiedAtsJobOutput> {
-    this.logger.log('mapSingleJobToUnified called');
+    
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
@@ -80,7 +80,7 @@ export class BamboohrJobMapper implements IJobMapper {
       );
     }
 
-    this.logger.log('mapSingleJobToUnified DONE');
+    
 
     return {
       remote_id: `${job.id}`,
