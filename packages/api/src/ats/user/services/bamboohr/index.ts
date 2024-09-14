@@ -35,15 +35,22 @@ export class BamboohrService implements IUserService {
           vertical: 'ats',
         },
       });
-      const resp = await axios.post(`${connection.account_url}/user.list`, {
+
+      this.logger.debug('Making request to Bamboo API');
+
+      const resp = await axios.get(`${connection.account_url}/v1/meta/users/`, {
         headers: {
+          Accept: 'application/json',
           'Content-Type': 'application/json',
           Authorization: `Basic ${Buffer.from(
             `${this.cryptoService.decrypt(connection.access_token)}:`,
           ).toString('base64')}`,
         },
       });
-      const users: BamboohrUserOutput[] = resp.data.results;
+
+      this.logger.debug('API result:', resp.data);
+
+      const users: BamboohrUserOutput[] = resp.data;
       this.logger.log(`Synced bamboohr users !`);
 
       return {

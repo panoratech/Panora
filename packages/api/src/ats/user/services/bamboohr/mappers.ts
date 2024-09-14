@@ -1,14 +1,15 @@
 import {
   UnifiedAtsUserInput,
-  UnifiedAtsUserOutput,
-  UserAccessRole,
+  UnifiedAtsUserOutput
 } from '@ats/user/types/model.unified';
 import { IUserMapper } from '@ats/user/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { Utils } from '@ats/@lib/@utils';
-import { BamboohrUserInput, BamboohrUserOutput } from './types';
+import { BamboohrUserOutput, BambooUser } from './types';
+import { AtsObject } from '@panora/shared';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
 
 @Injectable()
 export class BamboohrUserMapper implements IUserMapper {
@@ -16,27 +17,13 @@ export class BamboohrUserMapper implements IUserMapper {
     private mappersRegistry: MappersRegistry,
     private utils: Utils,
     private coreUnificationService: CoreUnification,
+    private logger: LoggerService,
   ) {
     this.mappersRegistry.registerService('ats', 'user', 'bamboohr', this);
-  }
 
-  mapToUserAccessRole(
-    data:
-      | 'Organization Admin'
-      | 'Elevated Access'
-      | 'Limited Access'
-      | 'External Recruiter',
-  ): UserAccessRole | string {
-    switch (data) {
-      case 'Organization Admin':
-        return 'SUPER_ADMIN';
-      case 'Elevated Access':
-        return 'ADMIN';
-      case 'Limited Access':
-        return 'LIMITED_TEAM_MEMBER';
-      case 'External Recruiter':
-        return 'INTERVIEWER';
-    }
+    this.logger.setContext(
+      AtsObject.user.toUpperCase() + ':' + BamboohrUserMapper.name,
+    );
   }
 
   async desunify(
@@ -45,50 +32,58 @@ export class BamboohrUserMapper implements IUserMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<BamboohrUserInput> {
+  ): Promise<BambooUser> {
     return;
   }
 
   async unify(
-    source: BamboohrUserOutput | BamboohrUserOutput[],
+    source: BamboohrUserOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
   ): Promise<UnifiedAtsUserOutput | UnifiedAtsUserOutput[]> {
-    if (!Array.isArray(source)) {
-      return await this.mapSingleUserToUnified(
-        source,
-        connectionId,
-        customFieldMappings,
-      );
+    const result: UnifiedAtsUserOutput[] = [];
+    if (typeof source === 'object' && source !== null) {
+      for (const key in source) {
+        const user = source[key];
+        const mappedUser = this.mapSingleUserToUnified(
+          user,
+          connectionId,
+          customFieldMappings,
+        );
+
+        result.push(mappedUser);
+      }
     }
-    // Handling array of BamboohrUserOutput
-    return Promise.all(
-      source.map((user) =>
-        this.mapSingleUserToUnified(user, connectionId, customFieldMappings),
-      ),
-    );
+
+    return result;
   }
 
-  private async mapSingleUserToUnified(
-    user: BamboohrUserOutput,
+  private mapSingleUserToUnified(
+    user: BambooUser,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<UnifiedAtsUserOutput> {
+  ): UnifiedAtsUserOutput {
+    const field_mappings: { [key: string]: any } = {};
+    if (customFieldMappings) {
+      for (const mapping of customFieldMappings) {
+        field_mappings[mapping.slug] = user[mapping.remote_id];
+      }
+    }
+
     return {
-      remote_id: user.id,
+      remote_id: user.id + '',
       remote_data: user,
       first_name: user.firstName || null,
       last_name: user.lastName || null,
       email: user.email || null,
-      disabled: user.isEnabled || null,
-      access_role: this.mapToUserAccessRole(user.globalRole as any),
-      remote_modified_at: user.updatedAt || null,
+      disabled: user.status !== 'enabled' || null,
+      ...field_mappings,
     };
   }
 }
