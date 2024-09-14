@@ -16,6 +16,8 @@ import { BullQueueModule } from '@@core/@core-services/queues/queue.module';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { AshbyOfficeMapper } from './services/ashby/mappers';
 import { Utils } from '@ats/@lib/@utils';
+import { BambooService } from './services/bamboohr';
+import { BamboohrMapper } from './services/bamboohr/mapper';
 
 @Module({
   controllers: [OfficeController],
@@ -35,6 +37,8 @@ import { Utils } from '@ats/@lib/@utils';
     AshbyOfficeMapper,
     /* PROVIDERS SERVICES */
     AshbyService,
+    BambooService,
+    BamboohrMapper,
   ],
   exports: [SyncService],
 })
