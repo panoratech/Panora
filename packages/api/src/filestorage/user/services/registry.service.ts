@@ -16,7 +16,8 @@ export class ServiceRegistry {
   getService(integrationId: string): IUserService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
-      throw new ReferenceError();
+      console.warn(`No service found for provider: ${integrationId}`);
+      return null;
     }
     return service;
   }

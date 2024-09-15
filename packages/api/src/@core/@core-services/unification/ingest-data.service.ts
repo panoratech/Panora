@@ -210,25 +210,34 @@ export class IngestDataService {
 
     // insert the files in our s3 bucket so we can process them for our RAG
     if (vertical === 'filestorage' && commonObject === 'file') {
-      const filesInfo: FileInfo[] = data
-        .filter((file: FileStorageFile) => file.file_url && file.mime_type)
-        .map((file: FileStorageFile) => ({
-          id: file.id_fs_file,
-          url: file.file_url,
-          provider: integrationId,
-          s3Key: `${projectId}/${linkedUserId}/${
-            file.id_fs_file
-          }.${getFileExtensionFromMimeType(file.mime_type)}`,
-          fileType: getFileExtensionFromMimeType(file.mime_type),
-        }));
+      try {
+        const filesInfo: FileInfo[] = data
+          .filter((file: FileStorageFile) => file.file_url && file.mime_type)
+          .map((file: FileStorageFile) => ({
+            id: file.id_fs_file,
+            url: file.file_url,
+            provider: integrationId,
+            s3Key: `${projectId}/${linkedUserId}/${
+              file.id_fs_file
+            }.${getFileExtensionFromMimeType(file.mime_type)}`,
+            fileType: getFileExtensionFromMimeType(file.mime_type),
+          }));
 
-      if (filesInfo.length > 0) {
-        console.log('During sync, found files to process for RAG...');
-        await this.ragService.queueDocumentProcessing(
-          filesInfo,
-          projectId,
-          linkedUserId,
+        if (filesInfo.length > 0) {
+          this.logger.log('During sync, found files to process for RAG...');
+          await this.ragService.queueDocumentProcessing(
+            filesInfo,
+            projectId,
+            linkedUserId,
+          );
+        }
+      } catch (ragError) {
+        this.logger.error(
+          `Error processing files for RAG: ${ragError.message}`,
+          ragError.stack,
         );
+        // Optionally, you could create an event to log this error
+        // await this.prisma.events.create({...});
       }
     }
 

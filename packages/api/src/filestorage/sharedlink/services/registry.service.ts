@@ -16,7 +16,8 @@ export class ServiceRegistry {
   getService(integrationId: string): ISharedLinkService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
-      throw new ReferenceError();
+      //throw new ReferenceError();
+      return null;
     }
     return service;
   }

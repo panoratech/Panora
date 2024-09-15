@@ -16,9 +16,7 @@ export class ServiceRegistry {
   getService(integrationId: string): ITaxRateService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
-      throw new ReferenceError(
-        `Service not found for integration ID: ${integrationId}`,
-      );
+      return null;
     }
     return service;
   }

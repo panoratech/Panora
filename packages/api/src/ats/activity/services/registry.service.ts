@@ -15,11 +15,9 @@ export class ServiceRegistry {
 
   getService(integrationId: string): IActivityService {
     const service = this.serviceMap.get(integrationId);
-    // if (!service) {
-    //   throw new ReferenceError(
-    //     `Service not found for integration ID: ${integrationId}`,
-    //   );
-    // }
+    if (!service) {
+      return null;
+    }
     return service;
   }
 }

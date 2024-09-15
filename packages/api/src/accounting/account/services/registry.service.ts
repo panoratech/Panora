@@ -16,7 +16,7 @@ export class ServiceRegistry {
   getService(integrationId: string): IAccountService {
     const service = this.serviceMap.get(integrationId);
     if (!service) {
-      throw new ReferenceError();
+      return null;
     }
     return service;
   }

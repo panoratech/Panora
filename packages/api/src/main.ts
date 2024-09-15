@@ -1,5 +1,5 @@
 import '@@core/@core-services/sentry/instrument';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import * as cookieParser from 'cookie-parser';
@@ -9,6 +9,7 @@ import * as yaml from 'js-yaml';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { generatePanoraParamsSpec } from '@@core/utils/decorators/utils';
+import { AllExceptionsFilter } from '@@core/utils/exception.filter';
 
 function addSpeakeasyGroup(document: any) {
   for (const path in document.paths) {
@@ -105,6 +106,9 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
   app.useGlobalInterceptors(new LoggerErrorInterceptor());
   app.use(cookieParser());
+
+  const httpAdapter = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
 
   await app.listen(3000);
 }

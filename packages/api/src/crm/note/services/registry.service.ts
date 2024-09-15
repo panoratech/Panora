@@ -15,9 +15,9 @@ export class ServiceRegistry {
 
   getService(integrationId: string): INoteService {
     const service = this.serviceMap.get(integrationId);
-    // if (!service) {
-    //   throw new Error();
-    // }
+    if (!service) {
+      return null;
+    }
     return service;
   }
 }

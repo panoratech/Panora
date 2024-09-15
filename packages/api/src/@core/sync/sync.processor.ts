@@ -21,9 +21,10 @@ export class SyncProcessor {
     try {
       const service = this.registry.getService(vertical, commonObject);
       if (!service) {
-        throw new Error(
+        this.logger.warn(
           `No service found for vertical ${vertical} and common object ${commonObject}`,
         );
+        return { status: 'skipped', reason: 'No service found' };
       }
 
       await service.kickstartSync(projectId);
