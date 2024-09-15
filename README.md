@@ -45,6 +45,8 @@ Panora is now running!  Follow our [Quickstart Guide](https://docs.panora.dev/qu
 
 See also [our selfhost guide here !](https://docs.panora.dev/open-source/selfhost/self-host-guide)
 
+If you want to chat with our codebase, feel free to use our [friend's amazing tool !](https://sage.storia.ai/panora)
+
 # ✨ Core Features  
 
 |                    |
