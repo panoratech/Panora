@@ -1,5 +1,5 @@
 import * as React from "react"
-import { RAGLayout } from "./RagLayout";
+import { RAGLayout } from "./RAGLayout";
 import { embeddingModels, TabType, vectorDatabases } from "./utils";
 
 export default function RAGSettingsPage() {

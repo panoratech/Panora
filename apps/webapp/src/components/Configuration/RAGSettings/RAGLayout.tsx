@@ -8,7 +8,7 @@ import * as React from "react"
 import { RAGItemDisplay } from "./RAGItemDisplay"
 import { RAGItemList } from "./RAGItemList"
 import { embeddingModels, vectorDatabases } from "./utils"
-import { useRagItem } from "./useRAGItem"
+import { useRagItem } from "./useRagItem"
 
 interface Props {
     items: (typeof vectorDatabases[number] | typeof embeddingModels[number])[];

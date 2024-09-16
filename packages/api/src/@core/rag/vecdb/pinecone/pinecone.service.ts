@@ -18,6 +18,7 @@ export class PineconeService {
     fileId: string,
     chunks: ProcessedChunk[],
     embeddings: number[][],
+    linkedUserId: string,
   ) {
     const index = this.client.Index(this.indexName);
     const vectors = chunks.map((chunk, i) => ({
@@ -28,7 +29,7 @@ export class PineconeService {
         ...chunk.metadata,
       }),
     }));
-    await index.upsert(vectors);
+    await index.namespace(`ns_${linkedUserId}`).upsert(vectors);
     console.log(`Inserted embeddings on Pinecone for fileId ${fileId}`);
   }
   private sanitizeMetadata(metadata: Record<string, any>): Record<string, any> {
@@ -53,9 +54,13 @@ export class PineconeService {
     return sanitized;
   }
 
-  async queryEmbeddings(queryEmbedding: number[], topK: number) {
+  async queryEmbeddings(
+    queryEmbedding: number[],
+    topK: number,
+    linkedUserId: string,
+  ) {
     const index = this.client.Index(this.indexName);
-    const queryResponse = await index.query({
+    const queryResponse = await index.namespace(`ns_${linkedUserId}`).query({
       vector: queryEmbedding,
       topK,
       includeMetadata: true,

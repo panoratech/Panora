@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { vectorDatabases, embeddingModels } from "./utils"
-import { useRagItem } from "./useRAGItem"
+import { useRagItem } from "./useRagItem"
 
 interface RAGItemListProps {
   items: (typeof vectorDatabases[number] | typeof embeddingModels[number])[];

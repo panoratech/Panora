@@ -24,6 +24,8 @@ const formSchema = z.object({
   url: z.string().optional(),
   indexName: z.string().optional(),
   embeddingApiKey: z.string().optional(),
+  collectionName: z.string().optional(),
+  className: z.string().optional(),
 });
 
 interface ItemDisplayProps {
@@ -183,11 +185,11 @@ export function RAGItemDisplay({ item, type }: ItemDisplayProps) {
             case 'pinecone':
                 return ['apiKey', 'indexName'];
             case 'qdrant':
-                return ['apiKey', 'baseUrl'];
+                return ['apiKey', 'baseUrl', 'collectionName'];
             case 'chromadb':
-                return ['url'];
+                return ['url', 'collectionName'];
             case 'weaviate':
-                return ['apiKey', 'url'];
+                return ['apiKey', 'url', 'className'];
             case 'openai_ada_small_1536':
             case 'openai_ada_large_3072':
             case 'openai_ada_002':
@@ -210,13 +212,16 @@ export function RAGItemDisplay({ item, type }: ItemDisplayProps) {
             case 'qdrant':
                 form.setValue("apiKey", data[0]);
                 form.setValue("baseUrl", data[1]);
+                form.setValue("collectionName", data[1]);
                 break;
             case 'chromadb':
                 form.setValue("url", data[0]);
+                form.setValue("collectionName", data[1]);
                 break;
             case 'weaviate':
                 form.setValue("apiKey", data[0]);
                 form.setValue("url", data[1]);
+                form.setValue("className", data[1]);
                 break;
             case 'openai_ada_small_1536':
             case 'openai_ada_large_3072':

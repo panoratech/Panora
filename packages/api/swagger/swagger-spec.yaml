@@ -28,7 +28,13 @@ paths:
   /rag/query:
     post:
       operationId: RagController_queryEmbeddings
-      parameters: []
+      parameters:
+        - name: x-connection-token
+          required: true
+          in: header
+          description: The connection token
+          schema:
+            type: string
       responses:
         '201':
           description: ''

@@ -19,9 +19,13 @@ export class ProcessDocumentProcessor {
 
   @Process('batchDocs')
   async processDocuments(
-    job: Job<{ filesInfo: FileInfo[]; projectId: string }>,
+    job: Job<{
+      filesInfo: FileInfo[];
+      projectId: string;
+      linkedUserId: string;
+    }>,
   ) {
-    const { filesInfo, projectId } = job.data;
+    const { filesInfo, projectId, linkedUserId } = job.data;
     const results = [];
 
     for (const fileInfo of filesInfo) {
@@ -40,7 +44,7 @@ export class ProcessDocumentProcessor {
         // console.log(`chunks for ${fileInfo.id} are ` + JSON.stringify(chunks));
         const embeddings = await this.embeddingService.generateEmbeddings(
           chunks,
-          projectId
+          projectId,
         );
         // Split embeddings into smaller batches
         const batchSize = 100; // Adjust this value as needed
@@ -52,6 +56,7 @@ export class ProcessDocumentProcessor {
             batchChunks,
             batchEmbeddings,
             projectId,
+            linkedUserId,
           );
         }
         results.push(`Successfully processed document ${fileInfo.id}`);

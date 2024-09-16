@@ -1,19 +1,25 @@
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { ProcessedChunk } from '@@core/rag/types';
 import { Injectable } from '@nestjs/common';
-import { ChromaClient } from 'chromadb';
+import { ChromaClient, Collection } from 'chromadb';
 
 @Injectable()
 export class ChromaDBService {
   private client: ChromaClient;
+  private collection: Collection;
 
-  constructor(private envService: EnvironmentService) {
-    //this.initialize();
+  constructor(private envService: EnvironmentService) {}
+
+  async onModuleInit() {
+    return;
   }
 
-  async initialize() {
+  async initialize(credentials: string[]) {
     this.client = new ChromaClient({
-      path: this.envService.getChromaCreds(),
+      path: credentials[0],
+    });
+    this.collection = await this.client.getOrCreateCollection({
+      name: credentials[1],
     });
   }
 
@@ -21,32 +27,29 @@ export class ChromaDBService {
     fileId: string,
     chunks: ProcessedChunk[],
     embeddings: number[][],
+    linkedUserId: string,
   ) {
-    const collection = await this.client.createCollection({ name: fileId });
-    await collection.add({
+    await this.collection.add({
       ids: chunks.map((_, i) => `${fileId}_${i}`),
       embeddings: embeddings,
       metadatas: chunks.map((chunk) => ({
         text: chunk.text,
         ...chunk.metadata,
+        user_id: `ns_${linkedUserId}`,
       })),
     });
   }
 
-  async queryEmbeddings(queryEmbedding: number[], topK: number) {
-    const collections = await this.client.listCollections();
-    const results = await Promise.all(
-      collections.map(async (collection) => {
-        const collectionInstance = await this.client.getCollection({
-          name: collection.name,
-        });
-        const result = await collectionInstance.query({
-          queryEmbeddings: [queryEmbedding],
-          nResults: topK,
-        });
-        return result.metadatas[0];
-      }),
-    );
-    return results.flat().slice(0, topK);
+  async queryEmbeddings(
+    queryEmbedding: number[],
+    topK: number,
+    linkedUserId: string,
+  ) {
+    const result = await this.collection.query({
+      queryEmbeddings: [queryEmbedding],
+      nResults: topK,
+      where: { user_id: `ns_${linkedUserId}` },
+    });
+    return result.metadatas[0];
   }
 }

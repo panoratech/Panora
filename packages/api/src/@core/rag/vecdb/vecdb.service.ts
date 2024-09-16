@@ -94,6 +94,7 @@ export class VectorDatabaseService implements OnModuleInit {
     chunks: Document<Record<string, any>>[],
     embeddings: number[][],
     projectId: string,
+    linkedUserId: string,
   ) {
     await this.init(projectId);
     const processedChunks: ProcessedChunk[] = chunks.map((chunk) => ({
@@ -105,10 +106,15 @@ export class VectorDatabaseService implements OnModuleInit {
       processedChunks,
       embeddings,
       projectId,
+      linkedUserId,
     );
   }
 
-  async queryEmbeddings(queryEmbedding: number[], topK: number) {
-    return this.vectorDb.queryEmbeddings(queryEmbedding, topK);
+  async queryEmbeddings(
+    queryEmbedding: number[],
+    topK: number,
+    linkedUserId: string,
+  ) {
+    return this.vectorDb.queryEmbeddings(queryEmbedding, topK, linkedUserId);
   }
 }

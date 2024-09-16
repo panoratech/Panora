@@ -48,15 +48,26 @@ export class VectorDbCredentialsService {
           this.envService.getPineconeCreds().indexName,
         ];
       case 'chromadb':
-        return [this.envService.getChromaCreds()];
+        return [
+          this.envService.getChromaCreds().url,
+          this.envService.getChromaCreds().collectionName,
+        ];
       case 'weaviate':
         const weaviateCreds = this.envService.getWeaviateCreds();
-        return [weaviateCreds.apiKey, weaviateCreds.url];
+        return [
+          weaviateCreds.apiKey,
+          weaviateCreds.url,
+          weaviateCreds.className,
+        ];
       case 'turbopuffer':
         return [this.envService.getTurboPufferApiKey()];
       case 'qdrant':
         const qdrantCreds = this.envService.getQdrantCreds();
-        return [qdrantCreds.apiKey, qdrantCreds.baseUrl];
+        return [
+          qdrantCreds.apiKey,
+          qdrantCreds.baseUrl,
+          qdrantCreds.collectionName,
+        ];
       default:
         throw new Error(`Unsupported vector database: ${vectorDb}`);
     }
@@ -69,11 +80,11 @@ export class VectorDbCredentialsService {
       case 'turbopuffer':
         return ['apiKey'];
       case 'qdrant':
-        return ['apiKey', 'baseUrl'];
+        return ['apiKey', 'baseUrl', 'collectionName'];
       case 'chromadb':
-        return ['url'];
+        return ['url', 'collectionName'];
       case 'weaviate':
-        return ['apiKey', 'url'];
+        return ['apiKey', 'url', 'className'];
       default:
         throw new Error(`Unsupported vector database: ${vectorDb}`);
     }

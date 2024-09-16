@@ -65,13 +65,19 @@ export class EnvironmentService {
     };
   }
 
-  getChromaCreds(): string {
-    return this.configService.get<string>('CHROMADB_URL');
+  getChromaCreds() {
+    return {
+      url: this.configService.get<string>('CHROMADB_URL'),
+      collectionName: this.configService.get<string>(
+        'CHROMADB_COLLECTION_NAME',
+      ),
+    };
   }
 
   getMilvusCreds() {
     return {
       address: this.configService.get<string>('MILVUS_ADDRESS'),
+      collectionName: this.configService.get<string>('MILVUS_COLLECTION_NAME'),
     };
   }
   getPineconeCreds() {
@@ -85,6 +91,7 @@ export class EnvironmentService {
     return {
       url: this.configService.get<string>('WEAVIATE_URL'),
       apiKey: this.configService.get<string>('WEAVIATE_API_KEY'),
+      className: this.configService.get<string>('WEAVIATE_CLASS_NAME'),
     };
   }
 
@@ -96,6 +103,7 @@ export class EnvironmentService {
     return {
       baseUrl: this.configService.get<string>('QDRANT_BASE_URL'),
       apiKey: this.configService.get<string>('QDRANT_API_KEY'),
+      collectionName: this.configService.get<string>('QDRANT_COLLECTION_NAME'),
     };
   }
 
