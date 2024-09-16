@@ -111,7 +111,7 @@ export class EmbeddingService implements OnModuleInit {
   }
 
   async embedQuery(query: string, projectId?: string) {
-    // await this.initializeEmbeddings(projectId);
+    await this.initializeEmbeddings(projectId);
     return this.embeddings.embedQuery(query);
   }
 }

@@ -32,6 +32,7 @@ export class RagController {
       body.query,
       body.topK,
       linkedUserId,
+      projectId,
     );
   }
 

@@ -18,6 +18,7 @@ export class PineconeService {
     fileId: string,
     chunks: ProcessedChunk[],
     embeddings: number[][],
+    projectId: string,
     linkedUserId: string,
   ) {
     const index = this.client.Index(this.indexName);

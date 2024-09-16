@@ -114,7 +114,9 @@ export class VectorDatabaseService implements OnModuleInit {
     queryEmbedding: number[],
     topK: number,
     linkedUserId: string,
+    projectId: string,
   ) {
+    await this.init(projectId);
     return this.vectorDb.queryEmbeddings(queryEmbedding, topK, linkedUserId);
   }
 }

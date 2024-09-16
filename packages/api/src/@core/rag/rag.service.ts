@@ -14,12 +14,21 @@ export class RagService {
     private s3Service: S3Service,
   ) {}
 
-  async queryEmbeddings(query: string, topK = 5, linkedUserId: string) {
-    const queryEmbedding = await this.embeddingService.embedQuery(query);
+  async queryEmbeddings(
+    query: string,
+    topK = 5,
+    linkedUserId: string,
+    projectId: string,
+  ) {
+    const queryEmbedding = await this.embeddingService.embedQuery(
+      query,
+      projectId,
+    );
     const results = await this.vectorDatabaseService.queryEmbeddings(
       queryEmbedding,
       topK,
       linkedUserId,
+      projectId,
     );
     return results.map((match: any) => ({
       chunk: match.metadata.text,

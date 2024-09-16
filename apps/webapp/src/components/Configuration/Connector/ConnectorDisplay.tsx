@@ -58,8 +58,8 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
   });
 
   const mappingConnectionStrategies = connectionStrategies?.filter(
-    (cs) => extractVertical(cs.type).toLowerCase() === item?.vertical && 
-    extractProvider(cs.type).toLowerCase() === item?.name
+    (cs) => extractVertical(cs.type)?.toLowerCase() === item?.vertical?.toLowerCase() && 
+    extractProvider(cs.type)?.toLowerCase() === item?.name?.toLowerCase()
   );
 
   const oauthAttributes = CONNECTORS_METADATA[item?.vertical!]?.[item?.name!]?.options?.oauth_attributes || [];

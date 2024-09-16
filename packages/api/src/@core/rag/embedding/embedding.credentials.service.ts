@@ -35,7 +35,7 @@ export class EmbeddingCredentialsService {
     return this.connectionsStrategiesService.getConnectionStrategyData(
       projectId,
       type,
-      ['api_key'],
+      ['embeddingApiKey'],
     );
   }
 
