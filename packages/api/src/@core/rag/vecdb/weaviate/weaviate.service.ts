@@ -1,7 +1,7 @@
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { ProcessedChunk } from '@@core/rag/types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import weaviate, { WeaviateClient, ApiKey } from 'weaviate-ts-client';
+import weaviate, { WeaviateClient, ApiKey } from 'weaviate-client';
 
 @Injectable()
 export class WeaviateService implements OnModuleInit {
@@ -15,30 +15,22 @@ export class WeaviateService implements OnModuleInit {
   }
 
   async initialize(credentials: string[]) {
-    this.client = weaviate.client({
-      scheme: 'https',
-      host: credentials[1],
-      apiKey: new ApiKey(credentials[0]),
+    this.client = await weaviate.connectToWeaviateCloud(credentials[1], {
+      authCredentials: new ApiKey(credentials[0]),
     });
     this.className = credentials[2];
     await this.ensureClassExists();
   }
 
   private async ensureClassExists() {
-    const classObj = {
-      class: this.className,
-      vectorizer: 'none', // assuming you're providing your own vectors
-      multiTenancyConfig: {
-        enabled: true,
-      },
-      properties: [
-        { name: 'text', dataType: ['text'] },
-        { name: 'metadata', dataType: ['object'] },
-      ],
-    };
-
     try {
-      await this.client.schema.classCreator().withClass(classObj).do();
+      await this.client.collections.create({
+        name: this.className,
+        multiTenancy: weaviate.configure.multiTenancy({
+          enabled: true,
+          autoTenantCreation: true,
+        }),
+      });
     } catch (error) {
       // Class might already exist, which is fine
       console.log(
@@ -56,24 +48,20 @@ export class WeaviateService implements OnModuleInit {
   ) {
     const batchSize = 100;
     const tenant = `ns_${linkedUserId}`;
+    const collection = this.client.collections.get(this.className);
+    const multiTenant = collection.withTenant(tenant);
+
     for (let i = 0; i < chunks.length; i += batchSize) {
-      const batcher = this.client.batch.objectsBatcher();
-      const batch = chunks.slice(i, i + batchSize);
+      const batch = chunks.slice(i, i + batchSize).map((chunk, index) => ({
+        properties: {
+          text: chunk.text,
+          metadata: chunk.metadata,
+        },
+        id: `${fileId}_${i + index}`,
+        vector: embeddings[i + index],
+      }));
 
-      batch.forEach((chunk, index) => {
-        batcher.withObject({
-          class: this.className,
-          id: `${fileId}_${i + index}`,
-          properties: {
-            text: chunk.text,
-            metadata: chunk.metadata,
-          },
-          vector: embeddings[i + index],
-          tenant: tenant,
-        });
-      });
-
-      await batcher.do();
+      await multiTenant.data.insertMany(batch);
     }
   }
 
@@ -83,16 +71,15 @@ export class WeaviateService implements OnModuleInit {
     linkedUserId: string,
   ) {
     const tenant = `ns_${linkedUserId}`;
-    const result = await this.client.graphql
-      .get()
-      .withClassName(this.className)
-      .withTenant(tenant)
-      .withFields('text metadata')
-      .withNearVector({ vector: queryEmbedding })
-      .withLimit(topK)
-      .do();
+    const multiCollection = this.client.collections.get(this.className);
 
-    return result.data.Get[this.className] || [];
+    const multiTenantObj = multiCollection.withTenant(tenant);
+    const result = await multiTenantObj.query.nearVector(queryEmbedding, {
+      limit: topK,
+      returnMetadata: ['distance'],
+    });
+
+    return result;
   }
 
   /*async deleteEmbeddings(fileId: string, tenant: string) {
