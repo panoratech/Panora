@@ -197,7 +197,6 @@ const ProviderModal = () => {
     const providerMetadata = CONNECTORS_METADATA[selectedProvider.category][selectedProvider.provider];
 
     if (providerMetadata.authStrategy.strategy === AuthStrategy.oauth2) {
-      console.log("values are "+ JSON.stringify(values))
       setAdditionalParams(values);
       setStartFlow(true);
     }else{

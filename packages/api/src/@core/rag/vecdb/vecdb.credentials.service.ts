@@ -13,7 +13,7 @@ export class VectorDbCredentialsService {
     projectId: string,
     vectorDb: string,
   ): Promise<string[]> {
-    const type = `vector_db.${vectorDb}`;
+    const type = `vectorDatabase.${vectorDb}`;
     const isCustom =
       await this.connectionsStrategiesService.isCustomCredentials(
         projectId,
@@ -65,15 +65,15 @@ export class VectorDbCredentialsService {
   private getAttributesForVectorDb(vectorDb: string): string[] {
     switch (vectorDb) {
       case 'pinecone':
-        return ['api_key', 'index_name'];
+        return ['apiKey', 'indexName'];
       case 'turbopuffer':
-        return ['api_key'];
+        return ['apiKey'];
       case 'qdrant':
-        return ['api_key', 'base_url'];
+        return ['apiKey', 'baseUrl'];
       case 'chromadb':
         return ['url'];
       case 'weaviate':
-        return ['api_key', 'url'];
+        return ['apiKey', 'url'];
       default:
         throw new Error(`Unsupported vector database: ${vectorDb}`);
     }

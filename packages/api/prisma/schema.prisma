@@ -1346,6 +1346,11 @@ model connector_sets {
   ats_ashby                  Boolean?
   ecom_webflow               Boolean?
   crm_microsoftdynamicssales Boolean?
+  fs_dropbox                 Boolean?
+  fs_googledrive             Boolean?
+  fs_sharepoint              Boolean?
+  fs_onedrive                Boolean?
+  crm_salesforce             Boolean?
   projects                   projects[]
 }
 

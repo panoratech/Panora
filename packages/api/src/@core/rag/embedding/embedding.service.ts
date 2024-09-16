@@ -37,14 +37,24 @@ export class EmbeddingService implements OnModuleInit {
     let apiKey: string;
 
     if (projectId) {
-      const activeStrategies = await this.connectionsStrategiesService.getConnectionStrategiesForProject(projectId);
+      const activeStrategies =
+        await this.connectionsStrategiesService.getConnectionStrategiesForProject(
+          projectId,
+        );
       const activeEmbeddingStrategy = activeStrategies.find(
-        (strategy) => strategy.type.startsWith('embedding_model.') && strategy.status,
+        (strategy) =>
+          strategy.type.startsWith('embeddingModel.') && strategy.status,
       );
 
       if (activeEmbeddingStrategy) {
-        embeddingType = activeEmbeddingStrategy.type.split('.')[1].toUpperCase() as EmbeddingModelType;
-        [apiKey] = await this.embeddingCredentialsService.getEmbeddingCredentials(projectId, embeddingType);
+        embeddingType = activeEmbeddingStrategy.type
+          .split('.')[1]
+          .toUpperCase() as EmbeddingModelType;
+        [apiKey] =
+          await this.embeddingCredentialsService.getEmbeddingCredentials(
+            projectId,
+            embeddingType,
+          );
       } else {
         embeddingType = 'OPENAI_ADA_002';
         apiKey = this.envService.getOpenAIApiKey();

@@ -6,6 +6,7 @@ interface IConnectionStrategyDto {
     type: string,
     attributes: string[],
     values: string[],
+    status?: boolean
 }
 
 const useCreateConnectionStrategy = () => {    

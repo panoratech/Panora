@@ -47,12 +47,13 @@ export class ConnectionsStrategiesController {
     @Body() connectionStrategyCreateDto: CreateConnectionStrategyDto,
   ) {
     const { id_project } = req.user;
-    const { type, attributes, values } = connectionStrategyCreateDto;
+    const { type, attributes, values, status } = connectionStrategyCreateDto;
     return await this.connectionsStrategiesService.createConnectionStrategy(
       id_project,
       type,
       attributes,
       values,
+      status,
     );
   }
 

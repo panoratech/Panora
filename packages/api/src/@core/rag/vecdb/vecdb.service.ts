@@ -43,7 +43,8 @@ export class VectorDatabaseService implements OnModuleInit {
         projectId,
       );
     const activeVectorDbStrategy = activeStrategies.find(
-      (strategy) => strategy.type.startsWith('vector_db.') && strategy.status,
+      (strategy) =>
+        strategy.type.startsWith('vectorDatabase.') && strategy.status,
     );
 
     let dbType: string;

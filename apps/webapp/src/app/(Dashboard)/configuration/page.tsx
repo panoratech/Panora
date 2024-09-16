@@ -39,7 +39,7 @@ import useUpdatePullFrequency from "@/hooks/create/useCreatePullFrequency";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { RAGSettingsPage } from "@/components/Configuration/RAGSettings/RAGSettingsPage";
+import RAGSettingsPage from "@/components/Configuration/RAGSettings/RAGSettingsPage";
 
 const frequencyOptions = [
   { label: '5 min', value: 300 },
@@ -128,10 +128,17 @@ export default function Page() {
   
 
 
-  const saveFrequency = async (vertical: string) => {
+  const handleFrequencyChangeAndSave = async (vertical: string, value: string) => {
+    handleFrequencyChange(vertical, value);
+    await saveFrequency(vertical, value);
+  };
+  
+  const saveFrequency = async (vertical: string, value: string) => {
     setLoadingStates(prev => ({ ...prev, [vertical]: true }));
     try {
-      const updateData = { [vertical]: parseInt(localFrequencies[vertical] || '0', 10) };
+      const frequency = parseInt(value, 10);
+      console.log("frequency being saved: " + frequency);
+      const updateData = { [vertical]: frequency };
       
       await toast.promise(
         createPullFrequencyPromise(updateData),
@@ -140,9 +147,9 @@ export default function Page() {
           success: (data: any) => {
             queryClient.setQueryData<any>(['pull-frequencies'], (oldData: any) => ({
               ...oldData,
-              [vertical]: localFrequencies[vertical],
+              [vertical]: frequency.toString(),
             }));
-            return `Frequency saved`;
+            return frequency === 0 ? `${vertical} sync deactivated` : `Frequency saved for ${vertical}`;
           },
           error: (err: any) => err.message || 'Error updating frequency',
         }
@@ -238,42 +245,42 @@ export default function Page() {
         <CardDescription>Set the sync frequency for each vertical</CardDescription>
       </CardHeader>
       <CardContent>
-        {VERTICALS.map(vertical => (
-          <div key={vertical} className="mb-4">
-            <label className="block text-sm font-medium text-white mb-1">
-              {vertical.toUpperCase()}
-            </label>
-            <div className="flex items-center space-x-2">
-              <Select
-                value={localFrequencies[vertical] || '0'}
-                onValueChange={(value: string) => handleFrequencyChange(vertical, value)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  {frequencyOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value.toString()}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button 
-                onClick={() => saveFrequency(vertical)}
-                disabled={loadingStates[vertical]} 
-                size="sm" 
-                className="h-7 gap-1"
-              >
-                {loadingStates[vertical] ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : null}
-                {loadingStates[vertical] ? 'Saving...' : 'Save'}
-              </Button>            
-            </div>
-          </div>
-        ))}
-      </CardContent>
+  {VERTICALS.map(vertical => (
+    <div key={vertical} className="mb-4">
+      <label className="block text-sm font-medium text-white mb-1">
+        {vertical.toUpperCase()}
+      </label>
+      <div className="flex items-center space-x-2">
+        <Select
+          value={localFrequencies[vertical] || '0'}
+          onValueChange={(value: string) => handleFrequencyChangeAndSave(vertical, value)}
+          >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select frequency" />
+          </SelectTrigger>
+          <SelectContent>
+            {frequencyOptions.map(option => (
+              <SelectItem key={option.value} value={option.value.toString()}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {localFrequencies[vertical] && localFrequencies[vertical] !== '0'&& (
+          <Button 
+            onClick={() => handleFrequencyChangeAndSave(vertical, '0')}
+            size="sm" 
+            variant="destructive"
+            className="h-7"
+          >
+            {localFrequencies[vertical]}
+            Deactivate
+          </Button>
+        )}
+      </div>
+    </div>
+  ))}
+</CardContent>
     </Card>
               </div>
             </TabsContent>

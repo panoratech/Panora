@@ -1,0 +1,30 @@
+---
+title: "Sage"
+description: ""
+---
+
+# Common Objects
+ 
+| Unified Model    | Supported | Provider Endpoints |
+| ---------------- | --------- | ------------------ |
+| Bankinfo         | No 🚫     |                    |
+| Benefit          | Yes ✅    |   /v1/employees/${employee.remote_id}/employee_benefits                 |
+| Company          | Yes ✅    |      /v1/companies/${id}              |
+| Dependent        | No 🚫     |                    |
+| Employee         | Yes ✅    |     /v1/companies/${company.remote_id}/employees               |
+| Employeepayrollrun | No 🚫   |                    |
+| Employerbenefit  | Yes ✅    |           /v1/companies/${company.remote_id}/company_benefits         |
+| Employment       | Yes ✅    |             /v1/companies/${company.remote_id}/employees        |
+| Group            | Yes ✅    |      /v1/companies/${company.remote_id}/departments              |
+| Location         | Yes ✅    |        [/v1/employees/${employee.remote_id}/work_addresses , /v1/employees/${employee.remote_id}/home_addresses]            |
+| Paygroup         | No 🚫     |                    |
+| Payrollrun       | No 🚫     |                    |
+| Timeoff          | No 🚫     |                    |
+| Timeoffbalance   | No 🚫     |                    |
+| Timesheetentry   | No 🚫     |                    |
+
+
+| Features | Supported                           |
+| -------- | ------------------------------------- |
+| Scopes     ||
+| Realtime webhook     | No 🚫|

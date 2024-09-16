@@ -17,8 +17,7 @@ export default function CustomConnectorPage() {
     : providersArray(vertical);
 
   const connectors = filteredConnectors.filter((connector: Provider) => {
-    const matchesSearch = connector.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          connector.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesSearch = connector.name.toLowerCase().includes(searchQuery.toLowerCase()) || connector.description?.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesSearch
   })
 

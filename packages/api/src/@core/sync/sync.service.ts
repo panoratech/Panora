@@ -63,81 +63,90 @@ export class CoreSyncService {
                   for (const [vertical, interval] of Object.entries(
                     syncIntervals,
                   )) {
-                    const now = new Date();
-                    const lastSyncEvent = await this.prisma.events.findFirst({
-                      where: {
-                        id_project: project.id_project,
-                        type: `${vertical}.batchSyncStart`,
-                      },
-                      orderBy: {
-                        timestamp: 'desc',
-                      },
-                    });
-
-                    const lastSyncTime = lastSyncEvent
-                      ? lastSyncEvent.timestamp
-                      : new Date(0);
-
-                    const secondsSinceLastSync =
-                      Number(now.getTime() - lastSyncTime.getTime()) / 1000;
-
-                    if (interval && secondsSinceLastSync >= interval) {
-                      await this.prisma.events.create({
-                        data: {
+                    if (interval && interval > 0) {
+                      const now = new Date();
+                      const lastSyncEvent = await this.prisma.events.findFirst({
+                        where: {
                           id_project: project.id_project,
-                          id_event: uuidv4(),
-                          status: 'success',
                           type: `${vertical}.batchSyncStart`,
-                          method: 'GET',
-                          url: '',
-                          provider: '',
-                          direction: '0',
-                          timestamp: new Date(),
+                        },
+                        orderBy: {
+                          timestamp: 'desc',
                         },
                       });
+
+                      const lastSyncTime = lastSyncEvent
+                        ? lastSyncEvent.timestamp
+                        : new Date(0);
+
+                      const secondsSinceLastSync =
+                        Number(now.getTime() - lastSyncTime.getTime()) / 1000;
+
+                      if (interval && secondsSinceLastSync >= interval) {
+                        await this.prisma.events.create({
+                          data: {
+                            id_project: project.id_project,
+                            id_event: uuidv4(),
+                            status: 'success',
+                            type: `${vertical}.batchSyncStart`,
+                            method: 'GET',
+                            url: '',
+                            provider: '',
+                            direction: '0',
+                            timestamp: new Date(),
+                          },
+                        });
+                        const commonObjects =
+                          getCommonObjectsForVertical(vertical);
+                        for (const commonObject of commonObjects) {
+                          try {
+                            const service = this.registry.getService(
+                              vertical,
+                              commonObject,
+                            );
+                            if (service) {
+                              try {
+                                const cronExpression =
+                                  this.convertIntervalToCron(Number(interval));
+
+                                await this.bullQueueService.queueSyncJob(
+                                  `${vertical}-sync-${commonObject}s`,
+                                  {
+                                    projectId: project.id_project,
+                                    vertical,
+                                    commonObject,
+                                  },
+                                  cronExpression,
+                                );
+                                this.logger.log(
+                                  `Synced ${vertical}.${commonObject} for project ${project.id_project}`,
+                                );
+                              } catch (error) {
+                                this.logger.error(
+                                  `Error syncing ${vertical}.${commonObject} for project ${project.id_project}: ${error.message}`,
+                                  error,
+                                );
+                              }
+                            } else {
+                              this.logger.warn(
+                                `No service found for ${vertical}.${commonObject}`,
+                              );
+                            }
+                          } catch (error) {
+                            this.logger.error(
+                              `Error processing ${vertical}.${commonObject} for project ${project.id_project}: ${error.message}`,
+                              error,
+                            );
+                          }
+                        }
+                      }
+                    } else {
                       const commonObjects =
                         getCommonObjectsForVertical(vertical);
                       for (const commonObject of commonObjects) {
-                        try {
-                          const service = this.registry.getService(
-                            vertical,
-                            commonObject,
-                          );
-                          if (service) {
-                            try {
-                              const cronExpression = this.convertIntervalToCron(
-                                Number(interval),
-                              );
-
-                              await this.bullQueueService.queueSyncJob(
-                                `${vertical}-sync-${commonObject}s`,
-                                {
-                                  projectId: project.id_project,
-                                  vertical,
-                                  commonObject,
-                                },
-                                cronExpression,
-                              );
-                              this.logger.log(
-                                `Synced ${vertical}.${commonObject} for project ${project.id_project}`,
-                              );
-                            } catch (error) {
-                              this.logger.error(
-                                `Error syncing ${vertical}.${commonObject} for project ${project.id_project}: ${error.message}`,
-                                error,
-                              );
-                            }
-                          } else {
-                            this.logger.warn(
-                              `No service found for ${vertical}.${commonObject}`,
-                            );
-                          }
-                        } catch (error) {
-                          this.logger.error(
-                            `Error processing ${vertical}.${commonObject} for project ${project.id_project}: ${error.message}`,
-                            error,
-                          );
-                        }
+                        await this.bullQueueService.removeRepeatableJob(
+                          `${vertical}-sync-${commonObject}s`,
+                        );
                       }
                     }
                   }

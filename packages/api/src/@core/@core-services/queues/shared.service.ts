@@ -36,19 +36,20 @@ export class BullQueueService {
     return this.ragDocumentQueue;
   }
 
-  async queueSyncJob(jobName: string, jobData: any, cron: string) {
+  async removeRepeatableJob(jobName: string) {
     const jobs = await this.syncJobsQueue.getRepeatableJobs();
     for (const job of jobs) {
       if (job.name === jobName) {
         await this.syncJobsQueue.removeRepeatableByKey(job.key);
       }
     }
-    //await this.syncJobsQueue.add('health-check', {}, { attempts: 1 });
+  }
 
-    // Add new job with the job name and data
+  async queueSyncJob(jobName: string, jobData: any, cron: string) {
+    await this.removeRepeatableJob(jobName);
     const res = await this.syncJobsQueue.add(jobName, jobData, {
       repeat: { cron },
-      jobId: jobName, // Using jobId to identify repeatable jobs
+      jobId: jobName,
     });
     console.log('job is ' + JSON.stringify(res));
   }

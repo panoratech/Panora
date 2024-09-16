@@ -24,7 +24,7 @@ export function ConnectorList({ items }: ConnectorListProps) {
             )}
             onClick={() =>
               setConnector({
-                ...connector,
+                ...connector, 
                 selected: `${item.vertical}-${item.name}`,
               })
             }

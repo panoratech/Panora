@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateConnectionStrategyDto {
   @ApiProperty()
@@ -7,4 +7,6 @@ export class CreateConnectionStrategyDto {
   attributes: string[];
   @ApiProperty()
   values: string[];
+  @ApiPropertyOptional()
+  status?: boolean;
 }

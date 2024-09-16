@@ -26,7 +26,7 @@ export function ConnectorLayout({
 }: Props) {
   const [connector] = useConnector()
   const [selectedVertical, setSelectedVertical] = React.useState<string>("")
-
+  
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onSearchChange(event.target.value)
   }

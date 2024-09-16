@@ -1,8 +1,10 @@
 import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { FileInfo } from '@@core/rag/types';
 import {
+  CreateBucketCommand,
   GetObjectCommand,
-  S3Client
+  HeadBucketCommand,
+  S3Client,
 } from '@aws-sdk/client-s3';
 import { ServiceRegistry } from '@filestorage/file/services/registry.service';
 import { IFileService } from '@filestorage/file/types';
@@ -14,7 +16,10 @@ import { BUCKET_NAME } from './constants';
 export class S3Service {
   private s3: S3Client;
 
-  constructor(private envService: EnvironmentService, private fileServiceRegistry: ServiceRegistry) {
+  constructor(
+    private envService: EnvironmentService,
+    private fileServiceRegistry: ServiceRegistry,
+  ) {
     // const creds = this.envService.getAwsCredentials();
     const creds = this.envService.getMinioCredentials();
     this.s3 = new S3Client({
@@ -23,30 +28,48 @@ export class S3Service {
       forcePathStyle: true,
       //region: creds.region,
       credentials: {
-        accessKeyId: creds.accessKeyId,
-        secretAccessKey: creds.secretAccessKey,
+        accessKeyId: creds.accessKeyId || 'myaccesskey13',
+        secretAccessKey: creds.secretAccessKey || 'mysecretkey12',
       },
     });
   }
 
+  async ensureBucketExists(s3Client: S3Client, bucketName: string) {
+    try {
+      await s3Client.send(new HeadBucketCommand({ Bucket: bucketName }));
+    } catch (error) {
+      if (error.name === 'NotFound') {
+        try {
+          await s3Client.send(new CreateBucketCommand({ Bucket: bucketName }));
+          console.log(`Bucket ${bucketName} created successfully`);
+        } catch (createError) {
+          console.error(`Error creating bucket ${bucketName}:`, createError);
+          throw createError;
+        }
+      } else {
+        // Some other error occurred
+        console.error(`Error checking bucket ${bucketName}:`, error);
+        throw error;
+      }
+    }
+  }
+
   async uploadFilesFromUrls(
     urlsWithKeys: FileInfo[],
-    linkedUserId: string
+    linkedUserId: string,
   ): Promise<void> {
+    await this.ensureBucketExists(this.s3, BUCKET_NAME);
     const batchSize = 10;
     for (let i = 0; i < urlsWithKeys.length; i += batchSize) {
       const batch = urlsWithKeys.slice(i, i + batchSize);
       await Promise.all(
         batch.map(async ({ id, url, s3Key, provider }) => {
           try {
-            const service: IFileService = this.fileServiceRegistry.getService(provider.toLowerCase().trim());
-            if (!service) return;
-            await service.streamFileToS3(
-              id,
-              linkedUserId,
-              this.s3,
-              s3Key,
+            const service: IFileService = this.fileServiceRegistry.getService(
+              provider.toLowerCase().trim(),
             );
+            if (!service) return;
+            await service.streamFileToS3(id, linkedUserId, this.s3, s3Key);
             console.log(`Successfully uploaded ${s3Key} from ${provider}`);
           } catch (error) {
             console.error(

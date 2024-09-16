@@ -59,6 +59,7 @@ export class ConnectionsStrategiesService {
     type: string,
     attributes: string[],
     values: string[],
+    status?: boolean,
   ) {
     try {
       const checkCSDuplicate =
@@ -79,7 +80,7 @@ export class ConnectionsStrategiesService {
           id_connection_strategy: uuidv4(),
           id_project: projectId,
           type: type,
-          status: true,
+          status: status || true,
         },
       });
       const entity = await this.prisma.cs_entities.create({

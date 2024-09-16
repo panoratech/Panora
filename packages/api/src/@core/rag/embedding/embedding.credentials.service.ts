@@ -14,11 +14,12 @@ export class EmbeddingCredentialsService {
     projectId: string,
     embeddingModel: EmbeddingModelType,
   ): Promise<string[]> {
-    const type = `embedding_model.${embeddingModel.toLowerCase()}`;
-    const isCustom = await this.connectionsStrategiesService.isCustomCredentials(
-      projectId,
-      type,
-    );
+    const type = `embeddingModel.${embeddingModel.toLowerCase()}`;
+    const isCustom =
+      await this.connectionsStrategiesService.isCustomCredentials(
+        projectId,
+        type,
+      );
 
     if (isCustom) {
       return this.getCustomCredentials(projectId, type);
