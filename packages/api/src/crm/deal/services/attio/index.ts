@@ -8,9 +8,10 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { IDealService } from '@crm/deal/types';
 import { ServiceRegistry } from '../registry.service';
-import { AttioDealInput, AttioDealOutput } from './types';
+import { AttioDealInput, AttioDealOutput, paginationType } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
 import { OriginalDealOutput } from '@@core/utils/types/original/original.crm';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AttioService implements IDealService {
@@ -73,21 +74,134 @@ export class AttioService implements IDealService {
           vertical: 'crm',
         },
       });
-      const resp = await axios.post(
-        `${connection.account_url}/v2/objects/deals/records/query`,
-        {},
-        {
-          headers: {
-            accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
-          },
+
+      const paginationTrackInfo = await this.prisma.vertical_objects_sync_track_data.findFirst({
+        where: {
+          id_connection: connection.id_connection,
+          vertical: 'crm',
+          provider_slug: 'attio',
+          object: 'deal',
         },
-      );
+      });
+
+      let respData: AttioDealOutput[] = [];
+      let initialOffset: number = 0;
+
+      if (!paginationTrackInfo) {
+        // Intial sync
+        try {
+          while (true) {
+            const resp = await axios.post(
+              `${connection.account_url}/v2/objects/deals/records/query`,
+              {
+                "sorts": [
+                  {
+                    "attribute": "created_at",
+                    "direction": "asc"
+                  }
+                ],
+                "offset": initialOffset,
+                "limit": 500
+              },
+              {
+                headers: {
+                  accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${this.cryptoService.decrypt(
+                    connection.access_token,
+                  )}`,
+                },
+              },
+            );
+
+
+            respData.push(...resp.data.data);
+            initialOffset = initialOffset + resp.data.data.length;
+
+            if (resp.data.data.length < 500) {
+              break;
+            }
+          }
+        }
+        catch (error) {
+          this.logger.log(`Error in initial sync ${error.message} and last offset is ${initialOffset}`);
+        }
+
+      }
+      else {
+        // Incremental sync
+        const currentPaginationData = paginationTrackInfo.data as paginationType;
+        initialOffset = currentPaginationData.offset;
+
+        try {
+          while (true) {
+            const resp = await axios.post(
+              `${connection.account_url}/v2/objects/deals/records/query`,
+              {
+                "sorts": [
+                  {
+                    "attribute": "created_at",
+                    "direction": "asc"
+                  }
+                ],
+                "offset": initialOffset,
+                "limit": 500
+              },
+              {
+                headers: {
+                  accept: 'application/json',
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${this.cryptoService.decrypt(
+                    connection.access_token,
+                  )}`
+                }
+              }
+            );
+
+            respData.push(...resp.data.data);
+            initialOffset = initialOffset + resp.data.data.length;
+
+            if (resp.data.data.length < 500) {
+              break;
+            }
+          }
+        }
+        catch (error) {
+          this.logger.log(`Error in incremental sync ${error.message} and last offset is ${initialOffset}`);
+        }
+      }
+
+      // create or update records
+      if (paginationTrackInfo) {
+        await this.prisma.vertical_objects_sync_track_data.update({
+          where: {
+            id_vertical_objects_sync_track_data: paginationTrackInfo.id_vertical_objects_sync_track_data,
+          },
+          data: {
+            data: {
+              offset: initialOffset,
+            },
+          },
+        });
+      }
+      else {
+        await this.prisma.vertical_objects_sync_track_data.create({
+          data: {
+            id_vertical_objects_sync_track_data: uuidv4(),
+            vertical: 'crm',
+            provider_slug: 'attio',
+            object: 'deal',
+            pagination_type: 'offset',
+            id_connection: connection.id_connection,
+            data: {
+              offset: initialOffset,
+            },
+          },
+        });
+      }
+
       return {
-        data: resp.data.data,
+        data: respData,
         message: 'Attio deals retrieved',
         statusCode: 200,
       };

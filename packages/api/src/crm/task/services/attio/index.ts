@@ -8,7 +8,8 @@ import { ITaskService } from '@crm/task/types';
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
-import { AttioTaskInput, AttioTaskOutput } from './types';
+import { AttioTaskInput, AttioTaskOutput, paginationType } from './types';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AttioService implements ITaskService {
@@ -91,19 +92,109 @@ export class AttioService implements ITaskService {
         },
       });
 
-      const baseURL = `${connection.account_url}/v2/tasks`;
-
-      const resp = await axios.get(baseURL, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
+      const paginationTrackInfo = await this.prisma.vertical_objects_sync_track_data.findFirst({
+        where: {
+          id_connection: connection.id_connection,
+          vertical: 'crm',
+          provider_slug: 'attio',
+          object: 'task',
         },
       });
-      this.logger.log(`Synced attio tasks !`);
+
+      let respData: AttioTaskOutput[] = [];
+      let initialOffset: number = 0;
+
+      if (!paginationTrackInfo) {
+        // Intial sync
+        try {
+          while (true) {
+            const resp = await axios.get(
+              `${connection.account_url}/v2/tasks?limit=500&offset=${initialOffset}`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${this.cryptoService.decrypt(
+                    connection.access_token,
+                  )}`,
+                },
+              });
+
+
+            respData.push(...resp.data.data);
+            initialOffset = initialOffset + resp.data.data.length;
+
+            if (resp.data.data.length < 500) {
+              break;
+            }
+          }
+        }
+        catch (error) {
+          this.logger.log(`Error in initial sync ${error.message} and last offset is ${initialOffset}`);
+        }
+
+      }
+      else {
+        // Incremental sync
+        const currentPaginationData = paginationTrackInfo.data as paginationType;
+        initialOffset = currentPaginationData.offset;
+
+        try {
+          while (true) {
+            const resp = await axios.get(
+              `${connection.account_url}/v2/tasks?limit=500&offset=${initialOffset}`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${this.cryptoService.decrypt(
+                    connection.access_token,
+                  )}`,
+                },
+              });
+
+            respData.push(...resp.data.data);
+            initialOffset = initialOffset + resp.data.data.length;
+
+            if (resp.data.data.length < 500) {
+              break;
+            }
+          }
+        }
+        catch (error) {
+          this.logger.log(`Error in incremental sync ${error.message} and last offset is ${initialOffset}`);
+        }
+      }
+
+      // create or update records
+      if (paginationTrackInfo) {
+        await this.prisma.vertical_objects_sync_track_data.update({
+          where: {
+            id_vertical_objects_sync_track_data: paginationTrackInfo.id_vertical_objects_sync_track_data,
+          },
+          data: {
+            data: {
+              offset: initialOffset,
+            },
+          },
+        });
+      }
+      else {
+        await this.prisma.vertical_objects_sync_track_data.create({
+          data: {
+            id_vertical_objects_sync_track_data: uuidv4(),
+            vertical: 'crm',
+            provider_slug: 'attio',
+            object: 'task',
+            pagination_type: 'offset',
+            id_connection: connection.id_connection,
+            data: {
+              offset: initialOffset,
+            },
+          },
+        });
+      }
+
       return {
-        data: resp?.data?.data,
+        data: respData,
         message: 'Attio tasks retrieved',
         statusCode: 200,
       };
