@@ -1300,21 +1300,22 @@ model connection_strategies {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model connections {
-  id_connection        String       @id(map: "pk_connections") @db.Uuid
-  status               String
-  provider_slug        String
-  vertical             String
-  account_url          String?
-  token_type           String
-  access_token         String?
-  refresh_token        String?
-  expiration_timestamp DateTime?    @db.Timestamptz(6)
-  created_at           DateTime     @db.Timestamptz(6)
-  connection_token     String?
-  id_project           String       @db.Uuid
-  id_linked_user       String       @db.Uuid
-  linked_users         linked_users @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_11")
-  projects             projects     @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_9")
+  id_connection                    String                             @id(map: "pk_connections") @db.Uuid
+  status                           String
+  provider_slug                    String
+  vertical                         String
+  account_url                      String?
+  token_type                       String
+  access_token                     String?
+  refresh_token                    String?
+  expiration_timestamp             DateTime?                          @db.Timestamptz(6)
+  created_at                       DateTime                           @db.Timestamptz(6)
+  connection_token                 String?
+  id_project                       String                             @db.Uuid
+  id_linked_user                   String                             @db.Uuid
+  linked_users                     linked_users                       @relation(fields: [id_linked_user], references: [id_linked_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_11")
+  projects                         projects                           @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_9")
+  vertical_objects_sync_track_data vertical_objects_sync_track_data[]
 
   @@index([id_project], map: "fk_1")
   @@index([id_linked_user], map: "fk_connections_to_linkedusersid")
@@ -1346,6 +1347,11 @@ model connector_sets {
   ats_ashby                  Boolean?
   ecom_webflow               Boolean?
   crm_microsoftdynamicssales Boolean?
+  fs_dropbox                 Boolean?
+  fs_googledrive             Boolean?
+  fs_sharepoint              Boolean?
+  fs_onedrive                Boolean?
+  crm_salesforce             Boolean?
   projects                   projects[]
 }
 
@@ -2143,4 +2149,15 @@ model projects_pull_frequency {
   modified_at                DateTime @default(now()) @db.Timestamptz(6)
   id_project                 String   @unique(map: "uq_projects_pull_frequency_project") @db.Uuid
   projects                   projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_projects_pull_frequency_project")
+}
+
+model vertical_objects_sync_track_data {
+  id_vertical_objects_sync_track_data String      @id(map: "pk_vertical_objects_sync_track_data") @db.Uuid
+  vertical                            String
+  provider_slug                       String
+  object                              String
+  pagination_type                     String
+  id_connection                       String      @db.Uuid
+  data                                Json?       @db.Json
+  connections                         connections @relation(fields: [id_connection], references: [id_connection], onDelete: NoAction, onUpdate: NoAction, map: "fk_connection")
 }
