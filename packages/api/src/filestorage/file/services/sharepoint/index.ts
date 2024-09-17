@@ -29,7 +29,6 @@ export class SharepointService implements IFileService {
   async sync(data: SyncParam): Promise<ApiResponse<SharepointFileOutput[]>> {
     try {
       const { linkedUserId, id_folder } = data;
-      if (!id_folder) return;
 
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -39,11 +38,15 @@ export class SharepointService implements IFileService {
         },
       });
 
-      const folder = await this.prisma.fs_folders.findUnique({
-        where: {
-          id_fs_folder: id_folder as string,
-        },
-      });
+      const folder = id_folder
+        ? await this.prisma.fs_folders.findUnique({
+            where: {
+              id_fs_folder: id_folder as string,
+            },
+          })
+        : {
+            remote_id: 'root',
+          };
 
       const resp = await axios.get(
         `${connection.account_url}/drive/items/${folder.remote_id}/children`,

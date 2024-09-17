@@ -29,7 +29,6 @@ export class OnedriveService implements IFileService {
   async sync(data: SyncParam): Promise<ApiResponse<OnedriveFileOutput[]>> {
     try {
       const { linkedUserId, id_folder } = data;
-      if (!id_folder) return;
 
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -39,11 +38,15 @@ export class OnedriveService implements IFileService {
         },
       });
 
-      const folder = await this.prisma.fs_folders.findUnique({
-        where: {
-          id_fs_folder: id_folder as string,
-        },
-      });
+      const folder = id_folder
+        ? await this.prisma.fs_folders.findUnique({
+            where: {
+              id_fs_folder: id_folder as string,
+            },
+          })
+        : {
+            remote_id: 'root',
+          };
 
       const resp = await axios.get(
         `${connection.account_url}/v1.0/drive/items/${folder.remote_id}/children`,
