@@ -4,7 +4,7 @@ import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiOperation } from '@nestjs/swagger';
 import { RagService } from './rag.service';
-import { QueryBody, RagQueryOutput } from './types';
+import { RagQueryOutput, QueryBody } from './rag.dto';
 
 @Controller('rag')
 export class RagController {
