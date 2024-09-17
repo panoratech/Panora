@@ -68,4 +68,19 @@ export class BoxService implements IFileService {
       throw error;
     }
   }
+
+  async downloadFile(fileId: string, connection: any): Promise<Buffer> {
+    const response = await axios.get(
+      `${connection.account_url}/2.0/files/${fileId}/content`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+        responseType: 'arraybuffer',
+      },
+    );
+    return Buffer.from(response.data);
+  }
 }

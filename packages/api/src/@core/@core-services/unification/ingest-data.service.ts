@@ -212,7 +212,7 @@ export class IngestDataService {
     if (vertical === 'filestorage' && commonObject === 'file') {
       try {
         const filesInfo: FileInfo[] = data
-          .filter((file: FileStorageFile) => file.file_url && file.mime_type)
+          .filter((file: FileStorageFile) => file.mime_type !== null)
           .map((file: FileStorageFile) => ({
             id: file.id_fs_file,
             url: file.file_url,

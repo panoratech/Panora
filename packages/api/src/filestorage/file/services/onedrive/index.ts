@@ -46,7 +46,7 @@ export class OnedriveService implements IFileService {
       });
 
       const resp = await axios.get(
-        `${connection.account_url}/v1.0/drive/items/${folder.remote_id}/children`,
+        `${connection.account_url}/v1.0/me/drive/items/${folder.remote_id}/children`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ export class OnedriveService implements IFileService {
       await Promise.all(
         files.map(async (driveItem) => {
           const resp = await axios.get(
-            `${connection.account_url}/v1.0/drive/items/${driveItem.id}/permissions`,
+            `${connection.account_url}/v1.0/me/drive/items/${driveItem.id}/permissions`,
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -88,5 +88,20 @@ export class OnedriveService implements IFileService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async downloadFile(fileId: string, connection: any): Promise<Buffer> {
+    const response = await axios.get(
+      `${connection.account_url}/v1.0/me/drive/items/${fileId}/content`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+        responseType: 'arraybuffer',
+      },
+    );
+    return Buffer.from(response.data);
   }
 }

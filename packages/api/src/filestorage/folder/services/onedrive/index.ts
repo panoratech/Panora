@@ -96,7 +96,7 @@ export class OnedriveService implements IFolderService {
         const nestedFolders = await Promise.all(
           batch.map(async (folder_id) => {
             const resp = await axios.get(
-              `${connection.account_url}/v1.0/drive/items/${folder_id}/children`,
+              `${connection.account_url}/v1.0/me/drive/items/${folder_id}/children`,
               {
                 headers: {
                   'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ export class OnedriveService implements IFolderService {
             await Promise.all(
               resp.data.value.map(async (driveItem) => {
                 const resp = await axios.get(
-                  `${connection.account_url}/v1.0/drive/items/${driveItem.id}/permissions`,
+                  `${connection.account_url}/v1.0/me/drive/items/${driveItem.id}/permissions`,
                   {
                     headers: {
                       'Content-Type': 'application/json',
@@ -124,7 +124,6 @@ export class OnedriveService implements IFolderService {
                 driveItem.permissions = resp.data.value;
               }),
             );
-
             const folders = resp.data.value.filter(
               (driveItem) => driveItem.folder,
             );

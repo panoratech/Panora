@@ -106,11 +106,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
         },
       });
 
-      const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getTunnelIngress()
-          : this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const CREDENTIALS = (await this.cService.getCredentials(
         projectId,
@@ -141,7 +137,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
 
       // get site_id from tenant and sitename
       const site_details = await axios.get(
-        `https://graph.microsoft.com/v1.0/sites/${tenant}.sharepoint.com:/sites/${site}`,
+        `https://graph.microsoft.com/v1.0/sites/${site}.sharepoint.com:/sites/${tenant}`,
         {
           headers: {
             Authorization: `Bearer ${data.access_token}`,
@@ -213,11 +209,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
   async handleTokenRefresh(opts: RefreshParams) {
     try {
       const { connectionId, refreshToken, projectId } = opts;
-      const REDIRECT_URI = `${
-        this.env.getDistributionMode() == 'selfhost'
-          ? this.env.getTunnelIngress()
-          : this.env.getPanoraBaseUrl()
-      }/connections/oauth/callback`;
+      const REDIRECT_URI = `${this.env.getPanoraBaseUrl()}/connections/oauth/callback`;
 
       const formData = new URLSearchParams({
         grant_type: 'refresh_token',

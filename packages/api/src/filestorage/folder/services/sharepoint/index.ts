@@ -1,19 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { IFolderService } from '@filestorage/folder/types';
-import { FileStorageObject } from '@filestorage/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { FileStorageObject } from '@filestorage/@lib/@types';
+import { IFolderService } from '@filestorage/folder/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { SharepointFolderInput, SharepointFolderOutput } from './types';
-import { SyncParam } from '@@core/utils/types/interface';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { UnifiedFilestorageFileOutput } from '@filestorage/file/types/model.unified';
-import { SharepointFileOutput } from '@filestorage/file/services/sharepoint/types';
-
 @Injectable()
 export class SharepointService implements IFolderService {
   constructor(

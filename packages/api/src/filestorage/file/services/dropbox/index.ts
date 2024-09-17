@@ -9,7 +9,6 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { DropboxFileOutput } from './types';
-import { UnifiedFilestorageFolderOutput } from '@filestorage/folder/types/model.unified';
 
 @Injectable()
 export class DropboxService implements IFileService {
@@ -109,5 +108,21 @@ export class DropboxService implements IFileService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async downloadFile(fileId: string, connection: any): Promise<Buffer> {
+    const response = await axios.get(
+      `${connection.account_url}/files/download`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+          'Dropbox-API-Arg': JSON.stringify({ path: fileId }),
+        },
+        responseType: 'arraybuffer',
+      },
+    );
+    return Buffer.from(response.data);
   }
 }

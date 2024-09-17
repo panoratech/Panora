@@ -16,12 +16,14 @@ import { Input } from "@/components/ui/input";
 import { DataTableFacetedFilter } from "@/components/shared/data-table-faceted-filter";
 
 import config from "@/lib/config";
-import { AuthStrategy, providerToType, Provider, CONNECTORS_METADATA, extractProvider, extractVertical, needsSubdomain, needsScope } from "@panora/shared";
+import { AuthStrategy, providerToType, Provider, CONNECTORS_METADATA, extractProvider, extractVertical, needsSubdomain, needsScope, scopes } from "@panora/shared";
 import useProjectStore from "@/state/projectStore";
 import useConnectionStrategies from "@/hooks/get/useConnectionStrategies";
 import useCreateConnectionStrategy from "@/hooks/create/useCreateConnectionStrategy";
 import useUpdateConnectionStrategy from "@/hooks/update/useUpdateConnectionStrategy";
 import useConnectionStrategyAuthCredentials from "@/hooks/get/useConnectionStrategyAuthCredentials";
+import { Checkbox } from '@/components/ui/checkbox';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 const formSchema = z.object({
   subdomain: z.string().optional(),
@@ -43,11 +45,13 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
   const { idProject } = useProjectStore();
   const queryClient = useQueryClient();
   const posthog = usePostHog();
+  const [scopesOpen, setScopesOpen] = useState(false);
 
   const { data: connectionStrategies } = useConnectionStrategies();
   const { createCsPromise } = useCreateConnectionStrategy();
   const { updateCsPromise } = useUpdateConnectionStrategy();
   const { mutateAsync: fetchCredentials } = useConnectionStrategyAuthCredentials();
+  const scopes = CONNECTORS_METADATA[item?.vertical!]?.[item?.name!]?.scopes?.split(' ') || [];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -315,18 +319,47 @@ export function ConnectorDisplay({ item }: ItemDisplayProps) {
                       )}
                     />
                     <FormField
-                      name="scope"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Scopes</FormLabel>
-                          <FormControl>
-                            <DataTableFacetedFilter title="Add" field={field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                          name="scope"
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Popover open={scopesOpen} onOpenChange={setScopesOpen}>
+                                  <PopoverTrigger asChild>
+                                    <Button variant="outline" onClick={() => setScopesOpen(true)}>
+                                      Add Scopes
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-80">
+                                    <div className="grid gap-4">
+                                      <div className="space-y-2">
+                                        {scopes.map((scope) => (
+                                          <div key={scope} className="flex items-center">
+                                            <Checkbox
+                                              id={scope}
+                                              checked={field.value?.includes(scope)}
+                                              onCheckedChange={(checked) => {
+                                                const updatedScopes = checked
+                                                  ? [...(field.value?.split(' ') || []), scope]
+                                                  : (field.value?.split(' ') || []).filter((s) => s !== scope);
+                                                field.onChange(updatedScopes.join(' '));
+                                              }}
+                                            />
+                                            <label htmlFor={scope} className="ml-2 text-sm">
+                                              {scope}
+                                            </label>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </PopoverContent>
+                                </Popover>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                         )}
+                        />
+
                     {oauthAttributes.map((attr: string) => (
                       <FormField
                         key={attr}

@@ -89,4 +89,19 @@ export class SharepointService implements IFileService {
       throw error;
     }
   }
+
+  async downloadFile(fileId: string, connection: any): Promise<Buffer> {
+    const response = await axios.get(
+      `${connection.account_url}/drive/items/${fileId}/content`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+        responseType: 'arraybuffer',
+      },
+    );
+    return Buffer.from(response.data);
+  }
 }

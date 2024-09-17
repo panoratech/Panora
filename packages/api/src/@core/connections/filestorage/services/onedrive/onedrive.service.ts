@@ -107,16 +107,18 @@ export class OneDriveConnectionService extends AbstractBaseConnectionService {
         this.type,
       )) as OAuth2AuthData;
 
-      const formData = new URLSearchParams({
+      /*const formData = new URLSearchParams({
         redirect_uri: REDIRECT_URI,
         code: code,
         client_id: CREDENTIALS.CLIENT_ID,
         client_secret: CREDENTIALS.CLIENT_SECRET,
         grant_type: 'authorization_code',
-      });
+      });*/
+      const formData = `redirect_uri=${REDIRECT_URI}&code=${code}&client_id=${CREDENTIALS.CLIENT_ID}&client_secret=${CREDENTIALS.CLIENT_SECRET}&grant_type=authorization_code`;
+
       const res = await axios.post(
         `https://login.microsoftonline.com/common/oauth2/v2.0/token`,
-        formData.toString(),
+        formData,
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
