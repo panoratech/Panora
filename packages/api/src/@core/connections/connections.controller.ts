@@ -187,7 +187,7 @@ export class ConnectionsController {
   }
 
   @ApiOperation({
-    operationId: 'retrieveConnections',
+    operationId: 'listConnections',
     summary: 'List Connections',
   })
   @ApiGetArrayCustomResponse(Connection)

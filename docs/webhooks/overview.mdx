@@ -188,18 +188,18 @@ To enable webhook events, you need to register webhook endpoints. After you regi
         app.post('/webhook', async (request, response) => {
             const sig = request.headers['panora-signature'];
 
-            let event;
+            let event: Record<string, any> = {};
 
             try {
                 // Verifies that the event comes from Panora and not from malicious sender
                 event = await panora.webhooks.verifyEvent({
                     payload: request.body,
-                    signature: sig,
+                    signature: sig as string,
                     secret: endpointSecret,
                 });
             }
             catch (err) {
-                response.status(400).send(`Webhook Error: ${err.message}`);
+                response.status(400).send(`Webhook Error: ${(err as any).message}`);
             }
 
             // Handle the event
@@ -220,7 +220,8 @@ To enable webhook events, you need to register webhook endpoints. After you regi
             }
 
             // Return a response to acknowledge receipt of the event
-            response.json({received: true});
+                response.json('Received !');
+
         });
 
         app.listen(8080, () => console.log('Running on port 8080'));

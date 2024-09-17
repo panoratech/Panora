@@ -1,8 +1,10 @@
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
+import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
-import { ApiHeader } from '@nestjs/swagger';
+import { ApiBody, ApiHeader, ApiOperation } from '@nestjs/swagger';
 import { RagService } from './rag.service';
+import { QueryBody, RagQueryOutput } from './types';
 
 @Controller('rag')
 export class RagController {
@@ -13,15 +15,22 @@ export class RagController {
   ) {}
 
   @Post('query')
+  @ApiOperation({
+    operationId: 'query',
+    summary: 'Query using RAG Search',
+    description: 'Query across your connected data sources using RAG Search',
+  })
   @ApiHeader({
     name: 'x-connection-token',
     required: true,
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
+  @ApiPostCustomResponse(RagQueryOutput)
+  @ApiBody({ type: QueryBody })
   @UseGuards(ApiKeyAuthGuard)
   async queryEmbeddings(
-    @Body() body: { query: string; topK?: number },
+    @Body() body: QueryBody,
     @Headers('x-connection-token') connection_token: string,
   ) {
     const { linkedUserId, remoteSource, connectionId, projectId } =

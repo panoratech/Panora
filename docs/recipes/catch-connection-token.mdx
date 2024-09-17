@@ -38,7 +38,7 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
             // Handle the event
             switch (event.type) {
                 case 'connection.created':
-                    const connectionObject = event.data;
+                    const connectionObject = JSON.parse(event.data);
                     // Then define and call a method to handle the successful connection creation.
                     // handleConnectionCreationSucceeded(connectionObject);
                     break;
@@ -164,6 +164,13 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
         import express, { Request, Response } from 'express';
         import { Panora } from '@panora/sdk';
 
+        type ConnectionData = {
+            connection_token: string;
+            provider_slug: string;
+            vertical: string;
+            [key: string]: any;
+        }
+
         // Set your api key
         // See your keys here: https://dashboard.panora.dev/api-keys
         const panora = new Panora({ apiKey: process.env.API_KEY });
@@ -180,33 +187,46 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
         app.post('/webhook', async (request, response) => {
             const sig = request.headers['panora-signature'];
 
-            let event;
+            let event: Record<string, any> = {};
 
             try {
                 // Verifies that the event comes from Panora and not from malicious sender
                 event = await panora.webhooks.verifyEvent({
                     payload: request.body,
-                    signature: sig,
+                    signature: sig as any,
                     secret: endpointSecret,
                 });
             }
             catch (err) {
-                response.status(400).send(`Webhook Error: ${err.message}`);
+                response.status(400).send(`Webhook Error: ${(err as any).message}`);
             }
 
             // Handle the event
             switch (event.type) {
                 case 'connection.created':
-                    const connectionObject = event.data;
-                    // Then define and call a method to handle the successful connection creation.
-                    // handleConnectionCreationSucceeded(connectionObject);
+                    const connectionData: ConnectionData = JSON.parse(event.data);
+                    console.log(`Received connectionToken data ${JSON.stringify(connectionData)}`)
+                    break;
+                case 'filestorage.file.pulled':
+                    console.log(`Retrieving files...`)
+                    const files = event.data;
+                    console.log(JSON.stringify(files))
+                    /*Alternatively you can use our SDK with your connectionToken to retireve the same data
+                    
+                    const result = await panora.filestorage.files.list({
+                        xConnectionToken: connectionToken,
+                        remoteData: true,
+                    });
+                    for await (const page of result) {
+                        console.log(`Files are ${JSON.stringify(page.result)}`)
+                    }*/
                     break;
                 default:
                     console.log(`Unhandled event type ${event.type}`);
             }
-
             // Return a response to acknowledge receipt of the event
-            response.json({received: true});
+            response.json('Received !');
+
         });
 
         app.listen(8080, () => console.log('Running on port 8080'));
@@ -215,24 +235,26 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
 
         ```python Python
         import os
+        import json
         from panora_sdk import Panora
         from django.http import HttpResponse
+        from django.views.decorators.csrf import csrf_exempt
+        from django.views.decorators.http import require_http_methods
 
-        # Set your secret key.
+        # Set your api key
         # See your keys here: https://dashboard.panora.dev/api-keys
-        panora = Panora(
-            api_key=os.getenv("API_KEY", ""),
-        )
+        panora = Panora(api_key=os.getenv("API_KEY", ""))
+
         # Find your endpoint's secret in your webhook settings in the Config Page
         endpoint_secret = 'whsec_...'
 
+        connection_token = ''
 
-        # Using Django
         @csrf_exempt
+        @require_http_methods(["POST"])
         def my_webhook_view(request):
             payload = request.body
-            sig_header = request.META['panora-signature']
-            event = None
+            sig_header = request.headers.get('panora-signature')
 
             try:
                 # Verifies that the event comes from Panora and not from malicious sender
@@ -243,18 +265,32 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
                 })
             except ValueError as e:
                 # Invalid payload
-                print('Error parsing payload: {}'.format(str(e)))
-                return HttpResponse(status=400)
+                return HttpResponse(f"Webhook Error: {str(e)}", status=400)
 
             # Handle the event
-            if event.type == 'connection.created':
-                connection_object = event.data
-                # Then define and call a method to handle the successful connection creation.
-                # handle_connection_creation_succeeded(connection_object)
+            event_type = event.get('type')
+            if event_type == 'connection.created':
+                connection_data = json.loads(event['data'])
+                connection_token = connection_data.get('connection_token')
+                print(f"Received connectionToken data {json.dumps(connection_data)}")
+            elif event_type == 'filestorage.file.pulled':
+                print("Retrieving files...")
+                files = event['data']
+                print(json.dumps(files))
+                """Alternatively you can use our SDK with your connectionToken to retrieve the same data
+                
+                result = panora.filestorage.files.list(
+                    x_connection_token=connection_token,
+                    remote_data=True
+                )
+                for page in result:
+                    print(f"Files are {json.dumps(page.result)}")
+                """
             else:
-                print('Unhandled event type {}'.format(event.type))
+                print(f"Unhandled event type {event_type}")
 
-            return HttpResponse(status=200)
+            # Return a response to acknowledge receipt of the event
+            return HttpResponse('Received !')
         ```
         </CodeGroup>
 

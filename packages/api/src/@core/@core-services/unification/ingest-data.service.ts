@@ -247,7 +247,7 @@ export class IngestDataService {
         id_project: projectId,
         id_event: uuidv4(),
         status: 'success',
-        type: `${vertical}.${commonObject}.synced`,
+        type: `${vertical}.${commonObject}.pulled`,
         method: 'SYNC',
         url: '/sync',
         provider: integrationId,

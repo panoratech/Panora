@@ -1,12 +1,11 @@
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { Queues } from '@@core/@core-services/queues/types';
 import { OnQueueActive, Process, Processor } from '@nestjs/bull';
 import axios from 'axios';
 import { Job } from 'bull';
 import { v4 as uuidv4 } from 'uuid';
 import { WebhookService } from './webhook.service';
-import { Queues } from '@@core/@core-services/queues/types';
-import { response } from 'express';
 
 @Processor(Queues.PANORA_WEBHOOKS_SENDER)
 export class WebhookProcessor {
@@ -84,7 +83,7 @@ export class WebhookProcessor {
         await this.prisma.webhooks_reponses.create({
           data: {
             id_webhooks_reponse: uuidv4(),
-            http_response_data: response.data,
+            http_response_data: JSON.stringify(response.data),
             http_status_code: response.status.toString(),
           },
         });
@@ -97,7 +96,7 @@ export class WebhookProcessor {
 
         this.logger.log('Webhook delivered !');
       } catch (error) {
-        // If the POST request fails, set a next retry time and reinsert the job in the queue
+        // TODO: If the POST request fails, set a next retry time and reinsert the job in the queue
         /*const nextRetry = new Date();
         nextRetry.setSeconds(nextRetry.getSeconds() + 60); // Retry after 60 seconds
 
