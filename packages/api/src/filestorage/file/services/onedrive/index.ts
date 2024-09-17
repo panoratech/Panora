@@ -29,7 +29,6 @@ export class OnedriveService implements IFileService {
   async sync(data: SyncParam): Promise<ApiResponse<OnedriveFileOutput[]>> {
     try {
       const { linkedUserId, id_folder } = data;
-      if (!id_folder) return;
 
       const connection = await this.prisma.connections.findFirst({
         where: {
@@ -39,57 +38,79 @@ export class OnedriveService implements IFileService {
         },
       });
 
-      const folder = await this.prisma.fs_folders.findUnique({
-        where: {
-          id_fs_folder: id_folder as string,
-        },
-      });
-
-      const resp = await axios.get(
-        `${connection.account_url}/v1.0/me/drive/items/${folder.remote_id}/children`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.cryptoService.decrypt(
-              connection.access_token,
-            )}`,
+      const foldersToSync = ['root'];
+      if (id_folder) {
+        const folder = await this.prisma.fs_folders.findUnique({
+          where: {
+            id_fs_folder: id_folder as string,
           },
-        },
-      );
+        });
+        if (folder && folder.remote_id !== 'root') {
+          foldersToSync.push(folder.remote_id);
+        }
+      }
 
-      const files: OnedriveFileOutput[] = resp.data.value.filter(
-        (elem) => !elem.folder, // files don't have a folder property
-      );
+      const allFiles: OnedriveFileOutput[] = [];
 
-      // Add permission shared link is also included in permissions in one-drive)
-      await Promise.all(
-        files.map(async (driveItem) => {
-          const resp = await axios.get(
-            `${connection.account_url}/v1.0/me/drive/items/${driveItem.id}/permissions`,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.cryptoService.decrypt(
-                  connection.access_token,
-                )}`,
-              },
-            },
-          );
-          driveItem.permissions = resp.data.value;
-        }),
-      );
+      for (const folderId of foldersToSync) {
+        const files = await this.syncFolder(connection, folderId);
+        allFiles.push(...files);
+      }
 
-      this.logger.log(`Synced onedrive files !`);
+      this.logger.log(`Synced OneDrive files from root and specified folder!`);
       return {
-        data: files,
-        message: "One Drive's files retrieved",
+        data: allFiles,
+        message: "OneDrive's files retrieved from root and specified folder",
         statusCode: 200,
       };
     } catch (error) {
+      this.logger.error(
+        `Error syncing OneDrive files: ${error.message}`,
+        error,
+      );
       throw error;
     }
   }
+  private async syncFolder(
+    connection: any,
+    folderId: string,
+  ): Promise<OnedriveFileOutput[]> {
+    const resp = await axios.get(
+      `${connection.account_url}/v1.0/me/drive/items/${folderId}/children`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      },
+    );
 
+    const files: OnedriveFileOutput[] = resp.data.value.filter(
+      (elem) => !elem.folder, // files don't have a folder property
+    );
+
+    // Add permissions (shared link is also included in permissions in OneDrive)
+    await Promise.all(
+      files.map(async (driveItem) => {
+        const resp = await axios.get(
+          `${connection.account_url}/v1.0/me/drive/items/${driveItem.id}/permissions`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          },
+        );
+        driveItem.permissions = resp.data.value;
+      }),
+    );
+
+    return files;
+  }
   async downloadFile(fileId: string, connection: any): Promise<Buffer> {
     const response = await axios.get(
       `${connection.account_url}/v1.0/me/drive/items/${fileId}/content`,
