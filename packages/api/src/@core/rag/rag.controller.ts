@@ -37,7 +37,7 @@ export class RagController {
       await this.connectionUtils.getConnectionMetadataFromConnectionToken(
         connection_token,
       );
-    return this.documentEmbeddingService.queryEmbeddings(
+    return await this.documentEmbeddingService.queryEmbeddings(
       body.query,
       body.topK,
       linkedUserId,
