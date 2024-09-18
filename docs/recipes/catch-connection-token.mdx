@@ -47,9 +47,7 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
             }
 
             // Return a response to acknowledge receipt of the event
-            response.json({
-                received: true
-            });
+            response.json('Received !');
         });
 
         app.listen(8000, () => console.log('Running on port 8000'));

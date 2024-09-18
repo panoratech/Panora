@@ -50,9 +50,7 @@ To enable webhook events, you need to register webhook endpoints. After you regi
             }
 
             // Return a response to acknowledge receipt of the event
-            response.json({
-                received: true
-            });
+            response.json('Received !');
         });
 
         app.listen(8000, () => console.log('Running on port 8000'));

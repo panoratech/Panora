@@ -25,6 +25,7 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import {
+  EventPayload,
   SignatureVerificationDto,
   WebhookDto,
   WebhookResponse,
@@ -171,7 +172,7 @@ export class WebhookController {
     summary: 'Verify payload signature of the webhook',
   })
   @ApiBody({ type: SignatureVerificationDto })
-  @ApiPostGenericJson('Dynamic event payload')
+  @ApiPostCustomResponse(EventPayload)
   @UseGuards(ApiKeyAuthGuard)
   @Post('verifyEvent')
   async verifyPayloadSignature(@Body() data: SignatureVerificationDto) {

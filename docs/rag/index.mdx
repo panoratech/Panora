@@ -9,9 +9,9 @@ Once we've synced documents across File Storage systems, we embed and chunk them
 # Step 1: Import the code snippet
 
 <CodeGroup>
-    ```shell React
-    pnpm i @panora/sdk
-    ```
+  ```shell React
+  pnpm i @panora/sdk
+  ```
 </CodeGroup>
 
 #### Use the SDK
@@ -42,6 +42,8 @@ Once we've synced documents across File Storage systems, we embed and chunk them
 </CodeGroup>
 
 Congrats ! You should be able to get back your embeddings and chunks for the query !
+
+<Note>If you selfhost, please make sure to do step 2 or directly fill these env vars in your .env [here](/open-source/self_hosting/envVariables#rag)! </Note>
 
 By default, for embedding we use **OpenAI ADA-002** model and **Pinecone** managed vector database for storing the chunks.
 

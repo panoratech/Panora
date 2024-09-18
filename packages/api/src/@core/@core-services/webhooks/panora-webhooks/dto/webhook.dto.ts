@@ -27,17 +27,38 @@ export class WebhookDto {
 }
 
 export class EventPayload {
-  [key: string]: any;
-}
+  @ApiProperty({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    nullable: true,
+    description: 'The id of the event.',
+  })
+  id_event: string;
 
-export class SignatureVerificationDto {
+  @ApiProperty({
+    type: String,
+    example: 'connection.created',
+    nullable: true,
+    description: 'The type of the event.',
+  })
+  type: string;
+
   @ApiProperty({
     type: Object,
     additionalProperties: true,
     nullable: true,
+    description: 'The data payload event of the webhook.',
+  })
+  data: { [key: string]: any };
+}
+
+export class SignatureVerificationDto {
+  @ApiProperty({
+    type: EventPayload,
+    nullable: true,
     description: 'The payload event of the webhook.',
   })
-  payload: { [key: string]: any };
+  payload: EventPayload;
 
   @ApiProperty({
     type: String,

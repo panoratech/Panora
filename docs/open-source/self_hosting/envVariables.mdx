@@ -3,6 +3,7 @@ title: "Environment Variables"
 description: ""
 ---
 
+<Note>If you selfhost, please make sure to create your own oAuth app and [report the credentials in the dashboard](/recipes/add-custom-provider-creds) or directly fill these env vars in your .env [here](/open-source/self_hosting/envVariables#providers-specific-credentials)! </Note>
 
 # Backend
 
@@ -56,7 +57,7 @@ description: ""
 | Variable | Example                           | Purpose                           |
 | -------- | ------------------------------------- | ------------------------------------- |
 | REDIRECT_TUNNEL_INGRESS     | https://MY-NGROK-DOMAIN.ngrok-free.app  | Mandatory only when DISTRIBUTION=selfhost. Endpoint (an Ngrok tunnel domain) when you have to test your OAuth App and needs a HTTPS redirectUri that redirects to your localhost (useful for contributors that might need to test their oAuth flow)  |
-| WEBHOOK_INGRESS      |  https://MY-NGROK-DOMAIN.ngrok-free.app  | Same job as REDIRECT_TUNNEL_INGRESS. You can use the same value for both if you prefer.  |
+| WEBHOOK_INGRESS      |  https://MY-NGROK-DOMAIN.ngrok-free.app  | If you plan to use the Backend SDK to receive data, if your receiving server is running locally you must use a Ngrok redirect as well. (our main API is runnning within docker and doesnt have localhost context so requests must be https). Alternatively, you can just input it [using the dashboard](/webhooks/overview#:~:text=Register%20your%20endpoint%20within%20Panora%20using%20the%20Dashboard%20or%20the%20API.).   |
 
 
 ## Providers Specific Credentials
@@ -201,13 +202,24 @@ description: ""
 | SALESFORCE_CRM_CLOUD_CLIENT_SECRET      |    |   |
 
 ## RAG
+
+### Embedding Models
+Just use 1 model, it's not required of course to have them all.
 | Variable | Example                           | Purpose                           |
 | -------- | ------------------------------------- | ------------------------------------- |
 | OPENAI_API_KEY      |    |   |
 | JINA_API_KEY      |    |   |
 | COHERE_API_KEY      |    |   |
+
+| Variable | Example                           | Purpose                           |
+| -------- | ------------------------------------- | ------------------------------------- |
 | UNSTRUCTURED_API_KEY      |    |   |
 | UNSTRUCTURED_API_URL      |    |   |
+
+### Vector Database
+Just use 1 Vector DB, it's not required of course to have them all.
+| Variable | Example                           | Purpose                           |
+| -------- | ------------------------------------- | ------------------------------------- |
 | PINECONE_API_KEY      |    |   |
 | PINECONE_INDEX_NAME      |    |   |
 | QDRANT_BASE_URL      |    |   |
@@ -239,7 +251,10 @@ description: ""
 
 ## Storage (Optional)
 
-You can let them empty for now !
+If you selfhost, and you want the RAG feature you must fill these values.Just choose either AWS or Minio !
+We already put variables for Minio, so you dont have to do anything. 
+If you'd like to use AWS contact us for more info.
+<Note>Minio bucket is available at http://localhost:9000 </Note>
 
 | Variable | Example                           | Purpose                           |
 | -------- | ------------------------------------- | ------------------------------------- |

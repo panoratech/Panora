@@ -4,7 +4,7 @@ import { IsNumber, IsString } from 'class-validator';
 export class RagQueryOutput {
   @ApiProperty({
     type: String,
-    example: '\nDate : 06/07/2023',
+    example: 'Date : 06/07/2023',
     nullable: false,
     description: 'The chunk which matches the embed query',
   })

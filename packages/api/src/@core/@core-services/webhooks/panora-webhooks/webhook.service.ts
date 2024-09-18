@@ -3,7 +3,7 @@ import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { WebhooksError } from '@@core/utils/errors';
-import { WebhookDto } from './dto/webhook.dto';
+import { EventPayload, WebhookDto } from './dto/webhook.dto';
 import axios from 'axios';
 import { createHmac } from 'crypto';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
@@ -220,6 +220,7 @@ export class WebhookService {
             {
               id_event: deliveryAttempt.id_event,
               data: deliveryAttempt.webhooks_payloads.data,
+              type: eventType,
             },
             {
               headers: {
@@ -289,10 +290,10 @@ export class WebhookService {
   }
 
   async verifyPayloadSignature(
-    payload: { [key: string]: any },
+    payload: EventPayload,
     signature: string,
     secret: string,
-  ) {
+  ): Promise<EventPayload> {
     try {
       const expected = this.generateSignature(payload.data, secret);
       if (expected !== signature) {

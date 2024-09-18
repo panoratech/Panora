@@ -309,9 +309,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties: true
-                description: Dynamic event payload
+                $ref: '#/components/schemas/EventPayload'
       tags: *ref_1
       x-speakeasy-group: webhooks
   /ticketing/tickets:
@@ -9616,9 +9614,7 @@ components:
       properties:
         chunk:
           type: string
-          example: |-
-
-            Date : 06/07/2023
+          example: 'Date : 06/07/2023'
           nullable: false
           description: The chunk which matches the embed query
         metadata:
@@ -9998,14 +9994,36 @@ components:
       required:
         - url
         - scope
+    EventPayload:
+      type: object
+      properties:
+        id_event:
+          type: string
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          nullable: true
+          description: The id of the event.
+        type:
+          type: string
+          example: connection.created
+          nullable: true
+          description: The type of the event.
+        data:
+          type: object
+          additionalProperties: true
+          nullable: true
+          description: The data payload event of the webhook.
+      required:
+        - id_event
+        - type
+        - data
     SignatureVerificationDto:
       type: object
       properties:
         payload:
-          type: object
-          additionalProperties: true
           nullable: true
           description: The payload event of the webhook.
+          allOf:
+            - $ref: '#/components/schemas/EventPayload'
         signature:
           type: string
           nullable: true
