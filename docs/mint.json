@@ -671,6 +671,12 @@
       ]
     },
     {
+      "group": "RAG",
+      "pages": [
+        "rag/index"
+      ]
+    },
+    {
       "group": "Recipes",
       "pages": [
         "recipes/frontend-sdk",

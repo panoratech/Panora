@@ -49,8 +49,10 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-      x-speakeasy-group: rag.query
+                type: array
+                items:
+                  $ref: '#/components/schemas/RagQueryOutput'
+      x-speakeasy-group: rag
   /filestorage/files:
     get:
       operationId: listFilestorageFile
@@ -9609,6 +9611,48 @@ components:
       in: header
       name: x-api-key
   schemas:
+    RagQueryOutput:
+      type: object
+      properties:
+        chunk:
+          type: string
+          example: |-
+
+            Date : 06/07/2023
+          nullable: false
+          description: The chunk which matches the embed query
+        metadata:
+          type: object
+          example:
+            blobType: ''
+            text: ATTESTATION
+          additionalProperties: true
+          nullable: true
+          description: The metadata tied to the chunk
+        score:
+          type: number
+          example: 0.87
+          nullable: true
+          description: The score
+        embedding:
+          example:
+            - -0.00442447886
+            - -0.00116857514
+            - 0.00869117491
+            - -0.0361584462
+            - -0.00220073434
+            - 0.00946036354
+            - -0.0101112155
+          nullable: true
+          description: The embedding of the relevant chunk
+          type: array
+          items:
+            type: number
+      required:
+        - chunk
+        - metadata
+        - score
+        - embedding
     QueryBody:
       type: object
       properties:
@@ -9616,7 +9660,7 @@ components:
           type: string
           example: When does Panora incorporated?
           nullable: false
-          description: The query you want to received embeddings adn chunks for
+          description: The query you want to received embeddings and chunks for
         topK:
           type: number
           example: '3'

@@ -1,0 +1,58 @@
+---
+title: "Embeddings & Chunks"
+description: "Use the Panora API to retrieve your documents embedding sand chunks for your LLMs."
+icon: "heart"
+---
+
+Once we've synced documents across File Storage systems, we embed and chunk them so you can power your RAG applications and enable advanced retrieval search.
+
+# Step 1: Import the code snippet
+
+<CodeGroup>
+    ```shell React
+    pnpm i @panora/sdk
+    ```
+</CodeGroup>
+
+#### Use the SDK
+
+<CodeGroup>
+    ```javascript React
+    import { Panora } from "@panora/sdk";
+
+    const panora = new Panora({
+        apiKey: "<YOUR_API_KEY_HERE>",
+    });
+
+    async function run() {
+    const result = await panora.rag.query({
+      xConnectionToken: "<value>",
+      queryBody: {
+      query: "When does Panora incorporated?",
+      topK: 3,
+      },
+    });
+    
+    // Handle the result
+    console.log(result)
+    }
+
+    run();
+    ```
+</CodeGroup>
+
+Congrats ! You should be able to get back your embeddings and chunks for the query !
+
+By default, for embedding we use **OpenAI ADA-002** model and **Pinecone** managed vector database for storing the chunks.
+
+# Step 2 (Optional): Choose your own Vector DB + Embedding Model
+ 
+In Configuration page, choose the RAG settings page and provide your own credentials for vector database and embedding model.
+
+<Frame>
+  <img src="/images/cohere.png" alt="Description of image" />
+</Frame>
+<br/>
+<Frame>
+  <img src="/images/chroma.png" alt="Description of image" />
+</Frame>

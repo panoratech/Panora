@@ -1,10 +1,10 @@
 import { ApiKeyAuthGuard } from '@@core/auth/guards/api-key.guard';
 import { ConnectionUtils } from '@@core/connections/@utils';
-import { ApiPostCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
+import { ApiPostArrayCustomResponse } from '@@core/utils/dtos/openapi.respone.dto';
 import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiHeader, ApiOperation } from '@nestjs/swagger';
+import { QueryBody, RagQueryOutput } from './rag.dto';
 import { RagService } from './rag.service';
-import { RagQueryOutput, QueryBody } from './rag.dto';
 
 @Controller('rag')
 export class RagController {
@@ -26,7 +26,7 @@ export class RagController {
     description: 'The connection token',
     example: 'b008e199-eda9-4629-bd41-a01b6195864a',
   })
-  @ApiPostCustomResponse(RagQueryOutput)
+  @ApiPostArrayCustomResponse(RagQueryOutput)
   @ApiBody({ type: QueryBody })
   @UseGuards(ApiKeyAuthGuard)
   async queryEmbeddings(

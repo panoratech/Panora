@@ -33,6 +33,9 @@ function addSpeakeasyGroup(document: any) {
 
     if (groupName) {
       for (const method in document.paths[path]) {
+        if (groupName === 'rag.query') {
+          groupName = 'rag';
+        }
         document.paths[path][method]['x-speakeasy-group'] = groupName;
         if (
           groupName !== 'webhooks' &&
