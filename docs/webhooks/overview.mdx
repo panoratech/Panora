@@ -84,7 +84,7 @@ To enable webhook events, you need to register webhook endpoints. After you regi
         </CodeGroup>
     </Step>
     <Step title="Register your endpoint within Panora using the Dashboard or the API.">
-        Register the webhook endpoint’s accessible URL using the _Webhooks_ [section](https://dashboard.panora.dev/configuration) or the API so Panora knows where to deliver events.<br/>
+        Register the webhook endpoint’s accessible URL using the _Webhooks_ [section](https://app.panora.dev/configuration) or the API so Panora knows where to deliver events.<br/>
 
         **Webhook URL format** <br/>
 
@@ -96,7 +96,7 @@ To enable webhook events, you need to register webhook endpoints. After you regi
 
         **Add a webhook endpoint** <br/>
 
-        Navigate to the _Configuration_ [section](https://dashboard.panora.dev/configuration) and head to the Webhooks tab. <br/>
+        Navigate to the _Configuration_ [section](https://app.panora.dev/configuration) and head to the Webhooks tab. <br/>
         <video
         controls
         className="w-full aspect-video"
@@ -113,7 +113,7 @@ To enable webhook events, you need to register webhook endpoints. After you regi
         <CodeGroup>
         ```shell Curl
         curl --request POST \
-             --url https://api.panora.dev/webhook \
+             --url https://api.panora.dev/webhooks \
              --header 'x-api-key: <api-key>' \
              --header 'Content-Type: application/json' \
              --data '{
@@ -171,7 +171,7 @@ To enable webhook events, you need to register webhook endpoints. After you regi
         import { Panora } from '@panora/sdk';
 
         // Set your api key
-        // See your keys here: https://dashboard.panora.dev/api-keys
+        // See your keys here: https://app.panora.dev/api-keys
         const panora = new Panora({ apiKey: process.env.API_KEY });
 
         // Find your endpoint's secret in your webhook settings in the Config Page
@@ -232,7 +232,7 @@ To enable webhook events, you need to register webhook endpoints. After you regi
         from django.http import HttpResponse
 
         # Set your secret key.
-        # See your keys here: https://dashboard.panora.dev/api-keys
+        # See your keys here: https://app.panora.dev/api-keys
         panora = Panora(
             api_key=os.getenv("API_KEY", ""),
         )

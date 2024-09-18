@@ -17,7 +17,16 @@ Once we've synced documents across File Storage systems, we embed and chunk them
 #### Use the SDK
 
 <CodeGroup>
-    ```javascript React
+    ```shell Curl
+    curl --request GET \
+            --url https://api.panora.dev/rag/query \
+            --header 'x-api-key: <api-key>' \
+            --data '{
+              "query": "When does Panora incorporated?"
+              "topK": 3
+            }'
+    ```
+    ```javascript Typescript
     import { Panora } from "@panora/sdk";
 
     const panora = new Panora({

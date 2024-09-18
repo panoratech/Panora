@@ -6,7 +6,7 @@ export type UpdatePullFrequencyData = Record<string, number>;
 
 export const useUpdatePullFrequency = () => {
     const add = async (data: UpdatePullFrequencyData) => {
-        const response = await fetch(`${config.API_URL}/sync/internal/pull-frequencies`, {
+        const response = await fetch(`${config.API_URL}/sync/internal/pull_frequencies`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

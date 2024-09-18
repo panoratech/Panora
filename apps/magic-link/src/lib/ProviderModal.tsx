@@ -7,6 +7,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import config from '@/helpers/config';
 import useCreateApiKeyConnection from '@/hooks/queries/useCreateApiKeyConnection';
 import useProjectConnectors from '@/hooks/queries/useProjectConnectors';
 import useUniqueMagicLink from '@/hooks/queries/useUniqueMagicLink';
@@ -419,7 +420,10 @@ const ProviderModal = () => {
               <span className="text-sm">You've successfully connected your account!</span>
             </div>
             <button 
-              onClick={() => CloseSuccessDialog(false)}
+              onClick={() => {
+                CloseSuccessDialog(false)
+                window.location.href = config.WEBAPP_URL;
+              }}
               className="mt-4 px-6 py-2 bg-black text-white rounded-lg font-semibold hover:bg-gray-100 hover:text-black transition-colors"
             >
               Go to Dashboard

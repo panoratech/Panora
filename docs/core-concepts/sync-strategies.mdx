@@ -18,3 +18,25 @@ Go to Configurations page, and apply the frequency to the category you wish to r
 <Frame>
   <img src="/images/frequency.png" alt="Description of image" />
 </Frame>
+
+**You can also the API, just select a number of seconds for the vertical you want to have custom sync.**
+<CodeGroup>
+  ```shell Curl
+  curl --request POST \
+        --url https://api.panora.dev/sync/pull_frequencies \
+        --header 'x-api-key: <api-key>' \
+        --header 'Content-Type: application/json' \
+        --data '{
+          "crm": 300, 
+          "hris": 0,
+          "ticketing": 0,
+          "accounting": 0,
+          "ats": 0,
+          "ecommerce": 0,
+          "hris": 0,
+          "filestorage": 0,
+        }'
+  ```
+</CodeGroup>
+
+Here I just set up data to be synced every 5 minutes (300 seconds) for the CRM category.

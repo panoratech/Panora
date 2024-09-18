@@ -43,6 +43,19 @@ export class LinkedUsersController {
   }
 
   @ApiOperation({
+    operationId: 'remoteId',
+    summary: 'Retrieve a Linked User From A Remote Id',
+  })
+  @ApiQuery({ name: 'remoteId', example: 'id_1', required: true, type: String })
+  @ApiGetCustomResponse(LinkedUserResponse)
+  @UseGuards(ApiKeyAuthGuard)
+  @Get('fromRemoteId')
+  linkedUserFromRemoteId(@Query('remoteId') id: string) {
+    // validate project_id against user
+    return this.linkedUsersService.getLinkedUserV2(id);
+  }
+
+  @ApiOperation({
     operationId: 'listLinkedUsers',
     summary: 'Retrieve Linked Users',
   })
@@ -185,18 +198,5 @@ export class LinkedUsersController {
   getLinkedUser(@Param('id') id: string) {
     // validate project_id against user
     return this.linkedUsersService.getLinkedUser(id);
-  }
-
-  @ApiOperation({
-    operationId: 'remoteId',
-    summary: 'Retrieve a Linked User From A Remote Id',
-  })
-  @ApiQuery({ name: 'remoteId', example: 'id_1', required: true, type: String })
-  @ApiGetCustomResponse(LinkedUserResponse)
-  @UseGuards(ApiKeyAuthGuard)
-  @Get('fromRemoteId')
-  linkedUserFromRemoteId(@Query('remoteId') id: string) {
-    // validate project_id against user
-    return this.linkedUsersService.getLinkedUserV2(id);
   }
 }

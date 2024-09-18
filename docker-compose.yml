@@ -252,7 +252,7 @@ services:
         condition: service_healthy
     networks:
       - backend
-      - frontend
+      - frontend 
 
   webapp-next:
     image: panora.docker.scarf.sh/panoradotdev/frontend-webapp:selfhosted

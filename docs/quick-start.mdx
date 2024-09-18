@@ -8,7 +8,7 @@ icon: "star"
 
 Before you begin, make sure you have the following:
 
-- **Panora Running on your machine** (⏱️ 1 min self-hosting guide [here](/open-source/self_hosting/guide))
+- **An account on [our cloud](https://app.panora.dev) (⏱️ 15sec)** or **Panora Running on your machine** (⏱️ 1 min self-hosting guide [here](/open-source/self_hosting/guide))
 - **An API key** (⏱️ 1 min guide guide [here](/core-concepts/auth#learn-how-to-generate-your-api-keys))
 - **A free Hubspot account** (signup [here](https://app.hubspot.com/signup-hubspot/crm) - use a [disposable email](https://temp-mail.org/en/) if you prefer)
 
@@ -23,9 +23,9 @@ Let's now create our first magic link!
 
 
     <Steps>
-      <Step>Login to your [account dashboard](https://dashboard.panora.dev)</Step>
+      <Step>Login to your [account dashboard](https://app.panora.dev)</Step>
       <Step>
-        Go to _Connections_ [section](https://dashboard.panora.dev/connections) and click button `Create a Magic Link`
+        Go to _Connections_ [section](https://app.panora.dev/connections) and click button `Create a Magic Link`
       </Step>
       <Step>Click `Create a Unique Magic Link`</Step>
       <Step>
@@ -43,7 +43,7 @@ Let's now create our first magic link!
 ## Step 2: Grab the connection token
 
 Connection tokens are the way Panora represents a third party's account, whatever the underlying identification mechanism is.
-There are two ways to get these tokens: catchting them with a webhook, or just finding them in your dashboard. For now, we'll stick to the dashboard,.
+There are two ways to get these tokens: [catching them with a webhook](/recipes/catch-connection-token), or just finding them in your dashboard. For now, we'll stick to the dashboard.
 
 To find the `connection token` in the dashboard, visit the `connections` section. Copy the connection token from its column and save it.
 ![title](/images/connections_screen.png)
@@ -60,10 +60,20 @@ This will require you to have:
 The API key identifies _YOU_ as a user of Panora, while the connection token identifies which user's account you behalf you want to. In the future, you will have one connection token per user account connected on the Panora platform, while keeping one API key.
 
 You can copy past the Curl example below, and copy-paste it in your terminal. Don't forget to replace the API key and the connection token.
-
+<Note>
+  ONLY SELFHOST:
+  Replace `https://api.panora.dev` with `http://localhost:3000`.
+  If you use the SDK, include `serverURL: 'http://localhost:3000'` in the Panora client
+  ```javascript
+  const panora = new Panora({
+    serverURL: 'http://localhost:3000',
+    apiKey: process.env.API_KEY,
+  });
+  ```
+</Note>
       <CodeGroup>
          ```shell curl
-        curl --location 'http://localhost:3000/crm/contacts' \
+        curl --location 'https://api.panora.dev/crm/contacts' \
 --header 'x-connection-token: 7e6b9454-f616-477a-a71a-0f23eb74a72c' \
 --header 'x-api-key: sk_dev_30a78556-6a83-425x-b461-a87f007a09e1'
         ```

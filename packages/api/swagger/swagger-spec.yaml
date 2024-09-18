@@ -755,7 +755,7 @@ paths:
                 $ref: '#/components/schemas/ResyncStatusDto'
       tags: *ref_6
       x-speakeasy-group: sync
-  /sync/pull-frequencies:
+  /sync/pull_frequencies:
     post:
       operationId: updatePullFrequency
       summary: Update pull frequency for verticals
@@ -2127,6 +2127,27 @@ paths:
                 $ref: '#/components/schemas/UnifiedTicketingTeamOutput'
       tags: *ref_18
       x-speakeasy-group: ticketing.teams
+  /linked_users/fromRemoteId:
+    get:
+      operationId: remoteId
+      summary: Retrieve a Linked User From A Remote Id
+      parameters:
+        - name: remoteId
+          required: true
+          in: query
+          example: id_1
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkedUserResponse'
+      tags: &ref_19
+        - linkedUsers
+      x-speakeasy-group: linkedUsers
   /linked_users:
     post:
       operationId: createLinkedUser
@@ -2145,8 +2166,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LinkedUserResponse'
-      tags: &ref_19
-        - linkedUsers
+      tags: *ref_19
       x-speakeasy-group: linkedUsers
     get:
       operationId: listLinkedUsers
@@ -2194,26 +2214,6 @@ paths:
           required: true
           in: path
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LinkedUserResponse'
-      tags: *ref_19
-      x-speakeasy-group: linkedUsers
-  /linked_users/fromRemoteId:
-    get:
-      operationId: remoteId
-      summary: Retrieve a Linked User From A Remote Id
-      parameters:
-        - name: remoteId
-          required: true
-          in: query
-          example: id_1
           schema:
             type: string
       responses:

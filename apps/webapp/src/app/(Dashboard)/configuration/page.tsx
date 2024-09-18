@@ -145,7 +145,7 @@ export default function Page() {
         {
           loading: 'Updating...',
           success: (data: any) => {
-            queryClient.setQueryData<any>(['pull-frequencies'], (oldData: any) => ({
+            queryClient.setQueryData<any>(['pull_frequencies'], (oldData: any) => ({
               ...oldData,
               [vertical]: frequency.toString(),
             }));

@@ -164,7 +164,7 @@ export class SyncController {
   })
   @UseGuards(JwtAuthGuard)
   @ApiExcludeEndpoint()
-  @Post('internal/pull-frequencies')
+  @Post('internal/pull_frequencies')
   async updateInternalPullFrequency(
     @Request() req: any,
     @Body() data: UpdatePullFrequencyDto,
@@ -191,7 +191,7 @@ export class SyncController {
     description: 'Pull frequency updated successfully',
   })
   @UseGuards(ApiKeyAuthGuard)
-  @Post('pull-frequencies')
+  @Post('pull_frequencies')
   async updatePullFrequency(
     @Request() req: any,
     @Body() data: UpdatePullFrequencyDto,
@@ -216,7 +216,7 @@ export class SyncController {
   @ApiResponse({ status: 200, type: UpdatePullFrequencyDto })
   @UseGuards(JwtAuthGuard)
   @ApiExcludeEndpoint()
-  @Get('internal/pull-frequencies')
+  @Get('internal/pull_frequencies')
   async getInternalPullFrequency(@Request() req: any) {
     const projectId = req.user.id_project;
     const result = await this.syncService.getPullFrequency(projectId);
@@ -236,7 +236,7 @@ export class SyncController {
   })
   @ApiResponse({ status: 200, type: UpdatePullFrequencyDto })
   @UseGuards(ApiKeyAuthGuard)
-  @Get('pull-frequencies')
+  @Get('pull_frequencies')
   async getPullFrequency(@Request() req: any) {
     const projectId = req.user.id_project;
     const result = await this.syncService.getPullFrequency(projectId);

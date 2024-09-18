@@ -77,7 +77,7 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
         If you log `event.data`, you'll be able to check that it is a [Connection Object](/glossary/connection-object). Hence, it contains an `id_linked_user`(more info [here](/glossary/linked-account-object)) which is helpful to attach it to your own end-user on your backend/db systems.
     </Step>
     <Step title="Register your endpoint within Panora using the Dashboard or the API.">
-        Register the webhook endpoint’s accessible URL using the _Webhooks_ [section](https://dashboard.panora.dev/configuration) or the API so Panora knows where to deliver events.<br/>
+        Register the webhook endpoint’s accessible URL using the _Webhooks_ [section](https://app.panora.dev/configuration) or the API so Panora knows where to deliver events.<br/>
 
         **Webhook URL format** <br/>
 
@@ -89,7 +89,7 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
 
         **Add a webhook endpoint** <br/>
 
-        Navigate to the _Configuration_ [section](https://dashboard.panora.dev/configuration) and head to the Webhooks tab. <br/>
+        Navigate to the _Configuration_ [section](https://app.panora.dev/configuration) and head to the Webhooks tab. <br/>
             <video
             controls
             className="w-full aspect-video"
@@ -105,7 +105,7 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
         <CodeGroup>
         ```shell Curl
         curl --request POST \
-             --url https://api.panora.dev/webhook \
+             --url https://api.panora.dev/webhooks \
              --header 'x-api-key: <api-key>' \
              --header 'Content-Type: application/json' \
              --data '{
@@ -170,7 +170,7 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
         }
 
         // Set your api key
-        // See your keys here: https://dashboard.panora.dev/api-keys
+        // See your keys here: https://app.panora.dev/api-keys
         const panora = new Panora({ apiKey: process.env.API_KEY });
 
         // Find your endpoint's secret in your webhook settings in the Config Page
@@ -240,7 +240,7 @@ It is a field of the [Connection Object](/glossary/connection-object) that Panor
         from django.views.decorators.http import require_http_methods
 
         # Set your api key
-        # See your keys here: https://dashboard.panora.dev/api-keys
+        # See your keys here: https://app.panora.dev/api-keys
         panora = Panora(api_key=os.getenv("API_KEY", ""))
 
         # Find your endpoint's secret in your webhook settings in the Config Page

@@ -280,6 +280,7 @@ services:
       context: ./
       args:
         VITE_BACKEND_DOMAIN: http://localhost:3000
+        VITE_WEBAPP_DOMAIN: http://localhost
     restart: always
     ports:
       - 81:5173
