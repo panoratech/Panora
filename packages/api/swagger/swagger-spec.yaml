@@ -10007,15 +10007,9 @@ components:
           example: connection.created
           nullable: true
           description: The type of the event.
-        data:
-          type: object
-          additionalProperties: true
-          nullable: true
-          description: The data payload event of the webhook.
       required:
         - id_event
         - type
-        - data
     SignatureVerificationDto:
       type: object
       properties:

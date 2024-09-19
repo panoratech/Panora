@@ -43,13 +43,7 @@ export class EventPayload {
   })
   type: string;
 
-  @ApiProperty({
-    type: Object,
-    additionalProperties: true,
-    nullable: true,
-    description: 'The data payload event of the webhook.',
-  })
-  data: { [key: string]: any };
+  [key: string]: any;
 }
 
 export class SignatureVerificationDto {

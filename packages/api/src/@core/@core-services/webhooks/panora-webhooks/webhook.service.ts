@@ -18,6 +18,46 @@ export class WebhookService {
     this.logger.setContext(WebhookService.name);
   }
 
+  private safeSerialize(data: any): any {
+    return JSON.parse(
+      JSON.stringify(data, (key, value) => {
+        if (typeof value === 'bigint') {
+          return value.toString();
+        }
+        if (value instanceof Date) {
+          return value.toISOString();
+        }
+        if (typeof value === 'function') {
+          return value.toString();
+        }
+        if (value === undefined) {
+          return null;
+        }
+        if (typeof value === 'symbol') {
+          return value.toString();
+        }
+        if (
+          value !== null &&
+          typeof value === 'object' &&
+          !Array.isArray(value)
+        ) {
+          if (value.toJSON && typeof value.toJSON === 'function') {
+            return value.toJSON();
+          }
+          const proto = Object.getPrototypeOf(value);
+          if (
+            proto &&
+            proto.constructor &&
+            proto.constructor.name !== 'Object'
+          ) {
+            return `[object ${proto.constructor.name}]`;
+          }
+        }
+        return value;
+      }),
+    );
+  }
+
   generateSignature(payload: any, secret: string): string {
     try {
       return createHmac('sha256', secret)
@@ -121,11 +161,11 @@ export class WebhookService {
       if (!webhook) return;
 
       this.logger.log('handling webhook payload....');
-
+      const serializedData = this.safeSerialize(data);
       const w_payload = await this.prisma.webhooks_payloads.create({
         data: {
           id_webhooks_payload: uuidv4(),
-          data: JSON.stringify(data),
+          data: JSON.stringify(serializedData),
         },
       });
       this.logger.log('handling webhook delivery....');
