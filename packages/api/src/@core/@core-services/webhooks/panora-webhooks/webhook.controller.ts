@@ -172,7 +172,7 @@ export class WebhookController {
     summary: 'Verify payload signature of the webhook',
   })
   @ApiBody({ type: SignatureVerificationDto })
-  @ApiPostCustomResponse(EventPayload)
+  @ApiPostGenericJson('Dynamic event payload')
   @UseGuards(ApiKeyAuthGuard)
   @Post('verifyEvent')
   async verifyPayloadSignature(@Body() data: SignatureVerificationDto) {

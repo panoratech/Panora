@@ -309,7 +309,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventPayload'
+                type: object
+                additionalProperties: true
+                description: Dynamic event payload
       tags: *ref_1
       x-speakeasy-group: webhooks
   /ticketing/tickets:
@@ -9994,17 +9996,14 @@ components:
       required:
         - url
         - scope
-    EventPayload:
-      type: object
-      properties: {}
     SignatureVerificationDto:
       type: object
       properties:
         payload:
+          type: object
+          additionalProperties: true
           nullable: true
           description: The payload event of the webhook.
-          allOf:
-            - $ref: '#/components/schemas/EventPayload'
         signature:
           type: string
           nullable: true
