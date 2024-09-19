@@ -27,22 +27,6 @@ export class WebhookDto {
 }
 
 export class EventPayload {
-  @ApiProperty({
-    type: String,
-    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
-    nullable: true,
-    description: 'The id of the event.',
-  })
-  id_event: string;
-
-  @ApiProperty({
-    type: String,
-    example: 'connection.created',
-    nullable: true,
-    description: 'The type of the event.',
-  })
-  type: string;
-
   [key: string]: any;
 }
 

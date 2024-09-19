@@ -330,10 +330,10 @@ export class WebhookService {
   }
 
   async verifyPayloadSignature(
-    payload: EventPayload,
+    payload: { [key: string]: any },
     signature: string,
     secret: string,
-  ): Promise<EventPayload> {
+  ) {
     try {
       const expected = this.generateSignature(payload.data, secret);
       if (expected !== signature) {

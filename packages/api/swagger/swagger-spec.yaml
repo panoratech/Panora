@@ -9996,20 +9996,7 @@ components:
         - scope
     EventPayload:
       type: object
-      properties:
-        id_event:
-          type: string
-          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
-          nullable: true
-          description: The id of the event.
-        type:
-          type: string
-          example: connection.created
-          nullable: true
-          description: The type of the event.
-      required:
-        - id_event
-        - type
+      properties: {}
     SignatureVerificationDto:
       type: object
       properties:
