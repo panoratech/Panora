@@ -55,6 +55,8 @@ export interface SharepointFolderInput {
   readonly createdBy?: IdentitySet;
   /** Identity of the user, device, and application that last modified the item. Read-only. */
   readonly lastModifiedBy?: IdentitySet;
+  /** If this property is non-null, it indicates that the driveItem is the top-most driveItem in the drive. */
+  readonly root?: any;
 }
 
 /**

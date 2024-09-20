@@ -83,7 +83,20 @@ export class OnedriveService implements IFolderService {
         },
       });
 
-      let result = [],
+      // get root folder
+      const rootFolderData = await axios.get(
+        `${connection.account_url}/v1.0/me/drive/root`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+
+      let result = [rootFolderData.data],
         depth = 0,
         batch = [remote_folder_id];
 

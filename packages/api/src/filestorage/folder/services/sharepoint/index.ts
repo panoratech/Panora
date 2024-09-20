@@ -80,7 +80,20 @@ export class SharepointService implements IFolderService {
         },
       });
 
-      let result = [],
+      // get root folder
+      const rootFolderData = await axios.get(
+        `${connection.account_url}/drive/root`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.cryptoService.decrypt(
+              connection.access_token,
+            )}`,
+          },
+        },
+      );
+
+      let result = [rootFolderData.data],
         depth = 0,
         batch = [remote_folder_id];
 
@@ -104,7 +117,7 @@ export class SharepointService implements IFolderService {
               },
             );
 
-            // Add permissions (shared link is also included in permissions in one-drive)
+            // Add permissions (shared link is also included in permissions in SharePoint)
             // await Promise.all(
             //   resp.data.value.map(async (driveItem) => {
             //     const resp = await axios.get(
