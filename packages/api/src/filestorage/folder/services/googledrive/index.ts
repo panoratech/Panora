@@ -86,15 +86,7 @@ export class GoogleDriveFolderService implements IFolderService {
 
   async sync(data: SyncParam): Promise<ApiResponse<GoogleDriveFolderOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'googledrive',
-          vertical: 'filestorage',
-        },
-      });
+      const { connection } = data;
 
       if (!connection) {
         return {

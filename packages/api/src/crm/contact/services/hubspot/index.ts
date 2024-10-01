@@ -67,15 +67,7 @@ export class HubspotService implements IContactService {
 
   async sync(data: SyncParam): Promise<ApiResponse<HubspotContactOutput[]>> {
     try {
-      const { linkedUserId, custom_properties } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-          vertical: 'crm',
-        },
-      });
+      const { connection, custom_properties } = data;
 
       const commonPropertyNames = Object.keys(commonHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];

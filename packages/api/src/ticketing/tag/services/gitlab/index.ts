@@ -27,15 +27,7 @@ export class GitlabService implements ITagService {
 
   async sync(data: SyncParam): Promise<ApiResponse<GitlabTagOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'gitlab',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const groups = await axios.get(`${connection.account_url}/v4/groups`, {
         headers: {

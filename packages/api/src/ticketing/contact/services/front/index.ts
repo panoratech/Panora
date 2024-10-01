@@ -26,15 +26,7 @@ export class FrontService implements IContactService {
 
   async sync(data: SyncParam): Promise<ApiResponse<FrontContactOutput[]>> {
     try {
-      const { linkedUserId, account_id, webhook_remote_identifier } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'front',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection, account_id, webhook_remote_identifier } = data;
       /*let remote_account_id;
       if (account_id) {
         // account_id can either be the remote or the panora id

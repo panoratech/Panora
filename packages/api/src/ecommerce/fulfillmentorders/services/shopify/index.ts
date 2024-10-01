@@ -32,15 +32,8 @@ export class ShopifyService implements IFulfillmentOrdersService {
     data: SyncParam,
   ): Promise<ApiResponse<ShopifyFulfillmentOrdersOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'shopify',
-          vertical: 'ecommerce',
-        },
-      });
       const resp = await axios.post(
         `${connection.account_url}/departement.list`,
         {

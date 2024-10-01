@@ -68,16 +68,9 @@ export class HubspotService implements IDealService {
 
   async sync(data: SyncParam): Promise<ApiResponse<HubspotDealOutput[]>> {
     try {
-      const { linkedUserId, custom_properties } = data;
+      const { connection, custom_properties } = data;
 
       //crm.schemas.deals.read","crm.objects.deals.read
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-          vertical: 'crm',
-        },
-      });
 
       const commonPropertyNames = Object.keys(commonDealHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];

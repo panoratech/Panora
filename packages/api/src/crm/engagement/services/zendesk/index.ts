@@ -9,6 +9,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { ZendeskEngagementInput, ZendeskEngagementOutput } from './types';
+import { Connection } from '@@core/connections/@utils/types';
 @Injectable()
 export class ZendeskService implements IEngagementService {
   constructor(
@@ -83,11 +84,11 @@ export class ZendeskService implements IEngagementService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskEngagementOutput[]>> {
     try {
-      const { linkedUserId, engagement_type } = data;
+      const { connection, engagement_type } = data;
 
       switch (engagement_type as string) {
         case 'CALL':
-          return this.syncCalls(linkedUserId);
+          return this.syncCalls(connection);
         case 'MEETING':
           return;
         case 'EMAIL':
@@ -100,16 +101,8 @@ export class ZendeskService implements IEngagementService {
     }
   }
 
-  private async syncCalls(linkedUserId: string) {
+  private async syncCalls(connection: Connection) {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'crm',
-        },
-      });
-
       const resp = await axios.get(`${connection.account_url}/v2/calls`, {
         headers: {
           'Content-Type': 'application/json',

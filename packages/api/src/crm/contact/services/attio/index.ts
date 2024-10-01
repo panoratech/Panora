@@ -64,15 +64,7 @@ export class AttioService implements IContactService {
 
   async sync(data: SyncParam): Promise<ApiResponse<AttioContactOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'attio',
-          vertical: 'crm',
-        },
-      });
+      const { connection } = data;
 
       const resp = await axios.post(
         `${connection.account_url}/v2/objects/people/records/query`,

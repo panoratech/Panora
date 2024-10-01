@@ -156,15 +156,7 @@ export class FrontService implements ITicketService {
 
   async sync(data: SyncParam): Promise<ApiResponse<FrontTicketOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'front',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const resp = await axios.get(`${connection.account_url}/conversations`, {
         headers: {

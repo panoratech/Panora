@@ -60,16 +60,7 @@ export class CloseService implements IDealService {
 
   async sync(data: SyncParam): Promise<ApiResponse<CloseDealOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      //crm.schemas.deals.read","crm.objects.deals.read
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'close',
-          vertical: 'crm',
-        },
-      });
+      const { connection } = data;
 
       const baseURL = `${connection.account_url}/v1/opportunity`;
       const resp = await axios.get(baseURL, {

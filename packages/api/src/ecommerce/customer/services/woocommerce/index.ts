@@ -28,15 +28,8 @@ export class WoocommerceService implements ICustomerService {
     data: SyncParam,
   ): Promise<ApiResponse<WoocommerceCustomerOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'woocommerce',
-          vertical: 'ecommerce',
-        },
-      });
       const decryptedData = JSON.parse(
         this.cryptoService.decrypt(connection.access_token),
       );

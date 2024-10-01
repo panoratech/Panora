@@ -30,15 +30,7 @@ export class GustoService implements IEmployerBenefitService {
     data: SyncParam,
   ): Promise<ApiResponse<GustoEmployerbenefitOutput[]>> {
     try {
-      const { linkedUserId, id_company } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'gusto',
-          vertical: 'hris',
-        },
-      });
+      const { connection, id_company } = data;
 
       const company = await this.prisma.hris_companies.findUnique({
         where: {

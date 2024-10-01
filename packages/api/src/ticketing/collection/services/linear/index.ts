@@ -27,23 +27,13 @@ export class LinearService implements ICollectionService {
 
   async sync(data: SyncParam): Promise<ApiResponse<LinearCollectionOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'linear',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const projectQuery = {
-        "query": "query { projects { nodes { id, name, description } }}"
+        query: 'query { projects { nodes { id, name, description } }}',
       };
 
-      let resp = await axios.post(
-        `${connection.account_url}`,
-        projectQuery, {
+      const resp = await axios.post(`${connection.account_url}`, projectQuery, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

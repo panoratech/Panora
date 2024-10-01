@@ -81,20 +81,12 @@ export class SalesforceService implements ITaskService {
 
   async sync(data: SyncParam): Promise<ApiResponse<SalesforceTaskOutput[]>> {
     try {
-      const { linkedUserId, custom_properties, pageSize, cursor } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'salesforce',
-          vertical: 'crm',
-        },
-      });
+      const { connection, custom_properties, pageSize, cursor } = data;
 
       const instanceUrl = connection.account_url;
-      let pagingString = `${pageSize ? `ORDER BY Id DESC LIMIT ${pageSize} ` : ''}${
-        cursor ? `OFFSET ${cursor}` : ''
-      }`;
+      let pagingString = `${
+        pageSize ? `ORDER BY Id DESC LIMIT ${pageSize} ` : ''
+      }${cursor ? `OFFSET ${cursor}` : ''}`;
       if (!pageSize && !cursor) {
         pagingString = 'LIMIT 200';
       }
@@ -106,7 +98,9 @@ export class SalesforceService implements ITaskService {
       const query = `SELECT ${fields} FROM Task ${pagingString}`;
 
       const resp = await axios.get(
-        `${instanceUrl}/services/data/v56.0/query/?q=${encodeURIComponent(query)}`,
+        `${instanceUrl}/services/data/v56.0/query/?q=${encodeURIComponent(
+          query,
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${this.cryptoService.decrypt(

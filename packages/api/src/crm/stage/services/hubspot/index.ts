@@ -27,15 +27,7 @@ export class HubspotService implements IStageService {
 
   async sync(data: SyncParam): Promise<ApiResponse<HubspotStageOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-          vertical: 'crm',
-        },
-      });
+      const { connection } = data;
       // get all stages for all deals
       const url = 'https://api.hubapi.com/crm-pipelines/v1/pipelines/deals';
 

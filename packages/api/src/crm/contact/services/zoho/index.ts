@@ -73,15 +73,8 @@ export class ZohoService implements IContactService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZohoContactOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
-          vertical: 'crm',
-        },
-      });
       const fields =
         'First_Name,Last_Name,Full_Name,Email,Phone,Mailing_Street,Other_Street,Mailing_City,Other_City,Mailing_State,Other_State,Mailing_Zip,Other_Zip,Mailing_Country,Other_Country';
       const resp = await axios.get(

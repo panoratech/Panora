@@ -63,15 +63,8 @@ export class ZendeskService implements IDealService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskDealOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'crm',
-        },
-      });
       const resp = await axios.get(`${connection.account_url}/v2/deals`, {
         headers: {
           'Content-Type': 'application/json',

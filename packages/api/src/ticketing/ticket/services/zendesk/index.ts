@@ -113,14 +113,7 @@ export class ZendeskService implements ITicketService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskTicketOutput[]>> {
     try {
-      const { linkedUserId, webhook_remote_identifier } = data;
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection, webhook_remote_identifier } = data;
       const remote_ticket_id = webhook_remote_identifier as string;
 
       const request_url = remote_ticket_id

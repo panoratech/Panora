@@ -30,15 +30,8 @@ export class SquarespaceService implements IProductService {
     data: SyncParam,
   ): Promise<ApiResponse<SquarespaceProductOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'squarespace',
-          vertical: 'ecommerce',
-        },
-      });
       const resp = await axios.get(
         `${connection.account_url}/1.1/commerce/products?type=PHYSICAL,DIGITAL`,
         {

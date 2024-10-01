@@ -71,15 +71,8 @@ export class ZohoService implements IDealService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZohoDealOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
-          vertical: 'crm',
-        },
-      });
       const fields =
         'Owner,Description,Deal_Name,Account_Name,Stage,Amount,Contact_Name';
       const resp = await axios.get(

@@ -84,7 +84,9 @@ export class SharepointFileMapper implements IFileMapper {
     const field_mappings: { [key: string]: any } = {};
     if (customFieldMappings) {
       for (const mapping of customFieldMappings) {
-        field_mappings[mapping.slug] = file[mapping.remote_id];
+        field_mappings[mapping.slug] = file.fields
+          ? file.fields[mapping.remote_id]
+          : null;
       }
     }
 

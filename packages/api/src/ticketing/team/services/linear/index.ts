@@ -27,23 +27,13 @@ export class LinearService implements ITeamService {
 
   async sync(data: SyncParam): Promise<ApiResponse<LinearTeamOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'linear',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const teamQuery = {
-        "query": "query { teams { nodes { id, name, description } }}"
+        query: 'query { teams { nodes { id, name, description } }}',
       };
 
-      let resp = await axios.post(
-        `${connection.account_url}`,
-        teamQuery, {
+      const resp = await axios.post(`${connection.account_url}`, teamQuery, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
@@ -63,5 +53,3 @@ export class LinearService implements ITeamService {
     }
   }
 }
-
-

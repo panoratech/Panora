@@ -28,15 +28,7 @@ export class GustoService implements IBenefitService {
 
   async sync(data: SyncParam): Promise<ApiResponse<GustoBenefitOutput[]>> {
     try {
-      const { linkedUserId, id_employee } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'gusto',
-          vertical: 'hris',
-        },
-      });
+      const { connection, id_employee } = data;
 
       const employee = await this.prisma.hris_employees.findUnique({
         where: {

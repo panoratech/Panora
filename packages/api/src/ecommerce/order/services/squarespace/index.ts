@@ -27,15 +27,8 @@ export class SquarespaceService implements IOrderService {
 
   async sync(data: SyncParam): Promise<ApiResponse<SquarespaceOrderOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'squarespace',
-          vertical: 'ecommerce',
-        },
-      });
       const resp = await axios.get(
         `${connection.account_url}/1.0/commerce/orders`,
         {

@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
-import { ApiResponse } from '@@core/utils/types';
 import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ServiceRegistry } from '../registry.service';
 import { GitlabTicketInput, GitlabTicketOutput } from './types';
-import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GitlabService implements ITicketService {
@@ -79,15 +78,7 @@ export class GitlabService implements ITicketService {
   }
   async sync(data: SyncParam): Promise<ApiResponse<GitlabTicketOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'gitlab',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const resp = await axios.get(
         `${connection.account_url}/v4/issues?scope=created_by_me&scope=assigned_to_me`,

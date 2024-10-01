@@ -27,15 +27,8 @@ export class PipedriveService implements IStageService {
 
   async sync(data: SyncParam): Promise<ApiResponse<PipedriveStageOutput[]>> {
     try {
-      const { linkedUserId, deal_id } = data;
+      const { connection, deal_id } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'pipedrive',
-          vertical: 'crm',
-        },
-      });
       const res = await this.prisma.crm_deals.findUnique({
         where: { id_crm_deal: deal_id as string },
       });

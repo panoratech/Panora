@@ -1,17 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IApplicationService } from '@ats/application/types';
-import { AtsObject } from '@ats/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { AtsObject } from '@ats/@lib/@types';
+import { IApplicationService } from '@ats/application/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { AshbyApplicationInput, AshbyApplicationOutput } from './types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { OriginalApplicationOutput } from '@@core/utils/types/original/original.ats';
-import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class AshbyService implements IApplicationService {
@@ -64,15 +61,8 @@ export class AshbyService implements IApplicationService {
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyApplicationOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'ashby',
-          vertical: 'ats',
-        },
-      });
       const resp = await axios.post(
         `${connection.account_url}/application.list`,
         {

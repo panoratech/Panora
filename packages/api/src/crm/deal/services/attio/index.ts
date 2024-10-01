@@ -64,15 +64,8 @@ export class AttioService implements IDealService {
 
   async sync(data: SyncParam): Promise<ApiResponse<AttioDealOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'attio',
-          vertical: 'crm',
-        },
-      });
       const resp = await axios.post(
         `${connection.account_url}/v2/objects/deals/records/query`,
         {},

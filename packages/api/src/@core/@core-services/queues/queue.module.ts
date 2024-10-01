@@ -21,6 +21,9 @@ import { Queues } from './types';
       {
         name: Queues.RAG_DOCUMENT_PROCESSING,
       },
+      {
+        name: Queues.RATE_LIMIT_FAILED_JOBS,
+      },
     ),
   ],
   providers: [BullQueueService],

@@ -29,15 +29,7 @@ export class ZendeskService implements ITagService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskTagOutput[]>> {
     try {
-      const { linkedUserId, id_ticket } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection, id_ticket } = data;
 
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {

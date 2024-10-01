@@ -26,15 +26,8 @@ export class ZendeskService implements IUserService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskUserOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'crm',
-        },
-      });
       const resp = await axios.get(`${connection.account_url}/v2/users`, {
         headers: {
           'Content-Type': 'application/json',

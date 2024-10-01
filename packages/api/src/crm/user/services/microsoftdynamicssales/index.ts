@@ -12,56 +12,51 @@ import { MicrosoftdynamicssalesUserOutput } from './types';
 
 @Injectable()
 export class MicrosoftdynamicssalesService implements IUserService {
-    constructor(
-        private prisma: PrismaService,
-        private logger: LoggerService,
-        private cryptoService: EncryptionService,
-        private registry: ServiceRegistry,
-    ) {
-        this.logger.setContext(
-            CrmObject.user.toUpperCase() + ':' + MicrosoftdynamicssalesService.name,
-        );
-        this.registry.registerService('microsoftdynamicssales', this);
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
+  ) {
+    this.logger.setContext(
+      CrmObject.user.toUpperCase() + ':' + MicrosoftdynamicssalesService.name,
+    );
+    this.registry.registerService('microsoftdynamicssales', this);
+  }
+
+  async sync(
+    data: SyncParam,
+  ): Promise<ApiResponse<MicrosoftdynamicssalesUserOutput[]>> {
+    try {
+      const { connection } = data;
+
+      this.logger.log('===========');
+      this.logger.log(this.cryptoService.decrypt(connection.access_token));
+      this.logger.log('===========');
+
+      const baseURL = `${connection.account_url}/api/data/v9.2/systemusers`;
+      const resp = await axios.get(baseURL, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
+
+      this.logger.log(
+        `Synced microsoftdynamicssales users ! : ${JSON.stringify(
+          resp.data.value,
+        )}`,
+      );
+
+      return {
+        data: resp.data.value,
+        message: 'Microsoftdynamicssales users retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      throw error;
     }
-
-    async sync(data: SyncParam): Promise<ApiResponse<MicrosoftdynamicssalesUserOutput[]>> {
-        try {
-            const { linkedUserId } = data;
-
-            const connection = await this.prisma.connections.findFirst({
-                where: {
-                    id_linked_user: linkedUserId,
-                    provider_slug: 'microsoftdynamicssales',
-                    vertical: 'crm',
-                },
-            });
-
-            this.logger.log("===========");
-            this.logger.log(this.cryptoService.decrypt(
-                connection.access_token,
-            ));
-            this.logger.log("===========");
-
-
-            const baseURL = `${connection.account_url}/api/data/v9.2/systemusers`;
-            const resp = await axios.get(baseURL, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${this.cryptoService.decrypt(
-                        connection.access_token,
-                    )}`,
-                },
-            });
-
-            this.logger.log(`Synced microsoftdynamicssales users ! : ${JSON.stringify(resp.data.value)}`);
-
-            return {
-                data: resp.data.value,
-                message: 'Microsoftdynamicssales users retrieved',
-                statusCode: 200,
-            };
-        } catch (error) {
-            throw error;
-        }
-    }
+  }
 }

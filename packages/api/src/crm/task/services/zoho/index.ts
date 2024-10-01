@@ -26,15 +26,8 @@ export class ZohoService implements ITaskService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZohoTaskOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
-          vertical: 'crm',
-        },
-      });
       const fields =
         'Status,Owner,Description,Due_Date,Priority,Closed_Time,Subject,What_Id';
       const resp = await axios.get(

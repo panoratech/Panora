@@ -126,15 +126,8 @@ export class FrontService implements ICommentService {
   }
   async sync(data: SyncParam): Promise<ApiResponse<FrontCommentOutput[]>> {
     try {
-      const { linkedUserId, id_ticket } = data;
+      const { connection, id_ticket } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'front',
-          vertical: 'ticketing',
-        },
-      });
       //retrieve ticket remote id so we can retrieve the comments in the original software
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: {

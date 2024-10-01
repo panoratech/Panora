@@ -6,7 +6,6 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { ApiResponse } from '@@core/utils/types';
 import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalTagOutput } from '@@core/utils/types/original/original.ticketing';
 import { Injectable, OnModuleInit } from '@nestjs/common';
@@ -35,7 +34,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.registry.registerService('ticketing', 'tag', this);
   }
   onModuleInit() {
-//
+    //
   }
 
   //function used by sync worker which populate our tcg_tags table

@@ -1,17 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IActivityService } from '@ats/activity/types';
-import { AtsObject } from '@ats/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
-import { AshbyActivityInput, AshbyActivityOutput } from './types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { OriginalActivityOutput } from '@@core/utils/types/original/original.ats';
 import { SyncParam } from '@@core/utils/types/interface';
+import { AtsObject } from '@ats/@lib/@types';
+import { IActivityService } from '@ats/activity/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { AshbyActivityOutput } from './types';
 
 @Injectable()
 export class AshbyService implements IActivityService {
@@ -29,15 +26,8 @@ export class AshbyService implements IActivityService {
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyActivityOutput[]>> {
     try {
-      const { linkedUserId, candidate_id } = data;
+      const { connection, candidate_id } = data;
       if (!candidate_id) return;
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'ashby',
-          vertical: 'ats',
-        },
-      });
       const candidate = await this.prisma.ats_candidates.findUnique({
         where: {
           id_ats_candidate: candidate_id as string,

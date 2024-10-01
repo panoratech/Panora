@@ -29,15 +29,7 @@ export class ZendeskService implements ITeamService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskTeamOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const resp = await axios.get(`${connection.account_url}/v2/groups.json`, {
         headers: {

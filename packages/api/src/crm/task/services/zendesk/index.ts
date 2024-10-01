@@ -66,15 +66,8 @@ export class ZendeskService implements ITaskService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskTaskOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'crm',
-        },
-      });
       const resp = await axios.get(`${connection.account_url}/v2/tasks`, {
         headers: {
           'Content-Type': 'application/json',

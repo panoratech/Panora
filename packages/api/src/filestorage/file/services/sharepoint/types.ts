@@ -57,6 +57,8 @@ export interface SharepointFileOutput {
   readonly video?: Video;
   /** WebDAV compatible URL for the item. */
   readonly webDavUrl?: string;
+  /** Additional fields */
+  fields?: { [key: string]: any };
 }
 
 /**

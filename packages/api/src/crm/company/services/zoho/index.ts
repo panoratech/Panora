@@ -72,14 +72,8 @@ export class ZohoService implements ICompanyService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZohoCompanyOutput[]>> {
     try {
-      const { linkedUserId } = data;
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zoho',
-          vertical: 'crm',
-        },
-      });
+      const { connection } = data;
+
       const fields =
         'Owner,Industry,Billing_Street,Billing_Code,Billing_City,Billing_State,Employees,Phone,Description,Account_Name';
       const resp = await axios.get(

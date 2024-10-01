@@ -1,22 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { CoreSyncRegistry } from '../registries/core-sync.registry';
-import { CoreUnification } from './core-unification.service';
-import { v4 as uuidv4 } from 'uuid';
-import { PrismaService } from '../prisma/prisma.service';
+import { ConnectionUtils } from '@@core/connections/@utils';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { RagService } from '@@core/rag/rag.service';
+import { FileInfo } from '@@core/rag/types';
+import { RateLimitError } from '@@core/rate-limit/error';
 import {
   ApiResponse,
   getFileExtensionFromMimeType,
   TargetObject,
 } from '@@core/utils/types';
-import { UnifySourceType } from '@@core/utils/types/unify.output';
-import { WebhookService } from '../webhooks/panora-webhooks/webhook.service';
-import { ConnectionUtils } from '@@core/connections/@utils';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
-import { LoggerService } from '../logger/logger.service';
-import { RagService } from '@@core/rag/rag.service';
-import { FileInfo } from '@@core/rag/types';
+import { UnifySourceType } from '@@core/utils/types/unify.output';
+import { Injectable } from '@nestjs/common';
 import { fs_files as FileStorageFile } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { LoggerService } from '../logger/logger.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { BullQueueService } from '../queues/shared.service';
+import { CoreSyncRegistry } from '../registries/core-sync.registry';
+import { WebhookService } from '../webhooks/panora-webhooks/webhook.service';
+import { CoreUnification } from './core-unification.service';
 
 @Injectable()
 export class IngestDataService {
@@ -29,6 +31,7 @@ export class IngestDataService {
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
     private ragService: RagService,
+    private queues: BullQueueService,
   ) {}
 
   async syncForLinkedUser<T, U, V extends IBaseObjectService>(
@@ -87,7 +90,7 @@ export class IngestDataService {
 
       // Construct the syncParam object dynamically
       const syncParam: SyncParam = {
-        linkedUserId,
+        connection,
         custom_properties: remoteProperties,
       };
 
@@ -144,6 +147,32 @@ export class IngestDataService {
           `Error syncing ${integrationId} ${commonObject}: ${syncError.message}`,
           syncError,
         );
+        // handle the case where ratelimit is throwed
+        if (syncError instanceof RateLimitError) {
+          this.logger.warn(
+            `Rate limit exceeded for ${integrationId} ${commonObject}. Retry after ${syncError.retryAfter}ms.`,
+          );
+          // You might want to add some logic here to handle the rate limit,
+          // such as scheduling a retry or notifying the user.
+          const rlFailedJobsQueue = this.queues.getRlFailedJobsQueue();
+          await rlFailedJobsQueue.add(
+            'rate-limit-sync',
+            {
+              method: 'syncForLinkedUser',
+              args: [
+                integrationId,
+                linkedUserId,
+                vertical,
+                commonObject,
+                service,
+                params,
+                wh_real_time_trigger,
+              ],
+            },
+            { delay: syncError.retryAfter },
+          );
+          return;
+        }
         // Optionally, you could create an event to log this error
         /*await this.prisma.events.create({
         data: {

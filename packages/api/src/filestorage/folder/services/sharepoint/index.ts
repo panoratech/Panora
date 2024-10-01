@@ -10,6 +10,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { SharepointFolderInput, SharepointFolderOutput } from './types';
+import { Connection } from '@@core/connections/@utils/types';
 @Injectable()
 export class SharepointService implements IFolderService {
   constructor(
@@ -69,17 +70,9 @@ export class SharepointService implements IFolderService {
 
   async iterativeGetSharepointFolders(
     remote_folder_id: string,
-    linkedUserId: string,
+    connection: Connection,
   ): Promise<SharepointFolderOutput[]> {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'sharepoint',
-          vertical: 'filestorage',
-        },
-      });
-
       let result = [],
         depth = 0,
         batch = [remote_folder_id];
@@ -161,11 +154,11 @@ export class SharepointService implements IFolderService {
   async sync(data: SyncParam): Promise<ApiResponse<SharepointFolderOutput[]>> {
     try {
       this.logger.log('Syncing sharepoint folders');
-      const { linkedUserId } = data;
+      const { connection } = data;
 
       const folders = await this.iterativeGetSharepointFolders(
         'root',
-        linkedUserId,
+        connection,
       );
 
       this.logger.log(`${folders.length} sharepoint folders found`);

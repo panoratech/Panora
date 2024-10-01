@@ -63,15 +63,8 @@ export class ShopifyService implements IOrderService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ShopifyOrderOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'shopify',
-          vertical: 'ecommerce',
-        },
-      });
       const resp = await axios.get(
         `${connection.account_url}/admin/api/2024-07/orders.json`,
         {

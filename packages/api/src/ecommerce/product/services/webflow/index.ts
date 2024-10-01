@@ -64,15 +64,8 @@ export class WebflowService implements IProductService {
 
   async sync(data: SyncParam): Promise<ApiResponse<WebflowProductOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'webflow',
-          vertical: 'ecommerce',
-        },
-      });
       const resp = await axios.get(
         // https://api.webflow.com/v2/sites/{site_id}/products
         `${connection.account_url}/products`,

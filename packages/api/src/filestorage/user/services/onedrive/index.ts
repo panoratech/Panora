@@ -26,15 +26,7 @@ export class OnedriveService implements IUserService {
 
   async sync(data: SyncParam): Promise<ApiResponse<OnedriveUserOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'onedrive',
-          vertical: 'filestorage',
-        },
-      });
+      const { connection } = data;
 
       const resp = await axios.get(`${connection.account_url}/v1.0/users`, {
         headers: {

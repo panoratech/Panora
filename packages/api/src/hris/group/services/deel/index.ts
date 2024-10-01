@@ -36,15 +36,7 @@ export class DeelService implements IGroupService {
 
   async sync(data: SyncParam): Promise<ApiResponse<DeelGroupOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'deel',
-          vertical: 'hris',
-        },
-      });
+      const { connection } = data;
 
       const resp = await axios.get(`${connection.account_url}/rest/v2/teams`, {
         headers: {

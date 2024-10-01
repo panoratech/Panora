@@ -75,15 +75,7 @@ export class HubspotService implements INoteService {
 
   async sync(data: SyncParam): Promise<ApiResponse<HubspotNoteOutput[]>> {
     try {
-      const { linkedUserId, custom_properties } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-          vertical: 'crm',
-        },
-      });
+      const { connection, custom_properties } = data;
 
       const commonPropertyNames = Object.keys(commonNoteHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];

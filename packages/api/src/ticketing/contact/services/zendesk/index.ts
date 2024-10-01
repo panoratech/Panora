@@ -29,15 +29,8 @@ export class ZendeskService implements IContactService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
-      const { linkedUserId, webhook_remote_identifier } = data;
+      const { connection, webhook_remote_identifier } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'ticketing',
-        },
-      });
       let remote_contact_id;
       if (webhook_remote_identifier) {
         remote_contact_id = webhook_remote_identifier as string;

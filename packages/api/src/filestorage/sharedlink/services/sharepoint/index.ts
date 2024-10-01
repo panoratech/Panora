@@ -29,16 +29,9 @@ export class SharepointService implements ISharedLinkService {
     data: SyncParam,
   ): Promise<ApiResponse<SharepointSharedLinkOutput[]>> {
     try {
-      const { linkedUserId, extra } = data;
+      const { connection, extra } = data;
       //  TODO: where it comes from ??  extra?: { object_name: 'folder' | 'file'; value: string },
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'sharepoint',
-          vertical: 'filestorage',
-        },
-      });
       let remote_id;
       if (extra.object_name == 'folder') {
         const a = await this.prisma.fs_folders.findUnique({

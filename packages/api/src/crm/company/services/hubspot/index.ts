@@ -1,19 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { ICompanyService } from '@crm/company/types';
-import { CrmObject } from '@crm/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { CrmObject } from '@crm/@lib/@types';
+import { ICompanyService } from '@crm/company/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import {
   commonCompanyHubspotProperties,
   HubspotCompanyInput,
   HubspotCompanyOutput,
 } from './types';
-import { SyncParam } from '@@core/utils/types/interface';
+import { RateLimit } from '@@core/rate-limit/rate-limit.decorator';
+import { RateLimitService } from '@@core/rate-limit/rate-limit.service';
+import { BullQueueService } from '@@core/@core-services/queues/shared.service';
 
 @Injectable()
 export class HubspotService implements ICompanyService {
@@ -22,6 +24,8 @@ export class HubspotService implements ICompanyService {
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private rateLimitService: RateLimitService,
+    private queues: BullQueueService,
   ) {
     this.logger.setContext(
       CrmObject.company.toUpperCase() + ':' + HubspotService.name,
@@ -65,16 +69,10 @@ export class HubspotService implements ICompanyService {
     }
   }
 
+  @RateLimit()
   async sync(data: SyncParam): Promise<ApiResponse<HubspotCompanyOutput[]>> {
     try {
-      const { linkedUserId, custom_properties } = data;
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-          vertical: 'crm',
-        },
-      });
+      const { connection, custom_properties } = data;
 
       const commonPropertyNames = Object.keys(commonCompanyHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];

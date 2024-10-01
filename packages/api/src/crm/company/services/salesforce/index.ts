@@ -8,10 +8,10 @@ import { EncryptionService } from '@@core/@core-services/encryption/encryption.s
 import { ApiResponse } from '@@core/utils/types';
 import { ServiceRegistry } from '../registry.service';
 import {
-    commonSalesforceCompanyProperties,
-    SalesforceCompanyInput,
-    SalesforceCompanyOutput,
-  } from './types';
+  commonSalesforceCompanyProperties,
+  SalesforceCompanyInput,
+  SalesforceCompanyOutput,
+} from './types';
 import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
@@ -67,32 +67,27 @@ export class SalesforceService implements ICompanyService {
 
   async sync(data: SyncParam): Promise<ApiResponse<SalesforceCompanyOutput[]>> {
     try {
-      const { linkedUserId, custom_properties, pageSize, cursor } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'salesforce',
-          vertical: 'crm',
-        },
-      });
-
+      const { connection, custom_properties, pageSize, cursor } = data;
       const instanceUrl = connection.account_url;
-      let pagingString = `${pageSize ? `ORDER BY Id DESC LIMIT ${pageSize} ` : ''}${
-        cursor ? `OFFSET ${cursor}` : ''
-      }`;
+      let pagingString = `${
+        pageSize ? `ORDER BY Id DESC LIMIT ${pageSize} ` : ''
+      }${cursor ? `OFFSET ${cursor}` : ''}`;
       if (!pageSize && !cursor) {
         pagingString = 'LIMIT 200';
       }
 
-      const commonPropertyNames = Object.keys(commonSalesforceCompanyProperties);
+      const commonPropertyNames = Object.keys(
+        commonSalesforceCompanyProperties,
+      );
       const allProperties = [...commonPropertyNames, ...custom_properties];
       const fields = allProperties.join(',');
 
       const query = `SELECT ${fields} FROM Account ${pagingString}`;
 
       const resp = await axios.get(
-        `${instanceUrl}/services/data/v56.0/query/?q=${encodeURIComponent(query)}`,
+        `${instanceUrl}/services/data/v56.0/query/?q=${encodeURIComponent(
+          query,
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${this.cryptoService.decrypt(

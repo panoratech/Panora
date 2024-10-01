@@ -1,17 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
-import { ITicketService } from '@ticketing/ticket/types';
 import { ApiResponse } from '@@core/utils/types';
+import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { Utils } from '@ticketing/@lib/@utils';
+import { ITicketService } from '@ticketing/ticket/types';
 import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
+import * as fs from 'fs';
 import { ServiceRegistry } from '../registry.service';
 import { GorgiasTicketInput, GorgiasTicketOutput } from './types';
-import * as fs from 'fs';
-import { SyncParam } from '@@core/utils/types/interface';
-import { Utils } from '@ticketing/@lib/@utils';
 
 @Injectable()
 export class GorgiasService implements ITicketService {
@@ -105,15 +104,7 @@ export class GorgiasService implements ITicketService {
 
   async sync(data: SyncParam): Promise<ApiResponse<GorgiasTicketOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'gorgias',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const resp = await axios.get(`${connection.account_url}/tickets`, {
         headers: {

@@ -13,6 +13,7 @@ import { SyncParam } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { UnifiedFilestorageFileOutput } from '@filestorage/file/types/model.unified';
 import { OnedriveFileOutput } from '@filestorage/file/services/onedrive/types';
+import { Connection } from '@@core/connections/@utils/types';
 
 @Injectable()
 export class OnedriveService implements IFolderService {
@@ -72,17 +73,9 @@ export class OnedriveService implements IFolderService {
 
   async iterativeGetOnedriveFolders(
     remote_folder_id: string,
-    linkedUserId: string,
+    connection: Connection,
   ): Promise<OnedriveFolderOutput[]> {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'onedrive',
-          vertical: 'filestorage',
-        },
-      });
-
       let result = [],
         depth = 0,
         batch = [remote_folder_id];
@@ -163,11 +156,11 @@ export class OnedriveService implements IFolderService {
   async sync(data: SyncParam): Promise<ApiResponse<OnedriveFolderOutput[]>> {
     try {
       this.logger.log('Syncing onedrive folders');
-      const { linkedUserId } = data;
+      const { connection } = data;
 
       const folders = await this.iterativeGetOnedriveFolders(
         'root',
-        linkedUserId,
+        connection,
       );
 
       this.logger.log(`${folders.length} onedrive folders found`);

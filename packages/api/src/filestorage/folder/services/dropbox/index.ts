@@ -103,15 +103,7 @@ export class DropboxService implements IFolderService {
 
   async sync(data: SyncParam): Promise<ApiResponse<BoxFolderOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'dropbox',
-          vertical: 'filestorage',
-        },
-      });
+      const { connection } = data;
 
       const results = await this.getAllFolders(connection);
       this.logger.log(`Synced dropbox folders !`);

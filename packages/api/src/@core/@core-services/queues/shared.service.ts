@@ -16,6 +16,8 @@ export class BullQueueService {
     public readonly failedPassthroughRequestsQueue: Queue,
     @InjectQueue(Queues.RAG_DOCUMENT_PROCESSING)
     private ragDocumentQueue: Queue,
+    @InjectQueue(Queues.RATE_LIMIT_FAILED_JOBS)
+    private rlFailedJobsQueue: Queue,
   ) {}
 
   // getters
@@ -34,6 +36,9 @@ export class BullQueueService {
   }
   getRagDocumentQueue() {
     return this.ragDocumentQueue;
+  }
+  getRlFailedJobsQueue() {
+    return this.rlFailedJobsQueue;
   }
 
   async removeRepeatableJob(jobName: string) {

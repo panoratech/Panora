@@ -15,8 +15,9 @@ import { OrganisationsModule } from './organisations/organisations.module';
 import { PassthroughModule } from './passthrough/passthrough.module';
 import { ProjectConnectorsModule } from './project-connectors/project-connectors.module';
 import { ProjectsModule } from './projects/projects.module';
-import { SyncModule } from './sync/sync.module';
 import { RagModule } from './rag/rag.module';
+import { RateLimitModule } from './rate-limit/rate-limit.module';
+import { SyncModule } from './sync/sync.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { RagModule } from './rag/rag.module';
     SyncModule,
     ProjectConnectorsModule,
     BullQueueModule,
+    RateLimitModule,
     RagModule,
   ],
   exports: [
@@ -55,6 +57,7 @@ import { RagModule } from './rag/rag.module';
     SyncModule,
     ProjectConnectorsModule,
     IngestDataService,
+    RateLimitModule,
     BullQueueModule,
     RagModule,
   ],

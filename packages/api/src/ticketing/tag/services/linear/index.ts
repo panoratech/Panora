@@ -27,23 +27,13 @@ export class LinearService implements ITagService {
 
   async sync(data: SyncParam): Promise<ApiResponse<LinearTagOutput[]>> {
     try {
-      const { linkedUserId, id_ticket } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'linear',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection, id_ticket } = data;
 
       const labelQuery = {
-        "query": "query { issueLabels { nodes { id name } }}"
+        query: 'query { issueLabels { nodes { id name } }}',
       };
 
-      let resp = await axios.post(
-        `${connection.account_url}`,
-        labelQuery, {
+      const resp = await axios.post(`${connection.account_url}`, labelQuery, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

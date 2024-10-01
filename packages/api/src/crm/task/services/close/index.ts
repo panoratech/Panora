@@ -62,15 +62,7 @@ export class CloseService implements ITaskService {
 
   async sync(data: SyncParam): Promise<ApiResponse<CloseTaskOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'close',
-          vertical: 'crm',
-        },
-      });
+      const { connection } = data;
 
       const baseURL = `${connection.account_url}/v1/task`;
 

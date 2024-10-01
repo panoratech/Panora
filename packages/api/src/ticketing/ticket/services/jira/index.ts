@@ -1,17 +1,16 @@
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
 import { ITicketService } from '@ticketing/ticket/types';
 import axios from 'axios';
-import { ServiceRegistry } from '../registry.service';
-import { JiraTicketInput, JiraTicketOutput } from './types';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
+import { ServiceRegistry } from '../registry.service';
+import { JiraTicketInput, JiraTicketOutput } from './types';
 
 @Injectable()
 export class JiraService implements ITicketService {
@@ -231,15 +230,8 @@ export class JiraService implements ITicketService {
   }
   async sync(data: SyncParam): Promise<ApiResponse<JiraTicketOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'jira',
-          vertical: 'ticketing',
-        },
-      });
       const resp = await axios.get(`${connection.account_url}/3/search`, {
         headers: {
           'Content-Type': 'application/json',

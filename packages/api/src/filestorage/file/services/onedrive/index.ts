@@ -28,15 +28,7 @@ export class OnedriveService implements IFileService {
 
   async sync(data: SyncParam): Promise<ApiResponse<OnedriveFileOutput[]>> {
     try {
-      const { linkedUserId, id_folder } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'onedrive',
-          vertical: 'filestorage',
-        },
-      });
+      const { connection, id_folder } = data;
 
       const foldersToSync = ['root'];
       if (id_folder) {

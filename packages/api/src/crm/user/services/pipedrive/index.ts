@@ -27,15 +27,8 @@ export class PipedriveService implements IUserService {
 
   async sync(data: SyncParam): Promise<ApiResponse<PipedriveUserOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'pipedrive',
-          vertical: 'crm',
-        },
-      });
       const resp = await axios.get(`${connection.account_url}/v1/users`, {
         headers: {
           'Content-Type': 'application/json',

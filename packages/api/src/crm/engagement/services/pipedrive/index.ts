@@ -9,6 +9,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { PipedriveEngagementInput, PipedriveEngagementOutput } from './types';
+import { Connection } from '@@core/connections/@utils/types';
 @Injectable()
 export class PipedriveService implements IEngagementService {
   constructor(
@@ -62,15 +63,15 @@ export class PipedriveService implements IEngagementService {
     data: SyncParam,
   ): Promise<ApiResponse<PipedriveEngagementOutput[]>> {
     try {
-      const { linkedUserId, engagement_type } = data;
+      const { connection, engagement_type } = data;
 
       switch (engagement_type as string) {
         case 'CALL':
-          return this.syncCalls(linkedUserId);
+          return this.syncCalls(connection);
         case 'MEETING':
-          return this.syncMeetings(linkedUserId);
+          return this.syncMeetings(connection);
         case 'EMAIL':
-          return this.syncEmails(linkedUserId);
+          return this.syncEmails(connection);
         default:
           break;
       }
@@ -79,16 +80,8 @@ export class PipedriveService implements IEngagementService {
     }
   }
 
-  private async syncCalls(linkedUserId: string) {
+  private async syncCalls(connection: Connection) {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'pipedrive',
-          vertical: 'crm',
-        },
-      });
-
       const resp = await axios.get(`${connection.account_url}/v1/activities`, {
         headers: {
           'Content-Type': 'application/json',
@@ -112,16 +105,8 @@ export class PipedriveService implements IEngagementService {
       throw error;
     }
   }
-  private async syncMeetings(linkedUserId: string) {
+  private async syncMeetings(connection: Connection) {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'pipedrive',
-          vertical: 'crm',
-        },
-      });
-
       const resp = await axios.get(`${connection.account_url}/v1/activities`, {
         headers: {
           'Content-Type': 'application/json',
@@ -145,16 +130,8 @@ export class PipedriveService implements IEngagementService {
       throw error;
     }
   }
-  private async syncEmails(linkedUserId: string) {
+  private async syncEmails(connection: Connection) {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'pipedrive',
-          vertical: 'crm',
-        },
-      });
-
       const resp = await axios.get(`${connection.account_url}/v1/activities`, {
         headers: {
           'Content-Type': 'application/json',

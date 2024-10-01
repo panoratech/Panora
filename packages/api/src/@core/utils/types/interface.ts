@@ -1,3 +1,4 @@
+import { Connection } from '@@core/connections/@utils/types';
 import {
   ApiResponse,
   TargetObject,
@@ -67,9 +68,9 @@ export interface IBaseSync {
 }
 
 export type SyncParam = {
-  linkedUserId: string;
+  connection: Connection;
   [key: string]: any;
-};
+}; 
 export interface IBaseObjectService {
   sync(data: SyncParam): Promise<ApiResponse<any>>;
 }

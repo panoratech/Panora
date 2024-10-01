@@ -26,14 +26,8 @@ export class SharepointService implements IGroupService {
 
   async sync(data: SyncParam): Promise<ApiResponse<SharepointGroupOutput[]>> {
     try {
-      const { linkedUserId } = data;
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'sharepoint',
-          vertical: 'filestorage',
-        },
-      });
+      const { connection } = data;
+
       // remove /sites/site_id from account_url
       const url = connection.account_url.replace(/\/sites\/.+$/, '');
 

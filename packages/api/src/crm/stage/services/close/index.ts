@@ -28,15 +28,7 @@ export class CloseService implements IStageService {
 
   async sync(data: SyncParam): Promise<ApiResponse<CloseStageOutput[]>> {
     try {
-      const { linkedUserId, deal_id } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'close',
-          vertical: 'crm',
-        },
-      });
+      const { connection, deal_id } = data;
 
       const res = await this.prisma.crm_deals.findUnique({
         where: { id_crm_deal: deal_id as string },

@@ -27,15 +27,7 @@ export class JiraService implements ITeamService {
 
   async sync(data: SyncParam): Promise<ApiResponse<JiraTeamOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'jira',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const resp = await axios.get(
         `${connection.account_url}/3/groups/picker`,

@@ -25,15 +25,8 @@ export class WebflowService implements IOrderService {
   }
 
   async sync(data: SyncParam): Promise<ApiResponse<WebflowOrderOutput[]>> {
+    const { connection } = data;
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: data.linkedUserId,
-          provider_slug: 'webflow',
-          vertical: 'ecommerce',
-        },
-      });
-
       // ref: https://docs.developers.webflow.com/data/reference/list-orders
       const resp = await axios.get(`${connection.account_url}/orders`, {
         headers: {

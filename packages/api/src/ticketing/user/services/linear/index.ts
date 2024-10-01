@@ -1,15 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
-import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { ServiceRegistry } from '../registry.service';
-import { IUserService } from '@ticketing/user/types';
-import { LinearUserOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { IUserService } from '@ticketing/user/types';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { LinearUserOutput } from './types';
 
 @Injectable()
 export class LinearService implements IUserService {
@@ -27,23 +26,13 @@ export class LinearService implements IUserService {
 
   async sync(data: SyncParam): Promise<ApiResponse<LinearUserOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'linear',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const userQuery = {
-        "query": "query { users { nodes { id, name, email } }}"
+        query: 'query { users { nodes { id, name, email } }}',
       };
 
-      let resp = await axios.post(
-        `${connection.account_url}`,
-        userQuery, {
+      const resp = await axios.post(`${connection.account_url}`, userQuery, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(

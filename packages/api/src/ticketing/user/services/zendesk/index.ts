@@ -1,16 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
-import { TicketingObject } from '@ticketing/@lib/@types';
 import { ApiResponse } from '@@core/utils/types';
-import axios from 'axios';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
-import { EnvironmentService } from '@@core/@core-services/environment/environment.service';
-import { ServiceRegistry } from '../registry.service';
-import { IUserService } from '@ticketing/user/types';
-import { ZendeskUserOutput } from './types';
 import { SyncParam } from '@@core/utils/types/interface';
+import { Injectable } from '@nestjs/common';
+import { TicketingObject } from '@ticketing/@lib/@types';
+import { IUserService } from '@ticketing/user/types';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { ZendeskUserOutput } from './types';
 
 @Injectable()
 export class ZendeskService implements IUserService {
@@ -29,15 +28,7 @@ export class ZendeskService implements IUserService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskUserOutput[]>> {
     try {
-      const { linkedUserId, webhook_remote_identifier } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection, webhook_remote_identifier } = data;
       const remote_user_id = webhook_remote_identifier as string;
       const request_url = remote_user_id
         ? `${connection.account_url}/v2/users/${remote_user_id}.json`

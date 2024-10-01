@@ -13,47 +13,39 @@ import { SyncParam } from '@@core/utils/types/interface';
 
 @Injectable()
 export class GithubService implements ITeamService {
-    constructor(
-        private prisma: PrismaService,
-        private logger: LoggerService,
-        private cryptoService: EncryptionService,
-        private registry: ServiceRegistry,
-    ) {
-        this.logger.setContext(
-            TicketingObject.team.toUpperCase() + ':' + GithubService.name,
-        );
-        this.registry.registerService('github', this);
+  constructor(
+    private prisma: PrismaService,
+    private logger: LoggerService,
+    private cryptoService: EncryptionService,
+    private registry: ServiceRegistry,
+  ) {
+    this.logger.setContext(
+      TicketingObject.team.toUpperCase() + ':' + GithubService.name,
+    );
+    this.registry.registerService('github', this);
+  }
+
+  async sync(data: SyncParam): Promise<ApiResponse<GithubTeamOutput[]>> {
+    try {
+      const { connection } = data;
+
+      const resp = await axios.get(`${connection.account_url}/user/teams`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
+      this.logger.log(`Synced github teams !`);
+
+      return {
+        data: resp.data,
+        message: 'Github teams retrieved',
+        statusCode: 200,
+      };
+    } catch (error) {
+      throw error;
     }
-
-    async sync(data: SyncParam): Promise<ApiResponse<GithubTeamOutput[]>> {
-        try {
-            const { linkedUserId } = data;
-
-            const connection = await this.prisma.connections.findFirst({
-                where: {
-                    id_linked_user: linkedUserId,
-                    provider_slug: 'github',
-                    vertical: 'ticketing',
-                },
-            });
-
-            const resp = await axios.get(`${connection.account_url}/user/teams`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${this.cryptoService.decrypt(
-                        connection.access_token,
-                    )}`,
-                },
-            });
-            this.logger.log(`Synced github teams !`);
-
-            return {
-                data: resp.data,
-                message: 'Github teams retrieved',
-                statusCode: 200,
-            };
-        } catch (error) {
-            throw error;
-        }
-    }
+  }
 }

@@ -26,16 +26,8 @@ export class BoxService implements IFileService {
 
   async sync(data: SyncParam): Promise<ApiResponse<BoxFileOutput[]>> {
     try {
-      const { linkedUserId, id_folder } = data;
+      const { connection, id_folder } = data;
       if (!id_folder) return;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'box',
-          vertical: 'filestorage',
-        },
-      });
 
       const folder = await this.prisma.fs_folders.findUnique({
         where: {

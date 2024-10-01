@@ -81,15 +81,8 @@ export class AmazonService implements IOrderService {
 
   async sync(data: SyncParam): Promise<ApiResponse<AmazonOrderOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'amazon',
-          vertical: 'ecommerce',
-        },
-      });
       const specificMarketplaceIds = marketplaces.map(
         (marketplace) => marketplace.marketplaceId,
       );

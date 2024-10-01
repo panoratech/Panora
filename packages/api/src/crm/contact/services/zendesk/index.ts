@@ -64,15 +64,8 @@ export class ZendeskService implements IContactService {
 
   async sync(data: SyncParam): Promise<ApiResponse<ZendeskContactOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'zendesk',
-          vertical: 'crm',
-        },
-      });
       const resp = await axios.get(`${connection.account_url}/v2/contacts`, {
         headers: {
           'Content-Type': 'application/json',

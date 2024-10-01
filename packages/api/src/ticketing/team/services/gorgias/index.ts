@@ -27,15 +27,7 @@ export class GorgiasService implements ITeamService {
 
   async sync(data: SyncParam): Promise<ApiResponse<GorgiasTeamOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'gorgias',
-          vertical: 'ticketing',
-        },
-      });
+      const { connection } = data;
 
       const resp = await axios.get(`${connection.account_url}/teams`, {
         headers: {

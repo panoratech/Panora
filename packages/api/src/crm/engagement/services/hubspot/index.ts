@@ -21,6 +21,7 @@ import {
   commonEmailHubspotProperties,
   commonMeetingHubspotProperties,
 } from './types';
+import { Connection } from '@@core/connections/@utils/types';
 
 @Injectable()
 export class HubspotService implements IEngagementService {
@@ -178,15 +179,15 @@ export class HubspotService implements IEngagementService {
 
   async sync(data: SyncParam): Promise<ApiResponse<HubspotEngagementOutput[]>> {
     try {
-      const { linkedUserId, custom_properties, engagement_type } = data;
+      const { connection, custom_properties, engagement_type } = data;
 
       switch (engagement_type as string) {
         case 'CALL':
-          return this.syncCalls(linkedUserId, custom_properties);
+          return this.syncCalls(connection, custom_properties);
         case 'MEETING':
-          return this.syncMeetings(linkedUserId, custom_properties);
+          return this.syncMeetings(connection, custom_properties);
         case 'EMAIL':
-          return this.syncEmails(linkedUserId, custom_properties);
+          return this.syncEmails(connection, custom_properties);
         default:
           break;
       }
@@ -195,16 +196,11 @@ export class HubspotService implements IEngagementService {
     }
   }
 
-  private async syncCalls(linkedUserId: string, custom_properties?: string[]) {
+  private async syncCalls(
+    connection: Connection,
+    custom_properties?: string[],
+  ) {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-          vertical: 'crm',
-        },
-      });
-
       const commonPropertyNames = Object.keys(commonCallHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
       const baseURL = `${connection.account_url}/crm/v3/objects/call`;
@@ -236,18 +232,10 @@ export class HubspotService implements IEngagementService {
   }
 
   private async syncMeetings(
-    linkedUserId: string,
+    connection: Connection,
     custom_properties?: string[],
   ) {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-          vertical: 'crm',
-        },
-      });
-
       const commonPropertyNames = Object.keys(commonMeetingHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
       const baseURL = `${connection.account_url}/crm/v3/objects/meeting`;
@@ -278,16 +266,11 @@ export class HubspotService implements IEngagementService {
     }
   }
 
-  private async syncEmails(linkedUserId: string, custom_properties?: string[]) {
+  private async syncEmails(
+    connection: Connection,
+    custom_properties?: string[],
+  ) {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'hubspot',
-          vertical: 'crm',
-        },
-      });
-
       const commonPropertyNames = Object.keys(commonEmailHubspotProperties);
       const allProperties = [...commonPropertyNames, ...custom_properties];
       const baseURL = `${connection.account_url}/crm/v3/objects/emails`;

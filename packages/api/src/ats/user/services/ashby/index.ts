@@ -29,15 +29,8 @@ export class AshbyService implements IUserService {
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyUserOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'ashby',
-          vertical: 'ats',
-        },
-      });
       const resp = await axios.post(`${connection.account_url}/user.list`, {
         headers: {
           'Content-Type': 'application/json',

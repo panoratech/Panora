@@ -30,15 +30,8 @@ export class ShopifyService implements IFulfillmentService {
     data: SyncParam,
   ): Promise<ApiResponse<ShopifyFulfillmentOutput[]>> {
     try {
-      const { linkedUserId, id_order } = data;
+      const { connection, id_order } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'shopify',
-          vertical: 'ecommerce',
-        },
-      });
       //retrieve ticket remote id so we can retrieve the comments in the original software
       const order = await this.prisma.ecom_orders.findUnique({
         where: {

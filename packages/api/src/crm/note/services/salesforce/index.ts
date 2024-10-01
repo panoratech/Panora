@@ -81,15 +81,7 @@ export class SalesforceService implements INoteService {
 
   async sync(data: SyncParam): Promise<ApiResponse<SalesforceNoteOutput[]>> {
     try {
-      const { linkedUserId, custom_properties, pageSize, cursor } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'salesforce',
-          vertical: 'crm',
-        },
-      });
+      const { connection, custom_properties, pageSize, cursor } = data;
 
       const instanceUrl = connection.account_url;
       let pagingString = '';

@@ -1,17 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IDepartmentService } from '@ats/department/types';
-import { AtsObject } from '@ats/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
-import { AshbyDepartmentInput, AshbyDepartmentOutput } from './types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { OriginalDepartmentOutput } from '@@core/utils/types/original/original.ats';
 import { SyncParam } from '@@core/utils/types/interface';
+import { AtsObject } from '@ats/@lib/@types';
+import { IDepartmentService } from '@ats/department/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { AshbyDepartmentOutput } from './types';
 
 @Injectable()
 export class AshbyService implements IDepartmentService {
@@ -28,15 +25,8 @@ export class AshbyService implements IDepartmentService {
   }
   async sync(data: SyncParam): Promise<ApiResponse<AshbyDepartmentOutput[]>> {
     try {
-      const { linkedUserId } = data;
+      const { connection } = data;
 
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'ashby',
-          vertical: 'ats',
-        },
-      });
       const resp = await axios.post(
         `${connection.account_url}/departement.list`,
         {

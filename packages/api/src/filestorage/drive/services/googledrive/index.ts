@@ -11,6 +11,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import { ServiceRegistry } from '../registry.service';
 import { GoogleDriveDriveOutput } from './types';
+import { Connection } from '@@core/connections/@utils/types';
 
 @Injectable()
 export class GoogleDriveService implements IDriveService {
@@ -26,15 +27,7 @@ export class GoogleDriveService implements IDriveService {
     this.registry.registerService('googledrive', this);
   }
 
-  private async getGoogleClient(linkedUserId: string): Promise<OAuth2Client> {
-    const connection = await this.prisma.connections.findFirst({
-      where: {
-        id_linked_user: linkedUserId,
-        provider_slug: 'googledrive',
-        vertical: 'filestorage',
-      },
-    });
-
+  private async getGoogleClient(connection: Connection): Promise<OAuth2Client> {
     if (!connection) {
       throw new Error('Connection not found');
     }
@@ -53,7 +46,14 @@ export class GoogleDriveService implements IDriveService {
     linkedUserId: string,
   ): Promise<ApiResponse<GoogleDriveDriveOutput>> {
     try {
-      const oauth2Client = await this.getGoogleClient(linkedUserId);
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'googledrive',
+          vertical: 'filestorage',
+        },
+      });
+      const oauth2Client = await this.getGoogleClient(connection);
       const drive = google.drive({ version: 'v3', auth: oauth2Client });
 
       const response = await drive.drives.create({
@@ -81,8 +81,8 @@ export class GoogleDriveService implements IDriveService {
 
   async sync(data: SyncParam): Promise<ApiResponse<GoogleDriveDriveOutput[]>> {
     try {
-      const { linkedUserId } = data;
-      const oauth2Client = await this.getGoogleClient(linkedUserId);
+      const { connection } = data;
+      const oauth2Client = await this.getGoogleClient(connection);
       const drive = google.drive({ version: 'v3', auth: oauth2Client });
 
       const response = await drive.drives.list({

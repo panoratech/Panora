@@ -9,6 +9,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { SharepointFileOutput } from './types';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 
 @Injectable()
 export class SharepointService implements IFileService {
@@ -17,6 +18,7 @@ export class SharepointService implements IFileService {
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private fieldMappingService: FieldMappingService,
   ) {
     this.logger.setContext(
       `${FileStorageObject.file.toUpperCase()}:${SharepointService.name}`,
@@ -26,15 +28,7 @@ export class SharepointService implements IFileService {
 
   async sync(data: SyncParam): Promise<ApiResponse<SharepointFileOutput[]>> {
     try {
-      const { linkedUserId, id_folder } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'sharepoint',
-          vertical: 'filestorage',
-        },
-      });
+      const { connection, id_folder } = data;
 
       const foldersToSync = ['root'];
       if (id_folder) {
@@ -51,7 +45,7 @@ export class SharepointService implements IFileService {
       const allFiles: SharepointFileOutput[] = [];
 
       for (const folderId of foldersToSync) {
-        const files = await this.syncFolder(connection, folderId);
+        const files = await this.syncFolder(connection, folderId, linkedUserId);
         allFiles.push(...files);
       }
 
@@ -75,7 +69,33 @@ export class SharepointService implements IFileService {
   private async syncFolder(
     connection: any,
     folderId: string,
+    linkedUserId: string,
   ): Promise<SharepointFileOutput[]> {
+    const customFields = await this.fieldMappingService.getCustomFieldMappings(
+      'sharepoint',
+      linkedUserId,
+      'filestorage.file',
+    );
+
+    const selectFields = [
+      'id',
+      'name',
+      'webUrl',
+      'createdDateTime',
+      'lastModifiedDateTime',
+      'size',
+      'file',
+      'folder',
+      'permissions',
+      '@microsoft.graph.downloadUrl',
+    ];
+
+    if (customFields) {
+      customFields.forEach((field) => {
+        selectFields.push(`fields/${field.remote_id}`);
+      });
+    }
+
     const resp = await axios.get(
       `${connection.account_url}/drive/items/${folderId}/children`,
       {
@@ -85,11 +105,15 @@ export class SharepointService implements IFileService {
             connection.access_token,
           )}`,
         },
+        params: {
+          $select: selectFields.join(','),
+          $expand: 'fields',
+        },
       },
     );
 
     const files: SharepointFileOutput[] = resp.data.value.filter(
-      (elem) => !elem.folder, // files don't have a folder property
+      (elem) => !elem.folder,
     );
 
     // Add permissions (shared link is also included in permissions in SharePoint)

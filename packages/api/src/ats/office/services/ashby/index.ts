@@ -1,17 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { IOfficeService } from '@ats/office/types';
-import { AtsObject } from '@ats/@lib/@types';
-import axios from 'axios';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
-import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { ActionType, handle3rdPartyServiceError } from '@@core/utils/errors';
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
+import { LoggerService } from '@@core/@core-services/logger/logger.service';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { ApiResponse } from '@@core/utils/types';
-import { ServiceRegistry } from '../registry.service';
-import { AshbyOfficeInput, AshbyOfficeOutput } from './types';
-import { DesunifyReturnType } from '@@core/utils/types/desunify.input';
-import { OriginalOfficeOutput } from '@@core/utils/types/original/original.ats';
 import { SyncParam } from '@@core/utils/types/interface';
+import { AtsObject } from '@ats/@lib/@types';
+import { IOfficeService } from '@ats/office/types';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { ServiceRegistry } from '../registry.service';
+import { AshbyOfficeOutput } from './types';
 
 @Injectable()
 export class AshbyService implements IOfficeService {
@@ -29,15 +26,7 @@ export class AshbyService implements IOfficeService {
 
   async sync(data: SyncParam): Promise<ApiResponse<AshbyOfficeOutput[]>> {
     try {
-      const { linkedUserId } = data;
-
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'ashby',
-          vertical: 'ats',
-        },
-      });
+      const { connection } = data;
       const resp = await axios.post(`${connection.account_url}/location.list`, {
         headers: {
           'Content-Type': 'application/json',

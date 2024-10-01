@@ -19,6 +19,14 @@ CREATE TABLE webhooks_payloads
  CONSTRAINT PK_webhooks_payload PRIMARY KEY ( id_webhooks_payload )
 );
 
+-- ************************************** rate_limit_state
+CREATE TABLE rate_limit_state (
+  id_rate_limit_state uuid NOT NULL,
+  id_connection NOT NULL,
+  last_request_timestamp TIMESTAMP NOT NULL,
+  request_count INTEGER NOT NULL
+  CONSTRAINT PK_rate_limit_state PRIMARY KEY ( id_rate_limit_state )
+);
 
 -- ************************************** webhook_endpoints
 CREATE TABLE webhook_endpoints
