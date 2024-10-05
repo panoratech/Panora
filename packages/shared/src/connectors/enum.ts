@@ -9,11 +9,12 @@ export enum CrmConnectors {
 }
 
 export enum EcommerceConnectors {
-  SHOPIFY = 'shopify',
-  WOOCOMMERCE = 'woocommerce',
-  SQUARESPACE = 'squarespace',
-  AMAZON = 'amazon',
-  WEBFLOW = 'webflow',
+    SHOPIFY = 'shopify',
+    WOOCOMMERCE = 'woocommerce',
+    SQUARESPACE = 'squarespace',
+    AMAZON = 'amazon',
+    WEBFLOW = 'webflow',
+    EBAY = 'ebay'
 }
 
 export enum TicketingConnectors {

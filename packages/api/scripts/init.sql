@@ -557,6 +557,7 @@ CREATE TABLE connector_sets
  fs_sharepoint boolean NULL,
  fs_onedrive boolean NULL,
  crm_salesforce boolean NULL,
+ ecom_ebay boolean NULL,
 CONSTRAINT PK_project_connector PRIMARY KEY ( id_connector_set )
 );
 
