@@ -1,3 +1,5 @@
+import { EbayOrderInput, EbayOrderOutput } from '@ecommerce/order/services/ebay/types';
+
 import { EbayProductInput, EbayProductOutput } from '@ecommerce/product/services/ebay/types';
 
 /* INPUT */
@@ -77,7 +79,7 @@ export type OriginalOrderInput =
   | WoocommerceOrderInput
   | SquarespaceOrderInput
   | AmazonOrderInput
-  | WebflowOrderInput;
+  | WebflowOrderInput | EbayOrderInput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersInput = ShopifyFulfillmentOrdersInput;
@@ -114,7 +116,7 @@ export type OriginalOrderOutput =
   | WoocommerceOrderOutput
   | SquarespaceOrderOutput
   | AmazonOrderOutput
-  | WebflowOrderOutput;
+  | WebflowOrderOutput | EbayOrderOutput;
 
 /* fulfillmentorders */
 export type OriginalFulfillmentOrdersOutput = ShopifyFulfillmentOrdersOutput;

@@ -1,3 +1,5 @@
+import { EbayOrderMapper } from './services/ebay/mappers';
+import { EbayService } from './services/ebay';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
@@ -39,6 +41,8 @@ import { AmazonService } from './services/amazon';
     AmazonService,
     WebflowService,
     WebflowOrderMapper,
+    EbayService,
+    EbayOrderMapper,
   ],
   exports: [SyncService],
 })
