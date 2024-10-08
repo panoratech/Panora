@@ -21,6 +21,9 @@ import { Queues } from './types';
       {
         name: Queues.RAG_DOCUMENT_PROCESSING,
       },
+      {
+        name: Queues.THIRD_PARTY_DATA_INGESTION,
+      },
     ),
   ],
   providers: [BullQueueService],
