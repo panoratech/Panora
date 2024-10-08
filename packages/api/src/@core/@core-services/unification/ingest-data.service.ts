@@ -211,7 +211,7 @@ export class IngestDataService {
       );
 
     // insert the files in our s3 bucket so we can process them for our RAG
-    if (vertical === 'filestorage' && commonObject === 'file') {
+    /*if (vertical === 'filestorage' && commonObject === 'file') {
       try {
         const filesInfo: FileInfo[] = data
           .filter((file: FileStorageFile) => file.mime_type !== null)
@@ -241,7 +241,7 @@ export class IngestDataService {
         // Optionally, you could create an event to log this error
         // await this.prisma.events.create({...});
       }
-    }
+    }*/
 
     const event = await this.prisma.events.create({
       data: {

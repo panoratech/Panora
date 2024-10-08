@@ -80,6 +80,7 @@ export class GoogleDriveService implements IFileService {
       : 'trashed = false';
 
     let pageToken: string | undefined;
+    let count = 0;
     do {
       const response = await this.rateLimitedRequest(() =>
         drive.files.list({
@@ -90,20 +91,22 @@ export class GoogleDriveService implements IFileService {
         }),
       );
 
+      count++;
+
       await this.bullQueueService
         .getThirdPartyDataIngestionQueue()
         .add('fs_file_googledrive', {
           ...data,
-          pageToken: response.data.nextPageToken,
+          pageToken: (response as any).data.nextPageToken,
           query,
           connectionId: connection.id_connection,
           custom_field_mappings,
           ingestParams,
         });
 
-      pageToken = response.data.nextPageToken;
+      pageToken = (response as any).data.nextPageToken;
     } while (pageToken);
-
+    console.log(`it has been called ${count} times`)
     return {
       data: [],
       message: 'Google Drive sync completed',
@@ -135,41 +138,57 @@ export class GoogleDriveService implements IFileService {
       access_token: this.cryptoService.decrypt(connection.access_token),
     });
     const drive = google.drive({ version: 'v3', auth });
-
-    const response = await this.rateLimitedRequest(() =>
-      drive.files.list({
-        q: query,
-        fields:
-          'files(id, name, mimeType, modifiedTime, size, parents, webViewLink)',
-        pageSize: BATCH_SIZE,
-        pageToken: pageToken,
-        orderBy: 'modifiedTime',
-      }),
-    );
-
-    const files: GoogleDriveFileOutput[] = response.data.files.map((file) => ({
-      id: file.id!,
-      name: file.name!,
-      mimeType: file.mimeType!,
-      modifiedTime: file.modifiedTime!,
-      size: file.size!,
-      parents: file.parents,
-      webViewLink: file.webViewLink,
-    }));
-
-    await this.ingestData(
-      files,
-      connectionId,
-      custom_field_mappings,
-      ingestParams,
-    );
+    try {
+      const response = await this.rateLimitedRequest(() =>
+        drive.files.list({
+          q: query,
+          fields:
+            'files(id, name, mimeType, modifiedTime, size, parents, webViewLink)',
+          pageSize: BATCH_SIZE,
+          pageToken: pageToken,
+          orderBy: 'modifiedTime',
+        }),
+      );
+  
+      const files: GoogleDriveFileOutput[] = (response as any).data.files.map((file) => ({
+        id: file.id!,
+        name: file.name!,
+        mimeType: file.mimeType!,
+        modifiedTime: file.modifiedTime!,
+        size: file.size!,
+        parents: file.parents,
+        webViewLink: file.webViewLink,
+      }));
+  
+      await this.ingestData(
+        files,
+        connectionId,
+        custom_field_mappings,
+        ingestParams,
+      );
+    } catch (error) {
+      this.logger.error('Error in processBatch:', error);
+      if (error.message === 'Invalid Value') {
+        this.logger.error('This may be due to an expired or invalid access token.', error);
+      }
+      throw error;
+    }
   }
 
   private async rateLimitedRequest<T>(request: () => Promise<T>): Promise<T> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       setTimeout(async () => {
-        const result = await request();
-        resolve(result);
+        try {
+          const result = await request();
+          resolve(result);
+        } catch (error) {
+          this.logger.error('Error in rateLimitedRequest:', error);
+          if (error.response) {
+            this.logger.error('Response data:', error.response.data);
+            this.logger.error('Response status:', error.response.status);
+          }
+          reject(error);
+        }
       }, 1000 / API_RATE_LIMIT);
     });
   }

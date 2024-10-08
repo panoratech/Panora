@@ -77,7 +77,7 @@ export type SyncParam = {
 };
 export interface IBaseObjectService {
   sync(data: SyncParam): Promise<ApiResponse<any>>;
-  ingestData(
+  ingestData?(
     sourceData: any[],
     connectionId: string,
     customFieldMappings?: {
