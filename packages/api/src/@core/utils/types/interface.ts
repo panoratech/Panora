@@ -68,8 +68,22 @@ export interface IBaseSync {
 
 export type SyncParam = {
   linkedUserId: string;
+  custom_field_mappings?: {
+    slug: string;
+    remote_id: string;
+  }[];
+  ingestParams: { [key: string]: any };
   [key: string]: any;
 };
 export interface IBaseObjectService {
   sync(data: SyncParam): Promise<ApiResponse<any>>;
+  ingestData?(
+    sourceData: any[],
+    connectionId: string,
+    customFieldMappings?: {
+      slug: string;
+      remote_id: string;
+    }[],
+    extraParams?: { [key: string]: any },
+  ): Promise<any[]>;
 }

@@ -46,6 +46,22 @@ export class FileController {
     this.logger.setContext(FileController.name);
   }
 
+  /*@Get('count')
+  async getNumberFiles(
+    @Headers('x-connection-token') connection_token: string,
+    @Query() query: QueryDto,
+  ) {
+    try {
+      const { linkedUserId, remoteSource, connectionId, projectId } =
+        await this.connectionUtils.getConnectionMetadataFromConnectionToken(
+          connection_token,
+        );
+      return this.fileService.getCountFiles(connectionId);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }*/
+
   @ApiOperation({
     operationId: 'listFilestorageFile',
     summary: 'List  Files',

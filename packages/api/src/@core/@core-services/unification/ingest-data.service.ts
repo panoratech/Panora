@@ -85,10 +85,16 @@ export class IngestDataService {
         .filter((p) => p.shouldPassToService)
         .map((p) => p.param);
 
+      const ingestParams = params
+        .filter((p) => p.shouldPassToIngest)
+        .reduce((acc, p) => ({ ...acc, [p.paramName]: p.param }), {});
+
       // Construct the syncParam object dynamically
       const syncParam: SyncParam = {
         linkedUserId,
         custom_properties: remoteProperties,
+        custom_field_mappings: customFieldMappings,
+        ingestParams: ingestParams,
       };
 
       serviceParams.forEach((param, index) => {
@@ -124,11 +130,7 @@ export class IngestDataService {
           return;
         }
 
-        const sourceObject: U[] = resp.data;
-
-        const ingestParams = params
-          .filter((p) => p.shouldPassToIngest)
-          .reduce((acc, p) => ({ ...acc, [p.paramName]: p.param }), {});
+        /*const sourceObject: U[] = resp.data;
 
         await this.ingestData<T, U>(
           sourceObject,
@@ -138,7 +140,7 @@ export class IngestDataService {
           commonObject,
           customFieldMappings,
           ingestParams,
-        );
+        );*/
       } catch (syncError) {
         this.logger.error(
           `Error syncing ${integrationId} ${commonObject}: ${syncError.message}`,
@@ -209,7 +211,7 @@ export class IngestDataService {
       );
 
     // insert the files in our s3 bucket so we can process them for our RAG
-    if (vertical === 'filestorage' && commonObject === 'file') {
+    /*if (vertical === 'filestorage' && commonObject === 'file') {
       try {
         const filesInfo: FileInfo[] = data
           .filter((file: FileStorageFile) => file.mime_type !== null)
@@ -239,7 +241,7 @@ export class IngestDataService {
         // Optionally, you could create an event to log this error
         // await this.prisma.events.create({...});
       }
-    }
+    }*/
 
     const event = await this.prisma.events.create({
       data: {

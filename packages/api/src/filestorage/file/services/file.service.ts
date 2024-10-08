@@ -1,20 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
-import { v4 as uuidv4 } from 'uuid';
-import { ApiResponse } from '@@core/utils/types';
+import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
+import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
+import { ApiResponse } from '@@core/utils/types';
+import { OriginalFileOutput } from '@@core/utils/types/original/original.file-storage';
+import { FileStorageObject } from '@filestorage/@lib/@types';
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import {
   UnifiedFilestorageFileInput,
   UnifiedFilestorageFileOutput,
 } from '../types/model.unified';
-import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { ServiceRegistry } from './registry.service';
-import { CoreSyncRegistry } from '@@core/@core-services/registries/core-sync.registry';
-import { FileStorageObject } from '@filestorage/@lib/@types';
-import { OriginalFileOutput } from '@@core/utils/types/original/original.file-storage';
-import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 
 @Injectable()
 export class FileService {
@@ -441,4 +440,16 @@ export class FileService {
       throw error;
     }
   }
+  /*async getCountFiles(connection_id: string): Promise<number> {
+    try {
+      const fileCount = await this.prisma.fs_files.count({
+        where: {
+          id_connection: connection_id,
+        },
+      });
+      return fileCount;
+    } catch (error) {
+      throw error;
+    }
+  }*/
 }

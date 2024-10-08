@@ -95,7 +95,7 @@ async function bootstrap() {
     extendedSpecs['x-speakeasy-name-override'];
   addSpeakeasyGroup(document);
 
-  await generatePanoraParamsSpec(document);
+  // TODO: await generatePanoraParamsSpec(document);
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 

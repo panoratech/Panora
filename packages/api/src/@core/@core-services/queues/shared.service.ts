@@ -14,6 +14,8 @@ export class BullQueueService {
     public readonly syncJobsQueue: Queue,
     @InjectQueue(Queues.FAILED_PASSTHROUGH_REQUESTS_HANDLER)
     public readonly failedPassthroughRequestsQueue: Queue,
+    @InjectQueue(Queues.THIRD_PARTY_DATA_INGESTION)
+    public readonly thirdPartyDataIngestionQueue: Queue,
     @InjectQueue(Queues.RAG_DOCUMENT_PROCESSING)
     private ragDocumentQueue: Queue,
   ) {}
@@ -34,6 +36,9 @@ export class BullQueueService {
   }
   getRagDocumentQueue() {
     return this.ragDocumentQueue;
+  }
+  getThirdPartyDataIngestionQueue() {
+    return this.thirdPartyDataIngestionQueue;
   }
 
   async removeRepeatableJob(jobName: string) {
