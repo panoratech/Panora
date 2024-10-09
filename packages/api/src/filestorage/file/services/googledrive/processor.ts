@@ -9,7 +9,7 @@ import { GoogleDriveService } from '.';
 export class GoogleDriveQueueProcessor {
   constructor(private readonly googleDriveService: GoogleDriveService) {}
 
-  @Process('fs_file_googledrive')
+  @Process({ name: 'fs_file_googledrive', concurrency: 1 })
   async handleGoogleDriveSync(job: Job) {
     try {
       await this.googleDriveService.processBatch(job);
