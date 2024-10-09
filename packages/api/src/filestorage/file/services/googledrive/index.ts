@@ -74,11 +74,14 @@ export class GoogleDriveService implements IFileService {
     });
     const drive = google.drive({ version: 'v3', auth });
 
-    const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
-    const query = lastSyncTime
-      ? `trashed = false and modifiedTime > '${lastSyncTime.toISOString()}'`
-      : 'trashed = false';
-
+    let query = 'trashed = false';
+    if (!pageToken) {
+      const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
+      if (lastSyncTime) {
+        console.log(`Last sync time is ${lastSyncTime.toISOString()}`);
+        query += ` and modifiedTime > '${lastSyncTime.toISOString()}'`;
+      }
+    }
     // Fetch the current page of files
     const response = await this.rateLimitedRequest(() =>
       drive.files.list({
