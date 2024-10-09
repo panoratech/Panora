@@ -69,7 +69,6 @@ export class GoogleDriveService implements IFileService {
     if (!connection) return;
 
     const auth = new OAuth2Client();
-    console.log("token is "+ JSON.stringify(this.cryptoService.decrypt(connection.access_token)));
     auth.setCredentials({
       access_token: this.cryptoService.decrypt(connection.access_token),
     });
