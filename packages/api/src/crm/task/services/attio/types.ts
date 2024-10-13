@@ -45,3 +45,7 @@ export type AttioTaskInput = {
     }[];
   };
 };
+
+export type paginationType = {
+  offset: number;
+};

@@ -126,3 +126,8 @@ export interface AttioContact {
 
 export type AttioContactInput = Partial<AttioContact>;
 export type AttioContactOutput = AttioContactInput;
+
+
+export type paginationType = {
+  offset: number;
+};

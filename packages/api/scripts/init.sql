@@ -2900,6 +2900,20 @@ COMMENT ON COLUMN connections.token_type IS 'The type of the token, such as "Bea
 COMMENT ON COLUMN connections.connection_token IS 'Connection token users will put in their header to identify which service / linked_User they make request for';
 
 
+-- ************************************** vertical_objects_sync_track_data
+CREATE TABLE vertical_objects_sync_track_data
+(
+ id_vertical_objects_sync_track_data uuid NOT NULL,
+ vertical                            text NOT NULL,
+ provider_slug                       text NOT NULL,
+ object                              text NOT NULL,
+ pagination_type                     text NOT NULL,
+ id_connection                       uuid NOT NULL,
+ data                                json,
+ CONSTRAINT PK_vertical_objects_sync_track_data PRIMARY KEY ( id_vertical_objects_sync_track_data ),
+ CONSTRAINT FK_connection FOREIGN KEY ( id_connection ) REFERENCES connections ( id_connection )
+);
+
 -- ************************************** ats_scorecards
 CREATE TABLE ats_scorecards
 (

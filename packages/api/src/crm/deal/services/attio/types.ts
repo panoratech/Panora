@@ -102,3 +102,8 @@ export type AttioDealInput = {
     }[];
   }>;
 };
+
+
+export type paginationType = {
+  offset: number;
+};

@@ -127,3 +127,7 @@ export interface AttioCompany {
 
 export type AttioCompanyInput = Partial<AttioCompany>;
 export type AttioCompanyOutput = AttioCompanyInput;
+
+export type paginationType = {
+  offset: number;
+};
