@@ -76,10 +76,17 @@ export abstract class BaseConnectionService {
         };
         const formData = new FormData();
         for (const obj of data as MultipartData[]) {
-          formData.append(
-            obj.name,
-            obj.file_name ? fs.createReadStream(obj.file_name) : obj.data,
-          );
+          // Sanitize and validate the file path
+          if (obj.file_name) {
+            const sanitizedPath = path.normalize(obj.file_name).replace(/^(\.\.(\/|\\|$))+/, '');
+            // Optionally add additional path validation
+            if (!fs.existsSync(sanitizedPath)) {
+              throw new Error(`File not found: ${sanitizedPath}`);
+            }
+            formData.append(obj.name, fs.createReadStream(sanitizedPath));
+          } else {
+            formData.append(obj.name, obj.data);
+          }
         }
         DATA = formData;
         break;
