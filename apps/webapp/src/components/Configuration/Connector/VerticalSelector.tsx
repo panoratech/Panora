@@ -33,17 +33,17 @@ export function VerticalSelector({ onSelectVertical }: { onSelectVertical: (vert
         <Button
           variant="outline"
           role="combobox"
-          aria-label="Select a vertical..."
+          aria-label="Select category"
           aria-expanded={open}
           className="flex-1 justify-between md:max-w-[100px] lg:max-w-[200px] mx-2"
         >
-          {selectedVertical ? selectedVertical : "Select a vertical..."}
+          {selectedVertical ? selectedVertical : "Select category"}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">
         <Command>
-          <CommandInput placeholder="Search vertical..." />
+          <CommandInput placeholder="Search" />
           <CommandEmpty>No verticals found.</CommandEmpty>
           <CommandGroup heading="Categories">
             <CommandItem

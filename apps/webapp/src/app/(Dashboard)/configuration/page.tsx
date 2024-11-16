@@ -109,7 +109,7 @@ export default function Page() {
     data_type: mapping.data_type,
   }))
 
-  const VERTICALS = verticals.filter((vertical) => !["marketingautomation", "cybersecurity", "productivity"].includes(vertical));
+  const VERTICALS = verticals.filter((vertical) => !["marketingautomation", "productivity"].includes(vertical));
 
   useEffect(() => {
     if (pullFrequencies) {

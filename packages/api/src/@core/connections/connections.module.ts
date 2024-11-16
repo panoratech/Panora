@@ -10,7 +10,6 @@ import { ProductivityConnectionsModule } from './productivity/productivity.conne
 import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
 import { EcommerceConnectionModule } from './ecommerce/ecommerce.connection.module';
-import { CybersecurityConnectionsModule } from './cybersecurity/cybersecurity.connection.module';
 
 @Module({
   controllers: [ConnectionsController],
@@ -22,7 +21,6 @@ import { CybersecurityConnectionsModule } from './cybersecurity/cybersecurity.co
     MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
     EcommerceConnectionModule,
-    CybersecurityConnectionsModule,
     SyncModule,
   ],
   providers: [ValidateUserService, OAuthTokenRefreshService],
@@ -36,7 +34,6 @@ import { CybersecurityConnectionsModule } from './cybersecurity/cybersecurity.co
     FilestorageConnectionModule,
     EcommerceConnectionModule,
     ProductivityConnectionsModule,
-    CybersecurityConnectionsModule,
   ],
 })
 export class ConnectionsModule {}

@@ -66,9 +66,7 @@ export class ResyncStatusDto {
     example: 'ticketing',
     enum: [
       'ticketing',
-      'ats',
       'accounting',
-      'hris',
       'crm',
       'filestorage',
       'ecommerce',
@@ -113,8 +111,6 @@ export class SyncController {
       'marketingautomation',
       'crm',
       'filestorage',
-      'ats',
-      'hris',
       'accounting',
       'ecommerce',
     ],
