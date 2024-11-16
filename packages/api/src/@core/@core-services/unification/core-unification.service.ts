@@ -1,8 +1,6 @@
 import { AccountingObject } from '@accounting/@lib/@types';
-import { AtsObject } from '@ats/@lib/@types';
 import { CrmObject } from '@crm/@lib/@types';
 import { FileStorageObject } from '@filestorage/@lib/@types';
-import { HrisObject } from '@hris/@lib/@types';
 import { MarketingAutomationObject } from '@marketingautomation/@lib/@types';
 import { Injectable } from '@nestjs/common';
 import { ConnectorCategory } from '@panora/shared';
@@ -68,16 +66,6 @@ export class CoreUnification {
             customFieldMappings,
             extraParams,
           });
-        case ConnectorCategory.Ats:
-          targetType_ = targetType as AtsObject;
-          const atsRegistry = this.registry.getService('ats');
-          return atsRegistry.unify({
-            sourceObject,
-            targetType_,
-            providerName,
-            connectionId,
-            customFieldMappings,
-          });
         case ConnectorCategory.Accounting:
           targetType_ = targetType as AccountingObject;
           const accountingRegistry = this.registry.getService('accounting');
@@ -92,16 +80,6 @@ export class CoreUnification {
           targetType_ = targetType as FileStorageObject;
           const filestorageRegistry = this.registry.getService('filestorage');
           return filestorageRegistry.unify({
-            sourceObject,
-            targetType_,
-            providerName,
-            connectionId,
-            customFieldMappings,
-          });
-        case ConnectorCategory.Hris:
-          targetType_ = targetType as HrisObject;
-          const hrisRegistry = this.registry.getService('hris');
-          return hrisRegistry.unify({
             sourceObject,
             targetType_,
             providerName,
@@ -181,15 +159,7 @@ export class CoreUnification {
             providerName,
             customFieldMappings,
           });
-        case ConnectorCategory.Ats:
-          targetType_ = targetType as AtsObject;
-          const atsRegistry = this.registry.getService('ats');
-          return atsRegistry.desunify({
-            sourceObject,
-            targetType_,
-            providerName,
-            customFieldMappings,
-          });
+
         case ConnectorCategory.Accounting:
           targetType_ = targetType as AccountingObject;
           const accountingRegistry = this.registry.getService('accounting');
@@ -203,15 +173,6 @@ export class CoreUnification {
           targetType_ = targetType as FileStorageObject;
           const filestorageRegistry = this.registry.getService('filestorage');
           return filestorageRegistry.desunify({
-            sourceObject,
-            targetType_,
-            providerName,
-            customFieldMappings,
-          });
-        case ConnectorCategory.Hris:
-          targetType_ = targetType as HrisObject;
-          const hrisRegistry = this.registry.getService('hris');
-          return hrisRegistry.desunify({
             sourceObject,
             targetType_,
             providerName,

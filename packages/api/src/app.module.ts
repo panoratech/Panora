@@ -10,10 +10,8 @@ import { LoggerModule } from 'nestjs-pino';
 import { AccountingModule } from './accounting/accounting.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AtsModule } from './ats/ats.module';
 import { CrmModule } from './crm/crm.module';
 import { FileStorageModule } from './filestorage/filestorage.module';
-import { HrisModule } from './hris/hris.module';
 import { MarketingAutomationModule } from './marketingautomation/marketingautomation.module';
 import { CoreSharedModule } from '@@core/@core-services/module';
 import { EcommerceModule } from '@ecommerce/ecommerce.module';
@@ -22,9 +20,7 @@ import { EcommerceModule } from '@ecommerce/ecommerce.module';
   imports: [
     CoreSharedModule,
     CoreModule,
-    HrisModule,
     MarketingAutomationModule,
-    AtsModule,
     AccountingModule,
     FileStorageModule,
     EcommerceModule,
