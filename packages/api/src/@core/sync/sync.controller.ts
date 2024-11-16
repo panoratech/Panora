@@ -31,20 +31,6 @@ export class UpdatePullFrequencyDto {
 
   @ApiProperty({
     type: Number,
-    example: 3600,
-    description: 'Frequency in seconds',
-  })
-  ats?: number;
-
-  @ApiProperty({
-    type: Number,
-    example: 7200,
-    description: 'Frequency in seconds',
-  })
-  hris?: number;
-
-  @ApiProperty({
-    type: Number,
     example: 14400,
     description: 'Frequency in seconds',
   })

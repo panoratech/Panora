@@ -3,11 +3,9 @@ import { ValidateUserService } from '@@core/utils/services/validate-user.service
 import { Module } from '@nestjs/common';
 import { OAuthTokenRefreshService } from './@token-refresh/refresh.service';
 import { AccountingConnectionModule } from './accounting/accounting.connection.module';
-import { AtsConnectionModule } from './ats/ats.connection.module';
 import { ConnectionsController } from './connections.controller';
 import { CrmConnectionModule } from './crm/crm.connection.module';
 import { FilestorageConnectionModule } from './filestorage/filestorage.connection.module';
-import { HrisConnectionModule } from './hris/hris.connection.module';
 import { ProductivityConnectionsModule } from './productivity/productivity.connection.module';
 import { MarketingAutomationConnectionsModule } from './marketingautomation/marketingautomation.connection.module';
 import { TicketingConnectionModule } from './ticketing/ticketing.connection.module';
@@ -21,10 +19,8 @@ import { CybersecurityConnectionsModule } from './cybersecurity/cybersecurity.co
     ProductivityConnectionsModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
-    AtsConnectionModule,
     MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
-    HrisConnectionModule,
     EcommerceConnectionModule,
     CybersecurityConnectionsModule,
     SyncModule,
@@ -36,11 +32,9 @@ import { CybersecurityConnectionsModule } from './cybersecurity/cybersecurity.co
     CrmConnectionModule,
     TicketingConnectionModule,
     AccountingConnectionModule,
-    AtsConnectionModule,
     MarketingAutomationConnectionsModule,
     FilestorageConnectionModule,
     EcommerceConnectionModule,
-    HrisConnectionModule,
     ProductivityConnectionsModule,
     CybersecurityConnectionsModule,
   ],

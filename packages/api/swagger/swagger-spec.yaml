@@ -771,6 +771,12 @@ paths:
       responses:
         '200':
           description: Pull frequency updated successfully
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
       tags: *ref_6
       x-speakeasy-group: sync
     get:
@@ -7533,14 +7539,6 @@ components:
           type: number
           example: 1800
           description: Frequency in seconds
-        ats:
-          type: number
-          example: 3600
-          description: Frequency in seconds
-        hris:
-          type: number
-          example: 7200
-          description: Frequency in seconds
         accounting:
           type: number
           example: 14400
@@ -7559,8 +7557,6 @@ components:
           description: Frequency in seconds
       required:
         - crm
-        - ats
-        - hris
         - accounting
         - filestorage
         - ecommerce
