@@ -52,8 +52,6 @@ export class CoreSyncService {
                 if (projectSyncConfig) {
                   const syncIntervals = {
                     crm: projectSyncConfig.crm,
-                    ats: projectSyncConfig.ats,
-                    hris: projectSyncConfig.hris,
                     accounting: projectSyncConfig.accounting,
                     filestorage: projectSyncConfig.filestorage,
                     ecommerce: projectSyncConfig.ecommerce,
@@ -210,12 +208,6 @@ export class CoreSyncService {
         case ConnectorCategory.FileStorage:
           await this.handleFileStorageSync(provider, linkedUserId);
           break;
-        case ConnectorCategory.Ats:
-          await this.handleAtsSync(provider, linkedUserId);
-          break;
-        case ConnectorCategory.Hris:
-          await this.handleHrisSync(provider, linkedUserId);
-          break;
         case ConnectorCategory.Accounting:
           await this.handleAccountingSync(provider, linkedUserId);
           break;
@@ -234,144 +226,6 @@ export class CoreSyncService {
   // todo
   async handleAccountingSync(provider: string, linkedUserId: string) {
     return;
-  }
-
-  async handleHrisSync(provider: string, linkedUserId: string) {
-    // add other objects when i have info on the order
-    //todo: define here the topological order PER provider
-    const tasks = [
-      () =>
-        this.registry.getService('hris', 'company').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-    ];
-
-    const connection = await this.prisma.connections.findFirst({
-      where: {
-        id_linked_user: linkedUserId,
-        provider_slug: provider.toLowerCase(),
-      },
-    });
-
-    for (const task of tasks) {
-      try {
-        await task();
-      } catch (error) {
-        this.logger.error(`Task failed: ${error.message}`, error);
-      }
-    }
-    const companies = await this.prisma.hris_companies.findMany({
-      where: {
-        id_connection: connection.id_connection,
-      },
-    });
-
-    const companiesEmployeeTasks = companies.map(
-      (company) => async () =>
-        this.registry.getService('hris', 'employee').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-          id_company: company.id_hris_company,
-        }),
-    );
-
-    const companiesEmployerBenefitsTasks = companies.map(
-      (company) => async () =>
-        this.registry.getService('hris', 'employerbenefit').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-          id_company: company.id_hris_company,
-        }),
-    );
-
-    const companiesGroupsTasks = companies.map(
-      (company) => async () =>
-        this.registry.getService('hris', 'group').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-          id_company: company.id_hris_company,
-        }),
-    );
-
-    const employees = await this.prisma.hris_employees.findMany({
-      where: {
-        id_connection: connection.id_connection,
-      },
-    });
-
-    const employeesBenefitsTasks = employees.map(
-      (employee) => async () =>
-        this.registry.getService('hris', 'benefit').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-          id_employee: employee.id_hris_employee,
-        }),
-    );
-
-    const employeesLocationsTasks = employees.map(
-      (employee) => async () =>
-        this.registry.getService('hris', 'location').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-          id_employee: employee.id_hris_employee,
-        }),
-    );
-
-    for (const task of companiesEmployeeTasks) {
-      try {
-        await task();
-      } catch (error) {
-        this.logger.error(
-          `Companies Employee task failed: ${error.message}`,
-          error,
-        );
-      }
-    }
-
-    for (const task of employeesLocationsTasks) {
-      try {
-        await task();
-      } catch (error) {
-        this.logger.error(
-          `Companies Location task failed: ${error.message}`,
-          error,
-        );
-      }
-    }
-
-    for (const task of companiesEmployerBenefitsTasks) {
-      try {
-        await task();
-      } catch (error) {
-        this.logger.error(
-          `Companies Employer Benefits task failed: ${error.message}`,
-          error,
-        );
-      }
-    }
-
-    for (const task of companiesGroupsTasks) {
-      try {
-        await task();
-      } catch (error) {
-        this.logger.error(
-          `Companies Groups task failed: ${error.message}`,
-          error,
-        );
-      }
-    }
-
-    for (const task of employeesBenefitsTasks) {
-      try {
-        await task();
-      } catch (error) {
-        this.logger.error(
-          `Employees Benefits task failed: ${error.message}`,
-          error,
-        );
-      }
-    }
   }
 
   async handleCrmSync(provider: string, linkedUserId: string) {
@@ -685,92 +539,6 @@ export class CoreSyncService {
     }
   }
 
-  async handleAtsSync(provider: string, linkedUserId: string) {
-    const tasks = [
-      () =>
-        this.registry.getService('ats', 'office').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'department').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'rejectreason').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'user').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'jobs').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'jobinterviewstage').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'candidate').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'tag').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'eeocs').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'attachment').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'activity').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'application').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'offer').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'interview').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-      () =>
-        this.registry.getService('ats', 'scorecard').syncForLinkedUser({
-          integrationId: provider,
-          linkedUserId: linkedUserId,
-        }),
-    ];
-    for (const task of tasks) {
-      try {
-        await task();
-      } catch (error) {
-        this.logger.error(`File Storage Task failed: ${error.message}`, error);
-      }
-    }
-  }
 
   // we must have a sync_jobs table with 7 (verticals) rows, one of each is syncing details
   async getSyncStatus(vertical: string) {

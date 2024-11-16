@@ -54,11 +54,7 @@ export class MwHandlerProcessor {
         return await this.crmHandler.handleExternalIncomingWebhook(metadata);
       case ConnectorCategory.Accounting:
         return;
-      case ConnectorCategory.Ats:
-        return;
       case ConnectorCategory.FileStorage:
-        return;
-      case ConnectorCategory.Hris:
         return;
       case ConnectorCategory.MarketingAutomation:
         return;

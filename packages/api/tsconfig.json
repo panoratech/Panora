@@ -14,11 +14,9 @@
     "paths": {
       "@@core/*": ["src/@core/*"],
       "@crm/*": ["src/crm/*"],
-      "@hris/*": ["src/hris/*"],
       "@ticketing/*": ["src/ticketing/*"],
       "@filestorage/*": ["src/filestorage/*"],
       "@marketingautomation/*": ["src/marketingautomation/*"],
-      "@ats/*": ["src/ats/*"],
       "@accounting/*": ["src/accounting/*"],
       "@ecommerce/*": ["src/ecommerce/*"]
     },

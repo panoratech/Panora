@@ -1,6 +1,7 @@
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { CoreUnification } from '@@core/@core-services/unification/core-unification.service';
-import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
+// The following line is commented because it uses code from the ATS Module, which was removed from the project
+//import { OriginalTagOutput } from '@@core/utils/types/original/original.ats';
 import { UnifiedTicketingTagOutput } from '@ticketing/tag/types/model.unified';
 import { Injectable } from '@nestjs/common';
 import { TicketingObject } from '@ticketing/@lib/@types';
@@ -153,22 +154,24 @@ export class FrontTicketMapper implements ITicketMapper {
         };
       }
     }
-    if (ticket.tags) {
-      const tags = (await this.coreUnificationService.unify<
-        OriginalTagOutput[]
-      >({
-        sourceObject: ticket.tags,
-        targetType: TicketingObject.tag,
-        providerName: 'front',
-        vertical: 'ticketing',
-        connectionId: connectionId,
-        customFieldMappings: [],
-      })) as UnifiedTicketingTagOutput[];
-      opts = {
-        ...opts,
-        tags: tags,
-      };
-    }
+    // The following code is commented because it uses code from the ATS Module, which was removed from the project
+
+    // if (ticket.tags) {
+    //   const tags = (await this.coreUnificationService.unify<
+    //     OriginalTagOutput[]
+    //   >({
+    //     sourceObject: ticket.tags,
+    //     targetType: TicketingObject.tag,
+    //     providerName: 'front',
+    //     vertical: 'ticketing',
+    //     connectionId: connectionId,
+    //     customFieldMappings: [],
+    //   })) as UnifiedTicketingTagOutput[];
+    //   opts = {
+    //     ...opts,
+    //     tags: tags,
+    //   };
+    // }
     const unifiedTicket: UnifiedTicketingTicketOutput = {
       remote_id: ticket.id,
       remote_data: ticket,

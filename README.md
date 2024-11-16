@@ -83,18 +83,6 @@ Panora supports integration with the following objects across multiple platforms
 | Gitlab     | ✔        | ✔     | ✔    |           |      |     |  |  ✔|
 | Github     | ✔        | ✔     | ✔    |       ✔    |   ✔   |  ✔   |  ✔|  |
 
-### ATS Unified API (New!)
-
-|             | Activities | Applications | Candidates | Departments | Interviews | Jobs | Offers | Offices | Scorecard | Users | Eeocs | Job Interview Stage | Tags | Reject Reasons |
-|-------------|:----------:|:------------:|:----------:|:-----------:|:----------:|:----:|:------:|:-------:|:---------:|:-----:|:-------:|:-------:|:-------:|:-------:|
-| Ashby       | ✔          | ✔            | ✔          | ✔           | ✔          | ✔    | ✔      | ✔       |         | ✔     | | ✔| ✔| |
-
-### HRIS Unified API (New!)
-
-|             | Bankinfos | Benefits | Companies | Dependents | Employee | Employee Payroll Runs | Employer Benefits | Employments | Groups | Locations | Paygroups | Payrollrun | Timeoff | Timeoff Balances | Timesheet Entries |
-|-------------|:----------:|:------------:|:----------:|:-----------:|:----------:|:----:|:------:|:-------:|:---------:|:-----:|:-----:|:-----:|:-----:|:-----:| :-----:|
-| Gusto       |           | ✔            | ✔          |            | ✔          |    | ✔      | ✔       | ✔         | ✔     | | | | | |
-
 ### File Storage Unified API
 
 |                                           | Drives | Files | Folders | Groups | Users | Permissions | Shared Links |
@@ -118,102 +106,7 @@ Your favourite software is missing? [Ask the community to build a connector!](ht
 
 # 🚢 Roadmap
 
-## 🧠 Retrieval Engine for RAG
-
-- [x] Access and manage data from any source, including documents, chunk & vectors
-- [x] Semantic, keyword and hybrid search against a vector database
-  
-## 🪄 Integrations Coming Soon
-
-#### CRM
-
-- [x] Microsoft Dynamics 365
-- [x] Linear
-- [x] Redtail CRM
-- [x] Wealthbox
-- [x] Leadsquared
-- [x] Salesforce
-- [ ] Affinity CRM
-- [ ] Odoo
-- [ ] Intelliflow
-- [ ] Xplan
-- [ ] Plannr
-- [ ] ACT!
-- [ ] Jungo
-- [ ] Surefire
-- [ ] Velocity
-
-#### Ticketing
-
-- [ ] Service Now
-- [ ] Wrike
-- [ ] Dixa
-- [ ] Asana
-- [ ] Aha
-- [ ] Clickup
-
-#### Accounting
-
-- [ ] Wave Financial
-- [ ] Xero
-- [ ] Quickbooks
-
-#### File Storage
-
-- [x] Google Drive
-- [x] Dropbox
-- [x] Sharepoint
-- [x] One Drive
-  
-#### Productivity
-
-- [ ] Slack
-- [ ] Notion
-
-#### HRIS
-
-- [ ] Workday
-- [ ] ADP Workforce
-- [x] Sage
-- [x] Deel
-- [ ] BambooHR
-- [ ] Rippling
-
-#### Ecommerce
-
-- [ ] Ebay
-- [ ] Faire
-- [x] Webflow
-- [ ] Mercado Libre
-- [ ] Prestashop
-- [ ] Magento
-- [ ] BigCommerce
-
-#### ATS
-
-- [ ] Greenhouse
-- [ ] Lever
-- [ ] Avature
-
-#### Cybersecurity
-
-- [ ] Snyk
-- [ ] Qualys
-- [ ] Crowdstrike
-- [ ] Semgrep
-- [ ] Rapids7InsightVm
-- [ ] Tenable
-- [ ] SentinelOne
-- [ ] Microsoft Defender
-
-#### Legacy Softwares
-
-- [ ] Netsuite (Accounting)
-- [ ] SAP (ERP)
-- [ ] Ariba
-- [ ] Concur
-- [ ] Magaya (TMS)
-- [ ] Cargowise (TMS)
+See our [project roadmap here !](https://github.com/orgs/panoratech/projects/5)
 
 # 👾 Join the community
 

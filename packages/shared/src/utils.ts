@@ -1,5 +1,5 @@
 import { CONNECTORS_METADATA } from './connectors/metadata';
-import { ACCOUNTING_PROVIDERS, ATS_PROVIDERS, CRM_PROVIDERS, ECOMMERCE_PROVIDERS, FILESTORAGE_PROVIDERS, HRIS_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, TICKETING_PROVIDERS } from './connectors';
+import { ACCOUNTING_PROVIDERS, CRM_PROVIDERS, ECOMMERCE_PROVIDERS, FILESTORAGE_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, TICKETING_PROVIDERS } from './connectors';
 import { AuthStrategy, AuthType, DynamicApiUrl, DynamicAuthorization, StaticApiUrl, StringAuthorization, VerticalConfig } from './types';
 import { categoriesVerticals, ConnectorCategory } from './categories';
 
@@ -137,7 +137,7 @@ export function getLogoURL(providerName: string): string {
 export function mergeAllProviders(...arrays: string[][]): { vertical: string, value: string }[] {
   const result: { vertical: string, value: string }[] = [];
   arrays.forEach((arr, index) => {
-    const arrayName = Object.keys({ CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, FILESTORAGE_PROVIDERS, ECOMMERCE_PROVIDERS})[index];
+    const arrayName = Object.keys({ CRM_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, FILESTORAGE_PROVIDERS, ECOMMERCE_PROVIDERS})[index];
     arr.forEach(item => {
       if (item !== '') {
         result.push({ vertical: arrayName.split('_')[0], value: item });
@@ -147,16 +147,12 @@ export function mergeAllProviders(...arrays: string[][]): { vertical: string, va
   return result;
 }
 
-export const ALL_PROVIDERS: { vertical: string, value: string }[] = mergeAllProviders(CRM_PROVIDERS, HRIS_PROVIDERS, ATS_PROVIDERS, ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, FILESTORAGE_PROVIDERS, ECOMMERCE_PROVIDERS)
+export const ALL_PROVIDERS: { vertical: string, value: string }[] = mergeAllProviders(CRM_PROVIDERS,  ACCOUNTING_PROVIDERS, TICKETING_PROVIDERS, MARKETINGAUTOMATION_PROVIDERS, FILESTORAGE_PROVIDERS, ECOMMERCE_PROVIDERS)
 
 export function slugFromCategory(category: ConnectorCategory) {
   switch(category) {
     case ConnectorCategory.Crm:
       return 'crm';
-    case ConnectorCategory.Hris:
-      return 'hris';
-    case ConnectorCategory.Ats:
-      return 'ats';
     case ConnectorCategory.Ticketing:
       return 'tcg';
     case ConnectorCategory.MarketingAutomation:
@@ -176,10 +172,6 @@ export function categoryFromSlug(slug: string): ConnectorCategory | null {
   switch (slug) {
     case 'crm':
       return ConnectorCategory.Crm;
-    case 'hris':
-      return ConnectorCategory.Hris;
-    case 'ats':
-      return ConnectorCategory.Ats;
     case 'tcg':
       return ConnectorCategory.Ticketing;
     case 'mktg':

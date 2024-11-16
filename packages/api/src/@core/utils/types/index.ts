@@ -1,12 +1,10 @@
 import { AccountingObject, UnifiedAccounting } from '@accounting/@lib/@types';
-import { AtsObject, UnifiedAts } from '@ats/@lib/@types';
 import { CrmObject, UnifiedCrm } from '@crm/@lib/@types';
 import { EcommerceObject, UnifiedEcommerce } from '@ecommerce/@lib/@types';
 import {
   FileStorageObject,
   UnifiedFileStorage,
 } from '@filestorage/@lib/@types';
-import { HrisObject, UnifiedHris } from '@hris/@lib/@types';
 import {
   MarketingAutomationObject,
   UnifiedMarketingAutomation,
@@ -19,8 +17,6 @@ export type Unified =
   | UnifiedTicketing
   | UnifiedFileStorage
   | UnifiedMarketingAutomation
-  | UnifiedAts
-  | UnifiedHris
   | UnifiedAccounting
   | UnifiedEcommerce;
 
@@ -28,8 +24,6 @@ export type UnifyReturnType = Unified | Unified[];
 
 export type TargetObject =
   | CrmObject
-  | HrisObject
-  | AtsObject
   | AccountingObject
   | FileStorageObject
   | MarketingAutomationObject

@@ -46,7 +46,7 @@ export function ConnectorLayout({
           <Tabs defaultValue="all">
             <div className="flex flex-col px-4 py-2">
               <h1 className="text-xl font-bold">Connectors</h1>
-              <p className="text-sm font-bold mt-2">By default, all connectors use Panora managed credentials. You are free to edit them by creating your custom developer apps inside your favorite softwares ! </p>
+              <p className="text-sm font-bold mt-2">By default, all connectors use Panora managed credentials. You can edit settings to use your own credentials on this screen.</p>
             </div>
             <Separator />
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">

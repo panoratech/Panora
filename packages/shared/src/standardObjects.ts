@@ -9,42 +9,6 @@ export enum CrmObject {
     user = 'user',
 }
 
-export enum HrisObject {
-    bankinfo = 'bankinfo',
-    benefit = 'benefit',
-    company = 'company',
-    dependent = 'dependent',
-    employee = 'employee',
-    employeepayrollrun = 'employeepayrollrun',
-    employerbenefit = 'employerbenefit',
-    employment = 'employment',
-    group = 'group',
-    location = 'location',
-    paygroup = 'paygroup',
-    payrollrun = 'payrollrun',
-    timeoff = 'timeoff',
-    timeoffbalance = 'timeoffbalance',
-    timesheetentry = 'timesheetentry',
-}
-
-export enum AtsObject {
-    activity = 'activity',
-    application = 'application',
-    attachment = 'attachment',
-    candidate = 'candidate',
-    department = 'department',
-    interview = 'interview',
-    jobinterviewstage = 'jobinterviewstage',
-    job = 'job',
-    offer = 'offer',
-    office = 'office',
-    rejectreason = 'rejectreason',
-    scorecard = 'scorecard',
-    tag = 'tag',
-    user = 'user',
-    eeocs = 'eeocs',
-}
-
 export enum AccountingObject {
     balancesheet = 'balancesheet',
     cashflowstatement = 'cashflowstatement',
@@ -120,21 +84,12 @@ export const standardObjects = [
     ...prependPrefixToEnumValues('crm', CrmObject),
     ...prependPrefixToEnumValues('ticketing', TicketingObject),
     ...prependPrefixToEnumValues('filestorage', FileStorageObject),
-    ...prependPrefixToEnumValues('ats', AtsObject),
     ...prependPrefixToEnumValues('ecommerce', EcommerceObject),
 ];
 
 export function getCrmCommonObjects(): string[] {
     return Object.values(CrmObject);
   }
-  
-export function getHrisCommonObjects(): string[] {
-  return Object.values(HrisObject);
-}
-
-export function getAtsCommonObjects(): string[] {
-  return Object.values(AtsObject);
-}
 
 export function getAccountingCommonObjects(): string[] {
   return Object.values(AccountingObject);
@@ -161,10 +116,6 @@ export function getCommonObjectsForVertical(vertical: string): string[] {
   switch (vertical.toLowerCase()) {
     case 'crm':
       return getCrmCommonObjects();
-    case 'hris':
-      return getHrisCommonObjects();
-    case 'ats':
-      return getAtsCommonObjects();
     case 'accounting':
       return getAccountingCommonObjects();
     case 'ecommerce':
