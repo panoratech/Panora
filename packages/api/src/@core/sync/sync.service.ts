@@ -210,12 +210,6 @@ export class CoreSyncService {
         case ConnectorCategory.FileStorage:
           await this.handleFileStorageSync(provider, linkedUserId);
           break;
-        case ConnectorCategory.Ats:
-          await this.handleAtsSync(provider, linkedUserId);
-          break;
-        case ConnectorCategory.Hris:
-          await this.handleHrisSync(provider, linkedUserId);
-          break;
         case ConnectorCategory.Accounting:
           await this.handleAccountingSync(provider, linkedUserId);
           break;

@@ -9,10 +9,8 @@ import {
   CrmObject,
   FileStorageObject,
   TicketingObject,
-  HrisObject,
   AccountingObject,
   MarketingAutomationObject,
-  AtsObject,
 } from '@panora/shared';
 import * as fs from 'fs';
 import * as path from 'path';
