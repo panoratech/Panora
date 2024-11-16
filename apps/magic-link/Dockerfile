@@ -47,7 +47,7 @@ COPY --from=builder ./app/out/full/ .
 RUN pnpm turbo run build --filter=magic-link...
 
 # ========================================================================
-FROM nginx:1.24-alpine3.17 as runner
+FROM nginx:1.27.2-alpine3.20-slim as runner
 
 COPY --from=installer ./app/apps/magic-link/dist/ /usr/share/nginx/html
 COPY apps/magic-link/nginx.conf /etc/nginx/conf.d/default.conf
