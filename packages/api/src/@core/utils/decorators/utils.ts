@@ -1,7 +1,5 @@
 import {
   CRM_PROVIDERS,
-  HRIS_PROVIDERS,
-  ATS_PROVIDERS,
   ACCOUNTING_PROVIDERS,
   TICKETING_PROVIDERS,
   MARKETINGAUTOMATION_PROVIDERS,
@@ -27,8 +25,6 @@ interface ProviderMetadata {
 export async function generatePanoraParamsSpec(spec: any) {
   const verticals = {
     crm: [CRM_PROVIDERS, CrmObject],
-    hris: [HRIS_PROVIDERS, HrisObject],
-    ats: [ATS_PROVIDERS, AtsObject],
     accounting: [ACCOUNTING_PROVIDERS, AccountingObject],
     ticketing: [TICKETING_PROVIDERS, TicketingObject],
     marketingautomation: [

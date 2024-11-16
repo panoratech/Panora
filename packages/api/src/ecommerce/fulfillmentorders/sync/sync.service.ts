@@ -10,7 +10,8 @@ import { IBaseSync, SyncLinkedUserType } from '@@core/utils/types/interface';
 import { OriginalFulfillmentOrdersOutput } from '@@core/utils/types/original/original.ecommerce';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { ATS_PROVIDERS, ECOMMERCE_PROVIDERS } from '@panora/shared';
+// The following line are commented because they use code from the ATS Module, which was removed from the project
+// import { ATS_PROVIDERS, ECOMMERCE_PROVIDERS } from '@panora/shared';
 import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFulfillmentOrdersService } from '../types';

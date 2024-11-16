@@ -269,10 +269,6 @@ const ProviderModal = () => {
         return "File Storage";
       case "crm":
         return "CRM";
-      case "ats":
-        return "ATS";
-      case "hris":
-        return "HRIS";
       default:
         return vertical.substring(0,1).toUpperCase() + vertical.substring(1)
     }

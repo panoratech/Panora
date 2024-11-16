@@ -308,14 +308,14 @@ services:
   #       condition: service_healthy
   #   network_mode: "host"
 
-  docs:
-    build:
-      dockerfile: ./Dockerfile.dev
-      context: ./docs/
-    ports:
-      - 911:3000
-    volumes:
-      - ./docs/:/app
+  # docs:
+  #   build:
+  #     dockerfile: ./Dockerfile.dev
+  #     context: ./docs/
+  #   ports:
+  #     - 911:3000
+  #   volumes:
+  #     - ./docs/:/app
 
   minio:
     image: minio/minio
