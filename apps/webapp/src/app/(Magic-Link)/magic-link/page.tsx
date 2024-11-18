@@ -30,6 +30,7 @@ import { categoriesVerticals } from "@panora/shared/src/categories";
 import { ArrowLeft, ArrowLeftRight, Search, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Suspense } from "react";
 
 interface IBasicAuthFormData {
   [key: string]: string;
@@ -565,7 +566,7 @@ const ProviderModal = () => {
             <div className="flex items-center bg-white border-[1px] border-black text-black px-4 py-2 rounded-lg">
               <span className="text-md mr-3">✓</span>
               <span className="text-sm">
-                You've successfully connected your account!
+                You&apos;ve successfully connected your account!
               </span>
             </div>
             <button
@@ -602,4 +603,12 @@ const ProviderModal = () => {
   );
 };
 
-export default ProviderModal;
+const MagicLinkPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProviderModal />
+    </Suspense>
+  );
+};
+
+export default MagicLinkPage;
