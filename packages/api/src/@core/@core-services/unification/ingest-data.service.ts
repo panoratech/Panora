@@ -14,8 +14,6 @@ import { ConnectionUtils } from '@@core/connections/@utils';
 import { IBaseObjectService, SyncParam } from '@@core/utils/types/interface';
 import { FieldMappingService } from '@@core/field-mapping/field-mapping.service';
 import { LoggerService } from '../logger/logger.service';
-import { RagService } from '@@core/rag/rag.service';
-import { FileInfo } from '@@core/rag/types';
 import { fs_files as FileStorageFile } from '@prisma/client';
 
 @Injectable()
@@ -28,7 +26,6 @@ export class IngestDataService {
     private connectionUtils: ConnectionUtils,
     private logger: LoggerService,
     private fieldMappingService: FieldMappingService,
-    private ragService: RagService,
   ) {}
 
   async syncForLinkedUser<T, U, V extends IBaseObjectService>(

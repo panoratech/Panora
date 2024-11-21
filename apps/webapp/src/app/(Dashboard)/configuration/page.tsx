@@ -39,7 +39,6 @@ import useUpdatePullFrequency from "@/hooks/create/useCreatePullFrequency";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import RAGSettingsPage from "@/components/Configuration/RAGSettings/RAGSettingsPage";
 
 const frequencyOptions = [
   { label: '5 min', value: 300 },
@@ -185,7 +184,6 @@ export default function Page() {
               <TabsTrigger value="pull-frequency">
                 Sync Frequency
               </TabsTrigger>
-              <TabsTrigger value="rag-settings">RAG Settings</TabsTrigger>
               <TabsTrigger value="catalog">
                 Manage Catalog Widget
               </TabsTrigger>
@@ -360,9 +358,6 @@ export default function Page() {
               </div>
             </TabsContent>
 
-            <TabsContent value="rag-settings" className="space-y-4">
-              <RAGSettingsPage />
-            </TabsContent>
 
             <TabsContent value="custom" className="space-y-4">
               <CustomConnectorPage />
