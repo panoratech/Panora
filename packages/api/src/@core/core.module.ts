@@ -16,7 +16,6 @@ import { PassthroughModule } from './passthrough/passthrough.module';
 import { ProjectConnectorsModule } from './project-connectors/project-connectors.module';
 import { ProjectsModule } from './projects/projects.module';
 import { SyncModule } from './sync/sync.module';
-import { RagModule } from './rag/rag.module';
 
 @Module({
   imports: [
@@ -36,7 +35,6 @@ import { RagModule } from './rag/rag.module';
     SyncModule,
     ProjectConnectorsModule,
     BullQueueModule,
-    RagModule,
   ],
   exports: [
     AuthModule,
@@ -56,7 +54,6 @@ import { RagModule } from './rag/rag.module';
     ProjectConnectorsModule,
     IngestDataService,
     BullQueueModule,
-    RagModule,
   ],
   providers: [IngestDataService],
 })

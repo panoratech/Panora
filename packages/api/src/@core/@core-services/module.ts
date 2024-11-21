@@ -1,4 +1,3 @@
-import { RagModule } from '@@core/rag/rag.module';
 import { Global, Module } from '@nestjs/common';
 import { ConnectionUtils } from '../connections/@utils/index';
 import { FieldMappingService } from './../field-mapping/field-mapping.service';
@@ -12,11 +11,10 @@ import { MappersRegistry } from './registries/mappers.registry';
 import { UnificationRegistry } from './registries/unification.registry';
 import { RetryModule } from './request-retry/module';
 import { CoreUnification } from './unification/core-unification.service';
-import { RagService } from '@@core/rag/rag.service';
 
 @Global()
 @Module({
-  imports: [BullQueueModule, RetryModule, RagModule],
+  imports: [BullQueueModule, RetryModule],
   providers: [
     PrismaService,
     MappersRegistry,
@@ -28,7 +26,6 @@ import { RagService } from '@@core/rag/rag.service';
     LoggerService,
     ConnectionUtils,
     FieldMappingService,
-    RagService,
   ],
   exports: [
     PrismaService,
@@ -43,7 +40,6 @@ import { RagService } from '@@core/rag/rag.service';
     FieldMappingService,
     BullQueueModule,
     RetryModule,
-    RagService,
   ],
 })
 export class CoreSharedModule {}

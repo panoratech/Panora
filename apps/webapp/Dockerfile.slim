@@ -1,0 +1,61 @@
+FROM node:20-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN apk add --no-cache libc6-compat && \
+    corepack enable
+
+WORKDIR /app
+
+# Install Turbo
+RUN pnpm add -g turbo@1.13.4
+
+# Copy necessary files for turbo prune
+COPY . .
+
+# Prune the workspace
+RUN turbo prune --scope=webapp --docker
+
+# Installer stage
+FROM base AS installer
+WORKDIR /app
+
+# Copy pruned files
+COPY --from=base /app/out/json/ .
+COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=base /app/out/full/ .
+
+# Install dependencies
+RUN pnpm install --shamefully-hoist
+
+# Build shared package first
+RUN cd packages/shared && pnpm run build
+
+# Build the webapp
+RUN pnpm run build --filter=webapp...
+
+# Runner stage
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+# Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy necessary files
+COPY --from=installer /app/apps/webapp/.next/standalone ./
+COPY --from=installer /app/apps/webapp/.next/static ./apps/webapp/.next/static
+COPY --from=installer /app/apps/webapp/public ./apps/webapp/public
+
+# Copy package.json files
+COPY --from=installer /app/apps/webapp/package.json ./package.json
+
+# Install only production dependencies
+
+USER nextjs
+
+ENV NODE_ENV=production
+ENV PORT=8090
+
+EXPOSE 8090
+
+CMD ["node", "server.js"]
