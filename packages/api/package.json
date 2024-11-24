@@ -52,7 +52,7 @@
     "@pinecone-database/pinecone": "^3.0.2",
     "@prisma/client": "^5.4.2",
     "@qdrant/js-client-rest": "^1.11.0",
-    "@sentry/node": "8.9.2",
+    "@sentry/node": "8.36.0",
     "@sentry/profiling-node": "^8.9.2",
     "@sentry/tracing": "^7.80.0",
     "@shopify/shopify-api": "^11.1.0",
