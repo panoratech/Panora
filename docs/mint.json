@@ -139,13 +139,6 @@
     {
       "group": "",
       "pages": [
-        "hris/quickstart",
-        "hris/overview"
-      ]
-    },
-    {
-      "group": "",
-      "pages": [
         "file-storage/quickstart",
         "file-storage/overview"
       ]
@@ -348,128 +341,6 @@
           "pages": [
             "accounting/vendorcredits/retrieve-a-vendorcredit",
             "accounting/vendorcredits/list-vendorcredits"
-          ]
-        }
-      ]
-    },
-    {
-      "group": "",
-      "pages": [
-        "ats/quickstart",
-        "ats/overview"
-      ]
-    },
-    {
-      "group": "ATS Objects",
-      "pages": [
-        {
-          "group": "Activities",
-          "pages": [
-            "ats/activities/create-a-activity",
-            "ats/activities/list-activities",
-            "ats/activities/retrieve-a-activity"
-          ]
-        },
-        {
-          "group": "Applications",
-          "pages": [
-            "ats/applications/create-an-application",
-            "ats/applications/list-applications",
-            "ats/applications/retrieve-an-application"
-          ]
-        },
-        {
-          "group": "Attachments",
-          "pages": [
-            "ats/attachments/create-a-attachment",
-            "ats/attachments/list-attachments",
-            "ats/attachments/retrieve-a-attachment"
-          ]
-        },
-        {
-          "group": "Candidates",
-          "pages": [
-            "ats/candidates/create-a-candidate",
-            "ats/candidates/list-candidates",
-            "ats/candidates/retrieve-a-candidate"
-          ]
-        },
-        {
-          "group": "Departments",
-          "pages": [
-            "ats/departments/list-departments",
-            "ats/departments/retrieve-a-department"
-          ]
-        },
-        {
-          "group": "EEOCs",
-          "pages": [
-            "ats/eeocs/list-eeocss",
-            "ats/eeocs/retrieve-a-eeocs"
-          ]
-        },
-        {
-          "group": "Interviews",
-          "pages": [
-            "ats/interviews/create-a-interview",
-            "ats/interviews/list-interviews",
-            "ats/interviews/retrieve-a-interview"
-          ]
-        },
-        {
-          "group": "Job Interview Stages",
-          "pages": [
-            "ats/jobinterviewstages/list-jobinterviewstages",
-            "ats/jobinterviewstages/retrieve-a-jobinterviewstage"
-          ]
-        },
-        {
-          "group": "Jobs",
-          "pages": [
-            "ats/jobs/list-jobs",
-            "ats/jobs/retrieve-a-job"
-          ]
-        },
-        {
-          "group": "Offers",
-          "pages": [
-            "ats/offers/list-offers",
-            "ats/offers/retrieve-a-offer"
-          ]
-        },
-        {
-          "group": "Offices",
-          "pages": [
-            "ats/offices/list-offices",
-            "ats/offices/retrieve-a-office"
-          ]
-        },
-        {
-          "group": "Reject Reasons",
-          "pages": [
-            "ats/rejectreasons/list-rejectreasons",
-            "ats/rejectreasons/retrieve-a-rejectreason"
-          ]
-        },
-        {
-          "group": "Scorecards",
-          "pages": [
-            "ats/scorecards/list-scorecards",
-            "ats/scorecards/retrieve-a-scorecard"
-          ]
-        },
-        {
-          "group": "Tags",
-          "pages": [
-            "ats/tags/list-tags",
-            "ats/tags/retrieve-a-tag"
-          ]
-        },
-        {
-          "group": "Users",
-          "pages": [
-            "ats/users/list-users",
-            "ats/users/retrieve-a-user"
           ]
         }
       ]
@@ -765,20 +636,12 @@
       "url": "accounting"
     },
     {
-      "name": "ATS",
-      "url": "ats"
-    },
-    {
       "name": "CRM",
       "url": "crm"
     },
     {
       "name": "E-Commerce",
       "url": "ecommerce"
-    },
-    {
-      "name": "HRIS",
-      "url": "hris"
     },
     {
       "name": "File Storage",
