@@ -1,61 +1,57 @@
-FROM node:20-alpine AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN apk add --no-cache libc6-compat && \
-    corepack enable
+# Alpine image
+FROM node:20-alpine3.21 AS alpine
+RUN apk update
+RUN apk add --no-cache libc6-compat openssl
+
+# Setup pnpm and turbo on the alpine base
+FROM alpine as base
+RUN npm install pnpm turbo --global
+RUN pnpm config set store-dir ~/.pnpm-store
+
+# Prune projects
+FROM base AS pruner
+ARG PROJECT
 
 WORKDIR /app
-
-# Install Turbo
-RUN pnpm add -g turbo@1.13.4
-
-# Copy necessary files for turbo prune
 COPY . .
-
-# Prune the workspace
 RUN turbo prune --scope=webapp --docker
 
-# Installer stage
-FROM base AS installer
+# Build the project
+FROM base AS builder
+ARG PROJECT
+
 WORKDIR /app
 
-# Copy pruned files
-COPY --from=base /app/out/json/ .
-COPY --from=base /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=base /app/out/full/ .
+# Copy lockfile and package.json's of isolated subworkspace
+COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=pruner /app/out/json/ .
 
-# Install dependencies
-RUN pnpm install --shamefully-hoist
+# First install the dependencies (as they change less often)
+RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm install --frozen-lockfile
 
-# Build shared package first
-RUN cd packages/shared && pnpm run build
+# Copy source code of isolated subworkspace
+COPY --from=pruner /app/out/full/ .
 
-# Build the webapp
-RUN pnpm run build --filter=webapp...
+RUN turbo build --filter=webapp
+RUN --mount=type=cache,id=pnpm,target=~/.pnpm-store pnpm prune --prod --no-optional
+RUN rm -rf ./**/*/src
 
-# Runner stage
-FROM node:20-alpine AS runner
-WORKDIR /app
+# Final image
+FROM alpine AS runner
+ARG PROJECT
 
-# Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 nodejs
+USER nodejs
 
-# Copy necessary files
-COPY --from=installer /app/apps/webapp/.next/standalone ./
-COPY --from=installer /app/apps/webapp/.next/static ./apps/webapp/.next/static
-COPY --from=installer /app/apps/webapp/public ./apps/webapp/public
+WORKDIR /app
+COPY --from=builder --chown=nodejs:nodejs /app .
+WORKDIR /app/apps/webapp
 
-# Copy package.json files
-COPY --from=installer /app/apps/webapp/package.json ./package.json
-
-# Install only production dependencies
-
-USER nextjs
-
-ENV NODE_ENV=production
+ARG PORT=8080
 ENV PORT=8090
-
+ENV NODE_ENV=production
 EXPOSE 8090
 
-CMD ["node", "server.js"]
+CMD node dist/main

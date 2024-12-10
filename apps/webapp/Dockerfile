@@ -1,10 +1,10 @@
 # run directly from the repo root directory
 # docker build -f ./apps/webapp/Dockerfile .
-FROM node:20-alpine AS base
+FROM node:20-alpine3.21 AS base
 # =======================================================================
 # Turbo: Prepare a standalone workspace for docker
 FROM base AS builder
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 
 # Set pnpm
@@ -23,7 +23,7 @@ RUN ls -la ./out/full/apps/webapp
 # =======================================================================
 # Install Deps and build project using PNPM
 FROM base AS installer
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 # Set pnpm
 ENV PNPM_HOME="/pnpm"
@@ -47,8 +47,6 @@ RUN corepack enable
 
 WORKDIR /app
 
-RUN ls -la 
-
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
@@ -64,4 +62,3 @@ COPY --from=builder ./app/out/full/ .
 RUN pnpm run build
 
 CMD cd /app/apps/webapp/ && pnpm run start
-
