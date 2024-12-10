@@ -247,23 +247,6 @@ services:
     networks:
       - backend
       - frontend
-
-  magic-link-frontend:
-    build:
-      dockerfile: ./apps/magic-link/Dockerfile
-      context: ./
-      args:
-        VITE_BACKEND_DOMAIN: ${NEXT_PUBLIC_BACKEND_DOMAIN}
-        VITE_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
-    restart: always 
-    ports:
-      - 81:80
-    #depends_on:
-      #api:
-        #condition: service_healthy
-    networks:
-      - backend
-      - frontend
   
 networks:
   frontend:

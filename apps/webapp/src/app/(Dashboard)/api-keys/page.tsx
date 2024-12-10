@@ -177,7 +177,7 @@ export default function Page() {
             >
               <PlusCircle className="h-3.5 w-3.5" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                Create New Api Key
+                Create API key
               </span>
             </Button>
             </DialogTrigger>

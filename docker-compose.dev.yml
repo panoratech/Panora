@@ -100,7 +100,7 @@ services:
       WRIKE_TICKETING_CLOUD_CLIENT_SECRET: ${WRIKE_TICKETING_CLOUD_CLIENT_SECRET}
       ASANA_TICKETING_CLOUD_CLIENT_ID: ${ASANA_TICKETING_CLOUD_CLIENT_ID}
       ASANA_TICKETING_CLOUD_CLIENT_SECRET: ${ASANA_TICKETING_CLOUD_CLIENT_SECRET}
-      PENNYLANE_ACCOUNTING_CLOUD_CLIENT_ID: ${PENNYLANE_ACCOUNTING_CLOUD_CLIENT_ID}
+      PENNYLANE_ACCOUNTING_CLOUD_CLIENT_ID: ${PENNYLANE_ACCOUNTING_CLOUD_CcLIENT_ID}
       PENNYLANE_ACCOUNTING_CLOUD_CLIENT_SECRET: ${PENNYLANE_ACCOUNTING_CLOUD_CLIENT_SECRET}
       FRESHBOOKS_ACCOUNTING_CLOUD_CLIENT_ID: ${FRESHBOOKS_ACCOUNTING_CLOUD_CLIENT_ID}
       FRESHBOOKS_ACCOUNTING_CLOUD_CLIENT_SECRET: ${FRESHBOOKS_ACCOUNTING_CLOUD_CLIENT_SECRET}
@@ -170,28 +170,9 @@ services:
       PH_TELEMETRY: ${PH_TELEMETRY}
       SALESFORCE_CRM_CLOUD_CLIENT_ID: ${SALESFORCE_CRM_CLOUD_CLIENT_ID}
       SALESFORCE_CRM_CLOUD_CLIENT_SECRET: ${SALESFORCE_CRM_CLOUD_CLIENT_SECRET}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      JINA_API_KEY: ${JINA_API_KEY}
-      COHERE_API_KEY: ${COHERE_API_KEY}
       AWS_S3_REGION: ${AWS_S3_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      UNSTRUCTURED_API_KEY: ${UNSTRUCTURED_API_KEY}
-      UNSTRUCTURED_API_URL: ${UNSTRUCTURED_API_URL} 
-      PINECONE_API_KEY: ${PINECONE_API_KEY}
-      PINECONE_INDEX_NAME: ${PINECONE_INDEX_NAME}
-      QDRANT_BASE_URL: ${QDRANT_BASE_URL}
-      QDRANT_API_KEY: ${QDRANT_API_KEY}
-      QDRANT_COLLECTION_NAME: ${QDRANT_COLLECTION_NAME}
-      CHROMADB_URL: ${CHROMADB_URL}
-      CHROMADB_COLLECTION_NAME: ${CHROMADB_COLLECTION_NAME}
-      WEAVIATE_URL: ${WEAVIATE_URL}
-      WEAVIATE_API_KEY: ${WEAVIATE_API_KEY}
-      WEAVIATE_CLASS_NAME: ${WEAVIATE_CLASS_NAME}
-      TURBOPUFFER_API_KEY: ${TURBOPUFFER_API_KEY}
-      MILVUS_ADDRESS: ${MILVUS_ADDRESS}
-      MILVUS_COLLECTION_NAME: ${MILVUS_COLLECTION_NAME}
-
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -203,7 +184,7 @@ services:
     volumes:
       - .:/app
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 10s
       timeout: 5s
       retries: 1000 # Try launching the API service as long as possible. Required for other services to start
@@ -251,24 +232,9 @@ services:
       - backend
       - frontend
 
-  magic-link-frontend:
-    build:
-      dockerfile: ./apps/magic-link/Dockerfile.dev
-      context: ./
-      args:
-        VITE_BACKEND_DOMAIN: http://localhost:3000
-        VITE_WEBAPP_DOMAIN: http://localhost
-    restart: always
-    ports:
-      - 81:5173
-    depends_on:
-      api:
-        condition: service_healthy
-    networks:
-      - backend
-      - frontend
-    volumes:
-      - .:/app
+  # # # # # # # # # # 
+  # Developer tools #
+  # # # # # # # # # # 
 
   # pgadmin:
   #   image: dpage/pgadmin4
@@ -313,29 +279,9 @@ services:
   #   volumes:
   #     - ./docs/:/app
 
-  minio:
-    image: minio/minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio_storage:/data
-    environment:
-      MINIO_ROOT_USER: myaccesskey13
-      MINIO_ROOT_PASSWORD: mysecretkey12
-    command: server --console-address ":9001" /data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 30s
-      timeout: 20s
-      retries: 3
-    networks:
-      - backend
-
 volumes:
   local_pgdata:
   pgadmin-data:
-  minio_storage:
 
 networks:
   frontend:

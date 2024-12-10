@@ -1,9 +1,9 @@
 # run directly from the repo root directory
 # docker build -f ./packages/api/Dockerfile .
-FROM node:20-alpine AS base
+FROM node:20-alpine3.21 AS base
 # =======================================================================
 FROM base AS builder
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 
 # Set pnpm
@@ -19,7 +19,7 @@ RUN turbo prune api --docker
 # =======================================================================
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl
 RUN apk update
 # Set pnpm
 ENV PNPM_HOME="/pnpm"
@@ -42,7 +42,7 @@ RUN pnpm run build
 
 # ========================================================================
 FROM base AS runner
-RUN apk add --no-cache libc6-compat netcat-openbsd curl
+RUN apk add --no-cache libc6-compat netcat-openbsd curl openssl
 
 WORKDIR /app
 
