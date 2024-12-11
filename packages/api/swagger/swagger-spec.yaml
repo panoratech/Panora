@@ -5553,6 +5553,98 @@ paths:
                 $ref: '#/components/schemas/UnifiedAccountingVendorcreditOutput'
       tags: *ref_51
       x-speakeasy-group: accounting.vendorcredits
+  /filestorage/drives:
+    get:
+      operationId: listFilestorageDrives
+      summary: List Drives
+      parameters:
+        - name: x-connection-token
+          required: true
+          in: header
+          description: The connection token
+          schema:
+            type: string
+        - name: remote_data
+          required: false
+          in: query
+          example: true
+          description: Set to true to include data from the original software.
+          schema:
+            type: boolean
+        - name: limit
+          required: false
+          in: query
+          example: 10
+          description: Set to get the number of records.
+          schema:
+            default: 50
+            type: number
+        - name: cursor
+          required: false
+          in: query
+          example: 1b8b05bb-5273-4012-b520-8657b0b90874
+          description: Set to get the number of records after this cursor.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedDto'
+                  - properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/UnifiedFilestorageDriveOutput'
+      tags: &ref_52
+        - filestorage/drives
+      x-speakeasy-group: filestorage.drives
+      x-speakeasy-pagination:
+        type: cursor
+        inputs:
+          - name: cursor
+            in: parameters
+            type: cursor
+        outputs:
+          nextCursor: $.next_cursor
+  /filestorage/drives/{id}:
+    get:
+      operationId: retrieveFilestorageDrive
+      summary: Retrieve Drive
+      description: Retrieve a Drive from any connected file storage service
+      parameters:
+        - name: x-connection-token
+          required: true
+          in: header
+          description: The connection token
+          schema:
+            type: string
+        - name: id
+          required: true
+          in: path
+          description: id of the drive you want to retrieve.
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          schema:
+            type: string
+        - name: remote_data
+          required: false
+          in: query
+          description: Set to true to include data from the original file storage service.
+          example: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnifiedFilestorageDriveOutput'
+      tags: *ref_52
+      x-speakeasy-group: filestorage.drives
   /filestorage/files:
     get:
       operationId: listFilestorageFile
@@ -5599,7 +5691,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
-      tags: &ref_52
+      tags: &ref_53
         - filestorage/files
       x-speakeasy-group: filestorage.files
       x-speakeasy-pagination:
@@ -5641,7 +5733,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
-      tags: *ref_52
+      tags: *ref_53
       x-speakeasy-group: filestorage.files
   /filestorage/files/{id}:
     get:
@@ -5676,7 +5768,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFileOutput'
-      tags: *ref_52
+      tags: *ref_53
       x-speakeasy-group: filestorage.files
   /filestorage/folders:
     get:
@@ -5724,7 +5816,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
-      tags: &ref_53
+      tags: &ref_54
         - filestorage/folders
       x-speakeasy-group: filestorage.folders
       x-speakeasy-pagination:
@@ -5766,7 +5858,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
-      tags: *ref_53
+      tags: *ref_54
       x-speakeasy-group: filestorage.folders
   /filestorage/folders/{id}:
     get:
@@ -5801,7 +5893,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageFolderOutput'
-      tags: *ref_53
+      tags: *ref_54
       x-speakeasy-group: filestorage.folders
   /filestorage/groups:
     get:
@@ -5849,7 +5941,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageGroupOutput'
-      tags: &ref_54
+      tags: &ref_55
         - filestorage/groups
       x-speakeasy-group: filestorage.groups
       x-speakeasy-pagination:
@@ -5893,7 +5985,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageGroupOutput'
-      tags: *ref_54
+      tags: *ref_55
       x-speakeasy-group: filestorage.groups
   /filestorage/users:
     get:
@@ -5941,7 +6033,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
-      tags: &ref_55
+      tags: &ref_56
         - filestorage/users
       x-speakeasy-group: filestorage.users
       x-speakeasy-pagination:
@@ -5985,7 +6077,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedFilestorageUserOutput'
-      tags: *ref_55
+      tags: *ref_56
       x-speakeasy-group: filestorage.users
   /ecommerce/products:
     get:
@@ -6033,7 +6125,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedEcommerceProductOutput'
-      tags: &ref_56
+      tags: &ref_57
         - ecommerce/products
       x-speakeasy-group: ecommerce.products
       x-speakeasy-pagination:
@@ -6075,7 +6167,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceProductOutput'
-      tags: *ref_56
+      tags: *ref_57
       x-speakeasy-group: ecommerce.products
   /ecommerce/products/{id}:
     get:
@@ -6108,7 +6200,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceProductOutput'
-      tags: *ref_56
+      tags: *ref_57
       x-speakeasy-group: ecommerce.products
   /ecommerce/orders:
     get:
@@ -6156,7 +6248,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedEcommerceOrderOutput'
-      tags: &ref_57
+      tags: &ref_58
         - ecommerce/orders
       x-speakeasy-group: ecommerce.orders
       x-speakeasy-pagination:
@@ -6198,7 +6290,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceOrderOutput'
-      tags: *ref_57
+      tags: *ref_58
       x-speakeasy-group: ecommerce.orders
   /ecommerce/orders/{id}:
     get:
@@ -6231,7 +6323,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceOrderOutput'
-      tags: *ref_57
+      tags: *ref_58
       x-speakeasy-group: ecommerce.orders
   /ecommerce/customers:
     get:
@@ -6279,7 +6371,7 @@ paths:
                         type: array
                         items:
                           $ref: '#/components/schemas/UnifiedEcommerceCustomerOutput'
-      tags: &ref_58
+      tags: &ref_59
         - ecommerce/customers
       x-speakeasy-group: ecommerce.customers
       x-speakeasy-pagination:
@@ -6321,7 +6413,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceCustomerOutput'
-      tags: *ref_58
+      tags: *ref_59
       x-speakeasy-group: ecommerce.customers
   /ecommerce/fulfillments:
     get:
@@ -6370,7 +6462,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedEcommerceFulfillmentOutput
-      tags: &ref_59
+      tags: &ref_60
         - ecommerce/fulfillments
       x-speakeasy-group: ecommerce.fulfillments
       x-speakeasy-pagination:
@@ -6412,7 +6504,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedEcommerceFulfillmentOutput'
-      tags: *ref_59
+      tags: *ref_60
       x-speakeasy-group: ecommerce.fulfillments
   /ticketing/attachments:
     get:
@@ -6461,7 +6553,7 @@ paths:
                         items:
                           $ref: >-
                             #/components/schemas/UnifiedTicketingAttachmentOutput
-      tags: &ref_60
+      tags: &ref_61
         - ticketing/attachments
       x-speakeasy-group: ticketing.attachments
       x-speakeasy-pagination:
@@ -6502,7 +6594,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
-      tags: *ref_60
+      tags: *ref_61
       x-speakeasy-group: ticketing.attachments
   /ticketing/attachments/{id}:
     get:
@@ -6537,7 +6629,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
-      tags: *ref_60
+      tags: *ref_61
       x-speakeasy-group: ticketing.attachments
 info:
   title: Panora API
@@ -6815,12 +6907,12 @@ components:
             specified)
         attachments:
           type: array
-          items: &ref_83
+          items: &ref_84
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedTicketingAttachmentOutput'
           nullable: true
-          example: &ref_84
+          example: &ref_85
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The attachements UUIDs tied to the comment
       required:
@@ -6863,21 +6955,21 @@ components:
           description: The UUID of the parent ticket
         collections:
           type: array
-          items: &ref_61
+          items: &ref_62
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedTicketingCollectionOutput'
-          example: &ref_62
+          example: &ref_63
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
           type: array
-          items: &ref_63
+          items: &ref_64
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedTicketingTagOutput'
-          example: &ref_64
+          example: &ref_65
             - my_tag
             - urgent_tag
           nullable: true
@@ -6896,7 +6988,7 @@ components:
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
-          example: &ref_65
+          example: &ref_66
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The users UUIDs the ticket is assigned to
@@ -6904,7 +6996,7 @@ components:
           items:
             type: string
         comment:
-          example: &ref_66
+          example: &ref_67
             content: Assigned the issue !
           nullable: true
           description: The comment of the ticket
@@ -6922,17 +7014,17 @@ components:
           description: The UUID of the contact which the ticket belongs to
         attachments:
           type: array
-          items: &ref_67
+          items: &ref_68
             oneOf:
               - type: string
               - $ref: '#/components/schemas/UnifiedTicketingAttachmentInput'
-          example: &ref_68
+          example: &ref_69
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The attachements UUIDs tied to the ticket
           nullable: true
         field_mappings:
           type: object
-          example: &ref_69
+          example: &ref_70
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -7012,14 +7104,14 @@ components:
           description: The UUID of the parent ticket
         collections:
           type: array
-          items: *ref_61
-          example: *ref_62
+          items: *ref_62
+          example: *ref_63
           nullable: true
           description: The collection UUIDs the ticket belongs to
         tags:
           type: array
-          items: *ref_63
-          example: *ref_64
+          items: *ref_64
+          example: *ref_65
           nullable: true
           description: The tags names of the ticket
         completed_at:
@@ -7036,14 +7128,14 @@ components:
             The priority of the ticket. Authorized values are HIGH, MEDIUM or
             LOW.
         assigned_to:
-          example: *ref_65
+          example: *ref_66
           nullable: true
           description: The users UUIDs the ticket is assigned to
           type: array
           items:
             type: string
         comment:
-          example: *ref_66
+          example: *ref_67
           nullable: true
           description: The comment of the ticket
           allOf:
@@ -7060,13 +7152,13 @@ components:
           description: The UUID of the contact which the ticket belongs to
         attachments:
           type: array
-          items: *ref_67
-          example: *ref_68
+          items: *ref_68
+          example: *ref_69
           description: The attachements UUIDs tied to the ticket
           nullable: true
         field_mappings:
           type: object
-          example: *ref_69
+          example: *ref_70
           nullable: true
           description: >-
             The custom field mappings of the ticket between the remote 3rd party
@@ -7455,7 +7547,7 @@ components:
           nullable: true
         email_addresses:
           description: The email addresses of the company
-          example: &ref_70
+          example: &ref_71
             - email_address: acme@gmail.com
               email_address_type: WORK
           nullable: true
@@ -7464,7 +7556,7 @@ components:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
-          example: &ref_71
+          example: &ref_72
             - street_1: 5th Avenue
               city: New York
               state: NY
@@ -7476,7 +7568,7 @@ components:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
-          example: &ref_72
+          example: &ref_73
             - phone_number: '+33660606067'
               phone_type: WORK
           nullable: true
@@ -7485,7 +7577,7 @@ components:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          example: &ref_73
+          example: &ref_74
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -7550,28 +7642,28 @@ components:
           nullable: true
         email_addresses:
           description: The email addresses of the company
-          example: *ref_70
+          example: *ref_71
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Email'
         addresses:
           description: The addresses of the company
-          example: *ref_71
+          example: *ref_72
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Address'
         phone_numbers:
           description: The phone numbers of the company
-          example: *ref_72
+          example: *ref_73
           nullable: true
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         field_mappings:
           type: object
-          example: *ref_73
+          example: *ref_74
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
@@ -7595,7 +7687,7 @@ components:
         email_addresses:
           nullable: true
           description: The email addresses of the contact
-          example: &ref_74
+          example: &ref_75
             - email: john.doe@example.com
               type: WORK
           type: array
@@ -7604,7 +7696,7 @@ components:
         phone_numbers:
           nullable: true
           description: The phone numbers of the contact
-          example: &ref_75
+          example: &ref_76
             - phone: '1234567890'
               type: WORK
           type: array
@@ -7613,7 +7705,7 @@ components:
         addresses:
           nullable: true
           description: The addresses of the contact
-          example: &ref_76
+          example: &ref_77
             - street: 123 Main St
               city: Anytown
               state: CA
@@ -7630,7 +7722,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: &ref_77
+          example: &ref_78
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -7687,21 +7779,21 @@ components:
         email_addresses:
           nullable: true
           description: The email addresses of the contact
-          example: *ref_74
+          example: *ref_75
           type: array
           items:
             $ref: '#/components/schemas/Email'
         phone_numbers:
           nullable: true
           description: The phone numbers of the contact
-          example: *ref_75
+          example: *ref_76
           type: array
           items:
             $ref: '#/components/schemas/Phone'
         addresses:
           nullable: true
           description: The addresses of the contact
-          example: *ref_76
+          example: *ref_77
           type: array
           items:
             $ref: '#/components/schemas/Address'
@@ -7712,7 +7804,7 @@ components:
           example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
         field_mappings:
           type: object
-          example: *ref_77
+          example: *ref_78
           nullable: true
           description: >-
             The custom field mappings of the contact between the remote 3rd
@@ -7757,7 +7849,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_78
+          example: &ref_79
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -7834,7 +7926,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_78
+          example: *ref_79
           description: >-
             The custom field mappings of the company between the remote 3rd
             party & Panora
@@ -7894,7 +7986,7 @@ components:
           description: The UUID of the company tied to the engagement
         contacts:
           nullable: true
-          example: &ref_79
+          example: &ref_80
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           description: The UUIDs of contacts tied to the engagement object
           type: array
@@ -7903,7 +7995,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_80
+          example: &ref_81
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -7995,7 +8087,7 @@ components:
           description: The UUID of the company tied to the engagement
         contacts:
           nullable: true
-          example: *ref_79
+          example: *ref_80
           description: The UUIDs of contacts tied to the engagement object
           type: array
           items:
@@ -8003,7 +8095,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_80
+          example: *ref_81
           description: >-
             The custom field mappings of the engagement between the remote 3rd
             party & Panora
@@ -8040,7 +8132,7 @@ components:
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          example: &ref_81
+          example: &ref_82
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -8110,7 +8202,7 @@ components:
           description: The UUID of the deal tied to the note
         field_mappings:
           type: object
-          example: *ref_81
+          example: *ref_82
           nullable: true
           description: >-
             The custom field mappings of the note between the remote 3rd party &
@@ -8211,7 +8303,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_82
+          example: &ref_83
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -8299,7 +8391,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_82
+          example: *ref_83
           description: >-
             The custom field mappings of the task between the remote 3rd party &
             Panora
@@ -8463,9 +8555,9 @@ components:
             specified)
         attachments:
           type: array
-          items: *ref_83
+          items: *ref_84
           nullable: true
-          example: *ref_84
+          example: *ref_85
           description: The attachements UUIDs tied to the comment
         id:
           type: string
@@ -9195,7 +9287,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: &ref_85
+          example: &ref_86
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -9286,7 +9378,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: *ref_85
+          example: *ref_86
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -9402,7 +9494,7 @@ components:
           description: The UUID of the associated account
         field_mappings:
           type: object
-          example: &ref_86
+          example: &ref_87
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -9458,7 +9550,7 @@ components:
           description: The UUID of the associated account
         field_mappings:
           type: object
-          example: *ref_86
+          example: *ref_87
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -9858,7 +9950,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: &ref_87
+          example: &ref_88
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -9944,7 +10036,7 @@ components:
           description: The UUID of the associated company info
         field_mappings:
           type: object
-          example: *ref_87
+          example: *ref_88
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -10134,7 +10226,7 @@ components:
           nullable: true
           description: The UUID of the associated company info
         tracking_categories:
-          example: &ref_88
+          example: &ref_89
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the tracking categories associated with the expense
@@ -10148,7 +10240,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_89
+          example: &ref_90
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -10245,7 +10337,7 @@ components:
           nullable: true
           description: The UUID of the associated company info
         tracking_categories:
-          example: *ref_88
+          example: *ref_89
           nullable: true
           description: The UUIDs of the tracking categories associated with the expense
           type: array
@@ -10258,7 +10350,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_89
+          example: *ref_90
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -10432,7 +10524,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: &ref_90
+          example: &ref_91
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
@@ -10447,7 +10539,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_91
+          example: &ref_92
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -10576,7 +10668,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: *ref_90
+          example: *ref_91
           nullable: true
           description: The UUIDs of the tracking categories associated with the invoice
           type: array
@@ -10589,7 +10681,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_91
+          example: *ref_92
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -10686,7 +10778,7 @@ components:
           nullable: true
           description: The date of the transaction
         payments:
-          example: &ref_92
+          example: &ref_93
             - payment1
             - payment2
           nullable: true
@@ -10695,7 +10787,7 @@ components:
           items:
             type: string
         applied_payments:
-          example: &ref_93
+          example: &ref_94
             - appliedPayment1
             - appliedPayment2
           nullable: true
@@ -10729,7 +10821,7 @@ components:
           nullable: true
           description: The journal number
         tracking_categories:
-          example: &ref_94
+          example: &ref_95
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: >-
@@ -10755,7 +10847,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_95
+          example: &ref_96
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -10815,14 +10907,14 @@ components:
           nullable: true
           description: The date of the transaction
         payments:
-          example: *ref_92
+          example: *ref_93
           nullable: true
           description: The payments associated with the journal entry
           type: array
           items:
             type: string
         applied_payments:
-          example: *ref_93
+          example: *ref_94
           nullable: true
           description: The applied payments for the journal entry
           type: array
@@ -10854,7 +10946,7 @@ components:
           nullable: true
           description: The journal number
         tracking_categories:
-          example: *ref_94
+          example: *ref_95
           nullable: true
           description: >-
             The UUIDs of the tracking categories associated with the journal
@@ -10879,7 +10971,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_95
+          example: *ref_96
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -10939,7 +11031,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: &ref_96
+          example: &ref_97
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: The UUIDs of the tracking categories associated with the payment
@@ -10953,7 +11045,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_97
+          example: &ref_98
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -11050,7 +11142,7 @@ components:
           nullable: true
           description: The UUID of the associated accounting period
         tracking_categories:
-          example: *ref_96
+          example: *ref_97
           nullable: true
           description: The UUIDs of the tracking categories associated with the payment
           type: array
@@ -11063,7 +11155,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_97
+          example: *ref_98
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -11195,7 +11287,7 @@ components:
           nullable: true
           description: The exchange rate applied to the purchase order
         tracking_categories:
-          example: &ref_98
+          example: &ref_99
             - 801f9ede-c698-4e66-a7fc-48d19eebaa4f
           nullable: true
           description: >-
@@ -11216,7 +11308,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_99
+          example: &ref_100
             custom_field_1: value1
             custom_field_2: value2
           nullable: true
@@ -11334,7 +11426,7 @@ components:
           nullable: true
           description: The exchange rate applied to the purchase order
         tracking_categories:
-          example: *ref_98
+          example: *ref_99
           nullable: true
           description: >-
             The UUIDs of the tracking categories associated with the purchase
@@ -11354,7 +11446,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_99
+          example: *ref_100
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -11703,6 +11795,68 @@ components:
               additional_field: some value
           nullable: true
           description: The remote data of the vendor credit in the context of the 3rd Party
+    UnifiedFilestorageDriveOutput:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+          example: school
+          description: The name of the drive
+        remote_created_at:
+          type: string
+          nullable: true
+          example: '2024-10-01T12:00:00Z'
+          description: When the third party s drive was created.
+        drive_url:
+          type: string
+          nullable: true
+          example: https://example.com/school
+          description: The url of the drive
+        field_mappings:
+          type: object
+          example:
+            fav_dish: broccoli
+            fav_color: red
+          additionalProperties: true
+          nullable: true
+          description: >-
+            The custom field mappings of the object between the remote 3rd party
+            & Panora
+        id:
+          type: string
+          nullable: true
+          example: 801f9ede-c698-4e66-a7fc-48d19eebaa4f
+          description: The UUID of the drive
+        remote_id:
+          type: string
+          nullable: true
+          example: id_1
+          description: The id of the drive in the context of the 3rd Party
+        remote_data:
+          type: object
+          nullable: true
+          example:
+            fav_dish: broccoli
+            fav_color: red
+          additionalProperties: true
+          description: The remote data of the drive in the context of the 3rd Party
+        created_at:
+          format: date-time
+          type: string
+          nullable: true
+          example: '2024-10-01T12:00:00Z'
+          description: The created date of the object
+        modified_at:
+          format: date-time
+          type: string
+          nullable: true
+          example: '2024-10-01T12:00:00Z'
+          description: The modified date of the object
+      required:
+        - name
+        - remote_created_at
+        - drive_url
     UnifiedFilestorageFileOutput:
       type: object
       properties:
@@ -11743,7 +11897,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: &ref_100
+          example: &ref_101
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -11829,7 +11983,7 @@ components:
           nullable: true
         field_mappings:
           type: object
-          example: *ref_100
+          example: *ref_101
           description: >-
             The custom field mappings of the object between the remote 3rd party
             & Panora
@@ -11887,7 +12041,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: &ref_101
+          example: &ref_102
             fav_dish: broccoli
             fav_color: red
           additionalProperties: true
@@ -11978,7 +12132,7 @@ components:
           description: The UUID of the permission tied to the folder
         field_mappings:
           type: object
-          example: *ref_101
+          example: *ref_102
           additionalProperties: true
           nullable: true
           description: >-
@@ -12145,7 +12299,7 @@ components:
           nullable: true
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
-          example: &ref_102
+          example: &ref_103
             - https://myproduct/image
           nullable: true
           description: The URLs of the product images
@@ -12163,7 +12317,7 @@ components:
           nullable: true
           description: The vendor of the product
         variants:
-          example: &ref_103
+          example: &ref_104
             - title: teeshirt
               price: 20
               sku: '3'
@@ -12175,7 +12329,7 @@ components:
           items:
             $ref: '#/components/schemas/Variant'
         tags:
-          example: &ref_104
+          example: &ref_105
             - tag_1
           nullable: true
           description: The tags associated with the product
@@ -12184,7 +12338,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: &ref_105
+          example: &ref_106
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -12237,7 +12391,7 @@ components:
           nullable: true
           description: The status of the product. Either ACTIVE, DRAFT OR ARCHIVED.
         images_urls:
-          example: *ref_102
+          example: *ref_103
           nullable: true
           description: The URLs of the product images
           type: array
@@ -12254,13 +12408,13 @@ components:
           nullable: true
           description: The vendor of the product
         variants:
-          example: *ref_103
+          example: *ref_104
           description: The variants of the product
           type: array
           items:
             $ref: '#/components/schemas/Variant'
         tags:
-          example: *ref_104
+          example: *ref_105
           nullable: true
           description: The tags associated with the product
           type: array
@@ -12268,7 +12422,7 @@ components:
             type: string
         field_mappings:
           type: object
-          example: *ref_105
+          example: *ref_106
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -12330,7 +12484,7 @@ components:
           description: The UUID of the customer associated with the order
         items:
           nullable: true
-          example: &ref_106
+          example: &ref_107
             - remote_id: '12345'
               product_id: prod_001
               variant_id: var_001
@@ -12361,7 +12515,7 @@ components:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: &ref_107
+          example: &ref_108
             fav_dish: broccoli
             fav_color: red
           nullable: true
@@ -12452,14 +12606,14 @@ components:
           description: The UUID of the customer associated with the order
         items:
           nullable: true
-          example: *ref_106
+          example: *ref_107
           description: The items in the order
           type: array
           items:
             $ref: '#/components/schemas/LineItem'
         field_mappings:
           type: object
-          example: *ref_107
+          example: *ref_108
           nullable: true
           description: >-
             The custom field mappings of the object between the remote 3rd party
@@ -12636,7 +12790,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: &ref_108
+          example: &ref_109
             fav_dish: broccoli
             fav_color: red
           description: >-
@@ -12708,7 +12862,7 @@ components:
         field_mappings:
           type: object
           nullable: true
-          example: *ref_108
+          example: *ref_109
           description: >-
             The custom field mappings of the attachment between the remote 3rd
             party & Panora
