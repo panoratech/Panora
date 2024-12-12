@@ -90,6 +90,8 @@ export class GoogleDriveService implements IFileService {
           'nextPageToken, files(id, name, mimeType, modifiedTime, size, parents, webViewLink)',
         pageSize: BATCH_SIZE,
         pageToken: pageToken,
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
       }),
     );
 
