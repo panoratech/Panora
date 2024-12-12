@@ -93,15 +93,17 @@ export class GoogleDriveService implements IFileService {
       }),
     );
 
-    const files: GoogleDriveFileOutput[] = (response as any).data.files.map((file) => ({
-      id: file.id!,
-      name: file.name!,
-      mimeType: file.mimeType!,
-      modifiedTime: file.modifiedTime!,
-      size: file.size!,
-      parents: file.parents,
-      webViewLink: file.webViewLink,
-    }));
+    const files: GoogleDriveFileOutput[] = (response as any).data.files.map(
+      (file) => ({
+        id: file.id!,
+        name: file.name!,
+        mimeType: file.mimeType!,
+        modifiedTime: file.modifiedTime!,
+        size: file.size!,
+        parents: file.parents,
+        webViewLink: file.webViewLink,
+      }),
+    );
 
     // Process the files fetched in the current batch
     if (files.length > 0) {
@@ -145,11 +147,14 @@ export class GoogleDriveService implements IFileService {
     } = job.data;
 
     // Call the sync method with the pageToken and other job data
-    await this.sync({
-      linkedUserId,
-      custom_field_mappings,
-      ingestParams,
-    }, pageToken);
+    await this.sync(
+      {
+        linkedUserId,
+        custom_field_mappings,
+        ingestParams,
+      },
+      pageToken,
+    );
   }
 
   private async rateLimitedRequest<T>(request: () => Promise<T>): Promise<T> {
