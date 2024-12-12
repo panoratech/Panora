@@ -34,4 +34,7 @@ export interface GoogleDriveFolderOutput {
   trashed?: boolean;
   explicitlyTrashed?: boolean;
   spaces?: string[];
+
+  internal_id?: string | null; // Folder ID in panora db
+  internal_parent_folder_id?: string | null; // Parent Folder ID in panora db
 }

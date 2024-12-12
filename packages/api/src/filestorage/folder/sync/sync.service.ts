@@ -33,7 +33,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.registry.registerService('filestorage', 'folder', this);
   }
   onModuleInit() {
-//
+    //
   }
 
   @Cron('0 */8 * * *') // every 8 hours
@@ -125,7 +125,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
           return await this.prisma.fs_folders.create({
             data: {
               ...baseData,
-              id_fs_folder: uuidv4(),
+              id_fs_folder: folder.id ?? uuidv4(),
               created_at: new Date(),
               remote_id: originId ?? null,
               id_connection: connection_id,

@@ -10,6 +10,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import { ServiceRegistry } from '../registry.service';
 import { GoogleDriveFolderInput, GoogleDriveFolderOutput } from './types';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class GoogleDriveFolderService implements IFolderService {
@@ -84,6 +85,64 @@ export class GoogleDriveFolderService implements IFolderService {
     }
   }
 
+  async recursiveGetGoogleDriveFolders(
+    auth: OAuth2Client,
+  ): Promise<GoogleDriveFolderOutput[]> {
+    const drive = google.drive({ version: 'v3', auth });
+
+    // Helper function to fetch folders for a specific parent ID or root
+    async function fetchFolders(
+      parentId: string | null = null,
+    ): Promise<GoogleDriveFolderOutput[]> {
+      const folders: GoogleDriveFolderOutput[] = [];
+      let pageToken: string | null = null;
+      const query = parentId
+        ? `mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
+        : `mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false`;
+
+      do {
+        const response = await drive.files.list({
+          q: query,
+          fields:
+            'nextPageToken, files(id, name, parents, createdTime, modifiedTime)',
+          pageToken,
+        });
+
+        folders.push(...(response.data.files as GoogleDriveFolderOutput[]));
+        pageToken = response.data.nextPageToken ?? null;
+      } while (pageToken);
+
+      return folders;
+    }
+
+    // Recursive function to get folders level by level
+    async function retrieveFolders(
+      parentId: string | null = null, // Parent Folder ID returned by google drive api
+      internalParentId: string | null = null, // Parent Folder ID in panora db
+      level = 0,
+    ) {
+      const currentLevelFolders = await fetchFolders(parentId);
+      currentLevelFolders.forEach((folder) => {
+        folder.internal_id = uuidv4();
+        folder.internal_parent_folder_id = internalParentId;
+      });
+      const allFolders: GoogleDriveFolderOutput[] = currentLevelFolders;
+
+      for (const folder of currentLevelFolders) {
+        const childFolders = await retrieveFolders(
+          folder.id,
+          folder.internal_id,
+          level + 1,
+        );
+        allFolders.push(...childFolders);
+      }
+
+      return allFolders;
+    }
+
+    return retrieveFolders();
+  }
+
   async sync(data: SyncParam): Promise<ApiResponse<GoogleDriveFolderOutput[]>> {
     try {
       const { linkedUserId } = data;
@@ -108,26 +167,10 @@ export class GoogleDriveFolderService implements IFolderService {
       auth.setCredentials({
         access_token: this.cryptoService.decrypt(connection.access_token),
       });
-      const drive = google.drive({ version: 'v3', auth });
 
-      const response = await drive.files.list({
-        q: "mimeType = 'application/vnd.google-apps.folder' and trashed = false",
-        fields: 'files(id, name, mimeType, createdTime, modifiedTime, parents)',
-        pageSize: 1000, // Adjust as needed
-      });
+      const folders = await this.recursiveGetGoogleDriveFolders(auth);
 
-      const folders: GoogleDriveFolderOutput[] = response.data.files.map(
-        (folder) => ({
-          id: folder.id!,
-          name: folder.name!,
-          mimeType: folder.mimeType!,
-          createdTime: folder.createdTime!,
-          modifiedTime: folder.modifiedTime!,
-          parents: folder.parents,
-        }),
-      );
-
-      this.logger.log(`Synced Google Drive folders!`);
+      this.logger.log(`Synced ${folders.length} Google Drive folders!`);
 
       return {
         data: folders,
@@ -136,6 +179,7 @@ export class GoogleDriveFolderService implements IFolderService {
       };
     } catch (error) {
       this.logger.error('Error syncing Google Drive folders', error);
+      console.log(error);
       throw error;
     }
   }
