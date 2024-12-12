@@ -90,15 +90,38 @@ export class GoogleDriveFolderService implements IFolderService {
   ): Promise<GoogleDriveFolderOutput[]> {
     const drive = google.drive({ version: 'v3', auth });
 
+    async function fetchDriveIds(): Promise<string[]> {
+      const driveIds: string[] = ['root']; // Always include 'root' drive (My Drive)
+      let pageToken: string | null = null;
+
+      do {
+        const response = await drive.drives.list({
+          pageToken,
+          pageSize: 100,
+          fields: 'nextPageToken, drives(id, name)',
+        });
+
+        if (response.data.drives) {
+          const ids = response.data.drives.map((drive) => drive.id);
+          driveIds.push(...ids);
+        }
+
+        pageToken = response.data.nextPageToken ?? null;
+      } while (pageToken);
+
+      return driveIds;
+    }
+
     // Helper function to fetch folders for a specific parent ID or root
     async function fetchFoldersForParent(
       parentId: string | null = null,
+      driveId: string,
     ): Promise<GoogleDriveFolderOutput[]> {
       const folders: GoogleDriveFolderOutput[] = [];
       let pageToken: string | null = null;
       const query = parentId
         ? `mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
-        : `mimeType='application/vnd.google-apps.folder' and 'root' in parents and trashed=false`;
+        : `mimeType='application/vnd.google-apps.folder' and '${driveId}' in parents and trashed=false`;
 
       do {
         const response = await drive.files.list({
@@ -106,6 +129,12 @@ export class GoogleDriveFolderService implements IFolderService {
           fields:
             'nextPageToken, files(id, name, parents, createdTime, modifiedTime)',
           pageToken,
+          includeItemsFromAllDrives: true,
+          supportsAllDrives: true,
+          ...(driveId !== 'root' && {
+            driveId,
+            corpora: 'drive',
+          }),
         });
 
         folders.push(...(response.data.files as GoogleDriveFolderOutput[]));
@@ -121,8 +150,13 @@ export class GoogleDriveFolderService implements IFolderService {
       internalParentId: string | null = null, // Parent Folder ID in panora db
       level = 0,
       allFolders: GoogleDriveFolderOutput[] = [],
-    ) {
-      const currentLevelFolders = await fetchFoldersForParent(parentId);
+      driveId: string,
+    ): Promise<void> {
+      const currentLevelFolders = await fetchFoldersForParent(
+        parentId,
+        driveId,
+      );
+
       currentLevelFolders.forEach((folder) => {
         folder.internal_id = uuidv4();
         folder.internal_parent_folder_id = internalParentId;
@@ -136,13 +170,24 @@ export class GoogleDriveFolderService implements IFolderService {
           folder.internal_id,
           level + 1,
           allFolders,
+          driveId,
         );
       }
     }
 
-    const googleDriveFolders = [];
-    await populateFolders(null, null, 0, googleDriveFolders);
-    return googleDriveFolders;
+    try {
+      const driveIds = await fetchDriveIds();
+      const googleDriveFolders: GoogleDriveFolderOutput[] = [];
+
+      for (const driveId of driveIds) {
+        await populateFolders(null, null, 0, googleDriveFolders, driveId);
+      }
+
+      return googleDriveFolders;
+    } catch (error) {
+      this.logger.error('Error in recursiveGetGoogleDriveFolders', error);
+      throw error;
+    }
   }
 
   async sync(data: SyncParam): Promise<ApiResponse<GoogleDriveFolderOutput[]>> {
