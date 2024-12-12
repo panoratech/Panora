@@ -116,12 +116,26 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
+        let folder_id_by_remote_folder_id = null;
+        if (file.remote_folder_id) {
+          const folder = await this.prisma.fs_folders.findFirst({
+            where: {
+              remote_id: file.remote_folder_id,
+              id_connection: connection_id,
+            },
+            select: {
+              id_fs_folder: true,
+            },
+          });
+          folder_id_by_remote_folder_id = folder?.id_fs_folder;
+        }
+
         const baseData: any = {
           name: file.name ?? null,
           file_url: file.file_url ?? null,
           mime_type: file.mime_type ?? null,
           size: file.size ?? null,
-          id_fs_folder: id_folder ?? null,
+          id_fs_folder: id_folder ?? folder_id_by_remote_folder_id ?? null,
           modified_at: new Date(),
         };
 

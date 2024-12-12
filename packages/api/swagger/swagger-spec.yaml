@@ -11923,6 +11923,11 @@ components:
           description: The remote data of the file in the context of the 3rd Party
           nullable: true
           additionalProperties: true
+        remote_folder_id:
+          type: string
+          example: folder_123
+          description: The id of the parent folder in the context of the 3rd Party
+          nullable: true
         created_at:
           format: date-time
           type: string
