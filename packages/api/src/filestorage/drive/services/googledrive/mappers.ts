@@ -77,11 +77,12 @@ export class GoogleDriveMapper implements IDriveMapper {
       remote_id: drive.id,
       remote_data: drive,
       name: drive.name,
-      remote_created_at: drive.createdTime,
+      remote_created_at: drive.createdTime
+        ? new Date(drive.createdTime).toISOString()
+        : null,
       drive_url: `https://drive.google.com/drive/folders/${drive.id}`,
       field_mappings,
     };
-
     return result;
   }
 }

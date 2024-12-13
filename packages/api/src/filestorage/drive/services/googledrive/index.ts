@@ -87,6 +87,7 @@ export class GoogleDriveService implements IDriveService {
 
       const response = await drive.drives.list({
         pageSize: 100,
+        fields: 'drives(id,name,kind,createdTime)',
       });
 
       const drives: GoogleDriveDriveOutput[] = (response.data.drives || []).map(
@@ -94,8 +95,23 @@ export class GoogleDriveService implements IDriveService {
           id: drive.id || '',
           name: drive.name || '',
           kind: drive.kind || '',
+          createdTime: drive.createdTime || '',
         }),
       );
+
+      const rootDriveResponse = await drive.files.get({
+        fileId: 'root',
+        fields: 'name,createdTime,id,kind',
+      });
+      const rootDrive = rootDriveResponse.data;
+
+      drives.push({
+        id: rootDrive.id || '',
+        name: rootDrive.name || '',
+        kind: 'drive#drive',
+        createdTime: rootDrive.createdTime || '',
+      });
+
       this.logger.log(`Synced Google Drive drives!`);
 
       return {
