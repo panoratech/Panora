@@ -90,6 +90,13 @@ export class GoogleDriveFolderService implements IFolderService {
   ): Promise<GoogleDriveFolderOutput[]> {
     const drive = google.drive({ version: 'v3', auth });
 
+    const rootDriveId = await drive.files
+      .get({
+        fileId: 'root',
+        fields: 'id',
+      })
+      .then((res) => res.data.id);
+
     async function fetchDriveIds(): Promise<string[]> {
       const driveIds: string[] = ['root']; // Always include 'root' drive (My Drive)
       let pageToken: string | null = null;
@@ -127,7 +134,7 @@ export class GoogleDriveFolderService implements IFolderService {
         const response = await drive.files.list({
           q: query,
           fields:
-            'nextPageToken, files(id, name, parents, createdTime, modifiedTime)',
+            'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId)',
           pageToken,
           includeItemsFromAllDrives: true,
           supportsAllDrives: true,
@@ -140,6 +147,10 @@ export class GoogleDriveFolderService implements IFolderService {
         folders.push(...(response.data.files as GoogleDriveFolderOutput[]));
         pageToken = response.data.nextPageToken ?? null;
       } while (pageToken);
+
+      folders.forEach((folder) => {
+        folder.driveId = folder.driveId || rootDriveId;
+      });
 
       return folders;
     }

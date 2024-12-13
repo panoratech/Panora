@@ -74,6 +74,13 @@ export class GoogleDriveService implements IFileService {
     });
     const drive = google.drive({ version: 'v3', auth });
 
+    const rootDriveId = await drive.files
+      .get({
+        fileId: 'root',
+        fields: 'id',
+      })
+      .then((res) => res.data.id);
+
     let query = 'trashed = false';
     if (!pageToken) {
       const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
@@ -87,7 +94,7 @@ export class GoogleDriveService implements IFileService {
       drive.files.list({
         q: query,
         fields:
-          'nextPageToken, files(id, name, mimeType, modifiedTime, size, parents, webViewLink)',
+          'nextPageToken, files(id, name, mimeType, modifiedTime, size, parents, webViewLink, driveId)',
         pageSize: BATCH_SIZE,
         pageToken: pageToken,
         includeItemsFromAllDrives: true,
@@ -104,6 +111,7 @@ export class GoogleDriveService implements IFileService {
         size: file.size!,
         parents: file.parents,
         webViewLink: file.webViewLink,
+        driveId: file.driveId || rootDriveId,
       }),
     );
 

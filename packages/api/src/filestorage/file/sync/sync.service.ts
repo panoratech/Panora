@@ -117,6 +117,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
         });
 
         let folder_id_by_remote_folder_id = null;
+        let drive_id_by_remote_drive_id = null;
         if (file.remote_folder_id) {
           const folder = await this.prisma.fs_folders.findFirst({
             where: {
@@ -130,12 +131,26 @@ export class SyncService implements OnModuleInit, IBaseSync {
           folder_id_by_remote_folder_id = folder?.id_fs_folder;
         }
 
+        if (file.remote_drive_id) {
+          const drive = await this.prisma.fs_drives.findFirst({
+            where: {
+              remote_id: file.remote_drive_id,
+              id_connection: connection_id,
+            },
+            select: {
+              id_fs_drive: true,
+            },
+          });
+          drive_id_by_remote_drive_id = drive?.id_fs_drive;
+        }
+
         const baseData: any = {
           name: file.name ?? null,
           file_url: file.file_url ?? null,
           mime_type: file.mime_type ?? null,
           size: file.size ?? null,
           id_fs_folder: id_folder ?? folder_id_by_remote_folder_id ?? null,
+          id_fs_drive: drive_id_by_remote_drive_id ?? null,
           modified_at: new Date(),
         };
 

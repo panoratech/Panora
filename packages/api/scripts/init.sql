@@ -1335,6 +1335,7 @@ CREATE TABLE fs_files
  remote_id        text NULL,
  id_fs_permission uuid NULL,
  id_fs_folder     uuid NULL,
+ id_fs_drive      uuid NULL,
  created_at       timestamp with time zone NOT NULL,
  modified_at      timestamp with time zone NOT NULL,
  id_connection    uuid NOT NULL,

@@ -52,6 +52,16 @@ export class UnifiedFilestorageFileInput {
   @ApiProperty({
     type: String,
     example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
+    description: 'The UUID of the drive tied to the file',
+    nullable: true,
+  })
+  @IsString()
+  @IsOptional()
+  drive_id?: string;
+
+  @ApiProperty({
+    type: String,
+    example: '801f9ede-c698-4e66-a7fc-48d19eebaa4f',
     description: 'The UUID of the permission tied to the file',
     nullable: true,
   })
@@ -125,6 +135,16 @@ export class UnifiedFilestorageFileOutput extends UnifiedFilestorageFileInput {
   @IsString()
   @IsOptional()
   remote_folder_id?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    example: 'drive_123',
+    description: 'The id of the parent drive in the context of the 3rd Party',
+    nullable: true,
+  })
+  @IsString()
+  @IsOptional()
+  remote_drive_id?: string;
 
   @ApiPropertyOptional({
     example: '2024-10-01T12:00:00Z',

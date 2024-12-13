@@ -104,12 +104,26 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
+        let drive_id_by_remote_drive_id = null;
+        if (folder.remote_drive_id) {
+          const drive = await this.prisma.fs_drives.findFirst({
+            where: {
+              remote_id: folder.remote_drive_id,
+              id_connection: connection_id,
+            },
+            select: {
+              id_fs_drive: true,
+            },
+          });
+          drive_id_by_remote_drive_id = drive?.id_fs_drive;
+        }
+
         const baseData: any = {
           name: folder.name ?? null,
           size: folder.size ?? null,
           folder_url: folder.folder_url ?? null,
           description: folder.description ?? null,
-          id_fs_drive: folder.drive_id ?? null,
+          id_fs_drive: drive_id_by_remote_drive_id ?? null,
           parent_folder: folder.parent_folder_id ?? null,
           modified_at: new Date(),
         };

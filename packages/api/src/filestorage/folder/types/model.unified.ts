@@ -126,6 +126,16 @@ export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInpu
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    type: String,
+    example: 'drive_123',
+    description: 'The remote ID of the drive in the context of the 3rd Party',
+    nullable: true,
+  })
+  @IsString()
+  @IsOptional()
+  remote_drive_id?: string;
+
+  @ApiPropertyOptional({
     example: '2024-10-01T12:00:00Z',
     description: 'The created date of the folder',
     type: Date,

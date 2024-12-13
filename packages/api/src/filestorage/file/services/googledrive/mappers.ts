@@ -88,6 +88,7 @@ export class GoogleDriveFileMapper implements IFileMapper {
       remote_data: file,
       remote_folder_id:
         file.parents && file.parents.length > 0 ? file.parents[0] : null,
+      remote_drive_id: file.driveId || null,
       name: file.name,
       file_url: file.webViewLink || file.webContentLink || null,
       mime_type: file.mimeType || null,
