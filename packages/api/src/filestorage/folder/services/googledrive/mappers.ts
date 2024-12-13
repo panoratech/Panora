@@ -96,6 +96,7 @@ export class GoogleDriveFolderMapper implements IFolderMapper {
       remote_id: folder.id,
       remote_data: folder,
       remote_drive_id: folder.driveId || null,
+      folder_url: folder.webViewLink || null,
       name: folder.name,
       ...opts,
       field_mappings,

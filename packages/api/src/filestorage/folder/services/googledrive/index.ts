@@ -134,7 +134,7 @@ export class GoogleDriveFolderService implements IFolderService {
         const response = await drive.files.list({
           q: query,
           fields:
-            'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId)',
+            'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink)',
           pageToken,
           includeItemsFromAllDrives: true,
           supportsAllDrives: true,
@@ -228,7 +228,6 @@ export class GoogleDriveFolderService implements IFolderService {
 
       const folders = await this.recursiveGetGoogleDriveFolders(auth);
 
-      console.log('folders in sync', folders);
       this.logger.log(`Synced ${folders.length} Google Drive folders!`);
 
       return {
