@@ -126,6 +126,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
           id_fs_drive: drive_id_by_remote_drive_id ?? null,
           parent_folder: folder.parent_folder_id ?? null,
           modified_at: new Date(),
+          remote_created_at: folder.remote_created_at ?? null,
+          remote_modified_at: folder.remote_modified_at ?? null,
         };
 
         if (existingFolder) {

@@ -152,4 +152,24 @@ export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInpu
   })
   @IsOptional()
   modified_at?: Date;
+
+  @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    description:
+      'The created date of the folder in the context of the 3rd Party',
+    nullable: true,
+  })
+  @IsOptional()
+  remote_created_at?: Date;
+
+  @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    description:
+      'The modified date of the folder in the context of the 3rd Party',
+    nullable: true,
+  })
+  @IsOptional()
+  remote_modified_at?: Date;
 }

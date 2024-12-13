@@ -163,4 +163,24 @@ export class UnifiedFilestorageFileOutput extends UnifiedFilestorageFileInput {
   })
   @IsOptional()
   modified_at?: Date;
+
+  @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    description:
+      'The created date of the object in the context of the 3rd Party',
+    nullable: true,
+  })
+  @IsOptional()
+  remote_created_at?: Date;
+
+  @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    description:
+      'The modified date of the object in the context of the 3rd Party',
+    nullable: true,
+  })
+  @IsOptional()
+  remote_modified_at?: Date;
 }

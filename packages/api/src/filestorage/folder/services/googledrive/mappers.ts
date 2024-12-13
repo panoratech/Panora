@@ -96,6 +96,12 @@ export class GoogleDriveFolderMapper implements IFolderMapper {
       remote_id: folder.id,
       remote_data: folder,
       remote_drive_id: folder.driveId || null,
+      remote_created_at: folder.createdTime
+        ? new Date(folder.createdTime)
+        : null,
+      remote_modified_at: folder.modifiedTime
+        ? new Date(folder.modifiedTime)
+        : null,
       folder_url: folder.webViewLink || null,
       name: folder.name,
       ...opts,

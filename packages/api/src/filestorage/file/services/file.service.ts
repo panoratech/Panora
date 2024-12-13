@@ -245,6 +245,8 @@ export class FileService {
         remote_id: file.remote_id,
         created_at: file.created_at,
         modified_at: file.modified_at,
+        remote_created_at: file.remote_created_at,
+        remote_modified_at: file.remote_modified_at,
       };
 
       let res: UnifiedFilestorageFileOutput = unifiedFile;
@@ -395,6 +397,8 @@ export class FileService {
             remote_id: file.remote_id,
             created_at: file.created_at,
             modified_at: file.modified_at,
+            remote_created_at: file.remote_created_at,
+            remote_modified_at: file.remote_modified_at,
           };
         }),
       );

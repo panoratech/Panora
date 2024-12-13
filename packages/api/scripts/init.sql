@@ -814,18 +814,20 @@ ex 3600 for one hour';
 -- ************************************** fs_folders
 CREATE TABLE fs_folders
 (
- id_fs_folder     uuid NOT NULL,
- folder_url       text NULL,
- "size"           bigint NULL,
- name             text NULL,
- description      text NULL,
- parent_folder    uuid NULL,
- remote_id        text NULL,
- created_at       timestamp with time zone NOT NULL,
- modified_at      timestamp with time zone NOT NULL,
- id_fs_drive      uuid NULL,
- id_connection    uuid NOT NULL,
- id_fs_permission uuid NULL,
+ id_fs_folder       uuid NOT NULL,
+ folder_url         text NULL,
+ "size"             bigint NULL,
+ name               text NULL,
+ description        text NULL,
+ parent_folder      uuid NULL,
+ remote_id          text NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_created_at  timestamp with time zone NULL,
+ remote_modified_at timestamp with time zone NULL,
+ id_fs_drive        uuid NULL,
+ id_connection      uuid NOT NULL,
+ id_fs_permission   uuid NULL,
  CONSTRAINT PK_fs_folders PRIMARY KEY ( id_fs_folder )
 );
 
@@ -1327,18 +1329,20 @@ COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME c
 -- ************************************** fs_files
 CREATE TABLE fs_files
 (
- id_fs_file       uuid NOT NULL,
- name             text NULL,
- file_url         text NULL,
- mime_type        text NULL,
- "size"           bigint NULL,
- remote_id        text NULL,
- id_fs_permission uuid NULL,
- id_fs_folder     uuid NULL,
- id_fs_drive      uuid NULL,
- created_at       timestamp with time zone NOT NULL,
- modified_at      timestamp with time zone NOT NULL,
- id_connection    uuid NOT NULL,
+ id_fs_file         uuid NOT NULL,
+ name               text NULL,
+ file_url           text NULL,
+ mime_type          text NULL,
+ "size"             bigint NULL,
+ remote_id          text NULL,
+ id_fs_permission   uuid NULL,
+ id_fs_folder       uuid NULL,
+ id_fs_drive        uuid NULL,
+ remote_created_at  timestamp with time zone NULL,
+ remote_modified_at timestamp with time zone NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_fs_files PRIMARY KEY ( id_fs_file )
 );
 

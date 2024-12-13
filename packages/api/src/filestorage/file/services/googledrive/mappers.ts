@@ -99,6 +99,10 @@ export class GoogleDriveFileMapper implements IFileMapper {
       field_mappings,
       created_at: file.createdTime ? new Date(file.createdTime) : null,
       modified_at: file.modifiedTime ? new Date(file.modifiedTime) : null,
+      remote_created_at: file.createdTime ? new Date(file.createdTime) : null,
+      remote_modified_at: file.modifiedTime
+        ? new Date(file.modifiedTime)
+        : null,
     };
   }
 }

@@ -94,7 +94,7 @@ export class GoogleDriveService implements IFileService {
       drive.files.list({
         q: query,
         fields:
-          'nextPageToken, files(id, name, mimeType, modifiedTime, size, parents, webViewLink, driveId)',
+          'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId)',
         pageSize: BATCH_SIZE,
         pageToken: pageToken,
         includeItemsFromAllDrives: true,
@@ -107,6 +107,7 @@ export class GoogleDriveService implements IFileService {
         id: file.id!,
         name: file.name!,
         mimeType: file.mimeType!,
+        createdTime: file.createdTime!,
         modifiedTime: file.modifiedTime!,
         size: file.size!,
         parents: file.parents,
