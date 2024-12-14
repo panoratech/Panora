@@ -827,18 +827,13 @@ CREATE TABLE fs_folders
  remote_modified_at timestamp with time zone NULL,
  id_fs_drive        uuid NULL,
  id_connection      uuid NOT NULL,
- id_fs_permission   uuid NULL,
+ id_fs_permissions  uuid[] NULL,
  CONSTRAINT PK_fs_folders PRIMARY KEY ( id_fs_folder )
 );
 
 CREATE INDEX FK_fs_folder_driveID ON fs_folders
 (
  id_fs_drive
-);
-
-CREATE INDEX FK_fs_folder_permissionID ON fs_folders
-(
- id_fs_permission
 );
 
 
@@ -1335,7 +1330,7 @@ CREATE TABLE fs_files
  mime_type          text NULL,
  "size"             bigint NULL,
  remote_id          text NULL,
- id_fs_permission   uuid NULL,
+ id_fs_permissions  uuid[] NULL,
  id_fs_folder       uuid NULL,
  id_fs_drive        uuid NULL,
  remote_created_at  timestamp with time zone NULL,
@@ -1350,12 +1345,6 @@ CREATE INDEX FK_fs_file_FolderID ON fs_files
 (
  id_fs_folder
 );
-
-CREATE INDEX FK_fs_file_permissionID ON fs_files
-(
- id_fs_permission
-);
-
 
 -- ************************************** ecom_fulfilments
 CREATE TABLE ecom_fulfilments

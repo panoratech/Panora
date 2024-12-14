@@ -135,7 +135,7 @@ export class SharepointFolderMapper implements IFolderMapper {
         connectionId,
       ),
       // permission: opts.permissions?.[0] || null,
-      permission: null,
+      permissions: null,
       size: folder.size.toString(),
       shared_link: opts.shared_links?.[0] || null,
       field_mappings,

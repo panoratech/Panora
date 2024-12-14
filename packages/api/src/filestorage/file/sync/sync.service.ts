@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFileService } from '../types';
 import { UnifiedFilestorageFileOutput } from '../types/model.unified';
+import { fs_permissions as FileStoragePermission } from '@prisma/client';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -219,31 +220,33 @@ export class SyncService implements OnModuleInit, IBaseSync {
           }
         }
 
-        if (file.permission) {
-          let permission_id;
-          if (typeof file.permission === 'string') {
-            permission_id = file.permission;
+        if (file.permissions?.length > 0) {
+          let permission_ids;
+          if (typeof file.permissions[0] === 'string') {
+            permission_ids = file.permissions;
           } else {
             const perms = await this.registry
               .getService('filestorage', 'permission')
               .saveToDb(
                 connection_id,
                 linkedUserId,
-                [file.permission],
+                file.permissions as UnifiedFilestoragePermissionOutput[],
                 originSource,
-                [file.permission].map(
-                  (att: UnifiedFilestoragePermissionOutput) => att.remote_data,
+                (file.permissions as UnifiedFilestoragePermissionOutput[]).map(
+                  (att) => att.remote_data,
                 ),
                 { object_name: 'file', value: file_id },
               );
-            permission_id = perms[0].id_fs_permission;
+            permission_ids = perms.map(
+              (att: FileStoragePermission) => att.id_fs_permission,
+            );
           }
           await this.prisma.fs_files.update({
             where: {
               id_fs_file: file_id,
             },
             data: {
-              id_fs_permission: permission_id,
+              id_fs_permissions: permission_ids,
             },
           });
         }

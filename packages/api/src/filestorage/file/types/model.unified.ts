@@ -66,7 +66,7 @@ export class UnifiedFilestorageFileInput {
     nullable: true,
   })
   @IsString()
-  permission: string | UnifiedFilestoragePermissionOutput;
+  permissions: string[] | UnifiedFilestoragePermissionOutput[];
 
   @ApiProperty({
     type: String,

@@ -17,6 +17,7 @@ import { IFolderService } from '../types';
 import { UnifiedFilestorageFolderOutput } from '../types/model.unified';
 import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/types/model.unified';
 import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
+import { fs_permissions as FileStoragePermission } from '@prisma/client';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -193,31 +194,33 @@ export class SyncService implements OnModuleInit, IBaseSync {
           }
         }
 
-        if (folder.permission) {
-          let permission_id;
-          if (typeof folder.permission === 'string') {
-            permission_id = folder.permission;
+        if (folder.permissions?.length > 0) {
+          let permission_ids;
+          if (typeof folder.permissions[0] === 'string') {
+            permission_ids = folder.permissions;
           } else {
             const perms = await this.registry
               .getService('filestorage', 'permission')
               .saveToDb(
                 connection_id,
                 linkedUserId,
-                [folder.permission],
+                folder.permissions as UnifiedFilestoragePermissionOutput[],
                 originSource,
-                [folder.permission].map(
-                  (att: UnifiedFilestoragePermissionOutput) => att.remote_data,
-                ),
+                (
+                  folder.permissions as UnifiedFilestoragePermissionOutput[]
+                ).map((att) => att.remote_data),
                 { object_name: 'folder', value: folder_id },
               );
-            permission_id = perms[0].id_fs_permission;
+            permission_ids = perms.map(
+              (att: FileStoragePermission) => att.id_fs_permission,
+            );
           }
           await this.prisma.fs_folders.update({
             where: {
               id_fs_folder: folder_id,
             },
             data: {
-              id_fs_permission: permission_id,
+              id_fs_permissions: permission_ids,
             },
           });
         }

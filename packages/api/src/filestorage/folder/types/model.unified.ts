@@ -73,7 +73,7 @@ export class UnifiedFilestorageFolderInput {
     description: 'The UUID of the permission tied to the folder',
   })
   @IsString()
-  permission: string | UnifiedFilestoragePermissionOutput;
+  permissions: string[] | UnifiedFilestoragePermissionOutput[];
 
   @ApiPropertyOptional({
     type: Object,

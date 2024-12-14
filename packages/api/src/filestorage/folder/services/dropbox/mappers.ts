@@ -96,7 +96,7 @@ export class DropboxFolderMapper implements IFolderMapper {
       drive_id: null,
       parent_folder_id: null,
       shared_link: null,
-      permission: null,
+      permissions: null,
       field_mappings: {},
     };
 

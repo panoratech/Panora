@@ -68,10 +68,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 id_fs_file: extra.value,
               },
             });
-            if (file?.id_fs_permission) {
-              existingPermission = await this.prisma.fs_permissions.findUnique({
+            if (file?.id_fs_permissions?.length > 0) {
+              existingPermission = await this.prisma.fs_permissions.findMany({
                 where: {
-                  id_fs_permission: file.id_fs_permission,
+                  id_fs_permission: {
+                    in: file.id_fs_permissions,
+                  },
                 },
               });
             }
@@ -81,10 +83,12 @@ export class SyncService implements OnModuleInit, IBaseSync {
                 id_fs_folder: extra.value,
               },
             });
-            if (folder?.id_fs_permission) {
-              existingPermission = await this.prisma.fs_permissions.findUnique({
+            if (folder?.id_fs_permissions?.length > 0) {
+              existingPermission = await this.prisma.fs_permissions.findMany({
                 where: {
-                  id_fs_permission: folder.id_fs_permission,
+                  id_fs_permission: {
+                    in: folder.id_fs_permissions,
+                  },
                 },
               });
             }
