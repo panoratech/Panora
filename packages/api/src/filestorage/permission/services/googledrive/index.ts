@@ -13,7 +13,7 @@ import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
-export class GoogleDriveService implements IPermissionService {
+export class GoogledriveService implements IPermissionService {
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -23,14 +23,14 @@ export class GoogleDriveService implements IPermissionService {
     this.logger.setContext(
       FileStorageObject.permission.toUpperCase() +
         ':' +
-        GoogleDriveService.name,
+        GoogledriveService.name,
     );
     this.registry.registerService('googledrive', this);
   }
 
   async sync(
     data: SyncParam,
-  ): Promise<ApiResponse<GoogleDrivePermissionOutput[]>> {
+  ): Promise<ApiResponse<GoogledrivePermissionOutput[]>> {
     try {
       const { linkedUserId, extra } = data;
       // TODO: Determine the source of 'extra'
@@ -88,14 +88,14 @@ export class GoogleDriveService implements IPermissionService {
       });
       const drive = google.drive({ version: 'v3', auth });
 
-      const resp = await drive.permissions.list({
+      const resp: any = await drive.permissions.list({
         fileId: remote_id,
         fields: 'permissions(id, emailAddress, role, type, expirationTime)',
         supportsAllDrives: true,
       });
 
       return {
-        data: resp.data.permissions as GoogleDrivePermissionOutput[],
+        data: resp.data.permissions as GoogledrivePermissionOutput[],
         message: 'Synced Google Drive permissions!',
         statusCode: 200,
       };

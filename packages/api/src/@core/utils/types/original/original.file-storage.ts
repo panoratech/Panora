@@ -1,3 +1,5 @@
+import { GoogledrivePermissionInput, GoogledrivePermissionOutput } from '@filestorage/permission/services/googledrive/types';
+
 import {
   DropboxGroupInput,
   DropboxGroupOutput,
@@ -147,7 +149,7 @@ export type OriginalFolderInput =
 export type OriginalPermissionInput =
   | any
   | OnedrivePermissionInput
-  | SharepointPermissionInput;
+  | SharepointPermissionInput | GoogledrivePermissionInput;
 
 /* shared link */
 export type OriginalSharedLinkInput = any;
@@ -209,7 +211,7 @@ export type OriginalFolderOutput =
 export type OriginalPermissionOutput =
   | any
   | OnedrivePermissionOutput
-  | SharepointPermissionOutput;
+  | SharepointPermissionOutput | GoogledrivePermissionOutput;
 
 /* shared link */
 export type OriginalSharedLinkOutput = any;
