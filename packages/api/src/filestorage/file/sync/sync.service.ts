@@ -241,6 +241,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
               (att: FileStoragePermission) => att.id_fs_permission,
             );
           }
+
           await this.prisma.fs_files.update({
             where: {
               id_fs_file: file_id,

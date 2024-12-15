@@ -13,6 +13,8 @@ import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import { ServiceRegistry } from '../registry.service';
 import { GoogleDriveFileOutput } from './types';
+import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
+import { GoogledrivePermissionOutput } from '@filestorage/permission/services/googledrive/types';
 
 const BATCH_SIZE = 1000; // Number of files to process in each batch
 const API_RATE_LIMIT = 10; // Requests per second
@@ -42,6 +44,30 @@ export class GoogleDriveService implements IFileService {
     }[],
     extraParams?: { [key: string]: any },
   ): Promise<UnifiedFilestorageFileOutput[]> {
+    await Promise.all(
+      sourceData.map(async (file) => {
+        if (!file.permissions?.length) {
+          return;
+        }
+
+        const syncedPermissions = await this.ingestService.ingestData<
+          UnifiedFilestoragePermissionOutput,
+          GoogledrivePermissionOutput
+        >(
+          file.permissions,
+          'googledrive',
+          connectionId,
+          'filestorage',
+          'permission',
+          customFieldMappings,
+        );
+
+        file.permissions = syncedPermissions.map(
+          (perm) => perm.id || perm.id_fs_permission,
+        );
+      }),
+    );
+
     return this.ingestService.ingestData<
       UnifiedFilestorageFileOutput,
       GoogleDriveFileOutput
@@ -94,7 +120,7 @@ export class GoogleDriveService implements IFileService {
       drive.files.list({
         q: query,
         fields:
-          'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId)',
+          'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions)',
         pageSize: BATCH_SIZE,
         pageToken: pageToken,
         includeItemsFromAllDrives: true,
@@ -110,6 +136,7 @@ export class GoogleDriveService implements IFileService {
         createdTime: file.createdTime!,
         modifiedTime: file.modifiedTime!,
         size: file.size!,
+        permissions: file.permissions,
         parents: file.parents,
         webViewLink: file.webViewLink,
         driveId: file.driveId || rootDriveId,

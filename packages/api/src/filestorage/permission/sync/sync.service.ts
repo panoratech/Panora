@@ -105,8 +105,8 @@ export class SyncService implements OnModuleInit, IBaseSync {
         const baseData: any = {
           roles: permission.roles ?? null,
           type: permission.type ?? null,
-          user_id: permission.user_id ?? null,
-          group_id: permission.group_id ?? null,
+          user: permission.user_id ?? null,
+          group: permission.group_id ?? null,
           modified_at: new Date(),
         };
 
