@@ -16,6 +16,11 @@ import { MarketingAutomationModule } from './marketingautomation/marketingautoma
 import { CoreSharedModule } from '@@core/@core-services/module';
 import { EcommerceModule } from '@ecommerce/ecommerce.module';
 
+// Sentry Dependencies
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { HttpException } from '@nestjs/common';
+import { SentryModule, SentryInterceptor } from '@ntegral/nestjs-sentry';
+
 @Module({
   imports: [
     CoreSharedModule,
@@ -33,17 +38,17 @@ import { EcommerceModule } from '@ecommerce/ecommerce.module';
       },
     ]),
     ConfigModule.forRoot({ isGlobal: true }),
-    /*...(process.env.DISTRIBUTION === 'managed'
+    ...(process.env.DISTRIBUTION === 'managed'
       ? [
           SentryModule.forRoot({
             dsn: process.env.SENTRY_DSN,
             debug: true,
             environment: `${process.env.ENV}-${process.env.DISTRIBUTION}`,
             release: `${process.env.DISTRIBUTION}`,
-            logLevels: ['debug'],
+            logLevels: ['debug', 'error'],
           }),
         ]
-      : []),*/
+      : []),
     ScheduleModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
@@ -90,7 +95,7 @@ import { EcommerceModule } from '@ecommerce/ecommerce.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    /*{
+    {
       provide: APP_INTERCEPTOR,
       useFactory: () =>
         new SentryInterceptor({
@@ -101,7 +106,7 @@ import { EcommerceModule } from '@ecommerce/ecommerce.module';
             },
           ],
         }),
-    },*/
+    },
   ],
 })
 export class AppModule {}
