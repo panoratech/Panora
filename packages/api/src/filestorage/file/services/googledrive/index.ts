@@ -63,7 +63,7 @@ export class GoogleDriveService implements IFileService {
         );
 
         file.permissions = syncedPermissions.map(
-          (perm) => perm.id || perm.id_fs_permission,
+          (perm) => perm.id_fs_permission,
         );
       }),
     );
@@ -107,7 +107,8 @@ export class GoogleDriveService implements IFileService {
       })
       .then((res) => res.data.id);
 
-    let query = 'trashed = false';
+    let query =
+      "mimeType!='application/vnd.google-apps.folder' and trashed = false";
     if (!pageToken) {
       const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
       if (lastSyncTime) {
