@@ -16,8 +16,8 @@ import { PassthroughModule } from './passthrough/passthrough.module';
 import { ProjectConnectorsModule } from './project-connectors/project-connectors.module';
 import { ProjectsModule } from './projects/projects.module';
 import { SyncModule } from './sync/sync.module';
-import { SentryModule } from './@core-services/sentry/sentry.module';
-import { SentryInterceptor } from './@core-services/sentry/sentry.interceptor';
+// import { SentryModule } from './@core-services/sentry/sentry.module';
+// import { SentryInterceptor } from './@core-services/sentry/sentry.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
@@ -38,7 +38,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     SyncModule,
     ProjectConnectorsModule,
     BullQueueModule,
-    SentryModule,
   ],
   exports: [
     AuthModule,
@@ -58,14 +57,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     ProjectConnectorsModule,
     IngestDataService,
     BullQueueModule,
-    SentryModule,
   ],
   providers: [
     IngestDataService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: SentryInterceptor,
-    },
+   
   ],
 })
 export class CoreModule {}
