@@ -1,4 +1,5 @@
 import '@@core/@core-services/sentry/instrument';
+
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
@@ -10,6 +11,7 @@ import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { generatePanoraParamsSpec } from '@@core/utils/decorators/utils';
 import { AllExceptionsFilter } from '@@core/utils/exception.filter';
+import { SentryService } from './@core/@core-services/sentry/sentry.service';
 
 function addSpeakeasyGroup(document: any) {
   for (const path in document.paths) {
@@ -112,6 +114,9 @@ async function bootstrap() {
 
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+
+  // Initialize Sentry
+  app.get(SentryService);
 
   await app.listen(3000);
 }

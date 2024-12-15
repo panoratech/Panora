@@ -16,10 +16,10 @@ import { MarketingAutomationModule } from './marketingautomation/marketingautoma
 import { CoreSharedModule } from '@@core/@core-services/module';
 import { EcommerceModule } from '@ecommerce/ecommerce.module';
 
-// Sentry Dependencies
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { HttpException } from '@nestjs/common';
-import { SentryModule, SentryInterceptor } from '@ntegral/nestjs-sentry';
+// // Sentry Dependencies
+// import { APP_INTERCEPTOR } from '@nestjs/core';
+// import { HttpException } from '@nestjs/common';
+// import { SentryModule, SentryInterceptor } from '@ntegral/nestjs-sentry';
 
 @Module({
   imports: [
@@ -38,17 +38,17 @@ import { SentryModule, SentryInterceptor } from '@ntegral/nestjs-sentry';
       },
     ]),
     ConfigModule.forRoot({ isGlobal: true }),
-    ...(process.env.DISTRIBUTION === 'managed'
-      ? [
-          SentryModule.forRoot({
-            dsn: process.env.SENTRY_DSN,
-            debug: true,
-            environment: `${process.env.ENV}-${process.env.DISTRIBUTION}`,
-            release: `${process.env.DISTRIBUTION}`,
-            logLevels: ['debug', 'error'],
-          }),
-        ]
-      : []),
+    // ...(process.env.DISTRIBUTION === 'managed'
+    //   ? [
+    //       SentryModule.forRoot({
+    //         dsn: process.env.SENTRY_DSN,
+    //         debug: true,
+    //         environment: `${process.env.ENV}-${process.env.DISTRIBUTION}`,
+    //         release: `${process.env.DISTRIBUTION}`,
+    //         logLevels: ['debug', 'error'],
+    //       }),
+    //     ]
+    //   : []),
     ScheduleModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
@@ -95,18 +95,18 @@ import { SentryModule, SentryInterceptor } from '@ntegral/nestjs-sentry';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    {
-      provide: APP_INTERCEPTOR,
-      useFactory: () =>
-        new SentryInterceptor({
-          filters: [
-            {
-              type: HttpException,
-              filter: (exception: HttpException) => 500 > exception.getStatus(), // Only report 500 errors
-            },
-          ],
-        }),
-    },
+  //   {
+  //     provide: APP_INTERCEPTOR,
+  //     useFactory: () =>
+  //       new SentryInterceptor({
+  //         filters: [
+  //           {
+  //             type: HttpException,
+  //             filter: (exception: HttpException) => 500 > exception.getStatus(), // Only report 500 errors
+  //           },
+  //         ],
+  //       }),
+  //   },
   ],
 })
 export class AppModule {}
