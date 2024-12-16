@@ -172,6 +172,7 @@ export class GoogleDriveService implements IFileService {
         pageToken: pageToken,
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
+        orderBy: 'modifiedTime',
       }),
     );
 

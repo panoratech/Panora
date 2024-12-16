@@ -174,6 +174,7 @@ export class GoogleDriveFolderService implements IFolderService {
             pageToken,
             includeItemsFromAllDrives: true,
             supportsAllDrives: true,
+            orderBy: 'modifiedTime',
             ...(driveId !== 'root' && {
               driveId,
               corpora: 'drive',
