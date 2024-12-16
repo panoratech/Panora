@@ -44,30 +44,65 @@ export class GoogleDriveService implements IFileService {
     }[],
     extraParams?: { [key: string]: any },
   ): Promise<UnifiedFilestorageFileOutput[]> {
-    await Promise.all(
-      sourceData.map(async (file) => {
-        if (!file.permissions?.length) {
-          return;
+    // Extract all permissions from all files
+    const allPermissions = sourceData.reduce<{
+      permissions: GoogledrivePermissionOutput[];
+      filePermissionsMap: Map<string, string[]>;
+    }>(
+      (acc, file) => {
+        if (file.permissions?.length) {
+          // Store the relationship between file and its permissions
+          acc.filePermissionsMap.set(
+            file.id,
+            file.permissions.map((perm) => perm.id),
+          );
+          // Add permissions to the batch
+          acc.permissions.push(...file.permissions);
         }
+        return acc;
+      },
+      { permissions: [], filePermissionsMap: new Map() },
+    );
 
-        const syncedPermissions = await this.ingestService.ingestData<
+    // Filter permissions to keep only unique ones by ID
+    allPermissions.permissions = Array.from(
+      new Map(
+        allPermissions.permissions.map((perm) => [perm.id, perm]),
+      ).values(),
+    );
+
+    // Batch ingest all permissions at once
+    const syncedPermissions = allPermissions.permissions.length
+      ? await this.ingestService.ingestData<
           UnifiedFilestoragePermissionOutput,
           GoogledrivePermissionOutput
         >(
-          file.permissions,
+          allPermissions.permissions,
           'googledrive',
           connectionId,
           'filestorage',
           'permission',
           customFieldMappings,
-        );
+        )
+      : [];
 
-        file.permissions = syncedPermissions.map(
-          (perm) => perm.id_fs_permission,
-        );
-      }),
+    // Create a map of original permission ID to synced permission ID
+    const permissionIdMap = new Map(
+      syncedPermissions.map((perm) => [perm.remote_id, perm.id_fs_permission]),
     );
 
+    // Update files with synced permission IDs
+    sourceData.forEach((file) => {
+      if (allPermissions.filePermissionsMap.has(file.id)) {
+        const originalPermissionIds =
+          allPermissions.filePermissionsMap.get(file.id) ?? [];
+        file.permissions = originalPermissionIds
+          .map((id) => permissionIdMap.get(id))
+          .filter((id): id is string => id !== undefined);
+      }
+    });
+
+    // Ingest files with updated permissions
     return this.ingestService.ingestData<
       UnifiedFilestorageFileOutput,
       GoogleDriveFileOutput
