@@ -87,7 +87,7 @@ Panora supports integration with the following objects across multiple platforms
 
 |                                           | Drives | Files | Folders | Groups | Users | Permissions | Shared Links |
 |-----------------------------------------------|:--------:|:-----:|:-----:|:-----------:|:-----:|:-----:|:---------:|
-| Google Drive            |       ✔️ |  ✔️   |   ✔️  |        ✔️   | ✔️    |     |           |
+| Google Drive            |       ✔️ |  ✔️   |   ✔️  |           |       |    ✔️  |           |
 | Box        |        |   ✔️   |   ✔️   |      ✔️     |  ✔️    |  ✔️   |           |
 | Dropbox          |       |  ✔️   |   ✔️  | ✔️          |   ✔️  |   ✔️  |           |
 | OneDrive |      ✔️ | ✔️   |    ✔️|      ✔️  |   ✔️  |     |           |
