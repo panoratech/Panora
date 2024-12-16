@@ -102,8 +102,14 @@ export class GoogleDriveFolderService implements IFolderService {
 
   async recursiveGetGoogleDriveFolders(
     auth: OAuth2Client,
+    connectionId: string,
   ): Promise<GoogleDriveFolderOutput[]> {
     const drive = google.drive({ version: 'v3', auth });
+
+    const lastSyncTime = await this.getLastSyncTime(connectionId);
+    if (lastSyncTime) {
+      console.log(`Last sync time is ${lastSyncTime.toISOString()}`);
+    }
 
     const rootDriveId = await drive.files
       .get({
@@ -143,8 +149,10 @@ export class GoogleDriveFolderService implements IFolderService {
       let pageToken: string | null = null;
 
       const buildQuery = (parentId: string | null, driveId: string): string => {
-        const baseQuery =
-          "mimeType='application/vnd.google-apps.folder' and trashed=false";
+        let baseQuery = `mimeType='application/vnd.google-apps.folder' and trashed=false`;
+        if (lastSyncTime) {
+          baseQuery += ` and modifiedTime >= '${lastSyncTime.toISOString()}'`;
+        }
         return parentId
           ? `${baseQuery} and '${parentId}' in parents`
           : `${baseQuery} and '${driveId}' in parents`;
@@ -371,7 +379,10 @@ export class GoogleDriveFolderService implements IFolderService {
         access_token: this.cryptoService.decrypt(connection.access_token),
       });
 
-      const folders = await this.recursiveGetGoogleDriveFolders(auth);
+      const folders = await this.recursiveGetGoogleDriveFolders(
+        auth,
+        connection.id_connection,
+      );
       await this.ingestPermissionsForFolders(folders, connection.id_connection);
 
       this.logger.log(`Synced ${folders.length} Google Drive folders!`);
@@ -386,6 +397,14 @@ export class GoogleDriveFolderService implements IFolderService {
       console.log(error);
       throw error;
     }
+  }
+
+  private async getLastSyncTime(connectionId: string): Promise<Date | null> {
+    const lastSync = await this.prisma.fs_folders.findFirst({
+      where: { id_connection: connectionId },
+      orderBy: { remote_modified_at: 'desc' },
+    });
+    return lastSync ? lastSync.remote_modified_at : null;
   }
 }
 
