@@ -12,6 +12,17 @@ import { ServiceRegistry } from '../registry.service';
 import { GoogleDriveFolderInput, GoogleDriveFolderOutput } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
+interface GoogleDriveListResponse {
+  data: {
+    files: GoogleDriveFolderOutput[];
+    nextPageToken?: string;
+  };
+}
+
+const GOOGLE_DRIVE_QUOTA_DELAY = 100; // ms between requests
+const MAX_RETRIES = 3;
+const INITIAL_BACKOFF = 1000; // 1 second
+
 @Injectable()
 export class GoogleDriveFolderService implements IFolderService {
   constructor(
@@ -126,33 +137,84 @@ export class GoogleDriveFolderService implements IFolderService {
     ): Promise<GoogleDriveFolderOutput[]> {
       const folders: GoogleDriveFolderOutput[] = [];
       let pageToken: string | null = null;
-      const query = parentId
-        ? `mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
-        : `mimeType='application/vnd.google-apps.folder' and '${driveId}' in parents and trashed=false`;
 
-      do {
-        const response = await drive.files.list({
-          q: query,
-          fields:
-            'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink)',
-          pageToken,
-          includeItemsFromAllDrives: true,
-          supportsAllDrives: true,
-          ...(driveId !== 'root' && {
-            driveId,
-            corpora: 'drive',
-          }),
+      const buildQuery = (parentId: string | null, driveId: string): string => {
+        const baseQuery =
+          "mimeType='application/vnd.google-apps.folder' and trashed=false";
+        return parentId
+          ? `${baseQuery} and '${parentId}' in parents`
+          : `${baseQuery} and '${driveId}' in parents`;
+      };
+
+      const executeWithRetry = async (
+        pageToken: string | null,
+        retryCount = 0,
+      ): Promise<GoogleDriveListResponse> => {
+        try {
+          await new Promise((resolve) =>
+            setTimeout(resolve, GOOGLE_DRIVE_QUOTA_DELAY),
+          );
+
+          const resp = await drive.files.list({
+            q: buildQuery(parentId, driveId),
+            fields:
+              'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink)',
+            pageToken,
+            includeItemsFromAllDrives: true,
+            supportsAllDrives: true,
+            ...(driveId !== 'root' && {
+              driveId,
+              corpora: 'drive',
+            }),
+          });
+
+          return resp as unknown as GoogleDriveListResponse;
+        } catch (error) {
+          if (!isGoogleApiError(error)) {
+            throw error;
+          }
+
+          const { code, message } = error;
+
+          if (retryCount >= MAX_RETRIES) {
+            throw new Error(
+              `Failed to fetch Google Drive folders after ${MAX_RETRIES} retries. Last error: ${message}`,
+            );
+          }
+
+          // Handle rate limiting and quota errors
+          if (code === 429 || message.includes('quota')) {
+            const backoffTime = INITIAL_BACKOFF * Math.pow(2, retryCount);
+            await new Promise((resolve) => setTimeout(resolve, backoffTime));
+            return executeWithRetry(pageToken, retryCount + 1);
+          }
+
+          throw error;
+        }
+      };
+
+      try {
+        do {
+          const response = await executeWithRetry(pageToken);
+
+          if (response.data.files?.length) {
+            folders.push(...response.data.files);
+          }
+
+          pageToken = response.data.nextPageToken ?? null;
+        } while (pageToken);
+
+        // Set default driveId for folders that don't have one
+        folders.forEach((folder) => {
+          folder.driveId = folder.driveId || rootDriveId;
         });
 
-        folders.push(...(response.data.files as GoogleDriveFolderOutput[]));
-        pageToken = response.data.nextPageToken ?? null;
-      } while (pageToken);
-
-      folders.forEach((folder) => {
-        folder.driveId = folder.driveId || rootDriveId;
-      });
-
-      return folders;
+        return folders;
+      } catch (error) {
+        throw new Error(
+          `Error fetching Google Drive folders: ${error.message}`,
+        );
+      }
     }
 
     // Recursive function to populate folders level by level
@@ -241,4 +303,16 @@ export class GoogleDriveFolderService implements IFolderService {
       throw error;
     }
   }
+}
+
+// Type guard for Google API errors
+function isGoogleApiError(
+  error: unknown,
+): error is { code: number; message: string } {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    'message' in error
+  );
 }
