@@ -159,7 +159,7 @@ export class GoogleDriveService implements IFileService {
       const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
       if (lastSyncTime) {
         console.log(`Last sync time is ${lastSyncTime.toISOString()}`);
-        query += ` and modifiedTime > '${lastSyncTime.toISOString()}'`;
+        query += ` and modifiedTime >= '${lastSyncTime.toISOString()}'`;
       }
     }
     // Fetch the current page of files
@@ -263,9 +263,9 @@ export class GoogleDriveService implements IFileService {
   private async getLastSyncTime(connectionId: string): Promise<Date | null> {
     const lastSync = await this.prisma.fs_files.findFirst({
       where: { id_connection: connectionId },
-      orderBy: { modified_at: 'desc' },
+      orderBy: { remote_modified_at: 'desc' },
     });
-    return lastSync ? lastSync.modified_at : null;
+    return lastSync ? lastSync.remote_modified_at : null;
   }
 
   async downloadFile(fileId: string, connection: any): Promise<Buffer> {
