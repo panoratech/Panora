@@ -104,6 +104,7 @@ export class GoogleDriveFolderMapper implements IFolderMapper {
         : null,
       folder_url: folder.webViewLink || null,
       name: folder.name,
+      permissions: folder.permissions,
       ...opts,
       field_mappings,
     };

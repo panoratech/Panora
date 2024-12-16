@@ -1,6 +1,7 @@
 import { EncryptionService } from '@@core/@core-services/encryption/encryption.service';
 import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { PrismaService } from '@@core/@core-services/prisma/prisma.service';
+import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { ApiResponse } from '@@core/utils/types';
 import { SyncParam } from '@@core/utils/types/interface';
 import { FileStorageObject } from '@filestorage/@lib/@types';
@@ -11,6 +12,8 @@ import { google } from 'googleapis';
 import { ServiceRegistry } from '../registry.service';
 import { GoogleDriveFolderInput, GoogleDriveFolderOutput } from './types';
 import { v4 as uuidv4 } from 'uuid';
+import { GoogledrivePermissionOutput } from '@filestorage/permission/services/googledrive/types';
+import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
 
 interface GoogleDriveListResponse {
   data: {
@@ -30,6 +33,7 @@ export class GoogleDriveFolderService implements IFolderService {
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private ingestService: IngestDataService,
   ) {
     this.logger.setContext(
       `${FileStorageObject.folder.toUpperCase()}:${
@@ -158,7 +162,7 @@ export class GoogleDriveFolderService implements IFolderService {
           const resp = await drive.files.list({
             q: buildQuery(parentId, driveId),
             fields:
-              'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink)',
+              'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissions)',
             pageToken,
             includeItemsFromAllDrives: true,
             supportsAllDrives: true,
@@ -263,6 +267,85 @@ export class GoogleDriveFolderService implements IFolderService {
     }
   }
 
+  /**
+   * Ingests permissions for the provided Google Drive folders into the database.
+   */
+  async ingestPermissionsForFolders(
+    folders: GoogleDriveFolderOutput[],
+    connectionId: string,
+  ): Promise<GoogleDriveFolderOutput[]> {
+    if (folders.length === 0) {
+      this.logger.warn('No folders provided for ingesting permissions.');
+      return folders;
+    }
+
+    try {
+      // Extract all permissions from the folders
+      const allPermissions: GoogledrivePermissionOutput[] = folders.reduce<
+        GoogledrivePermissionOutput[]
+      >((accumulator, folder) => {
+        if (folder.permissions?.length) {
+          accumulator.push(...folder.permissions);
+        }
+        return accumulator;
+      }, []);
+
+      if (allPermissions.length === 0) {
+        this.logger.warn('No permissions found in the provided folders.');
+        return folders;
+      }
+
+      // Remove duplicate permissions based on 'id'
+      const uniquePermissions: GoogledrivePermissionOutput[] = Array.from(
+        new Map(
+          allPermissions.map((permission) => [permission.id, permission]),
+        ).values(),
+      );
+
+      this.logger.log(
+        `Ingesting ${uniquePermissions.length} unique permissions.`,
+      );
+
+      // Ingest permissions using the ingestService
+      const syncedPermissions = await this.ingestService.ingestData<
+        UnifiedFilestoragePermissionOutput,
+        GoogledrivePermissionOutput
+      >(
+        uniquePermissions,
+        'googledrive',
+        connectionId,
+        'filestorage',
+        'permission',
+      );
+
+      // Create a map of original permission ID to synced permission ID
+      const permissionIdMap: Map<string, string> = new Map(
+        syncedPermissions.map((permission) => [
+          permission.remote_id,
+          permission.id_fs_permission,
+        ]),
+      );
+
+      // Update each folder's permissions with the synced permission IDs
+      folders.forEach((folder) => {
+        if (folder.permissions?.length) {
+          folder.permissions = folder.permissions
+            .map((permission) => permissionIdMap.get(permission.id))
+            .filter(
+              (permissionId): permissionId is string =>
+                permissionId !== undefined,
+            );
+        }
+      });
+
+      this.logger.log('Successfully ingested and updated folder permissions.');
+      return folders;
+    } catch (error) {
+      this.logger.error('Error ingesting permissions for folders', error);
+      throw error;
+    }
+  }
+
   async sync(data: SyncParam): Promise<ApiResponse<GoogleDriveFolderOutput[]>> {
     try {
       const { linkedUserId } = data;
@@ -289,6 +372,7 @@ export class GoogleDriveFolderService implements IFolderService {
       });
 
       const folders = await this.recursiveGetGoogleDriveFolders(auth);
+      await this.ingestPermissionsForFolders(folders, connection.id_connection);
 
       this.logger.log(`Synced ${folders.length} Google Drive folders!`);
 

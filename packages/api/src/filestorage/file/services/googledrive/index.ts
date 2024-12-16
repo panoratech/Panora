@@ -44,61 +44,72 @@ export class GoogleDriveService implements IFileService {
     }[],
     extraParams?: { [key: string]: any },
   ): Promise<UnifiedFilestorageFileOutput[]> {
-    // Extract all permissions from all files
-    const allPermissions = sourceData.reduce<{
-      permissions: GoogledrivePermissionOutput[];
-      filePermissionsMap: Map<string, string[]>;
-    }>(
-      (acc, file) => {
-        if (file.permissions?.length) {
-          // Store the relationship between file and its permissions
-          acc.filePermissionsMap.set(
-            file.id,
-            file.permissions.map((perm) => perm.id),
-          );
-          // Add permissions to the batch
-          acc.permissions.push(...file.permissions);
-        }
-        return acc;
-      },
-      { permissions: [], filePermissionsMap: new Map() },
-    );
+    // Extract all permissions from the files
+    const allPermissions: GoogledrivePermissionOutput[] = sourceData.reduce<
+      GoogledrivePermissionOutput[]
+    >((accumulator, file) => {
+      if (file.permissions?.length) {
+        accumulator.push(...file.permissions);
+      }
+      return accumulator;
+    }, []);
 
-    // Filter permissions to keep only unique ones by ID
-    allPermissions.permissions = Array.from(
+    if (allPermissions.length === 0) {
+      this.logger.warn('No permissions found in the provided files.');
+      return this.ingestService.ingestData<
+        UnifiedFilestorageFileOutput,
+        GoogleDriveFileOutput
+      >(
+        sourceData,
+        'googledrive',
+        connectionId,
+        'filestorage',
+        'file',
+        customFieldMappings,
+        extraParams,
+      );
+    }
+
+    // Remove duplicate permissions based on 'id'
+    const uniquePermissions: GoogledrivePermissionOutput[] = Array.from(
       new Map(
-        allPermissions.permissions.map((perm) => [perm.id, perm]),
+        allPermissions.map((permission) => [permission.id, permission]),
       ).values(),
     );
 
-    // Batch ingest all permissions at once
-    const syncedPermissions = allPermissions.permissions.length
-      ? await this.ingestService.ingestData<
-          UnifiedFilestoragePermissionOutput,
-          GoogledrivePermissionOutput
-        >(
-          allPermissions.permissions,
-          'googledrive',
-          connectionId,
-          'filestorage',
-          'permission',
-          customFieldMappings,
-        )
-      : [];
-
-    // Create a map of original permission ID to synced permission ID
-    const permissionIdMap = new Map(
-      syncedPermissions.map((perm) => [perm.remote_id, perm.id_fs_permission]),
+    this.logger.log(
+      `Ingesting ${uniquePermissions.length} unique permissions.`,
     );
 
-    // Update files with synced permission IDs
+    // Ingest permissions using the ingestService
+    const syncedPermissions = await this.ingestService.ingestData<
+      UnifiedFilestoragePermissionOutput,
+      GoogledrivePermissionOutput
+    >(
+      uniquePermissions,
+      'googledrive',
+      connectionId,
+      'filestorage',
+      'permission',
+    );
+
+    // Create a map of original permission ID to synced permission ID
+    const permissionIdMap: Map<string, string> = new Map(
+      syncedPermissions.map((permission) => [
+        permission.remote_id,
+        permission.id_fs_permission,
+      ]),
+    );
+
+    // Update each file's permissions with the synced permission IDs
     sourceData.forEach((file) => {
-      if (allPermissions.filePermissionsMap.has(file.id)) {
-        const originalPermissionIds =
-          allPermissions.filePermissionsMap.get(file.id) ?? [];
-        file.permissions = originalPermissionIds
-          .map((id) => permissionIdMap.get(id))
-          .filter((id): id is string => id !== undefined);
+      if (file.permissions?.length) {
+        file.permissions = file.permissions
+          .map((permission) => permissionIdMap.get(permission.id))
+          .filter(
+            (permissionId): permissionId is string =>
+              permissionId !== undefined,
+          );
       }
     });
 
