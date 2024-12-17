@@ -135,7 +135,7 @@ export class OnedriveFolderMapper implements IFolderMapper {
         connectionId,
       ),
       // permission: opts.permissions?.[0] || null,
-      permissions: null,
+      permissions: [],
       size: folder.size.toString(),
       shared_link: opts.shared_links?.[0] || null,
       field_mappings,

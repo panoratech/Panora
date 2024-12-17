@@ -6,12 +6,15 @@ import { SyncParam } from '@@core/utils/types/interface';
 import { FileStorageObject } from '@filestorage/@lib/@types';
 import { IFileService } from '@filestorage/file/types';
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { OnedriveFileOutput } from './types';
 
 @Injectable()
 export class OnedriveService implements IFileService {
+  private readonly MAX_RETRIES: number = 5;
+  private readonly INITIAL_BACKOFF_MS: number = 1000;
+
   constructor(
     private prisma: PrismaService,
     private logger: LoggerService,
@@ -75,54 +78,126 @@ export class OnedriveService implements IFileService {
     connection: any,
     folderId: string,
   ): Promise<OnedriveFileOutput[]> {
-    const resp = await axios.get(
-      `${connection.account_url}/v1.0/me/drive/items/${folderId}/children`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
-        },
+    const config: AxiosRequestConfig = {
+      method: 'get',
+      url: `${connection.account_url}/v1.0/me/drive/items/${folderId}/children`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.cryptoService.decrypt(
+          connection.access_token,
+        )}`,
       },
-    );
+    };
+
+    const resp: AxiosResponse = await this.makeRequestWithRetry(config);
 
     const files: OnedriveFileOutput[] = resp.data.value.filter(
-      (elem) => !elem.folder, // files don't have a folder property
+      (elem: any) => !elem.folder, // files don't have a folder property
     );
 
     // Add permissions (shared link is also included in permissions in OneDrive)
-    await Promise.all(
-      files.map(async (driveItem) => {
-        const resp = await axios.get(
-          `${connection.account_url}/v1.0/me/drive/items/${driveItem.id}/permissions`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${this.cryptoService.decrypt(
-                connection.access_token,
-              )}`,
-            },
-          },
-        );
-        driveItem.permissions = resp.data.value;
-      }),
-    );
+    // await Promise.all(
+    //   files.map(async (driveItem: OnedriveFileOutput) => {
+    //     const permissionsConfig: AxiosRequestConfig = {
+    //       method: 'get',
+    //       url: `${connection.account_url}/v1.0/me/drive/items/${driveItem.id}/permissions`,
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         Authorization: `Bearer ${this.cryptoService.decrypt(
+    //           connection.access_token,
+    //         )}`,
+    //       },
+    //     };
+
+    //     const permissionsResp: AxiosResponse = await this.makeRequestWithRetry(
+    //       permissionsConfig,
+    //     );
+    //     driveItem.permissions = permissionsResp.data.value;
+    //   }),
+    // );
 
     return files;
   }
   async downloadFile(fileId: string, connection: any): Promise<Buffer> {
-    const response = await axios.get(
-      `${connection.account_url}/v1.0/me/drive/items/${fileId}/content`,
-      {
-        headers: {
-          Authorization: `Bearer ${this.cryptoService.decrypt(
-            connection.access_token,
-          )}`,
-        },
-        responseType: 'arraybuffer',
+    const config: AxiosRequestConfig = {
+      method: 'get',
+      url: `${connection.account_url}/v1.0/me/drive/items/${fileId}/content`,
+      headers: {
+        Authorization: `Bearer ${this.cryptoService.decrypt(
+          connection.access_token,
+        )}`,
       },
-    );
+      responseType: 'arraybuffer',
+    };
+
+    const response: AxiosResponse = await this.makeRequestWithRetry(config);
     return Buffer.from(response.data);
+  }
+
+  /**
+   * Makes an HTTP request with rate limit handling using exponential backoff.
+   * @param config - Axios request configuration.
+   * @returns Axios response.
+   */
+  private async makeRequestWithRetry(
+    config: AxiosRequestConfig,
+  ): Promise<AxiosResponse> {
+    let attempts = 0;
+    let backoff: number = this.INITIAL_BACKOFF_MS;
+
+    while (attempts < this.MAX_RETRIES) {
+      try {
+        const response: AxiosResponse = await axios(config);
+        return response;
+      } catch (error: any) {
+        if (error.response && error.response.status === 429) {
+          attempts++;
+          const retryAfter: number = this.getRetryAfter(
+            error.response.headers['retry-after'],
+          );
+          const delayTime: number = Math.max(retryAfter * 1000, backoff);
+
+          this.logger.warn(
+            `Rate limit hit. Retrying request in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
+          );
+
+          await this.delay(delayTime);
+          backoff *= 2; // Exponential backoff
+        } else {
+          this.logger.error('HTTP request failed:', error);
+          throw error;
+        }
+      }
+    }
+
+    this.logger.error(
+      'Max retry attempts reached. Request failed.',
+      'onedrive',
+      'makeRequestWithRetry',
+    );
+    throw new Error('Max retry attempts reached.');
+  }
+
+  /**
+   * Parses the Retry-After header to determine the wait time.
+   * @param retryAfterHeader - Value of the Retry-After header.
+   * @returns Retry delay in seconds.
+   */
+  private getRetryAfter(retryAfterHeader: string | undefined): number {
+    if (!retryAfterHeader) {
+      return 1; // Default to 1 second if header is missing
+    }
+
+    const retryAfterSeconds: number = parseInt(retryAfterHeader, 10);
+    return isNaN(retryAfterSeconds) ? 1 : retryAfterSeconds;
+  }
+
+  /**
+   * Delays execution for the specified duration.
+   * @param ms - Duration in milliseconds.
+   * @returns Promise that resolves after the delay.
+   */
+  private delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
