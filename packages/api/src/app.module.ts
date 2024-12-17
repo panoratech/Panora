@@ -42,6 +42,10 @@ import { EcommerceModule } from '@ecommerce/ecommerce.module';
           distribution: process.env.DISTRIBUTION,
           commit_id: process.env.GIT_COMMIT_ID,
         }),
+        redact: {
+          paths: ['req.headers.authorization', 'req.headers.x-api-key'],
+          remove: false
+        },
         transport:
           process.env.AXIOM_AGENT_STATUS === 'ENABLED'
             ? {
