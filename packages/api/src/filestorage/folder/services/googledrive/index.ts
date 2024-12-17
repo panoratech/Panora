@@ -373,13 +373,18 @@ export class GoogleDriveFolderService implements IFolderService {
     connectionId: string,
     lastSyncTime: Date,
   ): Promise<GoogleDriveFolderOutput[]> {
+    const MAX_RETRIES = 5;
+    const INITIAL_BACKOFF = 1000; // 1 second
+
     try {
       const drive = google.drive({ version: 'v3', auth });
       const driveIds = await this.fetchDriveIds(auth);
 
-      const modifiedFolders = await this.getModifiedFolders(
+      const modifiedFolders = await this.getModifiedFoldersWithRetry(
         drive,
         lastSyncTime,
+        MAX_RETRIES,
+        INITIAL_BACKOFF,
       );
       const folderIdToInternalIdMap = new Map<string, string>();
       const foldersToSync: GoogleDriveFolderOutput[] = []; // output
@@ -390,8 +395,7 @@ export class GoogleDriveFolderService implements IFolderService {
 
       async function getParentFromDb(parentId: string): Promise<string | null> {
         if (parentLookupCache.has(parentId)) {
-          const cachedValue = parentLookupCache.get(parentId);
-          return cachedValue === undefined ? null : cachedValue;
+          return parentLookupCache.get(parentId);
         }
 
         const parent = await this.prisma.fs_folders.findFirst({
@@ -411,17 +415,14 @@ export class GoogleDriveFolderService implements IFolderService {
         const foldersStillPending: GoogleDriveFolderOutput[] = [];
 
         for (const folder of remainingFolders) {
-          console.log('folder', folder);
           const parentId = folder.parents?.[0] || 'root';
           let internalParentId: string | null = null;
 
           // Check in memory maps first
           if (folderIdToInternalIdMap.has(parentId)) {
             internalParentId = folderIdToInternalIdMap.get(parentId)!;
-          } else if (driveIds.includes(parentId)) {
+          } else if (driveIds.includes(parentId) || parentId === 'root') {
             internalParentId = 'root';
-          } else if (parentId === 'root') {
-            internalParentId = null;
           } else {
             // Only query DB if necessary
             internalParentId = await getParentFromDb.call(this, parentId);
@@ -445,11 +446,13 @@ export class GoogleDriveFolderService implements IFolderService {
 
         // Check if we're stuck in a loop (no folders processed in this iteration)
         if (foldersStillPending.length === remainingFolders.length) {
-          this.logger.warn(
+          this.logger.error(
             `Processing stopped with ${foldersStillPending.length} unresolved folders - possible orphans or circular references`,
+            'foldersStillPending',
+            `${JSON.stringify(foldersStillPending)}`,
           );
           console.log('foldersStillPending', foldersStillPending);
-          break;
+          throw new Error('Processing stopped with unresolved folders');
         }
 
         remainingFolders = foldersStillPending;
@@ -460,6 +463,65 @@ export class GoogleDriveFolderService implements IFolderService {
       this.logger.error('Error in incremental folder sync', error);
       throw error;
     }
+  }
+
+  /**
+   * Fetches modified folders with retry logic for handling rate limits.
+   */
+  private async getModifiedFoldersWithRetry(
+    drive: any,
+    lastSyncTime: Date,
+    maxRetries: number,
+    initialBackoff: number,
+  ): Promise<any[]> {
+    let attempt = 0;
+    let backoff = initialBackoff;
+
+    while (attempt <= maxRetries) {
+      try {
+        return await this.getModifiedFolders(drive, lastSyncTime);
+      } catch (error) {
+        if (
+          isGoogleApiError(error) &&
+          (error.code === 429 || error.message.includes('quota'))
+        ) {
+          if (attempt === maxRetries) {
+            this.logger.error(
+              'Max retries reached for fetching modified folders.',
+              error.message,
+            );
+            throw new Error(
+              'Failed to fetch modified folders due to rate limits.',
+            );
+          }
+          this.logger.warn(
+            `Rate limit encountered. Retrying attempt ${
+              attempt + 1
+            } after ${backoff}ms.`,
+            error.message,
+          );
+          await this.delay(backoff);
+          backoff *= 2; // Exponential backoff
+          attempt += 1;
+        } else {
+          this.logger.error(
+            'Unexpected error while fetching modified folders.',
+            error,
+          );
+          throw error;
+        }
+      }
+    }
+
+    return [];
+  }
+
+  /**
+   * Delays execution for a specified amount of time.
+   * @param ms Milliseconds to delay.
+   */
+  private async delay(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private async getModifiedFolders(
@@ -550,6 +612,20 @@ export class GoogleDriveFolderService implements IFolderService {
       orderBy: { remote_modified_at: 'desc' },
     });
     return lastSync ? lastSync.remote_modified_at : null;
+  }
+
+  /**
+   * Type guard for Google API errors
+   */
+  private isGoogleApiError(
+    error: unknown,
+  ): error is { code: number; message: string } {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      'message' in error
+    );
   }
 }
 
