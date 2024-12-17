@@ -115,7 +115,7 @@ export class OnedriveService implements IFolderService {
       let batch: string[] = [remote_folder_id];
 
       while (batch.length > 0) {
-        if (depth > 5) {
+        if (depth > 50) {
           this.logger.warn('Maximum folder depth reached.');
           break;
         }
