@@ -15,6 +15,7 @@ import { FileStorageModule } from './filestorage/filestorage.module';
 import { MarketingAutomationModule } from './marketingautomation/marketingautomation.module';
 import { CoreSharedModule } from '@@core/@core-services/module';
 import { EcommerceModule } from '@ecommerce/ecommerce.module';
+import path from 'path';
 
 @Module({
   imports: [
@@ -43,7 +44,7 @@ import { EcommerceModule } from '@ecommerce/ecommerce.module';
           commit_id: process.env.GIT_COMMIT_ID,
         }),
         redact: {
-          paths: ['req.headers.authorization', 'req.headers.x-api-key'],
+          paths: ["req.headers.authorization", 'path["req.headers.x-api-key"]'],
           remove: false
         },
         transport:
