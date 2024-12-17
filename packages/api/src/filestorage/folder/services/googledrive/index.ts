@@ -106,11 +106,6 @@ export class GoogleDriveFolderService implements IFolderService {
   ): Promise<GoogleDriveFolderOutput[]> {
     const drive = google.drive({ version: 'v3', auth });
 
-    const lastSyncTime = await this.getLastSyncTime(connectionId);
-    if (lastSyncTime) {
-      console.log(`Last sync time is ${lastSyncTime.toISOString()}`);
-    }
-
     const rootDriveId = await drive.files
       .get({
         fileId: 'root',
@@ -127,10 +122,7 @@ export class GoogleDriveFolderService implements IFolderService {
       let pageToken: string | null = null;
 
       const buildQuery = (parentId: string | null, driveId: string): string => {
-        let baseQuery = `mimeType='application/vnd.google-apps.folder' and trashed=false`;
-        if (lastSyncTime) {
-          baseQuery += ` and modifiedTime >= '${lastSyncTime.toISOString()}'`;
-        }
+        const baseQuery = `mimeType='application/vnd.google-apps.folder' and trashed=false`;
         return parentId
           ? `${baseQuery} and '${parentId}' in parents`
           : `${baseQuery} and '${driveId}' in parents`;
@@ -228,15 +220,17 @@ export class GoogleDriveFolderService implements IFolderService {
 
       allFolders.push(...currentLevelFolders);
 
-      for (const folder of currentLevelFolders) {
-        await populateFolders(
-          folder.id,
-          folder.internal_id,
-          level + 1,
-          allFolders,
-          driveId,
-        );
-      }
+      await Promise.all(
+        currentLevelFolders.map((folder) =>
+          populateFolders(
+            folder.id,
+            folder.internal_id,
+            level + 1,
+            allFolders,
+            driveId,
+          ),
+        ),
+      );
     }
 
     try {
@@ -386,9 +380,10 @@ export class GoogleDriveFolderService implements IFolderService {
         MAX_RETRIES,
         INITIAL_BACKOFF,
       );
+      const unresolvedFolders = await this.getUnresolvedFolders(connectionId);
       const folderIdToInternalIdMap = new Map<string, string>();
       const foldersToSync: GoogleDriveFolderOutput[] = []; // output
-      let remainingFolders = modifiedFolders;
+      let remainingFolders = modifiedFolders.concat(unresolvedFolders);
 
       // Create a cache for parent lookups to minimize DB queries
       const parentLookupCache = new Map<string, string | null>();
@@ -446,13 +441,15 @@ export class GoogleDriveFolderService implements IFolderService {
 
         // Check if we're stuck in a loop (no folders processed in this iteration)
         if (foldersStillPending.length === remainingFolders.length) {
-          this.logger.error(
-            `Processing stopped with ${foldersStillPending.length} unresolved folders - possible orphans or circular references`,
-            'foldersStillPending',
-            `${JSON.stringify(foldersStillPending)}`,
+          this.logger.warn(
+            `Marking ${foldersStillPending.length} unresolved folders as 'unresolved'. Will try again in next sync.`,
           );
-          console.log('foldersStillPending', foldersStillPending);
-          throw new Error('Processing stopped with unresolved folders');
+
+          const unresolvedFolders = foldersStillPending.map((folder) => ({
+            ...folder,
+            internal_parent_folder_id: 'unresolved',
+          }));
+          foldersToSync.push(...unresolvedFolders);
         }
 
         remainingFolders = foldersStillPending;
@@ -473,7 +470,7 @@ export class GoogleDriveFolderService implements IFolderService {
     lastSyncTime: Date,
     maxRetries: number,
     initialBackoff: number,
-  ): Promise<any[]> {
+  ): Promise<GoogleDriveFolderOutput[]> {
     let attempt = 0;
     let backoff = initialBackoff;
 
@@ -527,9 +524,9 @@ export class GoogleDriveFolderService implements IFolderService {
   private async getModifiedFolders(
     drive: any,
     lastSyncTime: Date,
-  ): Promise<any[]> {
+  ): Promise<GoogleDriveFolderOutput[]> {
     let pageToken: string | null = null;
-    const folders: any[] = [];
+    const folders: GoogleDriveFolderOutput[] = [];
     const query = `modifiedTime >= '${lastSyncTime.toISOString()}'`;
 
     do {
@@ -551,6 +548,47 @@ export class GoogleDriveFolderService implements IFolderService {
     } while (pageToken);
 
     return folders;
+  }
+
+  async getUnresolvedFolders(
+    connectionId: string,
+  ): Promise<GoogleDriveFolderOutput[]> {
+    // Get unresolved folders
+    const unresolvedFolders = await this.prisma.fs_folders.findMany({
+      where: {
+        id_connection: connectionId,
+        parent_folder: 'unresolved',
+      },
+      select: {
+        id_fs_folder: true,
+        name: true,
+      },
+    });
+
+    // Get remote data for all folders in a single query
+    const folderIds = unresolvedFolders.map((folder) => folder.id_fs_folder);
+    const remoteDataEntries = await this.prisma.remote_data.findMany({
+      where: {
+        ressource_owner_id: {
+          in: folderIds,
+        },
+      },
+    });
+
+    // Create a map for quick lookup
+    const remoteDataMap = new Map(
+      remoteDataEntries.map((entry) => [entry.ressource_owner_id, entry.data]),
+    );
+
+    // Map and parse the remote data, filtering out any null values
+    return unresolvedFolders
+      .map((folder) => {
+        const remoteData = remoteDataMap.get(folder.id_fs_folder);
+        return remoteData
+          ? (JSON.parse(remoteData) as GoogleDriveFolderOutput)
+          : null;
+      })
+      .filter((folder): folder is GoogleDriveFolderOutput => folder !== null);
   }
 
   async sync(data: SyncParam): Promise<ApiResponse<GoogleDriveFolderOutput[]>> {
@@ -590,6 +628,8 @@ export class GoogleDriveFolderService implements IFolderService {
             auth,
             connection.id_connection,
           );
+
+      console.log(`Got ${folders.length} folders`);
 
       await this.ingestPermissionsForFolders(folders, connection.id_connection);
       this.logger.log(`Synced ${folders.length} Google Drive folders!`);
