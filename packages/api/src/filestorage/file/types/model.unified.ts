@@ -183,4 +183,14 @@ export class UnifiedFilestorageFileOutput extends UnifiedFilestorageFileInput {
   })
   @IsOptional()
   remote_modified_at?: Date;
+
+  @ApiPropertyOptional({
+    example: false,
+    type: Boolean,
+    description:
+      'Whether the object was deleted in the context of the 3rd Party',
+    default: false,
+  })
+  @IsOptional()
+  remote_was_deleted?: boolean;
 }

@@ -136,6 +136,7 @@ export class OnedriveFolderMapper implements IFolderMapper {
       remote_modified_at: folder.lastModifiedDateTime
         ? new Date(folder.lastModifiedDateTime)
         : null,
+      remote_was_deleted: folder.deleted ? true : false,
       name: folder.name,
       folder_url: folder.webUrl,
       description: folder.description,

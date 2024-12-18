@@ -96,6 +96,7 @@ export class GoogleDriveFolderMapper implements IFolderMapper {
       remote_id: folder.id,
       remote_data: folder,
       remote_drive_id: folder.driveId || null,
+      remote_was_deleted: folder.trashed ?? false,
       remote_created_at: folder.createdTime
         ? new Date(folder.createdTime)
         : null,

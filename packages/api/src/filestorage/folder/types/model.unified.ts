@@ -172,4 +172,14 @@ export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInpu
   })
   @IsOptional()
   remote_modified_at?: Date;
+
+  @ApiPropertyOptional({
+    example: false,
+    type: Boolean,
+    description:
+      'Whether the folder was deleted in the context of the 3rd Party',
+    default: false,
+  })
+  @IsOptional()
+  remote_was_deleted?: boolean;
 }

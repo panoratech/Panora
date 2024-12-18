@@ -130,6 +130,7 @@ export class OnedriveFileMapper implements IFileMapper {
       remote_modified_at: file.lastModifiedDateTime
         ? new Date(file.lastModifiedDateTime)
         : null,
+      remote_was_deleted: file.deleted ? true : false,
       name: file.name,
       file_url: file.webUrl,
       mime_type: file.file.mimeType,

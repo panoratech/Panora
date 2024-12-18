@@ -249,6 +249,7 @@ export class FileService {
         modified_at: file.modified_at,
         remote_created_at: file.remote_created_at,
         remote_modified_at: file.remote_modified_at,
+        remote_was_deleted: file.remote_was_deleted,
       };
 
       let res: UnifiedFilestorageFileOutput = unifiedFile;
@@ -403,6 +404,7 @@ export class FileService {
             modified_at: file.modified_at,
             remote_created_at: file.remote_created_at,
             remote_modified_at: file.remote_modified_at,
+            remote_was_deleted: file.remote_was_deleted,
           };
         }),
       );

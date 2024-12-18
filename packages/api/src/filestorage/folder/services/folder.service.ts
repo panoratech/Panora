@@ -250,6 +250,7 @@ export class FolderService {
         modified_at: folder.modified_at,
         remote_created_at: folder.remote_created_at,
         remote_modified_at: folder.remote_modified_at,
+        remote_was_deleted: folder.remote_was_deleted,
       };
 
       if (remote_data) {
@@ -402,6 +403,7 @@ export class FolderService {
               modified_at: folder.modified_at,
               remote_created_at: folder.remote_created_at,
               remote_modified_at: folder.remote_modified_at,
+              remote_was_deleted: folder.remote_was_deleted,
             };
           }),
         );

@@ -103,6 +103,7 @@ export class GoogleDriveFileMapper implements IFileMapper {
       remote_modified_at: file.modifiedTime
         ? new Date(file.modifiedTime)
         : null,
+      remote_was_deleted: file.trashed ?? false,
     };
   }
 }

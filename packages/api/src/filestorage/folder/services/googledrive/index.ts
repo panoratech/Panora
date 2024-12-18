@@ -182,7 +182,7 @@ export class GoogleDriveFolderService implements IFolderService {
       let pageToken: string | null = null;
 
       const buildQuery = (parentId: string | null, driveId: string): string => {
-        const baseQuery = `mimeType='application/vnd.google-apps.folder' and trashed=false`;
+        const baseQuery = `mimeType='application/vnd.google-apps.folder'`;
         return parentId
           ? `${baseQuery} and '${parentId}' in parents`
           : `${baseQuery} and '${driveId}' in parents`;
@@ -194,7 +194,7 @@ export class GoogleDriveFolderService implements IFolderService {
             drive.files.list({
               q: buildQuery(parentId, driveId),
               fields:
-                'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissions)',
+                'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissions, trashed)',
               pageToken,
               includeItemsFromAllDrives: true,
               supportsAllDrives: true,
@@ -508,10 +508,21 @@ export class GoogleDriveFolderService implements IFolderService {
     this.logger.warn(
       `Found ${pending.length} unresolved folders. Resolving them...`,
     );
-    async function getIntenalParentRecursive(
+
+    const getInternalParentRecursive = async (
       folder: GoogleDriveFolderOutput,
-    ): Promise<string | null> {
+      visitedIds: Set<string> = new Set(),
+    ): Promise<string | null> => {
       const remote_parent_id = folder.parents?.[0] || 'root';
+
+      // Prevent infinite loops
+      if (visitedIds.has(remote_parent_id)) {
+        this.logger.warn(`Circular reference detected for folder ${folder.id}`);
+        return null;
+      }
+      visitedIds.add(remote_parent_id);
+
+      // Check cache first
       const internal_parent_id = await this.resolveParentId(
         remote_parent_id,
         parentLookupCache,
@@ -519,27 +530,46 @@ export class GoogleDriveFolderService implements IFolderService {
         connectionId,
         parentLookupCache,
       );
+
       if (internal_parent_id) {
         return internal_parent_id;
       }
 
-      return getIntenalParentRecursive(
-        remote_folders.get(remote_parent_id) ||
+      // Try to get parent from remote folders map or API
+      try {
+        const parentFolder =
+          remote_folders.get(remote_parent_id) ||
           (await this.executeWithRetry(() =>
-            drive.files.get({
-              fileId: remote_parent_id,
-              fields: 'parents',
-            }),
-          )),
-      );
-    }
+            drive.files
+              .get({
+                fileId: remote_parent_id,
+                fields: 'id,parents',
+              })
+              .then((response) => response.data),
+          ));
+
+        if (!parentFolder) {
+          return null;
+        }
+
+        return getInternalParentRecursive(parentFolder, visitedIds);
+      } catch (error) {
+        this.logger.error(
+          `Failed to resolve parent for folder ${folder.id}`,
+          error,
+        );
+        return null;
+      }
+    };
 
     await Promise.all(
       pending.map(async (folder) => {
-        const internal_parent_id = await getIntenalParentRecursive(folder);
+        const internal_parent_id = await getInternalParentRecursive(folder);
+        const folder_internal_id = uuidv4();
         output.push({
           ...folder,
           internal_parent_folder_id: internal_parent_id,
+          internal_id: folder_internal_id,
         });
       }),
     );
@@ -597,7 +627,7 @@ export class GoogleDriveFolderService implements IFolderService {
       const response = await drive.files.list({
         q: query,
         fields:
-          'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissions)',
+          'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissions, trashed)',
         pageToken,
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,

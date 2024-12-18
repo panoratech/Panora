@@ -612,12 +612,6 @@ paths:
       responses:
         '200':
           description: Pull frequency updated successfully
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
       tags: *ref_5
       x-speakeasy-group: sync
     get:
@@ -12126,6 +12120,11 @@ components:
           example: '2024-10-01T12:00:00Z'
           description: The modified date of the folder in the context of the 3rd Party
           nullable: true
+        remote_was_deleted:
+          type: boolean
+          example: false
+          description: Whether the folder was deleted in the context of the 3rd Party
+          default: false
       required:
         - name
         - size

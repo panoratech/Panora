@@ -1284,6 +1284,7 @@ model fs_files {
   id_fs_drive        String?   @db.Uuid
   remote_created_at  DateTime? @db.Timestamptz(6)
   remote_modified_at DateTime? @db.Timestamptz(6)
+  remote_was_deleted Boolean   @default(false)
   created_at         DateTime  @db.Timestamptz(6)
   modified_at        DateTime  @db.Timestamptz(6)
   id_connection      String    @db.Uuid
@@ -1303,6 +1304,7 @@ model fs_folders {
   modified_at        DateTime  @db.Timestamptz(6)
   remote_created_at  DateTime? @db.Timestamptz(6)
   remote_modified_at DateTime? @db.Timestamptz(6)
+  remote_was_deleted Boolean   @default(false)
   id_fs_drive        String?   @db.Uuid
   id_connection      String    @db.Uuid
   id_fs_permissions  String[]  @db.Uuid

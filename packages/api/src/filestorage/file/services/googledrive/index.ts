@@ -159,8 +159,7 @@ export class GoogleDriveService implements IFileService {
       })
       .then((res) => res.data.id);
 
-    let query =
-      "mimeType!='application/vnd.google-apps.folder' and trashed = false";
+    let query = "mimeType!='application/vnd.google-apps.folder'";
     if (!pageTokenFiles && !pageTokenFolders) {
       const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
       if (lastSyncTime) {
@@ -183,6 +182,7 @@ export class GoogleDriveService implements IFileService {
       parents: file.parents,
       webViewLink: file.webViewLink,
       driveId: file.driveId || rootDriveId,
+      trashed: file.trashed ?? false,
     }));
 
     // Process the files fetched in the current batch
@@ -239,7 +239,7 @@ export class GoogleDriveService implements IFileService {
           drive.files.list({
             q: query,
             fields:
-              'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions)',
+              'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions, trashed)',
             pageSize: BATCH_SIZE,
             pageToken: pageTokenFiles,
             includeItemsFromAllDrives: true,
@@ -259,7 +259,7 @@ export class GoogleDriveService implements IFileService {
           drive.files.list({
             q: folderQuery,
             fields:
-              'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions)',
+              'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions, trashed)',
             pageSize: BATCH_SIZE,
             pageToken: pageTokenFolders,
             includeItemsFromAllDrives: true,
@@ -276,7 +276,7 @@ export class GoogleDriveService implements IFileService {
               drive.files.list({
                 q: `'${folder.id}' in parents`,
                 fields:
-                  'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions)',
+                  'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions, trashed)',
                 pageSize: BATCH_SIZE,
               }),
             ),
