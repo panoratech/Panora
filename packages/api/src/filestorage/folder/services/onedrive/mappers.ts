@@ -124,16 +124,14 @@ export class OnedriveFolderMapper implements IFolderMapper {
     }
 
     const result = {
+      id: folder.internal_id ?? null,
+      parent_folder_id: folder.internal_parent_folder_id ?? null,
       remote_id: folder.id,
       remote_data: folder,
       name: folder.name,
       folder_url: folder.webUrl,
       description: folder.description,
       drive_id: null,
-      parent_folder_id: await this.utils.getFolderIdFromRemote(
-        folder.parentReference?.id,
-        connectionId,
-      ),
       // permission: opts.permissions?.[0] || null,
       permissions: [],
       size: folder.size.toString(),

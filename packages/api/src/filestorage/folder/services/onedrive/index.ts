@@ -13,6 +13,7 @@ import { SyncParam } from '@@core/utils/types/interface';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { UnifiedFilestorageFileOutput } from '@filestorage/file/types/model.unified';
 import { OnedriveFileOutput } from '@filestorage/file/services/onedrive/types';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class OnedriveService implements IFolderService {
@@ -112,7 +113,17 @@ export class OnedriveService implements IFolderService {
 
       let result: OnedriveFolderOutput[] = [rootFolderData.data];
       let depth = 0;
-      let batch: string[] = [remote_folder_id];
+      let batch: {
+        remote_folder_id: string;
+        internal_id: string | null;
+        internal_parent_folder_id: string | null;
+      }[] = [
+        {
+          remote_folder_id: remote_folder_id,
+          internal_id: uuidv4(),
+          internal_parent_folder_id: null,
+        },
+      ];
 
       while (batch.length > 0) {
         if (depth > 50) {
@@ -121,37 +132,49 @@ export class OnedriveService implements IFolderService {
         }
 
         const nestedFoldersPromises: Promise<OnedriveFolderOutput[]>[] =
-          batch.map(async (folder_id: string) => {
-            const childrenConfig: AxiosRequestConfig = {
-              method: 'get',
-              url: `${connection.account_url}/v1.0/me/drive/items/${folder_id}/children`,
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.cryptoService.decrypt(
-                  connection.access_token,
-                )}`,
-              },
-            };
+          batch.map(
+            async (folder: {
+              remote_folder_id: string;
+              internal_id: string;
+              internal_parent_folder_id: string;
+            }) => {
+              const childrenConfig: AxiosRequestConfig = {
+                method: 'get',
+                url: `${connection.account_url}/v1.0/me/drive/items/${folder.remote_folder_id}/children`,
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${this.cryptoService.decrypt(
+                    connection.access_token,
+                  )}`,
+                },
+              };
 
-            const resp: AxiosResponse = await this.makeRequestWithRetry(
-              childrenConfig,
-            );
+              const resp: AxiosResponse = await this.makeRequestWithRetry(
+                childrenConfig,
+              );
 
-            const folders: OnedriveFolderOutput[] = resp.data.value.filter(
-              (driveItem: any) => driveItem.folder,
-            );
+              const folders: OnedriveFolderOutput[] = resp.data.value.filter(
+                (driveItem: any) => driveItem.folder,
+              );
 
-            return folders;
-          });
+              return folders.map((f: OnedriveFolderOutput) => ({
+                ...f,
+                internal_id: uuidv4(),
+                internal_parent_folder_id: folder.internal_id,
+              }));
+            },
+          );
 
         const nestedFolders: OnedriveFolderOutput[][] = await Promise.all(
           nestedFoldersPromises,
         );
 
         result = result.concat(nestedFolders.flat());
-        batch = nestedFolders
-          .flat()
-          .map((folder: OnedriveFolderOutput) => folder.id);
+        batch = nestedFolders.flat().map((folder: OnedriveFolderOutput) => ({
+          remote_folder_id: folder.id,
+          internal_id: folder.internal_id,
+          internal_parent_folder_id: folder.internal_parent_folder_id,
+        }));
         this.logger.log(`Batch size: ${batch.length} at depth ${depth}`);
         depth++;
       }

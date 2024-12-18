@@ -122,6 +122,7 @@ export class OnedriveFileMapper implements IFileMapper {
     return {
       remote_id: file.id,
       remote_data: file,
+      remote_folder_id: file.parentReference?.id,
       name: file.name,
       file_url: file.webUrl,
       mime_type: file.file.mimeType,
