@@ -56,6 +56,7 @@ export class OnedriveService implements IFileService {
         const folders = await this.prisma.fs_folders.findMany({
           where: {
             id_connection: connection.id_connection,
+            remote_was_deleted: false,
           },
           select: {
             remote_id: true,
@@ -106,22 +107,42 @@ export class OnedriveService implements IFileService {
     connection: any,
     folderId: string,
   ): Promise<OnedriveFileOutput[]> {
-    const config: AxiosRequestConfig = {
-      method: 'get',
-      url: `${connection.account_url}/v1.0/me/drive/items/${folderId}/children`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.cryptoService.decrypt(
-          connection.access_token,
-        )}`,
-      },
-    };
+    try {
+      const config: AxiosRequestConfig = {
+        timeout: 30000,
+        method: 'get',
+        url: `${connection.account_url}/v1.0/me/drive/items/${folderId}/children`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      };
 
-    const resp: AxiosResponse = await this.makeRequestWithRetry(config);
+      const resp: AxiosResponse = await this.makeRequestWithRetry(config);
 
-    const files: OnedriveFileOutput[] = resp.data.value.filter(
-      (elem: any) => !elem.folder, // files don't have a folder property
-    );
+      const files: OnedriveFileOutput[] = resp.data.value.filter(
+        (elem: any) => !elem.folder, // files don't have a folder property
+      );
+
+      return files;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        // Folder not found, mark as deleted
+        await this.prisma.fs_folders.updateMany({
+          where: {
+            remote_id: folderId,
+            id_connection: connection.id_connection,
+          },
+          data: {
+            remote_was_deleted: true,
+          },
+        });
+        return [];
+      }
+      throw error;
+    }
 
     // Add permissions (shared link is also included in permissions in OneDrive)
     // await Promise.all(
@@ -143,9 +164,8 @@ export class OnedriveService implements IFileService {
     //     driveItem.permissions = permissionsResp.data.value;
     //   }),
     // );
-
-    return files;
   }
+
   async downloadFile(fileId: string, connection: any): Promise<Buffer> {
     const config: AxiosRequestConfig = {
       method: 'get',
@@ -178,8 +198,10 @@ export class OnedriveService implements IFileService {
         const response: AxiosResponse = await axios(config);
         return response;
       } catch (error: any) {
+        attempts++;
+
+        // Handle rate limiting
         if (error.response && error.response.status === 429) {
-          attempts++;
           const retryAfter: number = this.getRetryAfter(
             error.response.headers['retry-after'],
           );
@@ -191,10 +213,27 @@ export class OnedriveService implements IFileService {
 
           await this.delay(delayTime);
           backoff *= 2; // Exponential backoff
-        } else {
-          this.logger.error('HTTP request failed:', error);
-          throw error;
+          continue;
         }
+
+        // Handle timeout errors
+        if (
+          error.code === 'ECONNABORTED' ||
+          error.code === 'ETIMEDOUT' ||
+          error.response?.code === 'ETIMEDOUT'
+        ) {
+          const delayTime: number = backoff;
+
+          this.logger.warn(
+            `Request timeout. Retrying in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
+          );
+
+          await this.delay(delayTime);
+          backoff *= 2;
+          continue;
+        }
+
+        throw error;
       }
     }
 

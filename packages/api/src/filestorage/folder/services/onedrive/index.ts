@@ -51,6 +51,7 @@ export class OnedriveService implements IFolderService {
       }
 
       const config: AxiosRequestConfig = {
+        timeout: 30000,
         method: 'post',
         url: `${connection.account_url}/v1.0/drive/root/children`,
         data: {
@@ -138,30 +139,49 @@ export class OnedriveService implements IFolderService {
               internal_id: string;
               internal_parent_folder_id: string;
             }) => {
-              const childrenConfig: AxiosRequestConfig = {
-                method: 'get',
-                url: `${connection.account_url}/v1.0/me/drive/items/${folder.remote_folder_id}/children`,
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${this.cryptoService.decrypt(
-                    connection.access_token,
-                  )}`,
-                },
-              };
+              try {
+                const childrenConfig: AxiosRequestConfig = {
+                  timeout: 30000,
+                  method: 'get',
+                  url: `${connection.account_url}/v1.0/me/drive/items/${folder.remote_folder_id}/children`,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${this.cryptoService.decrypt(
+                      connection.access_token,
+                    )}`,
+                  },
+                };
 
-              const resp: AxiosResponse = await this.makeRequestWithRetry(
-                childrenConfig,
-              );
+                const resp: AxiosResponse = await this.makeRequestWithRetry(
+                  childrenConfig,
+                );
 
-              const folders: OnedriveFolderOutput[] = resp.data.value.filter(
-                (driveItem: any) => driveItem.folder,
-              );
+                const folders: OnedriveFolderOutput[] = resp.data.value.filter(
+                  (driveItem: any) => driveItem.folder,
+                );
 
-              return folders.map((f: OnedriveFolderOutput) => ({
-                ...f,
-                internal_id: uuidv4(),
-                internal_parent_folder_id: folder.internal_id,
-              }));
+                return folders.map((f: OnedriveFolderOutput) => ({
+                  ...f,
+                  internal_id: uuidv4(),
+                  internal_parent_folder_id: folder.internal_id,
+                }));
+              } catch (error: any) {
+                if (error.response && error.response.status === 404) {
+                  console.log('Folder not found', folder.remote_folder_id);
+                  // Folder not found, mark as deleted
+                  await this.prisma.fs_folders.updateMany({
+                    where: {
+                      remote_id: folder.remote_folder_id,
+                      id_connection: connection.id_connection,
+                    },
+                    data: {
+                      remote_was_deleted: true,
+                    },
+                  });
+                  return [];
+                }
+                throw error;
+              }
             },
           );
 
@@ -225,23 +245,42 @@ export class OnedriveService implements IFolderService {
         const response: AxiosResponse = await axios(config);
         return response;
       } catch (error: any) {
+        attempts++;
+
+        // Handle rate limiting
         if (error.response && error.response.status === 429) {
-          attempts++;
           const retryAfter: number = this.getRetryAfter(
             error.response.headers['retry-after'],
           );
-          const delay: number = Math.max(retryAfter * 1000, backoff);
+          const delayTime: number = Math.max(retryAfter * 1000, backoff);
 
           this.logger.warn(
-            `Rate limit hit. Retrying request in ${delay}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
+            `Rate limit hit. Retrying request in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
           );
 
-          await this.delay(delay);
+          await this.delay(delayTime);
           backoff *= 2; // Exponential backoff
-        } else {
-          this.logger.error('HTTP request failed:', error);
-          throw error;
+          continue;
         }
+
+        // Handle timeout errors
+        if (
+          error.code === 'ECONNABORTED' ||
+          error.code === 'ETIMEDOUT' ||
+          error.response?.code === 'ETIMEDOUT'
+        ) {
+          const delayTime: number = backoff;
+
+          this.logger.warn(
+            `Request timeout. Retrying in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
+          );
+
+          await this.delay(delayTime);
+          backoff *= 2;
+          continue;
+        }
+
+        throw error;
       }
     }
 
