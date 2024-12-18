@@ -44,7 +44,7 @@ import path from 'path';
           commit_id: process.env.GIT_COMMIT_ID,
         }),
         redact: {
-          paths: ["req.headers.authorization", 'path["req.headers.x-api-key"]'],
+          paths: ["req.headers.authorization", 'path["req.headers.x-api-key"]', 'path["trace.config.headers.Authorization"]'],
           remove: false
         },
         transport:
