@@ -402,9 +402,8 @@ export class GoogleDriveFolderService implements IFolderService {
         this.getModifiedFolders(drive, lastSyncTime),
       );
 
-      const unresolvedFolders = await this.getUnresolvedFolders(connectionId);
       return await this.processFoldersWithParents(
-        modifiedFolders.concat(unresolvedFolders),
+        modifiedFolders,
         connectionId,
         driveIds,
         drive,
@@ -642,47 +641,6 @@ export class GoogleDriveFolderService implements IFolderService {
     } while (pageToken);
 
     return folders;
-  }
-
-  private async getUnresolvedFolders(
-    connectionId: string,
-  ): Promise<GoogleDriveFolderOutput[]> {
-    // Get unresolved folders
-    const unresolvedFolders = await this.prisma.fs_folders.findMany({
-      where: {
-        id_connection: connectionId,
-        parent_folder: 'unresolved',
-      },
-      select: {
-        id_fs_folder: true,
-        name: true,
-      },
-    });
-
-    // Get remote data for all folders in a single query
-    const folderIds = unresolvedFolders.map((folder) => folder.id_fs_folder);
-    const remoteDataEntries = await this.prisma.remote_data.findMany({
-      where: {
-        ressource_owner_id: {
-          in: folderIds,
-        },
-      },
-    });
-
-    // Create a map for quick lookup
-    const remoteDataMap = new Map(
-      remoteDataEntries.map((entry) => [entry.ressource_owner_id, entry.data]),
-    );
-
-    // Map and parse the remote data, filtering out any null values
-    return unresolvedFolders
-      .map((folder) => {
-        const remoteData = remoteDataMap.get(folder.id_fs_folder);
-        return remoteData
-          ? (JSON.parse(remoteData) as GoogleDriveFolderOutput)
-          : null;
-      })
-      .filter((folder): folder is GoogleDriveFolderOutput => folder !== null);
   }
 
   private async getLastSyncTime(connectionId: string): Promise<Date | null> {
