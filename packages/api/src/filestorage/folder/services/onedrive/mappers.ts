@@ -128,6 +128,14 @@ export class OnedriveFolderMapper implements IFolderMapper {
       parent_folder_id: folder.internal_parent_folder_id ?? null,
       remote_id: folder.id,
       remote_data: folder,
+      remote_drive_id:
+        folder.driveId || folder?.parentReference?.driveId || null,
+      remote_created_at: folder.createdDateTime
+        ? new Date(folder.createdDateTime)
+        : null,
+      remote_modified_at: folder.lastModifiedDateTime
+        ? new Date(folder.lastModifiedDateTime)
+        : null,
       name: folder.name,
       folder_url: folder.webUrl,
       description: folder.description,

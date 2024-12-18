@@ -123,6 +123,13 @@ export class OnedriveFileMapper implements IFileMapper {
       remote_id: file.id,
       remote_data: file,
       remote_folder_id: file.parentReference?.id,
+      remote_drive_id: file.driveId || file?.parentReference?.driveId || null,
+      remote_created_at: file.createdDateTime
+        ? new Date(file.createdDateTime)
+        : null,
+      remote_modified_at: file.lastModifiedDateTime
+        ? new Date(file.lastModifiedDateTime)
+        : null,
       name: file.name,
       file_url: file.webUrl,
       mime_type: file.file.mimeType,
