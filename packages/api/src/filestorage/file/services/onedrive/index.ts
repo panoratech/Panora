@@ -14,6 +14,7 @@ import { OnedriveFileOutput } from './types';
 export class OnedriveService implements IFileService {
   private readonly MAX_RETRIES: number = 5;
   private readonly INITIAL_BACKOFF_MS: number = 1000;
+  private readonly BATCH_SIZE: number = 20;
 
   constructor(
     private prisma: PrismaService,
@@ -51,16 +52,43 @@ export class OnedriveService implements IFileService {
         if (folder && folder.remote_id !== 'root') {
           foldersToSync.push(folder.remote_id);
         }
+      } else {
+        const folders = await this.prisma.fs_folders.findMany({
+          where: {
+            id_connection: connection.id_connection,
+          },
+          select: {
+            remote_id: true,
+          },
+        });
+        foldersToSync.push(...folders.map((folder) => folder.remote_id));
       }
 
       const allFiles: OnedriveFileOutput[] = [];
 
-      for (const folderId of foldersToSync) {
-        const files = await this.syncFolder(connection, folderId);
-        allFiles.push(...files);
+      // Process folders in batches
+      for (let i = 0; i < foldersToSync.length; i += this.BATCH_SIZE) {
+        const batch = foldersToSync.slice(i, i + this.BATCH_SIZE);
+
+        // Synchronize all folders in the current batch concurrently
+        const filePromises = batch.map(async (folderId) => {
+          const files = await this.syncFolder(connection, folderId);
+          return files;
+        });
+
+        // Await all promises for the current batch
+        const batchFiles = await Promise.all(filePromises);
+        const flatBatchFiles = batchFiles.flat();
+        allFiles.push(...flatBatchFiles);
+
+        this.logger.log(
+          `Batch ${i / this.BATCH_SIZE + 1} completed: got ${
+            flatBatchFiles.length
+          } files.`,
+        );
       }
 
-      this.logger.log(`Synced OneDrive files from root and specified folder!`);
+      this.logger.log(`Synced ${allFiles.length} files for onedrive.`);
       return {
         data: allFiles,
         message: "OneDrive's files retrieved from root and specified folder",

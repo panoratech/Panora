@@ -171,8 +171,9 @@ export class OnedriveService implements IFolderService {
       const folders: OnedriveFolderOutput[] =
         await this.iterativeGetOnedriveFolders('root', linkedUserId);
 
-      this.logger.log(`${folders.length} OneDrive folders found`);
-      this.logger.log('OneDrive folders synced successfully.');
+      this.logger.log(
+        `${folders.length} OneDrive folders synced successfully.`,
+      );
 
       return {
         data: folders,
