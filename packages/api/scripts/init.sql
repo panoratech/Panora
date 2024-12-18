@@ -819,7 +819,7 @@ CREATE TABLE fs_folders
  "size"             bigint NULL,
  name               text NULL,
  description        text NULL,
- parent_folder      text NULL,
+ parent_folder      uuid NULL,
  remote_id          text NULL,
  created_at         timestamp with time zone NOT NULL,
  modified_at        timestamp with time zone NOT NULL,

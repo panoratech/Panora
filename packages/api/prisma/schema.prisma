@@ -1298,7 +1298,7 @@ model fs_folders {
   size               BigInt?
   name               String?
   description        String?
-  parent_folder      String?
+  parent_folder      String?   @db.Uuid
   remote_id          String?
   created_at         DateTime  @db.Timestamptz(6)
   modified_at        DateTime  @db.Timestamptz(6)
