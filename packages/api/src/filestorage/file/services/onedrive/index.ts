@@ -12,7 +12,7 @@ import { OnedriveFileOutput } from './types';
 import { OnedriveService as OnedriveFolderService } from '@filestorage/folder/services/onedrive';
 @Injectable()
 export class OnedriveService implements IFileService {
-  private readonly MAX_RETRIES: number = 5;
+  private readonly MAX_RETRIES: number = 6;
   private readonly INITIAL_BACKOFF_MS: number = 1000;
   private readonly BATCH_SIZE: number = 20;
 
@@ -237,6 +237,19 @@ export class OnedriveService implements IFileService {
 
           this.logger.warn(
             `Request timeout. Retrying in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
+          );
+
+          await this.delay(delayTime);
+          backoff *= 2;
+          continue;
+        }
+
+        // Handle server errors (500+)
+        if (error.response && error.response.status >= 500) {
+          const delayTime: number = backoff;
+
+          this.logger.warn(
+            `Server error ${error.response.status}. Retrying in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
           );
 
           await this.delay(delayTime);

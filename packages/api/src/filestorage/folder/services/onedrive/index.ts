@@ -469,6 +469,19 @@ export class OnedriveService implements IFolderService {
           continue;
         }
 
+        // Handle server errors (500+)
+        if (error.response && error.response.status >= 500) {
+          const delayTime: number = backoff;
+
+          this.logger.warn(
+            `Server error ${error.response.status}. Retrying in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
+          );
+
+          await this.delay(delayTime);
+          backoff *= 2;
+          continue;
+        }
+
         throw error;
       }
     }
