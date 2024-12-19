@@ -11952,6 +11952,11 @@ components:
           example: '2024-10-01T12:00:00Z'
           description: The modified date of the object in the context of the 3rd Party
           nullable: true
+        remote_was_deleted:
+          type: boolean
+          example: false
+          description: Whether the object was deleted in the context of the 3rd Party
+          default: false
       required:
         - name
         - file_url

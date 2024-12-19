@@ -87,8 +87,31 @@ export class OnedriveService implements IFolderService {
       this.logger.log('Syncing OneDrive folders');
       const { linkedUserId } = data;
 
-      const folders: OnedriveFolderOutput[] =
-        await this.iterativeGetOnedriveFolders('root', linkedUserId);
+      const connection = await this.prisma.connections.findFirst({
+        where: {
+          id_linked_user: linkedUserId,
+          provider_slug: 'onedrive',
+          vertical: 'filestorage',
+        },
+      });
+
+      if (!connection) {
+        throw new Error('OneDrive connection not found.');
+      }
+
+      const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
+
+      let folders;
+
+      if (!lastSyncTime) {
+        folders = await this.iterativeGetOnedriveFolders(connection);
+      } else {
+        this.logger.log('Syncing OneDrive folders incrementally');
+        folders = await this.incrementalGetOnedriveFolders(
+          connection,
+          lastSyncTime,
+        );
+      }
 
       this.logger.log(
         `${folders.length} OneDrive folders synced successfully.`,
@@ -106,22 +129,9 @@ export class OnedriveService implements IFolderService {
   }
 
   async iterativeGetOnedriveFolders(
-    remote_folder_id: string,
-    linkedUserId: string,
+    connection: Connection,
   ): Promise<OnedriveFolderOutput[]> {
     try {
-      const connection = await this.prisma.connections.findFirst({
-        where: {
-          id_linked_user: linkedUserId,
-          provider_slug: 'onedrive',
-          vertical: 'filestorage',
-        },
-      });
-
-      if (!connection) {
-        throw new Error('OneDrive connection not found.');
-      }
-
       const rootConfig: AxiosRequestConfig = {
         method: 'get',
         url: `${connection.account_url}/v1.0/me/drive/root`,
@@ -137,7 +147,6 @@ export class OnedriveService implements IFolderService {
         rootConfig,
       );
 
-      let result: OnedriveFolderOutput[] = [rootFolderData.data];
       let depth = 0;
       let batch: {
         remote_folder_id: string;
@@ -145,9 +154,18 @@ export class OnedriveService implements IFolderService {
         internal_parent_folder_id: string | null;
       }[] = [
         {
-          remote_folder_id: remote_folder_id,
+          remote_folder_id: rootFolderData.data.id,
           internal_id: uuidv4(),
           internal_parent_folder_id: null,
+        },
+      ];
+
+      let result: OnedriveFolderOutput[] = [
+        {
+          ...rootFolderData.data,
+          remote_folder_id: batch[0].remote_folder_id,
+          internal_id: batch[0].internal_id,
+          internal_parent_folder_id: batch[0].internal_parent_folder_id,
         },
       ];
 
@@ -192,7 +210,6 @@ export class OnedriveService implements IFolderService {
                 }));
               } catch (error: any) {
                 if (error.response && error.response.status === 404) {
-                  console.log('Found deleted folder');
                   const f = await this.prisma.fs_folders.findFirst({
                     where: {
                       remote_id: folder.remote_folder_id,
@@ -231,6 +248,278 @@ export class OnedriveService implements IFolderService {
       this.logger.error('Error fetching OneDrive folders:', error);
       throw error;
     }
+  }
+
+  async incrementalGetOnedriveFolders(
+    connection: Connection,
+    lastSyncTime: Date,
+  ): Promise<OnedriveFolderOutput[]> {
+    // ref: https://learn.microsoft.com/en-us/graph/api/driveitem-delta?view=graph-rest-1.0&tabs=http#example-4-retrieving-delta-results-using-a-timestamp
+    let deltaLink = `${
+      connection.account_url
+    }/v1.0/me/drive/root/delta?token=${lastSyncTime.toISOString()}`;
+
+    const deltaConfig: AxiosRequestConfig = {
+      timeout: 30000,
+      method: 'get',
+      url: deltaLink,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.cryptoService.decrypt(
+          connection.access_token,
+        )}`,
+      },
+    };
+
+    const onedriveFolders: OnedriveFolderOutput[] = [];
+
+    do {
+      const deltaResponse = await this.makeRequestWithRetry(deltaConfig);
+      if (!deltaResponse.data.value) {
+        break;
+      }
+      deltaLink = deltaResponse.data.deltaLink;
+      onedriveFolders.push(
+        ...deltaResponse.data.value.filter((f: any) => f.folder),
+      );
+    } while (deltaLink);
+
+    const deletedFolders = onedriveFolders.filter((f: any) => f.deleted);
+    const updatedFolders = onedriveFolders.filter((f: any) => !f.deleted);
+
+    // handle deleted folders
+    await Promise.all(
+      deletedFolders.map(async (folder) => {
+        const internal_folder = await this.prisma.fs_folders.findFirst({
+          where: {
+            remote_id: folder.id,
+            id_connection: connection.id_connection,
+          },
+          select: {
+            id_fs_folder: true,
+          },
+        });
+
+        if (internal_folder) {
+          await this.handleDeletedFolder(
+            internal_folder.id_fs_folder,
+            connection,
+          );
+        }
+      }),
+    );
+
+    // handle updated folders
+    const foldersToSync = await this.assignParentIds(
+      updatedFolders,
+      connection,
+    );
+    return foldersToSync;
+  }
+
+  /**
+   * Assigns internal parent IDs to OneDrive folders, ensuring proper parent-child relationships.
+   * @param folders - Array of OneDriveFolderOutput to process.
+   * @returns The updated array of OneDriveFolderOutput with assigned internal parent IDs.
+   */
+  private async assignParentIds(
+    folders: OnedriveFolderOutput[],
+    connection: Connection,
+  ): Promise<OnedriveFolderOutput[]> {
+    const folderIdToInternalIdMap: Map<string, string> = new Map();
+    const foldersToSync: OnedriveFolderOutput[] = [];
+    let remainingFolders: OnedriveFolderOutput[] = [...folders];
+    const parentLookupCache: Map<string, string | null> = new Map();
+
+    while (remainingFolders.length > 0) {
+      const foldersStillPending: OnedriveFolderOutput[] = [];
+
+      for (const folder of remainingFolders) {
+        const parentId = folder.parentReference?.id || 'root';
+        const internalParentId = await this.resolveParentId(
+          parentId,
+          folderIdToInternalIdMap,
+          connection.id_connection,
+          parentLookupCache,
+        );
+
+        if (internalParentId) {
+          const folder_internal_id = await this.getIntenalIdForFolder(
+            folder.id,
+            connection,
+          );
+          foldersToSync.push({
+            ...folder,
+            internal_parent_folder_id:
+              internalParentId === 'root' ? null : internalParentId,
+            internal_id: folder_internal_id,
+          });
+          folderIdToInternalIdMap.set(folder.id, folder_internal_id);
+        } else {
+          foldersStillPending.push(folder);
+        }
+      }
+
+      if (foldersStillPending.length === remainingFolders.length) {
+        const remote_folders = new Map(
+          foldersToSync.map((folder) => [folder.id, folder]),
+        );
+
+        await this.handleUnresolvedFolders(
+          foldersStillPending,
+          foldersToSync,
+          remote_folders,
+          parentLookupCache,
+          folderIdToInternalIdMap,
+          connection,
+        );
+        break;
+      }
+
+      remainingFolders = foldersStillPending;
+    }
+
+    return foldersToSync;
+  }
+
+  private async getIntenalIdForFolder(
+    folderId: string,
+    connection: Connection,
+  ) {
+    const folder = await this.prisma.fs_folders.findFirst({
+      where: { remote_id: folderId, id_connection: connection.id_connection },
+      select: { id_fs_folder: true },
+    });
+    return folder?.id_fs_folder || uuidv4();
+  }
+
+  /**
+   * Resolves the internal parent ID for a given remote parent ID.
+   * @param parentId - The remote parent folder ID.
+   * @param idMap - Map of remote IDs to internal IDs.
+   * @param connectionId - The connection ID.
+   * @param cache - Cache for parent ID lookups.
+   * @returns The internal parent ID or null if not found.
+   */
+  private async resolveParentId(
+    parentId: string,
+    idMap: Map<string, string>,
+    connectionId: string,
+    cache: Map<string, string | null>,
+  ): Promise<string | null | undefined> {
+    if (idMap.has(parentId)) {
+      return idMap.get(parentId);
+    }
+
+    if (parentId === 'root') {
+      return 'root';
+    }
+
+    if (cache.has(parentId)) {
+      return cache.get(parentId);
+    }
+
+    const parentFolder = await this.prisma.fs_folders.findFirst({
+      where: {
+        remote_id: parentId,
+        id_connection: connectionId,
+      },
+      select: { id_fs_folder: true },
+    });
+
+    const result = parentFolder?.id_fs_folder || null;
+    cache.set(parentId, result);
+    return result;
+  }
+
+  /**
+   * Handles folders that couldn't be resolved in the initial pass.
+   * @param pending - Folders still pending resolution.
+   * @param output - Already processed folders.
+   * @param idMap - Map of remote IDs to internal IDs.
+   * @param cache - Cache for parent ID lookups.
+   */
+  private async handleUnresolvedFolders(
+    pending: OnedriveFolderOutput[],
+    output: OnedriveFolderOutput[],
+    remote_folders: Map<string, OnedriveFolderOutput>,
+    parentLookupCache: Map<string, string | null>,
+    idCache: Map<string, string | null>,
+    connection: Connection,
+  ): Promise<void> {
+    this.logger.warn(
+      `${pending.length} folders could not be resolved in the initial pass. Attempting to resolve remaining folders.`,
+    );
+
+    const getInternalParentRecursive = async (
+      folder: OnedriveFolderOutput,
+      visitedIds: Set<string> = new Set(),
+    ): Promise<string | null> => {
+      const remote_parent_id = folder.parentReference?.id || 'root';
+
+      if (visitedIds.has(remote_parent_id)) {
+        this.logger.warn(`Circular reference detected for folder ${folder.id}`);
+        return null;
+      }
+
+      visitedIds.add(remote_parent_id);
+
+      const internal_parent_id = await this.resolveParentId(
+        remote_parent_id,
+        idCache,
+        connection.id_connection,
+        parentLookupCache,
+      );
+
+      if (internal_parent_id) {
+        return internal_parent_id;
+      }
+
+      // Try to get parent from remote folders map or API
+      try {
+        const parentFolder =
+          remote_folders.get(remote_parent_id) ||
+          (await this.makeRequestWithRetry({
+            timeout: 30000,
+            method: 'get',
+            url: `${connection.account_url}/v1.0/me/drive/items/${remote_parent_id}`,
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          }));
+
+        if (!parentFolder) {
+          return null;
+        }
+
+        return getInternalParentRecursive(
+          parentFolder as OnedriveFolderOutput,
+          visitedIds,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to resolve parent for folder ${folder.id}`,
+          error,
+        );
+        return null;
+      }
+    };
+
+    await Promise.all(
+      pending.map(async (folder) => {
+        const internal_parent_id = await getInternalParentRecursive(folder);
+        const folder_internal_id = uuidv4();
+        idCache.set(folder.id, folder_internal_id);
+        output.push({
+          ...folder,
+          internal_parent_folder_id: internal_parent_id,
+          internal_id: folder_internal_id,
+        });
+      }),
+    );
   }
 
   /**
@@ -416,6 +705,19 @@ export class OnedriveService implements IFolderService {
       }
       throw error;
     }
+  }
+
+  /**
+   * Gets the last sync time for a connection.
+   * @param connectionId - The ID of the connection.
+   * @returns The last sync time or null if no sync time is found.
+   */
+  private async getLastSyncTime(connectionId: string): Promise<Date | null> {
+    const lastSync = await this.prisma.fs_folders.findFirst({
+      where: { id_connection: connectionId },
+      orderBy: { remote_modified_at: 'desc' },
+    });
+    return lastSync ? lastSync.remote_modified_at : null;
   }
 
   /**

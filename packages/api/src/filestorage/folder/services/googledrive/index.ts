@@ -22,9 +22,6 @@ interface GoogleDriveListResponse {
   };
 }
 
-const GOOGLE_DRIVE_QUOTA_DELAY = 100; // ms between requests
-const MAX_RETRIES = 3;
-const INITIAL_BACKOFF = 1000; // 1 second
 const RATE_LIMIT_DELAY = 100; // ms between requests to avoid quota issues
 const MAX_API_RETRIES = 3;
 const BASE_BACKOFF_MS = 1000;
@@ -439,7 +436,10 @@ export class GoogleDriveFolderService implements IFolderService {
         );
 
         if (internalParentId) {
-          const folder_internal_id = uuidv4();
+          const folder_internal_id = await this.getIntenalIdForFolder(
+            folder.id,
+            connectionId,
+          );
           foldersToSync.push(
             this.createFolderWithInternalIds(
               folder,
@@ -462,6 +462,7 @@ export class GoogleDriveFolderService implements IFolderService {
           foldersToSync,
           remote_folders,
           parentLookupCache,
+          folderIdToInternalIdMap,
           driveIds,
           connectionId,
           drive,
@@ -473,6 +474,17 @@ export class GoogleDriveFolderService implements IFolderService {
     }
 
     return foldersToSync;
+  }
+
+  private async getIntenalIdForFolder(
+    folderId: string,
+    connectionId: string,
+  ): Promise<string> {
+    const folder = await this.prisma.fs_folders.findFirst({
+      where: { remote_id: folderId, id_connection: connectionId },
+      select: { id_fs_folder: true },
+    });
+    return folder?.id_fs_folder || uuidv4();
   }
 
   private createFolderWithInternalIds(
@@ -500,6 +512,7 @@ export class GoogleDriveFolderService implements IFolderService {
     output: GoogleDriveFolderOutput[],
     remote_folders: Map<string, GoogleDriveFolderOutput>,
     parentLookupCache: Map<string, string | null>,
+    idCache: Map<string, string | null>,
     driveIds: string[],
     connectionId: string,
     drive: any,
@@ -524,7 +537,7 @@ export class GoogleDriveFolderService implements IFolderService {
       // Check cache first
       const internal_parent_id = await this.resolveParentId(
         remote_parent_id,
-        parentLookupCache,
+        idCache,
         driveIds,
         connectionId,
         parentLookupCache,
@@ -565,6 +578,7 @@ export class GoogleDriveFolderService implements IFolderService {
       pending.map(async (folder) => {
         const internal_parent_id = await getInternalParentRecursive(folder);
         const folder_internal_id = uuidv4();
+        idCache.set(folder.id, folder_internal_id);
         output.push({
           ...folder,
           internal_parent_folder_id: internal_parent_id,
