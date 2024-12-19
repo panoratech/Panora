@@ -41,6 +41,6 @@ import { SyncService } from './sync/sync.service';
     DropboxFolderMapper,
     GoogleDriveFolderService,
   ],
-  exports: [SyncService],
+  exports: [SyncService, OnedriveService],
 })
 export class FolderModule {}

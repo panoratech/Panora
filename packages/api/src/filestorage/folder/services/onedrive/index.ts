@@ -14,6 +14,8 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { UnifiedFilestorageFileOutput } from '@filestorage/file/types/model.unified';
 import { OnedriveFileOutput } from '@filestorage/file/services/onedrive/types';
 import { v4 as uuidv4 } from 'uuid';
+import { Connection } from '@@core/connections/@utils/types';
+import { fs_folders } from '@prisma/client';
 
 @Injectable()
 export class OnedriveService implements IFolderService {
@@ -76,6 +78,29 @@ export class OnedriveService implements IFolderService {
       };
     } catch (error) {
       this.logger.error('Error adding folder to OneDrive:', error);
+      throw error;
+    }
+  }
+
+  async sync(data: SyncParam): Promise<ApiResponse<OnedriveFolderOutput[]>> {
+    try {
+      this.logger.log('Syncing OneDrive folders');
+      const { linkedUserId } = data;
+
+      const folders: OnedriveFolderOutput[] =
+        await this.iterativeGetOnedriveFolders('root', linkedUserId);
+
+      this.logger.log(
+        `${folders.length} OneDrive folders synced successfully.`,
+      );
+
+      return {
+        data: folders,
+        message: 'OneDrive folders synced',
+        statusCode: 200,
+      };
+    } catch (error) {
+      this.logger.error('Error in OneDrive sync:', error);
       throw error;
     }
   }
@@ -167,17 +192,19 @@ export class OnedriveService implements IFolderService {
                 }));
               } catch (error: any) {
                 if (error.response && error.response.status === 404) {
-                  console.log('Folder not found', folder.remote_folder_id);
-                  // Folder not found, mark as deleted
-                  await this.prisma.fs_folders.updateMany({
+                  console.log('Found deleted folder');
+                  const f = await this.prisma.fs_folders.findFirst({
                     where: {
                       remote_id: folder.remote_folder_id,
                       id_connection: connection.id_connection,
                     },
-                    data: {
-                      remote_was_deleted: true,
+                    select: {
+                      id_fs_folder: true,
                     },
                   });
+                  if (f) {
+                    await this.handleDeletedFolder(f.id_fs_folder, connection);
+                  }
                   return [];
                 }
                 throw error;
@@ -206,25 +233,187 @@ export class OnedriveService implements IFolderService {
     }
   }
 
-  async sync(data: SyncParam): Promise<ApiResponse<OnedriveFolderOutput[]>> {
-    try {
-      this.logger.log('Syncing OneDrive folders');
-      const { linkedUserId } = data;
+  /**
+   * Handles the deletion of a folder by marking it and its children as deleted in the database.
+   * @param folderId - The internal ID of the folder to be marked as deleted.
+   * @param connection - The connection object containing the connection details.
+   */
+  async handleDeletedFolder(folderId: string, connection: Connection) {
+    const folder = await this.prisma.fs_folders.findFirst({
+      where: {
+        id_fs_folder: folderId,
+        id_connection: connection.id_connection,
+      },
+      select: {
+        remote_was_deleted: true,
+        id_fs_folder: true,
+        parent_folder: true,
+      },
+    });
 
-      const folders: OnedriveFolderOutput[] =
-        await this.iterativeGetOnedriveFolders('root', linkedUserId);
+    if (!folder || folder.remote_was_deleted) {
+      this.logger.debug('Folder already marked deleted');
+      return;
+    }
 
-      this.logger.log(
-        `${folders.length} OneDrive folders synced successfully.`,
+    const highestDeletedPredecessor = await this.findHigestDeletedPredecessor(
+      folder as fs_folders,
+      connection,
+    );
+
+    if (highestDeletedPredecessor === 'not_deleted') {
+      this.logger.debug(
+        "Higest deleted predecessor came out to be as 'not_deleted'",
       );
+      return;
+    }
 
-      return {
-        data: folders,
-        message: 'OneDrive folders synced',
-        statusCode: 200,
-      };
-    } catch (error) {
-      this.logger.error('Error in OneDrive sync:', error);
+    const entitiesDeleted = await this.markChildrenAsDeleted(
+      highestDeletedPredecessor,
+      connection,
+    );
+
+    this.logger.debug(
+      `Deleted ${entitiesDeleted} entities for folder ${folderId}`,
+    );
+  }
+
+  private async markChildrenAsDeleted(
+    folderId: string,
+    connection: Connection,
+  ): Promise<number> {
+    let entitiesDeleted = 0;
+
+    // we need to find all the children of this folder and mark them as deleted
+    const childFolders = await this.prisma.fs_folders.findMany({
+      where: {
+        parent_folder: folderId,
+        id_connection: connection.id_connection,
+      },
+      select: {
+        id_fs_folder: true,
+        remote_was_deleted: false,
+      },
+    });
+
+    const childFiles = await this.prisma.fs_files.findMany({
+      where: {
+        id_fs_folder: folderId,
+        id_connection: connection.id_connection,
+      },
+      select: {
+        id_fs_file: true,
+        remote_was_deleted: false,
+      },
+    });
+
+    const childFolderIds = childFolders.map((f) => f.id_fs_folder);
+    const childFileIds = childFiles.map((f) => f.id_fs_file);
+
+    await this.prisma.fs_folders.updateMany({
+      where: {
+        id_fs_folder: { in: childFolderIds },
+      },
+      data: {
+        remote_was_deleted: true,
+      },
+    });
+
+    await this.prisma.fs_files.updateMany({
+      where: {
+        id_fs_file: { in: childFileIds },
+      },
+      data: {
+        remote_was_deleted: true,
+      },
+    });
+
+    entitiesDeleted += childFolderIds.length + childFileIds.length;
+
+    const childFolderResults = await Promise.all(
+      childFolderIds.map(
+        async (id) => await this.markChildrenAsDeleted(id, connection),
+      ),
+    );
+
+    entitiesDeleted += childFolderResults.reduce((acc, curr) => acc + curr, 0);
+    return entitiesDeleted;
+  }
+
+  private async findHigestDeletedPredecessor(
+    folder: fs_folders,
+    connection: Connection,
+  ): Promise<string | 'not_deleted'> {
+    // if the folder has no parent, it is the root folder
+    if (!folder.parent_folder) {
+      return folder.id_fs_folder;
+    }
+
+    const remoteDeleted = folder.remote_was_deleted
+      ? true
+      : await this.folderDeletedOnRemote(folder, connection);
+    if (!remoteDeleted) {
+      return 'not_deleted';
+    }
+
+    // if the folder is deleted, we need to find the highest deleted predecessor
+    const parentFolder = await this.prisma.fs_folders.findFirst({
+      where: {
+        id_fs_folder: folder.parent_folder,
+        id_connection: connection.id_connection,
+      },
+      select: {
+        remote_was_deleted: true,
+        id_fs_folder: true,
+        parent_folder: true,
+      },
+    });
+
+    if (!parentFolder) {
+      return folder.id_fs_folder;
+    }
+
+    const parentResult = await this.findHigestDeletedPredecessor(
+      parentFolder as fs_folders,
+      connection,
+    );
+
+    if (parentResult === 'not_deleted') {
+      return folder.id_fs_folder;
+    }
+
+    return parentResult;
+  }
+
+  /**
+   * Checks if a folder is deleted on the remote OneDrive service.
+   * @param folder - The folder to check.
+   * @param connection - The connection object containing the connection details.
+   * @returns True if the folder is deleted, false otherwise.
+   */
+  private async folderDeletedOnRemote(
+    folder: fs_folders,
+    connection: Connection,
+  ) {
+    try {
+      const remoteFolder = await this.makeRequestWithRetry({
+        timeout: 30000,
+        method: 'get',
+        url: `${connection.account_url}/v1.0/me/drive/items/${folder.remote_id}?$select=id,deleted`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${this.cryptoService.decrypt(
+            connection.access_token,
+          )}`,
+        },
+      });
+
+      return remoteFolder && remoteFolder.data.deleted;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        // If we get a 404, we assume the folder is deleted
+        return true;
+      }
       throw error;
     }
   }
@@ -303,7 +492,7 @@ export class OnedriveService implements IFolderService {
     }
 
     const retryAfterSeconds: number = parseInt(retryAfterHeader, 10);
-    return isNaN(retryAfterSeconds) ? 1 : retryAfterSeconds;
+    return isNaN(retryAfterSeconds) ? 1 : retryAfterSeconds + 0.5;
   }
 
   /**

@@ -17,8 +17,10 @@ import { SharepointService } from './services/sharepoint';
 import { SharepointFileMapper } from './services/sharepoint/mappers';
 import { SyncService } from './sync/sync.service';
 import { GoogleDriveQueueProcessor } from './services/googledrive/processor';
+import { FolderModule } from '../folder/folder.module';
 
 @Module({
+  imports: [FolderModule],
   controllers: [FileController],
   providers: [
     FileService,

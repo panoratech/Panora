@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { OnedriveFileOutput } from './types';
-
+import { OnedriveService as OnedriveFolderService } from '@filestorage/folder/services/onedrive';
 @Injectable()
 export class OnedriveService implements IFileService {
   private readonly MAX_RETRIES: number = 5;
@@ -21,6 +21,7 @@ export class OnedriveService implements IFileService {
     private logger: LoggerService,
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
+    private onedriveFolderService: OnedriveFolderService,
   ) {
     this.logger.setContext(
       `${FileStorageObject.file.toUpperCase()}:${OnedriveService.name}`,
@@ -96,6 +97,7 @@ export class OnedriveService implements IFileService {
         statusCode: 200,
       };
     } catch (error) {
+      console.log(error);
       this.logger.error(
         `Error syncing OneDrive files: ${error.message}`,
         error,
@@ -129,16 +131,25 @@ export class OnedriveService implements IFileService {
       return files;
     } catch (error: any) {
       if (error.response?.status === 404) {
-        // Folder not found, mark as deleted
-        await this.prisma.fs_folders.updateMany({
+        const internalFolder = await this.prisma.fs_folders.findFirst({
           where: {
             remote_id: folderId,
             id_connection: connection.id_connection,
           },
-          data: {
+          select: {
+            id_fs_folder: true,
             remote_was_deleted: true,
           },
         });
+        if (internalFolder && internalFolder.remote_was_deleted) {
+          this.logger.debug(
+            `Folder ${internalFolder.id_fs_folder} not found in OneDrive, marking as deleted in internal database.`,
+          );
+          await this.onedriveFolderService.handleDeletedFolder(
+            internalFolder.id_fs_folder,
+            connection,
+          );
+        }
         return [];
       }
       throw error;
