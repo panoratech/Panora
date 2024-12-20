@@ -61,6 +61,7 @@ export interface OnedriveFolderInput {
   // internal fields
   internal_id?: string;
   internal_parent_folder_id?: string;
+  internal_permissions?: string[];
 }
 
 /**

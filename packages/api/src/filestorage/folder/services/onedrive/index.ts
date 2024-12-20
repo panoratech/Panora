@@ -16,6 +16,8 @@ import { OnedriveFileOutput } from '@filestorage/file/services/onedrive/types';
 import { v4 as uuidv4 } from 'uuid';
 import { Connection } from '@@core/connections/@utils/types';
 import { fs_folders } from '@prisma/client';
+import { OnedrivePermissionOutput } from '@filestorage/permission/services/onedrive/types';
+import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
 
 @Injectable()
 export class OnedriveService implements IFolderService {
@@ -117,6 +119,8 @@ export class OnedriveService implements IFolderService {
         `${folders.length} OneDrive folders synced successfully.`,
       );
 
+      await this.ingestPermissionsForFolders(folders, connection);
+
       return {
         data: folders,
         message: 'OneDrive folders synced',
@@ -124,6 +128,7 @@ export class OnedriveService implements IFolderService {
       };
     } catch (error) {
       this.logger.error('Error in OneDrive sync:', error);
+      console.log(error, 'error in onedrive service');
       throw error;
     }
   }
@@ -315,6 +320,142 @@ export class OnedriveService implements IFolderService {
       connection,
     );
     return foldersToSync;
+  }
+
+  /**
+   * Ingests and assigns permissions for folders.
+   * @param allFolders - Array of OneDriveFolderOutput to process.
+   * @param connection - The connection object.
+   * @returns The updated array of OneDriveFolderOutput with ingested permissions.
+   */
+  private async ingestPermissionsForFolders(
+    allFolders: OnedriveFolderOutput[],
+    connection: Connection,
+  ): Promise<OnedriveFolderOutput[]> {
+    const allPermissions: OnedrivePermissionOutput[] = [];
+    const folderIdToRemotePermissionIdMap: Map<string, string[]> = new Map();
+    const batchSize = 100; // simultaneous requests
+
+    const folders = allFolders.filter((f) => !f.deleted);
+
+    for (let i = 0; i < folders.length; i += batchSize) {
+      const batch = folders.slice(i, i + batchSize);
+      const permissions = await Promise.all(
+        batch.map(async (folder) => {
+          const permissionConfig: AxiosRequestConfig = {
+            timeout: 30000,
+            method: 'get',
+            url: `${connection.account_url}/v1.0/me/drive/items/${folder.id}/permissions`,
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          };
+
+          const resp = await this.makeRequestWithRetry(permissionConfig);
+          const permissions = resp.data.value;
+          folderIdToRemotePermissionIdMap.set(
+            folder.id,
+            permissions.map((p) => p.id),
+          );
+          return permissions;
+        }),
+      );
+
+      allPermissions.push(...permissions.flat());
+    }
+
+    const uniquePermissions = Array.from(
+      new Map(
+        allPermissions.map((permission) => [permission.id, permission]),
+      ).values(),
+    );
+
+    await this.assignUserAndGroupIdsToPermissions(uniquePermissions);
+
+    const syncedPermissions = await this.ingestService.ingestData<
+      UnifiedFilestoragePermissionOutput,
+      OnedrivePermissionOutput
+    >(
+      uniquePermissions,
+      'onedrive',
+      connection.id_connection,
+      'filestorage',
+      'permission',
+    );
+
+    this.logger.log(
+      `Ingested ${allPermissions.length} permissions for folders.`,
+    );
+
+    const permissionIdMap: Map<string, string> = new Map(
+      syncedPermissions.map((permission) => [
+        permission.remote_id,
+        permission.id_fs_permission,
+      ]),
+    );
+
+    folders.forEach((folder) => {
+      if (folderIdToRemotePermissionIdMap.has(folder.id)) {
+        folder.internal_permissions = folderIdToRemotePermissionIdMap
+          .get(folder.id)
+          ?.map((permission) => permissionIdMap.get(permission))
+          .filter((id) => id !== undefined);
+      }
+    });
+
+    return allFolders;
+  }
+
+  private async assignUserAndGroupIdsToPermissions(
+    permissions: OnedrivePermissionOutput[],
+  ): Promise<void> {
+    const userLookupCache: Map<string, string> = new Map();
+    const groupLookupCache: Map<string, string> = new Map();
+
+    for (const permission of permissions) {
+      if (permission.grantedToV2?.user?.id) {
+        const remote_user_id = permission.grantedToV2.user.id;
+        if (userLookupCache.has(remote_user_id)) {
+          permission.internal_user_id = userLookupCache.get(remote_user_id);
+          continue;
+        }
+        const user = await this.prisma.fs_users.findFirst({
+          where: {
+            remote_id: remote_user_id,
+          },
+          select: {
+            id_fs_user: true,
+          },
+        });
+        if (user) {
+          permission.internal_user_id = user.id_fs_user;
+          userLookupCache.set(remote_user_id, user.id_fs_user);
+        }
+      }
+
+      if (permission.grantedToV2?.group?.id) {
+        const remote_group_id = permission.grantedToV2.group.id;
+        if (groupLookupCache.has(remote_group_id)) {
+          permission.internal_group_id = groupLookupCache.get(remote_group_id);
+          continue;
+        }
+        const group = await this.prisma.fs_groups.findFirst({
+          where: {
+            remote_id: remote_group_id,
+          },
+          select: {
+            id_fs_group: true,
+          },
+        });
+        if (group) {
+          permission.internal_group_id = group.id_fs_group;
+          groupLookupCache.set(remote_group_id, group.id_fs_group);
+        }
+      }
+    }
   }
 
   /**

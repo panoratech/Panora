@@ -88,37 +88,6 @@ export class OnedriveFileMapper implements IFileMapper {
       }
     }
 
-    const opts: any = {};
-    if (file.permissions?.length) {
-      const permissions = await this.coreUnificationService.unify<
-        OriginalPermissionOutput[]
-      >({
-        sourceObject: file.permissions,
-        targetType: FileStorageObject.permission,
-        providerName: 'onedrive',
-        vertical: 'filestorage',
-        connectionId,
-        customFieldMappings: [],
-      });
-      opts.permissions = permissions;
-
-      // shared link
-      if (file.permissions.some((p) => p.link)) {
-        const sharedLinks =
-          await this.coreUnificationService.unify<OriginalSharedLinkOutput>({
-            sourceObject: file.permissions.find((p) => p.link),
-            targetType: FileStorageObject.sharedlink,
-            providerName: 'onedrive',
-            vertical: 'filestorage',
-            connectionId,
-            customFieldMappings: [],
-          });
-        opts.shared_links = sharedLinks;
-      }
-    }
-
-    // todo: handle folder
-
     return {
       remote_id: file.id,
       remote_data: file,
@@ -136,9 +105,8 @@ export class OnedriveFileMapper implements IFileMapper {
       mime_type: file.file.mimeType,
       size: file.size.toString(),
       folder_id: null,
-      // permission: opts.permissions?.[0] || null,
-      permissions: null,
-      shared_link: opts.shared_links?.[0] || null,
+      permissions: file.internal_permissions,
+      shared_link: null,
       field_mappings,
     };
   }

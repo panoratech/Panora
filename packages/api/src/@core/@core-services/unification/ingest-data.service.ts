@@ -139,6 +139,7 @@ export class IngestDataService {
           ingestParams,
         );
       } catch (syncError) {
+        console.log(syncError, 'syncError in ingest-data.service.ts');
         this.logger.error(
           `Error syncing ${integrationId} ${commonObject}: ${syncError.message}`,
           syncError,

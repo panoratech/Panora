@@ -14,6 +14,9 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 import { Connection } from '@@core/connections/@utils/types';
 import { UnifiedFilestorageFileOutput } from '@filestorage/file/types/model.unified';
 import { BullQueueService } from '@@core/@core-services/queues/shared.service';
+import { OnedrivePermissionOutput } from '@filestorage/permission/services/onedrive/types';
+import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
+
 @Injectable()
 export class OnedriveService implements IFileService {
   private readonly MAX_RETRIES: number = 6;
@@ -109,12 +112,16 @@ export class OnedriveService implements IFileService {
         }
 
         if (files.length > 0) {
+          // Assign and ingest permissions for the ingested files
+          await this.ingestPermissionsForFiles(files, connection);
+
           const ingestedFiles = await this.ingestFiles(
             files,
             connection,
             custom_field_mappings,
             ingestParams,
           );
+
           this.logger.log(
             `Ingested ${ingestedFiles.length} files from OneDrive.`,
             'onedrive files ingestion',
@@ -137,7 +144,9 @@ export class OnedriveService implements IFileService {
           );
         }
       } else {
-        const lastSyncTime = await this.getLastSyncTime(connection);
+        const lastSyncTime = await this.getLastSyncTime(
+          connection.id_connection,
+        );
         const deltaLink = lastSyncTime
           ? `${
               connection.account_url
@@ -258,29 +267,138 @@ export class OnedriveService implements IFileService {
     );
   }
 
-  private async getLastSyncTime(connection: {
-    id_connection: string;
-  }): Promise<Date | null> {
-    const lastSyncTime = await this.prisma.fs_files.findFirst({
-      where: {
-        id_connection: connection.id_connection,
-      },
-      orderBy: {
-        remote_modified_at: {
-          sort: 'desc',
-          nulls: 'last',
-        },
-      },
-      select: {
-        remote_modified_at: true,
-      },
+  /**
+   * Ingests and assigns permissions for files.
+   * @param allFiles - Array of OnedriveFileOutput to process.
+   * @param connection - The connection object.
+   * @returns The updated array of OnedriveFileOutput with ingested permissions.
+   */
+  private async ingestPermissionsForFiles(
+    allFiles: OnedriveFileOutput[],
+    connection: Connection,
+  ): Promise<OnedriveFileOutput[]> {
+    const allPermissions: OnedrivePermissionOutput[] = [];
+    const fileIdToRemotePermissionIdMap: Map<string, string[]> = new Map();
+    const batchSize = 100; // simultaneous requests
+
+    const files = allFiles.filter((f) => !f.deleted);
+
+    for (let i = 0; i < files.length; i += batchSize) {
+      const batch = files.slice(i, i + batchSize);
+      const permissions = await Promise.all(
+        batch.map(async (file) => {
+          const permissionConfig: AxiosRequestConfig = {
+            timeout: 30000,
+            method: 'get',
+            url: `${connection.account_url}/v1.0/me/drive/items/${file.id}/permissions`,
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${this.cryptoService.decrypt(
+                connection.access_token,
+              )}`,
+            },
+          };
+
+          const resp = await this.makeRequestWithRetry(permissionConfig);
+          const permissions = resp.data.value;
+          fileIdToRemotePermissionIdMap.set(
+            file.id,
+            permissions.map((p) => p.id),
+          );
+          return permissions;
+        }),
+      );
+
+      allPermissions.push(...permissions.flat());
+    }
+
+    const uniquePermissions = Array.from(
+      new Map(
+        allPermissions.map((permission) => [permission.id, permission]),
+      ).values(),
+    );
+
+    await this.assignUserAndGroupIdsToPermissions(uniquePermissions);
+
+    const syncedPermissions = await this.ingestService.ingestData<
+      UnifiedFilestoragePermissionOutput,
+      OnedrivePermissionOutput
+    >(
+      uniquePermissions,
+      'onedrive',
+      connection.id_connection,
+      'filestorage',
+      'permission',
+    );
+
+    this.logger.log(`Ingested ${allPermissions.length} permissions for files.`);
+
+    const permissionIdMap: Map<string, string> = new Map(
+      syncedPermissions.map((permission) => [
+        permission.remote_id,
+        permission.id_fs_permission,
+      ]),
+    );
+
+    files.forEach((file) => {
+      if (fileIdToRemotePermissionIdMap.has(file.id)) {
+        file.internal_permissions = fileIdToRemotePermissionIdMap
+          .get(file.id)
+          ?.map((permission) => permissionIdMap.get(permission))
+          .filter((id) => id !== undefined);
+      }
     });
 
-    this.logger.log(
-      `Last file sync time: ${lastSyncTime?.remote_modified_at}`,
-      'onedrive files sync',
-    );
-    return lastSyncTime?.remote_modified_at ?? null;
+    return allFiles;
+  }
+
+  private async assignUserAndGroupIdsToPermissions(
+    permissions: OnedrivePermissionOutput[],
+  ): Promise<void> {
+    const userLookupCache: Map<string, string> = new Map();
+    const groupLookupCache: Map<string, string> = new Map();
+
+    for (const permission of permissions) {
+      if (permission.grantedToV2?.user?.id) {
+        const remote_user_id = permission.grantedToV2.user.id;
+        if (userLookupCache.has(remote_user_id)) {
+          permission.internal_user_id = userLookupCache.get(remote_user_id);
+          continue;
+        }
+        const user = await this.prisma.fs_users.findFirst({
+          where: {
+            remote_id: remote_user_id,
+          },
+          select: {
+            id_fs_user: true,
+          },
+        });
+        if (user) {
+          permission.internal_user_id = user.id_fs_user;
+          userLookupCache.set(remote_user_id, user.id_fs_user);
+        }
+      }
+
+      if (permission.grantedToV2?.group?.id) {
+        const remote_group_id = permission.grantedToV2.group.id;
+        if (groupLookupCache.has(remote_group_id)) {
+          permission.internal_group_id = groupLookupCache.get(remote_group_id);
+          continue;
+        }
+        const group = await this.prisma.fs_groups.findFirst({
+          where: {
+            remote_id: remote_group_id,
+          },
+          select: {
+            id_fs_group: true,
+          },
+        });
+        if (group) {
+          permission.internal_group_id = group.id_fs_group;
+          groupLookupCache.set(remote_group_id, group.id_fs_group);
+        }
+      }
+    }
   }
 
   private async syncFolder(
@@ -305,6 +423,8 @@ export class OnedriveService implements IFileService {
       const files: OnedriveFileOutput[] = resp.data.value.filter(
         (elem: any) => !elem.folder, // files don't have a folder property
       );
+
+      await this.ingestPermissionsForFiles(files, connection);
 
       return files;
     } catch (error: any) {
@@ -332,27 +452,15 @@ export class OnedriveService implements IFileService {
       }
       throw error;
     }
+  }
 
-    // Add permissions (shared link is also included in permissions in OneDrive)
-    // await Promise.all(
-    //   files.map(async (driveItem: OnedriveFileOutput) => {
-    //     const permissionsConfig: AxiosRequestConfig = {
-    //       method: 'get',
-    //       url: `${connection.account_url}/v1.0/me/drive/items/${driveItem.id}/permissions`,
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         Authorization: `Bearer ${this.cryptoService.decrypt(
-    //           connection.access_token,
-    //         )}`,
-    //       },
-    //     };
-
-    //     const permissionsResp: AxiosResponse = await this.makeRequestWithRetry(
-    //       permissionsConfig,
-    //     );
-    //     driveItem.permissions = permissionsResp.data.value;
-    //   }),
-    // );
+  private async getLastSyncTime(connectionId: string): Promise<Date | null> {
+    const lastSync = await this.prisma.fs_files.findFirst({
+      where: { id_connection: connectionId },
+      orderBy: { remote_modified_at: { sort: 'desc', nulls: 'last' } },
+    });
+    this.logger.log(`Last sync time: ${lastSync?.remote_modified_at}`);
+    return lastSync ? lastSync.remote_modified_at : null;
   }
 
   async downloadFile(fileId: string, connection: any): Promise<Buffer> {
@@ -433,6 +541,11 @@ export class OnedriveService implements IFileService {
           await this.delay(delayTime);
           backoff *= 2;
           continue;
+        }
+
+        // handle 410 gone errors
+        if (error.response?.status === 410 && config.url.includes('delta')) {
+          // todo: handle 410 gone errors
         }
 
         throw error;
