@@ -784,6 +784,11 @@ export class OnedriveService implements IFolderService {
           continue;
         }
 
+        // handle 410 gone errors
+        if (error.response?.status === 410 && config.url.includes('delta')) {
+          // todo: handle 410 gone errors
+        }
+
         throw error;
       }
     }

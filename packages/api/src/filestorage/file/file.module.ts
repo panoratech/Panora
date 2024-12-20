@@ -18,6 +18,7 @@ import { SharepointFileMapper } from './services/sharepoint/mappers';
 import { SyncService } from './sync/sync.service';
 import { GoogleDriveQueueProcessor } from './services/googledrive/processor';
 import { FolderModule } from '../folder/folder.module';
+import { OnedriveQueueProcessor } from './services/onedrive/processor';
 
 @Module({
   imports: [FolderModule],
@@ -43,6 +44,7 @@ import { FolderModule } from '../folder/folder.module';
     DropboxFileMapper,
     GoogleDriveService,
     GoogleDriveQueueProcessor,
+    OnedriveQueueProcessor,
   ],
   exports: [SyncService, ServiceRegistry],
 })
