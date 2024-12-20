@@ -715,8 +715,12 @@ export class OnedriveService implements IFolderService {
   private async getLastSyncTime(connectionId: string): Promise<Date | null> {
     const lastSync = await this.prisma.fs_folders.findFirst({
       where: { id_connection: connectionId },
-      orderBy: { remote_modified_at: 'desc' },
+      orderBy: { remote_modified_at: { sort: 'desc', nulls: 'last' } },
     });
+    this.logger.log(
+      `Last sync time: ${lastSync?.remote_modified_at}`,
+      'onedrive folders sync',
+    );
     return lastSync ? lastSync.remote_modified_at : null;
   }
 

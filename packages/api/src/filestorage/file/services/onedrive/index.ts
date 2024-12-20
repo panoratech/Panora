@@ -258,16 +258,29 @@ export class OnedriveService implements IFileService {
     );
   }
 
-  private async getLastSyncTime(connection: any) {
+  private async getLastSyncTime(connection: {
+    id_connection: string;
+  }): Promise<Date | null> {
     const lastSyncTime = await this.prisma.fs_files.findFirst({
       where: {
         id_connection: connection.id_connection,
       },
       orderBy: {
-        remote_modified_at: 'desc',
+        remote_modified_at: {
+          sort: 'desc',
+          nulls: 'last',
+        },
+      },
+      select: {
+        remote_modified_at: true,
       },
     });
-    return lastSyncTime?.remote_modified_at;
+
+    this.logger.log(
+      `Last file sync time: ${lastSyncTime?.remote_modified_at}`,
+      'onedrive files sync',
+    );
+    return lastSyncTime?.remote_modified_at ?? null;
   }
 
   private async syncFolder(
