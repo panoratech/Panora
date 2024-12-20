@@ -79,10 +79,6 @@ export class GoogleDriveService implements IFileService {
       ).values(),
     );
 
-    this.logger.log(
-      `Ingesting ${uniquePermissions.length} unique permissions.`,
-    );
-
     // Ingest permissions using the ingestService
     const syncedPermissions = await this.ingestService.ingestData<
       UnifiedFilestoragePermissionOutput,
@@ -93,6 +89,10 @@ export class GoogleDriveService implements IFileService {
       connectionId,
       'filestorage',
       'permission',
+    );
+
+    this.logger.log(
+      `Ingested ${uniquePermissions.length} permissions for googledrive files.`,
     );
 
     // Create a map of original permission ID to synced permission ID
@@ -193,6 +193,8 @@ export class GoogleDriveService implements IFileService {
         custom_field_mappings,
         ingestParams,
       );
+
+      this.logger.log(`Ingested a batch of ${files.length} googledrive files.`);
     }
 
     if (nextPageTokenFiles || nextPageTokenFolders) {
@@ -205,9 +207,12 @@ export class GoogleDriveService implements IFileService {
           pageTokenFolders: nextPageTokenFolders,
           connectionId: connection.id_connection,
         });
+    } else {
+      this.logger.log(
+        `No more files to sync for googledrive for linked user ${linkedUserId}.`,
+      );
     }
 
-    console.log(`Processed a batch of ${files.length} files.`);
     return {
       data: [],
       message: 'Google Drive sync completed for this batch',
@@ -274,7 +279,7 @@ export class GoogleDriveService implements IFileService {
           foldersResponse.data.files.map((folder) =>
             this.rateLimitedRequest<DriveResponse>(() =>
               drive.files.list({
-                q: `'${folder.id}' in parents`,
+                q: `'${folder.id}' in parents and mimeType!='application/vnd.google-apps.folder'`,
                 fields:
                   'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions, trashed)',
                 pageSize: BATCH_SIZE,
