@@ -289,8 +289,26 @@ export class OnedriveService implements IFolderService {
       );
     } while (deltaLink);
 
-    const deletedFolders = onedriveFolders.filter((f: any) => f.deleted);
-    const updatedFolders = onedriveFolders.filter((f: any) => !f.deleted);
+    // Sort folders by lastModifiedDateTime in descending order (newest first)
+    const sortedFolders = [...onedriveFolders].sort((a, b) => {
+      const dateA = new Date(a.lastModifiedDateTime).getTime();
+      const dateB = new Date(b.lastModifiedDateTime).getTime();
+      return dateB - dateA;
+    });
+
+    const uniqueFolders = sortedFolders.reduce((acc, folder) => {
+      if (!acc.has(folder.id)) {
+        acc.set(folder.id, folder);
+      }
+      return acc;
+    }, new Map<string, OnedriveFolderOutput>());
+
+    const deletedFolders = Array.from(uniqueFolders.values()).filter(
+      (f: any) => f.deleted,
+    );
+    const updatedFolders = Array.from(uniqueFolders.values()).filter(
+      (f: any) => !f.deleted,
+    );
 
     // handle deleted folders
     await Promise.all(
@@ -334,7 +352,7 @@ export class OnedriveService implements IFolderService {
   ): Promise<OnedriveFolderOutput[]> {
     const allPermissions: OnedrivePermissionOutput[] = [];
     const folderIdToRemotePermissionIdMap: Map<string, string[]> = new Map();
-    const batchSize = 100; // simultaneous requests
+    const batchSize = 10; // simultaneous requests
 
     const folders = allFolders.filter((f) => !f.deleted);
 
@@ -387,7 +405,7 @@ export class OnedriveService implements IFolderService {
     );
 
     this.logger.log(
-      `Ingested ${allPermissions.length} permissions for folders.`,
+      `Ingested ${syncedPermissions.length} permissions for folders.`,
     );
 
     const permissionIdMap: Map<string, string> = new Map(

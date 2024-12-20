@@ -112,9 +112,6 @@ export class OnedriveService implements IFileService {
         }
 
         if (files.length > 0) {
-          // Assign and ingest permissions for the ingested files
-          await this.ingestPermissionsForFiles(files, connection);
-
           const ingestedFiles = await this.ingestFiles(
             files,
             connection,
@@ -253,6 +250,11 @@ export class OnedriveService implements IFileService {
       'onedrive files ingestion',
     );
 
+    await this.ingestPermissionsForFiles(
+      Array.from(uniqueFiles.values()),
+      connection,
+    );
+
     return this.ingestService.ingestData<
       UnifiedFilestorageFileOutput,
       OnedriveFileOutput
@@ -279,7 +281,7 @@ export class OnedriveService implements IFileService {
   ): Promise<OnedriveFileOutput[]> {
     const allPermissions: OnedrivePermissionOutput[] = [];
     const fileIdToRemotePermissionIdMap: Map<string, string[]> = new Map();
-    const batchSize = 100; // simultaneous requests
+    const batchSize = 10; // simultaneous requests
 
     const files = allFiles.filter((f) => !f.deleted);
 
@@ -309,6 +311,8 @@ export class OnedriveService implements IFileService {
         }),
       );
 
+      this.delay(1000); // delay to avoid rate limiting
+
       allPermissions.push(...permissions.flat());
     }
 
@@ -331,7 +335,9 @@ export class OnedriveService implements IFileService {
       'permission',
     );
 
-    this.logger.log(`Ingested ${allPermissions.length} permissions for files.`);
+    this.logger.log(
+      `Ingested ${syncedPermissions.length} permissions for files.`,
+    );
 
     const permissionIdMap: Map<string, string> = new Map(
       syncedPermissions.map((permission) => [
