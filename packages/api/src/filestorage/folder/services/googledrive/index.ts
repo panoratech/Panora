@@ -14,6 +14,8 @@ import { GoogleDriveFolderInput, GoogleDriveFolderOutput } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { GoogledrivePermissionOutput } from '@filestorage/permission/services/googledrive/types';
 import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
+import { GoogleDriveFileOutput } from '@filestorage/file/services/googledrive/types';
+import { GoogleDriveService as GoogleDriveFileService } from '@filestorage/file/services/googledrive';
 
 interface GoogleDriveListResponse {
   data: {
@@ -34,6 +36,7 @@ export class GoogleDriveFolderService implements IFolderService {
     private cryptoService: EncryptionService,
     private registry: ServiceRegistry,
     private ingestService: IngestDataService,
+    private fileService: GoogleDriveFileService,
   ) {
     this.logger.setContext(
       `${FileStorageObject.folder.toUpperCase()}:${
@@ -138,13 +141,29 @@ export class GoogleDriveFolderService implements IFolderService {
             connection.id_connection,
           );
 
-      console.log(`Got ${folders.length} folders`);
+      const filesToSync = await this.getFilesToSyncForFolders(
+        folders,
+        connection.id_connection,
+        auth,
+      );
 
+      // Sync permissions for folders
       await this.ingestPermissionsForFolders(folders, connection.id_connection);
+
+      await this.ingestService.ingestData(
+        folders,
+        'googledrive',
+        connection.id_connection,
+        'filestorage',
+        'folder',
+      );
+
       this.logger.log(`Synced ${folders.length} Google Drive folders!`);
 
+      // Sync files from new folders
+      await this.fileService.ingestFiles(filesToSync, connection.id_connection);
       return {
-        data: folders,
+        data: [],
         message: 'Google Drive folders retrieved',
         statusCode: 200,
       };
@@ -302,6 +321,49 @@ export class GoogleDriveFolderService implements IFolderService {
     return driveIds;
   }
 
+  private async getFilesToSyncForFolders(
+    folders: GoogleDriveFolderOutput[],
+    connectionId: string,
+    auth: OAuth2Client,
+  ): Promise<GoogleDriveFileOutput[]> {
+    const filesToSync: GoogleDriveFileOutput[] = [];
+    const drive = google.drive({ version: 'v3', auth });
+    const batchSize = 20;
+
+    for (let i = 0; i < folders.length; i += batchSize) {
+      const batch = folders.slice(i, i + batchSize);
+      const files = await Promise.all(
+        batch.map(async (folder) => {
+          const f = [];
+          let pageToken: string | null = null;
+          do {
+            const response = await this.executeWithRetry(() =>
+              drive.files.list({
+                q: `'${folder.id}' in parents and mimeType!='application/vnd.google-apps.folder'`,
+                fields:
+                  'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissions, trashed)',
+                includeItemsFromAllDrives: true,
+                supportsAllDrives: true,
+                orderBy: 'modifiedTime',
+                pageToken,
+              }),
+            );
+            if (response.data.files?.length) {
+              f.push(...response.data.files);
+            }
+            pageToken = response.data.nextPageToken ?? null;
+          } while (pageToken);
+          return f;
+        }),
+      );
+      filesToSync.push(...files.flat());
+    }
+
+    this.logger.log(`Got ${filesToSync.length} files to sync from folders.`);
+
+    return filesToSync;
+  }
+
   /**
    * Ingests permissions for the provided Google Drive folders into the database.
    */
@@ -373,7 +435,9 @@ export class GoogleDriveFolderService implements IFolderService {
         }
       });
 
-      this.logger.log('Successfully ingested and updated folder permissions.');
+      this.logger.log(
+        `Ingested ${syncedPermissions.length} googledrive permissions.`,
+      );
       return folders;
     } catch (error) {
       this.logger.error('Error ingesting permissions for folders', error);

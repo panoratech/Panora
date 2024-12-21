@@ -37,7 +37,7 @@ export class GoogleDriveService implements IFileService {
     this.registry.registerService('googledrive', this);
   }
 
-  async ingestData(
+  async ingestFiles(
     sourceData: GoogleDriveFileOutput[],
     connectionId: string,
     customFieldMappings?: {
@@ -116,7 +116,7 @@ export class GoogleDriveService implements IFileService {
     });
 
     // Ingest files with updated permissions
-    return this.ingestService.ingestData<
+    const syncedFiles = await this.ingestService.ingestData<
       UnifiedFilestorageFileOutput,
       GoogleDriveFileOutput
     >(
@@ -128,13 +128,15 @@ export class GoogleDriveService implements IFileService {
       customFieldMappings,
       extraParams,
     );
+
+    this.logger.log(
+      `Ingested a batch of ${syncedFiles.length} googledrive files.`,
+    );
+
+    return syncedFiles;
   }
 
-  async sync(
-    data: SyncParam,
-    pageTokenFiles?: string,
-    pageTokenFolders?: string,
-  ) {
+  async sync(data: SyncParam, pageToken?: string) {
     const { linkedUserId, custom_field_mappings, ingestParams } = data;
     const connection = await this.prisma.connections.findFirst({
       where: {
@@ -160,7 +162,7 @@ export class GoogleDriveService implements IFileService {
       .then((res) => res.data.id);
 
     let query = "mimeType!='application/vnd.google-apps.folder'";
-    if (!pageTokenFiles && !pageTokenFolders) {
+    if (!pageToken) {
       const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
       if (lastSyncTime) {
         console.log(`Last sync time is ${lastSyncTime.toISOString()}`);
@@ -168,8 +170,11 @@ export class GoogleDriveService implements IFileService {
       }
     }
 
-    const { filesToSync, nextPageTokenFiles, nextPageTokenFolders } =
-      await this.getFilesToSync(drive, query, pageTokenFiles, pageTokenFolders);
+    const { filesToSync, nextPageToken } = await this.getFilesToSync(
+      drive,
+      query,
+      pageToken,
+    );
 
     const files: GoogleDriveFileOutput[] = filesToSync.map((file) => ({
       id: file.id!,
@@ -187,24 +192,21 @@ export class GoogleDriveService implements IFileService {
 
     // Process the files fetched in the current batch
     if (files.length > 0) {
-      await this.ingestData(
+      await this.ingestFiles(
         files,
         connection.id_connection,
         custom_field_mappings,
         ingestParams,
       );
-
-      this.logger.log(`Ingested a batch of ${files.length} googledrive files.`);
     }
 
-    if (nextPageTokenFiles || nextPageTokenFolders) {
+    if (nextPageToken) {
       // Add the next pageToken to the queue
       await this.bullQueueService
         .getThirdPartyDataIngestionQueue()
         .add('fs_file_googledrive', {
           ...data,
-          pageTokenFiles: nextPageTokenFiles,
-          pageTokenFolders: nextPageTokenFolders,
+          pageToken: nextPageToken,
           connectionId: connection.id_connection,
         });
     } else {
@@ -223,15 +225,9 @@ export class GoogleDriveService implements IFileService {
   async getFilesToSync(
     drive: any,
     query: string,
-    pageTokenFiles?: string,
-    pageTokenFolders?: string,
+    pageToken?: string,
+    pages = 20, // number of times we use nextPageToken
   ) {
-    const need_to_fetch_files =
-      pageTokenFiles || (!pageTokenFolders && !pageTokenFiles);
-
-    const need_to_fetch_folders =
-      pageTokenFolders || (!pageTokenFiles && !pageTokenFolders);
-
     interface DriveResponse {
       data: {
         files: GoogleDriveFileOutput[];
@@ -239,71 +235,35 @@ export class GoogleDriveService implements IFileService {
       };
     }
 
-    const filesResponse = need_to_fetch_files
-      ? await this.rateLimitedRequest<DriveResponse>(() =>
-          drive.files.list({
-            q: query,
-            fields:
-              'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions, trashed)',
-            pageSize: BATCH_SIZE,
-            pageToken: pageTokenFiles,
-            includeItemsFromAllDrives: true,
-            supportsAllDrives: true,
-            orderBy: 'modifiedTime',
-          }),
-        )
-      : null;
+    const accumulatedFiles: GoogleDriveFileOutput[] = [];
+    let nextPageToken = pageToken;
+    let pagesProcessed = 0;
 
-    const folderQuery = query.replace(
-      "mimeType!='application/vnd.google-apps.folder'",
-      "mimeType='application/vnd.google-apps.folder'",
-    );
+    do {
+      const filesResponse = await this.rateLimitedRequest<DriveResponse>(() =>
+        drive.files.list({
+          q: query,
+          fields:
+            'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions, trashed)',
+          pageSize: BATCH_SIZE,
+          pageToken: nextPageToken,
+          includeItemsFromAllDrives: true,
+          supportsAllDrives: true,
+          orderBy: 'modifiedTime',
+        }),
+      );
 
-    const foldersResponse = need_to_fetch_folders
-      ? await this.rateLimitedRequest<DriveResponse>(() =>
-          drive.files.list({
-            q: folderQuery,
-            fields:
-              'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions, trashed)',
-            pageSize: BATCH_SIZE,
-            pageToken: pageTokenFolders,
-            includeItemsFromAllDrives: true,
-            supportsAllDrives: true,
-            orderBy: 'modifiedTime',
-          }),
-        )
-      : null;
-
-    const filesFromNewFolders = foldersResponse
-      ? await Promise.all(
-          foldersResponse.data.files.map((folder) =>
-            this.rateLimitedRequest<DriveResponse>(() =>
-              drive.files.list({
-                q: `'${folder.id}' in parents and mimeType!='application/vnd.google-apps.folder'`,
-                fields:
-                  'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions, trashed)',
-                pageSize: BATCH_SIZE,
-              }),
-            ),
-          ),
-        )
-      : null;
+      accumulatedFiles.push(...(filesResponse?.data.files || []));
+      nextPageToken = filesResponse?.data.nextPageToken;
+      pagesProcessed++;
+    } while (nextPageToken && pagesProcessed < pages);
 
     // Remove duplicate files based on id
     const filesToSync = Array.from(
-      new Map(
-        [
-          ...(filesResponse?.data.files || []),
-          ...(filesFromNewFolders?.flatMap((folder) => folder.data.files) ||
-            []),
-        ].map((file) => [file.id, file]),
-      ).values(),
+      new Map(accumulatedFiles.map((file) => [file.id, file])).values(),
     );
 
-    const nextPageTokenFiles = filesResponse?.data.nextPageToken;
-    const nextPageTokenFolders = foldersResponse?.data.nextPageToken;
-
-    return { filesToSync, nextPageTokenFiles, nextPageTokenFolders };
+    return { filesToSync, nextPageToken };
   }
 
   async processBatch(job: any) {
@@ -325,7 +285,6 @@ export class GoogleDriveService implements IFileService {
         ingestParams,
       },
       pageTokenFiles,
-      pageTokenFolders,
     );
   }
 
