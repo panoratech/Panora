@@ -104,6 +104,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ): Promise<FileStorageFile[]> {
     try {
       const files_results: FileStorageFile[] = [];
+      // Cache for folder and drive lookups
+      const folderLookupCache = new Map<string, string | null>();
+      const driveLookupCache = new Map<string, string | null>();
 
       const updateOrCreateFile = async (
         file: UnifiedFilestorageFileOutput,
@@ -119,30 +122,55 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
         let folder_id_by_remote_folder_id = null;
         let drive_id_by_remote_drive_id = null;
+
         if (file.remote_folder_id) {
-          const folder = await this.prisma.fs_folders.findFirst({
-            where: {
-              remote_id: file.remote_folder_id,
-              id_connection: connection_id,
-            },
-            select: {
-              id_fs_folder: true,
-            },
-          });
-          folder_id_by_remote_folder_id = folder?.id_fs_folder;
+          if (folderLookupCache.has(file.remote_folder_id)) {
+            folder_id_by_remote_folder_id = folderLookupCache.get(
+              file.remote_folder_id,
+            );
+          } else {
+            const folder = await this.prisma.fs_folders.findFirst({
+              where: {
+                remote_id: file.remote_folder_id,
+                id_connection: connection_id,
+              },
+              select: {
+                id_fs_folder: true,
+              },
+            });
+            folder_id_by_remote_folder_id = folder?.id_fs_folder ?? null;
+            folderLookupCache.set(
+              file.remote_folder_id,
+              folder_id_by_remote_folder_id,
+            );
+          }
         }
 
         if (file.remote_drive_id) {
-          const drive = await this.prisma.fs_drives.findFirst({
-            where: {
-              remote_id: file.remote_drive_id,
-              id_connection: connection_id,
-            },
-            select: {
-              id_fs_drive: true,
-            },
-          });
-          drive_id_by_remote_drive_id = drive?.id_fs_drive;
+          if (driveLookupCache.has(file.remote_drive_id)) {
+            drive_id_by_remote_drive_id = driveLookupCache.get(
+              file.remote_drive_id,
+            );
+            console.log(
+              'drive_id_by_remote_drive_id',
+              drive_id_by_remote_drive_id,
+            );
+          } else {
+            const drive = await this.prisma.fs_drives.findFirst({
+              where: {
+                remote_id: file.remote_drive_id,
+                id_connection: connection_id,
+              },
+              select: {
+                id_fs_drive: true,
+              },
+            });
+            drive_id_by_remote_drive_id = drive?.id_fs_drive ?? null;
+            driveLookupCache.set(
+              file.remote_drive_id,
+              drive_id_by_remote_drive_id,
+            );
+          }
         }
 
         const baseData: any = {
@@ -155,14 +183,20 @@ export class SyncService implements OnModuleInit, IBaseSync {
           modified_at: new Date(),
           remote_created_at: file.remote_created_at ?? null,
           remote_modified_at: file.remote_modified_at ?? null,
+          remote_was_deleted: file.remote_was_deleted ?? false,
         };
+
+        // remove null values
+        const cleanData = Object.fromEntries(
+          Object.entries(baseData).filter(([_, value]) => value !== null),
+        );
 
         if (existingFile) {
           return await this.prisma.fs_files.update({
             where: {
               id_fs_file: existingFile.id_fs_file,
             },
-            data: baseData,
+            data: cleanData,
           });
         } else {
           return await this.prisma.fs_files.create({

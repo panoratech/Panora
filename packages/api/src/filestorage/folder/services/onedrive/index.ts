@@ -115,11 +115,13 @@ export class OnedriveService implements IFolderService {
         );
       }
 
+      this.logger.log(`Ingesting permissions for ${folders.length} folders`);
+
+      await this.ingestPermissionsForFolders(folders, connection);
+
       this.logger.log(
         `${folders.length} OneDrive folders synced successfully.`,
       );
-
-      await this.ingestPermissionsForFolders(folders, connection);
 
       return {
         data: folders,
@@ -224,9 +226,7 @@ export class OnedriveService implements IFolderService {
                       id_fs_folder: true,
                     },
                   });
-                  if (f) {
-                    await this.handleDeletedFolder(f.id_fs_folder, connection);
-                  }
+                  await this.handleDeletedFolder(f.id_fs_folder, connection);
                   return [];
                 }
                 throw error;
@@ -306,30 +306,9 @@ export class OnedriveService implements IFolderService {
     const deletedFolders = Array.from(uniqueFolders.values()).filter(
       (f: any) => f.deleted,
     );
+
     const updatedFolders = Array.from(uniqueFolders.values()).filter(
       (f: any) => !f.deleted,
-    );
-
-    // handle deleted folders
-    await Promise.all(
-      deletedFolders.map(async (folder) => {
-        const internal_folder = await this.prisma.fs_folders.findFirst({
-          where: {
-            remote_id: folder.id,
-            id_connection: connection.id_connection,
-          },
-          select: {
-            id_fs_folder: true,
-          },
-        });
-
-        if (internal_folder) {
-          await this.handleDeletedFolder(
-            internal_folder.id_fs_folder,
-            connection,
-          );
-        }
-      }),
     );
 
     // handle updated folders
@@ -337,7 +316,8 @@ export class OnedriveService implements IFolderService {
       updatedFolders,
       connection,
     );
-    return foldersToSync;
+
+    return [...foldersToSync, ...deletedFolders];
   }
 
   /**
@@ -700,137 +680,18 @@ export class OnedriveService implements IFolderService {
     });
 
     if (!folder || folder.remote_was_deleted) {
-      this.logger.debug('Folder already marked deleted');
       return;
     }
 
-    const highestDeletedPredecessor = await this.findHigestDeletedPredecessor(
-      folder as fs_folders,
-      connection,
-    );
-
-    if (highestDeletedPredecessor === 'not_deleted') {
-      this.logger.debug(
-        "Higest deleted predecessor came out to be as 'not_deleted'",
-      );
-      return;
-    }
-
-    const entitiesDeleted = await this.markChildrenAsDeleted(
-      highestDeletedPredecessor,
-      connection,
-    );
-
-    this.logger.debug(
-      `Deleted ${entitiesDeleted} entities for folder ${folderId}`,
-    );
-  }
-
-  private async markChildrenAsDeleted(
-    folderId: string,
-    connection: Connection,
-  ): Promise<number> {
-    let entitiesDeleted = 0;
-
-    // we need to find all the children of this folder and mark them as deleted
-    const childFolders = await this.prisma.fs_folders.findMany({
-      where: {
-        parent_folder: folderId,
-        id_connection: connection.id_connection,
-      },
-      select: {
-        id_fs_folder: true,
-        remote_was_deleted: false,
-      },
-    });
-
-    const childFiles = await this.prisma.fs_files.findMany({
+    // update the folder to be deleted
+    await this.prisma.fs_folders.update({
       where: {
         id_fs_folder: folderId,
-        id_connection: connection.id_connection,
-      },
-      select: {
-        id_fs_file: true,
-        remote_was_deleted: false,
-      },
-    });
-
-    const childFolderIds = childFolders.map((f) => f.id_fs_folder);
-    const childFileIds = childFiles.map((f) => f.id_fs_file);
-
-    await this.prisma.fs_folders.updateMany({
-      where: {
-        id_fs_folder: { in: childFolderIds },
       },
       data: {
         remote_was_deleted: true,
       },
     });
-
-    await this.prisma.fs_files.updateMany({
-      where: {
-        id_fs_file: { in: childFileIds },
-      },
-      data: {
-        remote_was_deleted: true,
-      },
-    });
-
-    entitiesDeleted += childFolderIds.length + childFileIds.length;
-
-    const childFolderResults = await Promise.all(
-      childFolderIds.map(
-        async (id) => await this.markChildrenAsDeleted(id, connection),
-      ),
-    );
-
-    entitiesDeleted += childFolderResults.reduce((acc, curr) => acc + curr, 0);
-    return entitiesDeleted;
-  }
-
-  private async findHigestDeletedPredecessor(
-    folder: fs_folders,
-    connection: Connection,
-  ): Promise<string | 'not_deleted'> {
-    // if the folder has no parent, it is the root folder
-    if (!folder.parent_folder) {
-      return folder.id_fs_folder;
-    }
-
-    const remoteDeleted = folder.remote_was_deleted
-      ? true
-      : await this.folderDeletedOnRemote(folder, connection);
-    if (!remoteDeleted) {
-      return 'not_deleted';
-    }
-
-    // if the folder is deleted, we need to find the highest deleted predecessor
-    const parentFolder = await this.prisma.fs_folders.findFirst({
-      where: {
-        id_fs_folder: folder.parent_folder,
-        id_connection: connection.id_connection,
-      },
-      select: {
-        remote_was_deleted: true,
-        id_fs_folder: true,
-        parent_folder: true,
-      },
-    });
-
-    if (!parentFolder) {
-      return folder.id_fs_folder;
-    }
-
-    const parentResult = await this.findHigestDeletedPredecessor(
-      parentFolder as fs_folders,
-      connection,
-    );
-
-    if (parentResult === 'not_deleted') {
-      return folder.id_fs_folder;
-    }
-
-    return parentResult;
   }
 
   /**
@@ -877,8 +738,7 @@ export class OnedriveService implements IFolderService {
       orderBy: { remote_modified_at: { sort: 'desc', nulls: 'last' } },
     });
     this.logger.log(
-      `Last sync time: ${lastSync?.remote_modified_at}`,
-      'onedrive folders sync',
+      `Last sync time for connection ${connectionId} one drive folders: ${lastSync?.remote_modified_at}`,
     );
     return lastSync ? lastSync.remote_modified_at : null;
   }

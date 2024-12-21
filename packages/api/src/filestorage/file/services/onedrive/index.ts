@@ -78,10 +78,7 @@ export class OnedriveService implements IFileService {
 
       // if deltaLink is provided
       if (deltaLink) {
-        this.logger.log(
-          `Syncing OneDrive files from deltaLink: ${deltaLink}`,
-          'onedrive files sync',
-        );
+        this.logger.log(`Syncing OneDrive files from deltaLink: ${deltaLink}`);
 
         let files: OnedriveFileOutput[] = [];
         let nextDeltaLink: string | null = null;
@@ -121,7 +118,6 @@ export class OnedriveService implements IFileService {
 
           this.logger.log(
             `Ingested ${ingestedFiles.length} files from OneDrive.`,
-            'onedrive files ingestion',
           );
         }
 
@@ -135,10 +131,7 @@ export class OnedriveService implements IFileService {
               connectionId: connection.id_connection,
             });
         } else {
-          this.logger.log(
-            `No more files to sync from OneDrive.`,
-            'onedrive files sync',
-          );
+          this.logger.log(`No more files to sync from OneDrive.`);
         }
       } else {
         const lastSyncTime = await this.getLastSyncTime(
@@ -171,12 +164,12 @@ export class OnedriveService implements IFileService {
   private async getFilesToSync(
     connection: Connection,
     deltaLink: string,
-    batchSize: number, // number of times to call the API
+    maxApiCalls: number, // number of times to call the API
   ) {
     const files: OnedriveFileOutput[] = [];
     let nextDeltaLink: string | null = deltaLink;
 
-    for (let i = 0; i < batchSize; i++) {
+    for (let i = 0; i < maxApiCalls; i++) {
       const resp = await this.makeRequestWithRetry({
         timeout: 30000,
         method: 'get',
@@ -445,7 +438,7 @@ export class OnedriveService implements IFileService {
             remote_was_deleted: true,
           },
         });
-        if (internalFolder && internalFolder.remote_was_deleted) {
+        if (internalFolder && !internalFolder.remote_was_deleted) {
           this.logger.debug(
             `Folder ${internalFolder.id_fs_folder} not found in OneDrive, marking as deleted in internal database.`,
           );

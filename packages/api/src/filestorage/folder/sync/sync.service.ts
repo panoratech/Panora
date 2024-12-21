@@ -130,19 +130,25 @@ export class SyncService implements OnModuleInit, IBaseSync {
           modified_at: new Date(),
           remote_created_at: folder.remote_created_at ?? null,
           remote_modified_at: folder.remote_modified_at ?? null,
+          remote_was_deleted: folder.remote_was_deleted ? true : false,
         };
+
+        // remove null values
+        const cleanData = Object.fromEntries(
+          Object.entries(baseData).filter(([_, value]) => value !== null),
+        );
 
         if (existingFolder) {
           return await this.prisma.fs_folders.update({
             where: {
               id_fs_folder: existingFolder.id_fs_folder,
             },
-            data: baseData,
+            data: cleanData,
           });
         } else {
           return await this.prisma.fs_folders.create({
             data: {
-              ...baseData,
+              ...baseData, // using baseData for creation
               id_fs_folder: folder.id ?? uuidv4(),
               created_at: new Date(),
               remote_id: originId ?? null,

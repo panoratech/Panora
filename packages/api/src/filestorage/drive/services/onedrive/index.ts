@@ -66,7 +66,7 @@ export class OnedriveService implements IDriveService {
 
       const config: AxiosRequestConfig = {
         method: 'get',
-        url: `${connection.account_url}/v1.0/drives`,
+        url: `${connection.account_url}/v1.0/me/drives`,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this.cryptoService.decrypt(
