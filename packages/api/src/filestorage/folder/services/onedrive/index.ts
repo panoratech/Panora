@@ -352,7 +352,7 @@ export class OnedriveService implements IFolderService {
   ): Promise<OnedriveFolderOutput[]> {
     const allPermissions: OnedrivePermissionOutput[] = [];
     const folderIdToRemotePermissionIdMap: Map<string, string[]> = new Map();
-    const batchSize = 10; // simultaneous requests
+    const batchSize = 4; // simultaneous requests
 
     const folders = allFolders.filter((f) => !f.deleted);
 

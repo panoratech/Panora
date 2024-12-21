@@ -270,7 +270,7 @@ export class GoogleDriveService implements IFileService {
     const {
       linkedUserId,
       query,
-      pageTokenFiles,
+      pageToken,
       pageTokenFolders,
       connectionId,
       custom_field_mappings,
@@ -284,7 +284,7 @@ export class GoogleDriveService implements IFileService {
         custom_field_mappings,
         ingestParams,
       },
-      pageTokenFiles,
+      pageToken,
     );
   }
 

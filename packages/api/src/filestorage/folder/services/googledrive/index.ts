@@ -130,7 +130,7 @@ export class GoogleDriveFolderService implements IFolderService {
 
       const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
       const isFirstSync = !lastSyncTime;
-      const folders = isFirstSync
+      const folders = !isFirstSync
         ? await this.getFoldersIncremental(
             auth,
             connection.id_connection,

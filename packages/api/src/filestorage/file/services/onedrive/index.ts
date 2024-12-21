@@ -281,7 +281,7 @@ export class OnedriveService implements IFileService {
   ): Promise<OnedriveFileOutput[]> {
     const allPermissions: OnedrivePermissionOutput[] = [];
     const fileIdToRemotePermissionIdMap: Map<string, string[]> = new Map();
-    const batchSize = 10; // simultaneous requests
+    const batchSize = 4; // simultaneous requests
 
     const files = allFiles.filter((f) => !f.deleted);
 
