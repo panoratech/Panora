@@ -240,7 +240,7 @@ CREATE TABLE fs_groups
 (
  id_fs_group        uuid NOT NULL,
  name               text NULL,
- users              text[] NULL,
+ users              uuid[] NULL,
  remote_id          text NULL,
  remote_was_deleted boolean NOT NULL,
  created_at         timestamp with time zone NOT NULL,

@@ -412,12 +412,12 @@ export class CoreSyncService {
   async handleFileStorageSync(provider: string, linkedUserId: string) {
     const tasks = [
       () =>
-        this.registry.getService('filestorage', 'group').syncForLinkedUser({
+        this.registry.getService('filestorage', 'user').syncForLinkedUser({
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),
       () =>
-        this.registry.getService('filestorage', 'user').syncForLinkedUser({
+        this.registry.getService('filestorage', 'group').syncForLinkedUser({
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),

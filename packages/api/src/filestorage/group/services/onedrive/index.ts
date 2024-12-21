@@ -9,6 +9,7 @@ import { Injectable } from '@nestjs/common';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ServiceRegistry } from '../registry.service';
 import { OnedriveGroupOutput } from './types';
+import { connections } from '@prisma/client';
 
 @Injectable()
 export class OnedriveService implements IGroupService {
@@ -58,7 +59,8 @@ export class OnedriveService implements IGroupService {
       const resp: AxiosResponse = await this.makeRequestWithRetry(config);
 
       const groups: OnedriveGroupOutput[] = resp.data.value;
-      this.logger.log(`Synced OneDrive groups successfully.`);
+      await this.assignUsersForGroups(groups, connection);
+      this.logger.log(`Synced ${groups.length} OneDrive groups successfully.`);
 
       return {
         data: groups,
@@ -72,6 +74,58 @@ export class OnedriveService implements IGroupService {
       );
       throw error;
     }
+  }
+
+  private async assignUsersForGroups(
+    groups: OnedriveGroupOutput[],
+    connection: connections,
+  ) {
+    const userLookupCache: Map<string, string> = new Map();
+
+    for (const group of groups) {
+      const users = await this.fetchUsersForGroup(group, connection);
+      const internalUsers = await Promise.all(
+        users.map(async (user) => {
+          if (userLookupCache.has(user.id)) {
+            return userLookupCache.get(user.id);
+          }
+          const internalUser = await this.prisma.fs_users.findFirst({
+            where: {
+              remote_id: user.id,
+            },
+            select: {
+              id_fs_user: true,
+            },
+          });
+          userLookupCache.set(user.id, internalUser?.id_fs_user || null);
+          return internalUser?.id_fs_user || null;
+        }),
+      );
+      group.internal_users = internalUsers.filter(
+        (user) => user !== null,
+      ) as string[];
+    }
+  }
+
+  private async fetchUsersForGroup(
+    group: OnedriveGroupOutput,
+    connection: connections,
+  ) {
+    const config: AxiosRequestConfig = {
+      timeout: 10000,
+      method: 'get',
+      url: `${connection.account_url}/v1.0/groups/${group.id}/members`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.cryptoService.decrypt(
+          connection.access_token,
+        )}`,
+      },
+    };
+
+    const resp: AxiosResponse = await this.makeRequestWithRetry(config);
+
+    return resp.data.value;
   }
 
   /**

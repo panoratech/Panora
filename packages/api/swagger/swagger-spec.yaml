@@ -612,6 +612,12 @@ paths:
       responses:
         '200':
           description: Pull frequency updated successfully
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
       tags: *ref_5
       x-speakeasy-group: sync
     get:

@@ -76,7 +76,7 @@ export class OnedriveGroupMapper implements IGroupMapper {
       name: group.displayName || group.mailNickname,
       remote_was_deleted: group.deletedDateTime !== null,
       field_mappings,
-      users: [],
+      users: group.internal_users || [],
     };
   }
 }

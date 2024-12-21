@@ -119,7 +119,7 @@ model fs_drives {
 model fs_groups {
   id_fs_group        String   @id(map: "pk_fs_groups") @db.Uuid
   name               String?
-  users              String[]
+  users              String[] @db.Uuid
   remote_id          String?
   remote_was_deleted Boolean
   created_at         DateTime @db.Timestamptz(6)
