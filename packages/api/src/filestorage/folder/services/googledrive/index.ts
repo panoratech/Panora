@@ -129,8 +129,8 @@ export class GoogleDriveFolderService implements IFolderService {
       });
 
       const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
-
-      const folders = lastSyncTime
+      const isFirstSync = !lastSyncTime;
+      const folders = isFirstSync
         ? await this.getFoldersIncremental(
             auth,
             connection.id_connection,
@@ -140,12 +140,6 @@ export class GoogleDriveFolderService implements IFolderService {
             auth,
             connection.id_connection,
           );
-
-      const filesToSync = await this.getFilesToSyncForFolders(
-        folders,
-        connection.id_connection,
-        auth,
-      );
 
       // Sync permissions for folders
       await this.ingestPermissionsForFolders(folders, connection.id_connection);
@@ -161,7 +155,18 @@ export class GoogleDriveFolderService implements IFolderService {
       this.logger.log(`Synced ${folders.length} Google Drive folders!`);
 
       // Sync files from new folders
-      await this.fileService.ingestFiles(filesToSync, connection.id_connection);
+      if (!isFirstSync) {
+        const filesToSync = await this.getFilesToSyncForFolders(
+          folders,
+          connection.id_connection,
+          auth,
+        );
+        await this.fileService.ingestFiles(
+          filesToSync,
+          connection.id_connection,
+        );
+      }
+
       return {
         data: [],
         message: 'Google Drive folders retrieved',
