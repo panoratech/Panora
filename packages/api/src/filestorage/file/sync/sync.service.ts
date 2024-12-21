@@ -151,10 +151,6 @@ export class SyncService implements OnModuleInit, IBaseSync {
             drive_id_by_remote_drive_id = driveLookupCache.get(
               file.remote_drive_id,
             );
-            console.log(
-              'drive_id_by_remote_drive_id',
-              drive_id_by_remote_drive_id,
-            );
           } else {
             const drive = await this.prisma.fs_drives.findFirst({
               where: {
