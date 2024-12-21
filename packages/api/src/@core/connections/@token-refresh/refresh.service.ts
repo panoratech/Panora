@@ -17,16 +17,19 @@ export class OAuthTokenRefreshService implements OnModuleInit {
     this.handleCron();
   }
 
-  @Cron(CronExpression.EVERY_HOUR)
+  // This will run every 30 minutes
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async handleCron() {
     const now = new Date();
 
-    const tenHoursFromNow = new Date(now.getTime() + 10 * 60 * 60 * 1000);
+    // refresh tokens that expire in less than 48 hours from now
+    // Keep the time window wide to be able to react to incidents
+    const timeWindow = new Date(now.getTime() + 48 * 60 * 60 * 1000);
 
     const connectionsToRefresh = await this.prisma.connections.findMany({
       where: {
         expiration_timestamp: {
-          lte: tenHoursFromNow.toISOString(),
+          lte: timeWindow.toISOString(),
         },
       },
     });
