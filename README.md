@@ -21,7 +21,7 @@
 
 # 🕹️ Try
 
-- Prerequisite: You should have Git and Docker installed
+- Prerequisites: You should have Git and Docker installed on your system
 
  1. Get the code
 
