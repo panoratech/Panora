@@ -118,6 +118,8 @@ export class GoogleDriveService implements IFileService {
       }
     });
 
+    await this.assignDriveIds(sourceData, drive);
+
     // Ingest files with updated permissions
     const syncedFiles = await this.ingestService.ingestData<
       UnifiedFilestorageFileOutput,
@@ -380,6 +382,32 @@ export class GoogleDriveService implements IFileService {
       },
       pageToken,
     );
+  }
+
+  /**
+   * Assigns driveId as root to files that don't have one.
+   * @param files Array of Google Drive files.
+   * @param auth OAuth2 client for Google Drive API.
+   * @returns Array of Google Drive files with driveId assigned.
+   */
+  private async assignDriveIds(
+    files: GoogleDriveFileOutput[],
+    drive: ReturnType<typeof google.drive>,
+  ): Promise<GoogleDriveFileOutput[]> {
+    const rootDriveId = await this.rateLimitedRequest(() =>
+      drive.files
+        .get({
+          fileId: 'root',
+          fields: 'id',
+        })
+        .then((res) => res.data.id),
+    );
+
+    files.forEach((file) => {
+      file.driveId = file.driveId || rootDriveId;
+    });
+
+    return files;
   }
 
   private async fetchPermissions(

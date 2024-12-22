@@ -403,6 +403,8 @@ export class GoogleDriveFolderService implements IFolderService {
         connectionId,
       );
 
+      await this.assignDriveIds(modifiedFolders, auth);
+
       return await this.assignParentIds(
         modifiedFolders,
         connectionId,
@@ -413,6 +415,33 @@ export class GoogleDriveFolderService implements IFolderService {
       this.logger.error('Error in incremental folder sync', error);
       throw error;
     }
+  }
+
+  /**
+   * Assigns driveId as root to folders that don't have one.
+   * @param folders Array of Google Drive folders.
+   * @param auth OAuth2 client for Google Drive API.
+   * @returns Array of Google Drive folders with driveId assigned.
+   */
+  private async assignDriveIds(
+    folders: GoogleDriveFolderOutput[],
+    auth: OAuth2Client,
+  ): Promise<GoogleDriveFolderOutput[]> {
+    const drive = google.drive({ version: 'v3', auth });
+    const rootDriveId = await this.executeWithRetry(() =>
+      drive.files
+        .get({
+          fileId: 'root',
+          fields: 'id',
+        })
+        .then((res) => res.data.id),
+    );
+
+    folders.forEach((folder) => {
+      folder.driveId = folder.driveId || rootDriveId;
+    });
+
+    return folders;
   }
 
   /**
