@@ -138,7 +138,11 @@ export class GoogleDriveFolderService implements IFolderService {
           );
 
       // Sync permissions for folders
-      await this.ingestPermissionsForFolders(folders, connection.id_connection);
+      await this.ingestPermissionsForFolders(
+        folders,
+        connection.id_connection,
+        auth,
+      );
 
       this.logger.log(`Synced ${folders.length} Google Drive folders!`);
 
@@ -190,7 +194,7 @@ export class GoogleDriveFolderService implements IFolderService {
             drive.files.list({
               q: buildQuery(parentId, driveId),
               fields:
-                'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissions, trashed)',
+                'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissionIds, trashed)',
               pageToken,
               includeItemsFromAllDrives: true,
               supportsAllDrives: true,
@@ -307,6 +311,7 @@ export class GoogleDriveFolderService implements IFolderService {
   async ingestPermissionsForFolders(
     folders: GoogleDriveFolderOutput[],
     connectionId: string,
+    auth: OAuth2Client,
   ): Promise<GoogleDriveFolderOutput[]> {
     if (folders.length === 0) {
       this.logger.log('No folders provided for ingesting permissions.');
@@ -315,29 +320,26 @@ export class GoogleDriveFolderService implements IFolderService {
 
     try {
       // Extract all permissions from the folders
-      const allPermissions: GoogledrivePermissionOutput[] = folders.reduce<
-        GoogledrivePermissionOutput[]
-      >((accumulator, folder) => {
-        if (folder.permissions?.length) {
-          accumulator.push(...folder.permissions);
-        }
-        return accumulator;
-      }, []);
+      const permissionsIds: string[] = Array.from(
+        new Set(
+          folders.reduce<string[]>((accumulator, folder) => {
+            if (folder.permissionIds?.length) {
+              accumulator.push(...folder.permissionIds);
+            }
+            return accumulator;
+          }, []),
+        ),
+      );
 
-      if (allPermissions.length === 0) {
+      if (permissionsIds.length === 0) {
         this.logger.log('No permissions found in the provided folders.');
         return folders;
       }
 
-      // Remove duplicate permissions based on 'id'
-      const uniquePermissions: GoogledrivePermissionOutput[] = Array.from(
-        new Map(
-          allPermissions.map((permission) => [permission.id, permission]),
-        ).values(),
-      );
-
-      this.logger.log(
-        `Ingesting ${uniquePermissions.length} unique permissions.`,
+      const uniquePermissions = await this.fetchPermissions(
+        permissionsIds,
+        folders,
+        auth,
       );
 
       // Ingest permissions using the ingestService
@@ -362,9 +364,9 @@ export class GoogleDriveFolderService implements IFolderService {
 
       // Update each folder's permissions with the synced permission IDs
       folders.forEach((folder) => {
-        if (folder.permissions?.length) {
-          folder.permissions = folder.permissions
-            .map((permission) => permissionIdMap.get(permission.id))
+        if (folder.permissionIds?.length) {
+          folder.internal_permissions = folder.permissionIds
+            .map((permissionId) => permissionIdMap.get(permissionId))
             .filter(
               (permissionId): permissionId is string =>
                 permissionId !== undefined,
@@ -373,7 +375,7 @@ export class GoogleDriveFolderService implements IFolderService {
       });
 
       this.logger.log(
-        `Ingested ${syncedPermissions.length} googledrive permissions.`,
+        `Ingested ${syncedPermissions.length} googledrive permissions for folders.`,
       );
       return folders;
     } catch (error) {
@@ -515,6 +517,47 @@ export class GoogleDriveFolderService implements IFolderService {
     return pending.length === remaining.length;
   }
 
+  private async fetchPermissions(permissionIds, folders, auth) {
+    const drive = google.drive({ version: 'v3', auth });
+    const permissionIdToFolders = new Map<string, string[]>();
+
+    for (const folder of folders) {
+      if (folder.permissionIds?.length) {
+        for (const permissionId of folder.permissionIds) {
+          if (permissionIdToFolders.has(permissionId)) {
+            permissionIdToFolders.get(permissionId)?.push(folder.id);
+          } else {
+            permissionIdToFolders.set(permissionId, [folder.id]);
+          }
+        }
+      }
+    }
+
+    const permissions: GoogledrivePermissionOutput[] = [];
+    const entries = Array.from(permissionIdToFolders.entries());
+
+    // do in batches of 10
+    for (let i = 0; i < entries.length; i += 10) {
+      const batch = entries.slice(i, i + 10);
+      const batchPromises = batch.map(([permissionId, folderIds]) =>
+        drive.permissions.get({
+          permissionId,
+          fileId: folderIds[0],
+          supportsAllDrives: true,
+        }),
+      );
+
+      const batchResults = await Promise.all(batchPromises);
+      permissions.push(
+        ...batchResults.map(
+          (result) => result.data as unknown as GoogledrivePermissionOutput,
+        ),
+      );
+    }
+
+    return permissions;
+  }
+
   private async handleUnresolvedFolders(
     pending: GoogleDriveFolderOutput[],
     output: GoogleDriveFolderOutput[],
@@ -650,7 +693,7 @@ export class GoogleDriveFolderService implements IFolderService {
         supportsAllDrives: true,
         pageSize: 1000,
         fields:
-          'nextPageToken, newStartPageToken, changes(file(id,name,mimeType,createdTime,modifiedTime,size,parents,webViewLink,driveId,trashed,permissions))',
+          'nextPageToken, newStartPageToken, changes(file(id,name,mimeType,createdTime,modifiedTime,size,parents,webViewLink,driveId,trashed,permissionIds))',
       });
 
       const batchFolders = response.data.changes
@@ -685,6 +728,8 @@ export class GoogleDriveFolderService implements IFolderService {
           .then((response) => response.data.startPageToken),
       );
       remoteCursor = startPageToken;
+
+      // for first incremental sync
       await this.updateRemoteCursor(remoteCursor, connectionId);
     }
     return remoteCursor;

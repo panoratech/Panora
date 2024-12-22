@@ -93,7 +93,7 @@ export class GoogleDriveFileMapper implements IFileMapper {
       file_url: file.webViewLink || file.webContentLink || null,
       mime_type: file.mimeType || null,
       size: file.size || null,
-      permissions: file.permissions,
+      permissions: file.internal_permissions,
       shared_link: null,
       ...opts,
       field_mappings,

@@ -93,6 +93,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ): Promise<FileStorageFolder[]> {
     try {
       const folders_results: FileStorageFolder[] = [];
+      const driveLookupCache = new Map<string, string | null>();
 
       const updateOrCreateFolder = async (
         folder: UnifiedFilestorageFolderOutput,
@@ -107,16 +108,26 @@ export class SyncService implements OnModuleInit, IBaseSync {
 
         let drive_id_by_remote_drive_id = null;
         if (folder.remote_drive_id) {
-          const drive = await this.prisma.fs_drives.findFirst({
-            where: {
-              remote_id: folder.remote_drive_id,
-              id_connection: connection_id,
-            },
-            select: {
-              id_fs_drive: true,
-            },
-          });
-          drive_id_by_remote_drive_id = drive?.id_fs_drive;
+          if (driveLookupCache.has(folder.remote_drive_id)) {
+            drive_id_by_remote_drive_id = driveLookupCache.get(
+              folder.remote_drive_id,
+            );
+          } else {
+            const drive = await this.prisma.fs_drives.findFirst({
+              where: {
+                remote_id: folder.remote_drive_id,
+                id_connection: connection_id,
+              },
+              select: {
+                id_fs_drive: true,
+              },
+            });
+            drive_id_by_remote_drive_id = drive?.id_fs_drive ?? null;
+            driveLookupCache.set(
+              folder.remote_drive_id,
+              drive_id_by_remote_drive_id,
+            );
+          }
         }
 
         const baseData: any = {
