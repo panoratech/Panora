@@ -13,6 +13,7 @@ import Cookies from 'js-cookie';
 import useProfileStore from "@/state/profileStore";
 import useUser from "@/hooks/get/useUser";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 export default function Page() {
     const [userInitialized,setUserInitialized] = useState(true)
@@ -20,6 +21,14 @@ export default function Page() {
     const router = useRouter()
     const {profile} = useProfileStore();
     const [activeTab, setActiveTab] = useState('login');
+    const { theme, systemTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const currentTheme = theme === 'system' ? systemTheme : theme;
 
     useEffect(() => {
         if(profile)
@@ -50,17 +59,22 @@ export default function Page() {
 
     },[])
 
-    return (
-        <>
-        
-        {!userInitialized ? 
-        (
-            <div className='min-h-screen grid lg:grid-cols-2 mx-auto text-left'>
-                <div className='flex-1 flex flex-col py-12 sm:items-center lg:flex-none lg:px-20 xl:px-24'>
-                    <div className="w-[400px]">
-                    <img src="/logo.png" className='w-14' /> 
+    if (!mounted) {
+        return (
+            <div className='min-h-screen flex justify-center items-center'>
+                <div className='w-[450px] min-h-[500px] p-8 rounded-lg border bg-card'>
+                    <div className="flex justify-center mb-8">
+                        <img 
+                            src="/logo-panora-black.png"
+                            className='w-32' 
+                            alt="Panora" 
+                        /> 
                     </div>
-                    <Tabs defaultValue="login" className="w-[400px] space-y-4">
+                    <div className="text-center space-y-2 mb-8">
+                        <h1 className="text-2xl font-semibold tracking-tight">Welcome</h1>
+                        <p className="text-sm text-muted-foreground">Sign in to your account or create one</p>
+                    </div>
+                    <Tabs defaultValue="login" className="space-y-6">
                         <TabsList className="grid w-full grid-cols-2">
                             <TabsTrigger value="login">Login</TabsTrigger>
                             <TabsTrigger value="create">Create Account</TabsTrigger>
@@ -79,9 +93,47 @@ export default function Page() {
                         </Button>
                     )}
                 </div>       
-                <div className='hidden lg:block relative flex-1'>
-                    <img className='absolute inset-0 h-full w-full object-cover border-l' src="/bgbg.jpeg" alt='Login Page Image' />
-                </div>
+            </div>
+        );
+    }
+
+    return (
+        <>
+        
+        {!userInitialized ? 
+        (
+            <div className='min-h-screen flex justify-center items-center'>
+                <div className='w-[450px] min-h-[500px] p-8 rounded-lg border bg-card'>
+                    <div className="flex justify-center mb-8">
+                        <img 
+                            src={currentTheme === "dark" ? "/logo-panora-white-hq.png" : "/logo-panora-black.png"} 
+                            className='w-32' 
+                            alt="Panora" 
+                        /> 
+                    </div>
+                    <div className="text-center space-y-2 mb-8">
+                        <h1 className="text-2xl font-semibold tracking-tight">Welcome</h1>
+                        <p className="text-sm text-muted-foreground">Sign in to your account or create one</p>
+                    </div>
+                    <Tabs defaultValue="login" className="space-y-6">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="login">Login</TabsTrigger>
+                            <TabsTrigger value="create">Create Account</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="login">
+                            <LoginUserForm/>
+                        </TabsContent>
+                        <TabsContent value="create">
+                            <CreateUserForm/>
+                        </TabsContent>
+                    </Tabs>
+                    
+                    {activeTab === 'forgot-password' && (
+                        <Button variant="link" onClick={() => setActiveTab('login')}>
+                            Back to Login
+                        </Button>
+                    )}
+                </div>       
             </div>
         ) : 
         (

@@ -25,7 +25,7 @@ export default function EventsTable() {
     method: event.method, 
     url: event.url, 
     status: event.status,
-    direction: event.type, 
+    type: event.type, 
     integration: event.provider, 
     id_linked_user: event.id_linked_user,
     date: event.timestamp.toLocaleString(), 

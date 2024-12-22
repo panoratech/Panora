@@ -39,6 +39,8 @@ import useUpdatePullFrequency from "@/hooks/create/useCreatePullFrequency";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const frequencyOptions = [
   { label: '5 min', value: 300 },
@@ -63,7 +65,9 @@ export default function Page() {
   const [open, setOpen] = useState(false);
   const [localFrequencies, setLocalFrequencies] = useState<Record<string, string>>({});
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
-
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+  const [selectedVertical, setSelectedVertical] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -160,11 +164,54 @@ export default function Page() {
     }
   };
 
-  
- 
+  const handleConfirmSuspend = async () => {
+    try {
+      await saveFrequency(selectedVertical, '0');
+      setDialogOpen(false);
+    } catch (error) {
+      console.error('Error suspending sync:', error);
+    }
+  };
+
+  const handleSuspendClick = (vertical: string) => {
+    setSelectedVertical(vertical);
+    setConfirmText('');
+    setDialogOpen(true);
+  };
+
   return (
     
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Sync Suspension</DialogTitle>
+            <DialogDescription>
+              This will stop all automatic syncs for {selectedVertical?.toUpperCase()}. To confirm, please type "suspend" below.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            placeholder="Type 'suspend' to confirm"
+          />
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmSuspend}
+              disabled={confirmText.toLowerCase() !== 'suspend'}
+            >
+              Confirm Suspension
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
             <Heading
@@ -245,7 +292,7 @@ export default function Page() {
       <CardContent>
   {VERTICALS.map(vertical => (
     <div key={vertical} className="mb-4">
-      <label className="block text-sm font-medium text-white mb-1">
+      <label className="block text-sm font-medium mb-1">
         {vertical.toUpperCase()}
       </label>
       <div className="flex items-center space-x-2">
@@ -266,13 +313,12 @@ export default function Page() {
         </Select>
         {localFrequencies[vertical] && localFrequencies[vertical] !== '0'&& (
           <Button 
-            onClick={() => handleFrequencyChangeAndSave(vertical, '0')}
+            onClick={() => handleSuspendClick(vertical)}
             size="sm" 
             variant="destructive"
             className="h-7"
           >
-            {localFrequencies[vertical]}
-            Deactivate
+            Suspend Sync
           </Button>
         )}
       </div>
