@@ -260,6 +260,7 @@ CREATE TABLE fs_drives
  name              text NULL,
  remote_created_at timestamp with time zone NULL,
  remote_id         text NULL,
+ remote_cursor     text NULL,
  created_at        timestamp with time zone NOT NULL,
  modified_at       timestamp with time zone NOT NULL,
  id_connection     uuid NOT NULL,

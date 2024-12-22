@@ -57,7 +57,7 @@ export class GoogleDriveService implements IFileService {
     }, []);
 
     if (allPermissions.length === 0) {
-      this.logger.warn('No permissions found in the provided files.');
+      this.logger.log('No permissions found in the provided files.');
       return this.ingestService.ingestData<
         UnifiedFilestorageFileOutput,
         GoogleDriveFileOutput
@@ -136,6 +136,11 @@ export class GoogleDriveService implements IFileService {
     return syncedFiles;
   }
 
+  /**
+   * Syncs files from Google Drive to the local database
+   * @param data - Parameters required for syncing
+   * @param pageToken - Used for continuation of initial sync
+   */
   async sync(data: SyncParam, pageToken?: string) {
     const { linkedUserId, custom_field_mappings, ingestParams } = data;
     const connection = await this.prisma.connections.findFirst({
@@ -154,64 +159,65 @@ export class GoogleDriveService implements IFileService {
     });
     const drive = google.drive({ version: 'v3', auth });
 
-    const rootDriveId = await drive.files
-      .get({
-        fileId: 'root',
-        fields: 'id',
-      })
-      .then((res) => res.data.id);
+    const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
+    const isFirstSync = !lastSyncTime || pageToken;
+    let syncCompleted = false;
 
-    let query = "mimeType!='application/vnd.google-apps.folder'";
-    if (!pageToken) {
-      const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
-      if (lastSyncTime) {
-        console.log(`Last sync time is ${lastSyncTime.toISOString()}`);
-        query += ` and modifiedTime >= '${lastSyncTime.toISOString()}'`;
+    if (isFirstSync) {
+      // Start or continuation of initial sync
+      const { filesToSync: files, nextPageToken } = await this.getFilesToSync(
+        drive,
+        pageToken,
+      );
+
+      // Process the files fetched in the current batch
+      if (files.length > 0) {
+        await this.ingestFiles(
+          files,
+          connection.id_connection,
+          custom_field_mappings,
+          ingestParams,
+        );
       }
-    }
 
-    const { filesToSync, nextPageToken } = await this.getFilesToSync(
-      drive,
-      query,
-      pageToken,
-    );
+      if (nextPageToken) {
+        // Add the next pageToken to the queue
+        await this.bullQueueService
+          .getThirdPartyDataIngestionQueue()
+          .add('fs_file_googledrive', {
+            ...data,
+            pageToken: nextPageToken,
+            connectionId: connection.id_connection,
+          });
+      } else {
+        syncCompleted = true;
+      }
+    } else {
+      // incremental sync using changes api
+      const { filesToSync, moreChangesToFetch } =
+        await this.getFilesToSyncFromChangesApi(drive, connection);
 
-    const files: GoogleDriveFileOutput[] = filesToSync.map((file) => ({
-      id: file.id!,
-      name: file.name!,
-      mimeType: file.mimeType!,
-      createdTime: file.createdTime!,
-      modifiedTime: file.modifiedTime!,
-      size: file.size!,
-      permissions: file.permissions,
-      parents: file.parents,
-      webViewLink: file.webViewLink,
-      driveId: file.driveId || rootDriveId,
-      trashed: file.trashed ?? false,
-    }));
-
-    // Process the files fetched in the current batch
-    if (files.length > 0) {
       await this.ingestFiles(
-        files,
+        filesToSync,
         connection.id_connection,
         custom_field_mappings,
         ingestParams,
       );
+
+      if (moreChangesToFetch) {
+        await this.bullQueueService
+          .getThirdPartyDataIngestionQueue()
+          .add('fs_file_googledrive', {
+            ...data,
+          });
+      } else {
+        syncCompleted = true;
+      }
     }
 
-    if (nextPageToken) {
-      // Add the next pageToken to the queue
-      await this.bullQueueService
-        .getThirdPartyDataIngestionQueue()
-        .add('fs_file_googledrive', {
-          ...data,
-          pageToken: nextPageToken,
-          connectionId: connection.id_connection,
-        });
-    } else {
+    if (syncCompleted) {
       this.logger.log(
-        `No more files to sync for googledrive for linked user ${linkedUserId}.`,
+        `Googledrive files sync completed for user: ${linkedUserId}.`,
       );
     }
 
@@ -222,9 +228,75 @@ export class GoogleDriveService implements IFileService {
     };
   }
 
+  // For incremental syncs
+  async getFilesToSyncFromChangesApi(
+    drive: ReturnType<typeof google.drive>,
+    connection: any,
+  ) {
+    let moreChangesToFetch = false; // becomes true if there are more changes to fetch in any drive
+    const filesToSync: GoogleDriveFileOutput[] = [];
+
+    const remoteCursor = await this.getRemoteCursor(connection);
+
+    const response = await this.rateLimitedRequest(() =>
+      drive.changes.list({
+        pageToken: remoteCursor,
+        supportsAllDrives: true,
+        includeItemsFromAllDrives: true,
+        pageSize: 1000,
+        fields:
+          'nextPageToken, newStartPageToken, changes(file(id,name,mimeType,createdTime,modifiedTime,size,parents,webViewLink,driveId,trashed,permissions))',
+      }),
+    );
+
+    const { changes, nextPageToken, newStartPageToken } = response.data;
+
+    const batchFiles = changes
+      .filter(
+        (change) =>
+          change.file?.mimeType !== 'application/vnd.google-apps.folder',
+      )
+      .map((change) => change.file);
+
+    filesToSync.push(...(batchFiles as GoogleDriveFileOutput[]));
+
+    if (nextPageToken) {
+      moreChangesToFetch = true;
+    }
+
+    const nextCursor = newStartPageToken ? newStartPageToken : nextPageToken;
+
+    // all drives share the same cursor (might update this in the future)
+    await this.prisma.fs_drives.updateMany({
+      where: {
+        id_connection: connection.id_connection,
+      },
+      data: {
+        remote_cursor: nextCursor,
+      },
+    });
+
+    return {
+      filesToSync,
+      moreChangesToFetch,
+    };
+  }
+
+  private async getRemoteCursor(connection: any) {
+    const internalDrive = await this.prisma.fs_drives.findFirst({
+      where: {
+        id_connection: connection.id_connection,
+      },
+      select: {
+        remote_cursor: true,
+        id_fs_drive: true,
+      },
+    });
+    return internalDrive?.remote_cursor;
+  }
+
   async getFilesToSync(
     drive: any,
-    query: string,
     pageToken?: string,
     pages = 20, // number of times we use nextPageToken
   ) {
@@ -242,7 +314,7 @@ export class GoogleDriveService implements IFileService {
     do {
       const filesResponse = await this.rateLimitedRequest<DriveResponse>(() =>
         drive.files.list({
-          q: query,
+          q: 'mimeType != "application/vnd.google-apps.folder"',
           fields:
             'nextPageToken, files(id, name, mimeType, createdTime, modifiedTime, size, parents, webViewLink, driveId, permissions, trashed)',
           pageSize: BATCH_SIZE,
@@ -267,15 +339,8 @@ export class GoogleDriveService implements IFileService {
   }
 
   async processBatch(job: any) {
-    const {
-      linkedUserId,
-      query,
-      pageToken,
-      pageTokenFolders,
-      connectionId,
-      custom_field_mappings,
-      ingestParams,
-    } = job.data;
+    const { linkedUserId, pageToken, custom_field_mappings, ingestParams } =
+      job.data;
 
     // Call the sync method with the pageToken and other job data
     await this.sync(

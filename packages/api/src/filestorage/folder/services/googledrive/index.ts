@@ -131,11 +131,7 @@ export class GoogleDriveFolderService implements IFolderService {
       const lastSyncTime = await this.getLastSyncTime(connection.id_connection);
       const isFirstSync = !lastSyncTime;
       const folders = !isFirstSync
-        ? await this.getFoldersIncremental(
-            auth,
-            connection.id_connection,
-            lastSyncTime,
-          )
+        ? await this.getFoldersIncremental(auth, connection.id_connection)
         : await this.recursiveGetGoogleDriveFolders(
             auth,
             connection.id_connection,
@@ -144,31 +140,10 @@ export class GoogleDriveFolderService implements IFolderService {
       // Sync permissions for folders
       await this.ingestPermissionsForFolders(folders, connection.id_connection);
 
-      await this.ingestService.ingestData(
-        folders,
-        'googledrive',
-        connection.id_connection,
-        'filestorage',
-        'folder',
-      );
-
       this.logger.log(`Synced ${folders.length} Google Drive folders!`);
 
-      // Sync files from new folders
-      if (!isFirstSync) {
-        const filesToSync = await this.getFilesToSyncForFolders(
-          folders,
-          connection.id_connection,
-          auth,
-        );
-        await this.fileService.ingestFiles(
-          filesToSync,
-          connection.id_connection,
-        );
-      }
-
       return {
-        data: [],
+        data: folders,
         message: 'Google Drive folders retrieved',
         statusCode: 200,
       };
@@ -326,49 +301,6 @@ export class GoogleDriveFolderService implements IFolderService {
     return driveIds;
   }
 
-  private async getFilesToSyncForFolders(
-    folders: GoogleDriveFolderOutput[],
-    connectionId: string,
-    auth: OAuth2Client,
-  ): Promise<GoogleDriveFileOutput[]> {
-    const filesToSync: GoogleDriveFileOutput[] = [];
-    const drive = google.drive({ version: 'v3', auth });
-    const batchSize = 20;
-
-    for (let i = 0; i < folders.length; i += batchSize) {
-      const batch = folders.slice(i, i + batchSize);
-      const files = await Promise.all(
-        batch.map(async (folder) => {
-          const f = [];
-          let pageToken: string | null = null;
-          do {
-            const response = await this.executeWithRetry(() =>
-              drive.files.list({
-                q: `'${folder.id}' in parents and mimeType!='application/vnd.google-apps.folder'`,
-                fields:
-                  'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissions, trashed)',
-                includeItemsFromAllDrives: true,
-                supportsAllDrives: true,
-                orderBy: 'modifiedTime',
-                pageToken,
-              }),
-            );
-            if (response.data.files?.length) {
-              f.push(...response.data.files);
-            }
-            pageToken = response.data.nextPageToken ?? null;
-          } while (pageToken);
-          return f;
-        }),
-      );
-      filesToSync.push(...files.flat());
-    }
-
-    this.logger.log(`Got ${filesToSync.length} files to sync from folders.`);
-
-    return filesToSync;
-  }
-
   /**
    * Ingests permissions for the provided Google Drive folders into the database.
    */
@@ -377,7 +309,7 @@ export class GoogleDriveFolderService implements IFolderService {
     connectionId: string,
   ): Promise<GoogleDriveFolderOutput[]> {
     if (folders.length === 0) {
-      this.logger.warn('No folders provided for ingesting permissions.');
+      this.logger.log('No folders provided for ingesting permissions.');
       return folders;
     }
 
@@ -393,7 +325,7 @@ export class GoogleDriveFolderService implements IFolderService {
       }, []);
 
       if (allPermissions.length === 0) {
-        this.logger.warn('No permissions found in the provided folders.');
+        this.logger.log('No permissions found in the provided folders.');
         return folders;
       }
 
@@ -451,24 +383,25 @@ export class GoogleDriveFolderService implements IFolderService {
   }
 
   /**
-   * Gets folders modified since last sync while preserving parent-child relationships.
-   * Processes folders in order of known parent IDs to maintain hierarchy.
-   * Handles orphaned folders and circular references by breaking out of processing.
+   * Retrieves folders that have been modified for each drive using drive's remote_cursor
+   * @param auth OAuth2 client for Google Drive API.
+   * @param connectionId ID of the connection.
+   * @returns Array of Google Drive folders that have been modified.
    */
   private async getFoldersIncremental(
     auth: OAuth2Client,
     connectionId: string,
-    lastSyncTime: Date,
   ): Promise<GoogleDriveFolderOutput[]> {
     try {
       const drive = google.drive({ version: 'v3', auth });
       const driveIds = await this.fetchDriveIds(auth);
 
-      const modifiedFolders = await this.executeWithRetry(() =>
-        this.getModifiedFolders(drive, lastSyncTime),
+      const modifiedFolders = await this.getModifiedFolders(
+        drive,
+        connectionId,
       );
 
-      return await this.processFoldersWithParents(
+      return await this.assignParentIds(
         modifiedFolders,
         connectionId,
         driveIds,
@@ -480,7 +413,11 @@ export class GoogleDriveFolderService implements IFolderService {
     }
   }
 
-  private async processFoldersWithParents(
+  /**
+   * Assigns parent IDs to folders based on their parents.
+   * Handles circular references and orphaned folders.
+   */
+  private async assignParentIds(
     folders: GoogleDriveFolderOutput[],
     connectionId: string,
     driveIds: string[],
@@ -505,6 +442,7 @@ export class GoogleDriveFolderService implements IFolderService {
         );
 
         if (internalParentId) {
+          // Found parent
           const folder_internal_id = await this.getIntenalIdForFolder(
             folder.id,
             connectionId,
@@ -518,6 +456,7 @@ export class GoogleDriveFolderService implements IFolderService {
           );
           folderIdToInternalIdMap.set(folder.id, folder_internal_id);
         } else {
+          // Could not find parent, try in next iteration
           foldersStillPending.push(folder);
         }
       }
@@ -698,32 +637,67 @@ export class GoogleDriveFolderService implements IFolderService {
   }
 
   private async getModifiedFolders(
-    drive: any,
-    lastSyncTime: Date,
+    drive: ReturnType<typeof google.drive>,
+    connectionId: string,
   ): Promise<GoogleDriveFolderOutput[]> {
-    let pageToken: string | null = null;
     const folders: GoogleDriveFolderOutput[] = [];
-    const query = `modifiedTime >= '${lastSyncTime.toISOString()}'`;
+    let remoteCursor = await this.getRemoteCursor(drive, connectionId);
 
     do {
-      const response = await drive.files.list({
-        q: query,
-        fields:
-          'nextPageToken, files(id, name, parents, createdTime, modifiedTime, driveId, webViewLink, permissions, trashed)',
-        pageToken,
+      const response = await drive.changes.list({
+        pageToken: remoteCursor,
         includeItemsFromAllDrives: true,
         supportsAllDrives: true,
-        orderBy: 'modifiedTime',
+        pageSize: 1000,
+        fields:
+          'nextPageToken, newStartPageToken, changes(file(id,name,mimeType,createdTime,modifiedTime,size,parents,webViewLink,driveId,trashed,permissions))',
       });
 
-      if (response.data.files?.length) {
-        folders.push(...response.data.files);
-      }
+      const batchFolders = response.data.changes
+        .filter(
+          (change) =>
+            change.file?.mimeType === 'application/vnd.google-apps.folder',
+        )
+        .map((change) => change.file);
 
-      pageToken = response.data.nextPageToken ?? null;
-    } while (pageToken);
+      folders.push(...(batchFolders as GoogleDriveFolderOutput[]));
 
+      remoteCursor = response.data.nextPageToken;
+    } while (remoteCursor);
+
+    // NOTE: remote_cursor is updated in filesSync (to be better managed)
     return folders;
+  }
+
+  private async getRemoteCursor(
+    drive: ReturnType<typeof google.drive>,
+    connectionId: string,
+  ): Promise<string> {
+    const internalDrive = await this.prisma.fs_drives.findFirst({
+      where: { id_connection: connectionId }, // all drives share the same cursor for now
+      select: { id_fs_drive: true, remote_cursor: true },
+    });
+    let remoteCursor = internalDrive?.remote_cursor;
+    if (!remoteCursor) {
+      const startPageToken = await this.executeWithRetry(() =>
+        drive.changes
+          .getStartPageToken({ supportsAllDrives: true }) // one cursor for all drives
+          .then((response) => response.data.startPageToken),
+      );
+      remoteCursor = startPageToken;
+      await this.updateRemoteCursor(remoteCursor, connectionId);
+    }
+    return remoteCursor;
+  }
+
+  private async updateRemoteCursor(
+    remoteCursor: string,
+    connectionId: string,
+  ): Promise<void> {
+    await this.prisma.fs_drives.updateMany({
+      where: { id_connection: connectionId },
+      data: { remote_cursor: remoteCursor },
+    });
   }
 
   private async getLastSyncTime(connectionId: string): Promise<Date | null> {

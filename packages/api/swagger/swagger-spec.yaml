@@ -107,6 +107,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -127,6 +129,8 @@ paths:
           schema:
             type: string
       responses:
+        '200':
+          description: ''
         '201':
           description: ''
           content:
@@ -11849,6 +11853,11 @@ components:
           nullable: true
           example: '2024-10-01T12:00:00Z'
           description: The modified date of the object
+        remote_cursor:
+          type: string
+          nullable: true
+          example: next_page_token_123
+          description: The cursor used for pagination with the 3rd party provider
       required:
         - name
         - remote_created_at

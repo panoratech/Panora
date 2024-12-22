@@ -110,6 +110,7 @@ model fs_drives {
   name              String?
   remote_created_at DateTime? @db.Timestamptz(6)
   remote_id         String?
+  remote_cursor     String?
   created_at        DateTime  @db.Timestamptz(6)
   modified_at       DateTime  @db.Timestamptz(6)
   id_connection     String    @db.Uuid
