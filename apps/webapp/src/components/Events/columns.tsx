@@ -7,6 +7,7 @@ import { Event } from "./schema"
 import { getLogoURL } from "@panora/shared"
 import { formatISODate } from "@/lib/utils"
 import { toast } from "sonner"
+import Image from 'next/image';
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -161,7 +162,12 @@ export const columns: ColumnDef<Event>[] = [
       return (
         <div className="flex w-[100px] items-center">
             <Badge variant="outline" className="rounded-sm py-1 pr-2 font-normal">
-              <img src={getLogoURL(provider)} className="w-5 h-5 rounded-sm mr-2" 
+              <Image 
+                src={getLogoURL(provider)} 
+                width={20} 
+                height={20} 
+                className="rounded-sm mr-2"
+                alt={`${provider} logo`}
               />
               {provider}
             </Badge>

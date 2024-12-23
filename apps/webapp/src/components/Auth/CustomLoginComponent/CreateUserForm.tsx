@@ -117,7 +117,12 @@ const CreateUserForm = () => {
                 // Set the access token
                 if (loginResponse.access_token) {
                     Cookies.set('access_token', loginResponse.access_token);
-                    setProfile(loginResponse.user);
+                    setProfile({
+                        id_user: loginResponse.user.id,
+                        email: loginResponse.user.email,
+                        first_name: loginResponse.user.first_name,
+                        last_name: loginResponse.user.last_name
+                    });
                     router.replace('/connections');
                     toast.success('Logged in successfully!');
                 }

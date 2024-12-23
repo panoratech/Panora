@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import useResync from "@/hooks/create/useResync"
+import Image from 'next/image';
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -217,7 +218,13 @@ const Customizer = ({
     <div className="flex items-start pt-4 md:pt-0">
       <div className="space-y-1 pr-2">
         <div className="flex space-x-2 items-center">
-          <img src={logo} className="w-12 h-12 rounded-sm mr-2" />
+          <Image 
+            src={logo} 
+            width={48} 
+            height={48} 
+            className="rounded-sm mr-2"
+            alt={`${name} logo`}
+          />
           <div className="flex flex-col font-bold">
           {`${name.substring(0, 1).toUpperCase()}${name.substring(1)}`}
           <Badge variant={"outline"} className="rounded-xl py-1 font-normal">{authStrategy}</Badge>
@@ -279,6 +286,97 @@ const Customizer = ({
   )
 }
 
+const ConnectionActionsCell = ({ row }: { row: any }) => {
+  const { resyncPromise } = useResync();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+
+  const handleResync = async () => {
+    try {
+      toast.promise(
+        resyncPromise({
+          vertical: row.getValue("vertical"),
+          provider: row.getValue("app"),
+          linkedUserId: row.getValue("linkedUser")
+        }),
+        {
+          loading: 'Syncing...',
+          success: 'Sync initiated successfully',
+          error: 'Failed to sync'
+        }
+      );
+    } catch (error) {
+      console.error('Failed to resync:', error);
+    }
+  };
+
+  const handleDisconnectClick = () => {
+    setConfirmText('');
+    setDialogOpen(true);
+  };
+
+  const handleConfirmDisconnect = () => {
+    if (confirmText.toLowerCase() === 'delete') {
+      // TODO: Implement disconnect logic here
+      toast.success('Connection deleted successfully');
+      setDialogOpen(false);
+    }
+  };
+
+  return (
+    <>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Connection Deletion</DialogTitle>
+            <DialogDescription>
+              This will permanently delete the integration for {row.getValue("app")}. To confirm, please type &quot;delete&quot; below.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            placeholder="Type 'delete' to confirm"
+          />
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDisconnect}
+              disabled={confirmText.toLowerCase() !== 'delete'}
+            >
+              Confirm Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <DotsHorizontalIcon className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleResync}>
+            <ReloadIcon className="mr-2 h-4 w-4" />
+            <span>Resync</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="text-destructive" onClick={handleDisconnectClick}>
+            <TrashIcon className="mr-2 h-4 w-4" />
+            <span>Delete</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+};
+
 export const columns: ColumnDef<Connection>[] = [
   {
     accessorKey: "app", 
@@ -290,8 +388,13 @@ export const columns: ColumnDef<Connection>[] = [
       return (
         <div className="flex space-x-2">
           <Badge variant={"outline"} className="rounded-sm pr-6 py-1 font-normal">
-              <img src={getLogoURL(provider)} className="w-5 h-5 rounded-sm mr-2" 
-          />
+              <Image 
+                src={getLogoURL(provider)} 
+                width={20} 
+                height={20} 
+                className="rounded-sm mr-2"
+                alt={`${provider} logo`}
+              />
               {provider}
           </Badge>
         </div>
@@ -352,97 +455,6 @@ export const columns: ColumnDef<Connection>[] = [
     header: ({ column }) => (
       ''
     ),
-    cell: ({ row }) => {
-      const { resyncPromise } = useResync();
-      const [dialogOpen, setDialogOpen] = useState(false);
-      const [confirmText, setConfirmText] = useState('');
-
-      const handleResync = async () => {
-        try {
-          toast.promise(
-            resyncPromise({
-              vertical: row.getValue("vertical"),
-              provider: row.getValue("app"),
-              linkedUserId: row.getValue("linkedUser")
-            }),
-            {
-              loading: 'Syncing...',
-              success: 'Sync initiated successfully',
-              error: 'Failed to sync'
-            }
-          );
-        } catch (error) {
-          console.error('Failed to resync:', error);
-        }
-      };
-
-      const handleDisconnectClick = () => {
-        setConfirmText('');
-        setDialogOpen(true);
-      };
-
-      const handleConfirmDisconnect = () => {
-        if (confirmText.toLowerCase() === 'delete') {
-          // TODO: Implement disconnect logic here
-          toast.success('Connection deleted successfully');
-          setDialogOpen(false);
-        }
-      };
-
-      return (
-        <>
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Confirm Connection Deletion</DialogTitle>
-                <DialogDescription>
-                  This will permanently delete the integration for {row.getValue("app")}. To confirm, please type "delete" below.
-                </DialogDescription>
-              </DialogHeader>
-              <Input
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-                placeholder="Type 'delete' to confirm"
-              />
-              <DialogFooter>
-                <Button
-                  variant="ghost"
-                  onClick={() => setDialogOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleConfirmDisconnect}
-                  disabled={confirmText.toLowerCase() !== 'delete'}
-                >
-                  Confirm Delete
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <DotsHorizontalIcon className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleResync}>
-                <ReloadIcon className="mr-2 h-4 w-4" />
-                <span>Resync</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive" onClick={handleDisconnectClick}>
-                <TrashIcon className="mr-2 h-4 w-4" />
-                <span>Delete</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </>
-      )
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
+    cell: ({ row }) => <ConnectionActionsCell row={row} />
   }
 ];

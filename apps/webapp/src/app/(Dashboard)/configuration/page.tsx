@@ -123,7 +123,7 @@ export default function Page() {
       }, {} as Record<string, string>);
       setLocalFrequencies(initialFrequencies);
     }
-  }, [pullFrequencies]);
+  }, [pullFrequencies, VERTICALS]);
 
   const handleFrequencyChange = (vertical: string, value: string) => {
     setLocalFrequencies(prev => ({ ...prev, [vertical]: value }));
@@ -166,8 +166,10 @@ export default function Page() {
 
   const handleConfirmSuspend = async () => {
     try {
-      await saveFrequency(selectedVertical, '0');
-      setDialogOpen(false);
+      if (selectedVertical) {
+        await saveFrequency(selectedVertical, '0');
+        setDialogOpen(false);
+      }
     } catch (error) {
       console.error('Error suspending sync:', error);
     }
@@ -187,7 +189,7 @@ export default function Page() {
           <DialogHeader>
             <DialogTitle>Confirm Sync Suspension</DialogTitle>
             <DialogDescription>
-              This will stop all automatic syncs for {selectedVertical?.toUpperCase()}. To confirm, please type "suspend" below.
+              This will stop all automatic syncs for {selectedVertical?.toUpperCase()}. To confirm, please type &quot;suspend&quot; below.
             </DialogDescription>
           </DialogHeader>
           <Input

@@ -50,15 +50,13 @@ export default function Page() {
         {
             router.replace('/connections');
         }
-
-    },[profile]);
+    },[profile, router]);
 
     useEffect(() => {
-
         if(!Cookies.get('access_token'))
-            {
-                setUserInitialized(false);
-            }
+        {
+            setUserInitialized(false);
+        }
 
         if(Cookies.get('access_token') && !profile)
         {
@@ -66,8 +64,7 @@ export default function Page() {
                 onError: () => setUserInitialized(false)
             })
         }
-
-    },[])
+    },[profile, mutate])
 
     if (!mounted) {
         return null;
@@ -107,12 +104,15 @@ export default function Page() {
                             </div>
                             <div className="space-y-4">
                                 <p className="text-muted-foreground">
-                                    Connect your warehouse to any e-commerce platform and let AI automate data entry into your WMS & ERPs. Add revenue, not complexity to your operations.
+                                    Connect your warehouse to any e-commerce platform and let AI automate data entry into your WMS &amp; ERPs. Add revenue, not complexity to your operations.
                                 </p>
                                 <p className="text-muted-foreground">
                                     Use one unified API to manage orders across Shopify, Amazon, and more. Let AI handle your inventory updates while you focus on growth.
                                 </p>
-                                <p className="text-muted-foreground">You'll wonder how you ever managed without it.</p>
+                                <p className="text-muted-foreground">You&apos;ll wonder how you ever managed without it.</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Don&apos;t have an account? Create one now
+                                </p>
                             </div>
                         </div>
                     </div>
