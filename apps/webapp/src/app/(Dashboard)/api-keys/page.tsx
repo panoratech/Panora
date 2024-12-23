@@ -33,10 +33,11 @@ import { useForm } from "react-hook-form"
 import { DataTableLoading } from "@/components/shared/data-table-loading";
 import {CustomHeading}  from "@/components/shared/custom-heading";
 import { useColumns } from "@/components/ApiKeys/columns";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   apiKeyIdentifier: z.string().min(2, {
@@ -251,8 +252,30 @@ export default function Page() {
             This key will only be shown for the next minute. Please save it now.
           </DialogDescription>
         </DialogHeader>
-        <div className="mt-4">
-          <strong>API Key:</strong> <p>{newApiKey?.key}</p>
+        <div className="mt-4 flex items-center justify-between gap-2 rounded-md border p-2">
+          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+            {newApiKey?.key}
+          </code>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              if (newApiKey?.key) {
+                navigator.clipboard.writeText(newApiKey.key);
+                toast.success("API key copied to clipboard");
+              }
+            }}
+            className={cn(
+              "h-8 w-8",
+              "hover:bg-muted",
+              "focus-visible:ring-1",
+              "focus-visible:ring-ring",
+              "focus-visible:ring-offset-0"
+            )}
+          >
+            <Copy className="h-4 w-4" />
+            <span className="sr-only">Copy API key</span>
+          </Button>
         </div>
         <DialogFooter>
           <Button size="sm" className="h-7 gap-1" onClick={() => setIsKeyModalOpen(false)}>Close</Button>
