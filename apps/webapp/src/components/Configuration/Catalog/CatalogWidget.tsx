@@ -134,13 +134,7 @@ export function CatalogWidget() {
             <div className="flex w-full items-start justify-between">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <Image 
-                    src={item.logoPath} 
-                    width={20} 
-                    height={20} 
-                    className="rounded-sm mr-2"
-                    alt={`${item.name} logo`}
-                  />
+                  <img src={item.logoPath} className="w-8 h-8 rounded-lg" />
                   <div className="font-semibold">{`${item.name.substring(0, 1).toUpperCase()}${item.name.substring(1)}`}</div>
                 </div>
                 <div className="line-clamp-2 text-xs text-muted-foreground">

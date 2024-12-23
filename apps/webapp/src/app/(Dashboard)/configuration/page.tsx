@@ -118,39 +118,26 @@ export default function Page() {
     if (pullFrequencies) {
       const initialFrequencies = VERTICALS.reduce((acc, vertical) => {
         const value = pullFrequencies[vertical as keyof typeof pullFrequencies];
-        acc[vertical] = typeof value === 'string' ? value : '0';
+        acc[vertical] = value?.toString() || '0';
         return acc;
       }, {} as Record<string, string>);
       setLocalFrequencies(initialFrequencies);
     }
-  }, [pullFrequencies, VERTICALS]);
-
-  const handleFrequencyChange = (vertical: string, value: string) => {
-    setLocalFrequencies(prev => ({ ...prev, [vertical]: value }));
-  };
-  
-
+  }, [pullFrequencies]);
 
   const handleFrequencyChangeAndSave = async (vertical: string, value: string) => {
-    handleFrequencyChange(vertical, value);
-    await saveFrequency(vertical, value);
-  };
-  
-  const saveFrequency = async (vertical: string, value: string) => {
-    setLoadingStates(prev => ({ ...prev, [vertical]: true }));
+    const frequency = parseInt(value, 10);
+    const updateData = { [vertical]: frequency };
+    
     try {
-      const frequency = parseInt(value, 10);
-      console.log("frequency being saved: " + frequency);
-      const updateData = { [vertical]: frequency };
-      
       await toast.promise(
         createPullFrequencyPromise(updateData),
         {
           loading: 'Updating...',
-          success: (data: any) => {
-            queryClient.setQueryData<any>(['pull_frequencies'], (oldData: any) => ({
-              ...oldData,
-              [vertical]: frequency.toString(),
+          success: () => {
+            setLocalFrequencies(prev => ({
+              ...prev,
+              [vertical]: value
             }));
             return frequency === 0 ? `${vertical} sync deactivated` : `Frequency saved for ${vertical}`;
           },
@@ -159,19 +146,6 @@ export default function Page() {
       );
     } catch (error) {
       console.error(`Error updating ${vertical} pull frequency:`, error);
-    } finally {
-      setLoadingStates(prev => ({ ...prev, [vertical]: false }));
-    }
-  };
-
-  const handleConfirmSuspend = async () => {
-    try {
-      if (selectedVertical) {
-        await saveFrequency(selectedVertical, '0');
-        setDialogOpen(false);
-      }
-    } catch (error) {
-      console.error('Error suspending sync:', error);
     }
   };
 
@@ -179,6 +153,14 @@ export default function Page() {
     setSelectedVertical(vertical);
     setConfirmText('');
     setDialogOpen(true);
+  };
+
+  const handleConfirmSuspend = async () => {
+    if (selectedVertical && confirmText.toLowerCase() === 'suspend') {
+      await handleFrequencyChangeAndSave(selectedVertical, '0');
+      setDialogOpen(false);
+      setConfirmText('');
+    }
   };
 
   return (
@@ -301,7 +283,7 @@ export default function Page() {
         <Select
           value={localFrequencies[vertical] || '0'}
           onValueChange={(value: string) => handleFrequencyChangeAndSave(vertical, value)}
-          >
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select frequency" />
           </SelectTrigger>

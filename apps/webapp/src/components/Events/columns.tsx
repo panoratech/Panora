@@ -162,13 +162,7 @@ export const columns: ColumnDef<Event>[] = [
       return (
         <div className="flex w-[100px] items-center">
             <Badge variant="outline" className="rounded-sm py-1 pr-2 font-normal">
-              <Image 
-                src={getLogoURL(provider)} 
-                width={20} 
-                height={20} 
-                className="rounded-sm mr-2"
-                alt={`${provider} logo`}
-              />
+              <img src={getLogoURL(provider)} className="w-5 h-5 rounded-sm mr-2" />
               {provider}
             </Badge>
         </div>

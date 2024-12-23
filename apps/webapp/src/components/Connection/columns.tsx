@@ -379,26 +379,24 @@ const ConnectionActionsCell = ({ row }: { row: any }) => {
 
 export const columns: ColumnDef<Connection>[] = [
   {
-    accessorKey: "app", 
+    accessorKey: "app",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Provider" />
     ),
-    cell: ({ row }) => {      
+    cell: ({ row }) => {
       const provider = (row.getValue("app") as string).toLowerCase();
+
       return (
-        <div className="flex space-x-2">
-          <Badge variant={"outline"} className="rounded-sm pr-6 py-1 font-normal">
-              <Image 
-                src={getLogoURL(provider)} 
-                width={20} 
-                height={20} 
-                className="rounded-sm mr-2"
-                alt={`${provider} logo`}
-              />
+        <div className="flex w-[100px] items-center">
+            <Badge variant="outline" className="rounded-sm py-1 pr-2 font-normal">
+              <img src={getLogoURL(provider)} className="w-5 h-5 rounded-sm mr-2" alt={`${provider} logo`} />
               {provider}
-          </Badge>
+            </Badge>
         </div>
       )
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
     },
   },
   {
