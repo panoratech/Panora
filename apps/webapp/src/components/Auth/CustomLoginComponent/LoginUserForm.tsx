@@ -30,6 +30,7 @@ import useProfileStore from '@/state/profileStore';
 import Cookies from 'js-cookie';
 import { useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
+import { ArrowRight } from "lucide-react"
 
 const formSchema = z.object({
     email: z.string().email({
@@ -91,13 +92,7 @@ const LoginUserForm = () => {
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
 
-        <Card>
-            <CardHeader>
-                <CardTitle>Login</CardTitle>
-                <CardDescription>
-                Enter your Email and Password to login.
-                </CardDescription>
-            </CardHeader>
+        <Card className="border-0 shadow-none">
             <CardContent className="space-y-2">
                     <div className="space-y-1">
                     <FormField
@@ -132,7 +127,10 @@ const LoginUserForm = () => {
                 
             </CardContent>
             <CardFooter>
-                <Button type='submit' size="sm" className='h-7 gap-1'>Login</Button>
+                <Button type='submit' size="sm" className='h-7 gap-1'>
+                    Login
+                    <ArrowRight className="h-4 w-4" />
+                </Button>
                 <Link href="/b2c/login/forgot-password" className="text-sm ml-4 text-white-600 hover:underline">
                     Forgot Password?
                 </Link>
