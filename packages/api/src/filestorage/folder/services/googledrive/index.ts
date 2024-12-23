@@ -146,6 +146,11 @@ export class GoogleDriveFolderService implements IFolderService {
 
       this.logger.log(`Synced ${folders.length} Google Drive folders!`);
 
+      if (isFirstSync) {
+        const drive = google.drive({ version: 'v3', auth });
+        await this.createAndSetRemoteCursor(drive, connection.id_connection);
+      }
+
       return {
         data: folders,
         message: 'Google Drive folders retrieved',
@@ -751,17 +756,23 @@ export class GoogleDriveFolderService implements IFolderService {
     });
     let remoteCursor = internalDrive?.remote_cursor;
     if (!remoteCursor) {
-      const startPageToken = await this.executeWithRetry(() =>
-        drive.changes
-          .getStartPageToken({ supportsAllDrives: true }) // one cursor for all drives
-          .then((response) => response.data.startPageToken),
-      );
-      remoteCursor = startPageToken;
-
-      // for first incremental sync
-      await this.updateRemoteCursor(remoteCursor, connectionId);
+      remoteCursor = await this.createAndSetRemoteCursor(drive, connectionId);
     }
     return remoteCursor;
+  }
+
+  private async createAndSetRemoteCursor(
+    drive: ReturnType<typeof google.drive>,
+    connectionId: string,
+  ): Promise<string> {
+    const startPageToken = await this.executeWithRetry(() =>
+      drive.changes.getStartPageToken({ supportsAllDrives: true }),
+    );
+    await this.updateRemoteCursor(
+      startPageToken.data.startPageToken,
+      connectionId,
+    );
+    return startPageToken.data.startPageToken;
   }
 
   private async updateRemoteCursor(
