@@ -730,6 +730,11 @@ export class GoogleDriveFolderService implements IFolderService {
           'nextPageToken, newStartPageToken, changes(file(id,name,mimeType,createdTime,modifiedTime,size,parents,webViewLink,driveId,trashed,permissionIds))',
       });
 
+      if (!response.data.changes.length) {
+        // edge case where we have no changes but still have a nextPageToken
+        break;
+      }
+
       const batchFolders = response.data.changes
         .filter(
           (change) =>
