@@ -289,15 +289,6 @@ export class GoogleDriveService implements IFileService {
       pageToken = nextPageToken;
       newRemoteCursor = newStartPageToken || nextPageToken;
       apiCallCount++;
-
-      if (nextPageToken && changes.length === 0) {
-        // edge case where we have no changes but still have a nextPageToken
-        return {
-          filesToSync,
-          moreChangesToFetch: false,
-          remote_cursor: newRemoteCursor,
-        };
-      }
     } while (pageToken && apiCallCount < maxApiCalls);
 
     return {
