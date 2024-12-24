@@ -60,65 +60,49 @@ export class GoogleDriveService implements IFileService {
       ),
     );
 
-    if (permissionsIds.length === 0) {
-      this.logger.log('No permissions found in the provided files.');
-      return this.ingestService.ingestData<
-        UnifiedFilestorageFileOutput,
-        GoogleDriveFileOutput
-      >(
+    if (permissionsIds.length) {
+      const uniquePermissions = await this.fetchPermissions(
+        permissionsIds,
         sourceData,
+        drive,
+      );
+
+      // Ingest permissions using the ingestService
+      const syncedPermissions = await this.ingestService.ingestData<
+        UnifiedFilestoragePermissionOutput,
+        GoogledrivePermissionOutput
+      >(
+        uniquePermissions,
         'googledrive',
         connectionId,
         'filestorage',
-        'file',
-        customFieldMappings,
-        extraParams,
+        'permission',
       );
+
+      this.logger.log(
+        `Ingested ${uniquePermissions.length} permissions for googledrive files.`,
+      );
+
+      // Create a map of original permission ID to synced permission ID
+      const permissionIdMap: Map<string, string> = new Map(
+        syncedPermissions.map((permission) => [
+          permission.remote_id,
+          permission.id_fs_permission,
+        ]),
+      );
+
+      // Update each file's permissions with the synced permission IDs
+      sourceData.forEach((file) => {
+        if (file.permissionIds?.length) {
+          file.internal_permissions = file.permissionIds
+            .map((permissionId) => permissionIdMap.get(permissionId))
+            .filter(
+              (permissionId): permissionId is string =>
+                permissionId !== undefined,
+            );
+        }
+      });
     }
-
-    const uniquePermissions = await this.fetchPermissions(
-      permissionsIds,
-      sourceData,
-      drive,
-    );
-
-    // Ingest permissions using the ingestService
-    const syncedPermissions = await this.ingestService.ingestData<
-      UnifiedFilestoragePermissionOutput,
-      GoogledrivePermissionOutput
-    >(
-      uniquePermissions,
-      'googledrive',
-      connectionId,
-      'filestorage',
-      'permission',
-    );
-
-    this.logger.log(
-      `Ingested ${uniquePermissions.length} permissions for googledrive files.`,
-    );
-
-    // Create a map of original permission ID to synced permission ID
-    const permissionIdMap: Map<string, string> = new Map(
-      syncedPermissions.map((permission) => [
-        permission.remote_id,
-        permission.id_fs_permission,
-      ]),
-    );
-
-    // Update each file's permissions with the synced permission IDs
-    sourceData.forEach((file) => {
-      if (file.permissionIds?.length) {
-        file.internal_permissions = file.permissionIds
-          .map((permissionId) => permissionIdMap.get(permissionId))
-          .filter(
-            (permissionId): permissionId is string =>
-              permissionId !== undefined,
-          );
-      }
-    });
-
-    await this.assignDriveIds(sourceData, drive);
 
     // Ingest files with updated permissions
     const syncedFiles = await this.ingestService.ingestData<
@@ -137,6 +121,8 @@ export class GoogleDriveService implements IFileService {
     this.logger.log(
       `Ingested a batch of ${syncedFiles.length} googledrive files.`,
     );
+
+    await this.assignDriveIds(sourceData, drive);
 
     if (remote_cursor) {
       await this.prisma.fs_drives.updateMany({
