@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ServiceRegistry } from '../services/registry.service';
 import { IFileService } from '../types';
 import { UnifiedFilestorageFileOutput } from '../types/model.unified';
+import { fs_permissions as FileStoragePermission } from '@prisma/client';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -103,6 +104,9 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ): Promise<FileStorageFile[]> {
     try {
       const files_results: FileStorageFile[] = [];
+      // Cache for folder and drive lookups
+      const folderLookupCache = new Map<string, string | null>();
+      const driveLookupCache = new Map<string, string | null>();
 
       const updateOrCreateFile = async (
         file: UnifiedFilestorageFileOutput,
@@ -116,21 +120,79 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
+        let folder_id_by_remote_folder_id = null;
+        let drive_id_by_remote_drive_id = null;
+
+        if (file.remote_folder_id) {
+          if (folderLookupCache.has(file.remote_folder_id)) {
+            folder_id_by_remote_folder_id = folderLookupCache.get(
+              file.remote_folder_id,
+            );
+          } else {
+            const folder = await this.prisma.fs_folders.findFirst({
+              where: {
+                remote_id: file.remote_folder_id,
+                id_connection: connection_id,
+              },
+              select: {
+                id_fs_folder: true,
+              },
+            });
+            folder_id_by_remote_folder_id = folder?.id_fs_folder ?? null;
+            folderLookupCache.set(
+              file.remote_folder_id,
+              folder_id_by_remote_folder_id,
+            );
+          }
+        }
+
+        if (file.remote_drive_id) {
+          if (driveLookupCache.has(file.remote_drive_id)) {
+            drive_id_by_remote_drive_id = driveLookupCache.get(
+              file.remote_drive_id,
+            );
+          } else {
+            const drive = await this.prisma.fs_drives.findFirst({
+              where: {
+                remote_id: file.remote_drive_id,
+                id_connection: connection_id,
+              },
+              select: {
+                id_fs_drive: true,
+              },
+            });
+            drive_id_by_remote_drive_id = drive?.id_fs_drive ?? null;
+            driveLookupCache.set(
+              file.remote_drive_id,
+              drive_id_by_remote_drive_id,
+            );
+          }
+        }
+
         const baseData: any = {
           name: file.name ?? null,
           file_url: file.file_url ?? null,
           mime_type: file.mime_type ?? null,
           size: file.size ?? null,
-          id_fs_folder: id_folder ?? null,
+          id_fs_folder: id_folder ?? folder_id_by_remote_folder_id ?? null,
+          id_fs_drive: drive_id_by_remote_drive_id ?? null,
           modified_at: new Date(),
+          remote_created_at: file.remote_created_at ?? null,
+          remote_modified_at: file.remote_modified_at ?? null,
+          remote_was_deleted: file.remote_was_deleted ?? false,
         };
+
+        // remove null values
+        const cleanData = Object.fromEntries(
+          Object.entries(baseData).filter(([_, value]) => value !== null),
+        );
 
         if (existingFile) {
           return await this.prisma.fs_files.update({
             where: {
               id_fs_file: existingFile.id_fs_file,
             },
-            data: baseData,
+            data: cleanData,
           });
         } else {
           return await this.prisma.fs_files.create({
@@ -188,31 +250,34 @@ export class SyncService implements OnModuleInit, IBaseSync {
           }
         }
 
-        if (file.permission) {
-          let permission_id;
-          if (typeof file.permission === 'string') {
-            permission_id = file.permission;
+        if (file.permissions?.length > 0) {
+          let permission_ids;
+          if (typeof file.permissions[0] === 'string') {
+            permission_ids = file.permissions;
           } else {
             const perms = await this.registry
               .getService('filestorage', 'permission')
               .saveToDb(
                 connection_id,
                 linkedUserId,
-                [file.permission],
+                file.permissions as UnifiedFilestoragePermissionOutput[],
                 originSource,
-                [file.permission].map(
-                  (att: UnifiedFilestoragePermissionOutput) => att.remote_data,
+                (file.permissions as UnifiedFilestoragePermissionOutput[]).map(
+                  (att) => att.remote_data,
                 ),
                 { object_name: 'file', value: file_id },
               );
-            permission_id = perms[0].id_fs_permission;
+            permission_ids = perms.map(
+              (att: FileStoragePermission) => att.id_fs_permission,
+            );
           }
+
           await this.prisma.fs_files.update({
             where: {
               id_fs_file: file_id,
             },
             data: {
-              id_fs_permission: permission_id,
+              id_fs_permissions: permission_ids,
             },
           });
         }

@@ -240,7 +240,7 @@ CREATE TABLE fs_groups
 (
  id_fs_group        uuid NOT NULL,
  name               text NULL,
- users              text[] NULL,
+ users              uuid[] NULL,
  remote_id          text NULL,
  remote_was_deleted boolean NOT NULL,
  created_at         timestamp with time zone NOT NULL,
@@ -260,6 +260,7 @@ CREATE TABLE fs_drives
  name              text NULL,
  remote_created_at timestamp with time zone NULL,
  remote_id         text NULL,
+ remote_cursor     text NULL,
  created_at        timestamp with time zone NOT NULL,
  modified_at       timestamp with time zone NOT NULL,
  id_connection     uuid NOT NULL,
@@ -814,29 +815,27 @@ ex 3600 for one hour';
 -- ************************************** fs_folders
 CREATE TABLE fs_folders
 (
- id_fs_folder     uuid NOT NULL,
- folder_url       text NULL,
- "size"           bigint NULL,
- name             text NULL,
- description      text NULL,
- parent_folder    uuid NULL,
- remote_id        text NULL,
- created_at       timestamp with time zone NOT NULL,
- modified_at      timestamp with time zone NOT NULL,
- id_fs_drive      uuid NULL,
- id_connection    uuid NOT NULL,
- id_fs_permission uuid NULL,
+ id_fs_folder       uuid NOT NULL,
+ folder_url         text NULL,
+ "size"             bigint NULL,
+ name               text NULL,
+ description        text NULL,
+ parent_folder      uuid NULL,
+ remote_id          text NULL,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ remote_created_at  timestamp with time zone NULL,
+ remote_modified_at timestamp with time zone NULL,
+ remote_was_deleted boolean NOT NULL DEFAULT false,
+ id_fs_drive        uuid NULL,
+ id_connection      uuid NOT NULL,
+ id_fs_permissions  uuid[] NULL,
  CONSTRAINT PK_fs_folders PRIMARY KEY ( id_fs_folder )
 );
 
 CREATE INDEX FK_fs_folder_driveID ON fs_folders
 (
  id_fs_drive
-);
-
-CREATE INDEX FK_fs_folder_permissionID ON fs_folders
-(
- id_fs_permission
 );
 
 
@@ -1327,17 +1326,21 @@ COMMENT ON COLUMN linked_users.alias IS 'human-readable alias, for UI (ex ACME c
 -- ************************************** fs_files
 CREATE TABLE fs_files
 (
- id_fs_file       uuid NOT NULL,
- name             text NULL,
- file_url         text NULL,
- mime_type        text NULL,
- "size"           bigint NULL,
- remote_id        text NULL,
- id_fs_permission uuid NULL,
- id_fs_folder     uuid NULL,
- created_at       timestamp with time zone NOT NULL,
- modified_at      timestamp with time zone NOT NULL,
- id_connection    uuid NOT NULL,
+ id_fs_file         uuid NOT NULL,
+ name               text NULL,
+ file_url           text NULL,
+ mime_type          text NULL,
+ "size"             bigint NULL,
+ remote_id          text NULL,
+ id_fs_permissions  uuid[] NULL,
+ id_fs_folder       uuid NULL,
+ id_fs_drive        uuid NULL,
+ remote_created_at  timestamp with time zone NULL,
+ remote_modified_at timestamp with time zone NULL,
+ remote_was_deleted boolean NOT NULL DEFAULT false,
+ created_at         timestamp with time zone NOT NULL,
+ modified_at        timestamp with time zone NOT NULL,
+ id_connection      uuid NOT NULL,
  CONSTRAINT PK_fs_files PRIMARY KEY ( id_fs_file )
 );
 
@@ -1345,12 +1348,6 @@ CREATE INDEX FK_fs_file_FolderID ON fs_files
 (
  id_fs_folder
 );
-
-CREATE INDEX FK_fs_file_permissionID ON fs_files
-(
- id_fs_permission
-);
-
 
 -- ************************************** ecom_fulfilments
 CREATE TABLE ecom_fulfilments

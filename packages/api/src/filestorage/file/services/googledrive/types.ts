@@ -1,4 +1,4 @@
-export type GoogleDriveFileInput = Partial<GoogleDriveFileOutput>
+export type GoogleDriveFileInput = Partial<GoogleDriveFileOutput>;
 
 export interface GoogleDriveFileOutput {
   kind?: string;
@@ -105,4 +105,7 @@ export interface GoogleDriveFileOutput {
   };
   sha1Checksum?: string;
   sha256Checksum?: string;
+
+  // Internal fields
+  internal_permissions?: string[]; // Permissions ID in panora db
 }

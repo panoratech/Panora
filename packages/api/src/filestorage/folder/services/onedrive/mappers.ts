@@ -124,18 +124,25 @@ export class OnedriveFolderMapper implements IFolderMapper {
     }
 
     const result = {
+      id: folder.internal_id ?? null,
+      parent_folder_id: folder.internal_parent_folder_id ?? null,
       remote_id: folder.id,
       remote_data: folder,
+      remote_drive_id:
+        folder.driveId || folder?.parentReference?.driveId || null,
+      remote_created_at: folder.createdDateTime
+        ? new Date(folder.createdDateTime)
+        : null,
+      remote_modified_at: folder.lastModifiedDateTime
+        ? new Date(folder.lastModifiedDateTime)
+        : null,
+      remote_was_deleted: folder.deleted ? true : false,
       name: folder.name,
       folder_url: folder.webUrl,
       description: folder.description,
       drive_id: null,
-      parent_folder_id: await this.utils.getFolderIdFromRemote(
-        folder.parentReference?.id,
-        connectionId,
-      ),
       // permission: opts.permissions?.[0] || null,
-      permission: null,
+      permissions: folder.internal_permissions,
       size: folder.size.toString(),
       shared_link: opts.shared_links?.[0] || null,
       field_mappings,

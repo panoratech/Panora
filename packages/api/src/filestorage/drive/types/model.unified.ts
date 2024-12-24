@@ -95,4 +95,14 @@ export class UnifiedFilestorageDriveOutput extends UnifiedFilestorageDriveInput 
   })
   @IsOptional()
   modified_at?: Date;
+
+  @ApiPropertyOptional({
+    type: String,
+    nullable: true,
+    example: 'next_page_token_123',
+    description: 'The cursor used for pagination with the 3rd party provider',
+  })
+  @IsString()
+  @IsOptional()
+  remote_cursor?: string;
 }

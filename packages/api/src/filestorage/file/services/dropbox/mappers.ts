@@ -81,7 +81,7 @@ export class DropboxFileMapper implements IFileMapper {
       mime_type: null,
       size: file.size.toString(),
       folder_id: null,
-      permission: null,
+      permissions: null,
       shared_link: null,
       field_mappings: {},
     };

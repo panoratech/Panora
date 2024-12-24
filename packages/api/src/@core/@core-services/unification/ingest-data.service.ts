@@ -127,7 +127,7 @@ export class IngestDataService {
           return;
         }
 
-        /*const sourceObject: U[] = resp.data;
+        const sourceObject: U[] = resp.data;
 
         await this.ingestData<T, U>(
           sourceObject,
@@ -137,8 +137,9 @@ export class IngestDataService {
           commonObject,
           customFieldMappings,
           ingestParams,
-        );*/
+        );
       } catch (syncError) {
+        console.log(syncError, 'syncError in ingest-data.service.ts');
         this.logger.error(
           `Error syncing ${integrationId} ${commonObject}: ${syncError.message}`,
           syncError,

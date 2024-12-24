@@ -5,12 +5,14 @@ import {
 import { IPermissionMapper } from '@filestorage/permission/types';
 import { MappersRegistry } from '@@core/@core-services/registries/mappers.registry';
 import { Injectable } from '@nestjs/common';
-import { OriginalPermissionOutput } from '@@core/utils/types/original/original.file-storage';
+import {
+  GoogledrivePermissionInput,
+  GoogledrivePermissionOutput,
+} from './types';
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
-import { OnedrivePermissionInput, OnedrivePermissionOutput } from './types';
 
 @Injectable()
-export class OnedrivePermissionMapper implements IPermissionMapper {
+export class GoogledrivePermissionMapper implements IPermissionMapper {
   constructor(
     private mappersRegistry: MappersRegistry,
     private ingestService: IngestDataService,
@@ -18,7 +20,7 @@ export class OnedrivePermissionMapper implements IPermissionMapper {
     this.mappersRegistry.registerService(
       'filestorage',
       'permission',
-      'onedrive',
+      'googledrive',
       this,
     );
   }
@@ -29,12 +31,12 @@ export class OnedrivePermissionMapper implements IPermissionMapper {
       slug: string;
       remote_id: string;
     }[],
-  ): Promise<OnedrivePermissionInput> {
+  ): Promise<GoogledrivePermissionInput> {
     return;
   }
 
   async unify(
-    source: OnedrivePermissionOutput | OnedrivePermissionOutput[],
+    source: GoogledrivePermissionOutput | GoogledrivePermissionOutput[],
     connectionId: string,
     customFieldMappings?: {
       slug: string;
@@ -50,7 +52,7 @@ export class OnedrivePermissionMapper implements IPermissionMapper {
         customFieldMappings,
       );
     }
-    // Handling array of OnedrivePermissionOutput
+    // Handling array of GoogledrivePermissionOutput
     return Promise.all(
       source.map((permission) =>
         this.mapSinglePermissionToUnified(
@@ -63,7 +65,7 @@ export class OnedrivePermissionMapper implements IPermissionMapper {
   }
 
   private async mapSinglePermissionToUnified(
-    permission: OnedrivePermissionOutput,
+    permission: GoogledrivePermissionOutput,
     connectionId: string,
     customFieldMappings?: {
       slug: string;
@@ -80,15 +82,10 @@ export class OnedrivePermissionMapper implements IPermissionMapper {
     return {
       remote_id: permission.id,
       remote_data: permission,
-      roles: permission.roles?.map((role) => role.toUpperCase()),
-      type:
-        permission.link?.type === 'edit'
-          ? 'WRITE'
-          : permission.link?.type === 'view'
-          ? 'READ'
-          : permission.link?.type,
-      user_id: permission.internal_user_id,
-      group_id: permission.internal_group_id,
+      roles: [permission.role],
+      type: permission.type,
+      user_id: null,
+      group_id: null,
       field_mappings,
     };
   }

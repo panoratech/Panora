@@ -73,10 +73,10 @@ export class OnedriveGroupMapper implements IGroupMapper {
     return {
       remote_id: group.id,
       remote_data: group,
-      name: group.mailNickname,
+      name: group.displayName || group.mailNickname,
       remote_was_deleted: group.deletedDateTime !== null,
       field_mappings,
-      users: [],
+      users: group.internal_users || [],
     };
   }
 }

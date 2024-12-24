@@ -10,6 +10,14 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Panora",
   description: "Unified API",
+  icons: {
+    icon: [
+      {
+        url: '/logo.png',
+        type: 'image/png',
+      }
+    ]
+  }
 };
 
 export default function RootLayout({
@@ -22,8 +30,8 @@ export default function RootLayout({
       <body className={`${inter.className} overflow-hidden`}>
         <ThemeProvider
         attribute="class"
-        defaultTheme="system"
-        enableSystem
+        defaultTheme="light"
+        enableSystem={false}
         disableTransitionOnChange
         >
           <Provider>
@@ -31,7 +39,6 @@ export default function RootLayout({
             <Toaster />
           </Provider>
         </ThemeProvider>
-        
       </body>
     </html>
   );

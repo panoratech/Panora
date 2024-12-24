@@ -108,7 +108,7 @@ export class CoreSyncService {
                                   this.convertIntervalToCron(Number(interval));
 
                                 await this.bullQueueService.queueSyncJob(
-                                  `${vertical}-sync-${commonObject}s`,
+                                  `${vertical}-sync-${commonObject}s-${project.id_project}`,
                                   {
                                     projectId: project.id_project,
                                     vertical,
@@ -143,7 +143,7 @@ export class CoreSyncService {
                         getCommonObjectsForVertical(vertical);
                       for (const commonObject of commonObjects) {
                         await this.bullQueueService.removeRepeatableJob(
-                          `${vertical}-sync-${commonObject}s`,
+                          `${vertical}-sync-${commonObject}s-${project.id_project}`,
                         );
                       }
                     }
@@ -412,12 +412,12 @@ export class CoreSyncService {
   async handleFileStorageSync(provider: string, linkedUserId: string) {
     const tasks = [
       () =>
-        this.registry.getService('filestorage', 'group').syncForLinkedUser({
+        this.registry.getService('filestorage', 'user').syncForLinkedUser({
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),
       () =>
-        this.registry.getService('filestorage', 'user').syncForLinkedUser({
+        this.registry.getService('filestorage', 'group').syncForLinkedUser({
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),
@@ -431,15 +431,20 @@ export class CoreSyncService {
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),
-    ];
-    if (provider == 'googledrive') {
-      tasks.push(() =>
+      () =>
         this.registry.getService('filestorage', 'file').syncForLinkedUser({
           integrationId: provider,
           linkedUserId: linkedUserId,
         }),
-      );
-    }
+    ];
+    // if (provider == 'googledrive') {
+    //   tasks.push(() =>
+    //     this.registry.getService('filestorage', 'file').syncForLinkedUser({
+    //       integrationId: provider,
+    //       linkedUserId: linkedUserId,
+    //     }),
+    //   );
+    // }
     for (const task of tasks) {
       try {
         await task();
@@ -456,30 +461,30 @@ export class CoreSyncService {
       },
     });
 
-    const folders = await this.prisma.fs_folders.findMany({
-      where: {
-        id_connection: connection.id_connection,
-      },
-    });
-    if (provider !== 'googledrive') {
-      const filesTasks = folders.map(
-        (folder) => async () =>
-          this.registry.getService('filestorage', 'file').syncForLinkedUser({
-            integrationId: provider,
-            linkedUserId: linkedUserId,
-            id_folder: folder.id_fs_folder,
-          }),
-      );
+    // const folders = await this.prisma.fs_folders.findMany({
+    //   where: {
+    //     id_connection: connection.id_connection,
+    //   },
+    // });
+    // if (provider !== 'googledrive') {
+    //   const filesTasks = folders.map(
+    //     (folder) => async () =>
+    //       this.registry.getService('filestorage', 'file').syncForLinkedUser({
+    //         integrationId: provider,
+    //         linkedUserId: linkedUserId,
+    //         id_folder: folder.id_fs_folder,
+    //       }),
+    //   );
 
-      for (const task of filesTasks) {
-        try {
-          await task();
-        } catch (error) {
-          console.log(error);
-          this.logger.error(`File Task failed: ${error.message}`, error);
-        }
-      }
-    }
+    //   for (const task of filesTasks) {
+    //     try {
+    //       await task();
+    //     } catch (error) {
+    //       console.log(error);
+    //       this.logger.error(`File Task failed: ${error.message}`, error);
+    //     }
+    //   }
+    // }
   }
 
   async handleEcommerceSync(provider: string, linkedUserId: string) {
@@ -538,7 +543,6 @@ export class CoreSyncService {
       }
     }
   }
-
 
   // we must have a sync_jobs table with 7 (verticals) rows, one of each is syncing details
   async getSyncStatus(vertical: string) {

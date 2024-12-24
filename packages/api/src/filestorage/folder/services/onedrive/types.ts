@@ -57,6 +57,11 @@ export interface OnedriveFolderInput {
   readonly lastModifiedBy?: IdentitySet;
   /** If this property is non-null, it indicates that the driveItem is the top-most driveItem in the drive. */
   readonly root?: any;
+
+  // internal fields
+  internal_id?: string;
+  internal_parent_folder_id?: string;
+  internal_permissions?: string[];
 }
 
 /**

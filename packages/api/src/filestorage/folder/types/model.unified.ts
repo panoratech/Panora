@@ -73,7 +73,7 @@ export class UnifiedFilestorageFolderInput {
     description: 'The UUID of the permission tied to the folder',
   })
   @IsString()
-  permission: string | UnifiedFilestoragePermissionOutput;
+  permissions: string[] | UnifiedFilestoragePermissionOutput[];
 
   @ApiPropertyOptional({
     type: Object,
@@ -126,6 +126,16 @@ export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInpu
   remote_data?: Record<string, any>;
 
   @ApiPropertyOptional({
+    type: String,
+    example: 'drive_123',
+    description: 'The remote ID of the drive in the context of the 3rd Party',
+    nullable: true,
+  })
+  @IsString()
+  @IsOptional()
+  remote_drive_id?: string;
+
+  @ApiPropertyOptional({
     example: '2024-10-01T12:00:00Z',
     description: 'The created date of the folder',
     type: Date,
@@ -142,4 +152,34 @@ export class UnifiedFilestorageFolderOutput extends UnifiedFilestorageFolderInpu
   })
   @IsOptional()
   modified_at?: Date;
+
+  @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    description:
+      'The created date of the folder in the context of the 3rd Party',
+    nullable: true,
+  })
+  @IsOptional()
+  remote_created_at?: Date;
+
+  @ApiPropertyOptional({
+    example: '2024-10-01T12:00:00Z',
+    type: Date,
+    description:
+      'The modified date of the folder in the context of the 3rd Party',
+    nullable: true,
+  })
+  @IsOptional()
+  remote_modified_at?: Date;
+
+  @ApiPropertyOptional({
+    example: false,
+    type: Boolean,
+    description:
+      'Whether the folder was deleted in the context of the 3rd Party',
+    default: false,
+  })
+  @IsOptional()
+  remote_was_deleted?: boolean;
 }

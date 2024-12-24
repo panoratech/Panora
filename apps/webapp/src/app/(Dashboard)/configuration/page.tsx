@@ -39,6 +39,8 @@ import useUpdatePullFrequency from "@/hooks/create/useCreatePullFrequency";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const frequencyOptions = [
   { label: '5 min', value: 300 },
@@ -63,7 +65,9 @@ export default function Page() {
   const [open, setOpen] = useState(false);
   const [localFrequencies, setLocalFrequencies] = useState<Record<string, string>>({});
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
-
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+  const [selectedVertical, setSelectedVertical] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -114,39 +118,26 @@ export default function Page() {
     if (pullFrequencies) {
       const initialFrequencies = VERTICALS.reduce((acc, vertical) => {
         const value = pullFrequencies[vertical as keyof typeof pullFrequencies];
-        acc[vertical] = typeof value === 'string' ? value : '0';
+        acc[vertical] = value?.toString() || '0';
         return acc;
       }, {} as Record<string, string>);
       setLocalFrequencies(initialFrequencies);
     }
   }, [pullFrequencies]);
 
-  const handleFrequencyChange = (vertical: string, value: string) => {
-    setLocalFrequencies(prev => ({ ...prev, [vertical]: value }));
-  };
-  
-
-
   const handleFrequencyChangeAndSave = async (vertical: string, value: string) => {
-    handleFrequencyChange(vertical, value);
-    await saveFrequency(vertical, value);
-  };
-  
-  const saveFrequency = async (vertical: string, value: string) => {
-    setLoadingStates(prev => ({ ...prev, [vertical]: true }));
+    const frequency = parseInt(value, 10);
+    const updateData = { [vertical]: frequency };
+    
     try {
-      const frequency = parseInt(value, 10);
-      console.log("frequency being saved: " + frequency);
-      const updateData = { [vertical]: frequency };
-      
       await toast.promise(
         createPullFrequencyPromise(updateData),
         {
           loading: 'Updating...',
-          success: (data: any) => {
-            queryClient.setQueryData<any>(['pull_frequencies'], (oldData: any) => ({
-              ...oldData,
-              [vertical]: frequency.toString(),
+          success: () => {
+            setLocalFrequencies(prev => ({
+              ...prev,
+              [vertical]: value
             }));
             return frequency === 0 ? `${vertical} sync deactivated` : `Frequency saved for ${vertical}`;
           },
@@ -155,16 +146,56 @@ export default function Page() {
       );
     } catch (error) {
       console.error(`Error updating ${vertical} pull frequency:`, error);
-    } finally {
-      setLoadingStates(prev => ({ ...prev, [vertical]: false }));
     }
   };
 
-  
- 
+  const handleSuspendClick = (vertical: string) => {
+    setSelectedVertical(vertical);
+    setConfirmText('');
+    setDialogOpen(true);
+  };
+
+  const handleConfirmSuspend = async () => {
+    if (selectedVertical && confirmText.toLowerCase() === 'suspend') {
+      await handleFrequencyChangeAndSave(selectedVertical, '0');
+      setDialogOpen(false);
+      setConfirmText('');
+    }
+  };
+
   return (
     
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Sync Suspension</DialogTitle>
+            <DialogDescription>
+              This will stop all automatic syncs for {selectedVertical?.toUpperCase()}. To confirm, please type &quot;suspend&quot; below.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            placeholder="Type 'suspend' to confirm"
+          />
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => setDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmSuspend}
+              disabled={confirmText.toLowerCase() !== 'suspend'}
+            >
+              Confirm Suspension
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
             <Heading
@@ -245,14 +276,14 @@ export default function Page() {
       <CardContent>
   {VERTICALS.map(vertical => (
     <div key={vertical} className="mb-4">
-      <label className="block text-sm font-medium text-white mb-1">
+      <label className="block text-sm font-medium mb-1">
         {vertical.toUpperCase()}
       </label>
       <div className="flex items-center space-x-2">
         <Select
           value={localFrequencies[vertical] || '0'}
           onValueChange={(value: string) => handleFrequencyChangeAndSave(vertical, value)}
-          >
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select frequency" />
           </SelectTrigger>
@@ -266,13 +297,12 @@ export default function Page() {
         </Select>
         {localFrequencies[vertical] && localFrequencies[vertical] !== '0'&& (
           <Button 
-            onClick={() => handleFrequencyChangeAndSave(vertical, '0')}
+            onClick={() => handleSuspendClick(vertical)}
             size="sm" 
             variant="destructive"
             className="h-7"
           >
-            {localFrequencies[vertical]}
-            Deactivate
+            Suspend Sync
           </Button>
         )}
       </div>

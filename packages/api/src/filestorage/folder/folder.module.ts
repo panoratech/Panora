@@ -2,7 +2,7 @@ import { CoreUnification } from '@@core/@core-services/unification/core-unificat
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Utils } from '@filestorage/@lib/@utils';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { FolderController } from './folder.controller';
 import { BoxService } from './services/box';
 import { BoxFolderMapper } from './services/box/mappers';
@@ -17,8 +17,10 @@ import { ServiceRegistry } from './services/registry.service';
 import { SharepointService } from './services/sharepoint';
 import { SharepointFolderMapper } from './services/sharepoint/mappers';
 import { SyncService } from './sync/sync.service';
+import { FileModule } from '../file/file.module';
 
 @Module({
+  imports: [forwardRef(() => FileModule)],
   controllers: [FolderController],
   providers: [
     FolderService,
@@ -41,6 +43,6 @@ import { SyncService } from './sync/sync.service';
     DropboxFolderMapper,
     GoogleDriveFolderService,
   ],
-  exports: [SyncService],
+  exports: [SyncService, OnedriveService],
 })
 export class FolderModule {}

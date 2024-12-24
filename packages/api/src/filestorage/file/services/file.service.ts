@@ -157,7 +157,7 @@ export class FileService {
       mime_type: file.mime_type,
       size: file.size,
       folder_id: file.folder_id,
-      permission_id: file.permission as string,
+      permission_ids: file.permissions as string[],
       modified_at: new Date(),
     };
 
@@ -215,14 +215,16 @@ export class FileService {
       // Convert the map to an array of objects
       const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      let permission;
-      if (file.id_fs_permission) {
-        const perm = await this.prisma.fs_permissions.findUnique({
+      let permissions;
+      if (file.id_fs_permissions?.length > 0) {
+        const perms = await this.prisma.fs_permissions.findMany({
           where: {
-            id_fs_permission: file.id_fs_permission,
+            id_fs_permission: {
+              in: file.id_fs_permissions,
+            },
           },
         });
-        permission = perm;
+        permissions = perms;
       }
 
       const sharedLink = await this.prisma.fs_shared_links.findFirst({
@@ -238,12 +240,16 @@ export class FileService {
         mime_type: file.mime_type,
         size: String(file.size),
         folder_id: file.id_fs_folder,
-        permission: permission || null,
+        drive_id: file.id_fs_drive,
+        permissions: permissions || null,
         shared_link: sharedLink || null,
         field_mappings: field_mappings,
         remote_id: file.remote_id,
         created_at: file.created_at,
         modified_at: file.modified_at,
+        remote_created_at: file.remote_created_at,
+        remote_modified_at: file.remote_modified_at,
+        remote_was_deleted: file.remote_was_deleted,
       };
 
       let res: UnifiedFilestorageFileOutput = unifiedFile;
@@ -363,14 +369,16 @@ export class FileService {
           // Convert the map to an object
           const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          let permission;
-          if (file.id_fs_permission) {
-            const perm = await this.prisma.fs_permissions.findUnique({
+          let permissions;
+          if (file.id_fs_permissions?.length > 0) {
+            const perms = await this.prisma.fs_permissions.findMany({
               where: {
-                id_fs_permission: file.id_fs_permission,
+                id_fs_permission: {
+                  in: file.id_fs_permissions,
+                },
               },
             });
-            permission = perm;
+            permissions = perms;
           }
 
           const sharedLink = await this.prisma.fs_shared_links.findFirst({
@@ -387,12 +395,16 @@ export class FileService {
             mime_type: file.mime_type,
             size: String(file.size),
             folder_id: file.id_fs_folder,
-            permission: permission || null,
+            drive_id: file.id_fs_drive,
+            permissions: permissions || null,
             shared_link: sharedLink || null,
             field_mappings: field_mappings,
             remote_id: file.remote_id,
             created_at: file.created_at,
             modified_at: file.modified_at,
+            remote_created_at: file.remote_created_at,
+            remote_modified_at: file.remote_modified_at,
+            remote_was_deleted: file.remote_was_deleted,
           };
         }),
       );

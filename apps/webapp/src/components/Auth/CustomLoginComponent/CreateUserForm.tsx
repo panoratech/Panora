@@ -18,14 +18,22 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
+    FormDescription,
 } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { PasswordInput } from '@/components/ui/password-input'
 import useCreateUser from '@/hooks/create/useCreateUser'
+import useCreateLogin from '@/hooks/create/useCreateLogin'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+import Cookies from 'js-cookie'
+import useProfileStore from '@/state/profileStore'
+import { Checkbox } from "@/components/ui/checkbox"
+import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 
 const formSchema = z.object({
     first_name: z.string().min(2,{
@@ -33,19 +41,45 @@ const formSchema = z.object({
     }),
     last_name : z.string().min(2, {
         message: "Enter Last Name.",
-      }),
+    }),
     email : z.string().email({
         message: "Enter valid Email.",
     }),
-    password : z.string().min(2, {
-    message: "Enter Password.",
+    password : z.string().min(8, {
+        message: "Password must be at least 8 characters.",
     }),
-    
-})
+    confirmPassword: z.string(),
+    acceptTerms: z.boolean().refine(val => val === true, {
+        message: "You must accept the terms and privacy policy.",
+    })
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+});
+
+interface SignupResponse {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+}
+
+interface LoginResponse {
+    access_token: string;
+    user: {
+        id: string;
+        email: string;
+        first_name: string;
+        last_name: string;
+    }
+}
 
 const CreateUserForm = () => {
     const {createUserPromise} = useCreateUser();
+    const {loginPromise} = useCreateLogin();
     const queryClient = useQueryClient();
+    const router = useRouter();
+    const {setProfile} = useProfileStore();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -53,53 +87,60 @@ const CreateUserForm = () => {
             first_name:'',
             last_name:'',
             email:'',
-            password:''
+            password:'',
+            confirmPassword: '',
+            acceptTerms: false
         },   
     })
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-        toast.promise(
-            createUserPromise({
-                first_name:values.first_name,
-                last_name:values.last_name,
-                email:values.email,
-                strategy:'b2c',
-                password_hash:values.password
-            }), 
-            {
-            loading: 'Loading...',
-            success: (data: any) => {
-                form.reset();
-                queryClient.setQueryData<any[]>(['users'], (oldQueryData = []) => {
-                    return [...oldQueryData, data];
-                });
-                return (
-                    <div className="flex flex-row items-center">
-                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49991 0.877045C3.84222 0.877045 0.877075 3.84219 0.877075 7.49988C0.877075 11.1575 3.84222 14.1227 7.49991 14.1227C11.1576 14.1227 14.1227 11.1575 14.1227 7.49988C14.1227 3.84219 11.1576 0.877045 7.49991 0.877045ZM1.82708 7.49988C1.82708 4.36686 4.36689 1.82704 7.49991 1.82704C10.6329 1.82704 13.1727 4.36686 13.1727 7.49988C13.1727 10.6329 10.6329 13.1727 7.49991 13.1727C4.36689 13.1727 1.82708 10.6329 1.82708 7.49988ZM10.1589 5.53774C10.3178 5.31191 10.2636 5.00001 10.0378 4.84109C9.81194 4.68217 9.50004 4.73642 9.34112 4.96225L6.51977 8.97154L5.35681 7.78706C5.16334 7.59002 4.84677 7.58711 4.64973 7.78058C4.45268 7.97404 4.44978 8.29061 4.64325 8.48765L6.22658 10.1003C6.33054 10.2062 6.47617 10.2604 6.62407 10.2483C6.77197 10.2363 6.90686 10.1591 6.99226 10.0377L10.1589 5.53774Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-                    <div className="ml-2">
-                        User
-                        <Badge variant="secondary" className="rounded-sm px-1 mx-2 font-normal">{`${data.email}`}</Badge>
-                        has been created
-                    </div>
-                    </div>
-                )
-                ;
-            },
-            error: (err: any) => err.message || 'Error'
-        });
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        try {
+            // First register the user and wait for the response
+            const signupResponse = await createUserPromise({
+                first_name: values.first_name,
+                last_name: values.last_name,
+                email: values.email,
+                strategy: 'b2c',
+                password_hash: values.password
+            });
+
+            // Show success message for signup
+            toast.success('Account created successfully!');
+
+            try {
+                // Then attempt to log in
+                const loginResponse = await loginPromise({
+                    email: values.email,
+                    password_hash: values.password
+                }) as LoginResponse;
+
+                // Set the access token
+                if (loginResponse.access_token) {
+                    Cookies.set('access_token', loginResponse.access_token);
+                    setProfile({
+                        id_user: loginResponse.user.id,
+                        email: loginResponse.user.email,
+                        first_name: loginResponse.user.first_name,
+                        last_name: loginResponse.user.last_name
+                    });
+                    router.replace('/connections');
+                    toast.success('Logged in successfully!');
+                }
+            } catch (loginError: any) {
+                toast.error('Account created but login failed. Please try logging in manually.');
+                console.error('Login error:', loginError);
+            }
+        } catch (error: any) {
+            toast.error(error.message || 'Error creating account');
+            console.error('Signup error:', error);
+        }
     };
 
     return (
         <>
             <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Sign Up</CardTitle>
-                    <CardDescription>
-                    Create your account.
-                    </CardDescription>
-                </CardHeader>
+            <Card className="border-0 shadow-none">
                 <CardContent className="space-y-2">
                 <div className="grid gap-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -157,9 +198,53 @@ const CreateUserForm = () => {
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                    <PasswordInput {...field} placeholder='Enter Password' /> 
+                                    <Input type="password" {...field} placeholder='Enter Password' /> 
                                     </FormControl>
                                     <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className="grid gap-2">
+                        <FormField
+                            name="confirmPassword"
+                            control={form.control}
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Confirm Password</FormLabel>
+                                    <FormControl>
+                                    <Input type="password" {...field} placeholder='Confirm Password' /> 
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <div className="grid gap-2">
+                        <FormField
+                            control={form.control}
+                            name="acceptTerms"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md">
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel>
+                                            I accept the{" "}
+                                            <Link href="https://panora.dev/terms" target="_blank" className="underline">
+                                                Terms of Service
+                                            </Link>
+                                            {" "}and{" "}
+                                            <Link href="https://panora.dev/privacy" target="_blank" className="underline">
+                                                Privacy Policy
+                                            </Link>
+                                        </FormLabel>
+                                        <FormMessage />
+                                    </div>
                                 </FormItem>
                             )}
                         />
@@ -167,7 +252,10 @@ const CreateUserForm = () => {
                 </div>
                 </CardContent>
                 <CardFooter>
-                    <Button type='submit' size="sm" className="h-7 gap-1" >Create an account</Button>
+                    <Button type='submit' size="sm" className="h-7 gap-1">
+                        Create an account
+                        <ArrowRight className="h-4 w-4" />
+                    </Button>
                 </CardFooter>
             </Card>
             </form>

@@ -193,7 +193,7 @@ const handleOAuth2Url = async ({
       params += `&nonce=${randomString()}`;
       break;
     case 'googledrive':
-      params += '&access_type=offline';
+      params += '&access_type=offline&prompt=consent';
       break;
     case 'dropbox':
       params += '&token_access_type=offline';

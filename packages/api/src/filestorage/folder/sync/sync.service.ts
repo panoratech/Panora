@@ -17,6 +17,7 @@ import { IFolderService } from '../types';
 import { UnifiedFilestorageFolderOutput } from '../types/model.unified';
 import { UnifiedFilestorageSharedlinkOutput } from '@filestorage/sharedlink/types/model.unified';
 import { UnifiedFilestoragePermissionOutput } from '@filestorage/permission/types/model.unified';
+import { fs_permissions as FileStoragePermission } from '@prisma/client';
 
 @Injectable()
 export class SyncService implements OnModuleInit, IBaseSync {
@@ -33,7 +34,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
     this.registry.registerService('filestorage', 'folder', this);
   }
   onModuleInit() {
-//
+    //
   }
 
   @Cron('0 */8 * * *') // every 8 hours
@@ -92,6 +93,7 @@ export class SyncService implements OnModuleInit, IBaseSync {
   ): Promise<FileStorageFolder[]> {
     try {
       const folders_results: FileStorageFolder[] = [];
+      const driveLookupCache = new Map<string, string | null>();
 
       const updateOrCreateFolder = async (
         folder: UnifiedFilestorageFolderOutput,
@@ -104,28 +106,61 @@ export class SyncService implements OnModuleInit, IBaseSync {
           },
         });
 
+        let drive_id_by_remote_drive_id = null;
+        if (folder.remote_drive_id) {
+          if (driveLookupCache.has(folder.remote_drive_id)) {
+            drive_id_by_remote_drive_id = driveLookupCache.get(
+              folder.remote_drive_id,
+            );
+          } else {
+            const drive = await this.prisma.fs_drives.findFirst({
+              where: {
+                remote_id: folder.remote_drive_id,
+                id_connection: connection_id,
+              },
+              select: {
+                id_fs_drive: true,
+              },
+            });
+            drive_id_by_remote_drive_id = drive?.id_fs_drive ?? null;
+            driveLookupCache.set(
+              folder.remote_drive_id,
+              drive_id_by_remote_drive_id,
+            );
+          }
+        }
+
         const baseData: any = {
           name: folder.name ?? null,
           size: folder.size ?? null,
           folder_url: folder.folder_url ?? null,
           description: folder.description ?? null,
-          id_fs_drive: folder.drive_id ?? null,
+          id_fs_drive: drive_id_by_remote_drive_id ?? null,
+          id_fs_permissions: folder.permissions,
           parent_folder: folder.parent_folder_id ?? null,
           modified_at: new Date(),
+          remote_created_at: folder.remote_created_at ?? null,
+          remote_modified_at: folder.remote_modified_at ?? null,
+          remote_was_deleted: folder.remote_was_deleted ? true : false,
         };
+
+        // remove null values
+        const cleanData = Object.fromEntries(
+          Object.entries(baseData).filter(([_, value]) => value !== null),
+        );
 
         if (existingFolder) {
           return await this.prisma.fs_folders.update({
             where: {
               id_fs_folder: existingFolder.id_fs_folder,
             },
-            data: baseData,
+            data: cleanData,
           });
         } else {
           return await this.prisma.fs_folders.create({
             data: {
-              ...baseData,
-              id_fs_folder: uuidv4(),
+              ...baseData, // using baseData for creation
+              id_fs_folder: folder.id ?? uuidv4(),
               created_at: new Date(),
               remote_id: originId ?? null,
               id_connection: connection_id,
@@ -177,31 +212,33 @@ export class SyncService implements OnModuleInit, IBaseSync {
           }
         }
 
-        if (folder.permission) {
-          let permission_id;
-          if (typeof folder.permission === 'string') {
-            permission_id = folder.permission;
+        if (folder.permissions?.length > 0) {
+          let permission_ids;
+          if (typeof folder.permissions[0] === 'string') {
+            permission_ids = folder.permissions;
           } else {
             const perms = await this.registry
               .getService('filestorage', 'permission')
               .saveToDb(
                 connection_id,
                 linkedUserId,
-                [folder.permission],
+                folder.permissions as UnifiedFilestoragePermissionOutput[],
                 originSource,
-                [folder.permission].map(
-                  (att: UnifiedFilestoragePermissionOutput) => att.remote_data,
-                ),
+                (
+                  folder.permissions as UnifiedFilestoragePermissionOutput[]
+                ).map((att) => att.remote_data),
                 { object_name: 'folder', value: folder_id },
               );
-            permission_id = perms[0].id_fs_permission;
+            permission_ids = perms.map(
+              (att: FileStoragePermission) => att.id_fs_permission,
+            );
           }
           await this.prisma.fs_folders.update({
             where: {
               id_fs_folder: folder_id,
             },
             data: {
-              id_fs_permission: permission_id,
+              id_fs_permissions: permission_ids,
             },
           });
         }

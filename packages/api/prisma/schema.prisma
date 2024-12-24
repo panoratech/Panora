@@ -110,6 +110,7 @@ model fs_drives {
   name              String?
   remote_created_at DateTime? @db.Timestamptz(6)
   remote_id         String?
+  remote_cursor     String?
   created_at        DateTime  @db.Timestamptz(6)
   modified_at       DateTime  @db.Timestamptz(6)
   id_connection     String    @db.Uuid
@@ -119,7 +120,7 @@ model fs_drives {
 model fs_groups {
   id_fs_group        String   @id(map: "pk_fs_groups") @db.Uuid
   name               String?
-  users              String[]
+  users              String[] @db.Uuid
   remote_id          String?
   remote_was_deleted Boolean
   created_at         DateTime @db.Timestamptz(6)
@@ -1273,38 +1274,43 @@ model events {
 }
 
 model fs_files {
-  id_fs_file       String   @id(map: "pk_fs_files") @db.Uuid
-  name             String?
-  file_url         String?
-  mime_type        String?
-  size             BigInt?
-  remote_id        String?
-  id_fs_permission String?  @db.Uuid
-  id_fs_folder     String?  @db.Uuid
-  created_at       DateTime @db.Timestamptz(6)
-  modified_at      DateTime @db.Timestamptz(6)
-  id_connection    String   @db.Uuid
+  id_fs_file         String    @id(map: "pk_fs_files") @db.Uuid
+  name               String?
+  file_url           String?
+  mime_type          String?
+  size               BigInt?
+  remote_id          String?
+  id_fs_permissions  String[]  @db.Uuid
+  id_fs_folder       String?   @db.Uuid
+  id_fs_drive        String?   @db.Uuid
+  remote_created_at  DateTime? @db.Timestamptz(6)
+  remote_modified_at DateTime? @db.Timestamptz(6)
+  remote_was_deleted Boolean   @default(false)
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
+  id_connection      String    @db.Uuid
 
   @@index([id_fs_folder], map: "fk_fs_file_folderid")
-  @@index([id_fs_permission], map: "fk_fs_file_permissionid")
 }
 
 model fs_folders {
-  id_fs_folder     String   @id(map: "pk_fs_folders") @db.Uuid
-  folder_url       String?
-  size             BigInt?
-  name             String?
-  description      String?
-  parent_folder    String?  @db.Uuid
-  remote_id        String?
-  created_at       DateTime @db.Timestamptz(6)
-  modified_at      DateTime @db.Timestamptz(6)
-  id_fs_drive      String?  @db.Uuid
-  id_connection    String   @db.Uuid
-  id_fs_permission String?  @db.Uuid
+  id_fs_folder       String    @id(map: "pk_fs_folders") @db.Uuid
+  folder_url         String?
+  size               BigInt?
+  name               String?
+  description        String?
+  parent_folder      String?   @db.Uuid
+  remote_id          String?
+  created_at         DateTime  @db.Timestamptz(6)
+  modified_at        DateTime  @db.Timestamptz(6)
+  remote_created_at  DateTime? @db.Timestamptz(6)
+  remote_modified_at DateTime? @db.Timestamptz(6)
+  remote_was_deleted Boolean   @default(false)
+  id_fs_drive        String?   @db.Uuid
+  id_connection      String    @db.Uuid
+  id_fs_permissions  String[]  @db.Uuid
 
   @@index([id_fs_drive], map: "fk_fs_folder_driveid")
-  @@index([id_fs_permission], map: "fk_fs_folder_permissionid")
 }
 
 model invite_links {

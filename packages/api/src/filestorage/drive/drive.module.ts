@@ -3,6 +3,7 @@ import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/w
 import { Utils } from '@filestorage/@lib/@utils';
 import { Module } from '@nestjs/common';
 import { DriveService } from './services/drive.service';
+import { DriveController } from './drive.controller';
 import { GoogleDriveService } from './services/googledrive';
 import { GoogleDriveMapper } from './services/googledrive/mappers';
 import { OnedriveService } from './services/onedrive';
@@ -13,6 +14,7 @@ import { SharepointDriveMapper } from './services/sharepoint/mappers';
 import { SyncService } from './sync/sync.service';
 
 @Module({
+  controllers: [DriveController],
   providers: [
     DriveService,
     SyncService,

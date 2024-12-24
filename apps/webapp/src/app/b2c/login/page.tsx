@@ -1,4 +1,5 @@
 'use client';
+
 import CreateUserForm from "@/components/Auth/CustomLoginComponent/CreateUserForm";
 import LoginUserForm from "@/components/Auth/CustomLoginComponent/LoginUserForm";
 import {
@@ -13,6 +14,7 @@ import Cookies from 'js-cookie';
 import useProfileStore from "@/state/profileStore";
 import useUser from "@/hooks/get/useUser";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "next-themes";
 
 export default function Page() {
     const [userInitialized,setUserInitialized] = useState(true)
@@ -20,21 +22,41 @@ export default function Page() {
     const router = useRouter()
     const {profile} = useProfileStore();
     const [activeTab, setActiveTab] = useState('login');
+    const { theme, systemTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        // Get the hash from URL and set the active tab accordingly
+        const hash = window.location.hash.replace('#', '');
+        if (hash === 'signup') {
+            setActiveTab('create');
+        } else if (hash === 'login') {
+            setActiveTab('login');
+        }
+    }, []);
+
+    const currentTheme = theme === 'system' ? systemTheme : theme;
+
+    // Handle tab changes and update URL
+    const handleTabChange = (value: string) => {
+        setActiveTab(value);
+        const hash = value === 'create' ? 'signup' : 'login';
+        window.history.replaceState(null, '', `#${hash}`);
+    };
 
     useEffect(() => {
         if(profile)
         {
             router.replace('/connections');
         }
-
-    },[profile]);
+    },[profile, router]);
 
     useEffect(() => {
-
         if(!Cookies.get('access_token'))
-            {
-                setUserInitialized(false);
-            }
+        {
+            setUserInitialized(false);
+        }
 
         if(Cookies.get('access_token') && !profile)
         {
@@ -42,45 +64,58 @@ export default function Page() {
                 onError: () => setUserInitialized(false)
             })
         }
+    },[profile, mutate])
 
-        // if(profile)
-        // {
-        //     router.replace('/connections');
-        // }
-
-    },[])
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <>
-        
         {!userInitialized ? 
         (
-            <div className='min-h-screen grid lg:grid-cols-2 mx-auto text-left'>
-                <div className='flex-1 flex flex-col py-12 sm:items-center lg:flex-none lg:px-20 xl:px-24'>
-                    <div className="w-[400px]">
-                    <img src="/logo.png" className='w-14' /> 
+            <div className='min-h-screen flex items-center'>
+                <div className='w-full max-w-[1200px] px-4 mx-auto'>
+                    <div className='flex items-start justify-between gap-8'>
+                        <div className='w-[450px] h-[600px]'>
+                            <Tabs value={activeTab} onValueChange={handleTabChange} className="h-full">
+                                <TabsList className="grid w-full grid-cols-2">
+                                    <TabsTrigger value="login">Login</TabsTrigger>
+                                    <TabsTrigger value="create">Create Account</TabsTrigger>
+                                </TabsList>
+                                <div className="mt-6">
+                                    <TabsContent value="login" className="mt-0 h-[calc(100%-48px)]">
+                                        <LoginUserForm/>
+                                    </TabsContent>
+                                    <TabsContent value="create" className="mt-0 h-[calc(100%-48px)]">
+                                        <CreateUserForm/>
+                                    </TabsContent>
+                                </div>
+                            </Tabs>
+                        </div>
+
+                        <div className='w-[450px] space-y-8'>
+                            <div>
+                                <img 
+                                    src={currentTheme === "dark" ? "/logo-panora-white-hq.png" : "/logo-panora-black.png"} 
+                                    className='w-48' 
+                                    alt="Panora" 
+                                />
+                            </div>
+                            <div className="space-y-4">
+                                <p className="text-muted-foreground">
+                                    Connect your warehouse to any e-commerce platform and let AI automate data entry into your WMS &amp; ERPs. Add revenue, not complexity to your operations.
+                                </p>
+                                <p className="text-muted-foreground">
+                                    Use one unified API to manage orders across Shopify, Amazon, and more. Let AI handle your inventory updates while you focus on growth.
+                                </p>
+                                <p className="text-muted-foreground">You&apos;ll wonder how you ever managed without it.</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Don&apos;t have an account? Create one now
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <Tabs defaultValue="login" className="w-[400px] space-y-4">
-                        <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="login">Login</TabsTrigger>
-                            <TabsTrigger value="create">Create Account</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="login">
-                            <LoginUserForm/>
-                        </TabsContent>
-                        <TabsContent value="create">
-                            <CreateUserForm/>
-                        </TabsContent>
-                    </Tabs>
-                    
-                    {activeTab === 'forgot-password' && (
-                        <Button variant="link" onClick={() => setActiveTab('login')}>
-                            Back to Login
-                        </Button>
-                    )}
-                </div>       
-                <div className='hidden lg:block relative flex-1'>
-                    <img className='absolute inset-0 h-full w-full object-cover border-l' src="/bgbg.jpeg" alt='Login Page Image' />
                 </div>
             </div>
         ) : 

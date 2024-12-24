@@ -86,16 +86,24 @@ export class GoogleDriveFileMapper implements IFileMapper {
     return {
       remote_id: file.id,
       remote_data: file,
+      remote_folder_id:
+        file.parents && file.parents.length > 0 ? file.parents[0] : null,
+      remote_drive_id: file.driveId || null,
       name: file.name,
       file_url: file.webViewLink || file.webContentLink || null,
       mime_type: file.mimeType || null,
       size: file.size || null,
-      permission: null,
+      permissions: file.internal_permissions,
       shared_link: null,
       ...opts,
       field_mappings,
       created_at: file.createdTime ? new Date(file.createdTime) : null,
       modified_at: file.modifiedTime ? new Date(file.modifiedTime) : null,
+      remote_created_at: file.createdTime ? new Date(file.createdTime) : null,
+      remote_modified_at: file.modifiedTime
+        ? new Date(file.modifiedTime)
+        : null,
+      remote_was_deleted: file.trashed ?? false,
     };
   }
 }

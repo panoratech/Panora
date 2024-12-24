@@ -1,3 +1,5 @@
+import { GoogledrivePermissionMapper } from './services/googledrive/mappers';
+import { GoogledriveService } from './services/googledrive';
 import { SharepointPermissionMapper } from './services/sharepoint/mappers';
 import { SharepointService } from './services/sharepoint';
 import { OnedrivePermissionMapper } from './services/onedrive/mappers';
@@ -37,6 +39,8 @@ import { Utils } from '@filestorage/@lib/@utils';
     SharepointPermissionMapper,
     OnedriveService,
     OnedrivePermissionMapper,
+    GoogledriveService,
+    GoogledrivePermissionMapper,
   ],
   exports: [SyncService],
 })

@@ -1,4 +1,3 @@
-import '@@core/@core-services/sentry/instrument';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';

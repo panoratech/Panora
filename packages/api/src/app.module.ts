@@ -15,6 +15,7 @@ import { FileStorageModule } from './filestorage/filestorage.module';
 import { MarketingAutomationModule } from './marketingautomation/marketingautomation.module';
 import { CoreSharedModule } from '@@core/@core-services/module';
 import { EcommerceModule } from '@ecommerce/ecommerce.module';
+import path from 'path';
 
 @Module({
   imports: [
@@ -33,17 +34,6 @@ import { EcommerceModule } from '@ecommerce/ecommerce.module';
       },
     ]),
     ConfigModule.forRoot({ isGlobal: true }),
-    /*...(process.env.DISTRIBUTION === 'managed'
-      ? [
-          SentryModule.forRoot({
-            dsn: process.env.SENTRY_DSN,
-            debug: true,
-            environment: `${process.env.ENV}-${process.env.DISTRIBUTION}`,
-            release: `${process.env.DISTRIBUTION}`,
-            logLevels: ['debug'],
-          }),
-        ]
-      : []),*/
     ScheduleModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
@@ -53,6 +43,10 @@ import { EcommerceModule } from '@ecommerce/ecommerce.module';
           distribution: process.env.DISTRIBUTION,
           commit_id: process.env.GIT_COMMIT_ID,
         }),
+        redact: {
+          paths: ["req.headers.authorization", 'path["req.headers.x-api-key"]', 'path["trace.config.headers.Authorization"]'],
+          remove: false
+        },
         transport:
           process.env.AXIOM_AGENT_STATUS === 'ENABLED'
             ? {
@@ -90,18 +84,6 @@ import { EcommerceModule } from '@ecommerce/ecommerce.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    /*{
-      provide: APP_INTERCEPTOR,
-      useFactory: () =>
-        new SentryInterceptor({
-          filters: [
-            {
-              type: HttpException,
-              filter: (exception: HttpException) => 500 > exception.getStatus(), // Only report 500 errors
-            },
-          ],
-        }),
-    },*/
   ],
 })
 export class AppModule {}

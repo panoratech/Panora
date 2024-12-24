@@ -12,6 +12,7 @@ import useProjectStore from "@/state/projectStore"
 import useUpdateProjectConnectors from "@/hooks/update/useUpdateProjectConnectors"
 import useProjectConnectors from "@/hooks/get/useProjectConnectors"
 import { toast } from "sonner"
+import Image from 'next/image';
 
 export const verticals = categoriesVerticals as string[];
 

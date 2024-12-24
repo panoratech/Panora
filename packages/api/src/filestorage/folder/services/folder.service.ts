@@ -158,7 +158,7 @@ export class FolderService {
       description: folder.description,
       parent_folder: folder.parent_folder_id,
       id_fs_drive: folder.drive_id,
-      id_fs_permission: folder.permission as string,
+      id_fs_permissions: folder.permissions as string[],
       modified_at: new Date(),
     };
 
@@ -215,14 +215,16 @@ export class FolderService {
 
       // Convert the map to an array of objects
       const field_mappings = Object.fromEntries(fieldMappingsMap);
-      let permission;
-      if (folder.id_fs_permission) {
-        const perm = await this.prisma.fs_permissions.findUnique({
+      let permissions;
+      if (folder.id_fs_permissions?.length > 0) {
+        const perms = await this.prisma.fs_permissions.findMany({
           where: {
-            id_fs_permission: folder.id_fs_permission,
+            id_fs_permission: {
+              in: folder.id_fs_permissions,
+            },
           },
         });
-        permission = perm;
+        permissions = perms;
       }
 
       const sharedLink = await this.prisma.fs_shared_links.findFirst({
@@ -240,12 +242,15 @@ export class FolderService {
         description: folder.description,
         parent_folder_id: folder.parent_folder,
         drive_id: folder.id_fs_drive,
-        permission: permission || null,
+        permissions: permissions || null,
         shared_link: sharedLink || null,
         field_mappings: field_mappings,
         remote_id: folder.remote_id,
         created_at: folder.created_at,
         modified_at: folder.modified_at,
+        remote_created_at: folder.remote_created_at,
+        remote_modified_at: folder.remote_modified_at,
+        remote_was_deleted: folder.remote_was_deleted,
       };
 
       if (remote_data) {
@@ -363,14 +368,16 @@ export class FolderService {
               ([key, value]) => ({ [key]: value }),
             );
 
-            let permission;
-            if (folder.id_fs_permission) {
-              const perm = await this.prisma.fs_permissions.findUnique({
+            let permissions;
+            if (folder.id_fs_permissions?.length > 0) {
+              const perms = await this.prisma.fs_permissions.findMany({
                 where: {
-                  id_fs_permission: folder.id_fs_permission,
+                  id_fs_permission: {
+                    in: folder.id_fs_permissions,
+                  },
                 },
               });
-              permission = perm;
+              permissions = perms;
             }
 
             const sharedLink = await this.prisma.fs_shared_links.findFirst({
@@ -388,12 +395,15 @@ export class FolderService {
               description: folder.description,
               parent_folder_id: folder.parent_folder,
               drive_id: folder.id_fs_drive,
-              permission: permission || null,
+              permissions: permissions || null,
               shared_link: sharedLink || null,
               field_mappings: field_mappings,
               remote_id: folder.remote_id,
               created_at: folder.created_at,
               modified_at: folder.modified_at,
+              remote_created_at: folder.remote_created_at,
+              remote_modified_at: folder.remote_modified_at,
+              remote_was_deleted: folder.remote_was_deleted,
             };
           }),
         );

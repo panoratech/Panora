@@ -1,7 +1,7 @@
 import { IngestDataService } from '@@core/@core-services/unification/ingest-data.service';
 import { WebhookService } from '@@core/@core-services/webhooks/panora-webhooks/webhook.service';
 import { Utils } from '@filestorage/@lib/@utils';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { FileController } from './file.controller';
 import { BoxService } from './services/box';
 import { BoxFileMapper } from './services/box/mappers';
@@ -17,8 +17,11 @@ import { SharepointService } from './services/sharepoint';
 import { SharepointFileMapper } from './services/sharepoint/mappers';
 import { SyncService } from './sync/sync.service';
 import { GoogleDriveQueueProcessor } from './services/googledrive/processor';
+import { FolderModule } from '../folder/folder.module';
+import { OnedriveQueueProcessor } from './services/onedrive/processor';
 
 @Module({
+  imports: [forwardRef(() => FolderModule)],
   controllers: [FileController],
   providers: [
     FileService,
@@ -41,7 +44,8 @@ import { GoogleDriveQueueProcessor } from './services/googledrive/processor';
     DropboxFileMapper,
     GoogleDriveService,
     GoogleDriveQueueProcessor,
+    OnedriveQueueProcessor,
   ],
-  exports: [SyncService, ServiceRegistry],
+  exports: [SyncService, ServiceRegistry, GoogleDriveService],
 })
 export class FileModule {}

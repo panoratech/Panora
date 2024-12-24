@@ -128,7 +128,7 @@ export class SharepointFileMapper implements IFileMapper {
       size: file.size.toString(),
       folder_id: null,
       // permission: opts.permissions?.[0] || null,
-      permission: null,
+      permissions: null,
       shared_link: opts.shared_links?.[0] || null,
       field_mappings,
     };

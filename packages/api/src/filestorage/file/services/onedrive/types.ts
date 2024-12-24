@@ -57,6 +57,9 @@ export interface OnedriveFileOutput {
   readonly video?: Video;
   /** WebDAV compatible URL for the item. */
   readonly webDavUrl?: string;
+
+  // INTERNAL FIELDS
+  internal_permissions?: string[];
 }
 
 /**
