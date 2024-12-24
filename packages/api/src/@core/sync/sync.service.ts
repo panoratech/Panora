@@ -108,7 +108,7 @@ export class CoreSyncService {
                                   this.convertIntervalToCron(Number(interval));
 
                                 await this.bullQueueService.queueSyncJob(
-                                  `${vertical}-sync-${commonObject}s`,
+                                  `${vertical}-sync-${commonObject}s-${project.id_project}`,
                                   {
                                     projectId: project.id_project,
                                     vertical,
@@ -143,7 +143,7 @@ export class CoreSyncService {
                         getCommonObjectsForVertical(vertical);
                       for (const commonObject of commonObjects) {
                         await this.bullQueueService.removeRepeatableJob(
-                          `${vertical}-sync-${commonObject}s`,
+                          `${vertical}-sync-${commonObject}s-${project.id_project}`,
                         );
                       }
                     }

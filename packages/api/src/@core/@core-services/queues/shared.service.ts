@@ -21,7 +21,6 @@ export class BullQueueService {
   ) {}
 
   // getters
-
   getRealtimeWebhookReceiver() {
     return this.realTimeWebhookQueue;
   }
