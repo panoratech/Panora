@@ -103,6 +103,10 @@ export default function Page() {
                                 />
                             </div>
                             <div className="space-y-4">
+
+                                <h1 className="text-2xl font-bold">
+                                    Welcome to Panora
+                                </h1>
                                 <p className="text-muted-foreground">
                                     Connect your warehouse to any e-commerce platform and let AI automate data entry into your WMS &amp; ERPs. Add revenue, not complexity to your operations.
                                 </p>

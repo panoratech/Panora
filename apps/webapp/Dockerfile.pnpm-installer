@@ -1,0 +1,29 @@
+################################################
+# 1/ move to the repo root directory
+# 2/ build the image : docker build -t front_package_installer -f ./packages/api/Dockerfile.pnpm-installer .
+# 3/ run with: docker run -v $(pwd):/app/ -e PACKAGE_NAME=PACKAGE_NAME package_installer
+# example: docker run -v $(pwd):/app/ -e PACKAGE_NAME=@stripe/stripe-js front_package_installer
+################################################
+
+FROM node:20-alpine3.21 AS base
+# =======================================================================
+FROM base AS builder
+RUN apk add --no-cache libc6-compat netcat-openbsd curl openssl
+RUN apk update
+
+# Set pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+RUN pnpm add -g turbo@1.13.4
+
+# Start Script
+
+# Set environment variable
+ENV PACKAGE="$PACKAGE"
+
+WORKDIR /app/apps/webapp
+
+CMD pnpm add "${PACKAGE_NAME}"
