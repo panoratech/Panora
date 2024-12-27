@@ -1530,3 +1530,569 @@ model projects_pull_frequency {
   id_project                 String   @unique(map: "uq_projects_pull_frequency_project") @db.Uuid
   projects                   projects @relation(fields: [id_project], references: [id_project], onDelete: NoAction, onUpdate: NoAction, map: "fk_projects_pull_frequency_project")
 }
+
+model wms_addresses {
+  id_wms_address           String                     @id @db.Uuid
+  full_name                String?
+  company                  String?
+  address1                 String?
+  address2                 String?
+  address3                 String?
+  city                     String?
+  state                    String?
+  postal_code              String?
+  country                  String?
+  wms_orders_addresses     wms_orders_addresses[]
+  wms_shipments_addresses  wms_shipments_addresses[]
+  wms_warehouses_addresses wms_warehouses_addresses[]
+}
+
+model wms_audit_log {
+  id_wms_audit_log String   @id @db.Uuid
+  id_wms_user      String?  @db.Uuid
+  action           String?
+  entity_type      String?
+  entity_id        String?  @db.Uuid
+  created_at       DateTime @db.Timestamptz(6)
+}
+
+model wms_channels {
+  id_wms_channel String       @id @db.Uuid
+  name           String?
+  wms_orders     wms_orders[]
+}
+
+model wms_inbound_notes {
+  id_wms_inbound_shipment String                @db.Uuid
+  note                    String
+  wms_inbound_shipments   wms_inbound_shipments @relation(fields: [id_wms_inbound_shipment], references: [id_wms_inbound_shipment], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_inbound_shipment, note])
+}
+
+model wms_inbound_receipts {
+  id_wms_inbound_receipt          String                            @id @db.Uuid
+  id_wms_inbound_shipment         String?                           @db.Uuid
+  arrived_date                    DateTime?                         @db.Timestamptz(6)
+  wms_inbound_shipments           wms_inbound_shipments?            @relation(fields: [id_wms_inbound_shipment], references: [id_wms_inbound_shipment], onDelete: NoAction, onUpdate: NoAction)
+  wms_inbound_receipts_line_items wms_inbound_receipts_line_items[]
+}
+
+model wms_inbound_receipts_line_items {
+  id_wms_inbound_receipt_line_item String                @id @db.Uuid
+  id_wms_inbound_receipt           String?               @db.Uuid
+  id_wms_inventory_item            String?               @db.Uuid
+  sku                              String?
+  quantity                         Int?
+  wms_inbound_receipts             wms_inbound_receipts? @relation(fields: [id_wms_inbound_receipt], references: [id_wms_inbound_receipt], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_inbound_shipments {
+  id_wms_inbound_shipment          String                             @id @db.Uuid
+  id_wms_warehouse_customer        String?                            @db.Uuid
+  created_at                       DateTime                           @db.Timestamptz(6)
+  modified_at                      DateTime                           @db.Timestamptz(6)
+  id_connection                    String                             @db.Uuid
+  remote_id                        String?
+  remote_was_deleted               Boolean                            @default(false)
+  purchase_order_number            String?
+  status                           String?
+  raw_status                       String?
+  supplier                         String?
+  expected_arrival_date            DateTime?                          @db.Timestamptz(6)
+  id_wms_warehouse                 String?                            @db.Uuid
+  external_system_url              String?
+  wms_inbound_notes                wms_inbound_notes[]
+  wms_inbound_receipts             wms_inbound_receipts[]
+  wms_warehouse_customers          wms_warehouse_customers?           @relation(fields: [id_wms_warehouse_customer], references: [id_wms_warehouse_customer], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses                   wms_warehouses?                    @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+  wms_inbound_shipments_line_items wms_inbound_shipments_line_items[]
+  wms_inbound_tracking_numbers     wms_inbound_tracking_numbers[]
+}
+
+model wms_inbound_shipments_line_items {
+  id_wms_inbound_shipment_line_item String                 @id @db.Uuid
+  id_wms_inbound_shipment           String?                @db.Uuid
+  id_wms_inventory_item             String?                @db.Uuid
+  sku                               String?
+  expected_quantity                 Int?
+  received_quantity                 Int?
+  unit_cost                         Decimal?               @db.Decimal(10, 2)
+  external_id                       String?
+  wms_inbound_shipments             wms_inbound_shipments? @relation(fields: [id_wms_inbound_shipment], references: [id_wms_inbound_shipment], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_inbound_tracking_numbers {
+  id_wms_inbound_shipment String                @db.Uuid
+  tracking_number         String
+  wms_inbound_shipments   wms_inbound_shipments @relation(fields: [id_wms_inbound_shipment], references: [id_wms_inbound_shipment], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_inbound_shipment, tracking_number])
+}
+
+model wms_inventory_items {
+  id_wms_inventory_item            String                            @id @db.Uuid
+  id_wms_warehouse_customer        String?                           @db.Uuid
+  created_at                       DateTime                          @db.Timestamptz(6)
+  modified_at                      DateTime                          @db.Timestamptz(6)
+  id_connection                    String                            @db.Uuid
+  remote_id                        String?
+  remote_was_deleted               Boolean                           @default(false)
+  name                             String?
+  sku                              String?
+  unit_cost                        Decimal?                          @db.Decimal(10, 2)
+  active                           Boolean?
+  external_system_url              String?
+  wms_warehouse_customers          wms_warehouse_customers?          @relation(fields: [id_wms_warehouse_customer], references: [id_wms_warehouse_customer], onDelete: NoAction, onUpdate: NoAction)
+  wms_inventory_items_measurements wms_inventory_items_measurements?
+  wms_inventory_levels             wms_inventory_levels[]
+  wms_inventory_locations          wms_inventory_locations[]
+  wms_inventory_substitutes        wms_inventory_substitutes[]
+  wms_lots                         wms_lots[]
+
+  @@index([sku], map: "idx_wms_inventory_items_sku")
+}
+
+model wms_inventory_items_measurements {
+  id_wms_inventory_item String              @id @db.Uuid
+  length                Decimal?            @db.Decimal(10, 2)
+  width                 Decimal?            @db.Decimal(10, 2)
+  height                Decimal?            @db.Decimal(10, 2)
+  unit                  String?
+  weight                Decimal?            @db.Decimal(10, 2)
+  weight_unit           String?
+  wms_inventory_items   wms_inventory_items @relation(fields: [id_wms_inventory_item], references: [id_wms_inventory_item], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_inventory_levels {
+  id_wms_inventory_item String              @db.Uuid
+  id_wms_warehouse      String              @db.Uuid
+  onhand                Int?
+  committed             Int?
+  unfulfillable         Int?
+  fulfillable           Int?
+  unsellable            Int?
+  sellable              Int?
+  awaiting              Int?
+  wms_inventory_items   wms_inventory_items @relation(fields: [id_wms_inventory_item], references: [id_wms_inventory_item], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses        wms_warehouses      @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_inventory_item, id_wms_warehouse])
+}
+
+model wms_inventory_locations {
+  id_wms_inventory_item String              @db.Uuid
+  id_wms_location       String              @db.Uuid
+  id_wms_warehouse      String?             @db.Uuid
+  quantity              Int?
+  wms_inventory_items   wms_inventory_items @relation(fields: [id_wms_inventory_item], references: [id_wms_inventory_item], onDelete: NoAction, onUpdate: NoAction)
+  wms_locations         wms_locations       @relation(fields: [id_wms_location], references: [id_wms_location], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses        wms_warehouses?     @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_inventory_item, id_wms_location])
+}
+
+model wms_inventory_substitutes {
+  id_wms_inventory_item String              @db.Uuid
+  substitute_sku        String
+  wms_inventory_items   wms_inventory_items @relation(fields: [id_wms_inventory_item], references: [id_wms_inventory_item], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_inventory_item, substitute_sku])
+}
+
+model wms_locations {
+  id_wms_location                                                             String                    @id @db.Uuid
+  id_wms_warehouse                                                            String?                   @db.Uuid
+  wms_inventory_locations                                                     wms_inventory_locations[]
+  wms_warehouses                                                              wms_warehouses?           @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+  wms_stock_movements_wms_stock_movements_id_wms_from_locationTowms_locations wms_stock_movements[]     @relation("wms_stock_movements_id_wms_from_locationTowms_locations")
+  wms_stock_movements_wms_stock_movements_id_wms_to_locationTowms_locations   wms_stock_movements[]     @relation("wms_stock_movements_id_wms_to_locationTowms_locations")
+}
+
+model wms_lots {
+  id_wms_lot            String               @id @db.Uuid
+  id_wms_inventory_item String?              @db.Uuid
+  id_wms_warehouse      String?              @db.Uuid
+  onhand                Int?
+  expiration_date       DateTime?            @db.Timestamptz(6)
+  wms_inventory_items   wms_inventory_items? @relation(fields: [id_wms_inventory_item], references: [id_wms_inventory_item], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses        wms_warehouses?      @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model wms_metadata {
+  id_wms_metadata String   @id @db.Uuid
+  entity_type     String
+  entity_id       String   @db.Uuid
+  key             String
+  value           String?
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  modified_at     DateTime @default(now()) @db.Timestamptz(6)
+
+  @@unique([entity_type, entity_id, key])
+  @@index([entity_type, entity_id], map: "idx_wms_metadata_entity")
+  @@index([key], map: "idx_wms_metadata_key")
+}
+
+model wms_orders {
+  id_wms_order              String                   @id @db.Uuid
+  id_wms_warehouse_customer String?                  @db.Uuid
+  id_wms_warehouse          String?                  @db.Uuid
+  created_at                DateTime                 @db.Timestamptz(6)
+  modified_at               DateTime                 @db.Timestamptz(6)
+  id_connection             String                   @db.Uuid
+  remote_id                 String?
+  remote_was_deleted        Boolean                  @default(false)
+  reference_id              String?
+  order_number              String?
+  status                    String?
+  raw_status                String?
+  id_wms_channel            String?                  @db.Uuid
+  type                      String?
+  trading_partner           String?
+  id_wms_shipping_method    String?                  @db.Uuid
+  is_third_party_freight    Boolean?
+  invoice_currency_code     String?
+  total_price               Decimal?                 @db.Decimal(10, 2)
+  total_tax                 Decimal?                 @db.Decimal(10, 2)
+  total_discount            Decimal?                 @db.Decimal(10, 2)
+  total_shipping            Decimal?                 @db.Decimal(10, 2)
+  required_ship_date        DateTime?                @db.Timestamptz(6)
+  external_system_url       String?
+  wms_channels              wms_channels?            @relation(fields: [id_wms_channel], references: [id_wms_channel], onDelete: NoAction, onUpdate: NoAction)
+  wms_shipping_methods      wms_shipping_methods?    @relation(fields: [id_wms_shipping_method], references: [id_wms_shipping_method], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouse_customers   wms_warehouse_customers? @relation(fields: [id_wms_warehouse_customer], references: [id_wms_warehouse_customer], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses            wms_warehouses?          @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+  wms_orders_addresses      wms_orders_addresses[]
+  wms_orders_line_items     wms_orders_line_items[]
+  wms_returns               wms_returns[]
+  wms_shipments             wms_shipments[]
+
+  @@index([order_number], map: "idx_wms_orders_number")
+  @@index([status], map: "idx_wms_orders_status")
+}
+
+model wms_orders_addresses {
+  id_wms_order   String         @db.Uuid
+  id_wms_address String?        @db.Uuid
+  type           String
+  wms_addresses  wms_addresses? @relation(fields: [id_wms_address], references: [id_wms_address], onDelete: NoAction, onUpdate: NoAction)
+  wms_orders     wms_orders     @relation(fields: [id_wms_order], references: [id_wms_order], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_order, type])
+}
+
+model wms_orders_line_items {
+  id_wms_order_line_item String      @id @db.Uuid
+  id_wms_order           String?     @db.Uuid
+  id_wms_product         String?     @db.Uuid
+  sku                    String?
+  quantity               Int?
+  unit_price             Decimal?    @db.Decimal(10, 2)
+  is_picked              Boolean?
+  discount_amount        Decimal?    @db.Decimal(10, 2)
+  wms_orders             wms_orders? @relation(fields: [id_wms_order], references: [id_wms_order], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_packages {
+  id_wms_package            String                     @id @db.Uuid
+  id_wms_shipment           String?                    @db.Uuid
+  package_name              String?
+  tracking_number           String?
+  tracking_url              String?
+  id_wms_shipping_method    String?                    @db.Uuid
+  carrier                   String?
+  scac                      String?
+  shipping_cost             Decimal?                   @db.Decimal(10, 2)
+  wms_shipments             wms_shipments?             @relation(fields: [id_wms_shipment], references: [id_wms_shipment], onDelete: NoAction, onUpdate: NoAction)
+  wms_shipping_methods      wms_shipping_methods?      @relation(fields: [id_wms_shipping_method], references: [id_wms_shipping_method], onDelete: NoAction, onUpdate: NoAction)
+  wms_packages_line_items   wms_packages_line_items[]
+  wms_packages_measurements wms_packages_measurements?
+}
+
+model wms_packages_line_items {
+  id_wms_package_line_item String        @id @db.Uuid
+  id_wms_package           String?       @db.Uuid
+  id_wms_inventory_item    String?       @db.Uuid
+  sku                      String?
+  quantity                 Int?
+  id_wms_lot               String?       @db.Uuid
+  expiration_date          DateTime?     @db.Timestamptz(6)
+  id_wms_parent_product    String?       @db.Uuid
+  wms_packages             wms_packages? @relation(fields: [id_wms_package], references: [id_wms_package], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_packages_measurements {
+  id_wms_package String       @id @db.Uuid
+  length         Decimal?     @db.Decimal(10, 2)
+  width          Decimal?     @db.Decimal(10, 2)
+  height         Decimal?     @db.Decimal(10, 2)
+  unit           String?
+  weight         Decimal?     @db.Decimal(10, 2)
+  weight_unit    String?
+  wms_packages   wms_packages @relation(fields: [id_wms_package], references: [id_wms_package], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_permissions {
+  id_wms_permission    String                 @id @db.Uuid
+  name                 String?
+  description          String?
+  wms_user_permissions wms_user_permissions[]
+}
+
+model wms_products {
+  id_wms_product               String                         @id @db.Uuid
+  id_wms_warehouse_customer    String?                        @db.Uuid
+  created_at                   DateTime                       @db.Timestamptz(6)
+  modified_at                  DateTime                       @db.Timestamptz(6)
+  id_connection                String                         @db.Uuid
+  remote_id                    String?
+  remote_was_deleted           Boolean                        @default(false)
+  name                         String?
+  sku                          String?
+  gtin                         String?
+  unit_price                   Decimal?                       @db.Decimal(10, 2)
+  is_kit                       Boolean?
+  active                       Boolean?
+  supplier                     String?
+  country_of_origin            String?
+  harmonized_code              String?
+  external_system_url          String?
+  wms_warehouse_customers      wms_warehouse_customers?       @relation(fields: [id_wms_warehouse_customer], references: [id_wms_warehouse_customer], onDelete: NoAction, onUpdate: NoAction)
+  wms_products_inventory_items wms_products_inventory_items[]
+  wms_products_supplier_items  wms_products_supplier_items[]
+
+  @@index([sku], map: "idx_wms_products_sku")
+}
+
+model wms_products_inventory_items {
+  id_wms_product        String       @db.Uuid
+  id_wms_inventory_item String       @db.Uuid
+  sku                   String?
+  unit_quantity         Int?
+  wms_products          wms_products @relation(fields: [id_wms_product], references: [id_wms_product], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_product, id_wms_inventory_item])
+}
+
+model wms_products_supplier_items {
+  id_wms_product  String       @db.Uuid
+  id_wms_supplier String       @db.Uuid
+  supplier_name   String?
+  external_id     String?
+  unit_cost       Decimal?     @db.Decimal(10, 2)
+  wms_products    wms_products @relation(fields: [id_wms_product], references: [id_wms_product], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_product, id_wms_supplier])
+}
+
+model wms_returns {
+  id_wms_return             String                   @id @db.Uuid
+  id_wms_warehouse_customer String?                  @db.Uuid
+  created_at                DateTime                 @db.Timestamptz(6)
+  modified_at               DateTime                 @db.Timestamptz(6)
+  id_connection             String                   @db.Uuid
+  remote_id                 String?
+  remote_was_deleted        Boolean                  @default(false)
+  status                    String?
+  raw_status                String?
+  id_wms_order              String?                  @db.Uuid
+  external_system_url       String?
+  wms_orders                wms_orders?              @relation(fields: [id_wms_order], references: [id_wms_order], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouse_customers   wms_warehouse_customers? @relation(fields: [id_wms_warehouse_customer], references: [id_wms_warehouse_customer], onDelete: NoAction, onUpdate: NoAction)
+  wms_returns_line_items    wms_returns_line_items[]
+  wms_returns_notes         wms_returns_notes[]
+  wms_returns_shipments     wms_returns_shipments[]
+}
+
+model wms_returns_line_items {
+  id_wms_return_line_item String          @id @db.Uuid
+  id_wms_return           String?         @db.Uuid
+  id_wms_inventory_item   String?         @db.Uuid
+  sku                     String?
+  expected_quantity       Int?
+  received_quantity       Int?
+  restocked_quantity      Int?
+  return_reason           String?
+  quantity                Int?
+  id_wms_warehouse        String?         @db.Uuid
+  returned_date           DateTime?       @db.Timestamptz(6)
+  wms_returns             wms_returns?    @relation(fields: [id_wms_return], references: [id_wms_return], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses          wms_warehouses? @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_returns_notes {
+  id_wms_return String      @db.Uuid
+  note          String
+  wms_returns   wms_returns @relation(fields: [id_wms_return], references: [id_wms_return], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_return, note])
+}
+
+model wms_returns_receiving_details {
+  id_wms_return_shipment_item String                      @db.Uuid
+  quantity                    Int?
+  condition                   String
+  disposition                 String
+  wms_returns_shipments_items wms_returns_shipments_items @relation(fields: [id_wms_return_shipment_item], references: [id_wms_return_shipment_item], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_return_shipment_item, condition, disposition])
+}
+
+model wms_returns_shipments {
+  id_wms_return_shipment             String                              @id @db.Uuid
+  id_wms_return                      String?                             @db.Uuid
+  tracking_number                    String?
+  shipped_date                       DateTime?                           @db.Timestamptz(6)
+  arrived_date                       DateTime?                           @db.Timestamptz(6)
+  id_wms_warehouse                   String?                             @db.Uuid
+  carrier                            String?
+  shipping_cost                      Decimal?                            @db.Decimal(10, 2)
+  wms_returns                        wms_returns?                        @relation(fields: [id_wms_return], references: [id_wms_return], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses                     wms_warehouses?                     @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+  wms_returns_shipments_items        wms_returns_shipments_items[]
+  wms_returns_shipments_measurements wms_returns_shipments_measurements?
+}
+
+model wms_returns_shipments_items {
+  id_wms_return_shipment_item   String                          @id @db.Uuid
+  id_wms_return_shipment        String?                         @db.Uuid
+  id_wms_inventory_item         String?                         @db.Uuid
+  sku                           String?
+  quantity                      Int?
+  wms_returns_receiving_details wms_returns_receiving_details[]
+  wms_returns_shipments         wms_returns_shipments?          @relation(fields: [id_wms_return_shipment], references: [id_wms_return_shipment], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_returns_shipments_measurements {
+  id_wms_return_shipment String                @id @db.Uuid
+  length                 Decimal?              @db.Decimal(10, 2)
+  width                  Decimal?              @db.Decimal(10, 2)
+  height                 Decimal?              @db.Decimal(10, 2)
+  unit                   String?
+  weight                 Decimal?              @db.Decimal(10, 2)
+  weight_unit            String?
+  wms_returns_shipments  wms_returns_shipments @relation(fields: [id_wms_return_shipment], references: [id_wms_return_shipment], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_shipments {
+  id_wms_shipment         String                    @id @db.Uuid
+  id_wms_order            String?                   @db.Uuid
+  id_wms_warehouse        String?                   @db.Uuid
+  shipped_date            DateTime?                 @db.Timestamptz(6)
+  raw_status              String?
+  status                  String?
+  id_wms_shipping_method  String?                   @db.Uuid
+  wms_packages            wms_packages[]
+  wms_orders              wms_orders?               @relation(fields: [id_wms_order], references: [id_wms_order], onDelete: NoAction, onUpdate: NoAction)
+  wms_shipping_methods    wms_shipping_methods?     @relation(fields: [id_wms_shipping_method], references: [id_wms_shipping_method], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses          wms_warehouses?           @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+  wms_shipments_addresses wms_shipments_addresses[]
+}
+
+model wms_shipments_addresses {
+  id_wms_shipment String         @db.Uuid
+  id_wms_address  String?        @db.Uuid
+  type            String
+  wms_addresses   wms_addresses? @relation(fields: [id_wms_address], references: [id_wms_address], onDelete: NoAction, onUpdate: NoAction)
+  wms_shipments   wms_shipments  @relation(fields: [id_wms_shipment], references: [id_wms_shipment], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_shipment, type])
+}
+
+model wms_shipping_methods {
+  id_wms_shipping_method String          @id @db.Uuid
+  created_at             DateTime        @db.Timestamptz(6)
+  modified_at            DateTime        @db.Timestamptz(6)
+  id_connection          String          @db.Uuid
+  remote_id              String?
+  remote_was_deleted     Boolean         @default(false)
+  name                   String?
+  carrier                String?
+  wms_orders             wms_orders[]
+  wms_packages           wms_packages[]
+  wms_shipments          wms_shipments[]
+}
+
+model wms_stock_movements {
+  id_wms_stock_movement                                                 String          @id @db.Uuid
+  id_wms_inventory_item                                                 String?         @db.Uuid
+  id_wms_warehouse                                                      String?         @db.Uuid
+  movement_type                                                         String?
+  quantity                                                              Int?
+  id_wms_from_location                                                  String?         @db.Uuid
+  id_wms_to_location                                                    String?         @db.Uuid
+  id_wms_reference                                                      String?         @db.Uuid
+  reference_type                                                        String?
+  created_at                                                            DateTime        @db.Timestamptz(6)
+  id_wms_user                                                           String?         @db.Uuid
+  wms_locations_wms_stock_movements_id_wms_from_locationTowms_locations wms_locations?  @relation("wms_stock_movements_id_wms_from_locationTowms_locations", fields: [id_wms_from_location], references: [id_wms_location], onDelete: NoAction, onUpdate: NoAction)
+  wms_locations_wms_stock_movements_id_wms_to_locationTowms_locations   wms_locations?  @relation("wms_stock_movements_id_wms_to_locationTowms_locations", fields: [id_wms_to_location], references: [id_wms_location], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses                                                        wms_warehouses? @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model wms_user_permissions {
+  id_wms_user       String          @db.Uuid
+  id_wms_permission String          @db.Uuid
+  wms_permissions   wms_permissions @relation(fields: [id_wms_permission], references: [id_wms_permission], onDelete: NoAction, onUpdate: NoAction)
+  wms_users         wms_users       @relation(fields: [id_wms_user], references: [id_wms_user], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_wms_user, id_wms_permission])
+}
+
+model wms_users {
+  id_wms_user          String                 @id @db.Uuid
+  email                String?
+  name                 String?
+  role                 String?
+  wms_user_permissions wms_user_permissions[]
+}
+
+model wms_warehouse_customers {
+  id_wms_warehouse_customer String                  @id @db.Uuid
+  created_at                DateTime                @db.Timestamptz(6)
+  modified_at               DateTime                @db.Timestamptz(6)
+  id_connection             String                  @db.Uuid
+  remote_id                 String?
+  remote_was_deleted        Boolean                 @default(false)
+  name                      String?
+  email                     String?
+  wms_inbound_shipments     wms_inbound_shipments[]
+  wms_inventory_items       wms_inventory_items[]
+  wms_orders                wms_orders[]
+  wms_products              wms_products[]
+  wms_returns               wms_returns[]
+
+  @@index([email], map: "idx_wms_warehouse_customers_email")
+}
+
+model wms_warehouses {
+  id_wms_warehouse         String                    @id @db.Uuid
+  created_at               DateTime                  @db.Timestamptz(6)
+  modified_at              DateTime                  @db.Timestamptz(6)
+  id_connection            String                    @db.Uuid
+  remote_id                String?
+  remote_was_deleted       Boolean                   @default(false)
+  name                     String?
+  code                     String?
+  wms_inbound_shipments    wms_inbound_shipments[]
+  wms_inventory_levels     wms_inventory_levels[]
+  wms_inventory_locations  wms_inventory_locations[]
+  wms_locations            wms_locations[]
+  wms_lots                 wms_lots[]
+  wms_orders               wms_orders[]
+  wms_returns_line_items   wms_returns_line_items[]
+  wms_returns_shipments    wms_returns_shipments[]
+  wms_shipments            wms_shipments[]
+  wms_stock_movements      wms_stock_movements[]
+  wms_warehouses_addresses wms_warehouses_addresses?
+
+  @@index([code], map: "idx_wms_warehouses_code")
+}
+
+model wms_warehouses_addresses {
+  id_wms_warehouse String         @id @db.Uuid
+  id_wms_address   String?        @db.Uuid
+  wms_addresses    wms_addresses? @relation(fields: [id_wms_address], references: [id_wms_address], onDelete: NoAction, onUpdate: NoAction)
+  wms_warehouses   wms_warehouses @relation(fields: [id_wms_warehouse], references: [id_wms_warehouse], onDelete: NoAction, onUpdate: NoAction)
+}
