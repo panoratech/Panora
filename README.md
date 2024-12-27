@@ -3,7 +3,15 @@
   <p> Open-Source Unified API </p>
 </div>
 
-![Hero](https://panora.dev/wp-content/uploads/2023/12/github-banner.png)
+### Note from the Core Team:
+
+Our product roadmap is moving away from an integration platform to an AI Assistant for the logistics industry. 
+
+We're evaluating whether we should keep our future integration engine Open-Source. This repo is not *production-ready* and may not be maintained. We strongly discourage anyone from using it in production.
+
+Users looking for e-commerce / warehouse integrations, please [get in touch](https://cal.com/rflih/30?utm_source=github&utm_campaign=readme).
+
+
 
 <div align="center">
   </br>
@@ -38,7 +46,7 @@
 3.  Start
 
 ```
-  docker compose -f docker-compose.source.yml up
+  docker compose up
 ```
 
 Panora is now running! Follow our [Quickstart Guide](https://docs.panora.dev/quick-start) to start adding integrations to your product !
@@ -47,64 +55,6 @@ See also [our selfhost guide here !](https://docs.panora.dev/open-source/selfhos
 
 If you want to chat with our codebase, feel free to use our [friend's amazing tool !](https://sage.storia.ai/panora)
 
-# ✨ Core Features
-
-|                                                                                                |
-| ---------------------------------------------------------------------------------------------- |
-| **Magic Links:** Let your users grant you access to their data. Without writing code.          |
-| **Custom Fields:** Reflect in Panora the specific data points that matter to your users        |
-| **Passthrough Requests:** Interact with other software platforms in their native format.       |
-| **Webhooks:** Listen to one webhook to receive normalized data from various software platforms |
-
-# ✨ Integrations Catalog
-
-Panora supports integration with the following objects across multiple platforms:
-
-[Here is an extensive list of all integrations !](https://docs.panora.dev/integrations-catalog)
-
-### CRM Unified API
-
-|              | Contacts | Deals | Notes | Engagements | Tasks | Users | Companies | Stage |
-| ------------ | :------: | :---: | :---: | :---------: | :---: | :---: | :-------: | :---: |
-| Hubspot      |    ✔️    |  ✔️   |  ✔️   |     ✔️      |  ✔️   |  ✔️   |           |  ✔️   |
-| Pipedrive    |    ✔️    |  ✔️   |  ✔️   |     ✔️      |  ✔️   |  ✔️   |           |  ✔️   |
-| Zoho CRM     |    ✔️    |  ✔️   |  ✔️   |     ✔️      |  ✔️   |  ✔️   |           |       |
-| Zendesk Sell |    ✔️    |  ✔️   |  ✔️   |     ✔️      |  ✔️   |  ✔️   |           |  ✔️   |
-| Attio        |    ✔️    |  ✔️   |  ✔️   |             |  ✔️   |  ✔️   |    ✔️     |  ✔️   |
-| Close        |    ✔️    |  ✔️   |  ✔️   |     ✔️      |  ✔️   |  ✔️   |    ✔️     |  ✔️   |
-
-### Ticketing Unified API
-
-|         | Tickets | Comments | Users | Contacts | Accounts | Tags | Teams | Collections |
-| ------- | :-----: | :------: | :---: | :------: | :------: | :--: | :---: | :---------: |
-| Zendesk |    ✔    |    ✔     |   ✔   |    ✔     |    ✔     |  ✔   |   ✔   |             |
-| Front   |    ✔    |    ✔     |   ✔   |    ✔     |    ✔     |  ✔   |   ✔   |             |
-| Jira    |    ✔    |    ✔     |   ✔   |          |          |  ✔   |   ✔   |      ✔      |
-| Gitlab  |    ✔    |    ✔     |   ✔   |          |          |      |       |      ✔      |
-| Github  |    ✔    |    ✔     |   ✔   |    ✔     |    ✔     |  ✔   |   ✔   |             |
-
-| File Storage | Drives | Files | Folders | Groups | Users | Permissions | Shared Links |
-| ------------ | :----: | :---: | :-----: | :----: | :---: | :---------: | :----------: |
-| Google Drive |   ✔️   |  ✔️   |   ✔️    |        |       |     ✔️      |              |
-| Box          |        |  ✔️   |   ✔️    |   ✔️   |  ✔️   |             |      ✔️      |
-| Dropbox      |        |  ✔️   |   ✔️    |   ✔️   |  ✔️   |             |              |
-| OneDrive     |   ✔️   |  ✔️   |   ✔️    |   ✔️   |  ✔️   |     ✔️      |              |
-| SharePoint   |   ✔️   |  ✔️   |   ✔️    |   ✔️   |  ✔️   |             |              |
-
-### Ecommerce Unified API
-
-|             | Customers | Orders | Fulfillments | Fulfillment Orders | Products |
-| ----------- | :-------: | :----: | :----------: | :----------------: | :------: |
-| Amazon      |    ✔️     |   ✔️   |              |                    |          |
-| Shopify     |    ✔️     |   ✔️   |      ✔️      |         ✔️         |    ✔️    |
-| Squarespace |    ✔️     |   ✔️   |              |                    |    ✔️    |
-| Woocommerce |    ✔️     |   ✔️   |              |                    |    ✔️    |
-
-Your favourite software is missing? [Ask the community to build a connector!](https://github.com/panoratech/Panora/issues/new)
-
-# 🚢 Roadmap
-
-See our [project roadmap here !](https://github.com/orgs/panoratech/projects/5)
 
 # 👾 Join the community
 
