@@ -137,7 +137,7 @@ export class SharepointConnectionService extends AbstractBaseConnectionService {
 
       // get site_id from tenant and sitename
       const site_details = await axios.get(
-        `https://graph.microsoft.com/v1.0/sites/${site}.sharepoint.com:/sites/${tenant}`,
+        `https://graph.microsoft.com/v1.0/sites/${tenant}.sharepoint.com:/sites/${site}`,
         {
           headers: {
             Authorization: `Bearer ${data.access_token}`,
