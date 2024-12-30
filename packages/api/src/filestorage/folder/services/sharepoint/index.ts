@@ -646,24 +646,32 @@ export class SharepointService implements IFolderService {
       } catch (error: any) {
         attempts++;
 
-        if (
-          (error.response && error.response.status === 429) ||
-          (error.response && error.response.status >= 500) ||
-          error.code === 'ECONNABORTED' ||
-          error.code === 'ETIMEDOUT' ||
-          error.response?.code === 'ETIMEDOUT'
-        ) {
-          const retryAfter = this.getRetryAfter(
-            error.response?.headers['retry-after'],
+        // Handle rate limiting
+        if (error.response && error.response.status === 429) {
+          const retryAfter: number = this.getRetryAfter(
+            error.response.headers['retry-after'],
           );
           const delayTime: number = Math.max(retryAfter * 1000, backoff);
 
           this.logger.warn(
-            `Request failed with ${
-              error.code || error.response?.status
-            }. Retrying in ${delayTime}ms (Attempt ${attempts}/${
-              this.MAX_RETRIES
-            })`,
+            `Rate limit hit. Retrying request in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
+          );
+
+          await this.delay(delayTime);
+          backoff *= 2; // Exponential backoff
+          continue;
+        }
+
+        // Handle timeout errors
+        if (
+          error.code === 'ECONNABORTED' ||
+          error.code === 'ETIMEDOUT' ||
+          error.response?.code === 'ETIMEDOUT'
+        ) {
+          const delayTime: number = backoff;
+
+          this.logger.warn(
+            `Request timeout. Retrying in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
           );
 
           await this.delay(delayTime);
@@ -671,7 +679,24 @@ export class SharepointService implements IFolderService {
           continue;
         }
 
-        this.logger.error(`Request failed: ${error.message}`, error);
+        // Handle server errors (500+)
+        if (error.response && error.response.status >= 500) {
+          const delayTime: number = backoff;
+
+          this.logger.warn(
+            `Server error ${error.response.status}. Retrying in ${delayTime}ms (Attempt ${attempts}/${this.MAX_RETRIES})`,
+          );
+
+          await this.delay(delayTime);
+          backoff *= 2;
+          continue;
+        }
+
+        // handle 410 gone errors
+        if (error.response?.status === 410 && config.url.includes('delta')) {
+          // todo: handle 410 gone errors
+        }
+
         throw error;
       }
     }

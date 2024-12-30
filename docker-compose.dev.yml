@@ -218,7 +218,7 @@ services:
       NEXT_PUBLIC_POSTHOG_KEY: ${POSTHOG_KEY}
       NEXT_PUBLIC_POSTHOG_HOST: ${POSTHOG_HOST}
       NEXT_PUBLIC_DISTRIBUTION: ${DISTRIBUTION}
-      NEXT_PUBLIC_BACKEND_DOMAIN: https://localhost:3000
+      NEXT_PUBLIC_BACKEND_DOMAIN: http://localhost:3000
       NEXT_PUBLIC_MAGIC_LINK_DOMAIN: ${NEXT_PUBLIC_MAGIC_LINK_DOMAIN}
       NEXT_PUBLIC_WEBAPP_DOMAIN: ${NEXT_PUBLIC_WEBAPP_DOMAIN}
       NEXT_PUBLIC_REDIRECT_WEBHOOK_INGRESS: ${REDIRECT_TUNNEL_INGRESS} 
@@ -238,22 +238,22 @@ services:
   # Developer tools #
   # # # # # # # # # # 
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin4_container
-    restart: always
-    ports:
-      - "8888:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
-      PGADMIN_DEFAULT_PASSWORD: strong-password
-    networks:
-     - backend
-    depends_on:
-      postgres:
-        condition: service_healthy
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin4_container
+  #   restart: always
+  #   ports:
+  #     - "8888:80"
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+  #     PGADMIN_DEFAULT_PASSWORD: strong-password
+  #   networks:
+  #    - backend
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
 
   # ngrok:
   #   image: ngrok/ngrok:latest

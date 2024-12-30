@@ -111,10 +111,11 @@ export class SharepointService implements IGroupService {
     group: SharepointGroupOutput,
     connection: connections,
   ) {
+    const url = connection.account_url.replace(/\/sites\/.+$/, '');
     const config: AxiosRequestConfig = {
       timeout: 10000,
       method: 'get',
-      url: `${connection.account_url}/groups/${group.id}/members`,
+      url: `${url}/groups/${group.id}/members`,
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.cryptoService.decrypt(
