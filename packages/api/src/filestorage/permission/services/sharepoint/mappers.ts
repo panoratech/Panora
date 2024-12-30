@@ -80,15 +80,15 @@ export class SharepointPermissionMapper implements IPermissionMapper {
     return {
       remote_id: permission.id,
       remote_data: permission,
-      roles: permission.roles.map((role) => role.toUpperCase()),
+      roles: permission.roles?.map((role) => role.toUpperCase()),
       type:
         permission.link?.type === 'edit'
           ? 'WRITE'
           : permission.link?.type === 'view'
           ? 'READ'
           : permission.link?.type,
-      user_id: null,
-      group_id: null,
+      user_id: permission.internal_user_id,
+      group_id: permission.internal_group_id,
       field_mappings,
     };
   }

@@ -44,7 +44,6 @@ export class SharepointGroupMapper implements IGroupMapper {
         customFieldMappings,
       );
     }
-    // Handling array of SharepointGroupOutput
     return Promise.all(
       source.map((group) =>
         this.mapSingleGroupToUnified(group, connectionId, customFieldMappings),
@@ -67,16 +66,13 @@ export class SharepointGroupMapper implements IGroupMapper {
       }
     }
 
-    // todo: do something about users
-    // https://graph.microsoft.com/groups/group-id/members
-
     return {
       remote_id: group.id,
       remote_data: group,
-      name: group.mailNickname,
+      name: group.displayName || group.mailNickname,
       remote_was_deleted: group.deletedDateTime !== null,
       field_mappings,
-      users: [],
+      users: group.internal_users || [],
     };
   }
 }
