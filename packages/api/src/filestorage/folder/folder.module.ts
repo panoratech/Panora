@@ -43,6 +43,6 @@ import { FileModule } from '../file/file.module';
     DropboxFolderMapper,
     GoogleDriveFolderService,
   ],
-  exports: [SyncService, OnedriveService],
+  exports: [SyncService, OnedriveService, SharepointService],
 })
 export class FolderModule {}

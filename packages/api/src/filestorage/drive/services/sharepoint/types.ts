@@ -56,6 +56,8 @@ export interface IdentitySet {
   readonly phone?: Identity;
   /** Identity representing a user. */
   readonly user?: Identity;
+  /** Identity representing a group. */
+  readonly group?: Identity;
 }
 
 /**

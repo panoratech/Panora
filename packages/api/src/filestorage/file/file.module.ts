@@ -19,6 +19,7 @@ import { SyncService } from './sync/sync.service';
 import { GoogleDriveQueueProcessor } from './services/googledrive/processor';
 import { FolderModule } from '../folder/folder.module';
 import { OnedriveQueueProcessor } from './services/onedrive/processor';
+import { SharepointQueueProcessor } from './services/sharepoint/processor';
 
 @Module({
   imports: [forwardRef(() => FolderModule)],
@@ -45,6 +46,7 @@ import { OnedriveQueueProcessor } from './services/onedrive/processor';
     GoogleDriveService,
     GoogleDriveQueueProcessor,
     OnedriveQueueProcessor,
+    SharepointQueueProcessor,
   ],
   exports: [SyncService, ServiceRegistry, GoogleDriveService],
 })

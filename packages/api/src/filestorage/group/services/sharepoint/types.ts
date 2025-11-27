@@ -125,6 +125,12 @@ export interface SharepointGroupInput {
    * /groups?$filter=startsWith(displayName,'Role')&amp;$select=id,displayName&amp;$expand=owners($select=id,userPrincipalName,displayName).
    */
   owners?: DirectoryObject[];
+
+  // INTERNAL
+  /**
+   * Internal UUIDs of users that are members of this group.
+   */
+  internal_users?: string[];
 }
 
 /**

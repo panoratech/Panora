@@ -27,6 +27,10 @@ export interface SharepointPermissionOutput {
   shareId?: string;
   /** A format of yyyy-MM-ddTHH:mm:ssZ of DateTimeOffset indicates the expiration time of the permission. DateTime.MinValue indicates there's no expiration set for this permission. Optional. */
   expirationDateTime?: string;
+
+  // INTERNAL
+  internal_user_id?: string;
+  internal_group_id?: string;
 }
 
 /**
