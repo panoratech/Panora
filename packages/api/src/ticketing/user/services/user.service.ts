@@ -19,15 +19,19 @@ export class UserService {
     remote_data?: boolean,
   ): Promise<UnifiedTicketingUserOutput> {
     try {
+      this.logger.debug(`Fetching user by ID: ${id_ticketing_user}`);
       const user = await this.prisma.tcg_users.findUnique({
         where: {
           id_tcg_user: id_ticketing_user,
         },
       });
 
-      if (!user) throw new ReferenceError('User undefined');
+      if (!user) {
+        this.logger.warn(`User not found: ${id_ticketing_user}`);
+        throw new ReferenceError('User undefined');
+      }
 
-      // Fetch field mappings for the ticket
+      this.logger.debug(`Fetching field mappings for user: ${user.id_tcg_user}`);
       const values = await this.prisma.value.findMany({
         where: {
           entity: {
@@ -39,17 +43,13 @@ export class UserService {
         },
       });
 
-      // Create a map to store unique field mappings
       const fieldMappingsMap = new Map();
-
       values.forEach((value) => {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      // Convert the map to an array of objects
       const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedTicketingUserOutput format
       const unifiedUser: UnifiedTicketingUserOutput = {
         id: user.id_tcg_user,
         email_address: user.email_address,
@@ -62,6 +62,7 @@ export class UserService {
       };
 
       if (remote_data) {
+        this.logger.debug(`Fetching remote data for user: ${user.id_tcg_user}`);
         const resp = await this.prisma.remote_data.findFirst({
           where: {
             ressource_owner_id: user.id_tcg_user,
@@ -71,6 +72,8 @@ export class UserService {
 
         unifiedUser.remote_data = remote_data;
       }
+
+      this.logger.log('Logging event for user fetch');
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
@@ -89,12 +92,13 @@ export class UserService {
 
       return unifiedUser;
     } catch (error) {
+      this.logger.error('Error in getUser method', error.stack);
       throw error;
     }
   }
 
   async getUsers(
-   connection_id: string,
+    connection_id: string,
     project_id: string,
     integrationId: string,
     linkedUserId: string,
@@ -107,11 +111,13 @@ export class UserService {
     next_cursor: null | string;
   }> {
     try {
-      //TODO: handle case where data is not there (not synced) or old synced
+      this.logger.debug(`Fetching users for connection: ${connection_id}, cursor: ${cursor}, limit: ${limit}`);
+
       let prev_cursor = null;
       let next_cursor = null;
 
       if (cursor) {
+        this.logger.debug(`Validating cursor: ${cursor}`);
         const isCursorPresent = await this.prisma.tcg_users.findFirst({
           where: {
             id_connection: connection_id,
@@ -119,6 +125,7 @@ export class UserService {
           },
         });
         if (!isCursorPresent) {
+          this.logger.warn(`Invalid cursor provided: ${cursor}`);
           throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
@@ -151,7 +158,7 @@ export class UserService {
 
       const unifiedUsers: UnifiedTicketingUserOutput[] = await Promise.all(
         users.map(async (user) => {
-          // Fetch field mappings for the user
+          this.logger.debug(`Fetching field mappings for user: ${user.id_tcg_user}`);
           const values = await this.prisma.value.findMany({
             where: {
               entity: {
@@ -162,18 +169,14 @@ export class UserService {
               attribute: true,
             },
           });
-          // Create a map to store unique field mappings
-          const fieldMappingsMap = new Map();
 
+          const fieldMappingsMap = new Map();
           values.forEach((value) => {
             fieldMappingsMap.set(value.attribute.slug, value.data);
           });
 
-          // Convert the map to an array of objects
-          // Convert the map to an object
-const field_mappings = Object.fromEntries(fieldMappingsMap);
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedTicketingUserOutput format
           return {
             id: user.id_tcg_user,
             email_address: user.email_address,
@@ -190,22 +193,23 @@ const field_mappings = Object.fromEntries(fieldMappingsMap);
       let res: UnifiedTicketingUserOutput[] = unifiedUsers;
 
       if (remote_data) {
-        const remote_array_data: UnifiedTicketingUserOutput[] =
-          await Promise.all(
-            res.map(async (user) => {
-              const resp = await this.prisma.remote_data.findFirst({
-                where: {
-                  ressource_owner_id: user.id,
-                },
-              });
-              const remote_data = JSON.parse(resp.data);
-              return { ...user, remote_data };
-            }),
-          );
+        this.logger.debug('Fetching remote data for users');
+        const remote_array_data: UnifiedTicketingUserOutput[] = await Promise.all(
+          res.map(async (user) => {
+            const resp = await this.prisma.remote_data.findFirst({
+              where: {
+                ressource_owner_id: user.id,
+              },
+            });
+            const remote_data = JSON.parse(resp.data);
+            return { ...user, remote_data };
+          }),
+        );
 
         res = remote_array_data;
       }
 
+      this.logger.log('Logging event for users fetch');
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
@@ -228,6 +232,7 @@ const field_mappings = Object.fromEntries(fieldMappingsMap);
         next_cursor,
       };
     } catch (error) {
+      this.logger.error('Error in getUsers method', error.stack);
       throw error;
     }
   }

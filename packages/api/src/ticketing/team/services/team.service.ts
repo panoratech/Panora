@@ -20,11 +20,20 @@ export class TeamService {
     remote_data?: boolean,
   ): Promise<UnifiedTicketingTeamOutput> {
     try {
+      this.logger.log(`Starting to fetch team with id ${id_ticketing_team} for project ${project_id}, connection ${connection_id}`);
+
       const team = await this.prisma.tcg_teams.findUnique({
         where: {
           id_tcg_team: id_ticketing_team,
         },
       });
+
+      if (!team) {
+        this.logger.error(`Team with id ${id_ticketing_team} not found for project ${project_id}, connection ${connection_id}`);
+        throw new Error(`Team with id ${id_ticketing_team} not found`);
+      }
+
+      this.logger.log(`Fetched team: ${team.name} (id: ${team.id_tcg_team}) for project ${project_id}, connection ${connection_id}`);
 
       // Fetch field mappings for the ticket
       const values = await this.prisma.value.findMany({
@@ -38,17 +47,13 @@ export class TeamService {
         },
       });
 
-      // Create a map to store unique field mappings
       const fieldMappingsMap = new Map();
-
       values.forEach((value) => {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      // Convert the map to an array of objects
       const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedTicketingTeamOutput format
       const unifiedTeam: UnifiedTicketingTeamOutput = {
         id: team.id_tcg_team,
         name: team.name,
@@ -68,6 +73,7 @@ export class TeamService {
         const remote_data = JSON.parse(resp.data);
         unifiedTeam.remote_data = remote_data;
       }
+
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
@@ -83,14 +89,17 @@ export class TeamService {
           id_linked_user: linkedUserId,
         },
       });
+
+      this.logger.log(`Successfully fetched team ${unifiedTeam.name} (id: ${unifiedTeam.id}) for project ${project_id}, connection ${connection_id}`);
       return unifiedTeam;
     } catch (error) {
+      this.logger.error(`Error fetching team for project ${project_id}, connection ${connection_id}: ${error.message}`);
       throw error;
     }
   }
 
   async getTeams(
-   connection_id: string,
+    connection_id: string,
     project_id: string,
     integrationId: string,
     linkedUserId: string,
@@ -103,7 +112,7 @@ export class TeamService {
     next_cursor: null | string;
   }> {
     try {
-      //TODO: handle case where data is not there (not synced) or old synced
+      this.logger.log(`Starting to fetch teams for project ${project_id}, connection ${connection_id}, limit ${limit}`);
 
       let prev_cursor = null;
       let next_cursor = null;
@@ -116,6 +125,7 @@ export class TeamService {
           },
         });
         if (!isCursorPresent) {
+          this.logger.error(`Cursor ${cursor} does not exist for project ${project_id}, connection ${connection_id}`);
           throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
@@ -136,9 +146,7 @@ export class TeamService {
       });
 
       if (teams.length === limit + 1) {
-        next_cursor = Buffer.from(teams[teams.length - 1].id_tcg_team).toString(
-          'base64',
-        );
+        next_cursor = Buffer.from(teams[teams.length - 1].id_tcg_team).toString('base64');
         teams.pop();
       }
 
@@ -146,9 +154,12 @@ export class TeamService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
+      this.logger.log(`Fetched ${teams.length} teams for project ${project_id}, connection ${connection_id}`);
+
       const unifiedTeams: UnifiedTicketingTeamOutput[] = await Promise.all(
         teams.map(async (team) => {
-          // Fetch field mappings for the team
+          this.logger.log(`Fetching field mappings for team ${team.name} (id: ${team.id_tcg_team}) for project ${project_id}, connection ${connection_id}`);
+
           const values = await this.prisma.value.findMany({
             where: {
               entity: {
@@ -159,18 +170,13 @@ export class TeamService {
               attribute: true,
             },
           });
-          // Create a map to store unique field mappings
           const fieldMappingsMap = new Map();
-
           values.forEach((value) => {
             fieldMappingsMap.set(value.attribute.slug, value.data);
           });
 
-          // Convert the map to an array of objects
-          // Convert the map to an object
-const field_mappings = Object.fromEntries(fieldMappingsMap);
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedTicketingTeamOutput format
           return {
             id: team.id_tcg_team,
             name: team.name,
@@ -200,6 +206,7 @@ const field_mappings = Object.fromEntries(fieldMappingsMap);
 
         res = remote_array_data;
       }
+
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
@@ -216,12 +223,14 @@ const field_mappings = Object.fromEntries(fieldMappingsMap);
         },
       });
 
+      this.logger.log(`Successfully fetched ${res.length} teams for project ${project_id}, connection ${connection_id}`);
       return {
         data: res,
         prev_cursor,
         next_cursor,
       };
     } catch (error) {
+      this.logger.error(`Error fetching teams for project ${project_id}, connection ${connection_id}: ${error.message}`);
       throw error;
     }
   }

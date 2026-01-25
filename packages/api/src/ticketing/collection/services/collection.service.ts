@@ -22,6 +22,7 @@ export class CollectionService {
   ) {
     this.logger.setContext(CollectionService.name);
   }
+
   async getCollection(
     id_ticketing_collection: string,
     linkedUserId: string,
@@ -31,6 +32,7 @@ export class CollectionService {
     remote_data?: boolean,
   ): Promise<UnifiedTicketingCollectionOutput> {
     try {
+      this.logger.log(`Fetching collection with ID: ${id_ticketing_collection}`); // Log service added here
       const collection = await this.prisma.tcg_collections.findUnique({
         where: {
           id_tcg_collection: id_ticketing_collection,
@@ -58,6 +60,8 @@ export class CollectionService {
 
         unifiedCollection.remote_data = remote_data;
       }
+
+      // Create an event for this action
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
@@ -74,8 +78,10 @@ export class CollectionService {
         },
       });
 
+      this.logger.log(`Successfully fetched collection: ${id_ticketing_collection}`); // Log service added here
       return unifiedCollection;
     } catch (error) {
+      this.logger.error(`Error fetching collection: ${id_ticketing_collection}`, error); // Log service added here
       throw error;
     }
   }
@@ -94,6 +100,7 @@ export class CollectionService {
     next_cursor: null | string;
   }> {
     try {
+      this.logger.log(`Fetching collections with limit: ${limit}, cursor: ${cursor}`); // Log service added here
       let prev_cursor = null;
       let next_cursor = null;
 
@@ -168,6 +175,7 @@ export class CollectionService {
         res = remote_array_data;
       }
 
+      // Create an event for this action
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
@@ -184,12 +192,14 @@ export class CollectionService {
         },
       });
 
+      this.logger.log(`Successfully fetched collections, total: ${res.length}`); // Log service added here
       return {
         data: res,
         prev_cursor,
         next_cursor,
       };
     } catch (error) {
+      this.logger.error(`Error fetching collections`, error); // Log service added here
       throw error;
     }
   }

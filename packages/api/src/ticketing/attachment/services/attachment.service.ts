@@ -26,34 +26,26 @@ export class AttachmentService {
     project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketingAttachmentOutput> {
+    this.logger.log('addAttachment method called');
     try {
       const linkedUser = await this.prisma.linked_users.findUnique({
-        where: {
-          id_linked_user: linkedUserId,
-        },
+        where: { id_linked_user: linkedUserId },
       });
-      if (!linkedUser) throw new ReferenceError('Linked User Not Found');
-
-      //EXCEPTION: for Attachments we directly store them inside our db (no raw call to the provider)
-      //the actual job to retrieve the attachment info would be done inside /comments
-
-      // add the attachment inside our db
+      if (!linkedUser) {
+        this.logger.error('Linked User Not Found');
+        throw new ReferenceError('Linked User Not Found');
+      }
 
       const existingAttachment = await this.prisma.tcg_attachments.findFirst({
-        where: {
-          file_name: unifiedAttachmentData.file_name,
-          id_connection: connection_id,
-        },
+        where: { file_name: unifiedAttachmentData.file_name, id_connection: connection_id },
       });
 
       let unique_ticketing_attachment_id: string;
 
       if (existingAttachment) {
-        // Update the existing attachment
+        this.logger.log('Updating existing attachment');
         const res = await this.prisma.tcg_attachments.update({
-          where: {
-            id_tcg_attachment: existingAttachment.id_tcg_attachment,
-          },
+          where: { id_tcg_attachment: existingAttachment.id_tcg_attachment },
           data: {
             file_name: unifiedAttachmentData.file_name,
             uploader: linkedUserId,
@@ -62,8 +54,7 @@ export class AttachmentService {
         });
         unique_ticketing_attachment_id = res.id_tcg_attachment;
       } else {
-        // Create a new attachment
-        this.logger.log('not existing attachment ');
+        this.logger.log('Creating new attachment');
         const data = {
           id_tcg_attachment: uuidv4(),
           file_name: unifiedAttachmentData.file_name,
@@ -73,9 +64,7 @@ export class AttachmentService {
           id_connection: connection_id,
         };
 
-        const res = await this.prisma.tcg_attachments.create({
-          data: data,
-        });
+        const res = await this.prisma.tcg_attachments.create({ data });
         unique_ticketing_attachment_id = res.id_tcg_attachment;
       }
 
@@ -94,7 +83,7 @@ export class AttachmentService {
           id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
-          type: 'ticketing.attachment.push', //sync, push or pull
+          type: 'ticketing.attachment.push',
           method: 'POST',
           url: '/ticketing/attachments',
           provider: integrationId,
@@ -110,8 +99,11 @@ export class AttachmentService {
         linkedUser.id_project,
         event.id_event,
       );
+
+      this.logger.log('Attachment successfully added');
       return result_attachment;
     } catch (error) {
+      this.logger.error('Error in addAttachment', error.stack);
       throw error;
     }
   }
@@ -124,74 +116,60 @@ export class AttachmentService {
     project_id: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketingAttachmentOutput> {
+    this.logger.log('getAttachment method called');
     try {
       const attachment = await this.prisma.tcg_attachments.findUnique({
-        where: {
-          id_tcg_attachment: id_ticketing_attachment,
-        },
+        where: { id_tcg_attachment: id_ticketing_attachment },
       });
 
-      // Fetch field mappings for the attachment
+      if (!attachment) {
+        this.logger.error('Attachment not found');
+        throw new ReferenceError('Attachment not found');
+      }
+
       const values = await this.prisma.value.findMany({
         where: {
-          entity: {
-            ressource_owner_id: attachment.id_tcg_attachment,
-          },
+          entity: { ressource_owner_id: attachment.id_tcg_attachment },
         },
-        include: {
-          attribute: true,
-        },
+        include: { attribute: true },
       });
 
-      // Create a map to store unique field mappings
       const fieldMappingsMap = new Map();
-
       values.forEach((value) => {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      // Convert the map to an array of objects
       const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedTicketingAttachmentOutput format
       let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
         id: attachment.id_tcg_attachment,
         file_name: attachment.file_name,
         file_url: attachment.file_url,
         uploader: attachment.uploader,
-        field_mappings: field_mappings,
+        field_mappings,
         remote_id: attachment.remote_id,
         created_at: attachment.created_at,
         modified_at: attachment.modified_at,
       };
+
       if (attachment.id_tcg_comment) {
-        unifiedAttachment = {
-          ...unifiedAttachment,
-          comment_id: attachment.id_tcg_comment,
-        };
+        unifiedAttachment.comment_id = attachment.id_tcg_comment;
       }
+
       if (attachment.id_tcg_ticket) {
-        unifiedAttachment = {
-          ...unifiedAttachment,
-          ticket_id: attachment.id_tcg_ticket,
-        };
+        unifiedAttachment.ticket_id = attachment.id_tcg_ticket;
       }
 
       let res: UnifiedTicketingAttachmentOutput = unifiedAttachment;
 
       if (remote_data) {
         const resp = await this.prisma.remote_data.findFirst({
-          where: {
-            ressource_owner_id: attachment.id_tcg_attachment,
-          },
+          where: { ressource_owner_id: attachment.id_tcg_attachment },
         });
-        const remote_data = JSON.parse(resp.data);
-
-        res = {
-          ...res,
-          remote_data: remote_data,
-        };
+        const remoteData = JSON.parse(resp.data);
+        res = { ...res, remote_data: remoteData };
       }
+
       if (linkedUserId && integrationId) {
         await this.prisma.events.create({
           data: {
@@ -209,8 +187,11 @@ export class AttachmentService {
           },
         });
       }
+
+      this.logger.log('Attachment successfully retrieved');
       return res;
     } catch (error) {
+      this.logger.error('Error in getAttachment', error.stack);
       throw error;
     }
   }
@@ -228,35 +209,26 @@ export class AttachmentService {
     prev_cursor: null | string;
     next_cursor: null | string;
   }> {
+    this.logger.log('getAttachments method called');
     try {
-      //TODO: handle case where data is not there (not synced) or old synced
       let prev_cursor = null;
       let next_cursor = null;
 
       if (cursor) {
         const isCursorPresent = await this.prisma.tcg_attachments.findFirst({
-          where: {
-            id_connection: connection_id,
-            id_tcg_attachment: cursor,
-          },
+          where: { id_connection: connection_id, id_tcg_attachment: cursor },
         });
         if (!isCursorPresent) {
-          throw new ReferenceError(`The provided cursor does not exist!`);
+          this.logger.error('Invalid cursor provided');
+          throw new ReferenceError('The provided cursor does not exist!');
         }
       }
+
       const attachments = await this.prisma.tcg_attachments.findMany({
         take: limit + 1,
-        cursor: cursor
-          ? {
-              id_tcg_attachment: cursor,
-            }
-          : undefined,
-        orderBy: {
-          created_at: 'asc',
-        },
-        where: {
-          id_connection: connection_id,
-        },
+        cursor: cursor ? { id_tcg_attachment: cursor } : undefined,
+        orderBy: { created_at: 'asc' },
+        where: { id_connection: connection_id },
       });
 
       if (attachments.length === limit + 1) {
@@ -270,59 +242,44 @@ export class AttachmentService {
         prev_cursor = Buffer.from(cursor).toString('base64');
       }
 
-      const unifiedAttachments: UnifiedTicketingAttachmentOutput[] =
-        await Promise.all(
-          attachments.map(async (attachment) => {
-            // Fetch field mappings for the attachment
-            const values = await this.prisma.value.findMany({
-              where: {
-                entity: {
-                  ressource_owner_id: attachment.id_tcg_attachment,
-                },
-              },
-              include: {
-                attribute: true,
-              },
-            });
-            // Create a map to store unique field mappings
-            const fieldMappingsMap = new Map();
+      const unifiedAttachments = await Promise.all(
+        attachments.map(async (attachment) => {
+          const values = await this.prisma.value.findMany({
+            where: {
+              entity: { ressource_owner_id: attachment.id_tcg_attachment },
+            },
+            include: { attribute: true },
+          });
 
-            values.forEach((value) => {
-              fieldMappingsMap.set(value.attribute.slug, value.data);
-            });
+          const fieldMappingsMap = new Map();
+          values.forEach((value) => {
+            fieldMappingsMap.set(value.attribute.slug, value.data);
+          });
 
-            // Convert the map to an array of objects
-            const field_mappings = Array.from(
-              fieldMappingsMap,
-              ([key, value]) => ({ [key]: value }),
-            );
-            let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
-              id: attachment.id_tcg_attachment,
-              file_name: attachment.file_name,
-              file_url: attachment.file_url,
-              uploader: attachment.uploader,
-              field_mappings: field_mappings,
-              remote_id: attachment.remote_id,
-              created_at: attachment.created_at,
-              modified_at: attachment.modified_at,
-            };
-            if (attachment.id_tcg_comment) {
-              unifiedAttachment = {
-                ...unifiedAttachment,
-                comment_id: attachment.id_tcg_comment,
-              };
-            }
-            if (attachment.id_tcg_ticket) {
-              unifiedAttachment = {
-                ...unifiedAttachment,
-                ticket_id: attachment.id_tcg_ticket,
-              };
-            }
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-            // Transform to UnifiedTicketingAttachmentOutput format
-            return unifiedAttachment;
-          }),
-        );
+          let unifiedAttachment: UnifiedTicketingAttachmentOutput = {
+            id: attachment.id_tcg_attachment,
+            file_name: attachment.file_name,
+            file_url: attachment.file_url,
+            uploader: attachment.uploader,
+            field_mappings,
+            remote_id: attachment.remote_id,
+            created_at: attachment.created_at,
+            modified_at: attachment.modified_at,
+          };
+
+          if (attachment.id_tcg_comment) {
+            unifiedAttachment.comment_id = attachment.id_tcg_comment;
+          }
+
+          if (attachment.id_tcg_ticket) {
+            unifiedAttachment.ticket_id = attachment.id_tcg_ticket;
+          }
+
+          return unifiedAttachment;
+        }),
+      );
 
       let res: UnifiedTicketingAttachmentOutput[] = unifiedAttachments;
 
@@ -359,21 +316,24 @@ export class AttachmentService {
         },
       });
 
+      this.logger.log('Attachments successfully retrieved');
       return {
-        data: res,
+        data: unifiedAttachments,
         prev_cursor,
         next_cursor,
       };
     } catch (error) {
+      this.logger.error('Error in getAttachments', error.stack);
       throw error;
     }
   }
 
-  //TODO
   async downloadAttachment(
     id_ticketing_attachment: string,
     remote_data?: boolean,
   ): Promise<UnifiedTicketingAttachmentOutput> {
+    this.logger.log('downloadAttachment method called');
+    // TODO: Implementation pending
     return;
   }
 }

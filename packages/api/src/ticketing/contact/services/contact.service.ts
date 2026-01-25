@@ -20,11 +20,17 @@ export class ContactService {
     remote_data?: boolean,
   ): Promise<UnifiedTicketingContactOutput> {
     try {
+      this.logger.log(`Fetching contact with ID: ${id_ticketing_contact}`);
+
       const contact = await this.prisma.tcg_contacts.findUnique({
         where: {
           id_tcg_contact: id_ticketing_contact,
         },
       });
+
+      if (!contact) {
+        this.logger.warn(`Contact with ID ${id_ticketing_contact} not found`);
+      }
 
       // Fetch field mappings for the ticket
       const values = await this.prisma.value.findMany({
@@ -38,17 +44,13 @@ export class ContactService {
         },
       });
 
-      // Create a map to store unique field mappings
       const fieldMappingsMap = new Map();
-
       values.forEach((value) => {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
 
-      // Convert the map to an array of objects
       const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-      // Transform to UnifiedTicketingContactOutput format
       const unifiedContact: UnifiedTicketingContactOutput = {
         id: contact.id_tcg_contact,
         email_address: contact.email_address,
@@ -70,10 +72,11 @@ export class ContactService {
         const remote_data = JSON.parse(resp.data);
         unifiedContact.remote_data = remote_data;
       }
+
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
-          id_project: project_id, 
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.contact.pull',
@@ -86,14 +89,16 @@ export class ContactService {
         },
       });
 
+      this.logger.log(`Successfully fetched contact with ID: ${id_ticketing_contact}`);
       return unifiedContact;
     } catch (error) {
+      this.logger.error('Error fetching contact:', error);
       throw error;
     }
   }
 
   async getContacts(
-   connection_id: string,
+    connection_id: string,
     project_id: string,
     integrationId: string,
     linkedUserId: string,
@@ -106,7 +111,8 @@ export class ContactService {
     next_cursor: null | string;
   }> {
     try {
-      //TODO: handle case where data is not there (not synced) or old synced
+      this.logger.log(`Fetching contacts for connection ID: ${connection_id} with limit: ${limit}`);
+
       let prev_cursor = null;
       let next_cursor = null;
 
@@ -118,6 +124,7 @@ export class ContactService {
           },
         });
         if (!isCursorPresent) {
+          this.logger.warn(`The provided cursor ${cursor} does not exist`);
           throw new ReferenceError(`The provided cursor does not exist!`);
         }
       }
@@ -138,9 +145,7 @@ export class ContactService {
       });
 
       if (contacts.length === limit + 1) {
-        next_cursor = Buffer.from(
-          contacts[contacts.length - 1].id_tcg_contact,
-        ).toString('base64');
+        next_cursor = Buffer.from(contacts[contacts.length - 1].id_tcg_contact).toString('base64');
         contacts.pop();
       }
 
@@ -150,7 +155,6 @@ export class ContactService {
 
       const unifiedContacts: UnifiedTicketingContactOutput[] = await Promise.all(
         contacts.map(async (contact) => {
-          // Fetch field mappings for the contact
           const values = await this.prisma.value.findMany({
             where: {
               entity: {
@@ -161,18 +165,13 @@ export class ContactService {
               attribute: true,
             },
           });
-          // Create a map to store unique field mappings
           const fieldMappingsMap = new Map();
-
           values.forEach((value) => {
             fieldMappingsMap.set(value.attribute.slug, value.data);
           });
 
-          // Convert the map to an array of objects
-          // Convert the map to an object
-const field_mappings = Object.fromEntries(fieldMappingsMap);
+          const field_mappings = Object.fromEntries(fieldMappingsMap);
 
-          // Transform to UnifiedTicketingContactOutput format
           return {
             id: contact.id_tcg_contact,
             email_address: contact.email_address,
@@ -204,10 +203,11 @@ const field_mappings = Object.fromEntries(fieldMappingsMap);
 
         res = remote_array_data;
       }
+
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
-          id_project: project_id, 
+          id_project: project_id,
           id_event: uuidv4(),
           status: 'success',
           type: 'ticketing.contact.pull',
@@ -220,12 +220,14 @@ const field_mappings = Object.fromEntries(fieldMappingsMap);
         },
       });
 
+      this.logger.log(`Successfully fetched ${contacts.length} contacts`);
       return {
         data: res,
         prev_cursor,
         next_cursor,
       };
     } catch (error) {
+      this.logger.error('Error fetching contacts:', error);
       throw error;
     }
   }

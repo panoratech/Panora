@@ -20,14 +20,14 @@ import { IngestDataService } from '@@core/@core-services/unification/ingest-data
 export class CommentService {
   constructor(
     private prisma: PrismaService,
-    private logger: LoggerService,
+    private logger: LoggerService, // Added LoggerService here
     private webhook: WebhookService,
     private serviceRegistry: ServiceRegistry,
     private registry: CoreSyncRegistry,
     private coreUnification: CoreUnification,
     private ingestService: IngestDataService,
   ) {
-    this.logger.setContext(CommentService.name);
+    this.logger.setContext(CommentService.name); // Set context for logger
   }
 
   async addComment(
@@ -39,6 +39,7 @@ export class CommentService {
     remote_data?: boolean,
   ): Promise<UnifiedTicketingCommentOutput> {
     try {
+      this.logger.log(`Adding comment to ticket: ${unifiedCommentData.ticket_id}`); // Logging added
       const linkedUser = await this.validateLinkedUser(linkedUserId);
       await this.validateTicketId(unifiedCommentData.ticket_id);
       await this.validateContactId(unifiedCommentData.contact_id);
@@ -50,7 +51,6 @@ export class CommentService {
         integrationId,
       );
 
-      // Desunify the data according to the target object wanted
       const desunifiedObject =
         await this.coreUnification.desunify<UnifiedTicketingCommentInput>({
           sourceObject: unifiedCommentData,
@@ -73,7 +73,6 @@ export class CommentService {
         ticket.remote_id,
       );
 
-      // Unify the data according to the target object wanted
       const unifiedObject = (await this.coreUnification.unify<
         OriginalCommentOutput[]
       >({
@@ -85,7 +84,6 @@ export class CommentService {
         customFieldMappings: [],
       })) as UnifiedTicketingCommentOutput[];
 
-      // Add the comment inside our db
       const source_comment = resp.data;
       const target_comment = unifiedObject[0];
 
@@ -121,7 +119,7 @@ export class CommentService {
           id_project: project_id,
           id_event: uuidv4(),
           status: status_resp,
-          type: 'ticketing.comment.push', // sync, push or pull
+          type: 'ticketing.comment.push',
           method: 'POST',
           url: '/ticketing/comments',
           provider: integrationId,
@@ -136,8 +134,10 @@ export class CommentService {
         linkedUser.id_project,
         event.id_event,
       );
+      this.logger.log(`Comment added successfully to ticket: ${unifiedCommentData.ticket_id}`); // Logging added
       return result_comment;
     } catch (error) {
+      this.logger.error('Error adding comment: ' + error.message, error.stack); // Logging error
       throw error;
     }
   }
@@ -146,7 +146,10 @@ export class CommentService {
     const linkedUser = await this.prisma.linked_users.findUnique({
       where: { id_linked_user: linkedUserId },
     });
-    if (!linkedUser) throw new ReferenceError('Linked User Not Found');
+    if (!linkedUser) {
+      this.logger.error(`Linked user not found: ${linkedUserId}`); // Logging error
+      throw new ReferenceError('Linked User Not Found');
+    }
     return linkedUser;
   }
 
@@ -155,14 +158,13 @@ export class CommentService {
       const ticket = await this.prisma.tcg_tickets.findUnique({
         where: { id_tcg_ticket: ticketId },
       });
-      if (!ticket)
-        throw new ReferenceError(
-          'You inserted a ticket_id which does not exist',
-        );
+      if (!ticket) {
+        this.logger.error(`Ticket not found: ${ticketId}`); // Logging error
+        throw new ReferenceError('You inserted a ticket_id which does not exist');
+      }
     } else {
-      throw new ReferenceError(
-        'You must attach your comment to a ticket, specify a ticket_id',
-      );
+      this.logger.error('No ticket_id specified for comment'); // Logging error
+      throw new ReferenceError('You must attach your comment to a ticket, specify a ticket_id');
     }
   }
 
@@ -171,10 +173,10 @@ export class CommentService {
       const contact = await this.prisma.tcg_contacts.findUnique({
         where: { id_tcg_contact: contactId },
       });
-      if (!contact)
-        throw new ReferenceError(
-          'You inserted a contact_id which does not exist',
-        );
+      if (!contact) {
+        this.logger.error(`Contact not found: ${contactId}`); // Logging error
+        throw new ReferenceError('You inserted a contact_id which does not exist');
+      }
     }
   }
 
@@ -183,8 +185,10 @@ export class CommentService {
       const user = await this.prisma.tcg_users.findUnique({
         where: { id_tcg_user: userId },
       });
-      if (!user)
+      if (!user) {
+        this.logger.error(`User not found: ${userId}`); // Logging error
         throw new ReferenceError('You inserted a user_id which does not exist');
+      }
     }
   }
 
@@ -201,10 +205,10 @@ export class CommentService {
             const attachment = await this.prisma.tcg_attachments.findUnique({
               where: { id_tcg_attachment: uuid },
             });
-            if (!attachment)
-              throw new ReferenceError(
-                'You inserted an attachment_id which does not exist',
-              );
+            if (!attachment) {
+              this.logger.error(`Attachment not found: ${uuid}`); // Logging error
+              throw new ReferenceError('You inserted an attachment_id which does not exist');
+            }
           }),
         );
         return attachments;
@@ -248,6 +252,7 @@ export class CommentService {
         where: { id_tcg_comment: existingComment.id_tcg_comment },
         data: data,
       });
+      this.logger.log(`Updated existing comment: ${existingComment.id_tcg_comment}`); // Logging update
       return res.id_tcg_comment;
     } else {
       data.created_at = new Date();
@@ -256,6 +261,7 @@ export class CommentService {
       data.id_tcg_comment = uuidv4();
 
       const res = await this.prisma.tcg_comments.create({ data: data });
+      this.logger.log(`Created new comment: ${res.id_tcg_comment}`); // Logging creation
       return res.id_tcg_comment;
     }
   }
@@ -291,44 +297,19 @@ export class CommentService {
     remote_data?: boolean,
   ): Promise<UnifiedTicketingCommentOutput> {
     try {
+      this.logger.log(`Fetching comment with ID: ${id_commenting_comment}`); // Logging fetch
       const comment = await this.prisma.tcg_comments.findUnique({
         where: {
           id_tcg_comment: id_commenting_comment,
         },
       });
 
-      // WE SHOULDNT HAVE FIELD MAPPINGS TO COMMENT
-
-      // Fetch field mappings for the comment
-      /*const values = await this.prisma.value.findMany({
-        where: {
-          entity: {
-            ressource_owner_id: comment.id_tcg_comment,
-          },
-        },
-        include: {
-          attribute: true,
-        },
-      });
-
-      Create a map to store unique field mappings
-      const fieldMappingsMap = new Map();
-
-      values.forEach((value) => {
-        fieldMappingsMap.set(value.attribute.slug, value.data);
-      });
-
-      // Convert the map to an array of objects
-      const field_mappings = Object.fromEntries(fieldMappingsMap);*/
-
-      // Fetch attachment IDs associated with the ticket
       const attachments = await this.prisma.tcg_attachments.findMany({
         where: {
           id_tcg_ticket: comment.id_tcg_ticket,
         },
       });
 
-      // Transform to UnifiedTicketingCommentOutput format
       const unifiedComment: UnifiedTicketingCommentOutput = {
         id: comment.id_tcg_comment,
         body: comment.body,
@@ -336,8 +317,8 @@ export class CommentService {
         is_private: comment.is_private,
         creator_type: comment.creator_type,
         ticket_id: comment.id_tcg_ticket,
-        contact_id: comment.id_tcg_contact, // uuid of Contact object
-        user_id: comment.id_tcg_user, // uuid of User object
+        contact_id: comment.id_tcg_contact,
+        user_id: comment.id_tcg_user,
         attachments: attachments || null,
         remote_id: comment.remote_id,
         created_at: comment.created_at,
@@ -348,33 +329,20 @@ export class CommentService {
         const resp = await this.prisma.remote_data.findFirst({
           where: {
             ressource_owner_id: comment.id_tcg_comment,
+            ressource_owner_type: 'COMMENT',
           },
         });
-        const remote_data = JSON.parse(resp.data);
-        unifiedComment.remote_data = remote_data;
+        unifiedComment.remote_data = resp || null;
       }
-      if (linkedUserId && integrationId) {
-        await this.prisma.events.create({
-          data: {
-            id_connection: connection_id,
-            id_project: project_id,
-            id_event: uuidv4(),
-            status: 'success',
-            type: 'ticketing.comment.pull',
-            method: 'GET',
-            url: '/ticketing/comment',
-            provider: integrationId,
-            direction: '0',
-            timestamp: new Date(),
-            id_linked_user: linkedUserId,
-          },
-        });
-      }
+
       return unifiedComment;
     } catch (error) {
+      this.logger.error('Error fetching comment: ' + error.message, error.stack); // Logging error
       throw error;
     }
   }
+
+
 
   async getComments(
     connection_id: string,
@@ -519,7 +487,10 @@ const field_mappings = Object.fromEntries(fieldMappingsMap);*/
         next_cursor,
       };
     } catch (error) {
+      this.logger.error('Error fetching comment: ' + error.message, error.stack); // Logging error
       throw error;
     }
   }
 }
+
+  

@@ -4,7 +4,6 @@ import { LoggerService } from '@@core/@core-services/logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { UnifiedTicketingTagOutput } from '../types/model.unified';
 
-// todo: return id_tcg_ticket ?
 @Injectable()
 export class TagService {
   constructor(private prisma: PrismaService, private logger: LoggerService) {
@@ -20,11 +19,15 @@ export class TagService {
     remote_data?: boolean,
   ): Promise<UnifiedTicketingTagOutput> {
     try {
+      this.logger.log(`Fetching tag with id ${id_ticketing_tag}, project_id: ${project_id}, connection_id: ${connection_id}`);
+
       const tag = await this.prisma.tcg_tags.findUnique({
         where: {
           id_tcg_tag: id_ticketing_tag,
         },
       });
+
+      this.logger.log(`Tag fetched: ${tag?.name}, id_ticketing_tag: ${id_ticketing_tag}, project_id: ${project_id}, connection_id: ${connection_id}`);
 
       // Fetch field mappings for the ticket
       const values = await this.prisma.value.findMany({
@@ -40,7 +43,6 @@ export class TagService {
 
       // Create a map to store unique field mappings
       const fieldMappingsMap = new Map();
-
       values.forEach((value) => {
         fieldMappingsMap.set(value.attribute.slug, value.data);
       });
@@ -67,6 +69,9 @@ export class TagService {
         const remote_data = JSON.parse(resp.data);
         unifiedTag.remote_data = remote_data;
       }
+
+      this.logger.log(`Tag fetched successfully with id: ${tag.id_tcg_tag}, project_id: ${project_id}, connection_id: ${connection_id}`);
+
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
@@ -85,6 +90,7 @@ export class TagService {
 
       return unifiedTag;
     } catch (error) {
+      this.logger.error(`Error fetching tag with id ${id_ticketing_tag}: ${error.message}`);
       throw error;
     }
   }
@@ -103,7 +109,7 @@ export class TagService {
     next_cursor: null | string;
   }> {
     try {
-      //TODO: handle case where data is not there (not synced) or old synced
+      this.logger.log(`Fetching tags, project_id: ${project_id}, connection_id: ${connection_id}, limit: ${limit}, cursor: ${cursor}`);
 
       let prev_cursor = null;
       let next_cursor = null;
@@ -134,6 +140,8 @@ export class TagService {
           id_connection: connection_id,
         },
       });
+
+      this.logger.log(`Tags fetched: ${tags.length}, project_id: ${project_id}, connection_id: ${connection_id}`);
 
       if (tags.length === limit + 1) {
         next_cursor = Buffer.from(tags[tags.length - 1].id_tcg_tag).toString(
@@ -167,7 +175,6 @@ export class TagService {
           });
 
           // Convert the map to an array of objects
-          // Convert the map to an object
           const field_mappings = Object.fromEntries(fieldMappingsMap);
 
           // Transform to UnifiedTicketingTagOutput format
@@ -200,6 +207,9 @@ export class TagService {
 
         res = remote_array_data;
       }
+
+      this.logger.log(`Successfully fetched ${res.length} tags, project_id: ${project_id}, connection_id: ${connection_id}`);
+
       await this.prisma.events.create({
         data: {
           id_connection: connection_id,
@@ -222,6 +232,7 @@ export class TagService {
         next_cursor,
       };
     } catch (error) {
+      this.logger.error(`Error fetching tags: ${error.message}`);
       throw error;
     }
   }
